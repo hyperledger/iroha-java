@@ -1,0 +1,55 @@
+plugins {
+    id "com.google.protobuf" version "0.8.6"
+    id "org.sonarqube" version "2.6"
+}
+
+jar {
+    baseName = 'iroha-pure-java'
+    version = project.version
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+final def spockVersion = '1.2-groovy-2.4'
+final def edVersion = '2.0.1'
+final def spockGenesisVersion = '0.6.0'
+final def lombokVersion = '1.18.4'
+final def testcontainersIroha = 'v1.0.0_rc2-SNAPSHOT'
+final def rxjavaVersion = '2.2.4'
+final def jcabiVersion = '0.22.6'
+final def cglibVersion = '3.2.10'
+final def bytebuddyVersion = '1.9.7'
+final def objgenesisVersion = '3.0.1'
+
+
+dependencies {
+    compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
+    compile("com.github.warchant:ed25519-sha3-java:${edVersion}")
+
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+
+    testCompile "com.nagternal:spock-genesis:${spockGenesisVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+
+    testCompile project(":testcontainers")
+    compile group: 'com.jcabi', name: 'jcabi-aspects', version: "${jcabiVersion}"
+
+    // for mocking in groovy
+    testCompile("net.bytebuddy:byte-buddy:${bytebuddyVersion}")
+    testCompile("org.objenesis:objenesis:${objgenesisVersion}")
+    testCompile("cglib:cglib-nodep:${cglibVersion}")
+}
+
+apply from: 'proto.gradle'
+
+sonarqube {
+    properties {
+        property "sonar.exclusions", "**/generated/*.java"
+        property "sonar.projectKey", "hyperledger:iroha-java-client"
+    }
+}

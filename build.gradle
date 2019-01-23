@@ -1,0 +1,54 @@
+allprojects {
+    group 'jp.co.soramitsu'
+    version = "1.0"
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'idea'
+    apply plugin: 'jacoco'
+
+    sourceCompatibility = 1.8 // java 8
+    targetCompatibility = 1.8
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    final def rootReportDir = "${buildDir}/reports/}"
+
+    jacoco {
+        toolVersion = "0.8.2"
+        reportsDir = file(rootReportDir)
+    }
+
+    jacocoTestReport {
+        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+        reports {
+            xml.enabled true
+            xml.destination file("${rootReportDir}/coverage.xml")
+            csv.enabled false
+            html.enabled false
+            html.destination file("${rootReportDir}/html")
+        }
+
+        dependsOn(test)
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10'
+}

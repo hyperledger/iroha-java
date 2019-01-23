@@ -1,0 +1,60 @@
+plugins {
+    id "org.sonarqube" version "2.6"
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+final def testContainersVersion = '1.10.2'
+final def irohaPureJavaVersion = 'v1.0.0_rc2-SNAPSHOT'
+final def lombokVersion = '1.18.4'
+final def jacksonVersion = '2.9.7'
+final def spockVersion = '1.2-groovy-2.4'
+final def spockGenesisVersion = '0.6.0'
+final def cglibVersion = '3.2.10'
+final def bytebuddyVersion = '1.9.6'
+final def objgenesisVersion = '3.0.1'
+final def slf4jVersion = '1.7.25'
+final def junitVersion = '4.12'
+
+dependencies {
+    // for mocking in groovy
+    testCompile("net.bytebuddy:byte-buddy:${bytebuddyVersion}")
+    testCompile("org.objenesis:objenesis:${objgenesisVersion}")
+    testCompile("cglib:cglib-nodep:${cglibVersion}")
+    testCompile("com.nagternal:spock-genesis:${spockGenesisVersion}")
+    testCompile("org.spockframework:spock-core:${spockVersion}")
+
+    compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: "${slf4jVersion}"
+
+    //lombok
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+
+    // jackson
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+
+    // iroha java
+    implementation project(":client")
+
+    // testcontainers
+    compile("org.testcontainers:postgresql:${testContainersVersion}")
+    compile("org.testcontainers:testcontainers:${testContainersVersion}")
+
+    testCompile group: 'junit', name: 'junit', version: "${junitVersion}"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "hyperledger:iroha-java-testcontainers"
+    }
+}

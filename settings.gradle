@@ -1,0 +1,4 @@
+rootProject.name = 'iroha-java'
+include 'client'
+include 'testcontainers'
+
