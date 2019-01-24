@@ -11,10 +11,10 @@ Client library of [Iroha](https://github.com/hyperledger/iroha) written complete
 
 ## usage
 
-| Module         | Javadoc                                                                                       | How to Import                                                         |
-|----------------|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
-| Client SDK     | [master](https://jitpack.io/com/github/hyperledger/iroha-java/client/master/javadoc/)         | `compile com.github.hyperledger.iroha-java:client:master`             |
-| Testcontainers | [master](https://jitpack.io/com/github/hyperledger/iroha-java/testcontainers/master/javadoc/) | `testCompile com.github.hyperledger.iroha-java:testcontainers:master` |
+| Module         | Javadoc                                                                                                | How to Import                                                                  |
+|----------------|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| Client SDK     | [master](https://jitpack.io/com/github/hyperledger/iroha-java/client/master-SNAPSHOT/javadoc/)         | `compile "com.github.hyperledger.iroha-java:client:master-SNAPSHOT"`           |
+| Testcontainers | [master](https://jitpack.io/com/github/hyperledger/iroha-java/testcontainers/master-SNAPSHOT/javadoc/) | `testCompile com.github.hyperledger.iroha-java:testcontainers:master-SNAPSHOT` |
 
 
 [Read more](https://jitpack.io/docs/#features) to get specific javadoc/lib version(s).
