@@ -7,7 +7,6 @@ import io.reactivex.internal.functions.Functions;
 import iroha.protocol.Endpoint.ToriiResponse;
 import jp.co.soramitsu.iroha.java.TransactionStatusObserver;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.NoArgsConstructor;
 
@@ -25,49 +24,26 @@ import lombok.NoArgsConstructor;
  * </pre>
  * }
  */
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class InlineTransactionStatusObserver extends TransactionStatusObserver {
-
-  @Default
   private Action onTransactionSent = Functions.EMPTY_ACTION;
-
-  @Default
   private Action onComplete = Functions.EMPTY_ACTION;
-
-  @Default
   private Consumer<? super ToriiResponse> onTransactionFailed = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onTransactionCommitted = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onStatelessValidationSuccess = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onStatefulValidationSuccess = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onNotReceived = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onUnrecognizedStatus = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onMstExpired = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onRejected = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onEnoughSignaturesCollected = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super ToriiResponse> onMstPending = Functions.emptyConsumer();
-
-  @Default
   private Consumer<? super Throwable> onError = Functions.emptyConsumer();
+
+  public static InlineTransactionStatusObserverBuilder builder() {
+    return new InlineTransactionStatusObserverBuilder();
+  }
 
   @Override
   public void onTransactionSent() {
@@ -183,6 +159,112 @@ public class InlineTransactionStatusObserver extends TransactionStatusObserver {
       this.onComplete.run();
     } catch (Exception e) {
       onError(e);
+    }
+  }
+
+  public static class InlineTransactionStatusObserverBuilder {
+
+    private Action onTransactionSent = Functions.EMPTY_ACTION;
+    private Action onComplete = Functions.EMPTY_ACTION;
+    private Consumer<? super ToriiResponse> onTransactionFailed = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onTransactionCommitted = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onStatelessValidationSuccess = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onStatefulValidationSuccess = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onNotReceived = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onUnrecognizedStatus = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onMstExpired = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onRejected = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onEnoughSignaturesCollected = Functions.emptyConsumer();
+    private Consumer<? super ToriiResponse> onMstPending = Functions.emptyConsumer();
+    private Consumer<? super Throwable> onError = Functions.emptyConsumer();
+
+    InlineTransactionStatusObserverBuilder() {
+    }
+
+    public InlineTransactionStatusObserverBuilder onTransactionSent(
+        Action onTransactionSent) {
+      this.onTransactionSent = onTransactionSent;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onComplete(
+        Action onComplete) {
+      this.onComplete = onComplete;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onTransactionFailed(
+        Consumer<? super ToriiResponse> onTransactionFailed) {
+      this.onTransactionFailed = onTransactionFailed;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onTransactionCommitted(
+        Consumer<? super ToriiResponse> onTransactionCommitted) {
+      this.onTransactionCommitted = onTransactionCommitted;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onStatelessValidationSuccess(
+        Consumer<? super ToriiResponse> onStatelessValidationSuccess) {
+      this.onStatelessValidationSuccess = onStatelessValidationSuccess;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onStatefulValidationSuccess(
+        Consumer<? super ToriiResponse> onStatefulValidationSuccess) {
+      this.onStatefulValidationSuccess = onStatefulValidationSuccess;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onNotReceived(
+        Consumer<? super ToriiResponse> onNotReceived) {
+      this.onNotReceived = onNotReceived;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onUnrecognizedStatus(
+        Consumer<? super ToriiResponse> onUnrecognizedStatus) {
+      this.onUnrecognizedStatus = onUnrecognizedStatus;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onMstExpired(
+        Consumer<? super ToriiResponse> onMstExpired) {
+      this.onMstExpired = onMstExpired;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onRejected(
+        Consumer<? super ToriiResponse> onRejected) {
+      this.onRejected = onRejected;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onEnoughSignaturesCollected(
+        Consumer<? super ToriiResponse> onEnoughSignaturesCollected) {
+      this.onEnoughSignaturesCollected = onEnoughSignaturesCollected;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onMstPending(
+        Consumer<? super ToriiResponse> onMstPending) {
+      this.onMstPending = onMstPending;
+      return this;
+    }
+
+    public InlineTransactionStatusObserverBuilder onError(
+        Consumer<? super Throwable> onError) {
+      this.onError = onError;
+      return this;
+    }
+
+    public InlineTransactionStatusObserver build() {
+      return new InlineTransactionStatusObserver(onTransactionSent, onComplete, onTransactionFailed,
+          onTransactionCommitted, onStatelessValidationSuccess, onStatefulValidationSuccess,
+          onNotReceived, onUnrecognizedStatus, onMstExpired, onRejected,
+          onEnoughSignaturesCollected,
+          onMstPending, onError);
     }
   }
 }
