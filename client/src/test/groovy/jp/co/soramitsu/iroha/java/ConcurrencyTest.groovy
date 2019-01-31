@@ -23,21 +23,14 @@ class ConcurrencyTest extends Specification {
 
     def setupSpec() {
         iroha.start()
-        def address = iroha.getToriiAddress()
         api = iroha.api
-        api.setChannelForStreamingQueryStub(
-                ManagedChannelBuilder.forAddress(address.host, address.port)
-                        .directExecutor()
-                        .usePlaintext()
-                        .build()
-        )
     }
 
     def cleanupSpec() {
         iroha.stop()
     }
 
-    def getTx(int n) {
+    static def getTx(int n) {
         return Transaction.builder(defaultAccountId)
                 .createAccount("${n}", defaultDomainName, defaultKeyPair.public)
                 .sign(defaultKeyPair)
