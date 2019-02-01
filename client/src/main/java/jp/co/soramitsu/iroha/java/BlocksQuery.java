@@ -54,6 +54,6 @@ public class BlocksQuery
   }
 
   public static BlocksQueryBuilder builder(String accountId, long counter) {
-    return builder(accountId, Instant.now(), counter);
+    return builder(accountId, System.currentTimeMillis(), counter);
   }
 }

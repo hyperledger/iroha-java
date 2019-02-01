@@ -3,7 +3,9 @@ package jp.co.soramitsu.iroha.java
 import jp.co.soramitsu.iroha.java.debug.TestTransactionStatusObserver
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import spock.lang.Specification
+import spock.lang.Timeout
 
+import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
@@ -12,7 +14,7 @@ import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.*
 class IrohaAPITest extends Specification {
 
     static private IrohaContainer iroha = new IrohaContainer()
-    
+
     def setupSpec() {
         iroha.start()
     }
@@ -114,7 +116,11 @@ class IrohaAPITest extends Specification {
                             .onTransactionCommitted({ z -> onCommitted = true })
                             .build()
 
-                    api.txStatus(h).blockingSubscribe(obs)
+                    api.txStatus(h)
+                            .doOnError({n -> println(n)})
+                            .doOnNext({n -> println(n)})
+                            .doOnComplete({ -> println('COMPLETE')})
+                            .blockingSubscribe(obs)
 
                     return onCommitted
                 })
