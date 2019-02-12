@@ -80,6 +80,9 @@ class MstTest extends Specification {
                 .build()
 
         api.transaction(t1)
+                .doOnNext({e -> println("ON NEXT: ${e}")})
+                .doOnError({e -> println("ON ERROR: ${e}")})
+                .doOnComplete({e -> println("ON COMPLETE: ${e}")})
                 .blockingSubscribe(obs)
 
         then:

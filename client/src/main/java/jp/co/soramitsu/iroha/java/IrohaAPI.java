@@ -7,6 +7,7 @@ import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.reactivex.Observable;
+import io.reactivex.exceptions.Exceptions;
 import iroha.protocol.CommandService_v1Grpc;
 import iroha.protocol.CommandService_v1Grpc.CommandService_v1BlockingStub;
 import iroha.protocol.CommandService_v1Grpc.CommandService_v1Stub;
@@ -20,9 +21,10 @@ import iroha.protocol.QueryService_v1Grpc.QueryService_v1Stub;
 import iroha.protocol.TransactionOuterClass;
 import java.io.Closeable;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 import jp.co.soramitsu.iroha.java.detail.StreamObserverToEmitter;
 import jp.co.soramitsu.iroha.java.subscription.SubscriptionStrategy;
-import jp.co.soramitsu.iroha.java.subscription.WaitUntilCompleted;
+import jp.co.soramitsu.iroha.java.subscription.WaitForTerminalStatus;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -32,7 +34,7 @@ import lombok.val;
  */
 public class IrohaAPI implements Closeable {
 
-  private static final WaitUntilCompleted defaultStrategy = new WaitUntilCompleted();
+  private static final SubscriptionStrategy defaultStrategy = new WaitForTerminalStatus();
 
   @Getter
   private URI uri;
@@ -103,7 +105,7 @@ public class IrohaAPI implements Closeable {
   /**
    * Send transaction synchronously, then subscribe for transaction status stream.
    *
-   * It uses {@link WaitUntilCompleted} subscription strategy by default.
+   * It uses {@link WaitForTerminalStatus} subscription strategy by default.
    *
    * @param tx protobuf transaction.
    * @return observable. Use {@code Observable.blockingSubscribe(...)} or {@code
@@ -189,6 +191,14 @@ public class IrohaAPI implements Closeable {
   public void terminate() {
     if (!channel.isTerminated()) {
       channel.shutdownNow();
+      boolean terminated = false;
+      do {
+        try {
+          terminated = channel.awaitTermination(10, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+          Exceptions.propagate(e);
+        }
+      } while (!terminated);
     }
   }
 

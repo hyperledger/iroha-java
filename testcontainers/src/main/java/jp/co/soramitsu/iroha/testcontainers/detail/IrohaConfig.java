@@ -52,7 +52,7 @@ public class IrohaConfig implements Cloneable {
   private boolean mst_enable = false;
 
   @Builder.Default
-  private int mst_expiration_time = 1440;
+  private int mst_expiration_time = 99999;
 
   @Override
   public IrohaConfig clone() {
