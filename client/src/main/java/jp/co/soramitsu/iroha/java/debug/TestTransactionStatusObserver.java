@@ -4,7 +4,9 @@ import iroha.protocol.Endpoint.ToriiResponse;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import jp.co.soramitsu.iroha.java.TransactionStatusObserver;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TestTransactionStatusObserver extends TransactionStatusObserver {
 
   private RuntimeException fail(String format, Object... args) {
@@ -98,28 +100,31 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
 
   @Override
   public void onTransactionSent() {
+    log.info("[onTransactionSent]");
     sent.incrementAndGet();
   }
 
   @Override
   public void onTransactionFailed(ToriiResponse t) {
+    log.info("[onTransactionFailed] " + t.toString());
     failed.incrementAndGet();
-    // TODO(@Warchant): store statuses and add API to check them
-    System.out.println(t);
   }
 
   @Override
   public void onTransactionCommitted(ToriiResponse t) {
+    log.error("[onNext] " + t.toString());
     committed.incrementAndGet();
   }
 
   @Override
   public void onError(Throwable e) {
+    log.info("[onError] " + e.toString());
     errored = e;
   }
 
   @Override
   public void onComplete() {
+    log.info("[onComplete]");
     completed.set(true);
   }
 }

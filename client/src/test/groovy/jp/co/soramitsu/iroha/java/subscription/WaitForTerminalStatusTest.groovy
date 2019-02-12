@@ -5,7 +5,6 @@ import io.reactivex.observers.TestObserver
 import iroha.protocol.Endpoint.ToriiResponse
 import iroha.protocol.Endpoint.TxStatus
 import jp.co.soramitsu.iroha.java.IrohaAPI
-import jp.co.soramitsu.iroha.java.timeout.TimeoutStrategy
 import spock.lang.Specification
 
 import java.util.stream.Collectors
@@ -26,14 +25,7 @@ class WaitForTerminalStatusTest extends Specification {
 
     def "valid transaction status flow"() {
         given:
-        TimeoutStrategy timeoutStrategy = Mock(TimeoutStrategy) {
-            nextTimeout() >> {
-                println("called nextTimeout()")
-                throw new RuntimeException("TEST FAILED: nextTimeout should have never been called")
-            }
-        }
-
-        SubscriptionStrategy strategy = new WaitForTerminalStatus(timeoutStrategy)
+        SubscriptionStrategy strategy = new WaitForTerminalStatus()
 
         def responses = makeResponseList([
                 TxStatus.ENOUGH_SIGNATURES_COLLECTED,
@@ -60,7 +52,7 @@ class WaitForTerminalStatusTest extends Specification {
 
         when:
         strategy.subscribe(api, null)
-                .subscribe(obs)
+                .blockingSubscribe(obs)
 
         then:
         obs.assertSubscribed()
@@ -73,14 +65,7 @@ class WaitForTerminalStatusTest extends Specification {
 
     def "after terminal status iroha pushes non-terminal statuses"() {
         given:
-        TimeoutStrategy timeoutStrategy = Mock(TimeoutStrategy) {
-            nextTimeout() >> {
-                println("called nextTimeout()")
-                throw new RuntimeException("TEST FAILED: nextTimeout should have never been called")
-            }
-        }
-
-        SubscriptionStrategy strategy = new WaitForTerminalStatus(timeoutStrategy)
+        SubscriptionStrategy strategy = new WaitForTerminalStatus()
 
         def responses = makeResponseList([
                 TxStatus.ENOUGH_SIGNATURES_COLLECTED,
@@ -113,8 +98,6 @@ class WaitForTerminalStatusTest extends Specification {
         strategy.subscribe(api, null)
                 .blockingSubscribe(obs)
 
-        println(obs.toString())
-
         then:
         obs.assertSubscribed()
         obs.assertNoErrors()
@@ -129,53 +112,16 @@ class WaitForTerminalStatusTest extends Specification {
         ]))
     }
 
-    def "client gracefully handles and re-subscribes after onError received"() {
+    def "client gracefully handles and does not resubscribe after onError received"() {
         given:
-        final int ERRORS = 5
-
-        TimeoutStrategy timeoutStrategy = Mock(TimeoutStrategy) {
-            // should be called 5 times
-            ERRORS * nextTimeout() >> {
-                println("called nextTimeout()")
-                return true
-            }
-        }
-
-        SubscriptionStrategy strategy = new WaitForTerminalStatus(timeoutStrategy)
-                .doOnError({ t ->
-            println("[Client] received onError from Iroha: ${t}")
-        })
-                .doOnComplete({ ->
-            println("[Client] received onComplete from Iroha")
-        })
+        SubscriptionStrategy strategy = new WaitForTerminalStatus()
 
         def throwable = new RuntimeException("<<nasty error>>")
-        def responses = makeResponseList([
-                TxStatus.ENOUGH_SIGNATURES_COLLECTED,
-                TxStatus.STATELESS_VALIDATION_SUCCESS,
-                TxStatus.STATEFUL_VALIDATION_SUCCESS,
-                TxStatus.COMMITTED
-        ])
 
         IrohaAPI api = Mock(IrohaAPI) {
-            // first ERRORS subscriptions, iroha returns error
-            ERRORS * txStatus(_) >> {
-                // first 5 subscriptions client gets onError
+            txStatus(_) >> {
                 return Observable.create({ o ->
                     o.onError(throwable)
-                })
-            }
-
-            // next subscription client gets few non-terminal statuses, then terminal status
-            1 * txStatus(_) >> {
-                return Observable.create({ o ->
-                    responses.forEach({ response ->
-                        println("[Iroha].onNext(${response.txStatus})")
-                        o.onNext(response)
-                    })
-
-                    println("[Iroha].onComplete()")
-                    o.onComplete()
                 })
             }
         }
@@ -184,34 +130,17 @@ class WaitForTerminalStatusTest extends Specification {
 
         when:
         strategy.subscribe(api, null)
-                .subscribe(obs)
+                .blockingSubscribe(obs)
 
         then:
         obs.assertSubscribed()
-        obs.assertNoErrors()
-        obs.assertComplete()
+        obs.assertError(throwable)
         obs.assertNoTimeout()
-        obs.assertValueCount(responses.size())
-        obs.assertValueSequence(responses)
     }
 
     def "client resubscribes after onComplete, when no terminal status received"() {
         given:
-
-        TimeoutStrategy timeoutStrategy = Mock(TimeoutStrategy) {
-            nextTimeout() >> {
-                println("called nextTimeout()")
-                return true
-            }
-        }
-
-        SubscriptionStrategy strategy = new WaitForTerminalStatus(timeoutStrategy)
-                .doOnError({ t ->
-            println("[Client] received onError from Iroha: ${t}")
-        })
-                .doOnComplete({ ->
-            println("[Client] received onComplete from Iroha")
-        })
+        SubscriptionStrategy strategy = new WaitForTerminalStatus()
 
         def responses = makeResponseList([
                 TxStatus.ENOUGH_SIGNATURES_COLLECTED,

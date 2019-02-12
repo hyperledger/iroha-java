@@ -27,7 +27,7 @@ class IrohaAPITest extends Specification {
 
         when: "send valid transaction"
         def valid = Transaction.builder(defaultAccountId)
-                .createAccount("z", defaultDomainName, defaultKeyPair.getPublic())
+                .createAccount("zzpppzp", defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
                 .build()
 
