@@ -37,7 +37,7 @@ public class IrohaConfig implements Cloneable {
   private PostgresConfig pg_opt = PostgresConfig.builder().build();
 
   @Builder.Default
-  private int max_proposal_size = 10;
+  private int max_proposal_size = 1000;
 
   @Builder.Default
   private int proposal_delay = 1000;
@@ -50,6 +50,9 @@ public class IrohaConfig implements Cloneable {
 
   @Builder.Default
   private boolean mst_enable = false;
+
+  @Builder.Default
+  private int mst_expiration_time = 99999;
 
   @Override
   public IrohaConfig clone() {
