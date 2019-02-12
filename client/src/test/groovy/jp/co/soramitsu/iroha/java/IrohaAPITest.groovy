@@ -3,9 +3,7 @@ package jp.co.soramitsu.iroha.java
 import jp.co.soramitsu.iroha.java.debug.TestTransactionStatusObserver
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import spock.lang.Specification
-import spock.lang.Timeout
 
-import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 import java.util.stream.IntStream
 
@@ -117,9 +115,9 @@ class IrohaAPITest extends Specification {
                             .build()
 
                     api.txStatus(h)
-                            .doOnError({n -> println(n)})
-                            .doOnNext({n -> println(n)})
-                            .doOnComplete({ -> println('COMPLETE')})
+                            .doOnError({ n -> println("ON ERROR: " + n) })
+                            .doOnNext({ n -> println("ON NEXT: " + n) })
+                            .doOnComplete({ -> println('COMPLETE') })
                             .blockingSubscribe(obs)
 
                     return onCommitted
