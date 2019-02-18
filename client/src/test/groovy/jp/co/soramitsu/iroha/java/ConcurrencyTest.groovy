@@ -1,11 +1,13 @@
 package jp.co.soramitsu.iroha.java
 
+import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import io.reactivex.internal.observers.LambdaObserver
 import iroha.protocol.QryResponses.BlockQueryResponse
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import spock.lang.Specification
 
+import java.util.concurrent.TimeUnit
 import java.util.stream.IntStream
 
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.*
@@ -21,22 +23,24 @@ class ConcurrencyTest extends Specification {
 
     static IrohaAPI api
 
-    static def defaultExecutorChannel
+    static ManagedChannel directExecutorChannel
 
     def setupSpec() {
         iroha.start()
         api = iroha.api
 
         def t = iroha.getToriiAddress()
-        defaultExecutorChannel = ManagedChannelBuilder.forAddress(t.host, t.port)
-            .directExecutor()
-            .usePlaintext()
-            .build()
+        directExecutorChannel = ManagedChannelBuilder.forAddress(t.host, t.port)
+                .directExecutor()
+                .usePlaintext()
+                .build()
 
-        api.setChannelForStreamingQueryStub(defaultExecutorChannel)
+        api.setChannelForStreamingQueryStub(directExecutorChannel)
     }
 
     def cleanupSpec() {
+        directExecutorChannel.shutdownNow()
+        directExecutorChannel.awaitTermination(30, TimeUnit.SECONDS)
         iroha.stop()
     }
 

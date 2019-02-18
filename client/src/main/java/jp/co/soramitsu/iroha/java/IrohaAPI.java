@@ -32,7 +32,7 @@ import lombok.val;
 /**
  * Class which provides convenient RX abstraction over Iroha API.
  */
-public class IrohaAPI implements Closeable, AutoCloseable {
+public class IrohaAPI implements Closeable {
 
   private static final SubscriptionStrategy defaultStrategy = new WaitForTerminalStatus();
 
