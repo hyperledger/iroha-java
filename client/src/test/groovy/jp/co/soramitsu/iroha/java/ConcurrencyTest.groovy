@@ -21,9 +21,19 @@ class ConcurrencyTest extends Specification {
 
     static IrohaAPI api
 
+    static def defaultExecutorChannel
+
     def setupSpec() {
         iroha.start()
         api = iroha.api
+
+        def t = iroha.getToriiAddress()
+        defaultExecutorChannel = ManagedChannelBuilder.forAddress(t.host, t.port)
+            .directExecutor()
+            .usePlaintext()
+            .build()
+
+        api.setChannelForStreamingQueryStub(defaultExecutorChannel)
     }
 
     def cleanupSpec() {
