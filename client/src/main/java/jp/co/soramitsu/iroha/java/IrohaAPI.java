@@ -63,14 +63,6 @@ public class IrohaAPI implements Closeable {
     );
 
     this.uri = new URI("grpc", null, host, port, null, null, null);
-
-    // set single thread executor for streaming query stub as default
-    this.setChannelForStreamingQueryStub(ManagedChannelBuilder
-        .forAddress(host, port)
-        .directExecutor()
-        .usePlaintext()
-        .build()
-    );
   }
 
   public IrohaAPI(ManagedChannel channel) {
@@ -194,7 +186,7 @@ public class IrohaAPI implements Closeable {
       boolean terminated = false;
       do {
         try {
-          terminated = channel.awaitTermination(10, TimeUnit.MILLISECONDS);
+          terminated = channel.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
           Exceptions.propagate(e);
         }
