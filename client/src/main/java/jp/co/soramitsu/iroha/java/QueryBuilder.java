@@ -8,6 +8,7 @@ import iroha.protocol.Queries.GetAccountAssets;
 import iroha.protocol.Queries.GetAccountDetail;
 import iroha.protocol.Queries.GetAccountTransactions;
 import iroha.protocol.Queries.GetAssetInfo;
+import iroha.protocol.Queries.GetBlock;
 import iroha.protocol.Queries.GetPendingTransactions;
 import iroha.protocol.Queries.GetRolePermissions;
 import iroha.protocol.Queries.GetRoles;
@@ -228,6 +229,18 @@ public class QueryBuilder {
     query.getProto().setGetTransactions(
         GetTransactions.newBuilder()
             .addAllTxHashes(hashes)
+            .build()
+    );
+
+    return query;
+  }
+
+  public Query getBlock(Long height){
+    Query query = newQuery();
+
+    query.getProto().setGetBlock(
+        GetBlock.newBuilder()
+            .setHeight(height)
             .build()
     );
 

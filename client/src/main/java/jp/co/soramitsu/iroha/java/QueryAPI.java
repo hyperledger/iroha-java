@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha.java;
 import iroha.protocol.QryResponses.AccountAssetResponse;
 import iroha.protocol.QryResponses.AccountResponse;
 import iroha.protocol.QryResponses.AssetResponse;
+import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
 import iroha.protocol.QryResponses.TransactionsResponse;
 import java.security.KeyPair;
@@ -62,6 +63,14 @@ public class QueryAPI {
     val res = api.query(q);
 
     return res.getAccountResponse();
+  }
+
+  public BlockResponse getBlock(Long height) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getBlock(height)
+        .buildSigned(keyPair);
+
+    return api.query(q).getBlockResponse();
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize,
