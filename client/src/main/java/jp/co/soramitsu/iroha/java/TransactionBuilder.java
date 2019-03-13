@@ -578,6 +578,10 @@ public class TransactionBuilder {
     return this;
   }
 
+  public TransactionBuilder setBatchMeta(Iterable<Transaction> transactions, BatchType batchType) {
+    return setBatchMeta(batchType, Utils.getBatchHashesHex(transactions));
+  }
+
   public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair)
       throws CryptoException {
     return tx.sign(keyPair);

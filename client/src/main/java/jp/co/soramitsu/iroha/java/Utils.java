@@ -251,7 +251,7 @@ public class Utils {
         .collect(Collectors.toList());
   }
 
-  private static Iterable<String> getBatchHashesHex(Iterable<Transaction> list) {
+  /* default */ static Iterable<String> getBatchHashesHex(Iterable<Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> toHex(reducedHash(tx)))
         .collect(Collectors.toList());
