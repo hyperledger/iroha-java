@@ -9,6 +9,7 @@ import java.net.URI;
 import java.time.Duration;
 import jp.co.soramitsu.iroha.java.IrohaAPI;
 import jp.co.soramitsu.iroha.testcontainers.detail.PostgresConfig;
+import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -41,7 +42,9 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   private static final String POSTGRES_USER = "POSTGRES_USER";
   private static final String POSTGRES_HOST = "POSTGRES_HOST";
   private static final String KEY = "KEY";
+  private static final String VERBOSITY = "VERBOSITY";
 
+  private Verbosity verbosity = Verbosity.INFO;
   private String irohaAlias = defaultIrohaAlias;
   private String irohaDockerImage = defaultIrohaDockerImage;
   private String postgresAlias = defaultPostgresAlias;
@@ -91,6 +94,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         .withEnv(POSTGRES_HOST, postgresAlias)
         .withEnv(POSTGRES_USER, postgresDockerContainer.getUsername())
         .withEnv("WAIT_TIMEOUT", "0") // don't wait for postgres
+        .withEnv(VERBOSITY, String.valueOf(verbosity.getLevel()))
         .withNetwork(network)
         .withExposedPorts(conf.getIrohaConfig().getTorii_port())
         .withFileSystemBind(conf.getDir().getAbsolutePath(), irohaWorkdir, READ_ONLY)
@@ -114,6 +118,14 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
    */
   public IrohaContainer withPeerConfig(@NonNull PeerConfig conf) {
     this.conf = conf;
+    return this;
+  }
+
+  /**
+   * Setter for irohad verbosity.
+   */
+  public IrohaContainer withVerbosity(Verbosity verbosity) {
+    this.verbosity = verbosity;
     return this;
   }
 

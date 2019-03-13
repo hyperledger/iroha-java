@@ -7,12 +7,13 @@ import jp.co.soramitsu.iroha.java.IrohaAPI
 import jp.co.soramitsu.iroha.java.Transaction
 import jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder
 import jp.co.soramitsu.iroha.testcontainers.detail.IrohaConfig
+import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
 class IrohaContainerTest extends Specification {
 
-    IrohaContainer ir = new IrohaContainer()
+    IrohaContainer ir = new IrohaContainer().withVerbosity(Verbosity.TRACE)
 
     def "temp folder is created and files are written"() {
         given:
