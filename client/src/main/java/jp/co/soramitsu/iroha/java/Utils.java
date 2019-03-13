@@ -230,7 +230,7 @@ public class Utils {
     return DatatypeConverter.printHexBinary(b);
   }
 
-  private static Iterable<String> getProtoBatchHashesHex(
+  public static Iterable<String> getProtoBatchHashesHex(
       Iterable<TransactionOuterClass.Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> toHex(reducedHash(tx)))
@@ -251,7 +251,7 @@ public class Utils {
         .collect(Collectors.toList());
   }
 
-  /* default */ static Iterable<String> getBatchHashesHex(Iterable<Transaction> list) {
+  public static Iterable<String> getBatchHashesHex(Iterable<Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> toHex(reducedHash(tx)))
         .collect(Collectors.toList());
