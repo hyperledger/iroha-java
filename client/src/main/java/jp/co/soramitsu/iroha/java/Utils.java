@@ -61,7 +61,17 @@ public class Utils {
   }
 
   /**
-   * Calculate SHA3-256 hash of {@link iroha.protocol.TransactionOuterClass.Transaction}
+   * Calculate SHA3-256 reduced hash of {@link Transaction}
+   *
+   * @param tx IPJ transaction
+   * @return 32 bytes hash
+   */
+  public static byte[] reducedHash(Transaction tx) {
+    return reducedHash(tx.reducedPayload.build());
+  }
+
+  /**
+   * Calculate SHA3-256 reduced hash of {@link iroha.protocol.TransactionOuterClass.Transaction}
    *
    * @param tx Protobuf transaction
    * @return 32 bytes hash
@@ -184,7 +194,7 @@ public class Utils {
   }
 
   /**
-   * Create Ordered Batch of transactions from iterable
+   * Create Ordered Batch of transactions created by single user from iterable
    */
   public static Iterable<TransactionOuterClass.Transaction> createTxOrderedBatch(
       Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair) {
@@ -192,12 +202,25 @@ public class Utils {
   }
 
   /**
-   * Create Atomic Batch of transactions from iterable
+   * Create unsigned Ordered Batch of any transactions from iterable
+   */
+  public static Iterable<Transaction> createTxUnsignedOrderedBatch(Iterable<Transaction> list) {
+    return createBatch(list, BatchType.ORDERED);
+  }
+
+  /**
+   * Create Atomic Batch of transactions created by single user from iterable
    */
   public static Iterable<TransactionOuterClass.Transaction> createTxAtomicBatch(
       Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair) {
     return createBatch(list, BatchType.ATOMIC, keyPair);
+  }
 
+  /**
+   * Create unsigned Atomic Batch of any signed transactions from iterable
+   */
+  public static Iterable<Transaction> createTxUnsignedAtomicBatch(Iterable<Transaction> list) {
+    return createBatch(list, BatchType.ATOMIC);
   }
 
   /**
@@ -207,7 +230,7 @@ public class Utils {
     return DatatypeConverter.printHexBinary(b);
   }
 
-  private static Iterable<String> getBatchHashesHex(
+  private static Iterable<String> getProtoBatchHashesHex(
       Iterable<TransactionOuterClass.Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> toHex(reducedHash(tx)))
@@ -216,7 +239,7 @@ public class Utils {
 
   private static Iterable<TransactionOuterClass.Transaction> createBatch(
       Iterable<TransactionOuterClass.Transaction> list, BatchType batchType, KeyPair keyPair) {
-    final Iterable<String> batchHashes = getBatchHashesHex(list);
+    final Iterable<String> batchHashes = getProtoBatchHashesHex(list);
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> Transaction
             .parseFrom(tx)
@@ -228,5 +251,21 @@ public class Utils {
         .collect(Collectors.toList());
   }
 
+  private static Iterable<String> getBatchHashesHex(Iterable<Transaction> list) {
+    return StreamSupport.stream(list.spliterator(), false)
+        .map(tx -> toHex(reducedHash(tx)))
+        .collect(Collectors.toList());
+  }
 
+  private static Iterable<Transaction> createBatch(Iterable<Transaction> list,
+      BatchType batchType) {
+    final Iterable<String> batchHashes = getBatchHashesHex(list);
+    return StreamSupport.stream(list.spliterator(), false)
+        .map(tx -> tx
+            .makeMutable()
+            .setBatchMeta(batchType, batchHashes)
+            .build()
+        )
+        .collect(Collectors.toList());
+  }
 }
