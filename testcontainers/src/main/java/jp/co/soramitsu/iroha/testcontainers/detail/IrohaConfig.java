@@ -54,6 +54,12 @@ public class IrohaConfig implements Cloneable {
   @Builder.Default
   private int mst_expiration_time = 99999;
 
+  @Builder.Default
+  private int max_rounds_delay = 3000;
+
+  @Builder.Default
+  private int stale_stream_max_rounds = 2;
+
   @Override
   public IrohaConfig clone() {
     try {
