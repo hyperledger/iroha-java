@@ -59,6 +59,8 @@ public class IrohaConfig implements Cloneable {
 
   @Builder.Default
   private int stale_stream_max_rounds = 2;
+  
+  private LoggerConfig log;
 
   @Override
   public IrohaConfig clone() {
