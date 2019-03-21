@@ -8,6 +8,7 @@ import java.io.File;
 import java.net.URI;
 import java.time.Duration;
 import jp.co.soramitsu.iroha.java.IrohaAPI;
+import jp.co.soramitsu.iroha.testcontainers.detail.LoggerConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.PostgresConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   public static final String defaultPostgresAlias = "iroha.postgres";
   public static final String defaultIrohaAlias = "iroha";
   public static final String irohaWorkdir = "/opt/iroha_data";
-  public static final String defaultIrohaDockerImage = "warchantua/iroha:1.0.0_rc4-hotfix1";
+  public static final String defaultIrohaDockerImage = "warchantua/iroha:1.0.0_rc5";
   public static final String defaultPostgresDockerImage = "postgres:11-alpine";
 
   // env vars
@@ -44,7 +45,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   private static final String KEY = "KEY";
   private static final String VERBOSITY = "VERBOSITY";
 
-  private Verbosity verbosity = Verbosity.INFO;
+  private String verbosity = Verbosity.CONFIG_FILE;
   private String irohaAlias = defaultIrohaAlias;
   private String irohaDockerImage = defaultIrohaDockerImage;
   private String postgresAlias = defaultPostgresAlias;
@@ -94,7 +95,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         .withEnv(POSTGRES_HOST, postgresAlias)
         .withEnv(POSTGRES_USER, postgresDockerContainer.getUsername())
         .withEnv("WAIT_TIMEOUT", "0") // don't wait for postgres
-        .withEnv(VERBOSITY, String.valueOf(verbosity.getLevel()))
+        .withEnv(VERBOSITY, verbosity)
         .withNetwork(network)
         .withExposedPorts(conf.getIrohaConfig().getTorii_port())
         .withFileSystemBind(conf.getDir().getAbsolutePath(), irohaWorkdir, READ_ONLY)
@@ -125,7 +126,13 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
    * Setter for irohad verbosity.
    */
   public IrohaContainer withVerbosity(Verbosity verbosity) {
-    this.verbosity = verbosity;
+    this.verbosity = verbosity.getLevel();
+    return this;
+  }
+
+  public IrohaContainer withLoggerConfig(LoggerConfig loggerConfig) {
+    this.verbosity = Verbosity.CONFIG_FILE;
+    this.conf.getIrohaConfig().setLog(loggerConfig);
     return this;
   }
 

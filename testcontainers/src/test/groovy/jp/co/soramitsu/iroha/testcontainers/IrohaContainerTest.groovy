@@ -5,9 +5,7 @@ import io.reactivex.observers.TestObserver
 import iroha.protocol.BlockOuterClass
 import jp.co.soramitsu.iroha.java.IrohaAPI
 import jp.co.soramitsu.iroha.java.Transaction
-import jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder
-import jp.co.soramitsu.iroha.testcontainers.detail.IrohaConfig
-import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity
+import jp.co.soramitsu.iroha.testcontainers.detail.*
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
@@ -20,6 +18,7 @@ class IrohaContainerTest extends Specification {
         def mapper = new ObjectMapper()
         def c = ir.getConf()
         def d = c.getDir()
+        println(d)
 
         when: "create tmp dir and dump files"
         ir.configure()
@@ -83,5 +82,29 @@ class IrohaContainerTest extends Specification {
         !ir.irohaDockerContainer.isRunning()
         !ir.postgresDockerContainer.isCreated()
         !ir.postgresDockerContainer.isRunning()
+    }
+
+    def "tree logger test"() {
+        given:
+        def consensusLog = LoggerConfig.builder().level(Verbosity.DEBUG).build()
+
+        def pattern = LoggerPattern.builder()
+                .info("HEHEHEHEHEHEHEHEHE %v")
+                .build()
+
+        def lc = LoggerConfig.builder()
+                .level(Verbosity.INFO)
+                .patterns(pattern)
+                .children(Collections.singletonMap("Irohad", consensusLog))
+                .build()
+
+        def iroha = new IrohaContainer()
+                .withLoggerConfig(lc)
+
+        when:
+        iroha.start()
+
+        then:
+        noExceptionThrown()
     }
 }
