@@ -21,7 +21,7 @@ env:
     secure: fKXekuaFWyMO+zEDMaRQ4gQApjunjKDqovNbCPFg/th1oGz7I6xJZB18PgLVN8659gZGREwoIVvijU9MJ6U/Ej+o840D0eosF4QQPDANhQ9kKCNLe22Jv3Co6PK+ENltm9KPP31dsIVRiuhoe3vXGgg5iotYSj+8atVl7cCQl0+j0TirKd/Nfs4Vbe6eiQNGCZK+TPKQMla1fvRurBxUJ/2VeCyThP7lIY93Qbm+PiIok7gTw0bFWvzGHqc6a7VOScCr3b00ruIK0k4CAR0klWw7ICP9n7cPJOzvGW45wAhYVcgON2o9TCxwNqOLotLTeQP4QihIQ5GSFaol3vVD7SsnkyZ03YIF8ZlZiWd5+MpPdShvJ586WPyY9drOaZPP8CnOyuD0le0vlmrLo11kCbNKizRaLYr9XrbM4lDSVHwOw8YS/Nhg24pJp7Bh/e3ULyuyNh2lQ6Q1xdeYHzZRUTUBBIgpU5UL0+4skg06lsD4uJSnlyQqBQk/WbraGPwncf/i03v+AHkSHWctUSI6nSHr641GfQnXqunXcI0KWrH22KI0rlEblzjJHHMP5MLvQyMoWDnPhQZS6Ci6dpZpooaZxibf+7OfrCi45uH2V17kedDOX4TPt6b2by7PPwV+7GwdE8IDPA3eBnAvdK0mYxHTSuxWwJtSUsA/DX5SrwA=
 script:
   - "./gradlew --daemon"
-  - "./gradlew build --parallel --build-cache --info"
+  - "./gradlew build --parallel --build-cache"
   - "./gradlew jacocoTestReport"
   - bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN}
 after_success:
