@@ -44,8 +44,7 @@ public class QueryAPI {
   private void checkErrorResponse(QueryResponse response) throws ErrorResponseException {
     if (response.hasErrorResponse()) {
       ErrorResponse errorResponse = response.getErrorResponse();
-      throw new ErrorResponseException(errorResponse.getErrorCode(),
-          errorResponse.getReason().toString(), errorResponse.getMessage());
+      throw new ErrorResponseException(errorResponse);
     }
   }
 
@@ -53,7 +52,7 @@ public class QueryAPI {
       String accountId,
       String writer,
       String key
-  ) throws ErrorResponseException {
+  ) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountDetail(accountId, writer, key)
         .buildSigned(keyPair);
@@ -67,7 +66,7 @@ public class QueryAPI {
     return adr.getDetail();
   }
 
-  public AccountResponse getAccount(String accountId) throws ErrorResponseException {
+  public AccountResponse getAccount(String accountId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccount(accountId)
         .buildSigned(keyPair);
@@ -79,7 +78,7 @@ public class QueryAPI {
     return res.getAccountResponse();
   }
 
-  public BlockResponse getBlock(Long height) throws ErrorResponseException {
+  public BlockResponse getBlock(Long height) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getBlock(height)
         .buildSigned(keyPair);
@@ -92,7 +91,7 @@ public class QueryAPI {
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize,
-      String firstHashHex) throws ErrorResponseException {
+      String firstHashHex) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountTransactions(accountId, pageSize, firstHashHex)
         .buildSigned(keyPair);
@@ -104,13 +103,12 @@ public class QueryAPI {
     return res.getTransactionsPageResponse();
   }
 
-  public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize)
-      throws ErrorResponseException {
+  public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize) {
     return getAccountTransactions(accountId, pageSize, null);
   }
 
   public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize, String firstHashHex) throws ErrorResponseException {
+      Integer pageSize, String firstHashHex) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex)
         .buildSigned(keyPair);
@@ -123,11 +121,11 @@ public class QueryAPI {
   }
 
   public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize) throws ErrorResponseException {
+      Integer pageSize) {
     return getAccountAssetTransactions(accountId, assetId, pageSize, null);
   }
 
-  public TransactionsResponse getTransactions(List<byte[]> hashes) throws ErrorResponseException {
+  public TransactionsResponse getTransactions(List<byte[]> hashes) {
     return getTransactions(
         hashes.stream()
             .map(Utils::toHex)
@@ -135,8 +133,7 @@ public class QueryAPI {
     );
   }
 
-  public TransactionsResponse getTransactions(Iterable<String> hashes)
-      throws ErrorResponseException {
+  public TransactionsResponse getTransactions(Iterable<String> hashes) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getTransactions(hashes)
         .buildSigned(keyPair);
@@ -148,7 +145,7 @@ public class QueryAPI {
     return res.getTransactionsResponse();
   }
 
-  public AssetResponse getAssetInfo(String assetId) throws ErrorResponseException {
+  public AssetResponse getAssetInfo(String assetId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAssetInfo(assetId)
         .buildSigned(keyPair);
@@ -160,7 +157,7 @@ public class QueryAPI {
     return res.getAssetResponse();
   }
 
-  public AccountAssetResponse getAccountAssets(String accountId) throws ErrorResponseException {
+  public AccountAssetResponse getAccountAssets(String accountId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountAssets(accountId)
         .buildSigned(keyPair);
