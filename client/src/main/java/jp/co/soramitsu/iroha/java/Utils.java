@@ -26,6 +26,9 @@ import org.spongycastle.jcajce.provider.digest.SHA3;
 
 public class Utils {
 
+  public static final String IROHA_FRIENDLY_QUOTE = "\\\"";
+  public static final String IROHA_FRIENDLY_NEW_LINE = "\\n";
+
   /**
    * Parse a keypair from hex strings
    *
@@ -267,5 +270,27 @@ public class Utils {
             .build()
         )
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Escapes symbols reserved in JSON so it can be used in Iroha
+   *
+   * @param str input string to escape
+   * @return escaped string
+   */
+  public static String irohaEscape(String str) {
+    return str.replace("\"", IROHA_FRIENDLY_QUOTE)
+        .replace("\n", IROHA_FRIENDLY_NEW_LINE);
+  }
+
+  /**
+   * Reverse to irohaEscape(), unescape symbols reserved in JSON so it can be used in Iroha
+   *
+   * @param str input escaped string
+   * @return unescaped string
+   */
+  public static String irohaUnEscape(String str) {
+    return str.replace(IROHA_FRIENDLY_QUOTE, "\"")
+        .replace(IROHA_FRIENDLY_NEW_LINE, "\n");
   }
 }

@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha.java
 
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.time.Instant
 
@@ -34,5 +35,20 @@ class UtilsTest extends Specification {
 
         then:
         r2 == r1
+    }
+
+    @Unroll
+    def "Iroha escape and unescape: inStr=#inStr"() {
+        when:
+        def escapedStr = Utils.irohaEscape(inStr)
+        def unescapedStr = Utils.irohaUnEscape(escapedStr)
+
+        then:
+        escapedStr == expected_value
+        inStr == unescapedStr
+
+        where:
+        inStr                     | expected_value
+        "{\"quoted\" \n newline}" | "{\\\"quoted\\\" \\n newline}"
     }
 }
