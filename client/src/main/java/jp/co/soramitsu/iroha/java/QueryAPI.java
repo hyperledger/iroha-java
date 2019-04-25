@@ -41,7 +41,7 @@ public class QueryAPI {
 
   private AtomicInteger counter = new AtomicInteger(1);
 
-  private void checkErrorResponse(QueryResponse response) throws ErrorResponseException {
+  private void checkErrorResponse(QueryResponse response) {
     if (response.hasErrorResponse()) {
       ErrorResponse errorResponse = response.getErrorResponse();
       throw new ErrorResponseException(errorResponse);
