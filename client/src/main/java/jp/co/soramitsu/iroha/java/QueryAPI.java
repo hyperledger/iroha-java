@@ -39,7 +39,7 @@ public class QueryAPI {
     this.keyPair = account.getKeyPair();
   }
 
-  private AtomicInteger counter = new AtomicInteger(1);
+  private static AtomicInteger counter = new AtomicInteger(1);
 
   private void checkErrorResponse(QueryResponse response) {
     if (response.hasErrorResponse()) {
