@@ -53,11 +53,6 @@ subprojects {
         dependsOn(test)
     }
 
-//    test {
-//        testLogging {
-//            events "passed", "skipped", "failed", "standardOut", "standardError"
-//        }
-//    }
     test {
         testlogger {
             theme 'standard'
@@ -67,9 +62,9 @@ subprojects {
             showPassed true
             showSkipped true
             showFailed true
-            showStandardStreams false
-            showPassedStandardStreams true
-            showSkippedStandardStreams true
+            showStandardStreams true
+            showPassedStandardStreams false
+            showSkippedStandardStreams false
             showFailedStandardStreams true
         }
     }
