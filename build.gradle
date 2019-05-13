@@ -1,3 +1,7 @@
+plugins {
+    id 'com.adarshr.test-logger' version '1.6.0'
+}
+
 allprojects {
     group 'jp.co.soramitsu'
     version = "1.0"
@@ -47,6 +51,22 @@ subprojects {
         }
 
         dependsOn(test)
+    }
+
+    test {
+        testlogger {
+            theme 'standard'
+            showExceptions true
+            slowThreshold 2000
+            showSummary true
+            showPassed true
+            showSkipped true
+            showFailed true
+            showStandardStreams true
+            showPassedStandardStreams false
+            showSkippedStandardStreams false
+            showFailedStandardStreams true
+        }
     }
 }
 
