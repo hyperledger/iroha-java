@@ -6,6 +6,7 @@ import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.ErrorResponse;
 import iroha.protocol.QryResponses.QueryResponse;
+import iroha.protocol.QryResponses.SignatoriesResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
 import iroha.protocol.QryResponses.TransactionsResponse;
 import java.security.KeyPair;
@@ -167,5 +168,17 @@ public class QueryAPI {
     checkErrorResponse(res);
 
     return res.getAccountAssetsResponse();
+  }
+
+  public SignatoriesResponse getSignatories(String accountId) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+            .getSignatories(accountId)
+            .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getSignatoriesResponse();
   }
 }
