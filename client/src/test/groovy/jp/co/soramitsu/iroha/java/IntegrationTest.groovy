@@ -234,5 +234,14 @@ class IntegrationTest extends Specification {
         accountAsset.assetId == "${asset}#${defaultDomain}"
         accountAsset.accountId == defaultAccountId
         accountAsset.balance == "4"
+
+        when: "get account signatories query is executed"
+        queryResponse = qapi.getSignatories(defaultAccountId)
+
+        then: "response is valid containing single signatory"
+        queryResponse.keysCount == 1
+        def accountKey = queryResponse.keysList.get(0)
+
+        accountKey == Utils.toHex(defaultKeypair.public.encoded).toLowerCase()
     }
 }
