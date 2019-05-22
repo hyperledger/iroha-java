@@ -74,22 +74,30 @@ public class IrohaAPI implements Closeable {
   }
 
   public IrohaAPI setChannelForBlockingCmdStub(Channel channel) {
-    cmdStub = CommandService_v1Grpc.newBlockingStub(channel);
+    cmdStub = CommandService_v1Grpc.newBlockingStub(channel)
+        .withMaxInboundMessageSize(Integer.MAX_VALUE)
+        .withMaxOutboundMessageSize(Integer.MAX_VALUE);
     return this;
   }
 
   public IrohaAPI setChannelForStreamingCmdStub(Channel channel) {
-    cmdStreamingStub = CommandService_v1Grpc.newStub(channel);
+    cmdStreamingStub = CommandService_v1Grpc.newStub(channel)
+        .withMaxInboundMessageSize(Integer.MAX_VALUE)
+        .withMaxOutboundMessageSize(Integer.MAX_VALUE);
     return this;
   }
 
   public IrohaAPI setChannelForBlockingQueryStub(Channel channel) {
-    queryStub = QueryService_v1Grpc.newBlockingStub(channel);
+    queryStub = QueryService_v1Grpc.newBlockingStub(channel)
+        .withMaxInboundMessageSize(Integer.MAX_VALUE)
+        .withMaxOutboundMessageSize(Integer.MAX_VALUE);
     return this;
   }
 
   public IrohaAPI setChannelForStreamingQueryStub(Channel channel) {
-    queryStreamingStub = QueryService_v1Grpc.newStub(channel);
+    queryStreamingStub = QueryService_v1Grpc.newStub(channel)
+        .withMaxInboundMessageSize(Integer.MAX_VALUE)
+        .withMaxOutboundMessageSize(Integer.MAX_VALUE);
     return this;
   }
 
