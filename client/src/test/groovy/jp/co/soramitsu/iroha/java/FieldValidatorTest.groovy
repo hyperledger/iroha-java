@@ -133,7 +133,7 @@ class FieldValidatorTest extends Specification {
         PRECISION     | 300 // too big
         ROLE_NAME     | "" // empty role name
         DETAILS_KEY   | "" // empty key
-        DETAILS_VALUE | "1" * 6000 // too big
+        DETAILS_VALUE | "1" * 6000000 // too big
         TIMESTAMP     | -5 // can't be negative
         DOMAIN        | "" // empty
         DOMAIN        | "bogdan!com" // invalid domain
