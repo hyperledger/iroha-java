@@ -233,6 +233,42 @@ public class Utils {
     return DatatypeConverter.printHexBinary(b);
   }
 
+  /**
+   * Get transaction hash hexstring
+   * @param transaction
+   * @return lowercase hexstring
+   */
+  public String toHexHash(TransactionOuterClass.Transaction transaction) {
+    return DatatypeConverter.printHexBinary(hash(transaction)).toLowerCase();
+  }
+
+  /**
+   * Get query hash hexstring
+   * @param query
+   * @return lowercase hexstring
+   */
+  public String toHexHash(Queries.Query query) {
+    return DatatypeConverter.printHexBinary(hash(query)).toLowerCase();
+  }
+
+  /**
+   * Get block_v1 hash hexstring
+   * @param block_v1
+   * @return lowercase hexstring
+   */
+  public String toHexHash(Block_v1 block_v1) {
+    return DatatypeConverter.printHexBinary(hash(block_v1)).toLowerCase();
+  }
+
+  /**
+   * Get block hash hexstring
+   * @param block
+   * @return lowercase hexstring
+   */
+  public String toHexHash(Block block) {
+    return DatatypeConverter.printHexBinary(hash(block)).toLowerCase();
+  }
+
   public static Iterable<String> getProtoBatchHashesHex(
       Iterable<TransactionOuterClass.Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
