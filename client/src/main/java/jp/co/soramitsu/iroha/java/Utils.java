@@ -238,7 +238,7 @@ public class Utils {
    * @param transaction
    * @return lowercase hexstring
    */
-  public String toHexHash(TransactionOuterClass.Transaction transaction) {
+  public static String toHexHash(TransactionOuterClass.Transaction transaction) {
     return DatatypeConverter.printHexBinary(hash(transaction)).toLowerCase();
   }
 
@@ -247,7 +247,7 @@ public class Utils {
    * @param query
    * @return lowercase hexstring
    */
-  public String toHexHash(Queries.Query query) {
+  public static String toHexHash(Queries.Query query) {
     return DatatypeConverter.printHexBinary(hash(query)).toLowerCase();
   }
 
@@ -256,7 +256,7 @@ public class Utils {
    * @param block_v1
    * @return lowercase hexstring
    */
-  public String toHexHash(Block_v1 block_v1) {
+  public static String toHexHash(Block_v1 block_v1) {
     return DatatypeConverter.printHexBinary(hash(block_v1)).toLowerCase();
   }
 
@@ -265,7 +265,7 @@ public class Utils {
    * @param block
    * @return lowercase hexstring
    */
-  public String toHexHash(Block block) {
+  public static String toHexHash(Block block) {
     return DatatypeConverter.printHexBinary(hash(block)).toLowerCase();
   }
 
