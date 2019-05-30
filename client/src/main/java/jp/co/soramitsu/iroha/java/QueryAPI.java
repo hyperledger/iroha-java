@@ -181,4 +181,16 @@ public class QueryAPI {
 
     return res.getSignatoriesResponse();
   }
+
+  public TransactionsResponse getPendingTransactions() {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getPendingTransactions()
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getTransactionsResponse();
+  }
 }
