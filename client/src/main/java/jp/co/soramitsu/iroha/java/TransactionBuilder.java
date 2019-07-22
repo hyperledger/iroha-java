@@ -299,7 +299,9 @@ public class TransactionBuilder {
       String accountId,
       Iterable<GrantablePermission> permissions
   ) {
-    permissions.forEach(p -> this.grantPermission(accountId, p));
+    for (GrantablePermission permission : permissions) {
+      grantPermission(accountId, permission);
+    }
     return this;
   }
 
