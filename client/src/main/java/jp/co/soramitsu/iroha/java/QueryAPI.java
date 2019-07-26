@@ -4,6 +4,7 @@ import iroha.protocol.QryResponses.AccountAssetResponse;
 import iroha.protocol.QryResponses.AccountResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
+import iroha.protocol.QryResponses.PeersResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
 import iroha.protocol.QryResponses.TransactionsResponse;
 import java.security.KeyPair;
@@ -39,6 +40,22 @@ public class QueryAPI {
 
   private AtomicInteger counter = new AtomicInteger(1);
 
+  public PeersResponse getPeers() {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getPeers()
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    return res.getPeersResponse();
+  }
+
+  /**
+   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
+   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
+   * deleted in Iroha 2.0.0
+   */
+  @Deprecated
   public String getAccountDetails(
       String accountId,
       String writer,
@@ -46,6 +63,32 @@ public class QueryAPI {
   ) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountDetail(accountId, writer, key)
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    val adr = res.getAccountDetailResponse();
+
+    return adr.getDetail();
+  }
+
+  public String getAccountDetails(
+      String accountId,
+      String writer,
+      String key,
+      Integer pageSize,
+      String accountDetailRecordIdWriter,
+      String accountDetailRecordIdKey
+  ) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getAccountDetail(
+            accountId,
+            writer,
+            key,
+            pageSize,
+            accountDetailRecordIdWriter,
+            accountDetailRecordIdKey
+        )
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -132,9 +175,29 @@ public class QueryAPI {
     return res.getAssetResponse();
   }
 
+  /**
+   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
+   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
+   * deleted in Iroha 2.0.0
+   */
+  @Deprecated
   public AccountAssetResponse getAccountAssets(String accountId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountAssets(accountId)
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    return res.getAccountAssetsResponse();
+  }
+
+  public AccountAssetResponse getAccountAssets(
+      String accountId,
+      Integer pageSize,
+      String firstAssetId
+  ) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getAccountAssets(accountId, pageSize, firstAssetId)
         .buildSigned(keyPair);
 
     val res = api.query(q);

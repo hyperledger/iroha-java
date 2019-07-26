@@ -88,6 +88,7 @@ class IntegrationTest extends Specification {
                 .grantPermission("${account}@${defaultDomain}", Primitive.GrantablePermission.can_set_my_account_detail)
                 .revokePermission("${account}@${defaultDomain}", Primitive.GrantablePermission.can_set_my_account_detail)
                 .setAccountDetail(defaultAccountId, "key", "value")
+                .compareAndSetAccountDetail(defaultAccount, "key", "new value", "value")
                 .createAsset("${asset}", defaultDomain, 2)
                 .addAssetQuantity("${asset}#${defaultDomain}", BigDecimal.TEN)
                 .addAssetQuantity("${asset}#${defaultDomain}", "1")

@@ -2,6 +2,9 @@ package jp.co.soramitsu.iroha.java;
 
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 
+import iroha.protocol.Primitive.AccountDetailRecordId;
+import iroha.protocol.Queries.AccountDetailPaginationMeta;
+import iroha.protocol.Queries.AssetPaginationMeta;
 import iroha.protocol.Queries.GetAccount;
 import iroha.protocol.Queries.GetAccountAssetTransactions;
 import iroha.protocol.Queries.GetAccountAssets;
@@ -9,6 +12,7 @@ import iroha.protocol.Queries.GetAccountDetail;
 import iroha.protocol.Queries.GetAccountTransactions;
 import iroha.protocol.Queries.GetAssetInfo;
 import iroha.protocol.Queries.GetBlock;
+import iroha.protocol.Queries.GetPeers;
 import iroha.protocol.Queries.GetPendingTransactions;
 import iroha.protocol.Queries.GetRolePermissions;
 import iroha.protocol.Queries.GetRoles;
@@ -16,7 +20,6 @@ import iroha.protocol.Queries.GetSignatories;
 import iroha.protocol.Queries.GetTransactions;
 import iroha.protocol.Queries.QueryPayloadMeta;
 import iroha.protocol.Queries.TxPaginationMeta;
-import iroha.protocol.Queries.TxPaginationMeta.Builder;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -92,6 +95,17 @@ public class QueryBuilder {
     return this;
   }
 
+  public Query getPeers() {
+    Query query = newQuery();
+
+    query.getProto().setGetPeers(
+        GetPeers.newBuilder()
+            .build()
+    );
+
+    return query;
+  }
+
   public Query getAccountAssetTransactions(
       String accountId,
       String assetId,
@@ -111,7 +125,7 @@ public class QueryBuilder {
             .setAccountId(accountId)
             .setAssetId(assetId)
             .setPaginationMeta(
-                getPaginationMeta(pageSize, firstHashHex)
+                getTxPaginationMeta(pageSize, firstHashHex)
             )
             .build()
     );
@@ -155,6 +169,7 @@ public class QueryBuilder {
     return query;
   }
 
+  @Deprecated
   public Query getAccountAssets(
       String accountId
   ) {
@@ -173,19 +188,59 @@ public class QueryBuilder {
     return query;
   }
 
+  public Query getAccountAssets(
+      String accountId,
+      Integer pageSize,
+      String firstAssetId
+  ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkAccountId(accountId);
+    }
+
+    Query query = newQuery();
+
+    query.getProto().setGetAccountAssets(
+        GetAccountAssets.newBuilder()
+            .setAccountId(accountId)
+            .setPaginationMeta(
+                getAssetPaginationMeta(pageSize, firstAssetId)
+            )
+            .build()
+    );
+
+    return query;
+  }
+
+  private AssetPaginationMeta getAssetPaginationMeta(
+      Integer pageSize,
+      String firstAssetId
+  ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkPageSize(pageSize);
+      if (firstAssetId != null) {
+        this.validator.checkAssetId(firstAssetId);
+      }
+    }
+
+    val paginationMetaBuilder = AssetPaginationMeta.newBuilder().setPageSize(pageSize);
+    if (firstAssetId != null) {
+      paginationMetaBuilder.setFirstAssetId(firstAssetId);
+    }
+
+    return paginationMetaBuilder.build();
+  }
+
   /**
-   * Get account detail. Each field is optional.
-   *
-   * @param accountId where to get "detail"; can be null
-   * @param writer filter by writer; can be null
-   * @param key filter by key; can be null
+   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
+   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
+   * deleted in Iroha 2.0.0
    */
+  @Deprecated
   public Query getAccountDetail(
       String accountId,
       String writer,
       String key
   ) {
-
     val b = GetAccountDetail.newBuilder();
 
     if (nonNull(accountId)) {
@@ -215,6 +270,91 @@ public class QueryBuilder {
     return query;
   }
 
+  /**
+   * Get account detail. Each field is optional.
+   *
+   * @param accountId where to get "detail"; can be null
+   * @param writer filter by writer; can be null
+   * @param key filter by key; can be null
+   */
+  public Query getAccountDetail(
+      String accountId,
+      String writer,
+      String key,
+      Integer pageSize,
+      String accountDetailRecordIdWriter,
+      String accountDetailRecordIdKey
+  ) {
+    val b = GetAccountDetail.newBuilder();
+
+    if (nonNull(accountId)) {
+      if (nonNull(this.validator)) {
+        this.validator.checkAccountId(accountId);
+      }
+      b.setAccountId(accountId);
+    }
+
+    if (nonNull(writer)) {
+      if (nonNull(this.validator)) {
+        this.validator.checkAccountId(writer);
+      }
+      b.setWriter(writer);
+    }
+
+    if (nonNull(key)) {
+      if (nonNull(this.validator)) {
+        this.validator.checkAccountDetailsKey(key);
+      }
+      b.setKey(key);
+    }
+
+    Query query = newQuery();
+    query.getProto().setGetAccountDetail(
+        b.setPaginationMeta(
+            getAccountDetailPaginationMeta(
+                pageSize,
+                accountDetailRecordIdWriter,
+                accountDetailRecordIdKey
+            )
+        )
+    );
+
+    return query;
+  }
+
+  private AccountDetailPaginationMeta getAccountDetailPaginationMeta(
+      Integer pageSize,
+      String accountDetailRecordIdWriter,
+      String accountDetailRecordIdKey
+  ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkPageSize(pageSize);
+      if (accountDetailRecordIdWriter != null) {
+        this.validator.checkAccountId(accountDetailRecordIdWriter);
+      }
+      if (accountDetailRecordIdKey != null) {
+        this.validator.checkAccountDetailsKey(accountDetailRecordIdKey);
+      }
+    }
+
+    val paginationMetaBuilder = AccountDetailPaginationMeta
+        .newBuilder()
+        .setPageSize(pageSize);
+
+    if (accountDetailRecordIdWriter != null || accountDetailRecordIdKey != null) {
+      AccountDetailRecordId.Builder accountRecordIdBuilder = AccountDetailRecordId.newBuilder();
+      if (accountDetailRecordIdWriter != null) {
+        accountRecordIdBuilder.setWriter(accountDetailRecordIdWriter);
+      }
+      if (accountDetailRecordIdKey != null) {
+        accountRecordIdBuilder.setKey(accountDetailRecordIdKey);
+      }
+      paginationMetaBuilder.setFirstRecordId(accountRecordIdBuilder.build());
+    }
+
+    return paginationMetaBuilder.build();
+  }
+
   public Query getTransactions(List<byte[]> hashes) {
     return getTransactions(
         hashes.stream()
@@ -235,7 +375,7 @@ public class QueryBuilder {
     return query;
   }
 
-  public Query getBlock(Long height){
+  public Query getBlock(Long height) {
     Query query = newQuery();
 
     query.getProto().setGetBlock(
@@ -247,11 +387,34 @@ public class QueryBuilder {
     return query;
   }
 
+  /**
+   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
+   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
+   * deleted in Iroha 2.0.0
+   */
+  @Deprecated
   public Query getPendingTransactions() {
     Query query = newQuery();
 
     query.getProto().setGetPendingTransactions(
         GetPendingTransactions.newBuilder()
+            .build()
+    );
+
+    return query;
+  }
+
+  public Query getPendingTransactions(
+      Integer pageSize,
+      String firstHashHex
+  ) {
+    Query query = newQuery();
+
+    query.getProto().setGetPendingTransactions(
+        GetPendingTransactions.newBuilder()
+            .setPaginationMeta(
+                getTxPaginationMeta(pageSize, firstHashHex)
+            )
             .build()
     );
 
@@ -269,7 +432,7 @@ public class QueryBuilder {
         GetAccountTransactions.newBuilder()
             .setAccountId(accountId)
             .setPaginationMeta(
-                getPaginationMeta(pageSize, firstHashHex)
+                getTxPaginationMeta(pageSize, firstHashHex)
             )
             .build()
     );
@@ -277,7 +440,7 @@ public class QueryBuilder {
     return query;
   }
 
-  private TxPaginationMeta getPaginationMeta(Integer pageSize, String firstHashHex) {
+  private TxPaginationMeta getTxPaginationMeta(Integer pageSize, String firstHashHex) {
     if (nonNull(this.validator)) {
       this.validator.checkPageSize(pageSize);
       if (firstHashHex != null) {
@@ -285,7 +448,8 @@ public class QueryBuilder {
       }
     }
 
-    Builder paginationMetaBuilder = TxPaginationMeta.newBuilder().setPageSize(pageSize);
+    val paginationMetaBuilder = TxPaginationMeta.newBuilder()
+        .setPageSize(pageSize);
     if (firstHashHex != null) {
       paginationMetaBuilder.setFirstTxHash(firstHashHex);
     }
