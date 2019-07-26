@@ -5,6 +5,9 @@ import iroha.protocol.QryResponses.AccountResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.PeersResponse;
+import iroha.protocol.QryResponses.ErrorResponse;
+import iroha.protocol.QryResponses.QueryResponse;
+import iroha.protocol.QryResponses.SignatoriesResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
 import iroha.protocol.QryResponses.TransactionsResponse;
 import java.security.KeyPair;
@@ -38,7 +41,14 @@ public class QueryAPI {
     this.keyPair = account.getKeyPair();
   }
 
-  private AtomicInteger counter = new AtomicInteger(1);
+  private static AtomicInteger counter = new AtomicInteger(1);
+
+  private void checkErrorResponse(QueryResponse response) {
+    if (response.hasErrorResponse()) {
+      ErrorResponse errorResponse = response.getErrorResponse();
+      throw new ErrorResponseException(errorResponse);
+    }
+  }
 
   public PeersResponse getPeers() {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
@@ -46,6 +56,8 @@ public class QueryAPI {
         .buildSigned(keyPair);
 
     val res = api.query(q);
+
+    checkErrorResponse(res);
 
     return res.getPeersResponse();
   }
@@ -66,6 +78,8 @@ public class QueryAPI {
         .buildSigned(keyPair);
 
     val res = api.query(q);
+
+    checkErrorResponse(res);
 
     val adr = res.getAccountDetailResponse();
 
@@ -93,6 +107,8 @@ public class QueryAPI {
 
     val res = api.query(q);
 
+    checkErrorResponse(res);
+
     val adr = res.getAccountDetailResponse();
 
     return adr.getDetail();
@@ -105,6 +121,8 @@ public class QueryAPI {
 
     val res = api.query(q);
 
+    checkErrorResponse(res);
+
     return res.getAccountResponse();
   }
 
@@ -113,7 +131,11 @@ public class QueryAPI {
         .getBlock(height)
         .buildSigned(keyPair);
 
-    return api.query(q).getBlockResponse();
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getBlockResponse();
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize,
@@ -123,6 +145,8 @@ public class QueryAPI {
         .buildSigned(keyPair);
 
     val res = api.query(q);
+
+    checkErrorResponse(res);
 
     return res.getTransactionsPageResponse();
   }
@@ -138,6 +162,8 @@ public class QueryAPI {
         .buildSigned(keyPair);
 
     val res = api.query(q);
+
+    checkErrorResponse(res);
 
     return res.getTransactionsPageResponse();
   }
@@ -162,6 +188,8 @@ public class QueryAPI {
 
     val res = api.query(q);
 
+    checkErrorResponse(res);
+
     return res.getTransactionsResponse();
   }
 
@@ -171,6 +199,8 @@ public class QueryAPI {
         .buildSigned(keyPair);
 
     val res = api.query(q);
+
+    checkErrorResponse(res);
 
     return res.getAssetResponse();
   }
@@ -188,6 +218,8 @@ public class QueryAPI {
 
     val res = api.query(q);
 
+    checkErrorResponse(res);
+
     return res.getAccountAssetsResponse();
   }
 
@@ -202,6 +234,32 @@ public class QueryAPI {
 
     val res = api.query(q);
 
+    checkErrorResponse(res);
+
     return res.getAccountAssetsResponse();
+  }
+
+  public SignatoriesResponse getSignatories(String accountId) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+            .getSignatories(accountId)
+            .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getSignatoriesResponse();
+  }
+
+  public TransactionsResponse getPendingTransactions() {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getPendingTransactions()
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getTransactionsResponse();
   }
 }

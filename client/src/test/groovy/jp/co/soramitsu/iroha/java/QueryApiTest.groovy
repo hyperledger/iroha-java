@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha.java
 
-
 import jp.co.soramitsu.iroha.java.debug.Account
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import jp.co.soramitsu.iroha.testcontainers.PeerConfig
@@ -90,6 +89,39 @@ class QueryApiTest extends Specification {
         B      | null      | null   | "key2" | "{ \"b@test\" : {\"key2\" : \"Bvalue2\"} }"
         A      | B.id      | null   | "key2" | "{ \"b@test\" : {\"key2\" : \"Bvalue2\"} }"
         A      | B.id      | A.id   | "key2" | "{\"a@test\" : {\"key2\" : null}}"
+    }
+
+    @Unroll
+    def "exception in getAccountDetails"(Account issuer, String accountId, String writer, String key) {
+        given:
+        def qapi = new QueryAPI(api, issuer)
+
+        when:
+        qapi.getAccountDetails(accountId, writer, key)
+
+        then:
+        thrown ErrorResponseException
+
+        where:
+        issuer | accountId            | writer      | key
+        A      | "nonexistent@domain" | null        | null
+    }
+
+    @Unroll
+    def "exception in getAccount"(Account issuer, String accountId) {
+        given:
+        def qapi = new QueryAPI(api, issuer)
+
+        when:
+        qapi.getAccount(accountId)
+
+        then:
+        thrown ErrorResponseException
+
+        where:
+        issuer | accountId
+        A      | "nonexistent@domain"
+        A      | "invalid"
     }
 
 }

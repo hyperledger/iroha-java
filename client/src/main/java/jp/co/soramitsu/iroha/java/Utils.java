@@ -26,6 +26,9 @@ import org.spongycastle.jcajce.provider.digest.SHA3;
 
 public class Utils {
 
+  public static final String IROHA_FRIENDLY_QUOTE = "\\\"";
+  public static final String IROHA_FRIENDLY_NEW_LINE = "\\n";
+
   /**
    * Parse a keypair from hex strings
    *
@@ -230,6 +233,42 @@ public class Utils {
     return DatatypeConverter.printHexBinary(b);
   }
 
+  /**
+   * Get transaction hash hexstring
+   * @param transaction
+   * @return lowercase hexstring
+   */
+  public static String toHexHash(TransactionOuterClass.Transaction transaction) {
+    return DatatypeConverter.printHexBinary(hash(transaction)).toLowerCase();
+  }
+
+  /**
+   * Get query hash hexstring
+   * @param query
+   * @return lowercase hexstring
+   */
+  public static String toHexHash(Queries.Query query) {
+    return DatatypeConverter.printHexBinary(hash(query)).toLowerCase();
+  }
+
+  /**
+   * Get block_v1 hash hexstring
+   * @param block_v1
+   * @return lowercase hexstring
+   */
+  public static String toHexHash(Block_v1 block_v1) {
+    return DatatypeConverter.printHexBinary(hash(block_v1)).toLowerCase();
+  }
+
+  /**
+   * Get block hash hexstring
+   * @param block
+   * @return lowercase hexstring
+   */
+  public static String toHexHash(Block block) {
+    return DatatypeConverter.printHexBinary(hash(block)).toLowerCase();
+  }
+
   public static Iterable<String> getProtoBatchHashesHex(
       Iterable<TransactionOuterClass.Transaction> list) {
     return StreamSupport.stream(list.spliterator(), false)
@@ -267,5 +306,27 @@ public class Utils {
             .build()
         )
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Escapes symbols reserved in JSON so it can be used in Iroha
+   *
+   * @param str input string to escape
+   * @return escaped string
+   */
+  public static String irohaEscape(String str) {
+    return str.replace("\"", IROHA_FRIENDLY_QUOTE)
+        .replace("\n", IROHA_FRIENDLY_NEW_LINE);
+  }
+
+  /**
+   * Reverse to irohaEscape(), unescape symbols reserved in JSON so it can be used in Iroha
+   *
+   * @param str input escaped string
+   * @return unescaped string
+   */
+  public static String irohaUnEscape(String str) {
+    return str.replace(IROHA_FRIENDLY_QUOTE, "\"")
+        .replace(IROHA_FRIENDLY_NEW_LINE, "\n");
   }
 }

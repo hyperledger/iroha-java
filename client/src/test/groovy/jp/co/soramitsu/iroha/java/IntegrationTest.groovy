@@ -235,5 +235,27 @@ class IntegrationTest extends Specification {
         accountAsset.assetId == "${asset}#${defaultDomain}"
         accountAsset.accountId == defaultAccountId
         accountAsset.balance == "4"
+
+        when: "get account signatories query is executed"
+        queryResponse = qapi.getSignatories(defaultAccountId)
+
+        then: "response is valid containing single signatory"
+        queryResponse.keysCount == 1
+        def accountKey = queryResponse.keysList.get(0)
+
+        accountKey == Utils.toHex(defaultKeypair.public.encoded).toLowerCase()
+
+        def pendingTx = Transaction.builder(defaultAccountId, Instant.now())
+                .createAccount(anotherAccount, defaultDomain, defaultKeypair.getPublic())
+                .setQuorum(2)
+                .sign(defaultKeypair)
+                .build()
+        api.transactionSync(pendingTx)
+
+        when: "get pending transaxtions query is executed"
+        queryResponse = qapi.getPendingTransactions()
+
+        then: "response is valid containing single transaction"
+        queryResponse.transactionsCount == 1
     }
 }
