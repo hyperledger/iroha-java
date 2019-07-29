@@ -5,7 +5,6 @@ import iroha.protocol.QryResponses.AccountResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.ErrorResponse;
-import iroha.protocol.QryResponses.PeersResponse;
 import iroha.protocol.QryResponses.QueryResponse;
 import iroha.protocol.QryResponses.SignatoriesResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
@@ -50,24 +49,6 @@ public class QueryAPI {
     }
   }
 
-  public PeersResponse getPeers() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getPeers()
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getPeersResponse();
-  }
-
-  /**
-   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
-   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
-   * deleted in Iroha 2.0.0
-   */
-  @Deprecated
   public String getAccountDetails(
       String accountId,
       String writer,
@@ -84,43 +65,6 @@ public class QueryAPI {
     val adr = res.getAccountDetailResponse();
 
     return adr.getDetail();
-  }
-
-  public String getAccountDetails(
-      String accountId,
-      String writer,
-      String key,
-      Integer pageSize,
-      String accountDetailRecordIdWriter,
-      String accountDetailRecordIdKey
-  ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountDetail(
-            accountId,
-            writer,
-            key,
-            pageSize,
-            accountDetailRecordIdWriter,
-            accountDetailRecordIdKey
-        )
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    val adr = res.getAccountDetailResponse();
-
-    return adr.getDetail();
-  }
-
-  public String getAccountDetails(
-      String accountId,
-      String writer,
-      String key,
-      Integer pageSize
-  ) {
-    return getAccountDetails(accountId, writer, key, pageSize, null, null);
   }
 
   public AccountResponse getAccount(String accountId) {
@@ -214,12 +158,6 @@ public class QueryAPI {
     return res.getAssetResponse();
   }
 
-  /**
-   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
-   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
-   * deleted in Iroha 2.0.0
-   */
-  @Deprecated
   public AccountAssetResponse getAccountAssets(String accountId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getAccountAssets(accountId)
@@ -232,33 +170,10 @@ public class QueryAPI {
     return res.getAccountAssetsResponse();
   }
 
-  public AccountAssetResponse getAccountAssets(
-      String accountId,
-      Integer pageSize,
-      String firstAssetId
-  ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountAssets(accountId, pageSize, firstAssetId)
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getAccountAssetsResponse();
-  }
-
-  public AccountAssetResponse getAccountAssets(
-      String accountId,
-      Integer pageSize
-  ) {
-    return getAccountAssets(accountId, pageSize, null);
-  }
-
   public SignatoriesResponse getSignatories(String accountId) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getSignatories(accountId)
-        .buildSigned(keyPair);
+            .getSignatories(accountId)
+            .buildSigned(keyPair);
 
     val res = api.query(q);
 
@@ -267,12 +182,6 @@ public class QueryAPI {
     return res.getSignatoriesResponse();
   }
 
-  /**
-   * Pagination metadata can be missing in the request for compatibility reasons, but this behaviour
-   * is deprecated and should be avoided. This function is deprecated in Iroha 1.1.0 and will be
-   * deleted in Iroha 2.0.0
-   */
-  @Deprecated
   public TransactionsResponse getPendingTransactions() {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
         .getPendingTransactions()
@@ -283,26 +192,5 @@ public class QueryAPI {
     checkErrorResponse(res);
 
     return res.getTransactionsResponse();
-  }
-
-  public TransactionsResponse getPendingTransactions(
-      Integer pageSize,
-      String firstHashHex
-  ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getPendingTransactions(pageSize, firstHashHex)
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getTransactionsResponse();
-  }
-
-  public TransactionsResponse getPendingTransactions(
-      Integer pageSize
-  ) {
-    return getPendingTransactions(pageSize, null);
   }
 }

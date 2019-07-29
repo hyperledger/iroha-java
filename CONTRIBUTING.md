@@ -5,7 +5,7 @@
 1. Fork this repo
 2. Select iroha version for dev:
     ```bash
-    export IROHA_VERSION=v1.1.0
+    export IROHA_VERSION=v1.0.0_rc2
     git checkout ${IROHA_VERSION}
     ```
 2. Create feature branch:

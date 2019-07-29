@@ -8,14 +8,12 @@ import iroha.protocol.Commands.AddPeer;
 import iroha.protocol.Commands.AddSignatory;
 import iroha.protocol.Commands.AppendRole;
 import iroha.protocol.Commands.Command;
-import iroha.protocol.Commands.CompareAndSetAccountDetail;
 import iroha.protocol.Commands.CreateAccount;
 import iroha.protocol.Commands.CreateAsset;
 import iroha.protocol.Commands.CreateDomain;
 import iroha.protocol.Commands.CreateRole;
 import iroha.protocol.Commands.DetachRole;
 import iroha.protocol.Commands.GrantPermission;
-import iroha.protocol.Commands.RemovePeer;
 import iroha.protocol.Commands.RemoveSignatory;
 import iroha.protocol.Commands.RevokePermission;
 import iroha.protocol.Commands.SetAccountDetail;
@@ -276,33 +274,6 @@ public class TransactionBuilder {
     return addPeer(address, peerKey.getEncoded());
   }
 
-  public TransactionBuilder removePeer(
-      byte[] peerKey
-  ) {
-    if (nonNull(this.validator)) {
-      this.validator.checkPublicKey(peerKey);
-    }
-
-    val hex = DatatypeConverter.printHexBinary(peerKey);
-
-    tx.reducedPayload.addCommands(
-        Command.newBuilder()
-            .setRemovePeer(
-                RemovePeer.newBuilder()
-                    .setPublicKey(Utils.toHex(peerKey))
-                    .build()
-            )
-    );
-
-    return this;
-  }
-
-  public TransactionBuilder removePeer(
-      PublicKey peerKey
-  ) {
-    return removePeer(peerKey.getEncoded());
-  }
-
   public TransactionBuilder grantPermission(
       String accountId,
       GrantablePermission permission
@@ -328,7 +299,7 @@ public class TransactionBuilder {
       String accountId,
       Iterable<GrantablePermission> permissions
   ) {
-    for (GrantablePermission p : permissions) {
+    for(GrantablePermission p : permissions) {
       this.grantPermission(accountId, p);
     }
     return this;
@@ -605,42 +576,6 @@ public class TransactionBuilder {
     tx.batchMeta.setType(batchType);
     tx.batchMeta.addAllReducedHashes(hashes);
     tx.updateBatch();
-
-    return this;
-  }
-
-  public TransactionBuilder compareAndSetAccountDetail(
-      String accountId,
-      String key,
-      String value,
-      String opt_old_value
-  ) {
-    val b = CompareAndSetAccountDetail.newBuilder();
-
-    if (nonNull(this.validator)) {
-      this.validator.checkAccountId(accountId);
-      this.validator.checkAccountDetailsKey(key);
-      this.validator.checkAccountDetailsValue(value);
-    }
-
-    b.setAccountId(accountId)
-        .setKey(key)
-        .setValue(value);
-
-    if (nonNull(opt_old_value)) {
-      if (nonNull(this.validator)) {
-        this.validator.checkAccountDetailsValue(opt_old_value);
-      }
-      b.setOldValue(opt_old_value);
-    }
-
-    tx.reducedPayload.addCommands(
-        Command.newBuilder()
-            .setCompareAndSetAccountDetail(
-                b.build()
-            )
-            .build()
-    );
 
     return this;
   }
