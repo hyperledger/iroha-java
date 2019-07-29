@@ -19,6 +19,9 @@ import lombok.val;
 @NoArgsConstructor
 public class GenesisBlockBuilder {
 
+  /** Total permissions */
+  static final int TOTAL_PERMISSIONS_NUMBER = 46;
+
   // this one must be equal to the name passed to iroha entrypoint.sh
   public static final String defaultGenesisBlockName = "genesis.block";
   public static final String defaultRoleName = "default";
@@ -71,7 +74,7 @@ public class GenesisBlockBuilder {
         // give all permissions
         .createRole(
             defaultRoleName,
-            IntStream.range(0, 45 /* check RolePermission numbers */)
+            IntStream.range(0, TOTAL_PERMISSIONS_NUMBER + 1)
                 .boxed()
                 .map(RolePermission::forNumber)
                 .collect(Collectors.toList())

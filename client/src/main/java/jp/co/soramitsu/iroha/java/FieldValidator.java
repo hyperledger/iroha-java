@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import lombok.NonNull;
 import lombok.val;
 
-
 /**
  * Stateless validator for transaction and query fields.
  */
@@ -108,7 +107,6 @@ public class FieldValidator {
     }
   }
 
-
   public void checkAssetId(@NonNull String assetId) {
     val t = assetId.split(assetIdDelimiter);
     if (t.length != 2) {
@@ -131,7 +129,6 @@ public class FieldValidator {
     }
   }
 
-
   public void checkAccountDetailsKey(@NonNull String key) {
     val m = accountDetailsKeyPattern.matcher(key);
     if (!m.matches()) {
@@ -143,7 +140,6 @@ public class FieldValidator {
       );
     }
   }
-
 
   public void checkAccountDetailsValue(@NonNull String value) {
     if (!(value.length() <= accountDetailsMaxLength)) {
