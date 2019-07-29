@@ -66,7 +66,7 @@ class CommandsTest extends Specification {
                 .build()
         api.transaction(tx).blockingSubscribe()
 
-        def actual_value = qapi.getAccountDetails(account.getId(), account.getId(), key, 1)
+        def actual_value = qapi.getAccountDetails(account.getId(), account.getId(), key, 1).getDetail()
 
         then:
         actual_value == expected_value
