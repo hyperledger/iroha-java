@@ -13,6 +13,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'jacoco'
     apply plugin: 'maven'
+    apply plugin: 'com.adarshr.test-logger'
 
     sourceCompatibility = 1.8 // java 8
     targetCompatibility = 1.8
@@ -53,20 +54,18 @@ subprojects {
         dependsOn(test)
     }
 
-    test {
-        testlogger {
-            theme 'standard'
-            showExceptions true
-            slowThreshold 2000
-            showSummary true
-            showPassed true
-            showSkipped true
-            showFailed true
-            showStandardStreams true
-            showPassedStandardStreams false
-            showSkippedStandardStreams false
-            showFailedStandardStreams true
-        }
+    testlogger {
+        theme 'standard'
+        showExceptions true
+        slowThreshold 2000
+        showSummary true
+        showPassed true
+        showSkipped true
+        showFailed true
+        showStandardStreams false
+        showPassedStandardStreams true
+        showSkippedStandardStreams true
+        showFailedStandardStreams true
     }
 }
 
