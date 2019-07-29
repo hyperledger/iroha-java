@@ -19,9 +19,9 @@ class QueryApiTest extends Specification {
     static IrohaAPI api
     static def iroha = new IrohaContainer()
             .withPeerConfig(
-            PeerConfig.builder()
-                    .genesisBlock(getGenesisBlock())
-                    .build())
+                    PeerConfig.builder()
+                            .genesisBlock(getGenesisBlock())
+                            .build())
 
     def setupSpec() {
         iroha.start()
@@ -74,9 +74,9 @@ class QueryApiTest extends Specification {
         def response = qapi.getPeers()
 
         then:
-        (response.getPeersCount() == 1) &&
-                (response.getPeers(0).getAddress() == expected_address) &&
-                (response.getPeers(0).getPeerKey() == expected_key)
+        response.getPeersCount() == 1
+        response.getPeers(0).getAddress() == expected_address
+        response.getPeers(0).getPeerKey() == expected_key
 
         where:
         issuer | expected_address | expected_key
@@ -89,7 +89,7 @@ class QueryApiTest extends Specification {
         def qapi = new QueryAPI(api, issuer)
 
         when:
-        def actual_value = qapi.getAccountDetails(accountId, writer, key)
+        def actual_value = qapi.getAccountDetails(accountId, writer, key, 10).getDetail()
 
         then:
         actual_value == expected_value
@@ -110,19 +110,41 @@ class QueryApiTest extends Specification {
     }
 
     @Unroll
+    def "getAccountDetail pagination test: accountId=#accountId, writer=#writer, key=#key, nextWriter=#nextWriter, nextKet=#nextKey"() {
+        given:
+        def qapi = new QueryAPI(api, A)
+
+        when:
+        def res = qapi.getAccountDetails(accountId, writer, key, 1, nextWriter, nextKey)
+        def actualValue = res.getDetail()
+        def actualNextWriter = res.getNextRecordId().writer
+        def actualNextKey = res.getNextRecordId().key
+
+        then:
+        actualValue == expectedValue
+        actualNextWriter == expectedNextWriter
+        actualNextKey == expectedNextKey
+
+        where:
+        accountId | writer | key  | nextWriter | nextKey | expectedValue                                 | expectedNextWriter | expectedNextKey
+        null      | null   | null | null       | null    | "{ \"a@test\" : { \"key1\" : \"Avalue1\" } }" | "a@test"           | "key2"
+        null      | null   | null | "a@test"   | "key2"  | "{ \"a@test\" : { \"key2\" : \"Avalue3\" } }" | "a@test"           | "key4"
+    }
+
+    @Unroll
     def "exception in @Deprecated getAccountDetails"(Account issuer, String accountId, String writer, String key) {
         given:
         def qapi = new QueryAPI(api, issuer)
 
         when:
-        qapi.getAccountDetails(accountId, writer, key)
+        qapi.getAccountDetails(accountId, writer, key, 1)
 
         then:
         thrown ErrorResponseException
 
         where:
-        issuer | accountId            | writer      | key
-        A      | "nonexistent@domain" | null        | null
+        issuer | accountId            | writer | key
+        A      | "nonexistent@domain" | null   | null
     }
 
     def "validation exception in getAccountDetails"(Account issuer, String accountId, String writer, String key, Integer pageSize) {
@@ -136,10 +158,10 @@ class QueryApiTest extends Specification {
         thrown ValidationException
 
         where:
-        issuer | accountId            | writer      | key  | pageSize
-        A      | "invalid"            | null        | null | 10
-        A      | null                 | null        | null | -10
-        A      | null                 | null        | null | 0
+        issuer | accountId | writer | key  | pageSize
+        A      | "invalid" | null   | null | 10
+        A      | null      | null   | null | -10
+        A      | null      | null   | null | 0
     }
 
     def "exception in getAccountDetails"(Account issuer, String accountId, String writer, String key, Integer pageSize) {
@@ -153,8 +175,8 @@ class QueryApiTest extends Specification {
         thrown ErrorResponseException
 
         where:
-        issuer | accountId            | writer      | key  | pageSize
-        A      | "nonexistent@domain" | null        | null | 10
+        issuer | accountId            | writer | key  | pageSize
+        A      | "nonexistent@domain" | null   | null | 10
     }
 
     @Unroll

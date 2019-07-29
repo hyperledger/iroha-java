@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha.java;
 
 import iroha.protocol.QryResponses.AccountAssetResponse;
+import iroha.protocol.QryResponses.AccountDetailResponse;
 import iroha.protocol.QryResponses.AccountResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
@@ -86,7 +87,7 @@ public class QueryAPI {
     return adr.getDetail();
   }
 
-  public String getAccountDetails(
+  public AccountDetailResponse getAccountDetails(
       String accountId,
       String writer,
       String key,
@@ -109,12 +110,10 @@ public class QueryAPI {
 
     checkErrorResponse(res);
 
-    val adr = res.getAccountDetailResponse();
-
-    return adr.getDetail();
+    return res.getAccountDetailResponse();
   }
 
-  public String getAccountDetails(
+  public AccountDetailResponse getAccountDetails(
       String accountId,
       String writer,
       String key,
