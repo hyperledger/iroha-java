@@ -60,18 +60,6 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   @Getter
   private Network network;
 
-    /**
-     * Creates Iroha container with a fixed Iroha port
-     *
-     * @param fixedIrohaPort - fixed Iroha port
-     * @return Iroha container with a fixed Iroha port
-     */
-    public static IrohaContainer createFixedPortIrohaContainer(int fixedIrohaPort) {
-        IrohaContainer irohaContainer = new IrohaContainer();
-        irohaContainer.fixedIrohaPort = fixedIrohaPort;
-        return irohaContainer;
-    }
-
   /**
    * Finalizes current configuration.
    *
@@ -113,10 +101,10 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         )
         .withNetworkAliases(irohaAlias);
 
-      // init fixed Iroha port
-      if (nonNull(fixedIrohaPort)) {
-          irohaDockerContainer.withFixedExposedPort(fixedIrohaPort, conf.getIrohaConfig().getTorii_port());
-      }
+    // init fixed Iroha port
+    if (nonNull(fixedIrohaPort)) {
+      irohaDockerContainer.withFixedExposedPort(fixedIrohaPort, conf.getIrohaConfig().getTorii_port());
+    }
 
     // init logger
     if (nonNull(logger)) {
@@ -191,6 +179,14 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
 
   public IrohaContainer withIrohaDockerImage(@NonNull String irohaDockerImage) {
     this.irohaDockerImage = irohaDockerImage;
+    return this;
+  }
+
+  public IrohaContainer withFixedPort(int fixedIrohaPort) {
+    if (fixedIrohaPort < 0 || fixedIrohaPort > 65535) {
+      throw new IllegalArgumentException("Invalid port " + fixedIrohaPort);
+    }
+    this.fixedIrohaPort = fixedIrohaPort;
     return this;
   }
 
