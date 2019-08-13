@@ -11,16 +11,10 @@ import jp.co.soramitsu.iroha.java.IrohaAPI;
 import jp.co.soramitsu.iroha.testcontainers.detail.LoggerConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.PostgresConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.FailureDetectingExternalResource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.*;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.lifecycle.Startable;
@@ -53,6 +47,8 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
 
   private Logger logger = LoggerFactory.getLogger(IrohaContainer.class);
 
+  private Integer fixedIrohaPort;
+
   // use default config
   @Getter
   private PeerConfig conf = new PeerConfig();
@@ -60,7 +56,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   @Getter
   private PostgreSQLContainer postgresDockerContainer;
   @Getter
-  private GenericContainer irohaDockerContainer;
+  private FixedHostPortGenericContainer irohaDockerContainer;
   @Getter
   private Network network;
 
@@ -90,7 +86,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         .withNetworkAliases(postgresAlias);
 
     // init irohaDockerContainer container
-    irohaDockerContainer = new GenericContainer<>(irohaDockerImage)
+    irohaDockerContainer = new FixedHostPortGenericContainer<>(irohaDockerImage)
         .withEnv(KEY, PeerConfig.peerKeypairName)
         .withEnv(POSTGRES_HOST, postgresAlias)
         .withEnv(POSTGRES_USER, postgresDockerContainer.getUsername())
@@ -104,6 +100,11 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
                 .withStartupTimeout(Duration.ofSeconds(60))
         )
         .withNetworkAliases(irohaAlias);
+
+    // init fixed Iroha port
+    if (nonNull(fixedIrohaPort)) {
+      irohaDockerContainer.withFixedExposedPort(fixedIrohaPort, conf.getIrohaConfig().getTorii_port());
+    }
 
     // init logger
     if (nonNull(logger)) {
@@ -178,6 +179,14 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
 
   public IrohaContainer withIrohaDockerImage(@NonNull String irohaDockerImage) {
     this.irohaDockerImage = irohaDockerImage;
+    return this;
+  }
+
+  public IrohaContainer withFixedPort(int fixedIrohaPort) {
+    if (fixedIrohaPort < 0 || fixedIrohaPort > 65535) {
+      throw new IllegalArgumentException("Invalid port " + fixedIrohaPort);
+    }
+    this.fixedIrohaPort = fixedIrohaPort;
     return this;
   }
 
