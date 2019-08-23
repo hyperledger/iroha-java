@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha.java;
 
 import iroha.protocol.Queries;
 import iroha.protocol.Queries.Query.Payload;
+import iroha.protocol.Queries.QueryOrBuilder;
 import iroha.protocol.Queries.QueryPayloadMeta;
 import java.security.KeyPair;
 import java.time.Instant;
@@ -19,6 +20,12 @@ public class Query
     super(Payload.newBuilder());
 
     this.meta = meta;
+  }
+
+  public Query(QueryOrBuilder queryBuilder) {
+    super(queryBuilder.getPayload().toBuilder());
+
+    this.meta = queryBuilder.getPayload().getMeta().toBuilder();
   }
 
   private void updatePayload() {
