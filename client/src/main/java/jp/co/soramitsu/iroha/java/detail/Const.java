@@ -11,6 +11,7 @@ public class Const {
 
   public static final Pattern accountDetailsKeyPattern = Pattern.compile("[A-Za-z0-9_]{1,64}");
   public static final Pattern accountPattern = Pattern.compile("[a-z_0-9]{1,32}");
+  public static final Pattern domainPattern = Pattern.compile("(([a-zA-Z]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)*[a-zA-Z]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?)");
   public static final Pattern roleNamePattern = Pattern.compile("[a-z_0-9]{1,32}");
   public static final Pattern assetNamePattern = Pattern.compile("[a-z_0-9]{1,32}");
 

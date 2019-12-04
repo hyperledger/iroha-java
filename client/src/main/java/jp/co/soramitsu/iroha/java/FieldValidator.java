@@ -23,12 +23,12 @@ import static jp.co.soramitsu.iroha.java.detail.Const.accountIdDelimiter;
 import static jp.co.soramitsu.iroha.java.detail.Const.accountPattern;
 import static jp.co.soramitsu.iroha.java.detail.Const.assetIdDelimiter;
 import static jp.co.soramitsu.iroha.java.detail.Const.assetNamePattern;
+import static jp.co.soramitsu.iroha.java.detail.Const.domainPattern;
 import static jp.co.soramitsu.iroha.java.detail.Const.hostPortDelimiter;
 import static jp.co.soramitsu.iroha.java.detail.Const.roleNamePattern;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import lombok.NonNull;
 import lombok.val;
@@ -69,10 +69,14 @@ public class FieldValidator {
   }
 
   public void checkDomain(@NonNull String domain) {
-    try {
-      URI uri = new URI(null, null, domain, 0, null, null, null);
-    } catch (URISyntaxException e) {
-      throw new ValidationException(DOMAIN, "Domain name is invalid: '%s'", domain);
+    val m = domainPattern.matcher(domain);
+    if (!m.matches()) {
+      throw new ValidationException(
+          DOMAIN,
+          "Domain name is invalid. Expected '%s', got '%s'",
+          accountPattern.pattern(),
+          domain
+      );
     }
   }
 

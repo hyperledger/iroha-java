@@ -41,7 +41,7 @@ class FieldValidatorTest extends Specification {
         account = "bogdan"
         key = "key"
         value = "value"
-        domain = "amount"
+        domain = "amount.domain"
         asset = "usd"
         address = "127.0.0.1:1337"
         role = "role"
