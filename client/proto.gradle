@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     compile "com.google.protobuf:protobuf-java:${protobufVersion}"
-    compile "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+    compile group: 'io.grpc', name: 'protoc-gen-grpc-java', version: grpcVersion, ext: 'pom'
     compile "io.grpc:grpc-stub:${grpcVersion}"
     compile "io.grpc:grpc-protobuf:${grpcVersion}"
     compile "io.grpc:grpc-core:${grpcVersion}"
