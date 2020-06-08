@@ -8,6 +8,8 @@ import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.ErrorResponse;
 import iroha.protocol.QryResponses.PeersResponse;
 import iroha.protocol.QryResponses.QueryResponse;
+import iroha.protocol.QryResponses.RolesResponse;
+import iroha.protocol.QryResponses.RolePermissionsResponse;
 import iroha.protocol.QryResponses.SignatoriesResponse;
 import iroha.protocol.QryResponses.TransactionsPageResponse;
 import iroha.protocol.QryResponses.TransactionsResponse;
@@ -303,5 +305,29 @@ public class QueryAPI {
       Integer pageSize
   ) {
     return getPendingTransactions(pageSize, null);
+  }
+
+  public RolesResponse getRoles() {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getRoles()
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getRolesResponse();
+  }
+
+  public RolePermissionsResponse getRolePermissions(String roleId) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+        .getRolePermissions(roleId)
+        .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getRolePermissionsResponse();
   }
 }
