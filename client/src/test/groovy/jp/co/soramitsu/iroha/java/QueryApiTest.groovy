@@ -10,6 +10,8 @@ import spock.lang.Unroll
 import static jp.co.soramitsu.iroha.java.Transaction.builder
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultAccountId
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultKeyPair
+import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultRoleName
+import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.TOTAL_PERMISSIONS_NUMBER
 
 class QueryApiTest extends Specification {
 
@@ -81,6 +83,31 @@ class QueryApiTest extends Specification {
         where:
         issuer | expected_address | expected_key
         A      | "0.0.0.0:10001"  | "43eeb17f0bab10dd51ab70983c25200a1742d31b3b7b54c38c34d7b827b26eed"
+    }
+
+    @Unroll
+    def "getRoles query"() {
+        given:
+        def qapi = new QueryAPI(api, A)
+
+        when:
+        def response = qapi.getRoles()
+
+        then:
+        response.getRolesCount() == 1
+        response.getRoles(0) == defaultRoleName
+    }
+
+    @Unroll
+    def "getRolePermissions query"() {
+      given:
+      def qapi = new QueryAPI(api, A)
+
+      when:
+      def response = qapi.getRolePermissions(defaultRoleName)
+
+      then:
+      response.getPermissionsCount() == TOTAL_PERMISSIONS_NUMBER + 1
     }
 
     @Unroll
