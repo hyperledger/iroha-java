@@ -11,7 +11,7 @@ import static jp.co.soramitsu.iroha.java.Transaction.builder
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultAccountId
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultKeyPair
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultRoleName
-import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.TOTAL_PERMISSIONS_NUMBER
+import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.MAX_PERMISSION_NUMBER
 
 class QueryApiTest extends Specification {
 
@@ -107,7 +107,7 @@ class QueryApiTest extends Specification {
       def response = qapi.getRolePermissions(defaultRoleName)
 
       then:
-      response.getPermissionsCount() == TOTAL_PERMISSIONS_NUMBER + 1
+      response.getPermissionsCount() == MAX_PERMISSION_NUMBER
     }
 
     @Unroll

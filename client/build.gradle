@@ -37,6 +37,8 @@ dependencies {
     testCompile("net.bytebuddy:byte-buddy:${bytebuddyVersion}")
     testCompile("org.objenesis:objenesis:${objgenesisVersion}")
     testCompile("cglib:cglib-nodep:${cglibVersion}")
+
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 }
 
 apply from: 'proto.gradle'

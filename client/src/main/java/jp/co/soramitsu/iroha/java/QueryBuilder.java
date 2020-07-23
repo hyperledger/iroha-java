@@ -9,6 +9,7 @@ import iroha.protocol.Queries.GetAccount;
 import iroha.protocol.Queries.GetAccountAssetTransactions;
 import iroha.protocol.Queries.GetAccountAssets;
 import iroha.protocol.Queries.GetAccountDetail;
+import iroha.protocol.Queries.GetEngineReceipts;
 import iroha.protocol.Queries.GetAccountTransactions;
 import iroha.protocol.Queries.GetAssetInfo;
 import iroha.protocol.Queries.GetBlock;
@@ -95,6 +96,18 @@ public class QueryBuilder {
   public QueryBuilder setCounter(long counter) {
     meta.setQueryCounter(counter);
     return this;
+  }
+
+  public Query getEngineReceipts(String txHash) {
+    Query query = newQuery();
+
+    query.getProto().setGetEngineReceipts(
+        GetEngineReceipts.newBuilder()
+            .setTxHash(txHash)
+            .build()
+    );
+
+    return query;
   }
 
   public Query getPeers() {

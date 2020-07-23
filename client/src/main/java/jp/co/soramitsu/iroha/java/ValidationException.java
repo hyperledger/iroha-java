@@ -22,6 +22,8 @@ public class ValidationException extends IllegalArgumentException {
     ASSET_ID,
     ASSET_NAME,
     DOMAIN,
+    EVM_ADDRESS,
+    HEX_STRING,
     PUBKEY,
     PEER_ADDRESS,
     QUORUM,
@@ -32,6 +34,7 @@ public class ValidationException extends IllegalArgumentException {
     TIMESTAMP,
     DESCRIPTION,
     PAGE_SIZE,
-    HASH_LENGTH
+    HASH_LENGTH,
+    NOT_ALLOWED
   }
 }

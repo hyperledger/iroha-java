@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha.java;
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 import static jp.co.soramitsu.iroha.java.detail.Const.accountIdDelimiter;
 
+import iroha.protocol.Commands;
 import iroha.protocol.Commands.AddAssetQuantity;
 import iroha.protocol.Commands.AddPeer;
 import iroha.protocol.Commands.AddSignatory;
@@ -36,6 +37,7 @@ import javax.xml.bind.DatatypeConverter;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3.CryptoException;
 import jp.co.soramitsu.iroha.java.detail.BuildableAndSignable;
 import lombok.val;
+import static jp.co.soramitsu.iroha.java.ValidationException.Type.NOT_ALLOWED;
 
 public class TransactionBuilder {
 
@@ -114,6 +116,40 @@ public class TransactionBuilder {
     }
 
     tx.reducedPayload.setQuorum(quorum);
+    return this;
+  }
+
+  public TransactionBuilder setSettingValue(String key, String value) {
+    throw new ValidationException(NOT_ALLOWED, "Command can be used in genesis block only");
+  }
+
+  public TransactionBuilder callEngine(String caller, String optCallee, String input) {
+    if (nonNull(validator)) {
+      validator.checkAccountId(caller);
+      validator.checkHexString(input);
+    }
+
+    val b = Commands.CallEngine
+            .newBuilder()
+            .setCaller(caller)
+            .setInput(input);
+
+    if (nonNull(optCallee)) {
+      if (nonNull(validator)) {
+        validator.checkEvmAddress(optCallee);
+      }
+      b.setCallee(optCallee);
+    }
+
+
+    tx.reducedPayload.addCommands(
+        Command.newBuilder()
+            .setCallEngine(
+                b.build()
+            )
+            .build()
+    );
+
     return this;
   }
 
@@ -613,25 +649,24 @@ public class TransactionBuilder {
       String accountId,
       String key,
       String value,
-      String opt_old_value
+      String optOldValue
   ) {
-    val b = CompareAndSetAccountDetail.newBuilder();
-
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
       this.validator.checkAccountDetailsKey(key);
       this.validator.checkAccountDetailsValue(value);
     }
-
-    b.setAccountId(accountId)
+    val b = CompareAndSetAccountDetail
+        .newBuilder()
+        .setAccountId(accountId)
         .setKey(key)
         .setValue(value);
 
-    if (nonNull(opt_old_value)) {
+    if (nonNull(optOldValue)) {
       if (nonNull(this.validator)) {
-        this.validator.checkAccountDetailsValue(opt_old_value);
+        this.validator.checkAccountDetailsValue(optOldValue);
       }
-      b.setOldValue(opt_old_value);
+      b.setOldValue(optOldValue);
     }
 
     tx.reducedPayload.addCommands(

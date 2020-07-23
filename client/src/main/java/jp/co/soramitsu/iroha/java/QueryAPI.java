@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha.java;
 import iroha.protocol.QryResponses.AccountAssetResponse;
 import iroha.protocol.QryResponses.AccountDetailResponse;
 import iroha.protocol.QryResponses.AccountResponse;
+import iroha.protocol.QryResponses.EngineReceiptsResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.ErrorResponse;
@@ -51,6 +52,18 @@ public class QueryAPI {
       ErrorResponse errorResponse = response.getErrorResponse();
       throw new ErrorResponseException(errorResponse);
     }
+  }
+
+  public EngineReceiptsResponse getEngineReceipts(String txHash) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement())
+            .getEngineReceipts(txHash)
+            .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getEngineReceiptsResponse();
   }
 
   public PeersResponse getPeers() {

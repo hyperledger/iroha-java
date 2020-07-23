@@ -30,7 +30,9 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   public static final String defaultPostgresAlias = "iroha.postgres";
   public static final String defaultIrohaAlias = "iroha";
   public static final String irohaWorkdir = "/opt/iroha_data";
-  public static final String defaultIrohaDockerImage = "warchantua/iroha:1.1.0";
+  // TODO (a.chernyshov) change tag to "hyperledger/iroha:1.2.0-rc.1" as soon as
+  // https://github.com/hyperledger/iroha/pull/606 with signature check fix is released
+  public static final String defaultIrohaDockerImage = "soramitsu/iroha:PR-606";
   public static final String defaultPostgresDockerImage = "postgres:11-alpine";
 
   // env vars

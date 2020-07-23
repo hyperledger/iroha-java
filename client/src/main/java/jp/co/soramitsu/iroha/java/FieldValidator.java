@@ -1,30 +1,7 @@
 package jp.co.soramitsu.iroha.java;
 
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.ACCOUNT_ID;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.ACCOUNT_NAME;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.AMOUNT;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.ASSET_ID;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.ASSET_NAME;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.DESCRIPTION;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.DETAILS_KEY;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.DETAILS_VALUE;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.DOMAIN;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.HASH_LENGTH;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.PAGE_SIZE;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.PEER_ADDRESS;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.PRECISION;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.PUBKEY;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.QUORUM;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.ROLE_NAME;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.TIMESTAMP;
-import static jp.co.soramitsu.iroha.java.detail.Const.accountDetailsKeyPattern;
-import static jp.co.soramitsu.iroha.java.detail.Const.accountDetailsMaxLength;
-import static jp.co.soramitsu.iroha.java.detail.Const.accountIdDelimiter;
-import static jp.co.soramitsu.iroha.java.detail.Const.accountPattern;
-import static jp.co.soramitsu.iroha.java.detail.Const.assetIdDelimiter;
-import static jp.co.soramitsu.iroha.java.detail.Const.assetNamePattern;
-import static jp.co.soramitsu.iroha.java.detail.Const.hostPortDelimiter;
-import static jp.co.soramitsu.iroha.java.detail.Const.roleNamePattern;
+import static jp.co.soramitsu.iroha.java.ValidationException.Type.*;
+import static jp.co.soramitsu.iroha.java.detail.Const.*;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -165,6 +142,18 @@ public class FieldValidator {
     }
   }
 
+  public void checkEvmAddress(@NonNull String address) {
+    val m = evmAddress.matcher(address);
+    if (!m.matches()) {
+      throw new ValidationException(
+              EVM_ADDRESS,
+              "Invalid EVM address. Expected '%s', got '%s'",
+              evmAddress.pattern(),
+              address
+      );
+    }
+  }
+
   public void checkPublicKey(@NonNull byte[] peerKey) {
     if (peerKey.length != 32) {
       throw new ValidationException(PUBKEY, "Public key must be 32 bytes length, got '%d'",
@@ -226,6 +215,18 @@ public class FieldValidator {
     if (length != 64) {
       throw new ValidationException(HASH_LENGTH, "Hash length must be equal to 64, got '%d'",
           length);
+    }
+  }
+
+  public void checkHexString(@NonNull String string) {
+    val m = hexString.matcher(string);
+    if (!m.matches()) {
+      throw new ValidationException(
+              HEX_STRING,
+              "Invalid hex string. Expected '%s', got '%s'",
+              hexString.pattern(),
+              string
+      );
     }
   }
 }
