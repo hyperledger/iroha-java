@@ -645,11 +645,21 @@ public class TransactionBuilder {
     return this;
   }
 
+  /**
+   * Compare the old value before set the new one
+   * @param accountId - to set value in details
+   * @param key - key
+   * @param value - value to set
+   * @param optOldValue - old value to check (optional)
+   * @param optCheckValue - if true, empty old_value in command must match absent value in WSV;
+   *                        if false, any old_value in command matches absent in WSV (legacy)
+   */
   public TransactionBuilder compareAndSetAccountDetail(
       String accountId,
       String key,
       String value,
-      String optOldValue
+      String optOldValue,
+      Boolean optCheckEmpty
   ) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
@@ -667,6 +677,10 @@ public class TransactionBuilder {
         this.validator.checkAccountDetailsValue(optOldValue);
       }
       b.setOldValue(optOldValue);
+    }
+
+    if (nonNull(optCheckEmpty)) {
+      b.setCheckEmpty(optCheckEmpty);
     }
 
     tx.reducedPayload.addCommands(
