@@ -161,10 +161,12 @@ public class QueryAPI {
     return res.getBlockResponse();
   }
 
-  public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize,
-      String firstHashHex) {
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         String firstHashHex,
+                                                         QueryBuilder.Ordering ordering) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountTransactions(accountId, pageSize, firstHashHex)
+        .getAccountTransactions(accountId, pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -172,16 +174,32 @@ public class QueryAPI {
     checkErrorResponse(res);
 
     return res.getTransactionsPageResponse();
+  }
+
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         String firstHashHex) {
+    return getAccountTransactions(accountId, pageSize, firstHashHex, null);
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize) {
-    return getAccountTransactions(accountId, pageSize, null);
+    return getAccountTransactions(accountId, pageSize, null, null);
   }
 
-  public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize, String firstHashHex) {
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         QueryBuilder.Ordering ordering) {
+    return getAccountTransactions(accountId, pageSize, null, ordering);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              String firstHashHex,
+                                                              QueryBuilder.Ordering ordering) {
+
     val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex)
+        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -191,9 +209,24 @@ public class QueryAPI {
     return res.getTransactionsPageResponse();
   }
 
-  public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize) {
-    return getAccountAssetTransactions(accountId, assetId, pageSize, null);
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              String firstHashHex) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, null);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, null, null);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              QueryBuilder.Ordering ordering) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, null, ordering);
   }
 
   public TransactionsResponse getTransactions(List<byte[]> hashes) {
@@ -300,11 +333,12 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getPendingTransactions(
-      Integer pageSize,
-      String firstHashHex
+          Integer pageSize,
+          String firstHashHex,
+          QueryBuilder.Ordering ordering
   ) {
     val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getPendingTransactions(pageSize, firstHashHex)
+        .getPendingTransactions(pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -315,9 +349,23 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getPendingTransactions(
+          Integer pageSize,
+          String firstHashHex
+  ) {
+    return getPendingTransactions(pageSize, firstHashHex, null);
+  }
+
+  public TransactionsResponse getPendingTransactions(
       Integer pageSize
   ) {
-    return getPendingTransactions(pageSize, null);
+    return getPendingTransactions(pageSize, null, null);
+  }
+
+  public TransactionsResponse getPendingTransactions(
+          Integer pageSize,
+          QueryBuilder.Ordering ordering
+  ) {
+    return getPendingTransactions(pageSize, null, ordering);
   }
 
   public RolesResponse getRoles() {

@@ -1,5 +1,6 @@
-package jp.co.soramitsu.iroha.java
+package jp.co.soramitsu.iroha.java.query
 
+import jp.co.soramitsu.iroha.java.*
 import jp.co.soramitsu.iroha.java.debug.Account
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import jp.co.soramitsu.iroha.testcontainers.PeerConfig
