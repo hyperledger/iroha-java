@@ -7,18 +7,29 @@ import java.security.KeyPair;
 import java.time.Instant;
 import java.util.Date;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3.CryptoException;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.detail.Hashable;
 
 public class BlocksQuery
     extends Hashable<Payload.Builder> {
 
   private QueryPayloadMeta.Builder meta;
+  private SignatureBuilder signatureBuilder;
   private Queries.BlocksQuery.Builder q = Queries.BlocksQuery.newBuilder();
 
   public BlocksQuery(QueryPayloadMeta.Builder meta) {
     super(Payload.newBuilder());
 
     this.meta = meta;
+    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+  }
+
+  public BlocksQuery(QueryPayloadMeta.Builder meta, SignatureBuilder signatureBuilder) {
+    super(Payload.newBuilder());
+
+    this.meta = meta;
+    this.signatureBuilder = signatureBuilder;
   }
 
   public byte[] payload() {
@@ -32,7 +43,7 @@ public class BlocksQuery
 
   public Queries.BlocksQuery buildSigned(KeyPair keyPair) throws CryptoException {
     updatePayload();
-    q.setSignature(Utils.sign(this, keyPair));
+    q.setSignature(signatureBuilder.sign(this, keyPair));
     return q.build();
   }
 

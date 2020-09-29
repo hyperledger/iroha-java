@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import lombok.Getter;
 import lombok.val;
 
@@ -67,15 +69,18 @@ public class QueryBuilder {
     List<Sequence> fieldOrdering = new ArrayList<>();
   }
 
+  private SignatureBuilder signatureBuilder;
+
   private FieldValidator validator;
 
   private QueryPayloadMeta.Builder meta = QueryPayloadMeta.newBuilder();
 
   private Query newQuery() {
-    return new Query(meta);
+    return new Query(meta, signatureBuilder);
   }
 
-  private void init(String accountId, Long time, long counter) {
+  private void init(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
+    this.signatureBuilder = signatureBuilder;
     setCreatorAccountId(accountId);
     setCreatedTime(time);
     setCounter(counter);
@@ -84,15 +89,27 @@ public class QueryBuilder {
   }
 
   public QueryBuilder(String accountId, Instant time, long counter) {
-    init(accountId, time.toEpochMilli(), counter);
+    init(accountId, time.toEpochMilli(), counter, new Ed25519Sha3SignatureBuilder());
   }
 
   public QueryBuilder(String accountId, Date time, long counter) {
-    init(accountId, time.getTime(), counter);
+    init(accountId, time.getTime(), counter, new Ed25519Sha3SignatureBuilder());
   }
 
   public QueryBuilder(String accountId, Long time, long counter) {
-    init(accountId, time, counter);
+    init(accountId, time, counter, new Ed25519Sha3SignatureBuilder());
+  }
+
+  public QueryBuilder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time.toEpochMilli(), counter, signatureBuilder);
+  }
+
+  public QueryBuilder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time.getTime(), counter, signatureBuilder);
+  }
+
+  public QueryBuilder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time, counter, signatureBuilder);
   }
 
   public QueryBuilder enableValidation() {

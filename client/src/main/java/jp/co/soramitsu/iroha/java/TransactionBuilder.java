@@ -29,22 +29,26 @@ import iroha.protocol.Primitive.RolePermission;
 import iroha.protocol.TransactionOuterClass;
 import iroha.protocol.TransactionOuterClass.Transaction.Payload.BatchMeta.BatchType;
 import java.math.BigDecimal;
-import java.security.KeyPair;
-import java.security.PublicKey;
+import java.security.*;
 import java.time.Instant;
 import java.util.Date;
 import javax.xml.bind.DatatypeConverter;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3.CryptoException;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.detail.BuildableAndSignable;
 import lombok.val;
 import static jp.co.soramitsu.iroha.java.ValidationException.Type.NOT_ALLOWED;
 
 public class TransactionBuilder {
 
+  // Ed25519/Sha3 is default signature
+  private SignatureBuilder signatureBuilder;
   private FieldValidator validator;
   private Transaction tx;
 
-  private void init(String accountId, Long time) {
+  private void init(String accountId, Long time, SignatureBuilder signatureBuilder) {
+    this.signatureBuilder = signatureBuilder;
     tx = new Transaction();
     if (nonNull(accountId)) {
       setCreatorAccountId(accountId);
@@ -64,18 +68,32 @@ public class TransactionBuilder {
    * block they can be null.
    */
   public TransactionBuilder(String accountId, Instant time) {
-    init(accountId, time.toEpochMilli());
+    init(accountId, time.toEpochMilli(), new Ed25519Sha3SignatureBuilder());
   }
 
   public TransactionBuilder(String accountId, Date time) {
-    init(accountId, time.getTime());
+    init(accountId, time.getTime(), new Ed25519Sha3SignatureBuilder());
   }
 
   public TransactionBuilder(String accountId, Long time) {
-    init(accountId, time);
+    init(accountId, time, new Ed25519Sha3SignatureBuilder());
   }
 
-  /* default */ TransactionBuilder(Transaction transaction) {
+  public TransactionBuilder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
+    init(accountId, time.toEpochMilli(), signatureBuilder);
+  }
+
+  public TransactionBuilder(String accountId, Date time, SignatureBuilder signatureBuilder) {
+    init(accountId, time.getTime(), signatureBuilder);
+  }
+
+  public TransactionBuilder(String accountId, Long time, SignatureBuilder signatureBuilder) {
+    init(accountId, time, signatureBuilder);
+  }
+
+  /* default */
+  TransactionBuilder(Transaction transaction) {
+    signatureBuilder = new Ed25519Sha3SignatureBuilder();
     tx = transaction;
   }
 
@@ -154,13 +172,13 @@ public class TransactionBuilder {
   }
 
   public TransactionBuilder createAccount(
-      String accountName,
-      String domainid,
-      byte[] publicKey
+    String accountName,
+    String domainId,
+    String publicKey
   ) {
     if (nonNull(this.validator)) {
       this.validator.checkAccount(accountName);
-      this.validator.checkDomain(domainid);
+      this.validator.checkDomain(domainId);
       this.validator.checkPublicKey(publicKey);
     }
 
@@ -169,12 +187,38 @@ public class TransactionBuilder {
             .setCreateAccount(
                 CreateAccount.newBuilder()
                     .setAccountName(accountName)
-                    .setDomainId(domainid)
-                    .setPublicKey(Utils.toHex(publicKey)).build()
+                    .setDomainId(domainId)
+                    .setPublicKey(publicKey)
+                    .build()
             ).build()
     );
 
     return this;
+  }
+
+  public TransactionBuilder createAccount(
+      String accountName,
+      String domainId,
+      byte[] publicKey
+  ) {
+    return createAccount(accountName, domainId, Utils.toHex(publicKey));
+  }
+
+  public TransactionBuilder createAccount(
+      String accountId,
+      byte[] publicKey
+  ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkAccountId(accountId);
+    }
+
+    val t = accountId.split(accountIdDelimiter);
+
+    return createAccount(
+        t[0],
+        t[1],
+        publicKey
+    );
   }
 
   public TransactionBuilder createAccount(
@@ -202,7 +246,7 @@ public class TransactionBuilder {
     return createAccount(
         t[0],
         t[1],
-        publicKey.getEncoded()
+        publicKey
     );
   }
 
@@ -698,9 +742,8 @@ public class TransactionBuilder {
     return setBatchMeta(batchType, Utils.getBatchHashesHex(transactions));
   }
 
-  public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair)
-      throws CryptoException {
-    return tx.sign(keyPair);
+  public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair) throws CryptoException {
+    return tx.sign(keyPair, signatureBuilder);
   }
 
   public Transaction build() {
