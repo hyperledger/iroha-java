@@ -695,7 +695,7 @@ public class TransactionBuilder {
    * @param key - key
    * @param value - value to set
    * @param optOldValue - old value to check (optional)
-   * @param optCheckValue - if true, empty old_value in command must match absent value in WSV;
+   * @param optCheckEmpty - if true, empty old_value in command must match absent value in WSV;
    *                        if false, any old_value in command matches absent in WSV (legacy)
    */
   public TransactionBuilder compareAndSetAccountDetail(
