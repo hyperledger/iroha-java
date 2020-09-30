@@ -150,7 +150,7 @@ public class IrohaNetwork extends FailureDetectingExternalResource implements St
   public void start() {
     configure();
 
-    peers.parallelStream()
+    peers.stream()
         .map(pd -> pd.getContainer()
             .withNetwork(network)
             .withIrohaAlias(pd.getName())
@@ -162,7 +162,7 @@ public class IrohaNetwork extends FailureDetectingExternalResource implements St
    * Stop iroha network. Destroys all containers.
    */
   public void stop() {
-    peers.parallelStream()
+    peers.stream()
         .map(PeerDescriptor::getContainer)
         .forEach(IrohaContainer::stop);
   }
