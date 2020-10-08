@@ -58,6 +58,7 @@ class CommandsTest extends Specification {
 
     /**
      * Binary code of contract
+     * Just a valid binary code.
      */
     static def evm_binary_code = "606060405260a18060106000396000f360606040526000357c01000000000000000" +
             "0000000000000000000000000000000000000000090048063d46300fd1460435780" +

@@ -31,25 +31,26 @@ import java.util.List;
 import java.util.stream.Collectors;
 import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
 import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
-import lombok.Getter;
+import lombok.Value;
 import lombok.val;
 
 public class QueryBuilder {
 
   public class Ordering {
 
+    @Value
     class Sequence {
       public Sequence(Field field, Direction direction) {
         this.field = field;
         this.direction = direction;
       }
 
-      @Getter Field field;
-      @Getter Direction direction;
+      Field field;
+      Direction direction;
     }
 
     void addFieldOrdering(Field field, Direction direction) {
-      fieldOrdering.add(new Sequence(field, direction));
+      addFieldOrdering(new Sequence(field, direction));
     }
 
     void addFieldOrdering(Sequence sequence) {

@@ -690,7 +690,25 @@ public class TransactionBuilder {
   }
 
   /**
-   * Compare the old value before set the new one
+   * An old version of compareAndSet. Use new one instead
+   * Compares the old value before setting the new one
+   * @param accountId - to set value in details
+   * @param key - key
+   * @param value - value to set
+   * @param optOldValue - old value to check (optional)
+   */
+  @Deprecated
+  public TransactionBuilder compareAndSetAccountDetail(
+          String accountId,
+          String key,
+          String value,
+          String optOldValue
+  ) {
+    return compareAndSetAccountDetail(accountId, key, value, optOldValue, false);
+  }
+
+  /**
+   * Compares the old value before setting the new one
    * @param accountId - to set value in details
    * @param key - key
    * @param value - value to set
