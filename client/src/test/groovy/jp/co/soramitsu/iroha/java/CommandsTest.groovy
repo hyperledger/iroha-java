@@ -11,7 +11,6 @@ import spock.lang.Unroll
 import static jp.co.soramitsu.iroha.java.Transaction.builder
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultAccountId
 import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.defaultKeyPair
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.NOT_ALLOWED;
 
 class CommandsTest extends Specification {
 
@@ -183,19 +182,5 @@ class CommandsTest extends Specification {
         where:
         caller          | input
         account.getId() | evm_abi_encoded_call
-    }
-
-    @Unroll
-    def "setSettingValue command throws NOT_ALLOWED: key=#key, value=#value"() {
-        when:
-        Transaction.builder(account.getId())
-                .setSettingValue(key, value)
-        then:
-        def e = thrown(ValidationException.class)
-        e.type == NOT_ALLOWED
-
-        where:
-        key       | value
-        "any key" | "any value"
     }
 }

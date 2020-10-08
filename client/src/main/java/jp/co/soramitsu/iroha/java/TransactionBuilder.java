@@ -137,8 +137,25 @@ public class TransactionBuilder {
     return this;
   }
 
+  /**
+   * Set setting value command should be used to set initialization values in genesis block only.
+   * @param key - parameter key
+   * @param value - perameter value
+   * @return Transaction builder with setSettingValue transaction
+   */
   public TransactionBuilder setSettingValue(String key, String value) {
-    throw new ValidationException(NOT_ALLOWED, "Command can be used in genesis block only");
+    tx.reducedPayload.addCommands(
+        Command.newBuilder()
+            .setSetSettingValue(
+                Commands.SetSettingValue
+                    .newBuilder()
+                    .setKey(key)
+                    .setValue(value)
+                    .build()
+            ).build()
+    );
+
+    return this;
   }
 
   public TransactionBuilder callEngine(String caller, String optCallee, String input) {
