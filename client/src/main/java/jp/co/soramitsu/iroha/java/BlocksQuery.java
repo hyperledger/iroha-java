@@ -22,7 +22,7 @@ public class BlocksQuery
     super(Payload.newBuilder());
 
     this.meta = meta;
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
   }
 
   public BlocksQuery(QueryPayloadMeta.Builder meta, SignatureBuilder signatureBuilder) {

@@ -68,15 +68,15 @@ public class TransactionBuilder {
    * block they can be null.
    */
   public TransactionBuilder(String accountId, Instant time) {
-    init(accountId, time.toEpochMilli(), new Ed25519Sha3SignatureBuilder());
+    init(accountId, time.toEpochMilli(), Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public TransactionBuilder(String accountId, Date time) {
-    init(accountId, time.getTime(), new Ed25519Sha3SignatureBuilder());
+    init(accountId, time.getTime(), Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public TransactionBuilder(String accountId, Long time) {
-    init(accountId, time, new Ed25519Sha3SignatureBuilder());
+    init(accountId, time, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public TransactionBuilder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
@@ -93,7 +93,7 @@ public class TransactionBuilder {
 
   /* default */
   TransactionBuilder(Transaction transaction) {
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
     tx = transaction;
   }
 

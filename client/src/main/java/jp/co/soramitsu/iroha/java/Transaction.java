@@ -61,7 +61,7 @@ public class Transaction
   @Override
   public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair) {
     updatePayload();
-    tx.addSignatures(new Ed25519Sha3SignatureBuilder().sign(this, keyPair));
+    tx.addSignatures(Ed25519Sha3SignatureBuilder.getInstance().sign(this, keyPair));
     return this;
   }
 

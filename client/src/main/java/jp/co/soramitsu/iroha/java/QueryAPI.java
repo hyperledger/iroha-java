@@ -42,7 +42,7 @@ public class QueryAPI {
     this.api = api;
     this.accountId = accountId;
     this.keyPair = keyPair;
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
   }
 
   public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair, SignatureBuilder signatureBuilder) {
@@ -56,7 +56,7 @@ public class QueryAPI {
     this.api = api;
     this.accountId = account.getId();
     this.keyPair = account.getKeyPair();
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
   }
 
   public QueryAPI(IrohaAPI api, Account account, SignatureBuilder signatureBuilder) {

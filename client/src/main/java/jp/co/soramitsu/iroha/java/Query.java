@@ -23,7 +23,7 @@ public class Query
     super(Payload.newBuilder());
 
     this.meta = meta;
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
   }
 
   public Query(QueryPayloadMeta.Builder meta, SignatureBuilder signatureBuilder) {
@@ -37,7 +37,7 @@ public class Query
     super(queryBuilder.getPayload().toBuilder());
 
     this.meta = queryBuilder.getPayload().getMeta().toBuilder();
-    signatureBuilder = new Ed25519Sha3SignatureBuilder();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
   }
 
   public Query(QueryOrBuilder queryBuilder, SignatureBuilder signatureBuilder) {

@@ -90,15 +90,15 @@ public class QueryBuilder {
   }
 
   public QueryBuilder(String accountId, Instant time, long counter) {
-    init(accountId, time.toEpochMilli(), counter, new Ed25519Sha3SignatureBuilder());
+    init(accountId, time.toEpochMilli(), counter, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public QueryBuilder(String accountId, Date time, long counter) {
-    init(accountId, time.getTime(), counter, new Ed25519Sha3SignatureBuilder());
+    init(accountId, time.getTime(), counter, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public QueryBuilder(String accountId, Long time, long counter) {
-    init(accountId, time, counter, new Ed25519Sha3SignatureBuilder());
+    init(accountId, time, counter, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public QueryBuilder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder) {
