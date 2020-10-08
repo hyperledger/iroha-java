@@ -27,3 +27,7 @@ Client library of [Iroha](https://github.com/hyperledger/iroha) written complete
 ## contribute
 
 Please read [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## if you have any questions
+
+Please contact the community [here](https://github.com/hyperledger/iroha#need-help) to get answers as soon as possible.
