@@ -1,6 +1,8 @@
 package jp.co.soramitsu.iroha.java
 
 import jp.co.soramitsu.iroha.java.debug.TestTransactionStatusObserver
+import jp.co.soramitsu.iroha.java.subscription.SubscriptionStrategy
+import jp.co.soramitsu.iroha.java.subscription.WaitForTerminalStatus
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer
 import spock.lang.Specification
 
@@ -114,11 +116,8 @@ class IrohaAPITest extends Specification {
                             .onTransactionCommitted({ z -> onCommitted = true })
                             .build()
 
-                    api.txStatus(h)
-                            .doOnError({ n -> println("ON ERROR: " + n) })
-                            .doOnNext({ n -> println("ON NEXT: " + n) })
-                            .doOnComplete({ -> println('COMPLETE') })
-                            .blockingSubscribe(obs)
+                    SubscriptionStrategy waiter = new WaitForTerminalStatus()
+                    waiter.subscribe(api, h).blockingSubscribe(obs)
 
                     return onCommitted
                 })
