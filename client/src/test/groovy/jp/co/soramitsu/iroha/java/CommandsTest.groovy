@@ -120,8 +120,7 @@ class CommandsTest extends Specification {
         def transaction_observer = new TestTransactionStatusObserver()
         api.transaction(tx).blockingSubscribe(transaction_observer)
 
-        // TODO (a.chernyshov) remove lower case as soon as Iroha supports case insensitive hash comparison
-        def actual_value = qapi.getEngineReceipts(Utils.toHex(hash).toLowerCase())
+        def actual_value = qapi.getEngineReceipts(Utils.toHex(hash))
 
         then:
         transaction_observer.assertAllTransactionsCommitted()
@@ -152,8 +151,7 @@ class CommandsTest extends Specification {
                 .build()
         def deploy_hash = Utils.hash(deploy_tx);
         api.transaction(deploy_tx).blockingSubscribe()
-        // TODO (a.chernyshov) remove lower case as soon as Iroha supports case insensitive hash comparison
-        def deploy_receipt = qapi.getEngineReceipts(Utils.toHex(deploy_hash).toLowerCase())
+        def deploy_receipt = qapi.getEngineReceipts(Utils.toHex(deploy_hash))
         def callee = deploy_receipt.getEngineReceipts(0).contractAddress
 
         when:
@@ -165,8 +163,7 @@ class CommandsTest extends Specification {
         def transaction_observer = new TestTransactionStatusObserver()
         api.transaction(tx).blockingSubscribe(transaction_observer)
 
-        // TODO (a.chernyshov) remove lower case as soon as Iroha supports case insensitive hash comparison
-        def actual_value = qapi.getEngineReceipts(Utils.toHex(hash).toLowerCase())
+        def actual_value = qapi.getEngineReceipts(Utils.toHex(hash))
 
         then:
         transaction_observer.assertAllTransactionsCommitted()
