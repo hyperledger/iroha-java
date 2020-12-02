@@ -1,7 +1,6 @@
 package jp.co.soramitsu.iroha.testcontainers;
 
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
-import static org.testcontainers.containers.BindMode.READ_ONLY;
 
 import java.io.Closeable;
 import java.io.File;
@@ -18,6 +17,7 @@ import org.testcontainers.containers.*;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.lifecycle.Startable;
+import org.testcontainers.utility.MountableFile;
 
 /**
  * If you get {@link com.github.dockerjava.api.exception.DockerException}: Mounts denied, please
@@ -94,7 +94,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         .withEnv(VERBOSITY, verbosity)
         .withNetwork(network)
         .withExposedPorts(conf.getIrohaConfig().getTorii_port())
-        .withFileSystemBind(conf.getDir().getAbsolutePath(), irohaWorkdir, READ_ONLY)
+        .withCopyFileToContainer(MountableFile.forHostPath(conf.getDir().getAbsolutePath()), irohaWorkdir)
         .waitingFor(
             Wait.forLogMessage(".*iroha initialized.*\\s", 1)
                 .withStartupTimeout(Duration.ofSeconds(60))
