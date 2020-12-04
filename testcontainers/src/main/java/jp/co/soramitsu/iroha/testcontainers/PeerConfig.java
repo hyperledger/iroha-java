@@ -118,6 +118,27 @@ public class PeerConfig {
     return this;
   }
 
+  public PeerConfig withServerCertificate(@NonNull String certificate) {
+    try {
+      writeToFile("server.crt", certificate);
+    } catch (IOException e) {
+      throw new RuntimeIOException(e);
+    }
+
+    return this;
+  }
+
+
+  public PeerConfig withServerKey(@NonNull String key) {
+    try {
+      writeToFile("server.key", key);
+    } catch (IOException e) {
+      throw new RuntimeIOException(e);
+    }
+
+    return this;
+  }
+
   public void save() {
     try {
       withPeerKeyPair(keyPairMap.get(peerKeypairName));

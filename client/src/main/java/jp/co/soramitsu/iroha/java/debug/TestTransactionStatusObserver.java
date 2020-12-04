@@ -97,6 +97,16 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
     return this;
   }
 
+  @Override
+  public String toString() {
+    return "TestTransactionStatusObserver{" +
+        "sent=" + sent +
+        ", committed=" + committed +
+        ", failed=" + failed +
+        ", completed=" + completed +
+        ", errored=" + errored +
+        '}';
+  }
 
   @Override
   public void onTransactionSent() {

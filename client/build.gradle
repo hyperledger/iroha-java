@@ -35,6 +35,8 @@ dependencies {
     testCompile project(":testcontainers")
     compile group: 'com.jcabi', name: 'jcabi-aspects', version: "${jcabiVersion}"
 
+    runtime 'io.netty:netty-tcnative-boringssl-static:2.0.34.Final'
+
     // for mocking in groovy
     testCompile("net.bytebuddy:byte-buddy:${bytebuddyVersion}")
     testCompile("org.objenesis:objenesis:${objgenesisVersion}")

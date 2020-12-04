@@ -6,6 +6,8 @@ import static jp.co.soramitsu.iroha.java.Utils.createTxStatusRequest;
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
 import io.reactivex.Observable;
 import io.reactivex.exceptions.Exceptions;
 import iroha.protocol.CommandService_v1Grpc;
@@ -20,6 +22,8 @@ import iroha.protocol.QueryService_v1Grpc.QueryService_v1BlockingStub;
 import iroha.protocol.QueryService_v1Grpc.QueryService_v1Stub;
 import iroha.protocol.TransactionOuterClass;
 import java.io.Closeable;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 import jp.co.soramitsu.iroha.java.detail.StreamObserverToEmitter;
@@ -50,22 +54,50 @@ public class IrohaAPI implements Closeable {
   private QueryService_v1Stub queryStreamingStub;
 
   public IrohaAPI(URI uri) {
-    this(uri.getHost(), uri.getPort());
+    this(uri, null);
   }
 
-  @SneakyThrows
+  /**
+   * Constructor with secure connection over TLS
+   *
+   * @param uri      - address to connect to Iroha
+   * @param certFile - certification filename for SSL/TLS connection
+   */
+  public IrohaAPI(URI uri, String certFile) {
+    this(uri.getHost(), uri.getPort(), certFile);
+  }
+
   public IrohaAPI(String host, int port) {
-    this(
+    this(host, port, null);
+  }
+
+  /**
+   * Constructor with secure connection over TLS
+   *
+   * @param host     - address to connect to Iroha
+   * @param port     - port to connect to Iroha
+   * @param certFile - certificate filename for SSL/TLS connection
+   */
+  @SneakyThrows
+  public IrohaAPI(String host, int port, String certFile) {
+    ManagedChannel channel = certFile == null ?
         ManagedChannelBuilder
             .forAddress(host, port)
             .usePlaintext()
             .build()
-    );
+        :
+            NettyChannelBuilder
+                .forAddress(host, port)
+                .sslContext(
+                    GrpcSslContexts.forClient().trustManager(new File(certFile)).build())
+                .build();
+
+    setChannel(channel);
 
     this.uri = new URI("grpc", null, host, port, null, null, null);
   }
 
-  public IrohaAPI(ManagedChannel channel) {
+  private void setChannel(ManagedChannel channel) {
     this.channel = channel;
     this.setChannelForBlockingCmdStub(channel);
     this.setChannelForBlockingQueryStub(channel);
@@ -104,7 +136,7 @@ public class IrohaAPI implements Closeable {
 
   /**
    * Send transaction synchronously, then subscribe for transaction status stream.
-   *
+   * <p>
    * It uses {@link WaitForTerminalStatus} subscription strategy by default.
    *
    * @param tx protobuf transaction.
@@ -124,7 +156,7 @@ public class IrohaAPI implements Closeable {
 
   /**
    * Send transaction synchronously.
-   *
+   * <p>
    * Blocking call.
    *
    * @param tx protobuf transaction.
@@ -155,7 +187,7 @@ public class IrohaAPI implements Closeable {
 
   /**
    * Synchronously send list of transactions.
-   *
+   * <p>
    * Blocking call.
    */
   public void transactionListSync(Iterable<TransactionOuterClass.Transaction> txList) {
