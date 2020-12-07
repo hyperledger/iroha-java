@@ -121,6 +121,12 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
   }
 
   @Override
+  public void onRejected(ToriiResponse t) {
+    log.info("[onRejected] " + t.toString());
+    failed.incrementAndGet();
+  }
+
+  @Override
   public void onTransactionCommitted(ToriiResponse t) {
     log.error("[onNext] " + t.toString());
     committed.incrementAndGet();
