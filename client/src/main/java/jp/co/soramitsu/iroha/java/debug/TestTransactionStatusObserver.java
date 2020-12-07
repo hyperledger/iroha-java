@@ -16,6 +16,7 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
   private AtomicInteger sent = new AtomicInteger(0);
   private AtomicInteger committed = new AtomicInteger(0);
   private AtomicInteger failed = new AtomicInteger(0);
+  private AtomicInteger rejected = new AtomicInteger(0);
   private AtomicBoolean completed = new AtomicBoolean(false);
   private Throwable errored;
 
@@ -43,6 +44,14 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
     return this;
   }
 
+  public TestTransactionStatusObserver assertNTransactionsRejected(int n) {
+    if (rejected.get() != n) {
+      throw fail("assertNTransactionsRejected: rejected %d, expected %d", rejected.get(), n);
+    }
+
+    return this;
+  }
+
   public TestTransactionStatusObserver assertNoTransactionFailed() {
     return assertNTransactionsFailed(0);
   }
@@ -59,6 +68,13 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
       throw fail("No transactions have been sent");
     }
     return assertNTransactionsFailed(sent.get());
+  }
+
+  public TestTransactionStatusObserver assertAllTransactionsRejected() {
+    if (sent.get() == 0) {
+      throw fail("No transactions have been sent");
+    }
+    return assertNTransactionsRejected(sent.get());
   }
 
   public TestTransactionStatusObserver assertAllTransactionsCommitted() {
@@ -102,6 +118,7 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
     return "TestTransactionStatusObserver{" +
         "sent=" + sent +
         ", committed=" + committed +
+        ", rejected=" + rejected +
         ", failed=" + failed +
         ", completed=" + completed +
         ", errored=" + errored +
@@ -123,7 +140,7 @@ public class TestTransactionStatusObserver extends TransactionStatusObserver {
   @Override
   public void onRejected(ToriiResponse t) {
     log.info("[onRejected] " + t.toString());
-    failed.incrementAndGet();
+    rejected.incrementAndGet();
   }
 
   @Override

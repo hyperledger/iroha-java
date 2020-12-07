@@ -105,7 +105,7 @@ class MstTest extends Specification {
 
         then:
         obs.assertNTransactionsSent(1)
-        obs.assertAllTransactionsFailed()
+        obs.assertAllTransactionsRejected()
         obs.assertNoTransactionCommitted()
     }
 
