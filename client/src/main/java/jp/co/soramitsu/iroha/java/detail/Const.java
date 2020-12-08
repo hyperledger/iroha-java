@@ -14,4 +14,9 @@ public class Const {
   public static final Pattern roleNamePattern = Pattern.compile("[a-z_0-9]{1,32}");
   public static final Pattern assetNamePattern = Pattern.compile("[a-z_0-9]{1,32}");
 
+  /** EVM address is a 20-bytes string in hex representation (40 symbols) */
+  public static final Pattern evmAddress = Pattern.compile("[0-9a-fA-F]{40}");
+
+  /** Hex string of any length */
+  public static final Pattern hexString = Pattern.compile("[0-9a-fA-F]*");
 }

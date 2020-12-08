@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha.java;
 import iroha.protocol.QryResponses.AccountAssetResponse;
 import iroha.protocol.QryResponses.AccountDetailResponse;
 import iroha.protocol.QryResponses.AccountResponse;
+import iroha.protocol.QryResponses.EngineReceiptsResponse;
 import iroha.protocol.QryResponses.AssetResponse;
 import iroha.protocol.QryResponses.BlockResponse;
 import iroha.protocol.QryResponses.ErrorResponse;
@@ -17,6 +18,8 @@ import java.security.KeyPair;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.debug.Account;
 import lombok.Getter;
 import lombok.NonNull;
@@ -32,16 +35,35 @@ public class QueryAPI {
   @NonNull
   private KeyPair keyPair;
 
+  // default signature builder
+  private SignatureBuilder signatureBuilder;
+
   public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair) {
     this.api = api;
     this.accountId = accountId;
     this.keyPair = keyPair;
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
+  }
+
+  public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair, SignatureBuilder signatureBuilder) {
+    this.api = api;
+    this.accountId = accountId;
+    this.keyPair = keyPair;
+    this.signatureBuilder = signatureBuilder;
   }
 
   public QueryAPI(IrohaAPI api, Account account) {
     this.api = api;
     this.accountId = account.getId();
     this.keyPair = account.getKeyPair();
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
+  }
+
+  public QueryAPI(IrohaAPI api, Account account, SignatureBuilder signatureBuilder) {
+    this.api = api;
+    this.accountId = account.getId();
+    this.keyPair = account.getKeyPair();
+    this.signatureBuilder = signatureBuilder;
   }
 
   private static AtomicInteger counter = new AtomicInteger(1);
@@ -53,8 +75,20 @@ public class QueryAPI {
     }
   }
 
+  public EngineReceiptsResponse getEngineReceipts(String txHash) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+            .getEngineReceipts(txHash)
+            .buildSigned(keyPair);
+
+    val res = api.query(q);
+
+    checkErrorResponse(res);
+
+    return res.getEngineReceiptsResponse();
+  }
+
   public PeersResponse getPeers() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getPeers()
         .buildSigned(keyPair);
 
@@ -76,7 +110,7 @@ public class QueryAPI {
       String writer,
       String key
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAccountDetail(accountId, writer, key)
         .buildSigned(keyPair);
 
@@ -97,7 +131,7 @@ public class QueryAPI {
       String accountDetailRecordIdWriter,
       String accountDetailRecordIdKey
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAccountDetail(
             accountId,
             writer,
@@ -125,7 +159,7 @@ public class QueryAPI {
   }
 
   public AccountResponse getAccount(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAccount(accountId)
         .buildSigned(keyPair);
 
@@ -137,7 +171,7 @@ public class QueryAPI {
   }
 
   public BlockResponse getBlock(Long height) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getBlock(height)
         .buildSigned(keyPair);
 
@@ -148,10 +182,12 @@ public class QueryAPI {
     return res.getBlockResponse();
   }
 
-  public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize,
-      String firstHashHex) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountTransactions(accountId, pageSize, firstHashHex)
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         String firstHashHex,
+                                                         QueryBuilder.Ordering ordering) {
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+        .getAccountTransactions(accountId, pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -159,16 +195,32 @@ public class QueryAPI {
     checkErrorResponse(res);
 
     return res.getTransactionsPageResponse();
+  }
+
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         String firstHashHex) {
+    return getAccountTransactions(accountId, pageSize, firstHashHex, null);
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId, Integer pageSize) {
-    return getAccountTransactions(accountId, pageSize, null);
+    return getAccountTransactions(accountId, pageSize, null, null);
   }
 
-  public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize, String firstHashHex) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex)
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         QueryBuilder.Ordering ordering) {
+    return getAccountTransactions(accountId, pageSize, null, ordering);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              String firstHashHex,
+                                                              QueryBuilder.Ordering ordering) {
+
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -178,9 +230,24 @@ public class QueryAPI {
     return res.getTransactionsPageResponse();
   }
 
-  public TransactionsPageResponse getAccountAssetTransactions(String accountId, String assetId,
-      Integer pageSize) {
-    return getAccountAssetTransactions(accountId, assetId, pageSize, null);
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              String firstHashHex) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, null);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, null, null);
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              QueryBuilder.Ordering ordering) {
+    return getAccountAssetTransactions(accountId, assetId, pageSize, null, ordering);
   }
 
   public TransactionsResponse getTransactions(List<byte[]> hashes) {
@@ -192,7 +259,7 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getTransactions(Iterable<String> hashes) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getTransactions(hashes)
         .buildSigned(keyPair);
 
@@ -204,7 +271,7 @@ public class QueryAPI {
   }
 
   public AssetResponse getAssetInfo(String assetId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAssetInfo(assetId)
         .buildSigned(keyPair);
 
@@ -222,7 +289,7 @@ public class QueryAPI {
    */
   @Deprecated
   public AccountAssetResponse getAccountAssets(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAccountAssets(accountId)
         .buildSigned(keyPair);
 
@@ -238,7 +305,7 @@ public class QueryAPI {
       Integer pageSize,
       String firstAssetId
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getAccountAssets(accountId, pageSize, firstAssetId)
         .buildSigned(keyPair);
 
@@ -257,7 +324,7 @@ public class QueryAPI {
   }
 
   public SignatoriesResponse getSignatories(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getSignatories(accountId)
         .buildSigned(keyPair);
 
@@ -275,7 +342,7 @@ public class QueryAPI {
    */
   @Deprecated
   public TransactionsResponse getPendingTransactions() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getPendingTransactions()
         .buildSigned(keyPair);
 
@@ -287,11 +354,12 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getPendingTransactions(
-      Integer pageSize,
-      String firstHashHex
+          Integer pageSize,
+          String firstHashHex,
+          QueryBuilder.Ordering ordering
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
-        .getPendingTransactions(pageSize, firstHashHex)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+        .getPendingTransactions(pageSize, firstHashHex, ordering)
         .buildSigned(keyPair);
 
     val res = api.query(q);
@@ -302,13 +370,27 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getPendingTransactions(
+          Integer pageSize,
+          String firstHashHex
+  ) {
+    return getPendingTransactions(pageSize, firstHashHex, null);
+  }
+
+  public TransactionsResponse getPendingTransactions(
       Integer pageSize
   ) {
-    return getPendingTransactions(pageSize, null);
+    return getPendingTransactions(pageSize, null, null);
+  }
+
+  public TransactionsResponse getPendingTransactions(
+          Integer pageSize,
+          QueryBuilder.Ordering ordering
+  ) {
+    return getPendingTransactions(pageSize, null, ordering);
   }
 
   public RolesResponse getRoles() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getRoles()
         .buildSigned(keyPair);
 
@@ -320,7 +402,7 @@ public class QueryAPI {
   }
 
   public RolePermissionsResponse getRolePermissions(String roleId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement())
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
         .getRolePermissions(roleId)
         .buildSigned(keyPair);
 

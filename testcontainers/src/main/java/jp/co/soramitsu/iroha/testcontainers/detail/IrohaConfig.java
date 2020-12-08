@@ -30,6 +30,9 @@ public class IrohaConfig implements Cloneable {
   private int torii_port = 50051;
 
   @Builder.Default
+  private ToriiTlsConfig torii_tls_params = null;
+
+  @Builder.Default
   private int internal_port = 10001;
 
   @Builder.Default

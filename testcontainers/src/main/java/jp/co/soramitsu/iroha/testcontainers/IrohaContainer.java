@@ -4,11 +4,13 @@ import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.time.Duration;
 import jp.co.soramitsu.iroha.java.IrohaAPI;
 import jp.co.soramitsu.iroha.testcontainers.detail.LoggerConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.PostgresConfig;
+import jp.co.soramitsu.iroha.testcontainers.detail.ToriiTlsConfig;
 import jp.co.soramitsu.iroha.testcontainers.detail.Verbosity;
 import lombok.*;
 import org.slf4j.Logger;
@@ -30,7 +32,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   public static final String defaultPostgresAlias = "iroha.postgres";
   public static final String defaultIrohaAlias = "iroha";
   public static final String irohaWorkdir = "/opt/iroha_data";
-  public static final String defaultIrohaDockerImage = "warchantua/iroha:1.1.0";
+  public static final String defaultIrohaDockerImage = "hyperledger/iroha:1.2.0";
   public static final String defaultPostgresDockerImage = "postgres:11-alpine";
 
   // env vars
@@ -48,6 +50,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   private Logger logger = LoggerFactory.getLogger(IrohaContainer.class);
 
   private Integer fixedIrohaPort;
+  private Integer fixedIrohaTlsPort;
 
   // use default config
   @Getter
@@ -62,7 +65,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
 
   /**
    * Finalizes current configuration.
-   *
+   * <p>
    * Useful for debugging.
    */
   public IrohaContainer configure() {
@@ -94,16 +97,28 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
         .withEnv(VERBOSITY, verbosity)
         .withNetwork(network)
         .withExposedPorts(conf.getIrohaConfig().getTorii_port())
-        .withCopyFileToContainer(MountableFile.forHostPath(conf.getDir().getAbsolutePath()), irohaWorkdir)
+        .withCopyFileToContainer(MountableFile.forHostPath(conf.getDir().getAbsolutePath()),
+            irohaWorkdir)
         .waitingFor(
             Wait.forLogMessage(".*iroha initialized.*\\s", 1)
                 .withStartupTimeout(Duration.ofSeconds(60))
         )
         .withNetworkAliases(irohaAlias);
 
+    ToriiTlsConfig toriiTlsConfig = conf.getIrohaConfig().getTorii_tls_params();
+
+    if (nonNull(toriiTlsConfig)) {
+      irohaDockerContainer.withExposedPorts(toriiTlsConfig.getPort());
+      if (nonNull(fixedIrohaTlsPort)) {
+        irohaDockerContainer
+            .withFixedExposedPort(fixedIrohaTlsPort, toriiTlsConfig.getPort());
+      }
+    }
+
     // init fixed Iroha port
     if (nonNull(fixedIrohaPort)) {
-      irohaDockerContainer.withFixedExposedPort(fixedIrohaPort, conf.getIrohaConfig().getTorii_port());
+      irohaDockerContainer
+          .withFixedExposedPort(fixedIrohaPort, conf.getIrohaConfig().getTorii_port());
     }
 
     // init logger
@@ -190,6 +205,14 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
     return this;
   }
 
+  public IrohaContainer withFixedTlsPort(int fixedIrohaTlsPort) {
+    if (fixedIrohaTlsPort < 0 || fixedIrohaTlsPort > 65535) {
+      throw new IllegalArgumentException("Invalid port " + fixedIrohaTlsPort);
+    }
+    this.fixedIrohaTlsPort = fixedIrohaTlsPort;
+    return this;
+  }
+
   /**
    * Start peer. Method is synchronous -- it is safe to start peer and then access API.
    */
@@ -229,6 +252,22 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   }
 
   /**
+   * Returns a URI for API of current peer over TLS.
+   * @return
+   */
+  @SneakyThrows
+  public URI getToriiTlsAddress() {
+    String host = irohaDockerContainer.getContainerIpAddress();
+    ToriiTlsConfig toriiParams = conf.getIrohaConfig().getTorii_tls_params();
+    if (toriiParams != null) {
+      int port = irohaDockerContainer.getMappedPort(toriiParams.getPort());
+      return new URI("grpc", null, host, port, null, null, null);
+    }
+
+    return null;
+  }
+
+  /**
    * Returns directory on host filesystem, where peer configuration is stored.
    */
   public File getHostConfigDir() {
@@ -240,6 +279,13 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
    */
   public IrohaAPI getApi() {
     return new IrohaAPI(getToriiAddress());
+  }
+
+  /**
+   * Returns secure (using TLS) async wrapper over iroha api.
+   */
+  public IrohaAPI getSecureApi() {
+    return new IrohaAPI(getToriiTlsAddress(), conf.getDir() + "/server.crt");
   }
 
 }

@@ -3,12 +3,16 @@ package jp.co.soramitsu.iroha.java;
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 
 import iroha.protocol.Primitive.AccountDetailRecordId;
+import iroha.protocol.Queries;
+import iroha.protocol.Queries.Field;
+import iroha.protocol.Queries.Direction;
 import iroha.protocol.Queries.AccountDetailPaginationMeta;
 import iroha.protocol.Queries.AssetPaginationMeta;
 import iroha.protocol.Queries.GetAccount;
 import iroha.protocol.Queries.GetAccountAssetTransactions;
 import iroha.protocol.Queries.GetAccountAssets;
 import iroha.protocol.Queries.GetAccountDetail;
+import iroha.protocol.Queries.GetEngineReceipts;
 import iroha.protocol.Queries.GetAccountTransactions;
 import iroha.protocol.Queries.GetAssetInfo;
 import iroha.protocol.Queries.GetBlock;
@@ -21,22 +25,63 @@ import iroha.protocol.Queries.GetTransactions;
 import iroha.protocol.Queries.QueryPayloadMeta;
 import iroha.protocol.Queries.TxPaginationMeta;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
+import lombok.Value;
 import lombok.val;
 
 public class QueryBuilder {
+
+  public class Ordering {
+
+    List<Sequence> fieldOrdering = new ArrayList<>();
+
+    @Value
+    class Sequence {
+      public Sequence(Field field, Direction direction) {
+        this.field = field;
+        this.direction = direction;
+      }
+
+      Field field;
+      Direction direction;
+    }
+
+    void addFieldOrdering(Field field, Direction direction) {
+      addFieldOrdering(new Sequence(field, direction));
+    }
+
+    void addFieldOrdering(Sequence sequence) {
+      fieldOrdering.add(sequence);
+    }
+
+    Queries.Ordering.Builder toBuilder() {
+      Queries.Ordering.Builder builder = Queries.Ordering.newBuilder();
+      fieldOrdering.forEach(i -> {
+           builder.addSequence(Queries.Ordering.FieldOrdering.newBuilder()
+               .setField(i.getField())
+               .setDirection(i.getDirection()));
+           });
+      return builder;
+    }
+  }
+
+  private SignatureBuilder signatureBuilder;
 
   private FieldValidator validator;
 
   private QueryPayloadMeta.Builder meta = QueryPayloadMeta.newBuilder();
 
   private Query newQuery() {
-    return new Query(meta);
+    return new Query(meta, signatureBuilder);
   }
 
-  private void init(String accountId, Long time, long counter) {
+  private void init(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
+    this.signatureBuilder = signatureBuilder;
     setCreatorAccountId(accountId);
     setCreatedTime(time);
     setCounter(counter);
@@ -45,15 +90,27 @@ public class QueryBuilder {
   }
 
   public QueryBuilder(String accountId, Instant time, long counter) {
-    init(accountId, time.toEpochMilli(), counter);
+    init(accountId, time.toEpochMilli(), counter, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public QueryBuilder(String accountId, Date time, long counter) {
-    init(accountId, time.getTime(), counter);
+    init(accountId, time.getTime(), counter, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public QueryBuilder(String accountId, Long time, long counter) {
-    init(accountId, time, counter);
+    init(accountId, time, counter, Ed25519Sha3SignatureBuilder.getInstance());
+  }
+
+  public QueryBuilder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time.toEpochMilli(), counter, signatureBuilder);
+  }
+
+  public QueryBuilder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time.getTime(), counter, signatureBuilder);
+  }
+
+  public QueryBuilder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
+    init(accountId, time, counter, signatureBuilder);
   }
 
   public QueryBuilder enableValidation() {
@@ -97,6 +154,18 @@ public class QueryBuilder {
     return this;
   }
 
+  public Query getEngineReceipts(String txHash) {
+    Query query = newQuery();
+
+    query.getProto().setGetEngineReceipts(
+        GetEngineReceipts.newBuilder()
+            .setTxHash(txHash)
+            .build()
+    );
+
+    return query;
+  }
+
   public Query getPeers() {
     Query query = newQuery();
 
@@ -112,7 +181,8 @@ public class QueryBuilder {
       String accountId,
       String assetId,
       Integer pageSize,
-      String firstHashHex
+      String firstHashHex,
+      Ordering ordering
   ) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
@@ -127,7 +197,7 @@ public class QueryBuilder {
             .setAccountId(accountId)
             .setAssetId(assetId)
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering)
             )
             .build()
     );
@@ -413,14 +483,15 @@ public class QueryBuilder {
 
   public Query getPendingTransactions(
       Integer pageSize,
-      String firstHashHex
+      String firstHashHex,
+      Ordering ordering
   ) {
     Query query = newQuery();
 
     query.getProto().setGetPendingTransactions(
         GetPendingTransactions.newBuilder()
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering)
             )
             .build()
     );
@@ -428,7 +499,7 @@ public class QueryBuilder {
     return query;
   }
 
-  public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex) {
+  public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex, Ordering ordering) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
     }
@@ -439,7 +510,7 @@ public class QueryBuilder {
         GetAccountTransactions.newBuilder()
             .setAccountId(accountId)
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering)
             )
             .build()
     );
@@ -447,7 +518,7 @@ public class QueryBuilder {
     return query;
   }
 
-  private TxPaginationMeta getTxPaginationMeta(Integer pageSize, String firstHashHex) {
+  private TxPaginationMeta getTxPaginationMeta(Integer pageSize, String firstHashHex, Ordering ordering) {
     if (nonNull(this.validator)) {
       this.validator.checkPageSize(pageSize);
       if (firstHashHex != null) {
@@ -459,6 +530,10 @@ public class QueryBuilder {
         .setPageSize(pageSize);
     if (firstHashHex != null) {
       paginationMetaBuilder.setFirstTxHash(firstHashHex);
+    }
+
+    if (ordering != null) {
+      paginationMetaBuilder.setOrdering(ordering.toBuilder());
     }
 
     return paginationMetaBuilder.build();

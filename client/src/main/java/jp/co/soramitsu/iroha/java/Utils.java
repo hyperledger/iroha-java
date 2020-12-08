@@ -8,19 +8,13 @@ import iroha.protocol.BlockOuterClass.Block;
 import iroha.protocol.BlockOuterClass.Block_v1;
 import iroha.protocol.Endpoint.TxList;
 import iroha.protocol.Endpoint.TxStatusRequest;
-import iroha.protocol.Primitive;
-import iroha.protocol.Primitive.Signature;
 import iroha.protocol.Queries;
 import iroha.protocol.TransactionOuterClass;
 import iroha.protocol.TransactionOuterClass.Transaction.Payload.BatchMeta.BatchType;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.DatatypeConverter;
-import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3;
-import jp.co.soramitsu.iroha.java.detail.Hashable;
 import lombok.val;
 import org.spongycastle.jcajce.provider.digest.SHA3;
 
@@ -146,20 +140,6 @@ public class Utils {
     val sha3 = new SHA3.Digest256();
     val data = q.getPayload().toByteArray();
     return sha3.digest(data);
-  }
-
-  /* default */
-  static <T extends Hashable> Primitive.Signature sign(T t, KeyPair kp) {
-    byte[] rawSignature = new Ed25519Sha3().rawSign(t.hash(), kp);
-
-    return Signature.newBuilder()
-        .setSignature(
-            Utils.toHex(rawSignature)
-        )
-        .setPublicKey(
-            Utils.toHex(kp.getPublic().getEncoded())
-        )
-        .build();
   }
 
   /**

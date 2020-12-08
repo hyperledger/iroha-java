@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha.java;
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 import static jp.co.soramitsu.iroha.java.detail.Const.accountIdDelimiter;
 
+import iroha.protocol.Commands;
 import iroha.protocol.Commands.AddAssetQuantity;
 import iroha.protocol.Commands.AddPeer;
 import iroha.protocol.Commands.AddSignatory;
@@ -28,21 +29,25 @@ import iroha.protocol.Primitive.RolePermission;
 import iroha.protocol.TransactionOuterClass;
 import iroha.protocol.TransactionOuterClass.Transaction.Payload.BatchMeta.BatchType;
 import java.math.BigDecimal;
-import java.security.KeyPair;
-import java.security.PublicKey;
+import java.security.*;
 import java.time.Instant;
 import java.util.Date;
 import javax.xml.bind.DatatypeConverter;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3.CryptoException;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.detail.BuildableAndSignable;
 import lombok.val;
 
 public class TransactionBuilder {
 
+  // Ed25519/Sha3 is default signature
+  private SignatureBuilder signatureBuilder;
   private FieldValidator validator;
   private Transaction tx;
 
-  private void init(String accountId, Long time) {
+  private void init(String accountId, Long time, SignatureBuilder signatureBuilder) {
+    this.signatureBuilder = signatureBuilder;
     tx = new Transaction();
     if (nonNull(accountId)) {
       setCreatorAccountId(accountId);
@@ -62,18 +67,32 @@ public class TransactionBuilder {
    * block they can be null.
    */
   public TransactionBuilder(String accountId, Instant time) {
-    init(accountId, time.toEpochMilli());
+    init(accountId, time.toEpochMilli(), Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public TransactionBuilder(String accountId, Date time) {
-    init(accountId, time.getTime());
+    init(accountId, time.getTime(), Ed25519Sha3SignatureBuilder.getInstance());
   }
 
   public TransactionBuilder(String accountId, Long time) {
-    init(accountId, time);
+    init(accountId, time, Ed25519Sha3SignatureBuilder.getInstance());
   }
 
-  /* default */ TransactionBuilder(Transaction transaction) {
+  public TransactionBuilder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
+    init(accountId, time.toEpochMilli(), signatureBuilder);
+  }
+
+  public TransactionBuilder(String accountId, Date time, SignatureBuilder signatureBuilder) {
+    init(accountId, time.getTime(), signatureBuilder);
+  }
+
+  public TransactionBuilder(String accountId, Long time, SignatureBuilder signatureBuilder) {
+    init(accountId, time, signatureBuilder);
+  }
+
+  /* default */
+  TransactionBuilder(Transaction transaction) {
+    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
     tx = transaction;
   }
 
@@ -117,14 +136,65 @@ public class TransactionBuilder {
     return this;
   }
 
+  /**
+   * Set setting value command should be used to set initialization values in genesis block only.
+   * @param key - parameter key
+   * @param value - perameter value
+   * @return Transaction builder with setSettingValue transaction
+   */
+  public TransactionBuilder setSettingValue(String key, String value) {
+    tx.reducedPayload.addCommands(
+        Command.newBuilder()
+            .setSetSettingValue(
+                Commands.SetSettingValue
+                    .newBuilder()
+                    .setKey(key)
+                    .setValue(value)
+                    .build()
+            ).build()
+    );
+
+    return this;
+  }
+
+  public TransactionBuilder callEngine(String caller, String optCallee, String input) {
+    if (nonNull(validator)) {
+      validator.checkAccountId(caller);
+      validator.checkHexString(input);
+    }
+
+    val b = Commands.CallEngine
+            .newBuilder()
+            .setCaller(caller)
+            .setInput(input);
+
+    if (nonNull(optCallee)) {
+      if (nonNull(validator)) {
+        validator.checkEvmAddress(optCallee);
+      }
+      b.setCallee(optCallee);
+    }
+
+
+    tx.reducedPayload.addCommands(
+        Command.newBuilder()
+            .setCallEngine(
+                b.build()
+            )
+            .build()
+    );
+
+    return this;
+  }
+
   public TransactionBuilder createAccount(
-      String accountName,
-      String domainid,
-      byte[] publicKey
+    String accountName,
+    String domainId,
+    String publicKey
   ) {
     if (nonNull(this.validator)) {
       this.validator.checkAccount(accountName);
-      this.validator.checkDomain(domainid);
+      this.validator.checkDomain(domainId);
       this.validator.checkPublicKey(publicKey);
     }
 
@@ -133,12 +203,38 @@ public class TransactionBuilder {
             .setCreateAccount(
                 CreateAccount.newBuilder()
                     .setAccountName(accountName)
-                    .setDomainId(domainid)
-                    .setPublicKey(Utils.toHex(publicKey)).build()
+                    .setDomainId(domainId)
+                    .setPublicKey(publicKey)
+                    .build()
             ).build()
     );
 
     return this;
+  }
+
+  public TransactionBuilder createAccount(
+      String accountName,
+      String domainId,
+      byte[] publicKey
+  ) {
+    return createAccount(accountName, domainId, Utils.toHex(publicKey));
+  }
+
+  public TransactionBuilder createAccount(
+      String accountId,
+      byte[] publicKey
+  ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkAccountId(accountId);
+    }
+
+    val t = accountId.split(accountIdDelimiter);
+
+    return createAccount(
+        t[0],
+        t[1],
+        publicKey
+    );
   }
 
   public TransactionBuilder createAccount(
@@ -166,7 +262,7 @@ public class TransactionBuilder {
     return createAccount(
         t[0],
         t[1],
-        publicKey.getEncoded()
+        publicKey
     );
   }
 
@@ -609,29 +705,60 @@ public class TransactionBuilder {
     return this;
   }
 
+  /**
+   * An old version of compareAndSet. Use new one instead
+   * Compares the old value before setting the new one
+   * @param accountId - to set value in details
+   * @param key - key
+   * @param value - value to set
+   * @param optOldValue - old value to check (optional)
+   */
+  @Deprecated
+  public TransactionBuilder compareAndSetAccountDetail(
+          String accountId,
+          String key,
+          String value,
+          String optOldValue
+  ) {
+    return compareAndSetAccountDetail(accountId, key, value, optOldValue, false);
+  }
+
+  /**
+   * Compares the old value before setting the new one
+   * @param accountId - to set value in details
+   * @param key - key
+   * @param value - value to set
+   * @param optOldValue - old value to check (optional)
+   * @param optCheckEmpty - if true, empty old_value in command must match absent value in WSV;
+   *                        if false, any old_value in command matches absent in WSV (legacy)
+   */
   public TransactionBuilder compareAndSetAccountDetail(
       String accountId,
       String key,
       String value,
-      String opt_old_value
+      String optOldValue,
+      Boolean optCheckEmpty
   ) {
-    val b = CompareAndSetAccountDetail.newBuilder();
-
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
       this.validator.checkAccountDetailsKey(key);
       this.validator.checkAccountDetailsValue(value);
     }
-
-    b.setAccountId(accountId)
+    val b = CompareAndSetAccountDetail
+        .newBuilder()
+        .setAccountId(accountId)
         .setKey(key)
         .setValue(value);
 
-    if (nonNull(opt_old_value)) {
+    if (nonNull(optOldValue)) {
       if (nonNull(this.validator)) {
-        this.validator.checkAccountDetailsValue(opt_old_value);
+        this.validator.checkAccountDetailsValue(optOldValue);
       }
-      b.setOldValue(opt_old_value);
+      b.setOldValue(optOldValue);
+    }
+
+    if (nonNull(optCheckEmpty)) {
+      b.setCheckEmpty(optCheckEmpty);
     }
 
     tx.reducedPayload.addCommands(
@@ -649,9 +776,8 @@ public class TransactionBuilder {
     return setBatchMeta(batchType, Utils.getBatchHashesHex(transactions));
   }
 
-  public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair)
-      throws CryptoException {
-    return tx.sign(keyPair);
+  public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair) throws CryptoException {
+    return tx.sign(keyPair, signatureBuilder);
   }
 
   public Transaction build() {

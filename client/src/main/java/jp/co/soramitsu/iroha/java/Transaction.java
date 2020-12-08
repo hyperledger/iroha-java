@@ -8,6 +8,8 @@ import iroha.protocol.TransactionOuterClass.Transaction.Payload.ReducedPayload;
 import java.security.KeyPair;
 import java.time.Instant;
 import java.util.Date;
+import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
+import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.detail.BuildableAndSignable;
 import jp.co.soramitsu.iroha.java.detail.Hashable;
 import jp.co.soramitsu.iroha.java.detail.ReducedHashable;
@@ -51,10 +53,22 @@ public class Transaction
     this.batchMeta = BatchMeta.newBuilder(tx.getPayload().getBatch());
   }
 
+  /**
+   * An old version of transaction sign. Uses Iroha builtin Ed25519/Sha3 signature implicitly. Prefer explicit version
+   * sign(KeyPair keyPair, SignatureBuilder signatureBuilder)
+   */
+  @Deprecated
   @Override
   public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair) {
     updatePayload();
-    tx.addSignatures(Utils.sign(this, keyPair));
+    tx.addSignatures(Ed25519Sha3SignatureBuilder.getInstance().sign(this, keyPair));
+    return this;
+  }
+
+  @Override
+  public BuildableAndSignable<TransactionOuterClass.Transaction> sign(KeyPair keyPair, SignatureBuilder signatureBuilder) {
+    updatePayload();
+    tx.addSignatures(signatureBuilder.sign(this, keyPair));
     return this;
   }
 
@@ -102,5 +116,21 @@ public class Transaction
 
   public static TransactionBuilder builder(String accountId) {
     return builder(accountId, System.currentTimeMillis());
+  }
+
+  public static TransactionBuilder builder(String accountId, Long date, SignatureBuilder signatureBuilder) {
+    return new TransactionBuilder(accountId, date, signatureBuilder);
+  }
+
+  public static TransactionBuilder builder(String accountId, Date date, SignatureBuilder signatureBuilder) {
+    return new TransactionBuilder(accountId, date, signatureBuilder);
+  }
+
+  public static TransactionBuilder builder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
+    return new TransactionBuilder(accountId, time, signatureBuilder);
+  }
+
+  public static TransactionBuilder builder(String accountId, SignatureBuilder signatureBuilder) {
+    return builder(accountId, System.currentTimeMillis(), signatureBuilder);
   }
 }

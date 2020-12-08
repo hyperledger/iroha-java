@@ -33,6 +33,9 @@ class FieldValidatorTest extends Specification {
         fv.checkRoleName(role)
         fv.checkTimestamp(time)
         fv.checkDescription(description)
+        fv.checkEvmAddress(evmAddress)
+        fv.checkHexString(hexString)
+        fv.checkHexString(emptyHexString)
 
         then:
         noExceptionThrown()
@@ -51,6 +54,9 @@ class FieldValidatorTest extends Specification {
         publicKey = new Ed25519Sha3().generateKeypair().getPublic().getEncoded()
         time = Instant.now().toEpochMilli()
         description = "description"
+        evmAddress = "7C370993FD90AF204FD582004E2E54E6A94F2651"
+        hexString = "DEADface"
+        emptyHexString = ""
     }
 
     def "invalid account is invalid"() {
@@ -70,6 +76,12 @@ class FieldValidatorTest extends Specification {
                 break
             case AMOUNT:
                 fv.checkAmount(string as String)
+                break
+            case EVM_ADDRESS:
+                fv.checkEvmAddress(string as String)
+                break
+            case HEX_STRING:
+                fv.checkHexString(string as String)
                 break
             case PUBKEY:
                 fv.checkPublicKey(string as byte[])
@@ -124,6 +136,10 @@ class FieldValidatorTest extends Specification {
         AMOUNT        | "hello.123"  // number format exception
         AMOUNT        | BigDecimal.TEN.setScale(300).toString() // does not fit in uint256
         AMOUNT        | BigDecimal.ONE.negate().toString() // negative
+        EVM_ADDRESS   | "7C370993FD90AF204" // too short
+        EVM_ADDRESS   | "7C370993FD90AF204FD582004E2E54E6A94F26517C370993FD90AF204FD582004E2E54E6A94F2651" // too long
+        EVM_ADDRESS   | "wrong symbols" // wrong symbols
+        HEX_STRING    | "wrong symbols" // wrong symbols
         PUBKEY        | [1, 2, 3] as byte[] // wrong size
         PEER_ADDRESS  | "127.0.0.1" // no port
         PEER_ADDRESS  | "127.0.0.1:100a" // wrong port
