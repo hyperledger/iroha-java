@@ -156,7 +156,7 @@ public class FieldValidator {
 
   public void checkPublicKey(@NonNull byte[] peerKey) {
     if (peerKey.length != 32 && peerKey.length != 35) {
-      throw new ValidationException(PUBKEY, "Public key must be 32 or 44 bytes length, got '%d'",
+      throw new ValidationException(PUBKEY, "Public key must be 32 or 35 bytes length, got '%d'",
           peerKey.length);
     }
   }

@@ -38,7 +38,6 @@ import jp.co.soramitsu.iroha.java.crypto.Ed25519Sha3SignatureBuilder;
 import jp.co.soramitsu.iroha.java.crypto.SignatureBuilder;
 import jp.co.soramitsu.iroha.java.detail.BuildableAndSignable;
 import lombok.val;
-import static jp.co.soramitsu.iroha.java.ValidationException.Type.NOT_ALLOWED;
 
 public class TransactionBuilder {
 

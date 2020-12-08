@@ -38,6 +38,8 @@ public class QueryBuilder {
 
   public class Ordering {
 
+    List<Sequence> fieldOrdering = new ArrayList<>();
+
     @Value
     class Sequence {
       public Sequence(Field field, Direction direction) {
@@ -66,8 +68,6 @@ public class QueryBuilder {
            });
       return builder;
     }
-
-    List<Sequence> fieldOrdering = new ArrayList<>();
   }
 
   private SignatureBuilder signatureBuilder;

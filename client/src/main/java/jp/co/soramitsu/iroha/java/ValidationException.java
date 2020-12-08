@@ -34,7 +34,6 @@ public class ValidationException extends IllegalArgumentException {
     TIMESTAMP,
     DESCRIPTION,
     PAGE_SIZE,
-    HASH_LENGTH,
-    NOT_ALLOWED
+    HASH_LENGTH
   }
 }
