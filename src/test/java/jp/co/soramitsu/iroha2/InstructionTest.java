@@ -28,7 +28,9 @@ import jp.co.soramitsu.iroha2.model.instruction.Transfer;
 import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+@Timeout(5)
 public class InstructionTest {
 
   // root account keys:

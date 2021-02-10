@@ -5,6 +5,7 @@ import java.net.http.WebSocket.Listener;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.json.reader.EventReader;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.Event;
@@ -87,7 +88,7 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
     return null;
   }
 
-  public CompletableFuture<TerminalStatus> getResult() {
+  public Future<TerminalStatus> getResult() {
     return result;
   }
 }
