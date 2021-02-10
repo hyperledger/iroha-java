@@ -37,7 +37,9 @@ import jp.co.soramitsu.iroha2.model.query.QueryResult;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
+@Timeout(5)
 public class QueryTest {
 
   // root account keys:
