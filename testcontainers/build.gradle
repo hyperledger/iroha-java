@@ -8,7 +8,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-final def testContainersVersion = '1.10.2'
+final def testContainersVersion = '1.15.1'
 final def lombokVersion = '1.18.4'
 final def jacksonVersion = '2.9.7'
 final def spockVersion = '1.2-groovy-2.4'
@@ -52,6 +52,7 @@ dependencies {
 
 sonarqube {
     properties {
-        property "sonar.projectKey", "hyperledger:iroha-java-testcontainers"
+        property "sonar.projectKey", "${project.group}:${rootProject.name}.${project.name}"
+        property "sonar.projectName", "${project.group}:${rootProject.name}.${project.name}"
     }
 }

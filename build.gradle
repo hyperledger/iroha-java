@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    group 'jp.co.soramitsu'
+    group 'hyperledger'
     version = "1.0"
 }
 
@@ -17,11 +17,8 @@ subprojects {
     sourceCompatibility = 1.8 // java 8
     targetCompatibility = 1.8
 
-    final def rootReportDir = "${buildDir}/reports/}"
-
     jacoco {
         toolVersion = "0.8.2"
-        reportsDir = file(rootReportDir)
     }
 
     jacocoTestReport {
@@ -29,10 +26,8 @@ subprojects {
 
         reports {
             xml.enabled true
-            xml.destination file("${rootReportDir}/coverage.xml")
             csv.enabled false
             html.enabled false
-            html.destination file("${rootReportDir}/html")
         }
 
         dependsOn(test)
@@ -43,6 +38,7 @@ subprojects {
             events "passed", "skipped", "failed"
             exceptionFormat "full"
         }
+        finalizedBy jacocoTestReport
     }
 }
 
