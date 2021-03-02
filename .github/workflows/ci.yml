@@ -5,12 +5,6 @@ on:
 
 env:
   BUILD_DIR: client/build
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  CACHE_VERSION: v01
-  CACHE_PATHS: |
-    ~/.gradle/caches
-    ~/.gradle/wrapper
 jobs:
   Linux:
     strategy:
@@ -20,7 +14,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/cache@v2
         with:
-          path: ${{ env.CACHE_PATHS }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -42,6 +38,5 @@ jobs:
       - name: Sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SORABOT_GITHUB_TOKEN: ${{ secrets.SORABOT_GITHUB_TOKEN }}
           BRANCH_NAME: ${{ github.ref }}
-        run: if [[ -n $SONAR_TOKEN && -n $SORABOT_GITHUB_TOKEN ]]; then ./housekeeping/sonar.sh; else echo "Some secret undefined. Step passed..."; fi
+        run: if [[ -n $SONAR_TOKEN ]]; then ./housekeeping/sonar.sh; else echo "Some secret undefined. Step passed..."; fi

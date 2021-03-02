@@ -2,7 +2,6 @@
 
 BUILD_DIR="${BUILD_DIR:?BUILD_DIR variable is not defined}"
 GITHUB_REPOSITORY="${GITHUB_REPOSITORY:?GITHUB_REPOSITORY variable is not defined}"
-SORABOT_GITHUB_TOKEN="${SORABOT_GITHUB_TOKEN:?SORABOT_GITHUB_TOKEN variable is not defined}"
 SONAR_TOKEN="${SONAR_TOKEN:?SONAR_TOKEN variable is not defined}"
 BRANCH_NAME="${BRANCH_NAME:?BRANCH_NAME variable is not defined}"
 
@@ -25,5 +24,4 @@ fi
     -Dsonar.github.disableInlineComments=true \
     -Dsonar.github.repository="${GITHUB_REPOSITORY}" \
     -Dsonar.login=${SONAR_TOKEN} \
-    -Dsonar.branch.name=${BRANCH_NAME} \
-    -Dsonar.github.oauth=${SORABOT_GITHUB_TOKEN} ${sonar_option}
+    -Dsonar.branch.name=${BRANCH_NAME} ${sonar_option}
