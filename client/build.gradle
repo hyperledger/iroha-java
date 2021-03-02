@@ -49,7 +49,7 @@ apply from: 'proto.gradle'
 
 sonarqube {
     properties {
-        property "sonar.exclusions", "**/generated/*.java"
-        property "sonar.projectKey", "hyperledger:iroha-java-client"
+        property "sonar.projectKey", "${project.group}:${rootProject.name}.${project.name}"
+        property "sonar.projectName", "${project.group}:${rootProject.name}.${project.name}"
     }
 }

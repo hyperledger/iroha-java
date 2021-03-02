@@ -1,0 +1,42 @@
+name: iroha-java CI
+
+on:
+  push:
+
+env:
+  BUILD_DIR: client/build
+jobs:
+  Linux:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Build with Gradle
+        run: |
+          ./gradlew --daemon
+          ./gradlew build --parallel --build-cache
+          ./gradlew jacocoTestReport
+      - name: Cleanup Gradle Cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties
+      - name: Codecov
+        uses: codecov/codecov-action@v1.2.1        
+      - name: Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          BRANCH_NAME: ${{ github.ref }}
+        run: if [[ -n $SONAR_TOKEN ]]; then ./housekeeping/sonar.sh; else echo "Some secret undefined. Step passed..."; fi
