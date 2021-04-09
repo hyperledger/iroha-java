@@ -7,6 +7,9 @@ import lombok.NonNull;
 public class AssetDefinition implements IdentifiableBox {
 
   @NonNull
+  private AssetValueType valueType;
+
+  @NonNull
   private DefinitionId id;
 
   @Override
