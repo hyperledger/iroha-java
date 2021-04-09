@@ -11,6 +11,7 @@ import java.security.SignatureException;
 import jp.co.soramitsu.iroha2.model.PublicKey;
 import jp.co.soramitsu.iroha2.model.Signature;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
+import jp.co.soramitsu.iroha2.scale.writer.U128Writer;
 import jp.co.soramitsu.iroha2.scale.writer.query.QueryWriter;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
@@ -31,7 +32,7 @@ public class UnsignedQuery {
     ByteArrayOutputStream hashBuf = new ByteArrayOutputStream();
     ScaleCodecWriter hashCodec = new ScaleCodecWriter(hashBuf);
     hashCodec.write(new QueryWriter(), query.getQuery());
-    hashCodec.writeByteArray(query.getTimestamp().getBytes());
+    hashCodec.write(new U128Writer(), query.getTimestamp());
     Blake2b256 hash = new Blake2b256();
     byte[] checksum = hash.digest(hashBuf.toByteArray());
 

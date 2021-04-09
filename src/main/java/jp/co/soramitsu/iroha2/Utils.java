@@ -1,7 +1,10 @@
 package jp.co.soramitsu.iroha2;
 
+import java.math.BigInteger;
 import java.security.KeyPair;
 import javax.xml.bind.DatatypeConverter;
+
+import jp.co.soramitsu.iroha2.model.U128;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
@@ -31,6 +34,10 @@ public class Utils {
     byte[] actualPubkeyBytes = new byte[32];
     System.arraycopy(publicKeyBytes, 12, actualPubkeyBytes, 0, 32);
     return actualPubkeyBytes;
+  }
+
+  public static U128 currentTimestamp() {
+    return new U128(BigInteger.valueOf(System.currentTimeMillis()));
   }
 
 }

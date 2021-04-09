@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class MetadataWriter implements ScaleWriter<Metadata> {
 
-    private static final MapWriter<String, Value> MAP_WRITER = new MapWriter(new StringWriter(),
+    private static final MapWriter<String, Value> MAP_WRITER = new MapWriter<>(new StringWriter(),
             new ValueWriter());
 
     @Override

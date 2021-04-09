@@ -7,17 +7,18 @@ import jp.co.soramitsu.iroha2.model.query.FindAssetQuantityById;
 import jp.co.soramitsu.iroha2.model.query.Query;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
 
+import static jp.co.soramitsu.iroha2.Utils.currentTimestamp;
+
 public class QueryBuilder {
 
   private SignedQueryRequest query = new SignedQueryRequest();
 
   public QueryBuilder() {
-    long timestamp = System.currentTimeMillis();
-    query.setTimestamp(Long.toString(timestamp));
+    query.setTimestamp(currentTimestamp());
   }
 
   public QueryBuilder setTimestamp(long timestamp) {
-    query.setTimestamp(Long.toString(timestamp));
+    query.setTimestamp(currentTimestamp());
     return this;
   }
 

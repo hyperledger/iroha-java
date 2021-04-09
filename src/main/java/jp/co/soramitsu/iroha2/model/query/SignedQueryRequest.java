@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.model.query;
 
 import jp.co.soramitsu.iroha2.model.Signature;
+import jp.co.soramitsu.iroha2.model.U128;
 import lombok.Data;
 
 /**
@@ -9,7 +10,7 @@ import lombok.Data;
 @Data
 public class SignedQueryRequest {
 
-  private String timestamp;
+  private U128 timestamp;
   private Signature signature;
   private Query query;
 }
