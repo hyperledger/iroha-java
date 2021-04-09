@@ -13,10 +13,8 @@ import jp.co.soramitsu.iroha2.model.Id;
 import jp.co.soramitsu.iroha2.model.Identifiable;
 import jp.co.soramitsu.iroha2.model.Payload;
 import jp.co.soramitsu.iroha2.model.Raw;
-import jp.co.soramitsu.iroha2.model.U128;
 import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.Value;
-import jp.co.soramitsu.iroha2.model.ValueBox;
 import jp.co.soramitsu.iroha2.model.WorldId;
 import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
@@ -41,7 +39,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     return Assertions.assertDoesNotThrow(() -> {
       ByteArrayOutputStream encoded = new ByteArrayOutputStream();
       ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
-      codec.write(new PayloadWtriter(), payload);
+      codec.write(new PayloadWriter(), payload);
       return encoded.toByteArray();
     });
   }

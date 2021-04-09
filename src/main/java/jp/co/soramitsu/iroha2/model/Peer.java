@@ -11,6 +11,6 @@ public class Peer implements IdentifiableBox {
 
   @Override
   public int getIndex() {
-    return 4;
+    return 5;
   }
 }

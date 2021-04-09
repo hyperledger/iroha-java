@@ -4,6 +4,6 @@ public class World implements IdentifiableBox {
 
   @Override
   public int getIndex() {
-    return 5;
+    return 6;
   }
 }

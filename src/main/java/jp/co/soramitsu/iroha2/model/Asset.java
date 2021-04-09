@@ -33,6 +33,6 @@ public class Asset implements IdentifiableBox {
 
   @Override
   public int getIndex() {
-    return 1;
+    return 2;
   }
 }

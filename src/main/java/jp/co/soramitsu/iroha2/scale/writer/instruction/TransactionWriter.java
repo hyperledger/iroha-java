@@ -10,7 +10,7 @@ import jp.co.soramitsu.iroha2.scale.writer.SignatureWriter;
 
 public class TransactionWriter implements ScaleWriter<Transaction> {
 
-  private static final PayloadWtriter PAYLOAD_WRITER = new PayloadWtriter();
+  private static final PayloadWriter PAYLOAD_WRITER = new PayloadWriter();
   private static final ListWriter<Signature> SIGNATURES_WRITER = new ListWriter<>(
       new SignatureWriter());
 

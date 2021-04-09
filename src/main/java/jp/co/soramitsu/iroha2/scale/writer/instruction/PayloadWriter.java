@@ -3,15 +3,18 @@ package jp.co.soramitsu.iroha2.scale.writer.instruction;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.ListWriter;
+import jp.co.soramitsu.iroha2.model.Payload;
+import jp.co.soramitsu.iroha2.model.instruction.Instruction;
+import jp.co.soramitsu.iroha2.scale.writer.AccountIdWriter;
+import jp.co.soramitsu.iroha2.scale.writer.MetadataWriter;
+
 import java.io.IOException;
 import java.math.BigInteger;
-import jp.co.soramitsu.iroha2.model.instruction.Instruction;
-import jp.co.soramitsu.iroha2.model.Payload;
-import jp.co.soramitsu.iroha2.scale.writer.AccountIdWriter;
 
-public class PayloadWtriter implements ScaleWriter<Payload> {
+public class PayloadWriter implements ScaleWriter<Payload> {
 
   private static final AccountIdWriter ACCOUNT_ID_WRITER = new AccountIdWriter();
+  private static final MetadataWriter METADATA_WRITER = new MetadataWriter();
   private static final ListWriter<Instruction> INSTRUCTIONS_WRITER = new ListWriter<>(
       new InstructionWriter());
 
@@ -44,6 +47,7 @@ public class PayloadWtriter implements ScaleWriter<Payload> {
     writer.write(INSTRUCTIONS_WRITER, value.getInstructions());
     writer.write(new UInt64Writer(), value.getCreationTime());
     writer.write(new UInt64Writer(), value.getTimeToLiveMs());
+    writer.write(METADATA_WRITER, value.getMetadata());
   }
 
 }

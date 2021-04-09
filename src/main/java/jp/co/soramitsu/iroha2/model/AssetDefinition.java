@@ -14,6 +14,6 @@ public class AssetDefinition implements IdentifiableBox {
 
   @Override
   public int getIndex() {
-    return 2;
+    return 3;
   }
 }
