@@ -13,6 +13,5 @@ public class RegisterWriter implements ScaleWriter<Register> {
   @Override
   public void write(ScaleCodecWriter writer, Register value) throws IOException {
     writer.write(EXPRESSION_WRITER_WRITER, value.getObject());
-    writer.write(EXPRESSION_WRITER_WRITER, value.getDestinationId());
   }
 }

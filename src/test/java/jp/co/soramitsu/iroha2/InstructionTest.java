@@ -80,12 +80,11 @@ public class InstructionTest {
   @Test
   public void testRegister() {
     Expression object = new Raw(new Value(new Identifiable(new Domain("new test domain"))));
-    Expression destination = new Raw(new Value(new Id(new WorldId())));
 
-    Instruction register = new Register(object, destination);
+    Instruction register = new Register(object);
     assertInstructionCommitted(register);
 
-    Instruction unregister = new Unregister(object, destination);
+    Instruction unregister = new Unregister(object);
     assertInstructionCommitted(unregister);
   }
 

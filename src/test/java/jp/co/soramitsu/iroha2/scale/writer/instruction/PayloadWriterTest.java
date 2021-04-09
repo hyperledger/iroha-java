@@ -65,8 +65,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
 
     payload.setInstructions(List.of(register));
 
@@ -95,8 +94,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Unregister unregister = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Unregister unregister = new Unregister(new Raw(new Value(new Identifiable(domain))));
 
     payload.setInstructions(List.of(unregister));
 
@@ -239,8 +237,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
     Raw condition = new Raw(new Value(new Bool(true)));
     If ifInstruction = new If(condition, register);
 
@@ -275,10 +272,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Raw condition = new Raw(new Value(new Bool(true)));
     If ifInstruction = new If(condition, register, removeDomain);
 
@@ -313,10 +308,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Instruction instruction = new Pair(register, removeDomain);
 
     payload.setInstructions(List.of(instruction));
@@ -351,10 +344,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Instruction instruction = new Sequence(List.of(register, removeDomain));
 
     payload.setInstructions(List.of(instruction));

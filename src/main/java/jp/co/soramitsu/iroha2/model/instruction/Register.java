@@ -9,8 +9,6 @@ public class Register implements Instruction {
 
   @NonNull
   private Expression object; // EvaluatesTo<IdentifiableBox>
-  @NonNull
-  private Expression destinationId; // EvaluatesTo<IdBox>
 
   @Override
   public int getIndex() {

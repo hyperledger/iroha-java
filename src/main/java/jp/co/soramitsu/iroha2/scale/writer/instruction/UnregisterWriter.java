@@ -13,6 +13,5 @@ public class UnregisterWriter implements ScaleWriter<Unregister> {
   @Override
   public void write(ScaleCodecWriter writer, Unregister value) throws IOException {
     writer.write(EXPRESSION_WRITER_WRITER, value.getObject());
-    writer.write(EXPRESSION_WRITER_WRITER, value.getDestinationId());
   }
 }
