@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.model.AssetDefinition;
 public class AssetDefinitionReader implements ScaleReader<AssetDefinition> {
 
   private static final DefinitionIdReader DEFINITION_ID_READER = new DefinitionIdReader();
-  private static final AssetValueTypeReader ASSET_VALUE_TYPE_READER = new AssetValueTypeReader();
+  private static final AssetValueReader ASSET_VALUE_TYPE_READER = new AssetValueReader();
 
   @Override
   public AssetDefinition read(ScaleCodecReader reader) {
