@@ -370,4 +370,40 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
+  /**
+   * Compares scale serialization of mint command with generated in rust one:
+   * <pre>
+   * {@code
+   *     let account_id: AccountId = AccountId::new("root", "global");
+   *     let quantity: u32 = 100;
+   *     let mint_asset = MintBox::new(
+   *         Value::U32(quantity),
+   *         IdBox::AssetId(AssetId::new(
+   *             AssetDefinitionId::new("XOR", "Soramitsu"),
+   *             account_id.clone(),
+   *         )),
+   *     );
+   * }
+   * </pre>
+   */
+  @Test
+  public void testSetKeyValueInstruction() {
+    AccountId accountId = new AccountId("root", "global");
+    BigInteger creationTime = BigInteger.ONE;
+    BigInteger timeToLiveMs = BigInteger.ZERO;
+
+    Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
+
+    Raw expression = new Raw(new Value(new U32(100)));
+    DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
+    AssetId assetId = new AssetId(definitionId, accountId);
+    Raw expression_id = new Raw(new Value(new Id(assetId)));
+    Mint mint = new Mint(expression, expression_id);
+
+    payload.setInstructions(List.of(mint));
+
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 9, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 4, 97, 13, 2, 20, 118, 97, 108, 117, 101, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
+    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
+  }
+
 }
