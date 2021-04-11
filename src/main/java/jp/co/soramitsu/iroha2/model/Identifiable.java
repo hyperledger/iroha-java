@@ -11,6 +11,6 @@ public class Identifiable implements ValueBox {
 
   @Override
   public int getIndex() {
-    return 4;
+    return 5;
   }
 }

@@ -21,6 +21,8 @@ import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.bind.DatatypeConverter;
+
 /**
  * Tests SCALE serialization of Payload with all possible instructions.
  */
@@ -70,7 +72,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, List.of(register), creationTime, timeToLiveMs, new Metadata(new HashMap<>()));
 
     String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 201, 169, 148, 62, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
-//    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
+    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
 
@@ -172,7 +174,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(burn));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,3,9,0,100,0,0,0,9,3,1,12,88,79,82,36,83,111,114,97,109,105,116,115,117,16,114,111,111,116,24,103,108,111,98,97,108,14,42,35,63,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 3, 13, 0, 100, 0, 0, 0, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 14, 42, 35, 63, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -316,7 +318,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(instruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,6,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,1,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,71,137,186,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 6, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 1, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 71, 137, 186, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 

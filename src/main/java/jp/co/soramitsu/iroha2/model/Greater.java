@@ -16,6 +16,6 @@ public class Greater implements Expression {
 
   @Override
   public int getIndex() {
-    return 2;
+    return 6;
   }
 }

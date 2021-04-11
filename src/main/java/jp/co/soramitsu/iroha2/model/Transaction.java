@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.model.instruction;
+package jp.co.soramitsu.iroha2.model;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import java.io.ByteArrayOutputStream;

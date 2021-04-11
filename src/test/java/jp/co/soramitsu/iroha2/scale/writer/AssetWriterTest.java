@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests SCALE serialization of Account.
+ * Tests SCALE serialization of Asset.
  */
 public class AssetWriterTest extends ScaleWriterFixture {
 

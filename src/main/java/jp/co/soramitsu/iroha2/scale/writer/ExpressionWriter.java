@@ -5,25 +5,34 @@ import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
 import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.Expression;
+import jp.co.soramitsu.iroha2.scale.writer.expression.ContainsAnyWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.DivideWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.ModWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.RaiseToWriter;
 
 public class ExpressionWriter implements ScaleWriter<Expression> {
 
   private static final UnionWriter<Expression> EXPRESSION_WRITER = new UnionWriter<>(
       new AddWriter(), // 0 - Add
       new SubtractWriter(), // 1 - Subtract
-      new GreaterWriter(), // 2 - Greater
-      new LessWriter(), // 3 - Less
-      new EqualWriter(), // 4 - Equal
-      new NotWriter(), // 5 - Not
-      new AndWriter(), // 6 - And
-      new OrWriter(), // 7 - Or
-      new IfWriter(), // 8 - If
-      new RawWriter(), // 9 - Raw
-      new QueryWriter(), // 10 - Query
-      new ContainsWriter(), // 11 - Contains
-      new ContainsAllWriter(), // 12 - ContainsAll
-      new WhereWriter(), // 13 - Where
-      new ContextValueWriter() // 14 - ContextValue
+      new MultiplyWriter(), // 2 - Multiply
+      new DivideWriter(), // 3 - Divide
+      new ModWriter(), // 4 - Mod
+      new RaiseToWriter(), // 5 - RaiseTo
+      new GreaterWriter(), // 6 - Greater
+      new LessWriter(), // 7 - Less
+      new EqualWriter(), // 8 - Equal
+      new NotWriter(), // 9 - Not
+      new AndWriter(), // 10 - And
+      new OrWriter(), // 11 - Or
+      new IfWriter(), // 12 - If
+      new RawWriter(), // 13 - Raw
+      new QueryWriter(), // 14 - Query
+      new ContainsWriter(), // 15 - Contains
+      new ContainsAllWriter(), // 16 - ContainsAll
+      new ContainsAnyWriter(), // 17 - ContainsAny
+      new WhereWriter(), // 18 - Where
+      new ContextValueWriter() // 19 - ContextValue
   );
 
   @Override

@@ -21,6 +21,6 @@ public class If implements Expression {
 
   @Override
   public int getIndex() {
-    return 8;
+    return 12;
   }
 }

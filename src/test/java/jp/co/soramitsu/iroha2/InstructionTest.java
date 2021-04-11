@@ -11,10 +11,7 @@ import jp.co.soramitsu.iroha2.model.Domain;
 import jp.co.soramitsu.iroha2.model.Expression;
 import jp.co.soramitsu.iroha2.model.Id;
 import jp.co.soramitsu.iroha2.model.Identifiable;
-import jp.co.soramitsu.iroha2.model.IdentifiableBox;
 import jp.co.soramitsu.iroha2.model.Value;
-import jp.co.soramitsu.iroha2.model.WorldId;
-import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
 import jp.co.soramitsu.iroha2.model.instruction.If;
 import jp.co.soramitsu.iroha2.model.instruction.Instruction;
@@ -22,7 +19,7 @@ import jp.co.soramitsu.iroha2.model.instruction.Mint;
 import jp.co.soramitsu.iroha2.model.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Register;
 import jp.co.soramitsu.iroha2.model.instruction.Sequence;
-import jp.co.soramitsu.iroha2.model.instruction.Transaction;
+import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.instruction.Transfer;
 import jp.co.soramitsu.iroha2.model.instruction.Unregister;
@@ -103,8 +100,9 @@ public class InstructionTest {
     Transfer transfer = new Transfer(destination, amount, destination);
     assertInstructionCommitted(transfer);
 
-    Burn burn = new Burn(amount, destination);
-    assertInstructionCommitted(burn);
+    Assertions.fail();
+//    Burn burn = new Burn(amount, destination);
+//    assertInstructionCommitted(burn);
   }
 
   /**

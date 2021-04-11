@@ -21,7 +21,9 @@ public class InstructionWriter implements ScaleWriter<Instruction> {
       new IfWriter(), // 5 - If
       new PairWriter(), // 6 - Pair
       new SequenceWriter(), // 7 - Sequence
-      new FailWriter() // 8 - Fail
+      new FailWriter(), // 8 - Fail
+      new SetKeyValueWriter(), // 9 - SetKeyValue
+      new RemoveKeyValueWriter() // 10 - RemoveKeyValue
   );
 
 

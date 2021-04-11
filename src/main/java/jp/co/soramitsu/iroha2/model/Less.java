@@ -16,6 +16,6 @@ public class Less implements Expression {
 
   @Override
   public int getIndex() {
-    return 3;
+    return 7;
   }
 }

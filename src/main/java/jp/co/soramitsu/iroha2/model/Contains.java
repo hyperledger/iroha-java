@@ -17,6 +17,6 @@ public class Contains implements Expression {
 
   @Override
   public int getIndex() {
-    return 11;
+    return 14;
   }
 }

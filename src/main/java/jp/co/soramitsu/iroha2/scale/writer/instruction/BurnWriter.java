@@ -2,9 +2,10 @@ package jp.co.soramitsu.iroha2.scale.writer.instruction;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.scale.writer.ExpressionWriter;
+
+import java.io.IOException;
 
 public class BurnWriter implements ScaleWriter<Burn> {
 

@@ -13,6 +13,6 @@ public class Not implements Expression {
 
   @Override
   public int getIndex() {
-    return 5;
+    return 9;
   }
 }

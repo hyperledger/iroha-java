@@ -16,6 +16,6 @@ public class Equal implements Expression {
 
   @Override
   public int getIndex() {
-    return 4;
+    return 8;
   }
 }

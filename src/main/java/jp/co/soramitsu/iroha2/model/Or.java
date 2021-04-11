@@ -16,6 +16,6 @@ public class Or implements Expression {
 
   @Override
   public int getIndex() {
-    return 7;
+    return 11;
   }
 }

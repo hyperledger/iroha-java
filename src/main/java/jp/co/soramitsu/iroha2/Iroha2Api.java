@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.json.writer.SubscriptionRequestWriter;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Pipeline;
-import jp.co.soramitsu.iroha2.model.instruction.Transaction;
+import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.model.query.QueryResult;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
 import jp.co.soramitsu.iroha2.scale.reader.query.QueryResultReader;
