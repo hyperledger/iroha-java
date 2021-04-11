@@ -1,9 +1,10 @@
 package jp.co.soramitsu.iroha2.model.instruction;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Sequence implements Instruction {

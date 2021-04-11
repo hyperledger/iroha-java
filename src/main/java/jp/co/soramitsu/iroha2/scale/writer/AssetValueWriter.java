@@ -4,9 +4,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
 import jp.co.soramitsu.iroha2.model.AssetValue;
-import jp.co.soramitsu.iroha2.model.BigQuantity;
-import jp.co.soramitsu.iroha2.model.ValueBox;
-import jp.co.soramitsu.iroha2.scale.reader.QuantityReader;
 
 import java.io.IOException;
 

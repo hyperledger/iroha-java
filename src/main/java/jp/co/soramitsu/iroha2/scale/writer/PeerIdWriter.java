@@ -2,8 +2,9 @@ package jp.co.soramitsu.iroha2.scale.writer;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.PeerId;
+
+import java.io.IOException;
 
 public class PeerIdWriter implements ScaleWriter<PeerId> {
 

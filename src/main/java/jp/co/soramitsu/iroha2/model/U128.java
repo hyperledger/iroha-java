@@ -1,8 +1,9 @@
 package jp.co.soramitsu.iroha2.model;
 
-import java.math.BigInteger;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.math.BigInteger;
 
 @Data
 public class U128 {

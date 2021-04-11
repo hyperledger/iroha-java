@@ -1,13 +1,6 @@
 package jp.co.soramitsu.iroha2;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
 import jp.co.soramitsu.iroha2.model.PublicKey;
 import jp.co.soramitsu.iroha2.model.Signature;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
@@ -17,6 +10,10 @@ import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 import org.bouncycastle.jcajce.provider.digest.Blake2b.Blake2b256;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.*;
 
 public class UnsignedQuery {
 

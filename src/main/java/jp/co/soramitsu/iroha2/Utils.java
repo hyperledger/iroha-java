@@ -1,9 +1,5 @@
 package jp.co.soramitsu.iroha2;
 
-import java.math.BigInteger;
-import java.security.KeyPair;
-import javax.xml.bind.DatatypeConverter;
-
 import jp.co.soramitsu.iroha2.model.U128;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
@@ -11,6 +7,10 @@ import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec;
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec;
+
+import javax.xml.bind.DatatypeConverter;
+import java.math.BigInteger;
+import java.security.KeyPair;
 
 public class Utils {
 

@@ -3,10 +3,11 @@ package jp.co.soramitsu.iroha2.scale.writer.query;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.query.Query;
 import jp.co.soramitsu.iroha2.scale.writer.EnumerationUnionValue;
 import jp.co.soramitsu.iroha2.scale.writer.NopWriter;
+
+import java.io.IOException;
 
 public class QueryWriter implements ScaleWriter<Query> {
 

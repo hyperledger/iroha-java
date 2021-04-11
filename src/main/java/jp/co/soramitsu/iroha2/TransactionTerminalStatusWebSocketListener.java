@@ -1,17 +1,18 @@
 package jp.co.soramitsu.iroha2;
 
-import java.net.http.WebSocket;
-import java.net.http.WebSocket.Listener;
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.json.reader.EventReader;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.Event;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Committed;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Rejected;
+
+import java.net.http.WebSocket;
+import java.net.http.WebSocket.Listener;
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Future;
 
 /**
  * Listener waits for terminal status (committed or rejected).

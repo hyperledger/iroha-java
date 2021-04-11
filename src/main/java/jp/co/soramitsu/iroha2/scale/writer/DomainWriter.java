@@ -2,12 +2,9 @@ package jp.co.soramitsu.iroha2.scale.writer;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
+import jp.co.soramitsu.iroha2.model.*;
+
 import java.io.IOException;
-import jp.co.soramitsu.iroha2.model.Account;
-import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.AssetDefinitionEntry;
-import jp.co.soramitsu.iroha2.model.DefinitionId;
-import jp.co.soramitsu.iroha2.model.Domain;
 
 public class DomainWriter implements ScaleWriter<Domain> {
 

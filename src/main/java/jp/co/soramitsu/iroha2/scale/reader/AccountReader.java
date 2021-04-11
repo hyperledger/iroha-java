@@ -3,11 +3,7 @@ package jp.co.soramitsu.iroha2.scale.reader;
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
 import io.emeraldpay.polkaj.scale.reader.ListReader;
-import jp.co.soramitsu.iroha2.model.Account;
-import jp.co.soramitsu.iroha2.model.Asset;
-import jp.co.soramitsu.iroha2.model.AssetId;
-import jp.co.soramitsu.iroha2.model.PermissionRaw;
-import jp.co.soramitsu.iroha2.model.PublicKey;
+import jp.co.soramitsu.iroha2.model.*;
 
 public class AccountReader implements ScaleReader<Account> {
 

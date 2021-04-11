@@ -3,9 +3,10 @@ package jp.co.soramitsu.iroha2.scale.writer;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.ListWriter;
-import java.io.IOException;
+import jp.co.soramitsu.iroha2.model.NewAccount;
+import jp.co.soramitsu.iroha2.model.PublicKey;
 
-import jp.co.soramitsu.iroha2.model.*;
+import java.io.IOException;
 
 /**
  * Scale writer that writes nothing.

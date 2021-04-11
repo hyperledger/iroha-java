@@ -1,9 +1,10 @@
 package jp.co.soramitsu.iroha2.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Data
 public class Domain implements IdentifiableBox {

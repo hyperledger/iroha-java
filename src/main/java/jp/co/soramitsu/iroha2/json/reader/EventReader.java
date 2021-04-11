@@ -1,14 +1,6 @@
 package jp.co.soramitsu.iroha2.json.reader;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import java.lang.reflect.Type;
+import com.google.gson.*;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.Event;
 import jp.co.soramitsu.iroha2.model.events.Event.Data;
@@ -18,6 +10,8 @@ import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Committed;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Rejected;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Status;
 import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Validating;
+
+import java.lang.reflect.Type;
 
 public class EventReader implements JsonReader<Event> {
 

@@ -2,12 +2,9 @@ package jp.co.soramitsu.iroha2.scale.reader;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
+import jp.co.soramitsu.iroha2.model.*;
+
 import java.util.Map;
-import jp.co.soramitsu.iroha2.model.Account;
-import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.AssetDefinitionEntry;
-import jp.co.soramitsu.iroha2.model.DefinitionId;
-import jp.co.soramitsu.iroha2.model.Domain;
 
 public class DomainReader implements ScaleReader<Domain> {
 

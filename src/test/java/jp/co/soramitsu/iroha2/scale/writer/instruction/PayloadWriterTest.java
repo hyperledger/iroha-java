@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import jp.co.soramitsu.iroha2.model.*;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
 import jp.co.soramitsu.iroha2.model.instruction.If;
@@ -20,8 +21,6 @@ import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.bind.DatatypeConverter;
 
 /**
  * Tests SCALE serialization of Payload with all possible instructions.

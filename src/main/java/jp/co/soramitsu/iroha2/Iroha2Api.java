@@ -2,17 +2,12 @@ package jp.co.soramitsu.iroha2;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
-import java.io.ByteArrayOutputStream;
-import java.net.URI;
-import java.net.http.WebSocket;
-import java.net.http.WebSocket.Listener;
-import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.TransactionTerminalStatusWebSocketListener.TerminalStatus;
 import jp.co.soramitsu.iroha2.json.writer.SubscriptionRequestWriter;
+import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Pipeline;
-import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.model.query.QueryResult;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
 import jp.co.soramitsu.iroha2.scale.reader.query.QueryResultReader;
@@ -25,6 +20,12 @@ import org.eclipse.jetty.client.util.BytesRequestContent;
 import org.eclipse.jetty.client.util.FutureResponseListener;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
+
+import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.net.http.WebSocket;
+import java.net.http.WebSocket.Listener;
+import java.util.concurrent.Future;
 
 public class Iroha2Api {
 

@@ -1,16 +1,15 @@
 package jp.co.soramitsu.iroha2.model;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import jp.co.soramitsu.iroha2.model.Payload;
-import jp.co.soramitsu.iroha2.model.Signature;
 import jp.co.soramitsu.iroha2.scale.writer.instruction.PayloadWriter;
 import lombok.Data;
 import lombok.NonNull;
 import org.bouncycastle.jcajce.provider.digest.Blake2b.Blake2b256;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Transaction {

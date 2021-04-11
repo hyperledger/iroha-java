@@ -3,10 +3,7 @@ package jp.co.soramitsu.iroha2.scale.reader;
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
 import io.emeraldpay.polkaj.scale.reader.UnionReader;
-import jp.co.soramitsu.iroha2.model.And;
-import jp.co.soramitsu.iroha2.model.Equal;
-import jp.co.soramitsu.iroha2.model.Expression;
-import jp.co.soramitsu.iroha2.model.Or;
+import jp.co.soramitsu.iroha2.model.expression.Expression;
 
 public class ExpressionReader implements ScaleReader<Expression> {
 

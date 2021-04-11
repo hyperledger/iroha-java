@@ -1,8 +1,9 @@
 package jp.co.soramitsu.iroha2.model;
 
-import javax.xml.bind.DatatypeConverter;
 import lombok.Data;
 import lombok.NonNull;
+
+import javax.xml.bind.DatatypeConverter;
 
 @Data
 public class PublicKey implements ValueBox {

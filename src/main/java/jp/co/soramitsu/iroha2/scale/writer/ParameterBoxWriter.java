@@ -3,8 +3,9 @@ package jp.co.soramitsu.iroha2.scale.writer;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.ParameterBox;
+
+import java.io.IOException;
 
 public class ParameterBoxWriter implements ScaleWriter<ParameterBox> {
 

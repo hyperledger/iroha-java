@@ -1,12 +1,5 @@
 package jp.co.soramitsu.iroha2;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.List;
 import jp.co.soramitsu.iroha2.model.Payload;
 import jp.co.soramitsu.iroha2.model.PublicKey;
 import jp.co.soramitsu.iroha2.model.Signature;
@@ -14,6 +7,10 @@ import jp.co.soramitsu.iroha2.model.Transaction;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
+
+import java.io.IOException;
+import java.security.*;
+import java.util.List;
 
 public class TransactionSigner {
 

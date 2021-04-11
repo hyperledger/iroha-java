@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.scale.writer;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.ListWriter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;

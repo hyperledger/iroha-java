@@ -3,9 +3,10 @@ package jp.co.soramitsu.iroha2.scale.writer.instruction;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 import jp.co.soramitsu.iroha2.scale.writer.EnumerationUnionValue;
+
+import java.io.IOException;
 
 public class InstructionWriter implements ScaleWriter<Instruction> {
 

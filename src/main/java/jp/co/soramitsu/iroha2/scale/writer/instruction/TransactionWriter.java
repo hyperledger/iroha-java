@@ -3,10 +3,11 @@ package jp.co.soramitsu.iroha2.scale.writer.instruction;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.ListWriter;
-import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.Signature;
 import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.scale.writer.SignatureWriter;
+
+import java.io.IOException;
 
 public class TransactionWriter implements ScaleWriter<Transaction> {
 
