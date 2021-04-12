@@ -5,7 +5,6 @@ import io.emeraldpay.polkaj.scale.ScaleWriter;
 import io.emeraldpay.polkaj.scale.writer.UnionWriter;
 import jp.co.soramitsu.iroha2.model.expression.Expression;
 import jp.co.soramitsu.iroha2.scale.writer.EnumerationUnionValue;
-import jp.co.soramitsu.iroha2.scale.writer.MultiplyWriter;
 
 import java.io.IOException;
 

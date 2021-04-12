@@ -415,7 +415,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    * </pre>
    */
   @Test
-  public void testRemoveKeyValueInstruction() {       d
+  public void testRemoveKeyValueInstruction() {
     AccountId accountId = new AccountId("root", "global");
     BigInteger creationTime = BigInteger.ONE;
     BigInteger timeToLiveMs = BigInteger.ZERO;

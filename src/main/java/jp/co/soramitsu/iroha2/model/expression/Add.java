@@ -13,7 +13,6 @@ public class Add implements Expression {
   @NonNull
   private Expression right;
 
-
   @Override
   public int getIndex() {
     return 0;
