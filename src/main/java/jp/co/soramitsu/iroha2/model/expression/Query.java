@@ -1,6 +1,5 @@
-package jp.co.soramitsu.iroha2.model;
+package jp.co.soramitsu.iroha2.model.expression;
 
-import jp.co.soramitsu.iroha2.model.expression.Expression;
 import lombok.Data;
 import lombok.NonNull;
 

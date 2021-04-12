@@ -1,26 +1,17 @@
 package jp.co.soramitsu.iroha2.scale.writer.instruction;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
+import jp.co.soramitsu.iroha2.model.*;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
+import jp.co.soramitsu.iroha2.model.instruction.*;
+import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
-
-import jp.co.soramitsu.iroha2.model.*;
-import jp.co.soramitsu.iroha2.model.expression.Raw;
-import jp.co.soramitsu.iroha2.model.instruction.Burn;
-import jp.co.soramitsu.iroha2.model.instruction.Fail;
-import jp.co.soramitsu.iroha2.model.instruction.If;
-import jp.co.soramitsu.iroha2.model.instruction.Instruction;
-import jp.co.soramitsu.iroha2.model.instruction.Mint;
-import jp.co.soramitsu.iroha2.model.instruction.Pair;
-import jp.co.soramitsu.iroha2.model.instruction.Register;
-import jp.co.soramitsu.iroha2.model.instruction.Sequence;
-import jp.co.soramitsu.iroha2.model.instruction.Transfer;
-import jp.co.soramitsu.iroha2.model.instruction.Unregister;
-import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests SCALE serialization of Payload with all possible instructions.
@@ -352,6 +343,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    * <pre>
    * {@code
    *     let instruction = Fail(FailBox::new("Fail"));
+   * }
    * </pre>
    */
   @Test
@@ -371,20 +363,20 @@ public class PayloadWriterTest extends ScaleWriterFixture {
   }
 
   /**
-   * Compares scale serialization of mint command with generated in rust one:
-   * <pre>
-   * {@code
-   *     let account_id: AccountId = AccountId::new("root", "global");
-   *     let quantity: u32 = 100;
-   *     let mint_asset = MintBox::new(
-   *         Value::U32(quantity),
-   *         IdBox::AssetId(AssetId::new(
-   *             AssetDefinitionId::new("XOR", "Soramitsu"),
-   *             account_id.clone(),
-   *         )),
-   *     );
-   * }
-   * </pre>
+   *  Compares scale serialization of SetKeyValue command with generated in rust one:
+   *
+   *  <pre>
+   *  {@code
+   *   let instruction = SetKeyValueBox::new(
+   *     IdBox::AssetId(AssetId::new(
+   *       AssetDefinitionId::new("XOR", "Soramitsu"),
+   *        account_id.clone(),
+   *     )),
+   *     "Key".to_string(),
+   *     "Value".to_string(),
+   *   );
+   *  }
+   *   </pre>
    */
   @Test
   public void testSetKeyValueInstruction() {
@@ -394,15 +386,51 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
-    Raw expression = new Raw(new Value(new U32(100)));
     DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
-    AssetId assetId = new AssetId(definitionId, accountId);
-    Raw expression_id = new Raw(new Value(new Id(assetId)));
-    Mint mint = new Mint(expression, expression_id);
+    SetKeyValue setKeyValue = new SetKeyValue(
+            new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+            new Raw(new Value(new StringValue("Key"))),
+            new Raw(new Value(new StringValue("Value")))
+    );
 
-    payload.setInstructions(List.of(mint));
+    payload.setInstructions(List.of(setKeyValue));
 
-    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 9, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 4, 97, 13, 2, 20, 118, 97, 108, 117, 101, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 9, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 12, 75, 101, 121, 13, 2, 20, 86, 97, 108, 117, 101, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
+    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
+  }
+
+  /**
+   * Compares scale serialization of RemoveKeyValue command with generated in rust one:
+   *
+   * <pre>
+   * {@code
+   *     let instruction = RemoveKeyValueBox::new(
+   *         IdBox::AssetId(AssetId::new(
+   *             AssetDefinitionId::new("XOR", "Soramitsu"),
+   *             account_id.clone(),
+   *         )),
+   *         "Key".to_string(),
+   *     );
+   * }
+   * </pre>
+   */
+  @Test
+  public void testRemoveKeyValueInstruction() {       d
+    AccountId accountId = new AccountId("root", "global");
+    BigInteger creationTime = BigInteger.ONE;
+    BigInteger timeToLiveMs = BigInteger.ZERO;
+
+    Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
+
+    DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
+    RemoveKeyValue removeKeyValue = new RemoveKeyValue(
+            new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+            new Raw(new Value(new StringValue("Key")))
+    );
+
+    payload.setInstructions(List.of(removeKeyValue));
+
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 10, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 12, 75, 101, 121, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
