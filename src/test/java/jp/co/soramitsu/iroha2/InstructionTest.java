@@ -3,15 +3,8 @@ package jp.co.soramitsu.iroha2;
 import java.security.KeyPair;
 import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.TransactionTerminalStatusWebSocketListener.TerminalStatus;
-import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.AssetId;
-import jp.co.soramitsu.iroha2.model.Bool;
-import jp.co.soramitsu.iroha2.model.DefinitionId;
-import jp.co.soramitsu.iroha2.model.Domain;
+import jp.co.soramitsu.iroha2.model.*;
 import jp.co.soramitsu.iroha2.model.expression.Expression;
-import jp.co.soramitsu.iroha2.model.Id;
-import jp.co.soramitsu.iroha2.model.Identifiable;
-import jp.co.soramitsu.iroha2.model.Value;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
 import jp.co.soramitsu.iroha2.model.instruction.If;
 import jp.co.soramitsu.iroha2.model.instruction.Instruction;
@@ -19,8 +12,6 @@ import jp.co.soramitsu.iroha2.model.instruction.Mint;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Register;
 import jp.co.soramitsu.iroha2.model.instruction.Sequence;
-import jp.co.soramitsu.iroha2.model.Transaction;
-import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.instruction.Transfer;
 import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import org.junit.jupiter.api.Assertions;
@@ -49,28 +40,28 @@ public class InstructionTest {
           .sign(keyPair)
           .build();
 
-      Future<TerminalStatus> result = api.instructionAsync(transaction);
+      Future<TerminalStatus> result = api.instructionAsync(new V1Transaction(transaction));
       Assertions.assertTrue(result.get().isCommitted(), result.get().getMessage());
     });
   }
 
-  /**
-   * Asserts that transaction with instruction was rejected
-   */
-  private void assertInstructionRejected(Instruction instruction, String reason) {
-    Assertions.assertDoesNotThrow(() -> {
-      Transaction transaction = new TransactionBuilder()
-          .setCreator("root", "global")
-          .addInstruction(instruction)
-          .build()
-          .sign(keyPair)
-          .build();
-
-      Future<TerminalStatus> result = api.instructionAsync(transaction);
-      Assertions.assertFalse(result.get().isCommitted());
-      Assertions.assertTrue(result.get().getMessage().contains(reason));
-    });
-  }
+//  /**
+//   * Asserts that transaction with instruction was rejected
+//   */
+//  private void assertInstructionRejected(Instruction instruction, String reason) {
+//    Assertions.assertDoesNotThrow(() -> {
+//      Transaction transaction = new TransactionBuilder()
+//          .setCreator("root", "global")
+//          .addInstruction(instruction)
+//          .build()
+//          .sign(keyPair)
+//          .build();
+//
+//      Future<TerminalStatus> result = api.instructionAsync(transaction);
+//      Assertions.assertFalse(result.get().isCommitted());
+//      Assertions.assertTrue(result.get().getMessage().contains(reason));
+//    });
+//  }
 
 
   // Test register/unregister instruction
@@ -112,7 +103,8 @@ public class InstructionTest {
   public void testFail() {
     String reason = "test fail reason";
     Fail fail = new Fail(reason);
-    assertInstructionRejected(fail, reason);
+    Assertions.fail();
+//    assertInstructionRejected(fail, reason);
   }
 
   /**

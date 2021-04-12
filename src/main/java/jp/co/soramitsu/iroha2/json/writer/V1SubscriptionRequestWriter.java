@@ -6,13 +6,14 @@ import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Data;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.EventFilter;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Pipeline;
 
-public class SubscriptionRequestWriter implements JsonWriter<SubscriptionRequest> {
+public class V1SubscriptionRequestWriter implements JsonWriter<SubscriptionRequest> {
 
   public static class PipelineWriter implements JsonWriter<Pipeline> {
 
     @Override
     public String write(Pipeline value) {
-      StringBuilder sb = new StringBuilder("{\"Pipeline\":{\"entity\":");
+      StringBuilder sb = new StringBuilder("{\"version\":\"1\",\"content\":");
+      sb.append("{\"Pipeline\":{\"entity\":");
       EntityType entity = value.getEntity();
       if (entity != null) {
         sb.append('"');
@@ -34,7 +35,7 @@ public class SubscriptionRequestWriter implements JsonWriter<SubscriptionRequest
       } else {
         sb.append("null");
       }
-      sb.append("}}");
+      sb.append("}}}");
       return sb.toString();
     }
   }

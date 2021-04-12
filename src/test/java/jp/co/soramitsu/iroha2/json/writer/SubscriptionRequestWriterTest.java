@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
  */
 public class SubscriptionRequestWriterTest {
 
-  SubscriptionRequestWriter writer = new SubscriptionRequestWriter();
+  V1SubscriptionRequestWriter writer = new V1SubscriptionRequestWriter();
 
   /**
    * SubscriptionRequest initialized with Data event filter. Expected data from iroha2 Rust
