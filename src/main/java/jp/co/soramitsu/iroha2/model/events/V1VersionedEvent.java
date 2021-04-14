@@ -4,14 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-/**
- * Responses to event subscription.
- */
 @Data
 @NoArgsConstructor
-public class Event {
+public class V1VersionedEvent {
 
-  @NonNull
-  private EventType eventType;
+    int version;
 
+    @NonNull
+    private Event content;
 }

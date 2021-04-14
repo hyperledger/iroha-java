@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
+import java.time.Duration;
 import java.util.concurrent.Future;
 
 public class Iroha2Api {
@@ -100,14 +101,17 @@ public class Iroha2Api {
   /**
    * Sends transaction and get terminal status subscription.
    */
-  public Future<TerminalStatus> instructionAsync(VersionedTransaction transaction)
+  public Future<TerminalStatus> instructionAsync(V1Transaction transaction)
       throws Exception {
     // subscribe to events
-    byte[] hash = ((V1Transaction)transaction).getTransaction().getHash();
+    byte[] hash = transaction.getTransaction().getHash();
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(
-        new Pipeline(EntityType.Transaction, hash));
+        new Pipeline(EntityType.Transaction, hash)
+    );
     TransactionTerminalStatusWebSocketListener listener = new TransactionTerminalStatusWebSocketListener(
-        EntityType.Transaction, hash);
+        EntityType.Transaction,
+        hash
+    );
     events(subscriptionRequest, listener);
 
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
@@ -138,25 +142,11 @@ public class Iroha2Api {
     WebSocket socket = java.net.http.HttpClient
         .newHttpClient()
         .newWebSocketBuilder()
+        .connectTimeout(Duration.ofSeconds(10))
         .buildAsync(eventUri, listener)
         .join();
 
     String json = V1_SUBSCRIPTION_REQUEST_WRITER.write(subscriptionRequest);
-    System.err.println(json);
     socket.sendText(json, true).join();
-  }
-
-  protected String bytesToJsonString(byte[] bytes) {
-    if (bytes.length == 0) {
-      return "[]";
-    }
-    StringBuilder sb = new StringBuilder("[");
-    for (int i = 0; i < bytes.length - 1; i++) {
-      sb.append(Byte.toUnsignedInt(bytes[i]));
-      sb.append(", ");
-    }
-    sb.append(Byte.toUnsignedInt(bytes[bytes.length - 1]));
-    sb.append(']');
-    return sb.toString();
   }
 }

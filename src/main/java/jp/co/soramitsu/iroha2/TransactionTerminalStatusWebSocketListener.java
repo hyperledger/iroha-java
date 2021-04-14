@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2;
 
-import jp.co.soramitsu.iroha2.json.reader.EventReader;
-import jp.co.soramitsu.iroha2.model.events.EntityType;
-import jp.co.soramitsu.iroha2.model.events.Event;
-import jp.co.soramitsu.iroha2.model.events.Event.Pipeline;
-import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Committed;
-import jp.co.soramitsu.iroha2.model.events.Event.Pipeline.Rejected;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jp.co.soramitsu.iroha2.model.events.*;
+import jp.co.soramitsu.iroha2.model.events.reject.RejectionReason;
+import jp.co.soramitsu.iroha2.model.events.reject.TransactionRejectionReason;
+import lombok.Data;
 
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
@@ -20,42 +20,28 @@ import java.util.concurrent.Future;
  */
 public class TransactionTerminalStatusWebSocketListener implements Listener {
 
+  @Data
   static class TerminalStatus {
 
     private boolean committed;
-    private String message;
+    private TransactionRejectionReason reason;
 
     public TerminalStatus(boolean committed) {
       this.committed = committed;
     }
 
-    public TerminalStatus(boolean committed, String message) {
+    public TerminalStatus(boolean committed, TransactionRejectionReason reason) {
       this.committed = committed;
-      this.message = message;
+      this.reason = reason;
     }
 
-    public boolean isCommitted() {
-      return committed;
-    }
-
-    public void setCommitted(boolean committed) {
-      this.committed = committed;
-    }
-
-    public String getMessage() {
-      return message;
-    }
-
-    public void setMessage(String message) {
-      this.message = message;
-    }
   }
 
   CompletableFuture<TerminalStatus> result = new CompletableFuture<>();
   EntityType entityType;
   byte[] hash;
 
-  private static final EventReader EVENT_READER = new EventReader();
+  private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
   public TransactionTerminalStatusWebSocketListener(EntityType entityType, byte[] hash) {
     this.entityType = entityType;
@@ -69,24 +55,34 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
 
   @Override
   public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-    Event event = EVENT_READER.read(data.toString());
-
-    if (event.getEvent() instanceof Pipeline) {
-      Pipeline pipeline = (Pipeline) event.getEvent();
+    System.out.println(data);
+    final V1VersionedEvent event;
+    try {
+      event = JSON_MAPPER.readValue(data.toString(), V1VersionedEvent.class);
+    } catch (JsonProcessingException e) {
+      System.out.println(e);
+      return CompletableFuture.failedFuture(new RuntimeException("Could not deserialize json", e));
+    }
+    System.out.println("00 --> ");
+    final var eventVariant = event.getContent().getEventType();
+    if (eventVariant instanceof Pipeline) {
+      Pipeline pipeline = (Pipeline) eventVariant;
+      System.out.println(10 + " --> " +  pipeline);
       if (pipeline.getEntityType() == entityType && Arrays.equals(pipeline.getHash(), hash)) {
+        System.out.println(20 + " --> " +  pipeline);
         if (pipeline.getStatus() instanceof Committed) {
           result.complete(new TerminalStatus(true));
         } else if (pipeline.getStatus() instanceof Rejected) {
           result.complete(
-              new TerminalStatus(false, ((Rejected) pipeline.getStatus()).getRejectedReason()));
+              new TerminalStatus(false, (TransactionRejectionReason) ((Rejected)pipeline.getStatus()).getRejectedReason())
+          );
         }
       }
     }
 
     // event received response
-    webSocket.sendText("null", true).join();
-    Listener.super.onText(webSocket, data, last);
-    return null;
+    webSocket.sendText("{\"version\":\"1\",\"content\":null}", true).join();
+    return Listener.super.onText(webSocket, data, last);
   }
 
   public Future<TerminalStatus> getResult() {
