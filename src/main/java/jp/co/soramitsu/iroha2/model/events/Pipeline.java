@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.model.events;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -8,8 +7,7 @@ import lombok.NonNull;
 @lombok.Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonTypeInfo(include= JsonTypeInfo.As.WRAPPER_OBJECT, use= JsonTypeInfo.Id.NAME)
-public class Pipeline implements EventType {
+public class Pipeline implements Event {
 
     @NonNull
     private EntityType entityType;

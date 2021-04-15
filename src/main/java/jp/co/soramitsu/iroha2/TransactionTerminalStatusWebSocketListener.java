@@ -55,7 +55,7 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
 
   @Override
   public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
-    System.out.println(data);
+    System.err.println(data);
     final V1VersionedEvent event;
     try {
       event = JSON_MAPPER.readValue(data.toString(), V1VersionedEvent.class);
@@ -64,7 +64,7 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
       return CompletableFuture.failedFuture(new RuntimeException("Could not deserialize json", e));
     }
     System.out.println("00 --> ");
-    final var eventVariant = event.getContent().getEventType();
+    final var eventVariant = event.getContent();
     if (eventVariant instanceof Pipeline) {
       Pipeline pipeline = (Pipeline) eventVariant;
       System.out.println(10 + " --> " +  pipeline);
@@ -74,7 +74,7 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
           result.complete(new TerminalStatus(true));
         } else if (pipeline.getStatus() instanceof Rejected) {
           result.complete(
-              new TerminalStatus(false, (TransactionRejectionReason) ((Rejected)pipeline.getStatus()).getRejectedReason())
+              new TerminalStatus(false, (TransactionRejectionReason) ((Rejected)pipeline.getStatus()).getReason())
           );
         }
       }

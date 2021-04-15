@@ -4,6 +4,6 @@ import lombok.NoArgsConstructor;
 
 @lombok.Data
 @NoArgsConstructor
-public class Data implements EventType {
+public class Data implements Event {
 
 }
