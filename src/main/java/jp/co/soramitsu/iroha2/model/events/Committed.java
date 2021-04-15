@@ -7,4 +7,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public  class Committed implements Status {
 
-    }
+}

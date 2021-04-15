@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.model.events.reject;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 import lombok.AllArgsConstructor;
 import lombok.Data;

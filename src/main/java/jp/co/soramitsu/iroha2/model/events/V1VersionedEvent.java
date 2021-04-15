@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
-public class V1VersionedEvent {
+public class V1VersionedEvent implements VersionedEvent {
 
     int version;
 

@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRAP_ROOT_VALUE;
 
-@Timeout(10)
+@Timeout(5)
 public class InstructionTest {
 
   // root account keys:
@@ -49,14 +49,14 @@ public class InstructionTest {
           .build();
 
       Future<TerminalStatus> result = api.instructionAsync(new V1Transaction(transaction));
-//      Assertions.assertTrue(result.get().isCommitted(), result.get().getMessage());
+      Assertions.assertTrue(result.get().isCommitted());
     });
   }
 
   /**
    * Asserts that transaction with instruction was rejected
    */
-  private void assertInstructionRejected(Instruction instruction, String reason) {
+  private <T> void assertInstructionRejected(Instruction instruction) {
     Assertions.assertDoesNotThrow(() -> {
       Transaction transaction = new TransactionBuilder()
           .setCreator("alice", "wonderland")
@@ -67,7 +67,6 @@ public class InstructionTest {
 
       Future<TerminalStatus> result = api.instructionAsync(new V1Transaction(transaction));
       Assertions.assertFalse(result.get().isCommitted());
-//      Assertions.assertTrue(result.get().getReason().contains(reason));
     });
   }
 
@@ -92,7 +91,7 @@ public class InstructionTest {
   public void testMint() {
     Expression amount = new Raw(new Value(new U32(100)));
     Expression destination = new Raw(new Value(new Id(
-        new AssetId(new DefinitionId("rose", "wonderland"), new AccountId("root", "global"))
+        new AssetId(new DefinitionId("rose", "wonderland"), new AccountId("alice", "wonderland"))
     )));
 
     Mint mint = new Mint(amount, destination);
@@ -112,7 +111,7 @@ public class InstructionTest {
   public void testFail() {
     String reason = "test fail reason";
     Fail fail = new Fail(reason);
-    assertInstructionRejected(fail, reason);
+    assertInstructionRejected(fail);
   }
 
   /**
@@ -136,39 +135,5 @@ public class InstructionTest {
     Sequence emptySequence = new Sequence();
     If ifInstruction = new If(new Raw(new Value(new Bool(false))), fail, emptySequence);
     assertInstructionCommitted(ifInstruction);
-  }
-
-  @Test
-  public void fooTest() throws JsonProcessingException {
-//    String reason = "test fail reason";
-//    Fail fail = new Fail(reason);
-//    assertInstructionRejected(fail, reason);
-//    var json = "{\"Pipeline\":{\"entity_type\":\"Transaction\",\"status\":\"Re\",\"hash\":[112,39,237,251,112,246,8,211,99,176,79,43,118,194,51,90,228,245,221,144,59,237,102,30,54,207,195,65,214,203,60,6]}}";
-    var json = "{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity_type\":\"Transaction\",\"status\":{\"Rejected\":{\"Transaction\":{\"InstructionExecution\":{\"instruction\":{\"Fail\":{\"message\":\"test fail reason\"}},\"reason\":\"Execution failed: test fail reason.\"}}}},\"hash\":[158,137,179,17,76,47,50,100,71,163,199,68,233,13,83,231,91,19,95,2,98,247,184,219,166,176,19,193,218,254,113,147]}}}";
-//    var event = new ObjectMapper().readValue(json, V1VersionedEvent.class);
-    System.out.println(json);
-
-    final var objectMapper =new ObjectMapper();
-    objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE );
-
-//    var json_slice =
-//"{\n" +
-//        "   \"Transaction\":{\n" +
-//        "      \"InstructionExecution\":{\n" +
-//        "         \"instruction\":{\n" +
-//        "            \"Fail\":{\n" +
-//        "               \"message\":\"test fail reason\"\n" +
-//        "            }\n" +
-//        "         },\n" +
-//        "         \"reason\":\"Execution failed: test fail reason.\"\n" +
-//        "      }\n" +
-//        "   }\n" +
-//        "}";
-
-
-    System.out.println(objectMapper.readValue(json, V1VersionedEvent.class));
-
-//    var deserializedEvent = objectMapper.readValue(json, V1VersionedEvent.class);
-//    System.out.println(deserializedEvent);
   }
 }

@@ -2,8 +2,9 @@ package jp.co.soramitsu.iroha2;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import jp.co.soramitsu.iroha2.model.events.*;
-import jp.co.soramitsu.iroha2.model.events.reject.RejectionReason;
 import jp.co.soramitsu.iroha2.model.events.reject.TransactionRejectionReason;
 import lombok.Data;
 
@@ -41,7 +42,12 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
   EntityType entityType;
   byte[] hash;
 
-  private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+  public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+
+  static {
+    JSON_MAPPER.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+    JSON_MAPPER.enable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+  }
 
   public TransactionTerminalStatusWebSocketListener(EntityType entityType, byte[] hash) {
     this.entityType = entityType;
@@ -60,16 +66,13 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
     try {
       event = JSON_MAPPER.readValue(data.toString(), V1VersionedEvent.class);
     } catch (JsonProcessingException e) {
-      System.out.println(e);
+      System.err.println(e);
       return CompletableFuture.failedFuture(new RuntimeException("Could not deserialize json", e));
     }
-    System.out.println("00 --> ");
     final var eventVariant = event.getContent();
     if (eventVariant instanceof Pipeline) {
       Pipeline pipeline = (Pipeline) eventVariant;
-      System.out.println(10 + " --> " +  pipeline);
       if (pipeline.getEntityType() == entityType && Arrays.equals(pipeline.getHash(), hash)) {
-        System.out.println(20 + " --> " +  pipeline);
         if (pipeline.getStatus() instanceof Committed) {
           result.complete(new TerminalStatus(true));
         } else if (pipeline.getStatus() instanceof Rejected) {
@@ -80,7 +83,7 @@ public class TransactionTerminalStatusWebSocketListener implements Listener {
       }
     }
 
-    // event received response
+    // event received response expected by peer to proceed
     webSocket.sendText("{\"version\":\"1\",\"content\":null}", true).join();
     return Listener.super.onText(webSocket, data, last);
   }
