@@ -8,6 +8,6 @@ import java.math.BigInteger;
 @Data
 public class U128 {
 
-  @NonNull
-  private BigInteger value;
+    @NonNull
+    private BigInteger value;
 }

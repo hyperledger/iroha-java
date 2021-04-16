@@ -8,11 +8,11 @@ import java.util.List;
 @Data
 public class Vector implements ValueBox {
 
-  @NonNull
-  private List<Value> vector;
+    @NonNull
+    private List<Value> vector;
 
-  @Override
-  public int getIndex() {
-    return 3;
-  }
+    @Override
+    public int getIndex() {
+        return 3;
+    }
 }

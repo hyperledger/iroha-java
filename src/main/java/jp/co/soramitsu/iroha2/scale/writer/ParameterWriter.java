@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class ParameterWriter implements ScaleWriter<Parameter> {
 
-  private static final ParameterBoxWriter PARAMETER_BOX_WRITER = new ParameterBoxWriter();
+    private static final ParameterBoxWriter PARAMETER_BOX_WRITER = new ParameterBoxWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Parameter value) throws IOException {
-    writer.write(PARAMETER_BOX_WRITER, value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Parameter value) throws IOException {
+        writer.write(PARAMETER_BOX_WRITER, value.getValue());
+    }
 
 }

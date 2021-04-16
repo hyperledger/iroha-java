@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Raw;
 
 public class RawReader implements ScaleReader<Raw> {
 
-  private static final ValueReader VALUE_READER = new ValueReader();
+    private static final ValueReader VALUE_READER = new ValueReader();
 
-  @Override
-  public Raw read(ScaleCodecReader reader) {
-    return new Raw(reader.read(VALUE_READER));
-  }
+    @Override
+    public Raw read(ScaleCodecReader reader) {
+        return new Raw(reader.read(VALUE_READER));
+    }
 }

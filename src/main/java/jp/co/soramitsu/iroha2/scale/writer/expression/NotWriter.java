@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class NotWriter implements ScaleWriter<Not> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Not value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getExpression());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Not value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getExpression());
+    }
 
 }

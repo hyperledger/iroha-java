@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class Query implements Expression {
 
-  @NonNull
-  private jp.co.soramitsu.iroha2.model.query.Query query;
+    @NonNull
+    private jp.co.soramitsu.iroha2.model.query.Query query;
 
-  @Override
-  public int getIndex() {
-    return 14;
-  }
+    @Override
+    public int getIndex() {
+        return 14;
+    }
 }

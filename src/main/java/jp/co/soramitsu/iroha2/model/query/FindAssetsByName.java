@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class FindAssetsByName implements Query {
 
-  @NonNull
-  private Expression name;
+    @NonNull
+    private Expression name;
 
-  @Override
-  public int getIndex() {
-    return 8;
-  }
+    @Override
+    public int getIndex() {
+        return 8;
+    }
 }

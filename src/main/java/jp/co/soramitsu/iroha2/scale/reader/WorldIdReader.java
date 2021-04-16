@@ -6,9 +6,9 @@ import jp.co.soramitsu.iroha2.model.WorldId;
 
 public class WorldIdReader implements ScaleReader<WorldId> {
 
-  @Override
-  public WorldId read(ScaleCodecReader reader) {
-    return new WorldId();
-  }
+    @Override
+    public WorldId read(ScaleCodecReader reader) {
+        return new WorldId();
+    }
 
 }

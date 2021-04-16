@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Contains;
 
 public class ContainsReader implements ScaleReader<Contains> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public Contains read(ScaleCodecReader reader) {
-    return new Contains(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public Contains read(ScaleCodecReader reader) {
+        return new Contains(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+    }
 }

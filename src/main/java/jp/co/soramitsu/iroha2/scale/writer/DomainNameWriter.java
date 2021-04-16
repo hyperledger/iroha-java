@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class DomainNameWriter implements ScaleWriter<DomainName> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, DomainName value) throws IOException {
-    writer.writeAsList(value.getName().getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, DomainName value) throws IOException {
+        writer.writeAsList(value.getName().getBytes());
+    }
 
 }

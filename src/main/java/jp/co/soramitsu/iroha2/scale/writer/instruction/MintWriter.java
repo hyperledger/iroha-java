@@ -9,11 +9,11 @@ import java.io.IOException;
 
 public class MintWriter implements ScaleWriter<Mint> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Mint value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getObject());
-    writer.write(EXPRESSION_WRITER, value.getDestinationId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Mint value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getObject());
+        writer.write(EXPRESSION_WRITER, value.getDestinationId());
+    }
 }

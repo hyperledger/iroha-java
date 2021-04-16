@@ -6,11 +6,11 @@ import jp.co.soramitsu.iroha2.model.Value;
 
 public class ValueReader implements ScaleReader<Value> {
 
-  private static final ValueBoxReader VALUE_BOX_READER = new ValueBoxReader();
+    private static final ValueBoxReader VALUE_BOX_READER = new ValueBoxReader();
 
-  @Override
-  public Value read(ScaleCodecReader reader) {
-    return new Value(reader.read(VALUE_BOX_READER));
-  }
+    @Override
+    public Value read(ScaleCodecReader reader) {
+        return new Value(reader.read(VALUE_BOX_READER));
+    }
 
 }

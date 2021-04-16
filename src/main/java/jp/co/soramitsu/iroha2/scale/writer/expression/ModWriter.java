@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2.scale.writer.expression;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
-import jp.co.soramitsu.iroha2.model.expression.Add;
 import jp.co.soramitsu.iroha2.model.expression.Mod;
 
 import java.io.IOException;

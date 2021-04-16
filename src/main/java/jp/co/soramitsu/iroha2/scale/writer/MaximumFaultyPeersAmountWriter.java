@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public class MaximumFaultyPeersAmountWriter implements ScaleWriter<MaximumFaultyPeersAmount> {
 
-  private static final U32Writer U_32_WRITER = new U32Writer();
+    private static final U32Writer U_32_WRITER = new U32Writer();
 
-  @Override
-  public void write(ScaleCodecWriter writer, MaximumFaultyPeersAmount value) throws IOException {
-    writer.write(U_32_WRITER, value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, MaximumFaultyPeersAmount value) throws IOException {
+        writer.write(U_32_WRITER, value.getValue());
+    }
 }

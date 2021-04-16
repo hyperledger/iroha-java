@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Not;
 
 public class NotReader implements ScaleReader<Not> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public Not read(ScaleCodecReader reader) {
-    return new Not(reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public Not read(ScaleCodecReader reader) {
+        return new Not(reader.read(EXPRESSION_READER));
+    }
 }

@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class BoolWriter implements ScaleWriter<Bool> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, Bool value) throws IOException {
-    writer.writeByte(value.getValue() ? 1 : 0);
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Bool value) throws IOException {
+        writer.writeByte(value.getValue() ? 1 : 0);
+    }
 }

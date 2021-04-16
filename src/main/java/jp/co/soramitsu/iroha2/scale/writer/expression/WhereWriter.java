@@ -11,14 +11,14 @@ import java.io.IOException;
 
 public class WhereWriter implements ScaleWriter<Where> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
-  private static final MapWriter<String, Expression> VALUES_WRITER = new MapWriter<>(
-      new StringWriter(), EXPRESSION_WRITER);
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final MapWriter<String, Expression> VALUES_WRITER = new MapWriter<>(
+            new StringWriter(), EXPRESSION_WRITER);
 
-  @Override
-  public void write(ScaleCodecWriter writer, Where value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getExpression());
-    writer.write(VALUES_WRITER, value.getValues());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Where value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getExpression());
+        writer.write(VALUES_WRITER, value.getValues());
+    }
 
 }

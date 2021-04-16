@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.scale.reader.ValueReader;
 
 public class QueryResultReader implements ScaleReader<QueryResult> {
 
-  @Override
-  public QueryResult read(ScaleCodecReader reader) {
-    return new QueryResult(reader.read(new ValueReader()));
-  }
+    @Override
+    public QueryResult read(ScaleCodecReader reader) {
+        return new QueryResult(reader.read(new ValueReader()));
+    }
 }

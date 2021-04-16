@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.scale.reader.ExpressionReader;
 
 public class FindAssetsByDomainNameReader implements ScaleReader<FindAssetsByDomainName> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public FindAssetsByDomainName read(ScaleCodecReader reader) {
-    return new FindAssetsByDomainName(reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public FindAssetsByDomainName read(ScaleCodecReader reader) {
+        return new FindAssetsByDomainName(reader.read(EXPRESSION_READER));
+    }
 }

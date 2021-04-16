@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public  class Committed implements Status {
+public class Committed implements Status {
 
 }

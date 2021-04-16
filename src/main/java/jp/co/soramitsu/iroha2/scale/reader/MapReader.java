@@ -11,32 +11,32 @@ import java.util.stream.Collectors;
 
 public class MapReader<K, V> implements ScaleReader<Map<K, V>> {
 
-  private static class EntryReader<K, V> implements ScaleReader<Entry<K, V>> {
+    private final ListReader<Entry<K, V>> listReader;
 
-    private ScaleReader<K> keyReader;
-    private ScaleReader<V> valueReader;
-
-    public EntryReader(ScaleReader<K> keyReader, ScaleReader<V> valueReader) {
-      this.keyReader = keyReader;
-      this.valueReader = valueReader;
+    public MapReader(ScaleReader<K> keyReader, ScaleReader<V> valueReader) {
+        listReader = new ListReader<>(new EntryReader<>(keyReader, valueReader));
     }
 
     @Override
-    public Entry<K, V> read(ScaleCodecReader reader) {
-      return new SimpleEntry<>(reader.read(keyReader), reader.read(valueReader));
+    public Map<K, V> read(ScaleCodecReader reader) {
+        return reader.read(listReader).stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-  }
 
-  private ListReader<Entry<K, V>> listReader;
+    private static class EntryReader<K, V> implements ScaleReader<Entry<K, V>> {
 
-  public MapReader(ScaleReader<K> keyReader, ScaleReader<V> valueReader) {
-    listReader = new ListReader<>(new EntryReader<>(keyReader, valueReader));
-  }
+        private final ScaleReader<K> keyReader;
+        private final ScaleReader<V> valueReader;
 
-  @Override
-  public Map<K, V> read(ScaleCodecReader reader) {
-    return reader.read(listReader).stream()
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-  }
+        public EntryReader(ScaleReader<K> keyReader, ScaleReader<V> valueReader) {
+            this.keyReader = keyReader;
+            this.valueReader = valueReader;
+        }
+
+        @Override
+        public Entry<K, V> read(ScaleCodecReader reader) {
+            return new SimpleEntry<>(reader.read(keyReader), reader.read(valueReader));
+        }
+    }
 
 }

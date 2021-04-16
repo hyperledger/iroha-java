@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class VersionedSignedQueryRequestWriter implements ScaleWriter<VersionedSignedQueryRequest> {
 
-    private static UnionWriter<VersionedSignedQueryRequest> VERSIONED_REQUEST_UNION_WRITER = new UnionWriter<>(
+    private static final UnionWriter<VersionedSignedQueryRequest> VERSIONED_REQUEST_UNION_WRITER = new UnionWriter<>(
             new NopWriter<>(), // 0 - must not be used
             new V1SignedQueryRequestWriter() // 1 - V1
     );

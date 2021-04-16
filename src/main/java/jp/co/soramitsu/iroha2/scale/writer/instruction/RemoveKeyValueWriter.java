@@ -7,9 +7,9 @@ import jp.co.soramitsu.iroha2.scale.writer.expression.ExpressionWriter;
 
 import java.io.IOException;
 
-public class RemoveKeyValueWriter  implements ScaleWriter<RemoveKeyValue>  {
+public class RemoveKeyValueWriter implements ScaleWriter<RemoveKeyValue> {
 
-    private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
     @Override
     public void write(ScaleCodecWriter scaleCodecWriter, RemoveKeyValue removeKeyValue) throws IOException {

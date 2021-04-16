@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class PeerWriter implements ScaleWriter<Peer> {
 
-  private static final PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
+    private static final PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
 
-  public void write(ScaleCodecWriter writer, Peer value) throws IOException {
-    writer.write(PEER_ID_WRITER, value.getPeerId());
-  }
+    public void write(ScaleCodecWriter writer, Peer value) throws IOException {
+        writer.write(PEER_ID_WRITER, value.getPeerId());
+    }
 }

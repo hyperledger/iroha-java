@@ -9,19 +9,19 @@ import java.io.IOException;
 
 public class IdentifiableBoxWriter implements ScaleWriter<IdentifiableBox> {
 
-  private static final UnionWriter<IdentifiableBox> IDENTIFIABLE_BOX_WRITER = new UnionWriter<>(
-      new AccountWriter(), // 0 - Account
-      new NewAccountWriter(), // 1 - NewAccount
-      new AssetWriter(), // 2 - Asset
-      new AssetDefinitionWriter(), // 3 - AssetDefinition
-      new DomainWriter(), // 4 - Domain
-      new PeerWriter(), // 5 - Peer
-      new NopWriter<>() // 6 - World
-  );
+    private static final UnionWriter<IdentifiableBox> IDENTIFIABLE_BOX_WRITER = new UnionWriter<>(
+            new AccountWriter(), // 0 - Account
+            new NewAccountWriter(), // 1 - NewAccount
+            new AssetWriter(), // 2 - Asset
+            new AssetDefinitionWriter(), // 3 - AssetDefinition
+            new DomainWriter(), // 4 - Domain
+            new PeerWriter(), // 5 - Peer
+            new NopWriter<>() // 6 - World
+    );
 
-  @Override
-  public void write(ScaleCodecWriter writer, IdentifiableBox value) throws IOException {
-    writer.write(IDENTIFIABLE_BOX_WRITER, new EnumerationUnionValue<>(value));
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, IdentifiableBox value) throws IOException {
+        writer.write(IDENTIFIABLE_BOX_WRITER, new EnumerationUnionValue<>(value));
+    }
 
 }

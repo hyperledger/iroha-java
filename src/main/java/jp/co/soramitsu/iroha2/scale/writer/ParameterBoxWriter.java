@@ -9,16 +9,16 @@ import java.io.IOException;
 
 public class ParameterBoxWriter implements ScaleWriter<ParameterBox> {
 
-  private static final UnionWriter<ParameterBox> ID_BOX_WRITER = new UnionWriter<>(
-      new MaximumFaultyPeersAmountWriter(), // 0 - MaximumFaultyPeersAmountWriter
-      new CommitTimeWriter(), // 1 - CommitTime
-      new TransactionReceiptTimeWriter(), // 2 - TransactionReceiptTime
-      new BlockTimeWriter() // 3 - BlockTime
-  );
+    private static final UnionWriter<ParameterBox> ID_BOX_WRITER = new UnionWriter<>(
+            new MaximumFaultyPeersAmountWriter(), // 0 - MaximumFaultyPeersAmountWriter
+            new CommitTimeWriter(), // 1 - CommitTime
+            new TransactionReceiptTimeWriter(), // 2 - TransactionReceiptTime
+            new BlockTimeWriter() // 3 - BlockTime
+    );
 
-  @Override
-  public void write(ScaleCodecWriter writer, ParameterBox value) throws IOException {
-    writer.write(ID_BOX_WRITER, new EnumerationUnionValue<>(value));
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, ParameterBox value) throws IOException {
+        writer.write(ID_BOX_WRITER, new EnumerationUnionValue<>(value));
+    }
 
 }

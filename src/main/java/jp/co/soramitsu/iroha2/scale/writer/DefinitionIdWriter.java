@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class DefinitionIdWriter implements ScaleWriter<DefinitionId> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, DefinitionId value) throws IOException {
-    writer.writeAsList(value.getName().getBytes());
-    writer.writeAsList(value.getDomainName().getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, DefinitionId value) throws IOException {
+        writer.writeAsList(value.getName().getBytes());
+        writer.writeAsList(value.getDomainName().getBytes());
+    }
 }

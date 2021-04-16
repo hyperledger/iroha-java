@@ -6,6 +6,6 @@ import lombok.NonNull;
 @Data
 public class Value {
 
-  @NonNull
-  private ValueBox value;
+    @NonNull
+    private ValueBox value;
 }

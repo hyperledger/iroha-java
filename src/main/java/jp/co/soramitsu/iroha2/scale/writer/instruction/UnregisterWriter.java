@@ -9,10 +9,10 @@ import java.io.IOException;
 
 public class UnregisterWriter implements ScaleWriter<Unregister> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Unregister value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getObject());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Unregister value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getObject());
+    }
 }

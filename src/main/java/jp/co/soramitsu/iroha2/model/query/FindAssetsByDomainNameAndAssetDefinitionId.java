@@ -7,13 +7,13 @@ import lombok.NonNull;
 @Data
 public class FindAssetsByDomainNameAndAssetDefinitionId implements Query {
 
-  @NonNull
-  private Expression domainName;
-  @NonNull
-  private Expression assetDefinitionId;
+    @NonNull
+    private Expression domainName;
+    @NonNull
+    private Expression assetDefinitionId;
 
-  @Override
-  public int getIndex() {
-    return 13;
-  }
+    @Override
+    public int getIndex() {
+        return 13;
+    }
 }

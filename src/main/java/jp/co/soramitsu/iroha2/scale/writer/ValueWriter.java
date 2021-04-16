@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class ValueWriter implements ScaleWriter<Value> {
 
-  private static final ValueBoxWriter VALUE_BOX_WRITER = new ValueBoxWriter();
+    private static final ValueBoxWriter VALUE_BOX_WRITER = new ValueBoxWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Value value) throws IOException {
-    writer.write(VALUE_BOX_WRITER, value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Value value) throws IOException {
+        writer.write(VALUE_BOX_WRITER, value.getValue());
+    }
 
 }

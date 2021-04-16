@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class U128Writer implements ScaleWriter<U128> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, U128 value) throws IOException {
-    writer.writeUint128(value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, U128 value) throws IOException {
+        writer.writeUint128(value.getValue());
+    }
 }

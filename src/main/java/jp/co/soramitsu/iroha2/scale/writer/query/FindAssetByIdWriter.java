@@ -12,10 +12,10 @@ import java.io.IOException;
  */
 class FindAssetByIdWriter implements ScaleWriter<FindAssetById> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindAssetById value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindAssetById value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getId());
+    }
 }

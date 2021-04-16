@@ -6,7 +6,7 @@ import jp.co.soramitsu.iroha2.model.Store;
 
 import java.io.IOException;
 
-public class StoreWriter implements ScaleWriter<Store>  {
+public class StoreWriter implements ScaleWriter<Store> {
     @Override
     public void write(ScaleCodecWriter scaleCodecWriter, Store store) throws IOException {
         scaleCodecWriter.write(new MetadataWriter(), store.getMetadata());

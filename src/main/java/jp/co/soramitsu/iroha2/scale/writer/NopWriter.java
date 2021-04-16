@@ -8,7 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter;
  */
 public class NopWriter<T> implements ScaleWriter<T> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, T value) {
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, T value) {
+    }
 }

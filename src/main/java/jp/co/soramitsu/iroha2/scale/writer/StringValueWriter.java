@@ -10,6 +10,6 @@ import java.nio.charset.StandardCharsets;
 public class StringValueWriter implements ScaleWriter<StringValue> {
     @Override
     public void write(ScaleCodecWriter scaleCodecWriter, StringValue stringValue) throws IOException {
-       scaleCodecWriter.writeAsList(stringValue.getValue().getBytes(StandardCharsets.UTF_8));
+        scaleCodecWriter.writeAsList(stringValue.getValue().getBytes(StandardCharsets.UTF_8));
     }
 }

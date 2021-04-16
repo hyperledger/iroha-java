@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class Parameter implements ValueBox {
 
-  @NonNull
-  private ParameterBox value;
+    @NonNull
+    private ParameterBox value;
 
-  @Override
-  public int getIndex() {
-    return 7;
-  }
+    @Override
+    public int getIndex() {
+        return 7;
+    }
 }

@@ -6,16 +6,16 @@ import lombok.NonNull;
 @Data
 public class Greater implements Expression {
 
-  // Expression, which should evaluate to `U32`.
-  @NonNull
-  private Expression left;
-  // Expression, which should evaluate to `U32`.
-  @NonNull
-  private Expression right;
+    // Expression, which should evaluate to `U32`.
+    @NonNull
+    private Expression left;
+    // Expression, which should evaluate to `U32`.
+    @NonNull
+    private Expression right;
 
 
-  @Override
-  public int getIndex() {
-    return 6;
-  }
+    @Override
+    public int getIndex() {
+        return 6;
+    }
 }

@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.PublicKey;
 
 public class PublicKeyReader implements ScaleReader<PublicKey> {
 
-  @Override
-  public PublicKey read(ScaleCodecReader reader) {
-    return new PublicKey(reader.readString(), reader.readByteArray());
-  }
+    @Override
+    public PublicKey read(ScaleCodecReader reader) {
+        return new PublicKey(reader.readString(), reader.readByteArray());
+    }
 }

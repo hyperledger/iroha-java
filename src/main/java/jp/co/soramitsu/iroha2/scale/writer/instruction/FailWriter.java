@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class FailWriter implements ScaleWriter<Fail> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, Fail value) throws IOException {
-    writer.writeAsList(value.getMessage().getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Fail value) throws IOException {
+        writer.writeAsList(value.getMessage().getBytes());
+    }
 }

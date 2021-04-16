@@ -11,9 +11,9 @@ import java.io.IOException;
  */
 public class AccountIdWriter implements ScaleWriter<AccountId> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, AccountId value) throws IOException {
-    writer.writeAsList(value.getName().getBytes());
-    writer.writeAsList(value.getDomainName().getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, AccountId value) throws IOException {
+        writer.writeAsList(value.getName().getBytes());
+        writer.writeAsList(value.getDomainName().getBytes());
+    }
 }

@@ -12,39 +12,39 @@ import java.util.List;
 @Data
 public class Payload {
 
-  @NonNull
-  private AccountId accountId;
+    @NonNull
+    private AccountId accountId;
 
-  @NonNull
-  private List<Instruction> instructions = new ArrayList<>();
+    @NonNull
+    private List<Instruction> instructions = new ArrayList<>();
 
-  // unsigned int 64
-  @NonNull
-  private BigInteger creationTime;
+    // unsigned int 64
+    @NonNull
+    private BigInteger creationTime;
 
-  // unsigned int 64
-  @NonNull
-  private BigInteger timeToLiveMs;
+    // unsigned int 64
+    @NonNull
+    private BigInteger timeToLiveMs;
 
-  @NonNull
-  private Metadata metadata = new Metadata(new HashMap<>());
+    @NonNull
+    private Metadata metadata = new Metadata(new HashMap<>());
 
-  public Payload() {
-  }
+    public Payload() {
+    }
 
-  public Payload(AccountId accountId, BigInteger creationTime,
-      BigInteger timeToLiveMs) {
-    this.accountId = accountId;
-    this.creationTime = creationTime;
-    this.timeToLiveMs = timeToLiveMs;
-  }
+    public Payload(AccountId accountId, BigInteger creationTime,
+                   BigInteger timeToLiveMs) {
+        this.accountId = accountId;
+        this.creationTime = creationTime;
+        this.timeToLiveMs = timeToLiveMs;
+    }
 
-  public Payload(AccountId accountId, List<Instruction> instructions, BigInteger creationTime,
-      BigInteger timeToLiveMs, Metadata metadata) {
-    this.accountId = accountId;
-    this.instructions = instructions;
-    this.creationTime = creationTime;
-    this.timeToLiveMs = timeToLiveMs;
-    this.metadata = metadata;
-  }
+    public Payload(AccountId accountId, List<Instruction> instructions, BigInteger creationTime,
+                   BigInteger timeToLiveMs, Metadata metadata) {
+        this.accountId = accountId;
+        this.instructions = instructions;
+        this.creationTime = creationTime;
+        this.timeToLiveMs = timeToLiveMs;
+        this.metadata = metadata;
+    }
 }

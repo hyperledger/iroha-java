@@ -9,9 +9,9 @@ import java.io.IOException;
 
 public class IdentifiableWriter implements ScaleWriter<Identifiable> {
 
-  private static final IdentifiableBoxWriter IDENTIFIABLE_BOX_WRITER = new IdentifiableBoxWriter();
+    private static final IdentifiableBoxWriter IDENTIFIABLE_BOX_WRITER = new IdentifiableBoxWriter();
 
-  public void write(ScaleCodecWriter writer, Identifiable value) throws IOException {
-    writer.write(IDENTIFIABLE_BOX_WRITER, value.getValue());
-  }
+    public void write(ScaleCodecWriter writer, Identifiable value) throws IOException {
+        writer.write(IDENTIFIABLE_BOX_WRITER, value.getValue());
+    }
 }

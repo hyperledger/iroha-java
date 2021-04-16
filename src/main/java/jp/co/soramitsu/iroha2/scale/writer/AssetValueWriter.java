@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class AssetValueWriter implements ScaleWriter<AssetValue> {
 
-    private static UnionWriter<AssetValue> VALUE_WRITER = new UnionWriter<AssetValue> (
+    private static final UnionWriter<AssetValue> VALUE_WRITER = new UnionWriter<AssetValue>(
             new QuantityWriter(), // 0
             new BigQuantityWriter(), // 1
             new StoreWriter() // 2

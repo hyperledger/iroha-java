@@ -10,11 +10,11 @@ import java.io.IOException;
 
 public class SequenceWriter implements ScaleWriter<Sequence> {
 
-  private static final ListWriter<Instruction> INSTRUCTIONS_WRITER = new ListWriter<>(
-      new InstructionWriter());
+    private static final ListWriter<Instruction> INSTRUCTIONS_WRITER = new ListWriter<>(
+            new InstructionWriter());
 
-  @Override
-  public void write(ScaleCodecWriter writer, Sequence value) throws IOException {
-    writer.write(INSTRUCTIONS_WRITER, value.getInstructions());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Sequence value) throws IOException {
+        writer.write(INSTRUCTIONS_WRITER, value.getInstructions());
+    }
 }

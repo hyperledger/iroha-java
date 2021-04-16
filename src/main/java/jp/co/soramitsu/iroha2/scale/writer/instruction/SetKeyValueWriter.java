@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class SetKeyValueWriter implements ScaleWriter<SetKeyValue> {
 
-    private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
     @Override
     public void write(ScaleCodecWriter scaleCodecWriter, SetKeyValue setKeyValue) throws IOException {

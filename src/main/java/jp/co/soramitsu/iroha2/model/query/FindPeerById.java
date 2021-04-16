@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class FindPeerById implements Query {
 
-  @NonNull
-  private PeerId peerId;
+    @NonNull
+    private PeerId peerId;
 
-  @Override
-  public int getIndex() {
-    return 17;
-  }
+    @Override
+    public int getIndex() {
+        return 17;
+    }
 }

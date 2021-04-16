@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class Peer implements IdentifiableBox {
 
-  @NonNull
-  private PeerId peerId;
+    @NonNull
+    private PeerId peerId;
 
-  @Override
-  public int getIndex() {
-    return 5;
-  }
+    @Override
+    public int getIndex() {
+        return 5;
+    }
 }

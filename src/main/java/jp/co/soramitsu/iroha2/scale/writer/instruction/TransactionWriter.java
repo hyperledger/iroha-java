@@ -11,13 +11,13 @@ import java.io.IOException;
 
 public class TransactionWriter implements ScaleWriter<Transaction> {
 
-  private static final PayloadWriter PAYLOAD_WRITER = new PayloadWriter();
-  private static final ListWriter<Signature> SIGNATURES_WRITER = new ListWriter<>(
-      new SignatureWriter());
+    private static final PayloadWriter PAYLOAD_WRITER = new PayloadWriter();
+    private static final ListWriter<Signature> SIGNATURES_WRITER = new ListWriter<>(
+            new SignatureWriter());
 
-  @Override
-  public void write(ScaleCodecWriter writer, Transaction value) throws IOException {
-    writer.write(PAYLOAD_WRITER, value.getPayload());
-    writer.write(SIGNATURES_WRITER, value.getSignatures());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Transaction value) throws IOException {
+        writer.write(PAYLOAD_WRITER, value.getPayload());
+        writer.write(SIGNATURES_WRITER, value.getSignatures());
+    }
 }

@@ -8,16 +8,16 @@ import java.util.Map;
 @Data
 public class Where implements Expression {
 
-  // Expression, which should evaluate to `Value`.
-  @NonNull
-  private Expression expression;
-  
-  @NonNull
-  private Map<String, Expression> values;
+    // Expression, which should evaluate to `Value`.
+    @NonNull
+    private Expression expression;
+
+    @NonNull
+    private Map<String, Expression> values;
 
 
-  @Override
-  public int getIndex() {
-    return 18;
-  }
+    @Override
+    public int getIndex() {
+        return 18;
+    }
 }

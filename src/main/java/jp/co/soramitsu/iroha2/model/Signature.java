@@ -6,8 +6,8 @@ import lombok.NonNull;
 @Data
 public class Signature {
 
-  @NonNull
-  private PublicKey publicKey;
-  @NonNull
-  private byte[] signature;
+    @NonNull
+    private PublicKey publicKey;
+    @NonNull
+    private byte[] signature;
 }

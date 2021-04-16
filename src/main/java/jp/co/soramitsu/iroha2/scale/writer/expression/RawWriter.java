@@ -9,10 +9,10 @@ import java.io.IOException;
 
 public class RawWriter implements ScaleWriter<Raw> {
 
-  private static final ValueWriter VALUE_WRITER = new ValueWriter();
+    private static final ValueWriter VALUE_WRITER = new ValueWriter();
 
-  public void write(ScaleCodecWriter writer, Raw value) throws IOException {
-    writer.write(VALUE_WRITER, value.getValue());
-  }
+    public void write(ScaleCodecWriter writer, Raw value) throws IOException {
+        writer.write(VALUE_WRITER, value.getValue());
+    }
 
 }

@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.scale.reader.ExpressionReader;
 
 public class FindAssetQuantityByIdReader implements ScaleReader<FindAssetQuantityById> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public FindAssetQuantityById read(ScaleCodecReader reader) {
-    return new FindAssetQuantityById(reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public FindAssetQuantityById read(ScaleCodecReader reader) {
+        return new FindAssetQuantityById(reader.read(EXPRESSION_READER));
+    }
 }

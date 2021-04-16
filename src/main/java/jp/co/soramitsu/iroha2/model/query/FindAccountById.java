@@ -8,11 +8,11 @@ import lombok.NonNull;
 @Data
 public class FindAccountById implements Query {
 
-  @NonNull
-  private Expression id;
+    @NonNull
+    private Expression id;
 
-  @Override
-  public int getIndex() {
-    return 1;
-  }
+    @Override
+    public int getIndex() {
+        return 1;
+    }
 }

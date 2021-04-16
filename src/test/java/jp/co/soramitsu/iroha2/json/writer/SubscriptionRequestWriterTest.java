@@ -34,7 +34,7 @@ public class SubscriptionRequestWriterTest {
   public void testPipelineEventFilter() {
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(new Pipeline());
 
-    Assertions.assertEquals("{\"Pipeline\":{\"entity\":null,\"hash\":null}}",
+    Assertions.assertEquals("{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":null,\"hash\":null}}}",
         writer.write(subscriptionRequest));
   }
 
@@ -47,7 +47,7 @@ public class SubscriptionRequestWriterTest {
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(
         new Pipeline(EntityType.Transaction));
 
-    Assertions.assertEquals("{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":null}}",
+    Assertions.assertEquals("{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":null}}}",
         writer.write(subscriptionRequest));
   }
 
@@ -63,7 +63,7 @@ public class SubscriptionRequestWriterTest {
         new Pipeline(EntityType.Transaction, hash));
 
     Assertions.assertEquals(
-        "{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}}",
+        "{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}}}",
         writer.write(subscriptionRequest));
   }
 
@@ -79,7 +79,7 @@ public class SubscriptionRequestWriterTest {
         new Pipeline(EntityType.Block, hash));
 
     Assertions.assertEquals(
-        "{\"Pipeline\":{\"entity\":\"Block\",\"hash\":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}}",
+        "{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":\"Block\",\"hash\":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]}}}",
         writer.write(subscriptionRequest));
   }
 }

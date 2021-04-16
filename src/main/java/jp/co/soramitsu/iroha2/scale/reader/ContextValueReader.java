@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.expression.ContextValue;
 
 public class ContextValueReader implements ScaleReader<ContextValue> {
 
-  @Override
-  public ContextValue read(ScaleCodecReader reader) {
-    return new ContextValue(reader.readString());
-  }
+    @Override
+    public ContextValue read(ScaleCodecReader reader) {
+        return new ContextValue(reader.readString());
+    }
 }

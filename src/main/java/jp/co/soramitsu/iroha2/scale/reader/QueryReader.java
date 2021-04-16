@@ -6,11 +6,11 @@ import jp.co.soramitsu.iroha2.model.expression.Query;
 
 public class QueryReader implements ScaleReader<Query> {
 
-  private static final jp.co.soramitsu.iroha2.scale.reader.query.QueryReader QUERY_READER =
-      new jp.co.soramitsu.iroha2.scale.reader.query.QueryReader();
+    private static final jp.co.soramitsu.iroha2.scale.reader.query.QueryReader QUERY_READER =
+            new jp.co.soramitsu.iroha2.scale.reader.query.QueryReader();
 
-  @Override
-  public Query read(ScaleCodecReader reader) {
-    return new Query(reader.read(QUERY_READER));
-  }
+    @Override
+    public Query read(ScaleCodecReader reader) {
+        return new Query(reader.read(QUERY_READER));
+    }
 }

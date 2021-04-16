@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Subtract;
 
 public class SubtractReader implements ScaleReader<Subtract> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public Subtract read(ScaleCodecReader reader) {
-    return new Subtract(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public Subtract read(ScaleCodecReader reader) {
+        return new Subtract(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+    }
 }

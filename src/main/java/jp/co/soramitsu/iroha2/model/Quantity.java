@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
- public class Quantity implements AssetValue {
+public class Quantity implements AssetValue {
 
     @NonNull
     private U32 value;

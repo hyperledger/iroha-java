@@ -9,9 +9,9 @@ import jp.co.soramitsu.iroha2.model.Metrics.Cpu.Load;
  */
 public class LoadReader implements ScaleReader<Load> {
 
-  @Override
-  public Load read(ScaleCodecReader reader) {
-    return new Load(reader.readString(), reader.readString(), reader.readString());
-  }
+    @Override
+    public Load read(ScaleCodecReader reader) {
+        return new Load(reader.readString(), reader.readString(), reader.readString());
+    }
 
 }

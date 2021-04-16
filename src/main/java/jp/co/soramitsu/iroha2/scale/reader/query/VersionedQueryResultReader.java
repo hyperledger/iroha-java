@@ -12,6 +12,7 @@ public class VersionedQueryResultReader implements ScaleReader<VersionedQueryRes
             new UnsupportedReader(), // 0 - not used
             new V1QueryResultReader() //1 - V1
     );
+
     @Override
     public VersionedQueryResult read(ScaleCodecReader scaleCodecReader) {
         return scaleCodecReader.read(VERSIONED_QUERY_RESULT__READER).getValue();

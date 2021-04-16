@@ -10,11 +10,11 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Fail implements Instruction {
 
-  @NonNull
-  private String message;
+    @NonNull
+    private String message;
 
-  @Override
-  public int getIndex() {
-    return 8;
-  }
+    @Override
+    public int getIndex() {
+        return 8;
+    }
 }

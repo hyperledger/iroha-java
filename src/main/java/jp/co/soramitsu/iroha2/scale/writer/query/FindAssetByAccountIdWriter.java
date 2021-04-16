@@ -9,10 +9,10 @@ import java.io.IOException;
 
 class FindAssetByAccountIdWriter implements ScaleWriter<FindAssetsByAccountId> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindAssetsByAccountId value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getAccountId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindAssetsByAccountId value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getAccountId());
+    }
 }

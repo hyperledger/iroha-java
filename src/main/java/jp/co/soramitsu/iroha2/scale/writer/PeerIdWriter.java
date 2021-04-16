@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public class PeerIdWriter implements ScaleWriter<PeerId> {
 
-  private static final PublicKeyWriter PUBLIC_KEY_WRITER = new PublicKeyWriter();
+    private static final PublicKeyWriter PUBLIC_KEY_WRITER = new PublicKeyWriter();
 
-  public void write(ScaleCodecWriter writer, PeerId value) throws IOException {
-    writer.writeAsList(value.getAddress().getBytes());
-    writer.write(PUBLIC_KEY_WRITER, value.getPublicKey());
-  }
+    public void write(ScaleCodecWriter writer, PeerId value) throws IOException {
+        writer.writeAsList(value.getAddress().getBytes());
+        writer.write(PUBLIC_KEY_WRITER, value.getPublicKey());
+    }
 }

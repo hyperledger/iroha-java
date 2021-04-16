@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public class PairWriter implements ScaleWriter<Pair> {
 
-  private static InstructionWriter INSTRUCTION_WRITER = new InstructionWriter();
+    private static final InstructionWriter INSTRUCTION_WRITER = new InstructionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Pair value) throws IOException {
-    writer.write(INSTRUCTION_WRITER, value.getLeft());
-    writer.write(INSTRUCTION_WRITER, value.getRight());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Pair value) throws IOException {
+        writer.write(INSTRUCTION_WRITER, value.getLeft());
+        writer.write(INSTRUCTION_WRITER, value.getRight());
+    }
 }

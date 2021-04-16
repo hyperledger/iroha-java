@@ -9,9 +9,9 @@ import jp.co.soramitsu.iroha2.model.Metrics.Memory;
  */
 public class MemoryReader implements ScaleReader<Memory> {
 
-  @Override
-  public Memory read(ScaleCodecReader reader) {
-    return new Memory(reader.readString(), reader.readString());
-  }
+    @Override
+    public Memory read(ScaleCodecReader reader) {
+        return new Memory(reader.readString(), reader.readString());
+    }
 
 }

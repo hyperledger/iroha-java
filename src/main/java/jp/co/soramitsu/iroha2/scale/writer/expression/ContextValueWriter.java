@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class ContextValueWriter implements ScaleWriter<ContextValue> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, ContextValue value) throws IOException {
-    writer.writeAsList(value.getValueName().getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, ContextValue value) throws IOException {
+        writer.writeAsList(value.getValueName().getBytes());
+    }
 
 }

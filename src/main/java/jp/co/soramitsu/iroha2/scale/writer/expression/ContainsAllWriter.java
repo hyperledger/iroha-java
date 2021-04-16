@@ -8,12 +8,12 @@ import java.io.IOException;
 
 public class ContainsAllWriter implements ScaleWriter<ContainsAll> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, ContainsAll value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getCollection());
-    writer.write(EXPRESSION_WRITER, value.getElements());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, ContainsAll value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getCollection());
+        writer.write(EXPRESSION_WRITER, value.getElements());
+    }
 
 }

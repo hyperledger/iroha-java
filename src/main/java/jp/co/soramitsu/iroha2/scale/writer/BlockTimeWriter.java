@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public class BlockTimeWriter implements ScaleWriter<BlockTime> {
 
-  private static final U128Writer U_128_WRITER = new U128Writer();
+    private static final U128Writer U_128_WRITER = new U128Writer();
 
-  @Override
-  public void write(ScaleCodecWriter writer, BlockTime value) throws IOException {
-    writer.write(U_128_WRITER, value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, BlockTime value) throws IOException {
+        writer.write(U_128_WRITER, value.getValue());
+    }
 }

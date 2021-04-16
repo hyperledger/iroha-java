@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.PeerId;
 
 public class PeerIdReader implements ScaleReader<PeerId> {
 
-  private static final PublicKeyReader PUBLIC_KEY_READER = new PublicKeyReader();
+    private static final PublicKeyReader PUBLIC_KEY_READER = new PublicKeyReader();
 
-  @Override
-  public PeerId read(ScaleCodecReader reader) {
-    return new PeerId(reader.readString(), PUBLIC_KEY_READER.read(reader));
-  }
+    @Override
+    public PeerId read(ScaleCodecReader reader) {
+        return new PeerId(reader.readString(), PUBLIC_KEY_READER.read(reader));
+    }
 }

@@ -13,10 +13,10 @@ import java.io.IOException;
  */
 class FindAccountByIdWriter implements ScaleWriter<FindAccountById> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindAccountById value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindAccountById value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getId());
+    }
 }

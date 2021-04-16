@@ -5,8 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleReader;
 
 public class StringReader implements ScaleReader<String> {
 
-  @Override
-  public String read(ScaleCodecReader reader) {
-    return reader.readString();
-  }
+    @Override
+    public String read(ScaleCodecReader reader) {
+        return reader.readString();
+    }
 }

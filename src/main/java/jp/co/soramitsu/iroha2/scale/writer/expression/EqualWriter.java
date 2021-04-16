@@ -8,12 +8,12 @@ import java.io.IOException;
 
 public class EqualWriter implements ScaleWriter<Equal> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Equal value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getLeft());
-    writer.write(EXPRESSION_WRITER, value.getRight());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Equal value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getLeft());
+        writer.write(EXPRESSION_WRITER, value.getRight());
+    }
 
 }

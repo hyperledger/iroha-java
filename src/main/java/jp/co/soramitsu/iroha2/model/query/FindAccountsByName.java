@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class FindAccountsByName implements Query {
 
-  @NonNull
-  private Expression name;
+    @NonNull
+    private Expression name;
 
-  @Override
-  public int getIndex() {
-    return 3;
-  }
+    @Override
+    public int getIndex() {
+        return 3;
+    }
 }

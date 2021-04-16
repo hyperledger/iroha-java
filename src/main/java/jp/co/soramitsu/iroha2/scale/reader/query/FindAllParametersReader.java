@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.query.FindAllParameters;
 
 public class FindAllParametersReader implements ScaleReader<FindAllParameters> {
 
-  @Override
-  public FindAllParameters read(ScaleCodecReader scaleCodecReader) {
-    return new FindAllParameters();
-  }
+    @Override
+    public FindAllParameters read(ScaleCodecReader scaleCodecReader) {
+        return new FindAllParameters();
+    }
 }

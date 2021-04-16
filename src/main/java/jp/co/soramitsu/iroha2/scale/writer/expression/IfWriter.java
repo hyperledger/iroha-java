@@ -8,13 +8,13 @@ import java.io.IOException;
 
 public class IfWriter implements ScaleWriter<If> {
 
-  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, If value) throws IOException {
-    writer.write(EXPRESSION_WRITER, value.getCondition());
-    writer.write(EXPRESSION_WRITER, value.getThenExpression());
-    writer.write(EXPRESSION_WRITER, value.getElseExpression());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, If value) throws IOException {
+        writer.write(EXPRESSION_WRITER, value.getCondition());
+        writer.write(EXPRESSION_WRITER, value.getThenExpression());
+        writer.write(EXPRESSION_WRITER, value.getElseExpression());
+    }
 
 }

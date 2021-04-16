@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class VersionedTransactionWriter implements ScaleWriter<VersionedTransaction> {
 
-    private static UnionWriter<VersionedTransaction> VERSIONED_TX_UNION_WRITER = new UnionWriter<>(
+    private static final UnionWriter<VersionedTransaction> VERSIONED_TX_UNION_WRITER = new UnionWriter<>(
             new NopWriter<>(), // 0 - must not be used
             new V1TransactionWriter() // 1 - V1
     );

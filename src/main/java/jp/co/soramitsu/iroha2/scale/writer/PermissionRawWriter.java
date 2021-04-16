@@ -8,9 +8,9 @@ import java.io.IOException;
 
 public class PermissionRawWriter implements ScaleWriter<PermissionRaw> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, PermissionRaw value) throws IOException {
-    writer.writeAsList(value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, PermissionRaw value) throws IOException {
+        writer.writeAsList(value.getValue());
+    }
 
 }

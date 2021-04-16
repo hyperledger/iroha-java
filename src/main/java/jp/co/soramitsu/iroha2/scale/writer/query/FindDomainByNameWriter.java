@@ -9,10 +9,10 @@ import java.io.IOException;
 
 class FindDomainByNameWriter implements ScaleWriter<FindDomainByName> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindDomainByName value) throws IOException {
-    EXPRESSION_WRITER.write(writer, value.getName());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindDomainByName value) throws IOException {
+        EXPRESSION_WRITER.write(writer, value.getName());
+    }
 }

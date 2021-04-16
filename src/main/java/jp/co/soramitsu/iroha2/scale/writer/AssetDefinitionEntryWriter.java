@@ -8,12 +8,12 @@ import java.io.IOException;
 
 public class AssetDefinitionEntryWriter implements ScaleWriter<AssetDefinitionEntry> {
 
-  private static final DefinitionIdWriter DEFINITION_ID_WRITER = new DefinitionIdWriter();
-  private static final AccountIdWriter ACCOUNT_ID_WRITER = new AccountIdWriter();
+    private static final DefinitionIdWriter DEFINITION_ID_WRITER = new DefinitionIdWriter();
+    private static final AccountIdWriter ACCOUNT_ID_WRITER = new AccountIdWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, AssetDefinitionEntry value) throws IOException {
-    DEFINITION_ID_WRITER.write(writer, value.getDefinition());
-    ACCOUNT_ID_WRITER.write(writer, value.getRegisteredBy());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, AssetDefinitionEntry value) throws IOException {
+        DEFINITION_ID_WRITER.write(writer, value.getDefinition());
+        ACCOUNT_ID_WRITER.write(writer, value.getRegisteredBy());
+    }
 }

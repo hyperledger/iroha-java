@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.And;
 
 public class AndReader implements ScaleReader<And> {
 
-  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-  @Override
-  public And read(ScaleCodecReader reader) {
-    return new And(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-  }
+    @Override
+    public And read(ScaleCodecReader reader) {
+        return new And(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+    }
 }

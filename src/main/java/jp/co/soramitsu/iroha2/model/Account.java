@@ -11,21 +11,21 @@ import java.util.Map;
 @AllArgsConstructor
 public class Account implements IdentifiableBox {
 
-  @NonNull
-  private AccountId id;
-  @NonNull
-  private Map<AssetId, Asset> assets;
-  @NonNull
-  private List<PublicKey> signatories;
-  @NonNull
-  private List<PermissionRaw> permissions;
-  @NonNull
-  private SignatureCheckCondition signatureCheckCondition;
-  @NonNull
-  private Metadata metadata;
+    @NonNull
+    private AccountId id;
+    @NonNull
+    private Map<AssetId, Asset> assets;
+    @NonNull
+    private List<PublicKey> signatories;
+    @NonNull
+    private List<PermissionRaw> permissions;
+    @NonNull
+    private SignatureCheckCondition signatureCheckCondition;
+    @NonNull
+    private Metadata metadata;
 
-  @Override
-  public int getIndex() {
-    return 0;
-  }
+    @Override
+    public int getIndex() {
+        return 0;
+    }
 }

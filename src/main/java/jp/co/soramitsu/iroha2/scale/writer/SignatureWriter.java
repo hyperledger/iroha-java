@@ -9,12 +9,12 @@ import java.io.IOException;
 
 public class SignatureWriter implements ScaleWriter<Signature> {
 
-  private static final PublicKeyWriter PUBLIC_KEY_WRITER = new PublicKeyWriter();
+    private static final PublicKeyWriter PUBLIC_KEY_WRITER = new PublicKeyWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, Signature value) throws IOException {
-    writer.write(PUBLIC_KEY_WRITER, value.getPublicKey());
-    writer.writeAsList(value.getSignature());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Signature value) throws IOException {
+        writer.write(PUBLIC_KEY_WRITER, value.getPublicKey());
+        writer.writeAsList(value.getSignature());
+    }
 
 }

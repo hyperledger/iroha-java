@@ -9,10 +9,10 @@ import java.io.IOException;
 
 class FindPeerByIdWriter implements ScaleWriter<FindPeerById> {
 
-  private static PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
+    private static final PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindPeerById value) throws IOException {
-    writer.write(PEER_ID_WRITER, value.getPeerId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindPeerById value) throws IOException {
+        writer.write(PEER_ID_WRITER, value.getPeerId());
+    }
 }

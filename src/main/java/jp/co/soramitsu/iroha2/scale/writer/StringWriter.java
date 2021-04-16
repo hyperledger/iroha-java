@@ -7,9 +7,9 @@ import java.io.IOException;
 
 public class StringWriter implements ScaleWriter<String> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, String value) throws IOException {
-    writer.writeAsList(value.getBytes());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, String value) throws IOException {
+        writer.writeAsList(value.getBytes());
+    }
 
 }

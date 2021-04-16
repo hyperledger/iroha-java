@@ -10,11 +10,11 @@ import java.io.IOException;
 
 public class VectorWriter implements ScaleWriter<Vector> {
 
-  private static final ListWriter<Value> LIST_WRITER = new ListWriter<>(
-      new ValueWriter());
+    private static final ListWriter<Value> LIST_WRITER = new ListWriter<>(
+            new ValueWriter());
 
-  @Override
-  public void write(ScaleCodecWriter writer, Vector value) throws IOException {
-    writer.write(LIST_WRITER, value.getVector());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, Vector value) throws IOException {
+        writer.write(LIST_WRITER, value.getVector());
+    }
 }

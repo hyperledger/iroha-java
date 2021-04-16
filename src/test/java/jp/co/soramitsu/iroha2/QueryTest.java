@@ -296,29 +296,6 @@ public class QueryTest {
     });
   }
 
-  /**
-   * Find peer by Id. Returns the same Peer
-   */
-  @Test
-  public void requestFindPeerById() {
-    Assertions.assertDoesNotThrow(() -> {
-      PublicKey publicKey = new PublicKey("ed25519", peerPublicKey);
-      PeerId peerIdToFind = new PeerId("iroha:1337", publicKey);
-      SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindPeerById(peerIdToFind))
-          .sign(keyPair);
-
-      QueryResult res = api.query(new V1SignedQueryRequest(request));
-
-      Value value = res.getValue();
-      Assertions.assertTrue(value.getValue() instanceof Id);
-      Assertions.assertTrue(((Id) value.getValue()).getId() instanceof PeerId);
-      PeerId peerId = (PeerId) ((Id) value.getValue()).getId();
-      Assertions.assertEquals("iroha:1337", peerId.getAddress());
-      Assertions.assertEquals("ed25519", peerId.getPublicKey().getDigestFunction());
-      Assertions.assertArrayEquals(peerPublicKey, peerId.getPublicKey().getPayload());
-    });
-  }
 
   /**
    * Find all parameters returns empty list of Values.

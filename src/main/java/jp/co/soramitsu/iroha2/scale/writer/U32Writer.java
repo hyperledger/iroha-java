@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class U32Writer implements ScaleWriter<U32> {
 
-  @Override
-  public void write(ScaleCodecWriter writer, U32 value) throws IOException {
-    writer.writeUint32(value.getValue());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, U32 value) throws IOException {
+        writer.writeUint32(value.getValue());
+    }
 }

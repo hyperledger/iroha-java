@@ -6,6 +6,6 @@ import lombok.NonNull;
 @Data
 public class PermissionRaw {
 
-  @NonNull
-  private byte[] value;
+    @NonNull
+    private byte[] value;
 }
