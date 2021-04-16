@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2.scale.writer.query;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import jp.co.soramitsu.iroha2.model.query.FindAccountById;
-import jp.co.soramitsu.iroha2.scale.writer.AccountIdWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.ExpressionWriter;
 
 import java.io.IOException;
 
@@ -13,10 +13,10 @@ import java.io.IOException;
  */
 class FindAccountByIdWriter implements ScaleWriter<FindAccountById> {
 
-  private static AccountIdWriter ID_WRITER = new AccountIdWriter();
+  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
   @Override
   public void write(ScaleCodecWriter writer, FindAccountById value) throws IOException {
-    writer.write(ID_WRITER, value.getId());
+    writer.write(EXPRESSION_WRITER, value.getId());
   }
 }

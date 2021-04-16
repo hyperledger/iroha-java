@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.model.PublicKey;
 import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.Value;
 import jp.co.soramitsu.iroha2.model.Vector;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class QueryTest {
   public void queryFindAccountById() {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
-      Query query = new FindAccountById(accountId);
+      Query query = new FindAccountById(new Raw(new Value(new Id(accountId))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
