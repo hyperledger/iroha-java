@@ -9,8 +9,11 @@ import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Pipeline;
 import jp.co.soramitsu.iroha2.model.query.QueryResult;
+import jp.co.soramitsu.iroha2.model.query.V1QueryResult;
 import jp.co.soramitsu.iroha2.model.query.V1SignedQueryRequest;
 import jp.co.soramitsu.iroha2.scale.reader.query.QueryResultReader;
+import jp.co.soramitsu.iroha2.scale.reader.query.V1QueryResultReader;
+import jp.co.soramitsu.iroha2.scale.reader.query.VersionedQueryResultReader;
 import jp.co.soramitsu.iroha2.scale.writer.VersionedTransactionWriter;
 import jp.co.soramitsu.iroha2.scale.writer.query.VersionedSignedQueryRequestWriter;
 import org.eclipse.jetty.client.HttpClient;
@@ -74,9 +77,7 @@ public class Iroha2Api {
     ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
     codec.write(new VersionedSignedQueryRequestWriter(), request);
 
-    var rawBytes= encoded.toByteArray();
-    System.out.println(bytesToJsonString(rawBytes));
-    byte[] responseContent = send(queryUri, HttpMethod.GET, rawBytes);
+    byte[] responseContent = send(queryUri, HttpMethod.GET, encoded.toByteArray());
 
     ScaleCodecReader reader = new ScaleCodecReader(responseContent);
     return reader.read(new QueryResultReader());
