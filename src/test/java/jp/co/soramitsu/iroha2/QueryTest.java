@@ -42,9 +42,6 @@ import org.junit.jupiter.api.Timeout;
 @Timeout(5)
 public class QueryTest {
 
-  // root account keys:
-  // priv: 9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e
-  // pub:  7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0
   static String privateKeyHex = "de757bcb79f4c63e8fa0795edc26f86dfdba189b846e903d0b732bb644607720";
   static KeyPair keyPair = Utils.EdDSAKeyPairFromHexPrivateKey(privateKeyHex);
   static Iroha2Api api = new Iroha2Api("localhost:8080");

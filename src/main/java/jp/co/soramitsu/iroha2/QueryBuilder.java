@@ -2,10 +2,12 @@ package jp.co.soramitsu.iroha2;
 
 import static jp.co.soramitsu.iroha2.Utils.currentTimestamp;
 
+import java.math.BigInteger;
 import jp.co.soramitsu.iroha2.model.AccountId;
 import jp.co.soramitsu.iroha2.model.AssetId;
 import jp.co.soramitsu.iroha2.model.DefinitionId;
 import jp.co.soramitsu.iroha2.model.Id;
+import jp.co.soramitsu.iroha2.model.U128;
 import jp.co.soramitsu.iroha2.model.Value;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.FindAssetQuantityById;
@@ -21,7 +23,7 @@ public class QueryBuilder {
   }
 
   public QueryBuilder setTimestamp(long timestamp) {
-    query.setTimestamp(currentTimestamp());
+    query.setTimestamp(new U128(BigInteger.valueOf(timestamp)));
     return this;
   }
 

@@ -31,7 +31,7 @@ public interface Status {
         } else if (COMMITTED_VARIANT_CLASS_NAME.equals(variantName)) {
           return new Committed();
         } else {
-          final var errorName = String.format("Expected variant name one of %s or %s,but got %s",
+          final var errorName = String.format("Expected variant name one of %s or %s, but got %s",
               VALIDATING_VARIANT_CLASS_NAME, COMMITTED_VARIANT_CLASS_NAME, variantName);
           throw new JsonParseException(p, errorName);
         }

@@ -35,7 +35,7 @@ public class AssetWriterTest extends ScaleWriterFixture {
    * {@code
    *        let account_id = AccountId::new("root", "global");
    *        let asset_id = AssetId::new(AssetDefinitionId::new("XOR", "Soramitsu"), account_id.clone());
-   *        let asset = Asset::with_parameter(asset_id.clone(), "Key".to_string(), Value::U32(0), MetadataLimits::new(64, 64)).unwrap();r
+   *        let asset = Asset::with_parameter(asset_id.clone(), "Key".to_string(), Value::U32(0), MetadataLimits::new(64, 64)).unwrap();
    * </pre>
    */
   @Test
