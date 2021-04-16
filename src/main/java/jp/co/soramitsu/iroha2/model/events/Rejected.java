@@ -10,10 +10,6 @@ import lombok.NonNull;
 @lombok.Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonTypeInfo(
-//        use = JsonTypeInfo.Id.NAME,
-//        include = JsonTypeInfo.As.WRAPPER_OBJECT
-//)
 public class Rejected implements Status {
 
   @NonNull

@@ -13,15 +13,6 @@ import jp.co.soramitsu.iroha2.model.Transaction;
 import jp.co.soramitsu.iroha2.model.events.reject.TransactionRejectionReason;
 
 @JsonDeserialize(using = Status.StatusDeserializer.class)
-//@JsonTypeInfo(
-//        use = JsonTypeInfo.Id.NAME,
-//        include = JsonTypeInfo.As.WRAPPER_OBJECT
-//)
-//@JsonSubTypes({
-//        @JsonSubTypes.Type(value = Rejected.class, name = "Rejected"),
-//        @JsonSubTypes.Type(value = Committed.class, name = "Committed"),
-//        @JsonSubTypes.Type(value = Committed.class, name = "Validating"),
-//})
 public interface Status {
 
   class StatusDeserializer extends JsonDeserializer<Status> {
