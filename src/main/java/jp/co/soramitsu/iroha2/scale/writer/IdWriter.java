@@ -21,6 +21,7 @@ public class IdWriter implements ScaleWriter<Id> {
 
   @Override
   public void write(ScaleCodecWriter writer, Id value) throws IOException {
+
     writer.write(ID_BOX_WRITER, new EnumerationUnionValue<>(value.getId()));
   }
 }

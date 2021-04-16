@@ -163,8 +163,9 @@ public class QueryTest {
   public void requestFindAssetsByAssetDefinitionId() {
     Assertions.assertDoesNotThrow(() -> {
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
+      Query query = new FindAssetsByAssetDefinitionId(new Raw(new Value(new Id(assetDefinitionId))));
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAssetDefinitionId(assetDefinitionId))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
