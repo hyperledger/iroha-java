@@ -4,6 +4,6 @@ public class FindAllPeers implements Query {
 
   @Override
   public int getIndex() {
-    return 16;
+    return 18;
   }
 }

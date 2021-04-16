@@ -264,13 +264,16 @@ public class QueryTest {
   @Test
   public void requestFindDomainByName() {
     Assertions.assertDoesNotThrow(() -> {
+
+      Query query = new FindDomainByName(new Raw(new Value(new StringValue("wonderland"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindDomainByName("global"))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions
-          .assertEquals("global",
+          .assertEquals("wonderland",
               ((Domain) ((Identifiable) res.getValue().getValue()).getValue()).getName());
     });
   }

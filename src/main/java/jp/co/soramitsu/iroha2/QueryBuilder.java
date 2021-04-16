@@ -1,8 +1,7 @@
 package jp.co.soramitsu.iroha2;
 
-import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.AssetId;
-import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.*;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.FindAssetQuantityById;
 import jp.co.soramitsu.iroha2.model.query.Query;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
@@ -33,7 +32,7 @@ public class QueryBuilder {
     AccountId accountId = new AccountId(accountName, accountDomain);
     DefinitionId definitionId = new DefinitionId(assetName, assetDomain);
     AssetId assetId = new AssetId(definitionId, accountId);
-    FindAssetQuantityById request = new FindAssetQuantityById(assetId);
+    FindAssetQuantityById request = new FindAssetQuantityById(new Raw(new Value(new Id(assetId))));
     query.setQuery(request);
     return new UnsignedQuery(this.query);
   }
