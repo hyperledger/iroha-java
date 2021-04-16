@@ -3,7 +3,6 @@ package jp.co.soramitsu.iroha2.scale.reader;
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
 import io.emeraldpay.polkaj.scale.reader.UnionReader;
-import jp.co.soramitsu.iroha2.model.IdBox;
 import jp.co.soramitsu.iroha2.model.ParameterBox;
 
 public class ParameterBoxReader implements ScaleReader<ParameterBox> {

@@ -4,11 +4,11 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
 import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.instruction.Transfer;
-import jp.co.soramitsu.iroha2.scale.writer.ExpressionWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.ExpressionWriter;
 
 public class TransferWriter implements ScaleWriter<Transfer> {
 
-  private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
   @Override
   public void write(ScaleCodecWriter writer, Transfer value) throws IOException {

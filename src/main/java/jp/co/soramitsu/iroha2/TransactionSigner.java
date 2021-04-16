@@ -10,14 +10,14 @@ import java.util.List;
 import jp.co.soramitsu.iroha2.model.Payload;
 import jp.co.soramitsu.iroha2.model.PublicKey;
 import jp.co.soramitsu.iroha2.model.Signature;
-import jp.co.soramitsu.iroha2.model.instruction.Transaction;
+import jp.co.soramitsu.iroha2.model.Transaction;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec;
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable;
 
 public class TransactionSigner {
 
-  private Transaction transaction;
+  private final Transaction transaction;
 
   public TransactionSigner(Payload payload) {
     this.transaction = new Transaction(payload);

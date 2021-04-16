@@ -1,7 +1,5 @@
 package jp.co.soramitsu.iroha2.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -9,30 +7,17 @@ import lombok.NonNull;
 public class Asset implements IdentifiableBox {
 
   @NonNull
+  AssetValue value;
+  @NonNull
   private AssetId id;
-  @NonNull
-  private U32 quantity;
-  @NonNull
-  private U128 bigQuantity;
-  @NonNull
-  private Map<String, String> store;
 
-  public Asset(AssetId id, U32 quantity, U128 bigQuantity) {
+  public Asset(AssetId id, AssetValue assetValue) {
     this.id = id;
-    this.quantity = quantity;
-    this.bigQuantity = bigQuantity;
-    store = new HashMap<>();
-  }
-
-  public Asset(AssetId id, U32 quantity, U128 bigQuantity, Map<String, String> store) {
-    this.id = id;
-    this.quantity = quantity;
-    this.bigQuantity = bigQuantity;
-    this.store = store;
+    this.value = assetValue;
   }
 
   @Override
   public int getIndex() {
-    return 1;
+    return 2;
   }
 }

@@ -1,53 +1,16 @@
 package jp.co.soramitsu.iroha2.model.events;
 
-import lombok.Data;
-import lombok.NonNull;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-/**
- * Responses to event subscription.
- */
-@Data
-public class Event {
-
-  public interface EventType {
-
-  }
-
-  public static class Data implements EventType {
-
-  }
-
-  @lombok.Data
-  public static class Pipeline implements EventType {
-
-    public interface Status {
-
-    }
-
-    public static class Validating implements Status {
-
-    }
-
-    @lombok.Data
-    public static class Rejected implements Status {
-
-      @NonNull
-      private String rejectedReason;
-    }
-
-    public static class Committed implements Status {
-
-    }
-
-    @NonNull
-    private EntityType entityType;
-    @NonNull
-    private Status status;
-    @NonNull
-    private byte[] hash;
-  }
-
-  @NonNull
-  private EventType event;
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.WRAPPER_OBJECT
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Pipeline.class, name = "Pipeline"),
+    @JsonSubTypes.Type(value = jp.co.soramitsu.iroha2.model.events.Data.class, name = "Data")
+})
+public interface Event {
 
 }

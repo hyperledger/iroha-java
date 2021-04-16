@@ -9,7 +9,7 @@ import jp.co.soramitsu.iroha2.model.IdBox;
 
 public class IdWriter implements ScaleWriter<Id> {
 
-  private static UnionWriter<IdBox> ID_BOX_WRITER = new UnionWriter<>(
+  private static final UnionWriter<IdBox> ID_BOX_WRITER = new UnionWriter<>(
       new AccountIdWriter(), // 0 - AccountId
       new AssetIdWriter(), // 1 - AssetId
       new DefinitionIdWriter(), // 2 - AssetDefinitionId
@@ -20,6 +20,7 @@ public class IdWriter implements ScaleWriter<Id> {
 
   @Override
   public void write(ScaleCodecWriter writer, Id value) throws IOException {
+
     writer.write(ID_BOX_WRITER, new EnumerationUnionValue<>(value.getId()));
   }
 }

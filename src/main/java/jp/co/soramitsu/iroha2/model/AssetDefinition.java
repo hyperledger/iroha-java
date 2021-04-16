@@ -7,10 +7,13 @@ import lombok.NonNull;
 public class AssetDefinition implements IdentifiableBox {
 
   @NonNull
+  private AssetValue valueType;
+
+  @NonNull
   private DefinitionId id;
 
   @Override
   public int getIndex() {
-    return 2;
+    return 3;
   }
 }

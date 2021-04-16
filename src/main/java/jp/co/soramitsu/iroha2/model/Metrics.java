@@ -9,8 +9,18 @@ import lombok.NonNull;
 @Data
 public class Metrics {
 
+  @NonNull
+  private Cpu cpu;
+  @NonNull
+  private Disk disk;
+  @NonNull
+  private Memory memory;
+
   @Data
   public static class Cpu {
+
+    @NonNull
+    private Load load;
 
     @Data
     public static class Load {
@@ -22,9 +32,6 @@ public class Metrics {
       @NonNull
       private String time;
     }
-
-    @NonNull
-    private Load load;
   }
 
   public static class Disk {
@@ -63,11 +70,4 @@ public class Metrics {
     @NonNull
     private String swap;
   }
-
-  @NonNull
-  private Cpu cpu;
-  @NonNull
-  private Disk disk;
-  @NonNull
-  private Memory memory;
 }

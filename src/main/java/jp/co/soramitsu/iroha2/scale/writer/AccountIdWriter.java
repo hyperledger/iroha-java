@@ -6,7 +6,7 @@ import java.io.IOException;
 import jp.co.soramitsu.iroha2.model.AccountId;
 
 /**
- * Scale writer that writes nothing.
+ * Scale writer that writes Accunt id.
  */
 public class AccountIdWriter implements ScaleWriter<AccountId> {
 

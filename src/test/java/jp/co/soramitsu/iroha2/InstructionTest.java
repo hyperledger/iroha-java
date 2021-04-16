@@ -8,22 +8,22 @@ import jp.co.soramitsu.iroha2.model.AssetId;
 import jp.co.soramitsu.iroha2.model.Bool;
 import jp.co.soramitsu.iroha2.model.DefinitionId;
 import jp.co.soramitsu.iroha2.model.Domain;
-import jp.co.soramitsu.iroha2.model.Expression;
+import jp.co.soramitsu.iroha2.model.DomainName;
 import jp.co.soramitsu.iroha2.model.Id;
 import jp.co.soramitsu.iroha2.model.Identifiable;
-import jp.co.soramitsu.iroha2.model.IdentifiableBox;
+import jp.co.soramitsu.iroha2.model.Transaction;
+import jp.co.soramitsu.iroha2.model.U32;
+import jp.co.soramitsu.iroha2.model.V1Transaction;
 import jp.co.soramitsu.iroha2.model.Value;
-import jp.co.soramitsu.iroha2.model.WorldId;
+import jp.co.soramitsu.iroha2.model.expression.Expression;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
 import jp.co.soramitsu.iroha2.model.instruction.If;
 import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 import jp.co.soramitsu.iroha2.model.instruction.Mint;
-import jp.co.soramitsu.iroha2.model.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Register;
 import jp.co.soramitsu.iroha2.model.instruction.Sequence;
-import jp.co.soramitsu.iroha2.model.instruction.Transaction;
-import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.instruction.Transfer;
 import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import org.junit.jupiter.api.Assertions;
@@ -33,10 +33,7 @@ import org.junit.jupiter.api.Timeout;
 @Timeout(5)
 public class InstructionTest {
 
-  // root account keys:
-  // priv: 9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e
-  // pub:  7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0
-  String privateKeyHex = "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e";
+  String privateKeyHex = "de757bcb79f4c63e8fa0795edc26f86dfdba189b846e903d0b732bb644607720";
   KeyPair keyPair = Utils.EdDSAKeyPairFromHexPrivateKey(privateKeyHex);
   Iroha2Api api = new Iroha2Api("localhost:8080");
 
@@ -46,32 +43,32 @@ public class InstructionTest {
   private void assertInstructionCommitted(Instruction instruction) {
     Assertions.assertDoesNotThrow(() -> {
       Transaction transaction = new TransactionBuilder()
-          .setCreator("root", "global")
+          .setCreator("alice", "wonderland")
           .addInstruction(instruction)
+          .setTimeToLive(100_000L)
           .build()
           .sign(keyPair)
           .build();
 
-      Future<TerminalStatus> result = api.instructionAsync(transaction);
-      Assertions.assertTrue(result.get().isCommitted(), result.get().getMessage());
+      Future<TerminalStatus> result = api.instructionAsync(new V1Transaction(transaction));
+      Assertions.assertTrue(result.get().isCommitted());
     });
   }
 
   /**
    * Asserts that transaction with instruction was rejected
    */
-  private void assertInstructionRejected(Instruction instruction, String reason) {
+  private <T> void assertInstructionRejected(Instruction instruction) {
     Assertions.assertDoesNotThrow(() -> {
       Transaction transaction = new TransactionBuilder()
-          .setCreator("root", "global")
+          .setCreator("alice", "wonderland")
           .addInstruction(instruction)
           .build()
           .sign(keyPair)
           .build();
 
-      Future<TerminalStatus> result = api.instructionAsync(transaction);
+      Future<TerminalStatus> result = api.instructionAsync(new V1Transaction(transaction));
       Assertions.assertFalse(result.get().isCommitted());
-      Assertions.assertTrue(result.get().getMessage().contains(reason));
     });
   }
 
@@ -79,13 +76,13 @@ public class InstructionTest {
   // Test register/unregister instruction
   @Test
   public void testRegister() {
-    Expression object = new Raw(new Value(new Identifiable(new Domain("new test domain"))));
-    Expression destination = new Raw(new Value(new Id(new WorldId())));
+    Expression registerExpr = new Raw(new Value(new Identifiable(new Domain("new test domain"))));
 
-    Instruction register = new Register(object, destination);
+    Instruction register = new Register(registerExpr);
     assertInstructionCommitted(register);
 
-    Instruction unregister = new Unregister(object, destination);
+    Expression unregisterExpr = new Raw(new Value(new Id(new DomainName("new test domain"))));
+    Instruction unregister = new Unregister(unregisterExpr);
     assertInstructionCommitted(unregister);
   }
 
@@ -96,7 +93,8 @@ public class InstructionTest {
   public void testMint() {
     Expression amount = new Raw(new Value(new U32(100)));
     Expression destination = new Raw(new Value(new Id(
-        new AssetId(new DefinitionId("rose", "wonderland"), new AccountId("root", "global")))));
+        new AssetId(new DefinitionId("rose", "wonderland"), new AccountId("alice", "wonderland"))
+    )));
 
     Mint mint = new Mint(amount, destination);
     assertInstructionCommitted(mint);
@@ -115,7 +113,7 @@ public class InstructionTest {
   public void testFail() {
     String reason = "test fail reason";
     Fail fail = new Fail(reason);
-    assertInstructionRejected(fail, reason);
+    assertInstructionRejected(fail);
   }
 
   /**

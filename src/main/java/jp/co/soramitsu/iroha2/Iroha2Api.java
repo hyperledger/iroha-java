@@ -6,18 +6,19 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.http.WebSocket;
 import java.net.http.WebSocket.Listener;
+import java.time.Duration;
 import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.TransactionTerminalStatusWebSocketListener.TerminalStatus;
-import jp.co.soramitsu.iroha2.json.writer.SubscriptionRequestWriter;
+import jp.co.soramitsu.iroha2.json.writer.V1SubscriptionRequestWriter;
+import jp.co.soramitsu.iroha2.model.V1Transaction;
 import jp.co.soramitsu.iroha2.model.events.EntityType;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest;
 import jp.co.soramitsu.iroha2.model.events.SubscriptionRequest.Pipeline;
-import jp.co.soramitsu.iroha2.model.instruction.Transaction;
 import jp.co.soramitsu.iroha2.model.query.QueryResult;
-import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
+import jp.co.soramitsu.iroha2.model.query.V1SignedQueryRequest;
 import jp.co.soramitsu.iroha2.scale.reader.query.QueryResultReader;
-import jp.co.soramitsu.iroha2.scale.writer.instruction.TransactionWriter;
-import jp.co.soramitsu.iroha2.scale.writer.query.SignedQueryRequestWriter;
+import jp.co.soramitsu.iroha2.scale.writer.VersionedTransactionWriter;
+import jp.co.soramitsu.iroha2.scale.writer.query.VersionedSignedQueryRequestWriter;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -28,7 +29,7 @@ import org.eclipse.jetty.http.HttpStatus;
 
 public class Iroha2Api {
 
-  private static final SubscriptionRequestWriter SUBSCRIPTION_REQUEST_WRITER = new SubscriptionRequestWriter();
+  private static final V1SubscriptionRequestWriter V1_SUBSCRIPTION_REQUEST_WRITER = new V1SubscriptionRequestWriter();
 
   URI queryUri;
   URI instructionUri;
@@ -67,10 +68,10 @@ public class Iroha2Api {
    * @param request - build and signed request
    * @return query result object
    */
-  public QueryResult query(SignedQueryRequest request) throws Exception {
+  public QueryResult query(V1SignedQueryRequest request) throws Exception {
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
     ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
-    codec.write(new SignedQueryRequestWriter(), request);
+    codec.write(new VersionedSignedQueryRequestWriter(), request);
 
     byte[] responseContent = send(queryUri, HttpMethod.GET, encoded.toByteArray());
 
@@ -83,32 +84,35 @@ public class Iroha2Api {
    *
    * @param transaction - build and signed transaction
    */
-  public byte[] instruction(Transaction transaction) throws Exception {
+  public byte[] instruction(V1Transaction transaction) throws Exception {
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
     ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
-    codec.write(new TransactionWriter(), transaction);
+    codec.write(new VersionedTransactionWriter(), transaction);
 
     send(instructionUri, HttpMethod.POST, encoded.toByteArray());
 
-    return transaction.getHash();
+    return transaction.getTransaction().getHash();
   }
 
   /**
    * Sends transaction and get terminal status subscription.
    */
-  public Future<TerminalStatus> instructionAsync(Transaction transaction)
+  public Future<TerminalStatus> instructionAsync(V1Transaction transaction)
       throws Exception {
     // subscribe to events
-    byte[] hash = transaction.getHash();
+    byte[] hash = transaction.getTransaction().getHash();
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(
-        new Pipeline(EntityType.Transaction, hash));
+        new Pipeline(EntityType.Transaction, hash)
+    );
     TransactionTerminalStatusWebSocketListener listener = new TransactionTerminalStatusWebSocketListener(
-        EntityType.Transaction, hash);
+        EntityType.Transaction,
+        hash
+    );
     events(subscriptionRequest, listener);
 
     ByteArrayOutputStream encoded = new ByteArrayOutputStream();
     ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
-    codec.write(new TransactionWriter(), transaction);
+    codec.write(new VersionedTransactionWriter(), transaction);
 
     if (!httpClient.isStarted()) {
       httpClient.start();
@@ -134,10 +138,26 @@ public class Iroha2Api {
     WebSocket socket = java.net.http.HttpClient
         .newHttpClient()
         .newWebSocketBuilder()
+        .connectTimeout(Duration.ofSeconds(10))
         .buildAsync(eventUri, listener)
         .join();
 
-    String json = SUBSCRIPTION_REQUEST_WRITER.write(subscriptionRequest);
+    String json = V1_SUBSCRIPTION_REQUEST_WRITER.write(subscriptionRequest);
     socket.sendText(json, true).join();
   }
+
+  protected String bytesToJsonString(byte[] bytes) {
+    if (bytes.length == 0) {
+      return "[]";
+    }
+    StringBuilder sb = new StringBuilder("[");
+    for (int i = 0; i < bytes.length - 1; i++) {
+      sb.append(Byte.toUnsignedInt(bytes[i]));
+      sb.append(", ");
+    }
+    sb.append(Byte.toUnsignedInt(bytes[bytes.length - 1]));
+    sb.append(']');
+    return sb.toString();
+  }
+
 }
