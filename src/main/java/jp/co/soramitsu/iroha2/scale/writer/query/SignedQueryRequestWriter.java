@@ -5,6 +5,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
 import jp.co.soramitsu.iroha2.scale.writer.SignatureWriter;
 import jp.co.soramitsu.iroha2.scale.writer.U128Writer;
+import jp.co.soramitsu.iroha2.scale.writer.U128WriterCompact;
 
 import java.io.IOException;
 
@@ -15,7 +16,8 @@ public class SignedQueryRequestWriter implements ScaleWriter<SignedQueryRequest>
 
   private static final SignatureWriter SIGNATURE_WRITER = new SignatureWriter();
   private static final QueryWriter QUERY_WRITER = new QueryWriter();
-  private static final U128Writer U_128_WRITER = new U128Writer();
+  private static final U128WriterCompact U_128_WRITER = new U128WriterCompact();
+//  private static final U128Writer U_128_WRITER = new U128Writer();
 
   @Override
   public void write(ScaleCodecWriter writer, SignedQueryRequest value) throws IOException {
