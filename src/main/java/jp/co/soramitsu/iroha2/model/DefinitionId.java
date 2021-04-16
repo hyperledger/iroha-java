@@ -6,13 +6,13 @@ import lombok.NonNull;
 @Data
 public class DefinitionId implements IdBox {
 
-    @NonNull
-    private String name;
-    @NonNull
-    private String domainName;
+  @NonNull
+  private String name;
+  @NonNull
+  private String domainName;
 
-    @Override
-    public int getIndex() {
-        return 2;
-    }
+  @Override
+  public int getIndex() {
+    return 2;
+  }
 }

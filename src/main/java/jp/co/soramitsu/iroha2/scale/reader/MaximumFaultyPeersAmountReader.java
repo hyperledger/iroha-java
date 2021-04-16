@@ -6,11 +6,11 @@ import jp.co.soramitsu.iroha2.model.MaximumFaultyPeersAmount;
 
 public class MaximumFaultyPeersAmountReader implements ScaleReader<MaximumFaultyPeersAmount> {
 
-    private static final U32Reader U_32_READER = new U32Reader();
+  private static final U32Reader U_32_READER = new U32Reader();
 
-    @Override
-    public MaximumFaultyPeersAmount read(ScaleCodecReader reader) {
-        return new MaximumFaultyPeersAmount(reader.read(U_32_READER));
-    }
+  @Override
+  public MaximumFaultyPeersAmount read(ScaleCodecReader reader) {
+    return new MaximumFaultyPeersAmount(reader.read(U_32_READER));
+  }
 
 }

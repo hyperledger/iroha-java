@@ -9,10 +9,10 @@ import jp.co.soramitsu.iroha2.model.Metrics;
  */
 public class MetricsReader implements ScaleReader<Metrics> {
 
-    @Override
-    public Metrics read(ScaleCodecReader reader) {
-        return new Metrics(reader.read(new CpuReader()), reader.read(new DiskReader()),
-                reader.read(new MemoryReader()));
-    }
+  @Override
+  public Metrics read(ScaleCodecReader reader) {
+    return new Metrics(reader.read(new CpuReader()), reader.read(new DiskReader()),
+        reader.read(new MemoryReader()));
+  }
 
 }

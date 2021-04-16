@@ -11,9 +11,9 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class InstructionExecution implements TransactionRejectionReason {
 
-    @NonNull
-    private Instruction instruction;
+  @NonNull
+  private Instruction instruction;
 
-    @NonNull
-    private String reason;
+  @NonNull
+  private String reason;
 }

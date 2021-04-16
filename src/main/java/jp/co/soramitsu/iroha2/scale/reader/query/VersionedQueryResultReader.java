@@ -8,13 +8,13 @@ import jp.co.soramitsu.iroha2.model.query.VersionedQueryResult;
 
 public class VersionedQueryResultReader implements ScaleReader<VersionedQueryResult> {
 
-    private static final UnionReader<VersionedQueryResult> VERSIONED_QUERY_RESULT__READER = new UnionReader<>(
-            new UnsupportedReader(), // 0 - not used
-            new V1QueryResultReader() //1 - V1
-    );
+  private static final UnionReader<VersionedQueryResult> VERSIONED_QUERY_RESULT__READER = new UnionReader<>(
+      new UnsupportedReader(), // 0 - not used
+      new V1QueryResultReader() //1 - V1
+  );
 
-    @Override
-    public VersionedQueryResult read(ScaleCodecReader scaleCodecReader) {
-        return scaleCodecReader.read(VERSIONED_QUERY_RESULT__READER).getValue();
-    }
+  @Override
+  public VersionedQueryResult read(ScaleCodecReader scaleCodecReader) {
+    return scaleCodecReader.read(VERSIONED_QUERY_RESULT__READER).getValue();
+  }
 }

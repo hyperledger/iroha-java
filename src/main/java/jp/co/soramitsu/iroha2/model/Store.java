@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class Store implements AssetValue {
 
-    @NonNull
-    private Metadata metadata;
+  @NonNull
+  private Metadata metadata;
 
-    @Override
-    public int getIndex() {
-        return 2;
-    }
+  @Override
+  public int getIndex() {
+    return 2;
+  }
 }

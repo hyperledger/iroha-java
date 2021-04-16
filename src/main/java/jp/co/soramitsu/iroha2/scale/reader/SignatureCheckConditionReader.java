@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.SignatureCheckCondition;
 
 public class SignatureCheckConditionReader implements ScaleReader<SignatureCheckCondition> {
 
-    @Override
-    public SignatureCheckCondition read(ScaleCodecReader scaleCodecReader) {
-        return new SignatureCheckCondition(scaleCodecReader.read(new ExpressionReader()));
-    }
+  @Override
+  public SignatureCheckCondition read(ScaleCodecReader scaleCodecReader) {
+    return new SignatureCheckCondition(scaleCodecReader.read(new ExpressionReader()));
+  }
 }

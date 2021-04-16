@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.Store;
 
 public class StoreReader implements ScaleReader<Store> {
 
-    @Override
-    public Store read(ScaleCodecReader scaleCodecReader) {
-        return new Store(scaleCodecReader.read(new MetadataReader()));
-    }
+  @Override
+  public Store read(ScaleCodecReader scaleCodecReader) {
+    return new Store(scaleCodecReader.read(new MetadataReader()));
+  }
 }

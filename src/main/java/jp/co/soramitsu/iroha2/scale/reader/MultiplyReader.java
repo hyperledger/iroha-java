@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Multiply;
 
 public class MultiplyReader implements ScaleReader<Multiply> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Multiply read(ScaleCodecReader reader) {
-        return new Multiply(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Multiply read(ScaleCodecReader reader) {
+    return new Multiply(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

@@ -2,18 +2,17 @@ package jp.co.soramitsu.iroha2.scale.writer.expression;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import io.emeraldpay.polkaj.scale.ScaleWriter;
-import jp.co.soramitsu.iroha2.model.expression.Subtract;
-
 import java.io.IOException;
+import jp.co.soramitsu.iroha2.model.expression.Subtract;
 
 public class SubtractWriter implements ScaleWriter<Subtract> {
 
-    private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
+  private static final ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-    @Override
-    public void write(ScaleCodecWriter writer, Subtract value) throws IOException {
-        writer.write(EXPRESSION_WRITER, value.getLeft());
-        writer.write(EXPRESSION_WRITER, value.getRight());
-    }
+  @Override
+  public void write(ScaleCodecWriter writer, Subtract value) throws IOException {
+    writer.write(EXPRESSION_WRITER, value.getLeft());
+    writer.write(EXPRESSION_WRITER, value.getRight());
+  }
 
 }

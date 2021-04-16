@@ -1,13 +1,12 @@
 package jp.co.soramitsu.iroha2.model;
 
+import java.util.Map;
 import lombok.Data;
 import lombok.NonNull;
-
-import java.util.Map;
 
 @Data
 public class Metadata {
 
-    @NonNull
-    private Map<String, Value> map;
+  @NonNull
+  private Map<String, Value> map;
 }

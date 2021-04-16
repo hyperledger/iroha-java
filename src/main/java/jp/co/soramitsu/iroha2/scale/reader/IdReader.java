@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.Id;
 
 public class IdReader implements ScaleReader<Id> {
 
-    private static final IdBoxReader ID_BOX_READER = new IdBoxReader();
+  private static final IdBoxReader ID_BOX_READER = new IdBoxReader();
 
-    @Override
-    public Id read(ScaleCodecReader reader) {
-        return new Id(reader.read(ID_BOX_READER));
-    }
+  @Override
+  public Id read(ScaleCodecReader reader) {
+    return new Id(reader.read(ID_BOX_READER));
+  }
 }

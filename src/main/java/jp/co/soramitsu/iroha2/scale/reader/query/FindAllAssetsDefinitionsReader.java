@@ -6,8 +6,8 @@ import jp.co.soramitsu.iroha2.model.query.FindAllAssetsDefinitions;
 
 public class FindAllAssetsDefinitionsReader implements ScaleReader<FindAllAssetsDefinitions> {
 
-    @Override
-    public FindAllAssetsDefinitions read(ScaleCodecReader scaleCodecReader) {
-        return new FindAllAssetsDefinitions();
-    }
+  @Override
+  public FindAllAssetsDefinitions read(ScaleCodecReader scaleCodecReader) {
+    return new FindAllAssetsDefinitions();
+  }
 }

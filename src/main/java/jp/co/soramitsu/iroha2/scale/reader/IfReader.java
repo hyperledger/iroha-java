@@ -6,11 +6,11 @@ import jp.co.soramitsu.iroha2.model.expression.If;
 
 public class IfReader implements ScaleReader<If> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public If read(ScaleCodecReader reader) {
-        return new If(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER),
-                reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public If read(ScaleCodecReader reader) {
+    return new If(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER),
+        reader.read(EXPRESSION_READER));
+  }
 }

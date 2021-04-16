@@ -1,17 +1,38 @@
 package jp.co.soramitsu.iroha2.scale.writer.instruction;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
-import jp.co.soramitsu.iroha2.model.*;
-import jp.co.soramitsu.iroha2.model.expression.Raw;
-import jp.co.soramitsu.iroha2.model.instruction.*;
-import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
+import jp.co.soramitsu.iroha2.model.AccountId;
+import jp.co.soramitsu.iroha2.model.AssetId;
+import jp.co.soramitsu.iroha2.model.Bool;
+import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.Domain;
+import jp.co.soramitsu.iroha2.model.Id;
+import jp.co.soramitsu.iroha2.model.Identifiable;
+import jp.co.soramitsu.iroha2.model.Metadata;
+import jp.co.soramitsu.iroha2.model.Payload;
+import jp.co.soramitsu.iroha2.model.StringValue;
+import jp.co.soramitsu.iroha2.model.U32;
+import jp.co.soramitsu.iroha2.model.Value;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
+import jp.co.soramitsu.iroha2.model.instruction.Burn;
+import jp.co.soramitsu.iroha2.model.instruction.Fail;
+import jp.co.soramitsu.iroha2.model.instruction.If;
+import jp.co.soramitsu.iroha2.model.instruction.Instruction;
+import jp.co.soramitsu.iroha2.model.instruction.Mint;
+import jp.co.soramitsu.iroha2.model.instruction.Pair;
+import jp.co.soramitsu.iroha2.model.instruction.Register;
+import jp.co.soramitsu.iroha2.model.instruction.RemoveKeyValue;
+import jp.co.soramitsu.iroha2.model.instruction.Sequence;
+import jp.co.soramitsu.iroha2.model.instruction.SetKeyValue;
+import jp.co.soramitsu.iroha2.model.instruction.Transfer;
+import jp.co.soramitsu.iroha2.model.instruction.Unregister;
+import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests SCALE serialization of Payload with all possible instructions.
@@ -56,14 +77,12 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     Register register = new Register(new Raw(new Value(new Identifiable(new Domain("Soramitsu")))));
 
-    System.err.println(bytesToJsonString(scale(register)));
-
-    Payload payload = new Payload(accountId, List.of(register), creationTime, timeToLiveMs, new Metadata(new HashMap<>()));
+    Payload payload = new Payload(accountId, List.of(register), creationTime, timeToLiveMs,
+        new Metadata(new HashMap<>()));
 
     String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 201, 169, 148, 62, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
-
 
 
   /**
@@ -363,9 +382,9 @@ public class PayloadWriterTest extends ScaleWriterFixture {
   }
 
   /**
-   *  Compares scale serialization of SetKeyValue command with generated in rust one:
+   * Compares scale serialization of SetKeyValue command with generated in rust one:
    *
-   *  <pre>
+   * <pre>
    *  {@code
    *   let instruction = SetKeyValueBox::new(
    *     IdBox::AssetId(AssetId::new(
@@ -388,9 +407,9 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
     SetKeyValue setKeyValue = new SetKeyValue(
-            new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
-            new Raw(new Value(new StringValue("Key"))),
-            new Raw(new Value(new StringValue("Value")))
+        new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+        new Raw(new Value(new StringValue("Key"))),
+        new Raw(new Value(new StringValue("Value")))
     );
 
     payload.setInstructions(List.of(setKeyValue));
@@ -424,8 +443,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
     RemoveKeyValue removeKeyValue = new RemoveKeyValue(
-            new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
-            new Raw(new Value(new StringValue("Key")))
+        new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+        new Raw(new Value(new StringValue("Key")))
     );
 
     payload.setInstructions(List.of(removeKeyValue));

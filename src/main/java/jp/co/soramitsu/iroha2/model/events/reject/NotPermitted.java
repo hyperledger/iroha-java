@@ -10,6 +10,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class NotPermitted implements TransactionRejectionReason {
 
-    @NonNull
-    private String reason;
+  @NonNull
+  private String reason;
 }

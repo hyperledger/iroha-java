@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Or;
 
 public class OrReader implements ScaleReader<Or> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Or read(ScaleCodecReader reader) {
-        return new Or(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Or read(ScaleCodecReader reader) {
+    return new Or(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

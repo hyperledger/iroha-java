@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.scale.reader.ExpressionReader;
 
 public class FindAccountsByDomainNameReader implements ScaleReader<FindAccountsByDomainName> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public FindAccountsByDomainName read(ScaleCodecReader reader) {
-        return new FindAccountsByDomainName(reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public FindAccountsByDomainName read(ScaleCodecReader reader) {
+    return new FindAccountsByDomainName(reader.read(EXPRESSION_READER));
+  }
 }

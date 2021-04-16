@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class SignatureCheckCondition implements ValueBox {
 
-    @NonNull
-    private Expression value;
+  @NonNull
+  private Expression value;
 
-    @Override
-    public int getIndex() {
-        return 8;
-    }
+  @Override
+  public int getIndex() {
+    return 8;
+  }
 }

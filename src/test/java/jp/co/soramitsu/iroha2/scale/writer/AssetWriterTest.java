@@ -2,11 +2,16 @@ package jp.co.soramitsu.iroha2.scale.writer;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import java.io.ByteArrayOutputStream;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-
-import jp.co.soramitsu.iroha2.model.*;
+import jp.co.soramitsu.iroha2.model.AccountId;
+import jp.co.soramitsu.iroha2.model.Asset;
+import jp.co.soramitsu.iroha2.model.AssetId;
+import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.Metadata;
+import jp.co.soramitsu.iroha2.model.Store;
+import jp.co.soramitsu.iroha2.model.U32;
+import jp.co.soramitsu.iroha2.model.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

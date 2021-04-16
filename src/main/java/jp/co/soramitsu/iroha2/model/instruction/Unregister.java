@@ -11,11 +11,11 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Unregister implements Instruction {
 
-    @NonNull
-    private Expression object; // EvaluatesTo<IdentifiableBox>
+  @NonNull
+  private Expression object; // EvaluatesTo<IdentifiableBox>
 
-    @Override
-    public int getIndex() {
-        return 1;
-    }
+  @Override
+  public int getIndex() {
+    return 1;
+  }
 }

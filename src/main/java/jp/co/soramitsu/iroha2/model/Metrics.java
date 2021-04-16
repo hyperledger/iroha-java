@@ -9,65 +9,65 @@ import lombok.NonNull;
 @Data
 public class Metrics {
 
+  @NonNull
+  private Cpu cpu;
+  @NonNull
+  private Disk disk;
+  @NonNull
+  private Memory memory;
+
+  @Data
+  public static class Cpu {
+
     @NonNull
-    private Cpu cpu;
-    @NonNull
-    private Disk disk;
-    @NonNull
-    private Memory memory;
+    private Load load;
 
     @Data
-    public static class Cpu {
+    public static class Load {
 
-        @NonNull
-        private Load load;
+      @NonNull
+      private String frequency;
+      @NonNull
+      private String stats;
+      @NonNull
+      private String time;
+    }
+  }
 
-        @Data
-        public static class Load {
+  public static class Disk {
 
-            @NonNull
-            private String frequency;
-            @NonNull
-            private String stats;
-            @NonNull
-            private String time;
-        }
+    private long blockStorageSize;
+    @NonNull
+    private String blockStoragePath;
+
+    public Disk(long blockStorageSize, String blockStoragePath) {
+      this.blockStorageSize = blockStorageSize;
+      this.blockStoragePath = blockStoragePath;
     }
 
-    public static class Disk {
-
-        private long blockStorageSize;
-        @NonNull
-        private String blockStoragePath;
-
-        public Disk(long blockStorageSize, String blockStoragePath) {
-            this.blockStorageSize = blockStorageSize;
-            this.blockStoragePath = blockStoragePath;
-        }
-
-        public long getBlockStorageSize() {
-            return blockStorageSize;
-        }
-
-        public void setBlockStorageSize(long blockStorageSize) {
-            this.blockStorageSize = blockStorageSize;
-        }
-
-        public String getBlockStoragePath() {
-            return blockStoragePath;
-        }
-
-        public void setBlockStoragePath(String blockStoragePath) {
-            this.blockStoragePath = blockStoragePath;
-        }
+    public long getBlockStorageSize() {
+      return blockStorageSize;
     }
 
-    @Data
-    public static class Memory {
-
-        @NonNull
-        private String memory;
-        @NonNull
-        private String swap;
+    public void setBlockStorageSize(long blockStorageSize) {
+      this.blockStorageSize = blockStorageSize;
     }
+
+    public String getBlockStoragePath() {
+      return blockStoragePath;
+    }
+
+    public void setBlockStoragePath(String blockStoragePath) {
+      this.blockStoragePath = blockStoragePath;
+    }
+  }
+
+  @Data
+  public static class Memory {
+
+    @NonNull
+    private String memory;
+    @NonNull
+    private String swap;
+  }
 }

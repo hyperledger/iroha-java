@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Less;
 
 public class LessReader implements ScaleReader<Less> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Less read(ScaleCodecReader reader) {
-        return new Less(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Less read(ScaleCodecReader reader) {
+    return new Less(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

@@ -5,10 +5,10 @@ import lombok.Data;
 @Data
 public class TransactionValue implements ValueBox {
 
-    private TransactionValueVariant valueVariant;
+  private TransactionValueVariant valueVariant;
 
-    @Override
-    public int getIndex() {
-        return 9;
-    }
+  @Override
+  public int getIndex() {
+    return 9;
+  }
 }

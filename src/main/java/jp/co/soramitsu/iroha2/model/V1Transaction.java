@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class V1Transaction implements VersionedTransaction {
 
-    @NonNull
-    private Transaction transaction;
+  @NonNull
+  private Transaction transaction;
 
-    @Override
-    public int getIndex() {
-        return 1;
-    }
+  @Override
+  public int getIndex() {
+    return 1;
+  }
 }

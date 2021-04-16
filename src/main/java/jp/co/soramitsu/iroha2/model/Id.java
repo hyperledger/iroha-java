@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class Id implements ValueBox {
 
-    @NonNull
-    private IdBox id;
+  @NonNull
+  private IdBox id;
 
-    @Override
-    public int getIndex() {
-        return 4;
-    }
+  @Override
+  public int getIndex() {
+    return 4;
+  }
 }

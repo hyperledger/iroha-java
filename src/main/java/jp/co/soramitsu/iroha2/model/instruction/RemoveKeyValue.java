@@ -11,14 +11,14 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class RemoveKeyValue implements Instruction {
 
-    @NonNull
-    private Expression objectId;
+  @NonNull
+  private Expression objectId;
 
-    @NonNull
-    private Expression key;
+  @NonNull
+  private Expression key;
 
-    @Override
-    public int getIndex() {
-        return 10;
-    }
+  @Override
+  public int getIndex() {
+    return 10;
+  }
 }

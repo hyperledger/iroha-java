@@ -9,7 +9,8 @@ import lombok.Data;
  */
 @Data
 public class SignedQueryRequest {
-    private U128 timestamp;
-    private Signature signature;
-    private Query query;
+
+  private U128 timestamp;
+  private Signature signature;
+  private Query query;
 }

@@ -8,11 +8,11 @@ import jp.co.soramitsu.iroha2.model.Vector;
 
 public class VectorReader implements ScaleReader<Vector> {
 
-    private static final ListReader<Value> LIST_READER = new ListReader<>(new ValueReader());
+  private static final ListReader<Value> LIST_READER = new ListReader<>(new ValueReader());
 
-    @Override
-    public Vector read(ScaleCodecReader reader) {
-        return new Vector(LIST_READER.read(reader));
-    }
+  @Override
+  public Vector read(ScaleCodecReader reader) {
+    return new Vector(LIST_READER.read(reader));
+  }
 
 }

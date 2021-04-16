@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.scale.reader.PeerIdReader;
 
 public class FindPeerByIdReader implements ScaleReader<FindPeerById> {
 
-    private static final PeerIdReader PEER_ID_READER = new PeerIdReader();
+  private static final PeerIdReader PEER_ID_READER = new PeerIdReader();
 
-    @Override
-    public FindPeerById read(ScaleCodecReader reader) {
-        return new FindPeerById(reader.read(PEER_ID_READER));
-    }
+  @Override
+  public FindPeerById read(ScaleCodecReader reader) {
+    return new FindPeerById(reader.read(PEER_ID_READER));
+  }
 }

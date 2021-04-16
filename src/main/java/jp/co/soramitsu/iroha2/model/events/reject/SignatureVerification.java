@@ -9,9 +9,9 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class SignatureVerification implements TransactionRejectionReason {
 
-    @NonNull
-    private Signature signature;
+  @NonNull
+  private Signature signature;
 
-    @NonNull
-    private String reason;
+  @NonNull
+  private String reason;
 }

@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class FindDomainByName implements Query {
 
-    @NonNull
-    private Expression name;
+  @NonNull
+  private Expression name;
 
-    @Override
-    public int getIndex() {
-        return 17;
-    }
+  @Override
+  public int getIndex() {
+    return 17;
+  }
 }

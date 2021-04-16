@@ -16,8 +16,8 @@ import lombok.NonNull;
 //)
 public class Rejected implements Status {
 
-    @NonNull
-    @JsonAlias({"Transaction", "Block"})
-    private RejectionReason reason;
+  @NonNull
+  @JsonAlias({"Transaction", "Block"})
+  private RejectionReason reason;
 
 }

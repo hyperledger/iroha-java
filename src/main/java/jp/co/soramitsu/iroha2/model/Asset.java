@@ -6,18 +6,18 @@ import lombok.NonNull;
 @Data
 public class Asset implements IdentifiableBox {
 
-    @NonNull
-    AssetValue value;
-    @NonNull
-    private AssetId id;
+  @NonNull
+  AssetValue value;
+  @NonNull
+  private AssetId id;
 
-    public Asset(AssetId id, AssetValue assetValue) {
-        this.id = id;
-        this.value = assetValue;
-    }
+  public Asset(AssetId id, AssetValue assetValue) {
+    this.id = id;
+    this.value = assetValue;
+  }
 
-    @Override
-    public int getIndex() {
-        return 2;
-    }
+  @Override
+  public int getIndex() {
+    return 2;
+  }
 }

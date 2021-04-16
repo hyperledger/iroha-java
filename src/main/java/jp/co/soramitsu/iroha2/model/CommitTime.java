@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class CommitTime implements ParameterBox {
 
-    @NonNull
-    private U128 value;
+  @NonNull
+  private U128 value;
 
-    @Override
-    public int getIndex() {
-        return 1;
-    }
+  @Override
+  public int getIndex() {
+    return 1;
+  }
 }

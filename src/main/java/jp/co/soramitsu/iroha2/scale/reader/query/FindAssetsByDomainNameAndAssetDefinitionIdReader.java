@@ -6,15 +6,15 @@ import jp.co.soramitsu.iroha2.model.query.FindAssetsByDomainNameAndAssetDefiniti
 import jp.co.soramitsu.iroha2.scale.reader.ExpressionReader;
 
 public class FindAssetsByDomainNameAndAssetDefinitionIdReader implements
-        ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId> {
+    ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public FindAssetsByDomainNameAndAssetDefinitionId read(ScaleCodecReader reader) {
-        return new FindAssetsByDomainNameAndAssetDefinitionId(
-                reader.read(EXPRESSION_READER),
-                reader.read(EXPRESSION_READER)
-        );
-    }
+  @Override
+  public FindAssetsByDomainNameAndAssetDefinitionId read(ScaleCodecReader reader) {
+    return new FindAssetsByDomainNameAndAssetDefinitionId(
+        reader.read(EXPRESSION_READER),
+        reader.read(EXPRESSION_READER)
+    );
+  }
 }

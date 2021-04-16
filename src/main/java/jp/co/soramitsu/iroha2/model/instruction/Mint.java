@@ -11,13 +11,13 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Mint implements Instruction {
 
-    @NonNull
-    Expression object;
-    @NonNull
-    Expression destinationId;
+  @NonNull
+  Expression object;
+  @NonNull
+  Expression destinationId;
 
-    @Override
-    public int getIndex() {
-        return 2;
-    }
+  @Override
+  public int getIndex() {
+    return 2;
+  }
 }

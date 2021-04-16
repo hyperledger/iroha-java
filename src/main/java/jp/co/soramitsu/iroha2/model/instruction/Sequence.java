@@ -1,27 +1,26 @@
 package jp.co.soramitsu.iroha2.model.instruction;
 
-import lombok.Data;
-import lombok.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class Sequence implements Instruction {
 
-    @NonNull
-    private List<Instruction> instructions;
+  @NonNull
+  private List<Instruction> instructions;
 
-    public Sequence() {
-        instructions = new ArrayList<>();
-    }
+  public Sequence() {
+    instructions = new ArrayList<>();
+  }
 
-    public Sequence(List<Instruction> instructions) {
-        this.instructions = instructions;
-    }
+  public Sequence(List<Instruction> instructions) {
+    this.instructions = instructions;
+  }
 
-    @Override
-    public int getIndex() {
-        return 7;
-    }
+  @Override
+  public int getIndex() {
+    return 7;
+  }
 }

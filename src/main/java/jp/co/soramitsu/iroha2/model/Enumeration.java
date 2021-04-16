@@ -5,6 +5,6 @@ package jp.co.soramitsu.iroha2.model;
  */
 public interface Enumeration {
 
-    int getIndex();
+  int getIndex();
 
 }

@@ -1,13 +1,43 @@
 package jp.co.soramitsu.iroha2;
 
-import jp.co.soramitsu.iroha2.model.*;
+import java.security.KeyPair;
+import jp.co.soramitsu.iroha2.model.Account;
+import jp.co.soramitsu.iroha2.model.AccountId;
+import jp.co.soramitsu.iroha2.model.Asset;
+import jp.co.soramitsu.iroha2.model.AssetId;
+import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.Domain;
+import jp.co.soramitsu.iroha2.model.Id;
+import jp.co.soramitsu.iroha2.model.Identifiable;
+import jp.co.soramitsu.iroha2.model.StringValue;
+import jp.co.soramitsu.iroha2.model.U32;
+import jp.co.soramitsu.iroha2.model.Value;
+import jp.co.soramitsu.iroha2.model.Vector;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
-import jp.co.soramitsu.iroha2.model.query.*;
+import jp.co.soramitsu.iroha2.model.query.FindAccountById;
+import jp.co.soramitsu.iroha2.model.query.FindAccountsByDomainName;
+import jp.co.soramitsu.iroha2.model.query.FindAccountsByName;
+import jp.co.soramitsu.iroha2.model.query.FindAllAccounts;
+import jp.co.soramitsu.iroha2.model.query.FindAllAssets;
+import jp.co.soramitsu.iroha2.model.query.FindAllAssetsDefinitions;
+import jp.co.soramitsu.iroha2.model.query.FindAllDomains;
+import jp.co.soramitsu.iroha2.model.query.FindAllParameters;
+import jp.co.soramitsu.iroha2.model.query.FindAllPeers;
+import jp.co.soramitsu.iroha2.model.query.FindAssetById;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountId;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountIdAndAssetDefinitionId;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByAssetDefinitionId;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByDomainName;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByDomainNameAndAssetDefinitionId;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByName;
+import jp.co.soramitsu.iroha2.model.query.FindDomainByName;
+import jp.co.soramitsu.iroha2.model.query.Query;
+import jp.co.soramitsu.iroha2.model.query.QueryResult;
+import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
+import jp.co.soramitsu.iroha2.model.query.V1SignedQueryRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import java.security.KeyPair;
 
 @Timeout(5)
 public class QueryTest {
@@ -163,7 +193,8 @@ public class QueryTest {
   public void requestFindAssetsByAssetDefinitionId() {
     Assertions.assertDoesNotThrow(() -> {
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
-      Query query = new FindAssetsByAssetDefinitionId(new Raw(new Value(new Id(assetDefinitionId))));
+      Query query = new FindAssetsByAssetDefinitionId(
+          new Raw(new Value(new Id(assetDefinitionId))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
@@ -193,8 +224,8 @@ public class QueryTest {
       AccountId accountId = new AccountId("alice", "wonderland");
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
       Query query = new FindAssetsByAccountIdAndAssetDefinitionId(
-              new Raw(new Value(new Id(accountId))),
-              new Raw(new Value(new Id(assetDefinitionId)))
+          new Raw(new Value(new Id(accountId))),
+          new Raw(new Value(new Id(assetDefinitionId)))
       );
 
       SignedQueryRequest request = new QueryBuilder()
@@ -212,8 +243,8 @@ public class QueryTest {
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
 
       Query query = new FindAssetsByDomainNameAndAssetDefinitionId(
-              new Raw(new Value(new StringValue("wonderland"))),
-              new Raw(new Value(new Id(assetDefinitionId)))
+          new Raw(new Value(new StringValue("wonderland"))),
+          new Raw(new Value(new Id(assetDefinitionId)))
       );
 
       SignedQueryRequest request = new QueryBuilder()

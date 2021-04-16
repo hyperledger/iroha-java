@@ -6,9 +6,9 @@ import jp.co.soramitsu.iroha2.model.DomainName;
 
 public class DomainNameReader implements ScaleReader<DomainName> {
 
-    @Override
-    public DomainName read(ScaleCodecReader reader) {
-        return new DomainName(reader.readString());
-    }
+  @Override
+  public DomainName read(ScaleCodecReader reader) {
+    return new DomainName(reader.readString());
+  }
 
 }

@@ -6,16 +6,16 @@ import lombok.NonNull;
 @Data
 public class ContainsAny implements Expression {
 
-    // Expression, which should evaluate to `Value::Vec`.
-    @NonNull
-    private Expression collection;
-    // Expression, which should evaluate to `Value::Vec`.
-    @NonNull
-    private Expression elements;
+  // Expression, which should evaluate to `Value::Vec`.
+  @NonNull
+  private Expression collection;
+  // Expression, which should evaluate to `Value::Vec`.
+  @NonNull
+  private Expression elements;
 
 
-    @Override
-    public int getIndex() {
-        return 17;
-    }
+  @Override
+  public int getIndex() {
+    return 17;
+  }
 }

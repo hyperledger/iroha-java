@@ -11,17 +11,17 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class SetKeyValue implements Instruction {
 
-    @NonNull
-    private Expression objectId;
+  @NonNull
+  private Expression objectId;
 
-    @NonNull
-    private Expression key;
+  @NonNull
+  private Expression key;
 
-    @NonNull
-    private Expression value;
+  @NonNull
+  private Expression value;
 
-    @Override
-    public int getIndex() {
-        return 9;
-    }
+  @Override
+  public int getIndex() {
+    return 9;
+  }
 }

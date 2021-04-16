@@ -34,7 +34,8 @@ public class SubscriptionRequestWriterTest {
   public void testPipelineEventFilter() {
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(new Pipeline());
 
-    Assertions.assertEquals("{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":null,\"hash\":null}}}",
+    Assertions.assertEquals(
+        "{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":null,\"hash\":null}}}",
         writer.write(subscriptionRequest));
   }
 
@@ -47,7 +48,8 @@ public class SubscriptionRequestWriterTest {
     SubscriptionRequest subscriptionRequest = new SubscriptionRequest(
         new Pipeline(EntityType.Transaction));
 
-    Assertions.assertEquals("{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":null}}}",
+    Assertions.assertEquals(
+        "{\"version\":\"1\",\"content\":{\"Pipeline\":{\"entity\":\"Transaction\",\"hash\":null}}}",
         writer.write(subscriptionRequest));
   }
 

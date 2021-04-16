@@ -6,9 +6,9 @@ import jp.co.soramitsu.iroha2.model.U128;
 
 public class U128Reader implements ScaleReader<U128> {
 
-    @Override
-    public U128 read(ScaleCodecReader reader) {
-        return new U128(reader.readUint128());
-    }
+  @Override
+  public U128 read(ScaleCodecReader reader) {
+    return new U128(reader.readUint128());
+  }
 
 }

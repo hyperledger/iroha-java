@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class V1SignedQueryRequest implements VersionedSignedQueryRequest {
 
-    @NonNull
-    private SignedQueryRequest content;
+  @NonNull
+  private SignedQueryRequest content;
 
-    @Override
-    public int getIndex() {
-        return 1;
-    }
+  @Override
+  public int getIndex() {
+    return 1;
+  }
 }

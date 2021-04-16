@@ -6,13 +6,13 @@ import lombok.NonNull;
 @Data
 public class PeerId implements IdBox {
 
-    @NonNull
-    private String address;
-    @NonNull
-    private PublicKey publicKey;
+  @NonNull
+  private String address;
+  @NonNull
+  private PublicKey publicKey;
 
-    @Override
-    public int getIndex() {
-        return 4;
-    }
+  @Override
+  public int getIndex() {
+    return 4;
+  }
 }

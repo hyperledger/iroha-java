@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class V1QueryResult implements VersionedQueryResult {
 
-    @NonNull
-    private QueryResult queryResult;
+  @NonNull
+  private QueryResult queryResult;
 
-    @Override
-    public int getIndex() {
-        return 1;
-    }
+  @Override
+  public int getIndex() {
+    return 1;
+  }
 }

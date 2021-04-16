@@ -11,13 +11,13 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Burn implements Instruction {
 
-    @NonNull
-    Expression object;
-    @NonNull
-    Expression destinationId;
+  @NonNull
+  Expression object;
+  @NonNull
+  Expression destinationId;
 
-    @Override
-    public int getIndex() {
-        return 3;
-    }
+  @Override
+  public int getIndex() {
+    return 3;
+  }
 }

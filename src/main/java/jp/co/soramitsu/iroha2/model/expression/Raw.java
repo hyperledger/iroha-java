@@ -7,11 +7,11 @@ import lombok.NonNull;
 @Data
 public class Raw implements Expression {
 
-    @NonNull
-    private Value value;
+  @NonNull
+  private Value value;
 
-    @Override
-    public int getIndex() {
-        return 13;
-    }
+  @Override
+  public int getIndex() {
+    return 13;
+  }
 }

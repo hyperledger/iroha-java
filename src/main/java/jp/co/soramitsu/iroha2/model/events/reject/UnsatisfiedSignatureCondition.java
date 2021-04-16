@@ -9,6 +9,6 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class UnsatisfiedSignatureCondition implements TransactionRejectionReason {
 
-    @NonNull
-    private String reason;
+  @NonNull
+  private String reason;
 }

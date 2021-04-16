@@ -6,17 +6,17 @@ import lombok.NonNull;
 @Data
 public class Contains implements Expression {
 
-    // Expression, which should evaluate to `Vec<Value>`.
-    @NonNull
-    private Expression collection;
+  // Expression, which should evaluate to `Vec<Value>`.
+  @NonNull
+  private Expression collection;
 
-    // Expression, which should evaluate to `Value`.
-    @NonNull
-    private Expression element;
+  // Expression, which should evaluate to `Value`.
+  @NonNull
+  private Expression element;
 
 
-    @Override
-    public int getIndex() {
-        return 14;
-    }
+  @Override
+  public int getIndex() {
+    return 14;
+  }
 }

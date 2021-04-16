@@ -9,10 +9,10 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Pipeline implements Event {
 
-    @NonNull
-    private EntityType entityType;
-    @NonNull
-    private Status status;
-    @NonNull
-    private byte[] hash;
+  @NonNull
+  private EntityType entityType;
+  @NonNull
+  private Status status;
+  @NonNull
+  private byte[] hash;
 }

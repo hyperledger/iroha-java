@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Divide;
 
 public class DivideReader implements ScaleReader<Divide> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Divide read(ScaleCodecReader reader) {
-        return new Divide(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Divide read(ScaleCodecReader reader) {
+    return new Divide(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

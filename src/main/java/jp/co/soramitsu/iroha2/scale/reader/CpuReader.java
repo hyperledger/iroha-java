@@ -9,9 +9,9 @@ import jp.co.soramitsu.iroha2.model.Metrics.Cpu;
  */
 public class CpuReader implements ScaleReader<Cpu> {
 
-    @Override
-    public Cpu read(ScaleCodecReader reader) {
-        return new Cpu(reader.read(new LoadReader()));
-    }
+  @Override
+  public Cpu read(ScaleCodecReader reader) {
+    return new Cpu(reader.read(new LoadReader()));
+  }
 
 }

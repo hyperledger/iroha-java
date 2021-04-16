@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Equal;
 
 public class EqualReader implements ScaleReader<Equal> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Equal read(ScaleCodecReader reader) {
-        return new Equal(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Equal read(ScaleCodecReader reader) {
+    return new Equal(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

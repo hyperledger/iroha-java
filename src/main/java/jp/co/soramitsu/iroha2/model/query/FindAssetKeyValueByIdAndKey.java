@@ -7,13 +7,13 @@ import lombok.NonNull;
 @Data
 public class FindAssetKeyValueByIdAndKey implements Query {
 
-    @NonNull
-    private Expression id;
-    @NonNull
-    private Expression key;
+  @NonNull
+  private Expression id;
+  @NonNull
+  private Expression key;
 
-    @Override
-    public int getIndex() {
-        return 2;
-    }
+  @Override
+  public int getIndex() {
+    return 2;
+  }
 }

@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.scale.reader.ExpressionReader;
 
 public class FindDomainByNameReader implements ScaleReader<FindDomainByName> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public FindDomainByName read(ScaleCodecReader reader) {
-        return new FindDomainByName(EXPRESSION_READER.read(reader));
-    }
+  @Override
+  public FindDomainByName read(ScaleCodecReader reader) {
+    return new FindDomainByName(EXPRESSION_READER.read(reader));
+  }
 }

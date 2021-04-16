@@ -7,6 +7,6 @@ import lombok.NonNull;
 @Data
 public class QueryResult {
 
-    @NonNull
-    private Value value;
+  @NonNull
+  private Value value;
 }

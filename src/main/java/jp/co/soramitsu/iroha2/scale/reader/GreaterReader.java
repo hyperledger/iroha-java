@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.Greater;
 
 public class GreaterReader implements ScaleReader<Greater> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public Greater read(ScaleCodecReader reader) {
-        return new Greater(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public Greater read(ScaleCodecReader reader) {
+    return new Greater(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

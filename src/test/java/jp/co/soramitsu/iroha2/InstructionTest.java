@@ -1,29 +1,34 @@
 package jp.co.soramitsu.iroha2;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import java.security.KeyPair;
+import java.util.concurrent.Future;
 import jp.co.soramitsu.iroha2.TransactionTerminalStatusWebSocketListener.TerminalStatus;
-import jp.co.soramitsu.iroha2.model.*;
-import jp.co.soramitsu.iroha2.model.events.*;
-import jp.co.soramitsu.iroha2.model.events.reject.NotPermitted;
-import jp.co.soramitsu.iroha2.model.events.reject.RejectionReason;
-import jp.co.soramitsu.iroha2.model.events.reject.TransactionRejectionReason;
+import jp.co.soramitsu.iroha2.model.AccountId;
+import jp.co.soramitsu.iroha2.model.AssetId;
+import jp.co.soramitsu.iroha2.model.Bool;
+import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.Domain;
+import jp.co.soramitsu.iroha2.model.DomainName;
+import jp.co.soramitsu.iroha2.model.Id;
+import jp.co.soramitsu.iroha2.model.Identifiable;
+import jp.co.soramitsu.iroha2.model.Transaction;
+import jp.co.soramitsu.iroha2.model.U32;
+import jp.co.soramitsu.iroha2.model.V1Transaction;
+import jp.co.soramitsu.iroha2.model.Value;
 import jp.co.soramitsu.iroha2.model.expression.Expression;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
-import jp.co.soramitsu.iroha2.model.instruction.*;
+import jp.co.soramitsu.iroha2.model.instruction.Burn;
+import jp.co.soramitsu.iroha2.model.instruction.Fail;
+import jp.co.soramitsu.iroha2.model.instruction.If;
+import jp.co.soramitsu.iroha2.model.instruction.Instruction;
+import jp.co.soramitsu.iroha2.model.instruction.Mint;
+import jp.co.soramitsu.iroha2.model.instruction.Register;
+import jp.co.soramitsu.iroha2.model.instruction.Sequence;
+import jp.co.soramitsu.iroha2.model.instruction.Transfer;
+import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-
-import java.security.KeyPair;
-import java.util.concurrent.Future;
-
-import static com.fasterxml.jackson.databind.SerializationFeature.WRAP_ROOT_VALUE;
 
 @Timeout(5)
 public class InstructionTest {

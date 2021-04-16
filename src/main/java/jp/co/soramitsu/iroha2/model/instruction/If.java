@@ -9,26 +9,26 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class If implements Instruction {
 
-    @NonNull
-    private Expression condition; // EvaluatesTo<bool>
-    @NonNull
-    private Instruction then;
-    // Null means not set
-    private Instruction otherwise;   // optional
+  @NonNull
+  private Expression condition; // EvaluatesTo<bool>
+  @NonNull
+  private Instruction then;
+  // Null means not set
+  private Instruction otherwise;   // optional
 
-    public If(Expression condition, Instruction then) {
-        this.condition = condition;
-        this.then = then;
-    }
+  public If(Expression condition, Instruction then) {
+    this.condition = condition;
+    this.then = then;
+  }
 
-    public If(Expression condition, Instruction then, Instruction otherwise) {
-        this.condition = condition;
-        this.then = then;
-        this.otherwise = otherwise;
-    }
+  public If(Expression condition, Instruction then, Instruction otherwise) {
+    this.condition = condition;
+    this.then = then;
+    this.otherwise = otherwise;
+  }
 
-    @Override
-    public int getIndex() {
-        return 5;
-    }
+  @Override
+  public int getIndex() {
+    return 5;
+  }
 }

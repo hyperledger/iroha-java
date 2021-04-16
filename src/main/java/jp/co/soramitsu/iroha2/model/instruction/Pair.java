@@ -10,13 +10,13 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class Pair implements Instruction {
 
-    @NonNull
-    private Instruction left;
-    @NonNull
-    private Instruction right;
+  @NonNull
+  private Instruction left;
+  @NonNull
+  private Instruction right;
 
-    @Override
-    public int getIndex() {
-        return 6;
-    }
+  @Override
+  public int getIndex() {
+    return 6;
+  }
 }

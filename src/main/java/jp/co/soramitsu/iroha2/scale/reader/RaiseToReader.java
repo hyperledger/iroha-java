@@ -6,10 +6,10 @@ import jp.co.soramitsu.iroha2.model.expression.RaiseTo;
 
 public class RaiseToReader implements ScaleReader<RaiseTo> {
 
-    private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
+  private static final ExpressionReader EXPRESSION_READER = new ExpressionReader();
 
-    @Override
-    public RaiseTo read(ScaleCodecReader reader) {
-        return new RaiseTo(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
-    }
+  @Override
+  public RaiseTo read(ScaleCodecReader reader) {
+    return new RaiseTo(reader.read(EXPRESSION_READER), reader.read(EXPRESSION_READER));
+  }
 }

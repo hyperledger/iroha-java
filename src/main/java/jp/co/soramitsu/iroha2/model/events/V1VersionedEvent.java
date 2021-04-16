@@ -8,8 +8,8 @@ import lombok.NonNull;
 @NoArgsConstructor
 public class V1VersionedEvent implements VersionedEvent {
 
-    int version;
+  int version;
 
-    @NonNull
-    private Event content;
+  @NonNull
+  private Event content;
 }

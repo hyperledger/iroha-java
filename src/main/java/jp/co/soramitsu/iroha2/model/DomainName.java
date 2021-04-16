@@ -6,11 +6,11 @@ import lombok.NonNull;
 @Data
 public class DomainName implements IdBox {
 
-    @NonNull
-    private String name;
+  @NonNull
+  private String name;
 
-    @Override
-    public int getIndex() {
-        return 3;
-    }
+  @Override
+  public int getIndex() {
+    return 3;
+  }
 }
