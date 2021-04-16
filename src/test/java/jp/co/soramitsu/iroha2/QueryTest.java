@@ -149,8 +149,9 @@ public class QueryTest {
   public void requestFindAssetsByAccountId() {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
+      Query query = new FindAssetsByAccountId(new Raw(new Value(new Id(accountId))));
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAccountId(accountId))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
