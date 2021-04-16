@@ -4,6 +4,6 @@ public class FindAllAssets implements Query {
 
   @Override
   public int getIndex() {
-    return 4;
+    return 5;
   }
 }

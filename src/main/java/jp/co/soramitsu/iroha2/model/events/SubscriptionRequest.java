@@ -6,6 +6,9 @@ import lombok.NonNull;
 @Data
 public class SubscriptionRequest {
 
+  @NonNull
+  private EventFilter eventFilter;
+
   public interface EventFilter {
 
   }
@@ -47,7 +50,4 @@ public class SubscriptionRequest {
   public static class Data implements EventFilter {
 
   }
-
-  @NonNull
-  private EventFilter eventFilter;
 }

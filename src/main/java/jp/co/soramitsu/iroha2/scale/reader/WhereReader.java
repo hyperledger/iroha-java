@@ -2,8 +2,8 @@ package jp.co.soramitsu.iroha2.scale.reader;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
-import jp.co.soramitsu.iroha2.model.Expression;
-import jp.co.soramitsu.iroha2.model.Where;
+import jp.co.soramitsu.iroha2.model.expression.Expression;
+import jp.co.soramitsu.iroha2.model.expression.Where;
 
 public class WhereReader implements ScaleReader<Where> {
 

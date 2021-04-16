@@ -15,7 +15,7 @@ public class ScaleWriterFixture {
     StringBuilder sb = new StringBuilder("[");
     for (int i = 0; i < bytes.length - 1; i++) {
       sb.append(Byte.toUnsignedInt(bytes[i]));
-      sb.append(',');
+      sb.append(", ");
     }
     sb.append(Byte.toUnsignedInt(bytes[bytes.length - 1]));
     sb.append(']');

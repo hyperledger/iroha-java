@@ -4,6 +4,6 @@ public class FindAllDomains implements Query {
 
   @Override
   public int getIndex() {
-    return 14;
+    return 16;
   }
 }

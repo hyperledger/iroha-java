@@ -8,14 +8,17 @@ import jp.co.soramitsu.iroha2.model.ValueBox;
 
 public class ValueBoxWriter implements ScaleWriter<ValueBox> {
 
-  private static UnionWriter<ValueBox> VALUE_WRITER = new UnionWriter<>(
+  private static final UnionWriter<ValueBox> VALUE_WRITER = new UnionWriter<ValueBox>(
       new U32Writer(), // 0 - U32
       new BoolWriter(), // 1 - Bool
-      new VectorWriter(), // 2 - Vec
-      new IdWriter(), // 3 - Id
-      new IdentifiableWriter(), // 4 - Identifiable
+      new StringValueWriter(), // 2 - String
+      new VectorWriter(), // 3 - Vec
+      new IdWriter(), // 4 - Id
+      new IdentifiableWriter(), // 5 - Identifiable
       new PublicKeyWriter(), // 5 - PublicKey
-      new ParameterWriter() // 6 - Parameter
+      new ParameterWriter(), // 6 - Parameter
+      new SignatureCheckConditionWriter(), // 7 - SignatureCheckCondition
+      new TransactionValueWriter() // 8 - TransactionValue
   );
 
   @Override
