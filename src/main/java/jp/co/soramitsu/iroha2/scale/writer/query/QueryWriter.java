@@ -21,7 +21,7 @@ public class QueryWriter implements ScaleWriter<Query> {
       new FindAccountByIdWriter(), // 1
       NOP_WRITER, // 2 fix me,
       new FindAccountsByNameWriter(), // 3
-      new FindAccountsByDomainNameWriter(), // 3
+      new FindAccountsByDomainNameWriter(), // 4
       NOP_WRITER, // 4 FindAllAssets
       NOP_WRITER, // 5 FindAllAssetsDefinitions
       new FindAssetByIdWriter(), // 6

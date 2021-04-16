@@ -1,13 +1,13 @@
 package jp.co.soramitsu.iroha2;
 
-import java.security.KeyPair;
-
 import jp.co.soramitsu.iroha2.model.*;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+
+import java.security.KeyPair;
 
 @Timeout(5)
 public class QueryTest {
@@ -69,7 +69,7 @@ public class QueryTest {
   @Test
   public void queryFindAccountsByDomainName() {
     Assertions.assertDoesNotThrow(() -> {
-      Query query = new FindAccountsByDomainName("wonderland");
+      Query query = new FindAccountsByDomainName(new Raw(new Value(new StringValue("wonderland"))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
@@ -110,8 +110,10 @@ public class QueryTest {
       DefinitionId definitionId = new DefinitionId("rose", "wonderland");
       AssetId assetId = new AssetId(definitionId, accountId);
 
+      Query query = new FindAssetById(new Raw(new Value(new Id(assetId))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetById(assetId))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
@@ -131,8 +133,11 @@ public class QueryTest {
   @Test
   public void requestFindAssetsByName() {
     Assertions.assertDoesNotThrow(() -> {
+
+      Query query = new FindAssetsByName(new Raw(new Value(new StringValue("rose"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByName("rose"))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
