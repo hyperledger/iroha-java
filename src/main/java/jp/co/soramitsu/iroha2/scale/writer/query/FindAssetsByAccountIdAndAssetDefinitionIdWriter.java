@@ -5,19 +5,19 @@ import io.emeraldpay.polkaj.scale.ScaleWriter;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountIdAndAssetDefinitionId;
 import jp.co.soramitsu.iroha2.scale.writer.AccountIdWriter;
 import jp.co.soramitsu.iroha2.scale.writer.DefinitionIdWriter;
+import jp.co.soramitsu.iroha2.scale.writer.expression.ExpressionWriter;
 
 import java.io.IOException;
 
 class FindAssetsByAccountIdAndAssetDefinitionIdWriter implements
-    ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
+        ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
 
-  private static final AccountIdWriter ACCOUNT_ID_WRITER = new AccountIdWriter();
-  private static final DefinitionIdWriter DEFINITION_ID_WRITER = new DefinitionIdWriter();
+    private static ExpressionWriter EXPRESSION_WRITER = new ExpressionWriter();
 
-  @Override
-  public void write(ScaleCodecWriter writer, FindAssetsByAccountIdAndAssetDefinitionId value)
-      throws IOException {
-    ACCOUNT_ID_WRITER.write(writer, value.getAccountId());
-    DEFINITION_ID_WRITER.write(writer, value.getAssetDefinitionId());
-  }
+    @Override
+    public void write(ScaleCodecWriter writer, FindAssetsByAccountIdAndAssetDefinitionId value)
+            throws IOException {
+        EXPRESSION_WRITER.write(writer, value.getAccountId());
+        EXPRESSION_WRITER.write(writer, value.getAssetDefinitionId());
+    }
 }

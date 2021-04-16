@@ -192,8 +192,13 @@ public class QueryTest {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
+      Query query = new FindAssetsByAccountIdAndAssetDefinitionId(
+              new Raw(new Value(new Id(accountId))),
+              new Raw(new Value(new Id(assetDefinitionId)))
+      );
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAccountIdAndAssetDefinitionId(accountId, assetDefinitionId))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
