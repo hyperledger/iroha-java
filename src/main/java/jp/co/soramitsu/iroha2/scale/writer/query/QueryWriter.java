@@ -19,7 +19,8 @@ public class QueryWriter implements ScaleWriter<Query> {
   private static UnionWriter<Query> QUERY_WRITER = new UnionWriter<>(
       NOP_WRITER, // 0 FindAllAccounts
       new FindAccountByIdWriter(), // 1
-      new FindAccountsByNameWriter(), // 2
+      NOP_WRITER, // 2 fix me,
+      new FindAccountsByNameWriter(), // 3
       new FindAccountsByDomainNameWriter(), // 3
       NOP_WRITER, // 4 FindAllAssets
       NOP_WRITER, // 5 FindAllAssetsDefinitions

@@ -1,19 +1,8 @@
 package jp.co.soramitsu.iroha2;
 
 import java.security.KeyPair;
-import jp.co.soramitsu.iroha2.model.Account;
-import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.Asset;
-import jp.co.soramitsu.iroha2.model.AssetId;
-import jp.co.soramitsu.iroha2.model.DefinitionId;
-import jp.co.soramitsu.iroha2.model.Domain;
-import jp.co.soramitsu.iroha2.model.Id;
-import jp.co.soramitsu.iroha2.model.Identifiable;
-import jp.co.soramitsu.iroha2.model.PeerId;
-import jp.co.soramitsu.iroha2.model.PublicKey;
-import jp.co.soramitsu.iroha2.model.U32;
-import jp.co.soramitsu.iroha2.model.Value;
-import jp.co.soramitsu.iroha2.model.Vector;
+
+import jp.co.soramitsu.iroha2.model.*;
 import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.*;
 import org.junit.jupiter.api.Assertions;
@@ -67,7 +56,7 @@ public class QueryTest {
   @Test
   public void queryFindAccountsByName() {
     Assertions.assertDoesNotThrow(() -> {
-      Query query = new FindAccountsByName("alice");
+      Query query = new FindAccountsByName(new Raw(new Value(new StringValue("alice"))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
