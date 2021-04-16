@@ -176,8 +176,10 @@ public class QueryTest {
   @Test
   public void requestFindAssetsByDomainName() {
     Assertions.assertDoesNotThrow(() -> {
+      Query query = new FindAssetsByDomainName(new Raw(new Value(new StringValue("wonderland"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByDomainName("wonderland"))
+          .setQuery(query)
           .sign(keyPair);
 
       QueryResult res = api.query(new V1SignedQueryRequest(request));
