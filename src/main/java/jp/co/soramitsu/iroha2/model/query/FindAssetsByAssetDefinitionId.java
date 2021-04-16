@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.model.query;
 
-import jp.co.soramitsu.iroha2.model.DefinitionId;
+import jp.co.soramitsu.iroha2.model.expression.Expression;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -8,10 +8,10 @@ import lombok.NonNull;
 public class FindAssetsByAssetDefinitionId implements Query {
 
   @NonNull
-  private DefinitionId assetDefinitionId;
+  private Expression assetDefinitionId;
 
   @Override
   public int getIndex() {
-    return 9;
+    return 10;
   }
 }

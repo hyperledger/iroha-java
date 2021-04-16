@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2.scale.reader;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
-import jp.co.soramitsu.iroha2.model.Add;
+import jp.co.soramitsu.iroha2.model.expression.Add;
 
 public class AddReader implements ScaleReader<Add> {
 

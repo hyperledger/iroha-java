@@ -13,6 +13,6 @@ public class DefinitionId implements IdBox {
 
   @Override
   public int getIndex() {
-    return 3;
+    return 2;
   }
 }

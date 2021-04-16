@@ -12,6 +12,6 @@ public class Vector implements ValueBox {
 
   @Override
   public int getIndex() {
-    return 2;
+    return 3;
   }
 }

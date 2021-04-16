@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.scale.writer.instruction;
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import jp.co.soramitsu.iroha2.model.AccountId;
 import jp.co.soramitsu.iroha2.model.AssetId;
@@ -11,13 +12,12 @@ import jp.co.soramitsu.iroha2.model.DefinitionId;
 import jp.co.soramitsu.iroha2.model.Domain;
 import jp.co.soramitsu.iroha2.model.Id;
 import jp.co.soramitsu.iroha2.model.Identifiable;
+import jp.co.soramitsu.iroha2.model.Metadata;
 import jp.co.soramitsu.iroha2.model.Payload;
-import jp.co.soramitsu.iroha2.model.Raw;
-import jp.co.soramitsu.iroha2.model.U128;
+import jp.co.soramitsu.iroha2.model.StringValue;
 import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.Value;
-import jp.co.soramitsu.iroha2.model.ValueBox;
-import jp.co.soramitsu.iroha2.model.WorldId;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.instruction.Burn;
 import jp.co.soramitsu.iroha2.model.instruction.Fail;
 import jp.co.soramitsu.iroha2.model.instruction.If;
@@ -25,7 +25,9 @@ import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 import jp.co.soramitsu.iroha2.model.instruction.Mint;
 import jp.co.soramitsu.iroha2.model.instruction.Pair;
 import jp.co.soramitsu.iroha2.model.instruction.Register;
+import jp.co.soramitsu.iroha2.model.instruction.RemoveKeyValue;
 import jp.co.soramitsu.iroha2.model.instruction.Sequence;
+import jp.co.soramitsu.iroha2.model.instruction.SetKeyValue;
 import jp.co.soramitsu.iroha2.model.instruction.Transfer;
 import jp.co.soramitsu.iroha2.model.instruction.Unregister;
 import jp.co.soramitsu.iroha2.scale.writer.ScaleWriterFixture;
@@ -41,10 +43,20 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     return Assertions.assertDoesNotThrow(() -> {
       ByteArrayOutputStream encoded = new ByteArrayOutputStream();
       ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
-      codec.write(new PayloadWtriter(), payload);
+      codec.write(new PayloadWriter(), payload);
       return encoded.toByteArray();
     });
   }
+
+  private byte[] scale(Register payload) {
+    return Assertions.assertDoesNotThrow(() -> {
+      ByteArrayOutputStream encoded = new ByteArrayOutputStream();
+      ScaleCodecWriter codec = new ScaleCodecWriter(encoded);
+      codec.write(new RegisterWriter(), payload);
+      return encoded.toByteArray();
+    });
+  }
+
 
   /**
    * Compares scale serialization of register command with generated in rust one:
@@ -53,7 +65,6 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    * let domain_name = "Soramitsu";
    * let create_domain = RegisterBox::new(
    *  IdentifiableBox::from(Domain::new(domain_name)),
-   *  IdBox::from(WorldId),
    * );
    * }
    * </pre>
@@ -64,17 +75,15 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     BigInteger creationTime = new BigInteger("1611662666185");
     BigInteger timeToLiveMs = BigInteger.ZERO;
 
-    Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
+    Register register = new Register(new Raw(new Value(new Identifiable(new Domain("Soramitsu")))));
 
-    Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Payload payload = new Payload(accountId, List.of(register), creationTime, timeToLiveMs,
+        new Metadata(new HashMap<>()));
 
-    payload.setInstructions(List.of(register));
-
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,201,169,148,62,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 201, 169, 148, 62, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
+
 
   /**
    * Compares scale serialization of unregister command with generated in rust one:
@@ -83,7 +92,6 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    * let domain_name = "Soramitsu";
    * let create_domain = UnregisterBox::new(
    *  IdentifiableBox::from(Domain::new(domain_name)),
-   *  IdBox::from(WorldId),
    * );
    * }
    * </pre>
@@ -97,12 +105,11 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Unregister unregister = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Unregister unregister = new Unregister(new Raw(new Value(new Identifiable(domain))));
 
     payload.setInstructions(List.of(unregister));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,1,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,182,252,254,62,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 1, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 182, 252, 254, 62, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -116,7 +123,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *         Value::U32(quantity),
    *         IdBox::AssetId(AssetId::new(
    *             AssetDefinitionId::new("XOR", "Soramitsu"),
-   *             account_id,
+   *             account_id.clone(),
    *         )),
    *     );
    * }
@@ -125,7 +132,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
   @Test
   public void testMintInstruction() {
     AccountId accountId = new AccountId("root", "global");
-    BigInteger creationTime = new BigInteger("1611671487198");
+    BigInteger creationTime = BigInteger.ONE;
     BigInteger timeToLiveMs = BigInteger.ZERO;
 
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
@@ -138,7 +145,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(mint));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,2,9,0,100,0,0,0,9,3,1,12,88,79,82,36,83,111,114,97,109,105,116,115,117,16,114,111,111,116,24,103,108,111,98,97,108,222,66,27,63,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 2, 13, 0, 100, 0, 0, 0, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -174,7 +181,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(burn));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,3,9,0,100,0,0,0,9,3,1,12,88,79,82,36,83,111,114,97,109,105,116,115,117,16,114,111,111,116,24,103,108,111,98,97,108,14,42,35,63,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 3, 13, 0, 100, 0, 0, 0, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 14, 42, 35, 63, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -185,8 +192,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *     let account_id = AccountId::new("root", "global");
    *     let asset_definition_id = AssetDefinitionId { name: "XOR".to_string(), domain_name: "Soramitsu".to_string() };
    *
-   *     let domain_name = "Soramitsu";
-   *     let transfer_asset = TransferBox::new(
+   *     let instruction = TransferBox::new(
    *         IdBox::AssetId(AssetId::new(
    *             asset_definition_id.clone(),
    *             account_id.clone(),
@@ -194,7 +200,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *         Value::U32(100),
    *         IdBox::AssetId(AssetId::new(
    *             asset_definition_id,
-   *             account_id,
+   *             account_id.clone(),
    *         )),
    *     );
    * }
@@ -216,7 +222,7 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(transfer));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,4,9,3,1,12,88,79,82,36,83,111,114,97,109,105,116,115,117,16,114,111,111,116,24,103,108,111,98,97,108,9,0,100,0,0,0,9,3,1,12,88,79,82,36,83,111,114,97,109,105,116,115,117,16,114,111,111,116,24,103,108,111,98,97,108,215,168,52,63,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 4, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 0, 100, 0, 0, 0, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 215, 168, 52, 63, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -227,9 +233,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *     let domain_name = "Soramitsu";
    *     let create_domain = RegisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
-   *     let if_instruction = If::new(true, create_domain);
+   *     let instruction = If::new(true, create_domain);
    * </pre>
    */
   @Test
@@ -241,14 +246,13 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
     Raw condition = new Raw(new Value(new Bool(true)));
     If ifInstruction = new If(condition, register);
 
     payload.setInstructions(List.of(ifInstruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,5,9,1,1,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,0,2,181,162,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 5, 13, 1, 1, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 0, 2, 181, 162, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -259,13 +263,11 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *     let domain_name = "Soramitsu";
    *     let create_domain = RegisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
    *     let remove_domain = UnregisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
-   *     let if_instruction: Instruction = If::with_otherwise(true, create_domain, remove_domain).into();
+   *     let instruction = If::with_otherwise(true, create_domain, remove_domain);
    * </pre>
    */
   @Test
@@ -277,16 +279,14 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Raw condition = new Raw(new Value(new Bool(true)));
     If ifInstruction = new If(condition, register, removeDomain);
 
     payload.setInstructions(List.of(ifInstruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,5,9,1,1,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,1,1,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,230,87,168,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 5, 13, 1, 1, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 1, 1, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 230, 87, 168, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -297,11 +297,9 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *     let domain_name = "Soramitsu";
    *     let create_domain = RegisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
    *     let remove_domain = UnregisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
    *     let instruction = Pair::new(create_domain, remove_domain);
    * </pre>
@@ -315,15 +313,13 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Instruction instruction = new Pair(register, removeDomain);
 
     payload.setInstructions(List.of(instruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,6,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,1,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,71,137,186,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 6, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 1, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 71, 137, 186, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -334,14 +330,12 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    *     let domain_name = "Soramitsu";
    *     let create_domain = RegisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
    *     let remove_domain = UnregisterBox::new(
    *         IdentifiableBox::from(Domain::new(domain_name)),
-   *         IdBox::from(WorldId),
    *     );
    *     let instructions: Vec<Instruction> = vec![create_domain.into(), remove_domain.into()];
-   *     let instruction = Sequence::new(instructions);
+   *     let instruction = Instruction::Sequence(SequenceBox::new(instructions));
    * </pre>
    */
   @Test
@@ -353,15 +347,13 @@ public class PayloadWriterTest extends ScaleWriterFixture {
     Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
 
     Domain domain = new Domain("Soramitsu");
-    Register register = new Register(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
-    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))),
-        new Raw(new Value(new Id(new WorldId()))));
+    Register register = new Register(new Raw(new Value(new Identifiable(domain))));
+    Unregister removeDomain = new Unregister(new Raw(new Value(new Identifiable(domain))));
     Instruction instruction = new Sequence(List.of(register, removeDomain));
 
     payload.setInstructions(List.of(instruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,7,8,0,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,1,9,4,3,36,83,111,114,97,109,105,116,115,117,0,0,9,3,5,24,202,192,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 7, 8, 0, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 1, 13, 5, 4, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 0, 0, 24, 202, 192, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 
@@ -369,7 +361,8 @@ public class PayloadWriterTest extends ScaleWriterFixture {
    * Compares scale serialization of Fail instruction with generated in rust one:
    * <pre>
    * {@code
-   *     let instruction = Fail::new("Fail");
+   *     let instruction = Fail(FailBox::new("Fail"));
+   * }
    * </pre>
    */
   @Test
@@ -384,7 +377,79 @@ public class PayloadWriterTest extends ScaleWriterFixture {
 
     payload.setInstructions(List.of(instruction));
 
-    String expected = "[16,114,111,111,116,24,103,108,111,98,97,108,4,8,16,70,97,105,108,205,124,202,66,119,1,0,0,0,0,0,0,0,0,0,0]";
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 8, 16, 70, 97, 105, 108, 205, 124, 202, 66, 119, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
+    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
+  }
+
+  /**
+   * Compares scale serialization of SetKeyValue command with generated in rust one:
+   *
+   * <pre>
+   *  {@code
+   *   let instruction = SetKeyValueBox::new(
+   *     IdBox::AssetId(AssetId::new(
+   *       AssetDefinitionId::new("XOR", "Soramitsu"),
+   *        account_id.clone(),
+   *     )),
+   *     "Key".to_string(),
+   *     "Value".to_string(),
+   *   );
+   *  }
+   *   </pre>
+   */
+  @Test
+  public void testSetKeyValueInstruction() {
+    AccountId accountId = new AccountId("root", "global");
+    BigInteger creationTime = BigInteger.ONE;
+    BigInteger timeToLiveMs = BigInteger.ZERO;
+
+    Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
+
+    DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
+    SetKeyValue setKeyValue = new SetKeyValue(
+        new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+        new Raw(new Value(new StringValue("Key"))),
+        new Raw(new Value(new StringValue("Value")))
+    );
+
+    payload.setInstructions(List.of(setKeyValue));
+
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 9, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 12, 75, 101, 121, 13, 2, 20, 86, 97, 108, 117, 101, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
+    Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
+  }
+
+  /**
+   * Compares scale serialization of RemoveKeyValue command with generated in rust one:
+   *
+   * <pre>
+   * {@code
+   *     let instruction = RemoveKeyValueBox::new(
+   *         IdBox::AssetId(AssetId::new(
+   *             AssetDefinitionId::new("XOR", "Soramitsu"),
+   *             account_id.clone(),
+   *         )),
+   *         "Key".to_string(),
+   *     );
+   * }
+   * </pre>
+   */
+  @Test
+  public void testRemoveKeyValueInstruction() {
+    AccountId accountId = new AccountId("root", "global");
+    BigInteger creationTime = BigInteger.ONE;
+    BigInteger timeToLiveMs = BigInteger.ZERO;
+
+    Payload payload = new Payload(accountId, creationTime, timeToLiveMs);
+
+    DefinitionId definitionId = new DefinitionId("XOR", "Soramitsu");
+    RemoveKeyValue removeKeyValue = new RemoveKeyValue(
+        new Raw(new Value(new Id(new AssetId(definitionId, accountId)))),
+        new Raw(new Value(new StringValue("Key")))
+    );
+
+    payload.setInstructions(List.of(removeKeyValue));
+
+    String expected = "[16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 4, 10, 13, 4, 1, 12, 88, 79, 82, 36, 83, 111, 114, 97, 109, 105, 116, 115, 117, 16, 114, 111, 111, 116, 24, 103, 108, 111, 98, 97, 108, 13, 2, 12, 75, 101, 121, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]";
     Assertions.assertEquals(expected, bytesToJsonString(scale(payload)));
   }
 

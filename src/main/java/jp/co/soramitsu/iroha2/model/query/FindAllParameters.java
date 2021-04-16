@@ -5,6 +5,6 @@ public class FindAllParameters implements Query {
 
   @Override
   public int getIndex() {
-    return 18;
+    return 19;
   }
 }

@@ -4,14 +4,14 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import jp.co.soramitsu.iroha2.model.AccountId;
-import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 import jp.co.soramitsu.iroha2.model.Payload;
+import jp.co.soramitsu.iroha2.model.instruction.Instruction;
 
 public class TransactionBuilder {
 
   public static final long DEFAULT_TIME_TO_LIVE = 100_000;
 
-  private Payload payload = new Payload();
+  private final Payload payload = new Payload();
 
   public TransactionBuilder() {
     long timestamp = new Date().getTime();

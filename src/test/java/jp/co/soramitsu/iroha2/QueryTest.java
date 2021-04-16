@@ -9,11 +9,11 @@ import jp.co.soramitsu.iroha2.model.DefinitionId;
 import jp.co.soramitsu.iroha2.model.Domain;
 import jp.co.soramitsu.iroha2.model.Id;
 import jp.co.soramitsu.iroha2.model.Identifiable;
-import jp.co.soramitsu.iroha2.model.PeerId;
-import jp.co.soramitsu.iroha2.model.PublicKey;
+import jp.co.soramitsu.iroha2.model.StringValue;
 import jp.co.soramitsu.iroha2.model.U32;
 import jp.co.soramitsu.iroha2.model.Value;
 import jp.co.soramitsu.iroha2.model.Vector;
+import jp.co.soramitsu.iroha2.model.expression.Raw;
 import jp.co.soramitsu.iroha2.model.query.FindAccountById;
 import jp.co.soramitsu.iroha2.model.query.FindAccountsByDomainName;
 import jp.co.soramitsu.iroha2.model.query.FindAccountsByName;
@@ -23,18 +23,18 @@ import jp.co.soramitsu.iroha2.model.query.FindAllAssetsDefinitions;
 import jp.co.soramitsu.iroha2.model.query.FindAllDomains;
 import jp.co.soramitsu.iroha2.model.query.FindAllParameters;
 import jp.co.soramitsu.iroha2.model.query.FindAllPeers;
-import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountId;
 import jp.co.soramitsu.iroha2.model.query.FindAssetById;
+import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountId;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByAccountIdAndAssetDefinitionId;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByAssetDefinitionId;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByDomainName;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByDomainNameAndAssetDefinitionId;
 import jp.co.soramitsu.iroha2.model.query.FindAssetsByName;
 import jp.co.soramitsu.iroha2.model.query.FindDomainByName;
-import jp.co.soramitsu.iroha2.model.query.FindPeerById;
 import jp.co.soramitsu.iroha2.model.query.Query;
 import jp.co.soramitsu.iroha2.model.query.QueryResult;
 import jp.co.soramitsu.iroha2.model.query.SignedQueryRequest;
+import jp.co.soramitsu.iroha2.model.query.V1SignedQueryRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -42,10 +42,7 @@ import org.junit.jupiter.api.Timeout;
 @Timeout(5)
 public class QueryTest {
 
-  // root account keys:
-  // priv: 9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e
-  // pub:  7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0
-  static String privateKeyHex = "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e";
+  static String privateKeyHex = "de757bcb79f4c63e8fa0795edc26f86dfdba189b846e903d0b732bb644607720";
   static KeyPair keyPair = Utils.EdDSAKeyPairFromHexPrivateKey(privateKeyHex);
   static Iroha2Api api = new Iroha2Api("localhost:8080");
   static byte[] peerPublicKey = Utils.getActualPublicKey(keyPair.getPublic().getEncoded());
@@ -58,7 +55,7 @@ public class QueryTest {
           .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -67,12 +64,12 @@ public class QueryTest {
   public void queryFindAccountById() {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
-      Query query = new FindAccountById(accountId);
+      Query query = new FindAccountById(new Raw(new Value(new Id(accountId))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions
           .assertEquals("alice",
               ((Account) ((Identifiable) res.getValue().getValue()).getValue()).getId().getName());
@@ -86,12 +83,12 @@ public class QueryTest {
   @Test
   public void queryFindAccountsByName() {
     Assertions.assertDoesNotThrow(() -> {
-      Query query = new FindAccountsByName("alice");
+      Query query = new FindAccountsByName(new Raw(new Value(new StringValue("alice"))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -99,12 +96,12 @@ public class QueryTest {
   @Test
   public void queryFindAccountsByDomainName() {
     Assertions.assertDoesNotThrow(() -> {
-      Query query = new FindAccountsByDomainName("wonderland");
+      Query query = new FindAccountsByDomainName(new Raw(new Value(new StringValue("wonderland"))));
       SignedQueryRequest request = new QueryBuilder()
           .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -116,7 +113,7 @@ public class QueryTest {
           .setQuery(new FindAllAssets())
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -128,7 +125,7 @@ public class QueryTest {
           .setQuery(new FindAllAssetsDefinitions())
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -140,11 +137,13 @@ public class QueryTest {
       DefinitionId definitionId = new DefinitionId("rose", "wonderland");
       AssetId assetId = new AssetId(definitionId, accountId);
 
+      Query query = new FindAssetById(new Raw(new Value(new Id(assetId))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetById(assetId))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions
           .assertEquals("rose",
               ((Asset) ((Identifiable) res.getValue().getValue()).getValue()).getId()
@@ -161,11 +160,14 @@ public class QueryTest {
   @Test
   public void requestFindAssetsByName() {
     Assertions.assertDoesNotThrow(() -> {
+
+      Query query = new FindAssetsByName(new Raw(new Value(new StringValue("rose"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByName("rose"))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -174,11 +176,12 @@ public class QueryTest {
   public void requestFindAssetsByAccountId() {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
+      Query query = new FindAssetsByAccountId(new Raw(new Value(new Id(accountId))));
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAccountId(accountId))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -187,11 +190,13 @@ public class QueryTest {
   public void requestFindAssetsByAssetDefinitionId() {
     Assertions.assertDoesNotThrow(() -> {
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
+      Query query = new FindAssetsByAssetDefinitionId(
+          new Raw(new Value(new Id(assetDefinitionId))));
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAssetDefinitionId(assetDefinitionId))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -199,11 +204,13 @@ public class QueryTest {
   @Test
   public void requestFindAssetsByDomainName() {
     Assertions.assertDoesNotThrow(() -> {
+      Query query = new FindAssetsByDomainName(new Raw(new Value(new StringValue("wonderland"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByDomainName("wonderland"))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -213,11 +220,16 @@ public class QueryTest {
     Assertions.assertDoesNotThrow(() -> {
       AccountId accountId = new AccountId("alice", "wonderland");
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
+      Query query = new FindAssetsByAccountIdAndAssetDefinitionId(
+          new Raw(new Value(new Id(accountId))),
+          new Raw(new Value(new Id(assetDefinitionId)))
+      );
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByAccountIdAndAssetDefinitionId(accountId, assetDefinitionId))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -226,11 +238,17 @@ public class QueryTest {
   public void requestFindAssetsByDomainNameAndAssetDefinitionId() {
     Assertions.assertDoesNotThrow(() -> {
       DefinitionId assetDefinitionId = new DefinitionId("rose", "wonderland");
+
+      Query query = new FindAssetsByDomainNameAndAssetDefinitionId(
+          new Raw(new Value(new StringValue("wonderland"))),
+          new Raw(new Value(new Id(assetDefinitionId)))
+      );
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindAssetsByDomainNameAndAssetDefinitionId("wonderland", assetDefinitionId))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -245,7 +263,7 @@ public class QueryTest {
           .findAssetQuantityById("rose", "wonderland", "alice", "wonderland")
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
 
       Value value = res.getValue();
       Assertions.assertTrue(value.getValue() instanceof U32);
@@ -263,7 +281,7 @@ public class QueryTest {
           .setQuery(new FindAllDomains())
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions.assertFalse(((Vector) res.getValue().getValue()).getVector().isEmpty());
     });
   }
@@ -274,13 +292,16 @@ public class QueryTest {
   @Test
   public void requestFindDomainByName() {
     Assertions.assertDoesNotThrow(() -> {
+
+      Query query = new FindDomainByName(new Raw(new Value(new StringValue("wonderland"))));
+
       SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindDomainByName("global"))
+          .setQuery(query)
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
       Assertions
-          .assertEquals("global",
+          .assertEquals("wonderland",
               ((Domain) ((Identifiable) res.getValue().getValue()).getValue()).getName());
     });
   }
@@ -295,7 +316,7 @@ public class QueryTest {
           .setQuery(new FindAllPeers())
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
 
       Value value = res.getValue();
       Assertions.assertTrue(value.getValue() instanceof Vector);
@@ -303,29 +324,6 @@ public class QueryTest {
     });
   }
 
-  /**
-   * Find peer by Id. Returns the same Peer
-   */
-  @Test
-  public void requestFindPeerById() {
-    Assertions.assertDoesNotThrow(() -> {
-      PublicKey publicKey = new PublicKey("ed25519", peerPublicKey);
-      PeerId peerIdToFind = new PeerId("iroha:1337", publicKey);
-      SignedQueryRequest request = new QueryBuilder()
-          .setQuery(new FindPeerById(peerIdToFind))
-          .sign(keyPair);
-
-      QueryResult res = api.query(request);
-
-      Value value = res.getValue();
-      Assertions.assertTrue(value.getValue() instanceof Id);
-      Assertions.assertTrue(((Id) value.getValue()).getId() instanceof PeerId);
-      PeerId peerId = (PeerId) ((Id) value.getValue()).getId();
-      Assertions.assertEquals("iroha:1337", peerId.getAddress());
-      Assertions.assertEquals("ed25519", peerId.getPublicKey().getDigestFunction());
-      Assertions.assertArrayEquals(peerPublicKey, peerId.getPublicKey().getPayload());
-    });
-  }
 
   /**
    * Find all parameters returns empty list of Values.
@@ -337,7 +335,7 @@ public class QueryTest {
           .setQuery(new FindAllParameters())
           .sign(keyPair);
 
-      QueryResult res = api.query(request);
+      QueryResult res = api.query(new V1SignedQueryRequest(request));
 
       Value value = res.getValue();
       Assertions.assertTrue(value.getValue() instanceof Vector);

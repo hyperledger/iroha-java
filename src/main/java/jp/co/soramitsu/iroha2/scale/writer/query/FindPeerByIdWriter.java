@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.scale.writer.PeerIdWriter;
 
 class FindPeerByIdWriter implements ScaleWriter<FindPeerById> {
 
-  private static PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
+  private static final PeerIdWriter PEER_ID_WRITER = new PeerIdWriter();
 
   @Override
   public void write(ScaleCodecWriter writer, FindPeerById value) throws IOException {

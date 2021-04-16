@@ -3,30 +3,31 @@ package jp.co.soramitsu.iroha2.scale.reader;
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
 import io.emeraldpay.polkaj.scale.reader.UnionReader;
-import jp.co.soramitsu.iroha2.model.And;
-import jp.co.soramitsu.iroha2.model.Equal;
-import jp.co.soramitsu.iroha2.model.Expression;
-import jp.co.soramitsu.iroha2.model.Or;
+import jp.co.soramitsu.iroha2.model.expression.Expression;
 
 public class ExpressionReader implements ScaleReader<Expression> {
 
   private static final UnionReader<Expression> EXPRESSION_UNION_READER = new UnionReader<>(
       new AddReader(), // 0 - Add
       new SubtractReader(), // 1 - Subtract
-      new GreaterReader(), // 2 - Greater
-      new LessReader(), // 3 - Less
-      new EqualReader(), // 4 - Equal
-      new NotReader(), // 5 - Not
-      new AndReader(), // 6 - And
-      new OrReader(), // 7 - Or
-      new IfReader(), // 8 - If
-      new RawReader(), // 9 - Raw
-      new QueryReader(), // 10 - Query
-      new ContainsReader(), // 11 - Contains
-      new ContainsAllReader(), // 12 - ContainsAll
-      new ContainsAnyReader(), // 13 - ContainsAny
-      new WhereReader(), // 14 - Where
-      new ContextValueReader() // 15 - ContextValue
+      new MultiplyReader(), // 2 - Multiply
+      new DivideReader(), // 3 - Divide
+      new ModReader(), // 4 - Mod
+      new RaiseToReader(), // 5 - RaiseTo
+      new GreaterReader(), // 6 - Greater
+      new LessReader(), // 7 - Less
+      new EqualReader(), // 8 - Equal
+      new NotReader(), // 9 - Not
+      new AndReader(), // 10 - And
+      new OrReader(), // 11 - Or
+      new IfReader(), // 12 - If
+      new RawReader(), // 13 - Raw
+      new QueryReader(), // 14 - Query
+      new ContainsReader(), // 15 - Contains
+      new ContainsAllReader(), // 16 - ContainsAll
+      new ContainsAnyReader(), // 17 - ContainsAny
+      new WhereReader(), // 18 - Where
+      new ContextValueReader() // 19 - ContextValue
   );
 
   @Override

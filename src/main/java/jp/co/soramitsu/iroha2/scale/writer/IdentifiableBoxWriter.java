@@ -10,11 +10,12 @@ public class IdentifiableBoxWriter implements ScaleWriter<IdentifiableBox> {
 
   private static final UnionWriter<IdentifiableBox> IDENTIFIABLE_BOX_WRITER = new UnionWriter<>(
       new AccountWriter(), // 0 - Account
-      new AssetWriter(), // 1 - Asset
-      new AssetDefinitionWriter(), // 2 - AssetDefinition
-      new DomainWriter(), // 3 - Domain
-      new PeerWriter(), // 4 - Peer
-      new NopWriter<>() // 5 - World
+      new NewAccountWriter(), // 1 - NewAccount
+      new AssetWriter(), // 2 - Asset
+      new AssetDefinitionWriter(), // 3 - AssetDefinition
+      new DomainWriter(), // 4 - Domain
+      new PeerWriter(), // 5 - Peer
+      new NopWriter<>() // 6 - World
   );
 
   @Override

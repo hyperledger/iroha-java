@@ -9,11 +9,12 @@ public class IdentifiableBoxReader implements ScaleReader<IdentifiableBox> {
 
   private static final UnionReader<IdentifiableBox> IDENTIFIABLE_BOX_UNION_READER = new UnionReader<>(
       new AccountReader(), // 0 Account
-      new AssetReader(), // 1 Asset
-      new AssetDefinitionReader(), // 2 AssetDefinition
-      new DomainReader(), // 3 Domain
-      new PeerReader(), // 4 Peer
-      new WorldReader() // 5 World
+      new NewAccountReader(), // 1 NewAccount
+      new AssetReader(), // 2 Asset
+      new AssetDefinitionReader(), // 3 AssetDefinition
+      new DomainReader(), // 4 Domain
+      new PeerReader(), // 5 Peer
+      new WorldReader() // 6 World
   );
 
   @Override

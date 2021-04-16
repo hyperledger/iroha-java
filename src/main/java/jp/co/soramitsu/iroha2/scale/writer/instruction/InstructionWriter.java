@@ -12,7 +12,7 @@ public class InstructionWriter implements ScaleWriter<Instruction> {
   /**
    * Scale writers for queries, position in list must be an id in union.
    */
-  private static UnionWriter<Instruction> INSTRUCTION_WRITER = new UnionWriter<>(
+  private static final UnionWriter<Instruction> INSTRUCTION_WRITER = new UnionWriter<>(
       new RegisterWriter(), // 0 - Register
       new UnregisterWriter(), // 1 - Unregister
       new MintWriter(),  // 2 - Mint
@@ -21,7 +21,9 @@ public class InstructionWriter implements ScaleWriter<Instruction> {
       new IfWriter(), // 5 - If
       new PairWriter(), // 6 - Pair
       new SequenceWriter(), // 7 - Sequence
-      new FailWriter() // 8 - Fail
+      new FailWriter(), // 8 - Fail
+      new SetKeyValueWriter(), // 9 - SetKeyValue
+      new RemoveKeyValueWriter() // 10 - RemoveKeyValue
   );
 
 

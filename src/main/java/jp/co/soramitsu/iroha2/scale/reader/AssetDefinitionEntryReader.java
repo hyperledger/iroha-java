@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2.scale.reader;
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader;
 import io.emeraldpay.polkaj.scale.ScaleReader;
-import jp.co.soramitsu.iroha2.model.AssetDefinition;
 import jp.co.soramitsu.iroha2.model.AssetDefinitionEntry;
 
 public class AssetDefinitionEntryReader implements ScaleReader<AssetDefinitionEntry> {

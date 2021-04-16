@@ -29,6 +29,6 @@ public class Domain implements IdentifiableBox {
 
   @Override
   public int getIndex() {
-    return 3;
+    return 4;
   }
 }
