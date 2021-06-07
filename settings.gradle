@@ -1,2 +1,3 @@
 rootProject.name = 'iroha2-java'
 
+include 'testcontainers'
