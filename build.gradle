@@ -11,14 +11,11 @@ sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
-
-    // polkaj public repo
-    maven { url "https://dl.bintray.com/emerald/polkaj" }
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'io.emeraldpay.polkaj:polkaj-scale:0.3.0'
+    implementation(fileTree("libs") {include("*.jar")})
     implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '11.0.0'
     compile "net.i2p.crypto:eddsa:0.3.0"
