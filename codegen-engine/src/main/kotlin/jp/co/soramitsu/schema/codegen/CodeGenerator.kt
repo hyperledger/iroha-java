@@ -42,10 +42,8 @@ object CodeGenerator {
         val clazz = generateClassSkeleton(type, className)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' regular structure")
-            .superclass(
-                ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
-                .parameterizedBy(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
-            )
+
+        implementScaleCodec(clazz, className, packageName)
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
@@ -79,6 +77,8 @@ object CodeGenerator {
         val clazz = generateClassSkeleton(type, className)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' tuple structure")
+
+        implementScaleCodec(clazz, className, packageName)
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
@@ -155,7 +155,7 @@ object CodeGenerator {
 
                 variantClass.primaryConstructor(constructorBuilder.build())
             }
-
+            implementScaleCodec(variantClass, variant.name, "$packageName.$className")
             clazz.addType(variantClass.build())
         }
 
@@ -229,8 +229,64 @@ object CodeGenerator {
         }
     }
 
-    class implementScaleCodec() {
-
+    private fun implementScaleCodec(
+        clazz: TypeSpec.Builder,
+        className: String,
+        packageName: String,
+    ) {
+        clazz.addSuperinterface(
+            ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
+                .parameterizedBy(
+                    ClassName(
+                        "jp.co.soramitsu.schema.generated.$packageName",
+                        className
+                    )
+                )
+        )
+        clazz.addSuperinterface(
+            ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
+                .parameterizedBy(
+                    ClassName(
+                        "jp.co.soramitsu.schema.generated.$packageName",
+                        className
+                    )
+                )
+        )
+        clazz.addFunction(
+            FunSpec.builder("read")
+                .addParameter(
+                    ParameterSpec
+                        .builder(
+                            "reader",
+                            ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
+                        )
+                        .build()
+                )
+                .addModifiers(KModifier.OVERRIDE)
+                .returns(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
+                .build()
+        )
+        clazz.addFunction(
+            FunSpec.builder("write")
+                .addParameter(
+                    ParameterSpec
+                        .builder(
+                            "writer",
+                            ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
+                        )
+                        .build()
+                )
+                .addParameter(
+                    ParameterSpec
+                        .builder(
+                            "instance",
+                            ClassName("jp.co.soramitsu.schema.generated.$packageName", className)
+                        )
+                        .build()
+                )
+                .addModifiers(KModifier.OVERRIDE)
+                .build()
+        );
     }
 
 }
