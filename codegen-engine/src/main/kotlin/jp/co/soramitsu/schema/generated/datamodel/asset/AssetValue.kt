@@ -2,14 +2,9 @@
 package jp.co.soramitsu.schema.generated.datamodel.asset
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * AssetValue
@@ -27,14 +22,12 @@ public abstract class AssetValue {
    */
   public class Quantity(
     private val quantity: Int
-  ) : AssetValue(), ScaleReader<Quantity>, ScaleWriter<Quantity> {
+  ) : AssetValue() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): Quantity = Quantity(quantity.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-      writer.directWrite(this.discriminant());
-      quantity.write(writer, instance.quantity))
+    public companion object READER : ScaleReader<Quantity> {
+      public override fun read(reader: ScaleCodecReader): Quantity {
+      }
     }
   }
 
@@ -43,15 +36,12 @@ public abstract class AssetValue {
    */
   public class BigQuantity(
     private val bigQuantity: Int
-  ) : AssetValue(), ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
+  ) : AssetValue() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): BigQuantity =
-        BigQuantity(bigQuantity.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
-      writer.directWrite(this.discriminant());
-      bigQuantity.write(writer, instance.bigQuantity))
+    public companion object READER : ScaleReader<BigQuantity> {
+      public override fun read(reader: ScaleCodecReader): BigQuantity {
+      }
     }
   }
 
@@ -60,14 +50,12 @@ public abstract class AssetValue {
    */
   public class Store(
     private val store: Metadata
-  ) : AssetValue(), ScaleReader<Store>, ScaleWriter<Store> {
+  ) : AssetValue() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): Store = Store(store.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-      writer.directWrite(this.discriminant());
-      store.write(writer, instance.store))
+    public companion object READER : ScaleReader<Store> {
+      public override fun read(reader: ScaleCodecReader): Store {
+      }
     }
   }
 }

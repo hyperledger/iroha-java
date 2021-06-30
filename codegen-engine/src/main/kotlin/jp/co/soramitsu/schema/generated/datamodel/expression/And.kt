@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * And
@@ -17,12 +12,10 @@ import kotlin.Unit
 public class And(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
-) : ScaleReader<And>, ScaleWriter<And> {
-  public override fun read(reader: ScaleCodecReader): And =
-      And(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<And> {
+    public override fun read(reader: ScaleCodecReader): And =
+        And(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
   }
 }

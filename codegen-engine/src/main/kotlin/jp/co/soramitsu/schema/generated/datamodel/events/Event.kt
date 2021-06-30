@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * Event
@@ -26,14 +21,12 @@ public abstract class Event {
    */
   public class Pipeline(
     private val pipeline: jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Event
-  ) : Event(), ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
+  ) : Event() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(pipeline.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
-      writer.directWrite(this.discriminant());
-      pipeline.write(writer, instance.pipeline))
+    public companion object READER : ScaleReader<Pipeline> {
+      public override fun read(reader: ScaleCodecReader): Pipeline {
+      }
     }
   }
 
@@ -42,14 +35,12 @@ public abstract class Event {
    */
   public class Data(
     private val `data`: jp.co.soramitsu.schema.generated.datamodel.events.`data`.Event
-  ) : Event(), ScaleReader<Data>, ScaleWriter<Data> {
+  ) : Event() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): Data = Data(data.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-      writer.directWrite(this.discriminant());
-      data.write(writer, instance.data))
+    public companion object READER : ScaleReader<Data> {
+      public override fun read(reader: ScaleCodecReader): Data {
+      }
     }
   }
 }

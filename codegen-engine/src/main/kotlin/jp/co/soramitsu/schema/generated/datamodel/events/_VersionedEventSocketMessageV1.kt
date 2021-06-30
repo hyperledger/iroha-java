@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * _VersionedEventSocketMessageV1
@@ -16,12 +11,9 @@ import kotlin.Unit
  */
 public class _VersionedEventSocketMessageV1(
   private val eventSocketMessage: EventSocketMessage
-) : ScaleReader<_VersionedEventSocketMessageV1>, ScaleWriter<_VersionedEventSocketMessageV1> {
-  public override fun read(reader: ScaleCodecReader): _VersionedEventSocketMessageV1 =
-      _VersionedEventSocketMessageV1(eventSocketMessage.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: _VersionedEventSocketMessageV1):
-      Unit {
-    eventSocketMessage.write(writer, instance.eventSocketMessage)
+) {
+  public companion object READER : ScaleReader<_VersionedEventSocketMessageV1> {
+    public override fun read(reader: ScaleCodecReader): _VersionedEventSocketMessageV1 =
+        _VersionedEventSocketMessageV1(jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.READER.read(reader))
   }
 }

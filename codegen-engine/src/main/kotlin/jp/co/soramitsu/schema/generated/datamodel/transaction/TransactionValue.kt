@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.transaction
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * TransactionValue
@@ -26,15 +21,12 @@ public abstract class TransactionValue {
    */
   public class Transaction(
     private val transaction: VersionedTransaction
-  ) : TransactionValue(), ScaleReader<Transaction>, ScaleWriter<Transaction> {
+  ) : TransactionValue() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): Transaction =
-        Transaction(transaction.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-      writer.directWrite(this.discriminant());
-      transaction.write(writer, instance.transaction))
+    public companion object READER : ScaleReader<Transaction> {
+      public override fun read(reader: ScaleCodecReader): Transaction {
+      }
     }
   }
 
@@ -43,15 +35,12 @@ public abstract class TransactionValue {
    */
   public class RejectedTransaction(
     private val rejectedTransaction: VersionedRejectedTransaction
-  ) : TransactionValue(), ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
+  ) : TransactionValue() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): RejectedTransaction =
-        RejectedTransaction(rejectedTransaction.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-      writer.directWrite(this.discriminant());
-      rejectedTransaction.write(writer, instance.rejectedTransaction))
+    public companion object READER : ScaleReader<RejectedTransaction> {
+      public override fun read(reader: ScaleCodecReader): RejectedTransaction {
+      }
     }
   }
 }

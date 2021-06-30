@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * RaiseTo
@@ -17,12 +12,10 @@ import kotlin.Unit
 public class RaiseTo(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
-) : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
-  public override fun read(reader: ScaleCodecReader): RaiseTo =
-      RaiseTo(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<RaiseTo> {
+    public override fun read(reader: ScaleCodecReader): RaiseTo =
+        RaiseTo(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
   }
 }

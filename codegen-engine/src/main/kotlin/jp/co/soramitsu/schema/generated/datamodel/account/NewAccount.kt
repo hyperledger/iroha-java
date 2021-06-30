@@ -2,14 +2,9 @@
 package jp.co.soramitsu.schema.generated.datamodel.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.PublicKey
 import jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata
-import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -21,13 +16,11 @@ public class NewAccount(
   private val id: Id,
   private val signatories: List<PublicKey>,
   private val metadata: Metadata
-) : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-  public override fun read(reader: ScaleCodecReader): NewAccount =
-      NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),
-    kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<NewAccount> {
+    public override fun read(reader: ScaleCodecReader): NewAccount =
+        NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),
+        kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader))
   }
 }

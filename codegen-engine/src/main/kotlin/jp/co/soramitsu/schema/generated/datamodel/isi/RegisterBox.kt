@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
-import kotlin.Unit
 
 /**
  * RegisterBox
@@ -17,11 +12,9 @@ import kotlin.Unit
  */
 public class RegisterBox(
   private val `object`: EvaluatesTo
-) : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
-  public override fun read(reader: ScaleCodecReader): RegisterBox =
-      RegisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<RegisterBox> {
+    public override fun read(reader: ScaleCodecReader): RegisterBox =
+        RegisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
   }
 }

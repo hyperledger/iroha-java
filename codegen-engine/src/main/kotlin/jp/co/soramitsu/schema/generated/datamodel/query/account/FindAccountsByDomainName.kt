@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.query.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
-import kotlin.Unit
 
 /**
  * FindAccountsByDomainName
@@ -17,11 +12,9 @@ import kotlin.Unit
  */
 public class FindAccountsByDomainName(
   private val domainName: EvaluatesTo
-) : ScaleReader<FindAccountsByDomainName>, ScaleWriter<FindAccountsByDomainName> {
-  public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
-      FindAccountsByDomainName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<FindAccountsByDomainName> {
+    public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
+        FindAccountsByDomainName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
   }
 }

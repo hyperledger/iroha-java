@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * TransactionRejectionReason
@@ -26,15 +21,12 @@ public abstract class TransactionRejectionReason {
    */
   public class NotPermitted(
     private val notPermitted: NotPermittedFail
-  ) : TransactionRejectionReason(), ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): NotPermitted =
-        NotPermitted(notPermitted.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
-      writer.directWrite(this.discriminant());
-      notPermitted.write(writer, instance.notPermitted))
+    public companion object READER : ScaleReader<NotPermitted> {
+      public override fun read(reader: ScaleCodecReader): NotPermitted {
+      }
     }
   }
 
@@ -43,17 +35,12 @@ public abstract class TransactionRejectionReason {
    */
   public class UnsatisfiedSignatureCondition(
     private val unsatisfiedSignatureCondition: UnsatisfiedSignatureConditionFail
-  ) : TransactionRejectionReason(), ScaleReader<UnsatisfiedSignatureCondition>,
-      ScaleWriter<UnsatisfiedSignatureCondition> {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
-        UnsatisfiedSignatureCondition(unsatisfiedSignatureCondition.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
-        Unit {
-      writer.directWrite(this.discriminant());
-      unsatisfiedSignatureCondition.write(writer, instance.unsatisfiedSignatureCondition))
+    public companion object READER : ScaleReader<UnsatisfiedSignatureCondition> {
+      public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition {
+      }
     }
   }
 
@@ -62,16 +49,12 @@ public abstract class TransactionRejectionReason {
    */
   public class InstructionExecution(
     private val instructionExecution: InstructionExecutionFail
-  ) : TransactionRejectionReason(), ScaleReader<InstructionExecution>,
-      ScaleWriter<InstructionExecution> {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): InstructionExecution =
-        InstructionExecution(instructionExecution.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
-      writer.directWrite(this.discriminant());
-      instructionExecution.write(writer, instance.instructionExecution))
+    public companion object READER : ScaleReader<InstructionExecution> {
+      public override fun read(reader: ScaleCodecReader): InstructionExecution {
+      }
     }
   }
 
@@ -80,16 +63,12 @@ public abstract class TransactionRejectionReason {
    */
   public class SignatureVerification(
     private val signatureVerification: SignatureVerificationFail
-  ) : TransactionRejectionReason(), ScaleReader<SignatureVerification>,
-      ScaleWriter<SignatureVerification> {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 3
 
-    public override fun read(reader: ScaleCodecReader): SignatureVerification =
-        SignatureVerification(signatureVerification.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
-      writer.directWrite(this.discriminant());
-      signatureVerification.write(writer, instance.signatureVerification))
+    public companion object READER : ScaleReader<SignatureVerification> {
+      public override fun read(reader: ScaleCodecReader): SignatureVerification {
+      }
     }
   }
 

@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.query.asset
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
-import kotlin.Unit
 
 /**
  * FindAssetKeyValueByIdAndKey
@@ -18,12 +13,10 @@ import kotlin.Unit
 public class FindAssetKeyValueByIdAndKey(
   private val id: EvaluatesTo,
   private val key: EvaluatesTo
-) : ScaleReader<FindAssetKeyValueByIdAndKey>, ScaleWriter<FindAssetKeyValueByIdAndKey> {
-  public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
-      FindAssetKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<FindAssetKeyValueByIdAndKey> {
+    public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
+        FindAssetKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
   }
 }

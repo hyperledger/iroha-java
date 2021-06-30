@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.String
-import kotlin.Unit
 
 /**
  * NotPermittedFail
@@ -17,11 +12,9 @@ import kotlin.Unit
  */
 public class NotPermittedFail(
   private val reason: String
-) : ScaleReader<NotPermittedFail>, ScaleWriter<NotPermittedFail> {
-  public override fun read(reader: ScaleCodecReader): NotPermittedFail =
-      NotPermittedFail(reader.readString())
-
-  public override fun write(writer: ScaleCodecWriter, instance: NotPermittedFail): Unit {
-    reader.readString()
+) {
+  public companion object READER : ScaleReader<NotPermittedFail> {
+    public override fun read(reader: ScaleCodecReader): NotPermittedFail =
+        NotPermittedFail(reader.readString())
   }
 }

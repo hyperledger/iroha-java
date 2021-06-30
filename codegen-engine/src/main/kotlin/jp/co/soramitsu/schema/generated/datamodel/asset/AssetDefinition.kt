@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.asset
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * AssetDefinition
@@ -17,12 +12,10 @@ import kotlin.Unit
 public class AssetDefinition(
   private val valueType: AssetValueType,
   private val id: DefinitionId
-) : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-  public override fun read(reader: ScaleCodecReader): AssetDefinition =
-      AssetDefinition(jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<AssetDefinition> {
+    public override fun read(reader: ScaleCodecReader): AssetDefinition =
+        AssetDefinition(jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader))
   }
 }

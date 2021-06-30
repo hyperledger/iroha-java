@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.asset
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * Id
@@ -17,12 +12,10 @@ import kotlin.Unit
 public class Id(
   private val definitionId: DefinitionId,
   private val accountId: jp.co.soramitsu.schema.generated.datamodel.account.Id
-) : ScaleReader<Id>, ScaleWriter<Id> {
-  public override fun read(reader: ScaleCodecReader): Id =
-      Id(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<Id> {
+    public override fun read(reader: ScaleCodecReader): Id =
+        Id(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader))
   }
 }

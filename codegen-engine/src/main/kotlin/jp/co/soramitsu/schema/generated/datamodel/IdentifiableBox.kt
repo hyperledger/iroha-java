@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * IdentifiableBox
@@ -26,14 +21,12 @@ public abstract class IdentifiableBox {
    */
   public class Account(
     private val account: jp.co.soramitsu.schema.generated.datamodel.account.Account
-  ) : IdentifiableBox(), ScaleReader<Account>, ScaleWriter<Account> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): Account = Account(account.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-      writer.directWrite(this.discriminant());
-      account.write(writer, instance.account))
+    public companion object READER : ScaleReader<Account> {
+      public override fun read(reader: ScaleCodecReader): Account {
+      }
     }
   }
 
@@ -42,15 +35,12 @@ public abstract class IdentifiableBox {
    */
   public class NewAccount(
     private val newAccount: jp.co.soramitsu.schema.generated.datamodel.account.NewAccount
-  ) : IdentifiableBox(), ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): NewAccount =
-        NewAccount(newAccount.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-      writer.directWrite(this.discriminant());
-      newAccount.write(writer, instance.newAccount))
+    public companion object READER : ScaleReader<NewAccount> {
+      public override fun read(reader: ScaleCodecReader): NewAccount {
+      }
     }
   }
 
@@ -59,14 +49,12 @@ public abstract class IdentifiableBox {
    */
   public class Asset(
     private val asset: jp.co.soramitsu.schema.generated.datamodel.asset.Asset
-  ) : IdentifiableBox(), ScaleReader<Asset>, ScaleWriter<Asset> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): Asset = Asset(asset.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-      writer.directWrite(this.discriminant());
-      asset.write(writer, instance.asset))
+    public companion object READER : ScaleReader<Asset> {
+      public override fun read(reader: ScaleCodecReader): Asset {
+      }
     }
   }
 
@@ -75,15 +63,12 @@ public abstract class IdentifiableBox {
    */
   public class AssetDefinition(
     private val assetDefinition: jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition
-  ) : IdentifiableBox(), ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 3
 
-    public override fun read(reader: ScaleCodecReader): AssetDefinition =
-        AssetDefinition(assetDefinition.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-      writer.directWrite(this.discriminant());
-      assetDefinition.write(writer, instance.assetDefinition))
+    public companion object READER : ScaleReader<AssetDefinition> {
+      public override fun read(reader: ScaleCodecReader): AssetDefinition {
+      }
     }
   }
 
@@ -92,14 +77,12 @@ public abstract class IdentifiableBox {
    */
   public class Domain(
     private val domain: jp.co.soramitsu.schema.generated.datamodel.domain.Domain
-  ) : IdentifiableBox(), ScaleReader<Domain>, ScaleWriter<Domain> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 4
 
-    public override fun read(reader: ScaleCodecReader): Domain = Domain(domain.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-      writer.directWrite(this.discriminant());
-      domain.write(writer, instance.domain))
+    public companion object READER : ScaleReader<Domain> {
+      public override fun read(reader: ScaleCodecReader): Domain {
+      }
     }
   }
 
@@ -108,14 +91,12 @@ public abstract class IdentifiableBox {
    */
   public class Peer(
     private val peer: jp.co.soramitsu.schema.generated.datamodel.peer.Peer
-  ) : IdentifiableBox(), ScaleReader<Peer>, ScaleWriter<Peer> {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = 5
 
-    public override fun read(reader: ScaleCodecReader): Peer = Peer(peer.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-      writer.directWrite(this.discriminant());
-      peer.write(writer, instance.peer))
+    public companion object READER : ScaleReader<Peer> {
+      public override fun read(reader: ScaleCodecReader): Peer {
+      }
     }
   }
 

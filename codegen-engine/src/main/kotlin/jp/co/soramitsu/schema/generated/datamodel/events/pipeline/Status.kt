@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * Status
@@ -33,14 +28,12 @@ public abstract class Status {
    */
   public class Rejected(
     private val rejected: RejectionReason
-  ) : Status(), ScaleReader<Rejected>, ScaleWriter<Rejected> {
+  ) : Status() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): Rejected = Rejected(rejected.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
-      writer.directWrite(this.discriminant());
-      rejected.write(writer, instance.rejected))
+    public companion object READER : ScaleReader<Rejected> {
+      public override fun read(reader: ScaleCodecReader): Rejected {
+      }
     }
   }
 

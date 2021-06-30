@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.asset
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.String
-import kotlin.Unit
 
 /**
  * DefinitionId
@@ -18,12 +13,9 @@ import kotlin.Unit
 public class DefinitionId(
   private val name: String,
   private val domainName: String
-) : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
-  public override fun read(reader: ScaleCodecReader): DefinitionId =
-      DefinitionId(reader.readString(),reader.readString())
-
-  public override fun write(writer: ScaleCodecWriter, instance: DefinitionId): Unit {
-    reader.readString(),
-    reader.readString()
+) {
+  public companion object READER : ScaleReader<DefinitionId> {
+    public override fun read(reader: ScaleCodecReader): DefinitionId =
+        DefinitionId(reader.readString(), reader.readString())
   }
 }

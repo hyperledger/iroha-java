@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.transaction
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * _VersionedRejectedTransactionV1
@@ -16,12 +11,9 @@ import kotlin.Unit
  */
 public class _VersionedRejectedTransactionV1(
   private val rejectedTransaction: RejectedTransaction
-) : ScaleReader<_VersionedRejectedTransactionV1>, ScaleWriter<_VersionedRejectedTransactionV1> {
-  public override fun read(reader: ScaleCodecReader): _VersionedRejectedTransactionV1 =
-      _VersionedRejectedTransactionV1(rejectedTransaction.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: _VersionedRejectedTransactionV1):
-      Unit {
-    rejectedTransaction.write(writer, instance.rejectedTransaction)
+) {
+  public companion object READER : ScaleReader<_VersionedRejectedTransactionV1> {
+    public override fun read(reader: ScaleCodecReader): _VersionedRejectedTransactionV1 =
+        _VersionedRejectedTransactionV1(jp.co.soramitsu.schema.generated.datamodel.transaction.RejectedTransaction.READER.read(reader))
   }
 }

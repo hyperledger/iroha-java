@@ -2,21 +2,15 @@
 package jp.co.soramitsu.schema.generated.datamodel.query.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * FindAllAccounts
  *
  * Generated from 'iroha_data_model::query::account::FindAllAccounts' regular structure
  */
-public class FindAllAccounts : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
-  public override fun read(reader: ScaleCodecReader): FindAllAccounts = FindAllAccounts()
-
-  public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
+public class FindAllAccounts {
+  public companion object READER : ScaleReader<FindAllAccounts> {
+    public override fun read(reader: ScaleCodecReader): FindAllAccounts = FindAllAccounts()
   }
 }

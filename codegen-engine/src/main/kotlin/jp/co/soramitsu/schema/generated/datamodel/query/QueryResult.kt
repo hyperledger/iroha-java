@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.query
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.Value
-import kotlin.Unit
 
 /**
  * QueryResult
@@ -17,10 +12,9 @@ import kotlin.Unit
  */
 public class QueryResult(
   private val `value`: Value
-) : ScaleReader<QueryResult>, ScaleWriter<QueryResult> {
-  public override fun read(reader: ScaleCodecReader): QueryResult = QueryResult(value.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: QueryResult): Unit {
-    value.write(writer, instance.value)
+) {
+  public companion object READER : ScaleReader<QueryResult> {
+    public override fun read(reader: ScaleCodecReader): QueryResult =
+        QueryResult(jp.co.soramitsu.schema.generated.datamodel.Value.READER.read(reader))
   }
 }

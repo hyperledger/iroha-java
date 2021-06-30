@@ -2,12 +2,7 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * EvaluatesTo
@@ -17,11 +12,9 @@ import kotlin.Unit
  */
 public class EvaluatesTo(
   private val expression: Expression
-) : ScaleReader<EvaluatesTo>, ScaleWriter<EvaluatesTo> {
-  public override fun read(reader: ScaleCodecReader): EvaluatesTo =
-      EvaluatesTo(jp.co.soramitsu.schema.generated.datamodel.expression.Expression.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo): Unit {
-    jp.co.soramitsu.schema.generated.datamodel.expression.Expression.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<EvaluatesTo> {
+    public override fun read(reader: ScaleCodecReader): EvaluatesTo =
+        EvaluatesTo(jp.co.soramitsu.schema.generated.datamodel.expression.Expression.READER.read(reader))
   }
 }

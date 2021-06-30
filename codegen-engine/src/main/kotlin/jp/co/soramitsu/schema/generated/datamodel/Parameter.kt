@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * Parameter
@@ -26,15 +21,12 @@ public abstract class Parameter {
    */
   public class MaximumFaultyPeersAmount(
     private val maximumFaultyPeersAmount: Int
-  ) : Parameter(), ScaleReader<MaximumFaultyPeersAmount>, ScaleWriter<MaximumFaultyPeersAmount> {
+  ) : Parameter() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
-        MaximumFaultyPeersAmount(maximumFaultyPeersAmount.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount): Unit {
-      writer.directWrite(this.discriminant());
-      maximumFaultyPeersAmount.write(writer, instance.maximumFaultyPeersAmount))
+    public companion object READER : ScaleReader<MaximumFaultyPeersAmount> {
+      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount {
+      }
     }
   }
 
@@ -43,15 +35,12 @@ public abstract class Parameter {
    */
   public class BlockTime(
     private val blockTime: Int
-  ) : Parameter(), ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
+  ) : Parameter() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): BlockTime =
-        BlockTime(blockTime.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-      writer.directWrite(this.discriminant());
-      blockTime.write(writer, instance.blockTime))
+    public companion object READER : ScaleReader<BlockTime> {
+      public override fun read(reader: ScaleCodecReader): BlockTime {
+      }
     }
   }
 
@@ -60,15 +49,12 @@ public abstract class Parameter {
    */
   public class CommitTime(
     private val commitTime: Int
-  ) : Parameter(), ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
+  ) : Parameter() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): CommitTime =
-        CommitTime(commitTime.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-      writer.directWrite(this.discriminant());
-      commitTime.write(writer, instance.commitTime))
+    public companion object READER : ScaleReader<CommitTime> {
+      public override fun read(reader: ScaleCodecReader): CommitTime {
+      }
     }
   }
 
@@ -77,15 +63,12 @@ public abstract class Parameter {
    */
   public class TransactionReceiptTime(
     private val transactionReceiptTime: Int
-  ) : Parameter(), ScaleReader<TransactionReceiptTime>, ScaleWriter<TransactionReceiptTime> {
+  ) : Parameter() {
     public override fun discriminant(): Int = 3
 
-    public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
-        TransactionReceiptTime(transactionReceiptTime.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-      writer.directWrite(this.discriminant());
-      transactionReceiptTime.write(writer, instance.transactionReceiptTime))
+    public companion object READER : ScaleReader<TransactionReceiptTime> {
+      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime {
+      }
     }
   }
 }

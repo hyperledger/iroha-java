@@ -2,21 +2,15 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.`data`
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
-import kotlin.Unit
 
 /**
  * EventFilter
  *
  * Generated from 'iroha_data_model::events::data::EventFilter' tuple structure
  */
-public class EventFilter : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-  public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter()
-
-  public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
+public class EventFilter {
+  public companion object READER : ScaleReader<EventFilter> {
+    public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter()
   }
 }

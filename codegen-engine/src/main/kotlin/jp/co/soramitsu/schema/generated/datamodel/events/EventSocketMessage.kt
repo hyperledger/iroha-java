@@ -2,13 +2,8 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * EventSocketMessage
@@ -27,15 +22,12 @@ public abstract class EventSocketMessage {
   public class SubscriptionRequest(
     private val subscriptionRequest:
         jp.co.soramitsu.schema.generated.datamodel.events.SubscriptionRequest
-  ) : EventSocketMessage(), ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
+  ) : EventSocketMessage() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-        SubscriptionRequest(subscriptionRequest.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-      writer.directWrite(this.discriminant());
-      subscriptionRequest.write(writer, instance.subscriptionRequest))
+    public companion object READER : ScaleReader<SubscriptionRequest> {
+      public override fun read(reader: ScaleCodecReader): SubscriptionRequest {
+      }
     }
   }
 
@@ -51,14 +43,12 @@ public abstract class EventSocketMessage {
    */
   public class Event(
     private val event: jp.co.soramitsu.schema.generated.datamodel.events.Event
-  ) : EventSocketMessage(), ScaleReader<Event>, ScaleWriter<Event> {
+  ) : EventSocketMessage() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): Event = Event(event.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-      writer.directWrite(this.discriminant());
-      event.write(writer, instance.event))
+    public companion object READER : ScaleReader<Event> {
+      public override fun read(reader: ScaleCodecReader): Event {
+      }
     }
   }
 

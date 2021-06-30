@@ -2,14 +2,9 @@
 package jp.co.soramitsu.schema.generated.datamodel.query
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.Signature
 import kotlin.Int
-import kotlin.Unit
 
 /**
  * SignedQueryRequest
@@ -20,13 +15,11 @@ public class SignedQueryRequest(
   private val timestampMs: Int,
   private val signature: Signature,
   private val query: QueryBox
-) : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
-  public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
-      SignedQueryRequest(reader.readCompactInt(),jp.co.soramitsu.schema.generated.crypto.Signature.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.READER.read(reader))
-
-  public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
-    reader.readCompactInt(),
-    jp.co.soramitsu.schema.generated.crypto.Signature.READER.read(reader),
-    jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.READER.read(reader)
+) {
+  public companion object READER : ScaleReader<SignedQueryRequest> {
+    public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
+        SignedQueryRequest(reader.readCompactInt(),
+        jp.co.soramitsu.schema.generated.crypto.Signature.READER.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.READER.read(reader))
   }
 }

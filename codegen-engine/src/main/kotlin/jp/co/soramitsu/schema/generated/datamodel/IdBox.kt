@@ -2,16 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.schema.codegen.read
-import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.account.Id
 import jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId
 import kotlin.Int
 import kotlin.String
-import kotlin.Unit
 
 /**
  * IdBox
@@ -29,15 +24,12 @@ public abstract class IdBox {
    */
   public class AccountId(
     private val accountId: Id
-  ) : IdBox(), ScaleReader<AccountId>, ScaleWriter<AccountId> {
+  ) : IdBox() {
     public override fun discriminant(): Int = 0
 
-    public override fun read(reader: ScaleCodecReader): AccountId =
-        AccountId(accountId.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
-      writer.directWrite(this.discriminant());
-      accountId.write(writer, instance.accountId))
+    public companion object READER : ScaleReader<AccountId> {
+      public override fun read(reader: ScaleCodecReader): AccountId {
+      }
     }
   }
 
@@ -46,14 +38,12 @@ public abstract class IdBox {
    */
   public class AssetId(
     private val assetId: jp.co.soramitsu.schema.generated.datamodel.asset.Id
-  ) : IdBox(), ScaleReader<AssetId>, ScaleWriter<AssetId> {
+  ) : IdBox() {
     public override fun discriminant(): Int = 1
 
-    public override fun read(reader: ScaleCodecReader): AssetId = AssetId(assetId.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
-      writer.directWrite(this.discriminant());
-      assetId.write(writer, instance.assetId))
+    public companion object READER : ScaleReader<AssetId> {
+      public override fun read(reader: ScaleCodecReader): AssetId {
+      }
     }
   }
 
@@ -62,15 +52,12 @@ public abstract class IdBox {
    */
   public class AssetDefinitionId(
     private val assetDefinitionId: DefinitionId
-  ) : IdBox(), ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
+  ) : IdBox() {
     public override fun discriminant(): Int = 2
 
-    public override fun read(reader: ScaleCodecReader): AssetDefinitionId =
-        AssetDefinitionId(assetDefinitionId.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
-      writer.directWrite(this.discriminant());
-      assetDefinitionId.write(writer, instance.assetDefinitionId))
+    public companion object READER : ScaleReader<AssetDefinitionId> {
+      public override fun read(reader: ScaleCodecReader): AssetDefinitionId {
+      }
     }
   }
 
@@ -79,15 +66,12 @@ public abstract class IdBox {
    */
   public class DomainName(
     private val domainName: String
-  ) : IdBox(), ScaleReader<DomainName>, ScaleWriter<DomainName> {
+  ) : IdBox() {
     public override fun discriminant(): Int = 3
 
-    public override fun read(reader: ScaleCodecReader): DomainName =
-        DomainName(domainName.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
-      writer.directWrite(this.discriminant());
-      domainName.write(writer, instance.domainName))
+    public companion object READER : ScaleReader<DomainName> {
+      public override fun read(reader: ScaleCodecReader): DomainName {
+      }
     }
   }
 
@@ -96,14 +80,12 @@ public abstract class IdBox {
    */
   public class PeerId(
     private val peerId: jp.co.soramitsu.schema.generated.datamodel.peer.Id
-  ) : IdBox(), ScaleReader<PeerId>, ScaleWriter<PeerId> {
+  ) : IdBox() {
     public override fun discriminant(): Int = 4
 
-    public override fun read(reader: ScaleCodecReader): PeerId = PeerId(peerId.read(reader))
-
-    public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
-      writer.directWrite(this.discriminant());
-      peerId.write(writer, instance.peerId))
+    public companion object READER : ScaleReader<PeerId> {
+      public override fun read(reader: ScaleCodecReader): PeerId {
+      }
     }
   }
 
