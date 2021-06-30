@@ -74,7 +74,8 @@ object CodeGenerator {
     private fun implScaleWriterForStructs(type: Struct, structName: String): CodeBlock {
         val code = StringJoiner(",\n")
         for ((name, _) in type.mapping) {
-            code.add("${convertToCamelCase(name)}.write(writer)")
+            val normalizedName = convertToCamelCase(name);
+            code.add("$normalizedName.write(writer, instance.$normalizedName)")
         }
         return CodeBlock.builder()
             .add("$code")
@@ -94,7 +95,8 @@ object CodeGenerator {
     private fun implScaleWriterForTupleStructs(type: TupleStruct, structName: String): CodeBlock {
         val code = StringJoiner(",\n")
         for (typeRef in type.types) {
-            code.add(".write(writer)")
+            val name = createTupleStructName(typeRef.value!!)
+            code.add("$name.write(writer, instance.$name)")
         }
         return CodeBlock.builder()
             .add("$code")
@@ -111,13 +113,16 @@ object CodeGenerator {
             .build()
     }
 
-    private fun implScaleReaderForEnumVariant(type: TupleStruct, structName: String): CodeBlock {
-        val code = StringJoiner(", ")
-        for (typeRef in type.types) {
-            code.add("${createTupleStructName(typeRef.value!!)}.read(reader)")
-        }
+    private fun implScaleReaderForEnumVariant(variantName: String, innerPropertyName: String): CodeBlock {
         return CodeBlock.builder()
-            .add("return $structName($code)" )
+            .add("return $variantName($innerPropertyName.read(reader))" )
+            .build()
+    }
+
+    private fun implScaleWriterForEnumVariant(variantName: String, innerPropertyName: String): CodeBlock {
+        return CodeBlock.builder()
+            .add("writer.directWrite(this.discriminant());")
+            .add("\n$innerPropertyName.write(writer, instance.$innerPropertyName)")
             .build()
     }
 
@@ -175,20 +180,22 @@ object CodeGenerator {
             .addModifiers(KModifier.ABSTRACT)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' enum")
+            .addFunction(FunSpec.builder("discriminant")
+                .addModifiers(KModifier.ABSTRACT)
+                .returns(Int::class.java, CodeBlock.of("Discriminator of variant in enum"))
+                .build())
 
         for (variant in type.variants) {
 
             val variantClass = TypeSpec.classBuilder(variant.name)
                 .addModifiers(KModifier.PUBLIC)
                 .superclass(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
-                .addType(
-                    TypeSpec.companionObjectBuilder()
-                        .addProperty(
-                            PropertySpec.builder("DISCRIMINANT", Int::class, KModifier.CONST)
-                                .initializer("%L", variant.discriminant)
-                                .build()
-                        ).build()
-                ).addKdoc("'${variant.name}' variant")
+                .addFunction(FunSpec.builder("discriminant")
+                    .addModifiers(KModifier.OVERRIDE)
+                    .returns(Int::class.java)
+                    .addCode("return %L", variant.discriminant)
+                    .build())
+                .addKdoc("'${variant.name}' variant")
 
             if (variant.type != null) {
                 val (variantPropertyName, _, _) = defineFullClassNames(variant.name)
@@ -208,8 +215,8 @@ object CodeGenerator {
                 )
 
                 variantClass.primaryConstructor(constructorBuilder.build())
+                implementScaleCodec(variantClass, variant.name, "$packageName.$className", implScaleReaderForEnumVariant(variant.name, normalizedName), implScaleWriterForEnumVariant(variant.name, normalizedName))
             }
-//            implementScaleCodec(variantClass, variant.name, "$packageName.$className")
             clazz.addType(variantClass.build())
         }
 
