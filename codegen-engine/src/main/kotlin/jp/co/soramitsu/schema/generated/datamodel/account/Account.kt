@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.PublicKey
 import jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken
@@ -27,16 +29,16 @@ public class Account(
   private val signatureCheckCondition: SignatureCheckCondition,
   private val metadata: Metadata
 ) : ScaleReader<Account>, ScaleWriter<Account> {
-  public override fun read(reader: ScaleCodecReader): Account = Account(id.read(reader),
-      assets.read(reader), signatories.read(reader), permissionTokens.read(reader),
-      signatureCheckCondition.read(reader), metadata.read(reader))
+  public override fun read(reader: ScaleCodecReader): Account =
+      Account(jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),kotlin.collections.List<kotlin.Pair<kotlin.String,
+      kotlin.String>>.READER.read(reader),kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),kotlin.collections.Set<jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken>.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-    id.write(writer, instance.id),
-    assets.write(writer, instance.assets),
-    signatories.write(writer, instance.signatories),
-    permissionTokens.write(writer, instance.permissionTokens),
-    signatureCheckCondition.write(writer, instance.signatureCheckCondition),
-    metadata.write(writer, instance.metadata)
+    jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),
+    kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader),
+    kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),
+    kotlin.collections.Set<jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken>.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader)
   }
 }

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.Signature
 import kotlin.Int
 import kotlin.Unit
@@ -20,11 +22,11 @@ public class SignedQueryRequest(
   private val query: QueryBox
 ) : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
   public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
-      SignedQueryRequest(timestampMs.read(reader), signature.read(reader), query.read(reader))
+      SignedQueryRequest(reader.readCompactInt(),jp.co.soramitsu.schema.generated.crypto.Signature.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
-    timestampMs.write(writer, instance.timestampMs),
-    signature.write(writer, instance.signature),
-    query.write(writer, instance.query)
+    reader.readCompactInt(),
+    jp.co.soramitsu.schema.generated.crypto.Signature.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.READER.read(reader)
   }
 }

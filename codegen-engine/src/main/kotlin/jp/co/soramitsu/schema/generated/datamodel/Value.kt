@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.Unit
@@ -33,7 +35,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
       writer.directWrite(this.discriminant());
-      u32.write(writer, instance.u32)
+      u32.write(writer, instance.u32))
     }
   }
 
@@ -49,7 +51,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
       writer.directWrite(this.discriminant());
-      bool.write(writer, instance.bool)
+      bool.write(writer, instance.bool))
     }
   }
 
@@ -65,7 +67,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
       writer.directWrite(this.discriminant());
-      string.write(writer, instance.string)
+      string.write(writer, instance.string))
     }
   }
 
@@ -81,7 +83,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
       writer.directWrite(this.discriminant());
-      vec.write(writer, instance.vec)
+      vec.write(writer, instance.vec))
     }
   }
 
@@ -97,7 +99,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
       writer.directWrite(this.discriminant());
-      id.write(writer, instance.id)
+      id.write(writer, instance.id))
     }
   }
 
@@ -114,7 +116,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
       writer.directWrite(this.discriminant());
-      identifiable.write(writer, instance.identifiable)
+      identifiable.write(writer, instance.identifiable))
     }
   }
 
@@ -131,7 +133,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
       writer.directWrite(this.discriminant());
-      publicKey.write(writer, instance.publicKey)
+      publicKey.write(writer, instance.publicKey))
     }
   }
 
@@ -148,7 +150,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
       writer.directWrite(this.discriminant());
-      parameter.write(writer, instance.parameter)
+      parameter.write(writer, instance.parameter))
     }
   }
 
@@ -166,7 +168,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
       writer.directWrite(this.discriminant());
-      signatureCheckCondition.write(writer, instance.signatureCheckCondition)
+      signatureCheckCondition.write(writer, instance.signatureCheckCondition))
     }
   }
 
@@ -184,7 +186,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
       writer.directWrite(this.discriminant());
-      transactionValue.write(writer, instance.transactionValue)
+      transactionValue.write(writer, instance.transactionValue))
     }
   }
 
@@ -202,7 +204,7 @@ public abstract class Value {
 
     public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
       writer.directWrite(this.discriminant());
-      permissionToken.write(writer, instance.permissionToken)
+      permissionToken.write(writer, instance.permissionToken))
     }
   }
 }

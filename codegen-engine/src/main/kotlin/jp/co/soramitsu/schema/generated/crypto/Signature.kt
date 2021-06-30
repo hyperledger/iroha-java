@@ -5,7 +5,9 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import kotlin.Any
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
+import kotlin.ByteArray
 import kotlin.Unit
 
 /**
@@ -15,13 +17,13 @@ import kotlin.Unit
  */
 public class Signature(
   private val publicKey: PublicKey,
-  private val signature: Any
+  private val signature: ByteArray
 ) : ScaleReader<Signature>, ScaleWriter<Signature> {
-  public override fun read(reader: ScaleCodecReader): Signature = Signature(publicKey.read(reader),
-      signature.read(reader))
+  public override fun read(reader: ScaleCodecReader): Signature =
+      Signature(jp.co.soramitsu.schema.generated.crypto.PublicKey.READER.read(reader),reader.readByteArray())
 
   public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
-    publicKey.write(writer, instance.publicKey),
-    signature.write(writer, instance.signature)
+    jp.co.soramitsu.schema.generated.crypto.PublicKey.READER.read(reader),
+    reader.readByteArray()
   }
 }

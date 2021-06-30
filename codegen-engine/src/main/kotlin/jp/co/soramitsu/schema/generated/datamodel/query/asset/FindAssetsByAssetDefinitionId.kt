@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 import kotlin.Unit
 
@@ -17,10 +19,10 @@ public class FindAssetsByAssetDefinitionId(
   private val assetDefinitionId: EvaluatesTo
 ) : ScaleReader<FindAssetsByAssetDefinitionId>, ScaleWriter<FindAssetsByAssetDefinitionId> {
   public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
-      FindAssetsByAssetDefinitionId(assetDefinitionId.read(reader))
+      FindAssetsByAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
       Unit {
-    assetDefinitionId.write(writer, instance.assetDefinitionId)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

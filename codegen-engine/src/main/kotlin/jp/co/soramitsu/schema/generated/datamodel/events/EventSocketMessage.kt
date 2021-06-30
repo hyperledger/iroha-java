@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -33,7 +35,7 @@ public abstract class EventSocketMessage {
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
       writer.directWrite(this.discriminant());
-      subscriptionRequest.write(writer, instance.subscriptionRequest)
+      subscriptionRequest.write(writer, instance.subscriptionRequest))
     }
   }
 
@@ -56,7 +58,7 @@ public abstract class EventSocketMessage {
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
       writer.directWrite(this.discriminant());
-      event.write(writer, instance.event)
+      event.write(writer, instance.event))
     }
   }
 

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -15,9 +17,10 @@ import kotlin.Unit
 public class Peer(
   private val id: Id
 ) : ScaleReader<Peer>, ScaleWriter<Peer> {
-  public override fun read(reader: ScaleCodecReader): Peer = Peer(id.read(reader))
+  public override fun read(reader: ScaleCodecReader): Peer =
+      Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Id.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-    id.write(writer, instance.id)
+    jp.co.soramitsu.schema.generated.datamodel.peer.Id.READER.read(reader)
   }
 }

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.Value
 import jp.co.soramitsu.schema.generated.datamodel.query.QueryBox
 import kotlin.Int
@@ -33,7 +35,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
       writer.directWrite(this.discriminant());
-      add.write(writer, instance.add)
+      add.write(writer, instance.add))
     }
   }
 
@@ -49,7 +51,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
       writer.directWrite(this.discriminant());
-      subtract.write(writer, instance.subtract)
+      subtract.write(writer, instance.subtract))
     }
   }
 
@@ -65,7 +67,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
       writer.directWrite(this.discriminant());
-      multiply.write(writer, instance.multiply)
+      multiply.write(writer, instance.multiply))
     }
   }
 
@@ -81,7 +83,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
       writer.directWrite(this.discriminant());
-      divide.write(writer, instance.divide)
+      divide.write(writer, instance.divide))
     }
   }
 
@@ -97,7 +99,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
       writer.directWrite(this.discriminant());
-      mod.write(writer, instance.mod)
+      mod.write(writer, instance.mod))
     }
   }
 
@@ -113,7 +115,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
       writer.directWrite(this.discriminant());
-      raiseTo.write(writer, instance.raiseTo)
+      raiseTo.write(writer, instance.raiseTo))
     }
   }
 
@@ -129,7 +131,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
       writer.directWrite(this.discriminant());
-      greater.write(writer, instance.greater)
+      greater.write(writer, instance.greater))
     }
   }
 
@@ -145,7 +147,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
       writer.directWrite(this.discriminant());
-      less.write(writer, instance.less)
+      less.write(writer, instance.less))
     }
   }
 
@@ -161,7 +163,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
       writer.directWrite(this.discriminant());
-      equal.write(writer, instance.equal)
+      equal.write(writer, instance.equal))
     }
   }
 
@@ -177,7 +179,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
       writer.directWrite(this.discriminant());
-      not.write(writer, instance.not)
+      not.write(writer, instance.not))
     }
   }
 
@@ -193,7 +195,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
       writer.directWrite(this.discriminant());
-      and.write(writer, instance.and)
+      and.write(writer, instance.and))
     }
   }
 
@@ -209,7 +211,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
       writer.directWrite(this.discriminant());
-      or.write(writer, instance.or)
+      or.write(writer, instance.or))
     }
   }
 
@@ -225,7 +227,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       writer.directWrite(this.discriminant());
-      if.write(writer, instance.if)
+      if.write(writer, instance.if))
     }
   }
 
@@ -241,7 +243,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
       writer.directWrite(this.discriminant());
-      raw.write(writer, instance.raw)
+      raw.write(writer, instance.raw))
     }
   }
 
@@ -257,7 +259,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
       writer.directWrite(this.discriminant());
-      query.write(writer, instance.query)
+      query.write(writer, instance.query))
     }
   }
 
@@ -273,7 +275,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
       writer.directWrite(this.discriminant());
-      contains.write(writer, instance.contains)
+      contains.write(writer, instance.contains))
     }
   }
 
@@ -290,7 +292,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
       writer.directWrite(this.discriminant());
-      containsAll.write(writer, instance.containsAll)
+      containsAll.write(writer, instance.containsAll))
     }
   }
 
@@ -307,7 +309,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
       writer.directWrite(this.discriminant());
-      containsAny.write(writer, instance.containsAny)
+      containsAny.write(writer, instance.containsAny))
     }
   }
 
@@ -323,7 +325,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
       writer.directWrite(this.discriminant());
-      where.write(writer, instance.where)
+      where.write(writer, instance.where))
     }
   }
 
@@ -340,7 +342,7 @@ public abstract class Expression {
 
     public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
       writer.directWrite(this.discriminant());
-      contextValue.write(writer, instance.contextValue)
+      contextValue.write(writer, instance.contextValue))
     }
   }
 }

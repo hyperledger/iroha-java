@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.account.Id
 import jp.co.soramitsu.schema.generated.datamodel.isi.Instruction
 import kotlin.Int
@@ -25,15 +27,15 @@ public class Payload(
   private val timeToLiveMs: Int,
   private val metadata: List<Pair<String, String>>
 ) : ScaleReader<Payload>, ScaleWriter<Payload> {
-  public override fun read(reader: ScaleCodecReader): Payload = Payload(accountId.read(reader),
-      instructions.read(reader), creationTime.read(reader), timeToLiveMs.read(reader),
-      metadata.read(reader))
+  public override fun read(reader: ScaleCodecReader): Payload =
+      Payload(jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),kotlin.collections.List<jp.co.soramitsu.schema.generated.datamodel.isi.Instruction>.READER.read(reader),reader.readLong().toInt(),reader.readLong().toInt(),kotlin.collections.List<kotlin.Pair<kotlin.String,
+      kotlin.String>>.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-    accountId.write(writer, instance.accountId),
-    instructions.write(writer, instance.instructions),
-    creationTime.write(writer, instance.creationTime),
-    timeToLiveMs.write(writer, instance.timeToLiveMs),
-    metadata.write(writer, instance.metadata)
+    jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),
+    kotlin.collections.List<jp.co.soramitsu.schema.generated.datamodel.isi.Instruction>.READER.read(reader),
+    reader.readLong().toInt(),
+    reader.readLong().toInt(),
+    kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader)
   }
 }

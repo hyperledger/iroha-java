@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.Signature
 import jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason
 import kotlin.Unit
@@ -21,12 +23,11 @@ public class RejectedTransaction(
   private val rejectionReason: TransactionRejectionReason
 ) : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
   public override fun read(reader: ScaleCodecReader): RejectedTransaction =
-      RejectedTransaction(payload.read(reader), signatures.read(reader),
-      rejectionReason.read(reader))
+      RejectedTransaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.READER.read(reader),kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.Signature>.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-    payload.write(writer, instance.payload),
-    signatures.write(writer, instance.signatures),
-    rejectionReason.write(writer, instance.rejectionReason)
+    jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.READER.read(reader),
+    kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.Signature>.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.READER.read(reader)
   }
 }

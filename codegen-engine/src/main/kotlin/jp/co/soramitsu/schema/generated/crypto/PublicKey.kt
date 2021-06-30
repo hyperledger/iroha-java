@@ -5,7 +5,9 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import kotlin.Any
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
+import kotlin.ByteArray
 import kotlin.String
 import kotlin.Unit
 
@@ -16,13 +18,13 @@ import kotlin.Unit
  */
 public class PublicKey(
   private val digestFunction: String,
-  private val payload: Any
+  private val payload: ByteArray
 ) : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
   public override fun read(reader: ScaleCodecReader): PublicKey =
-      PublicKey(digestFunction.read(reader), payload.read(reader))
+      PublicKey(reader.readString(),reader.readByteArray())
 
   public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-    digestFunction.write(writer, instance.digestFunction),
-    payload.write(writer, instance.payload)
+    writer.writeString(instance.digestFunction)
+   writer.writeByteArray(instance.payload)
   }
 }

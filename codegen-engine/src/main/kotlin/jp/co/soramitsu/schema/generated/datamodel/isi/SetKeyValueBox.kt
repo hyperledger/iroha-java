@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 import kotlin.Unit
 
@@ -19,11 +21,11 @@ public class SetKeyValueBox(
   private val `value`: EvaluatesTo
 ) : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
   public override fun read(reader: ScaleCodecReader): SetKeyValueBox =
-      SetKeyValueBox(objectId.read(reader), key.read(reader), value.read(reader))
+      SetKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
-    objectId.write(writer, instance.objectId),
-    key.write(writer, instance.key),
-    value.write(writer, instance.value)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

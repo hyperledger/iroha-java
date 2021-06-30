@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -31,7 +33,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
       writer.directWrite(this.discriminant());
-      account.write(writer, instance.account)
+      account.write(writer, instance.account))
     }
   }
 
@@ -48,7 +50,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
       writer.directWrite(this.discriminant());
-      newAccount.write(writer, instance.newAccount)
+      newAccount.write(writer, instance.newAccount))
     }
   }
 
@@ -64,7 +66,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
       writer.directWrite(this.discriminant());
-      asset.write(writer, instance.asset)
+      asset.write(writer, instance.asset))
     }
   }
 
@@ -81,7 +83,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
       writer.directWrite(this.discriminant());
-      assetDefinition.write(writer, instance.assetDefinition)
+      assetDefinition.write(writer, instance.assetDefinition))
     }
   }
 
@@ -97,7 +99,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
       writer.directWrite(this.discriminant());
-      domain.write(writer, instance.domain)
+      domain.write(writer, instance.domain))
     }
   }
 
@@ -113,7 +115,7 @@ public abstract class IdentifiableBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
       writer.directWrite(this.discriminant());
-      peer.write(writer, instance.peer)
+      peer.write(writer, instance.peer))
     }
   }
 

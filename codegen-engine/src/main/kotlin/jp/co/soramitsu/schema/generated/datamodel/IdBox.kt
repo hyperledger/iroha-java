@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.account.Id
 import jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId
 import kotlin.Int
@@ -35,7 +37,7 @@ public abstract class IdBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
       writer.directWrite(this.discriminant());
-      accountId.write(writer, instance.accountId)
+      accountId.write(writer, instance.accountId))
     }
   }
 
@@ -51,7 +53,7 @@ public abstract class IdBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
       writer.directWrite(this.discriminant());
-      assetId.write(writer, instance.assetId)
+      assetId.write(writer, instance.assetId))
     }
   }
 
@@ -68,7 +70,7 @@ public abstract class IdBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
       writer.directWrite(this.discriminant());
-      assetDefinitionId.write(writer, instance.assetDefinitionId)
+      assetDefinitionId.write(writer, instance.assetDefinitionId))
     }
   }
 
@@ -85,7 +87,7 @@ public abstract class IdBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
       writer.directWrite(this.discriminant());
-      domainName.write(writer, instance.domainName)
+      domainName.write(writer, instance.domainName))
     }
   }
 
@@ -101,7 +103,7 @@ public abstract class IdBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
       writer.directWrite(this.discriminant());
-      peerId.write(writer, instance.peerId)
+      peerId.write(writer, instance.peerId))
     }
   }
 

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 import kotlin.collections.List
 
@@ -17,9 +19,9 @@ public class SequenceBox(
   private val instructions: List<Instruction>
 ) : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
   public override fun read(reader: ScaleCodecReader): SequenceBox =
-      SequenceBox(instructions.read(reader))
+      SequenceBox(kotlin.collections.List<jp.co.soramitsu.schema.generated.datamodel.isi.Instruction>.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
-    instructions.write(writer, instance.instructions)
+    kotlin.collections.List<jp.co.soramitsu.schema.generated.datamodel.isi.Instruction>.READER.read(reader)
   }
 }

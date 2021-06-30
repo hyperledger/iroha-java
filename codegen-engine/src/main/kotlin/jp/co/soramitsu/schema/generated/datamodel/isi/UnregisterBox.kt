@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 import kotlin.Unit
 
@@ -17,9 +19,9 @@ public class UnregisterBox(
   private val objectId: EvaluatesTo
 ) : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
   public override fun read(reader: ScaleCodecReader): UnregisterBox =
-      UnregisterBox(objectId.read(reader))
+      UnregisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
-    objectId.write(writer, instance.objectId)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.crypto.Signature
 import kotlin.Unit
 import kotlin.collections.List
@@ -19,10 +21,10 @@ public class Transaction(
   private val signatures: List<Signature>
 ) : ScaleReader<Transaction>, ScaleWriter<Transaction> {
   public override fun read(reader: ScaleCodecReader): Transaction =
-      Transaction(payload.read(reader), signatures.read(reader))
+      Transaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.READER.read(reader),kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.Signature>.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-    payload.write(writer, instance.payload),
-    signatures.write(writer, instance.signatures)
+    jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.READER.read(reader),
+    kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.Signature>.READER.read(reader)
   }
 }

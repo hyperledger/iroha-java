@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata
 import kotlin.Int
 import kotlin.Unit
@@ -32,7 +34,7 @@ public abstract class AssetValue {
 
     public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
       writer.directWrite(this.discriminant());
-      quantity.write(writer, instance.quantity)
+      quantity.write(writer, instance.quantity))
     }
   }
 
@@ -49,7 +51,7 @@ public abstract class AssetValue {
 
     public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
       writer.directWrite(this.discriminant());
-      bigQuantity.write(writer, instance.bigQuantity)
+      bigQuantity.write(writer, instance.bigQuantity))
     }
   }
 
@@ -65,7 +67,7 @@ public abstract class AssetValue {
 
     public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
       writer.directWrite(this.discriminant());
-      store.write(writer, instance.store)
+      store.write(writer, instance.store))
     }
   }
 }

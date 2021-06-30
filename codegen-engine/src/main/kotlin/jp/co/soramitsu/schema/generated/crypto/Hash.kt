@@ -5,8 +5,9 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import kotlin.Array
-import kotlin.Int
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
+import kotlin.ByteArray
 import kotlin.Unit
 
 /**
@@ -15,7 +16,7 @@ import kotlin.Unit
  * Generated from 'iroha_crypto::Hash' tuple structure
  */
 public class Hash(
-  private val array: Array<Int>
+  private val array: ByteArray
 ) : ScaleReader<Hash>, ScaleWriter<Hash> {
   public override fun read(reader: ScaleCodecReader): Hash = Hash(array.read(reader))
 

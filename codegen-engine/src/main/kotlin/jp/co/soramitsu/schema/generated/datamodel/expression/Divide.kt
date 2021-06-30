@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -16,11 +18,11 @@ public class Divide(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) : ScaleReader<Divide>, ScaleWriter<Divide> {
-  public override fun read(reader: ScaleCodecReader): Divide = Divide(left.read(reader),
-      right.read(reader))
+  public override fun read(reader: ScaleCodecReader): Divide =
+      Divide(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-    left.write(writer, instance.left),
-    right.write(writer, instance.right)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

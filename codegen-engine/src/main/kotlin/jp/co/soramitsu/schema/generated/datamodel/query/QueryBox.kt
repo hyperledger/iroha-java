@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -33,7 +35,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
       writer.directWrite(this.discriminant());
-      findAllAccounts.write(writer, instance.findAllAccounts)
+      findAllAccounts.write(writer, instance.findAllAccounts))
     }
   }
 
@@ -51,7 +53,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
       writer.directWrite(this.discriminant());
-      findAccountById.write(writer, instance.findAccountById)
+      findAccountById.write(writer, instance.findAccountById))
     }
   }
 
@@ -71,7 +73,7 @@ public abstract class QueryBox {
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
         Unit {
       writer.directWrite(this.discriminant());
-      findAccountKeyValueByIdAndKey.write(writer, instance.findAccountKeyValueByIdAndKey)
+      findAccountKeyValueByIdAndKey.write(writer, instance.findAccountKeyValueByIdAndKey))
     }
   }
 
@@ -89,7 +91,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit {
       writer.directWrite(this.discriminant());
-      findAccountsByName.write(writer, instance.findAccountsByName)
+      findAccountsByName.write(writer, instance.findAccountsByName))
     }
   }
 
@@ -107,7 +109,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName): Unit {
       writer.directWrite(this.discriminant());
-      findAccountsByDomainName.write(writer, instance.findAccountsByDomainName)
+      findAccountsByDomainName.write(writer, instance.findAccountsByDomainName))
     }
   }
 
@@ -124,7 +126,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
       writer.directWrite(this.discriminant());
-      findAllAssets.write(writer, instance.findAllAssets)
+      findAllAssets.write(writer, instance.findAllAssets))
     }
   }
 
@@ -142,7 +144,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions): Unit {
       writer.directWrite(this.discriminant());
-      findAllAssetsDefinitions.write(writer, instance.findAllAssetsDefinitions)
+      findAllAssetsDefinitions.write(writer, instance.findAllAssetsDefinitions))
     }
   }
 
@@ -159,7 +161,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetById): Unit {
       writer.directWrite(this.discriminant());
-      findAssetById.write(writer, instance.findAssetById)
+      findAssetById.write(writer, instance.findAssetById))
     }
   }
 
@@ -177,7 +179,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
       writer.directWrite(this.discriminant());
-      findAssetsByName.write(writer, instance.findAssetsByName)
+      findAssetsByName.write(writer, instance.findAssetsByName))
     }
   }
 
@@ -195,7 +197,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
       writer.directWrite(this.discriminant());
-      findAssetsByAccountId.write(writer, instance.findAssetsByAccountId)
+      findAssetsByAccountId.write(writer, instance.findAssetsByAccountId))
     }
   }
 
@@ -215,7 +217,7 @@ public abstract class QueryBox {
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
         Unit {
       writer.directWrite(this.discriminant());
-      findAssetsByAssetDefinitionId.write(writer, instance.findAssetsByAssetDefinitionId)
+      findAssetsByAssetDefinitionId.write(writer, instance.findAssetsByAssetDefinitionId))
     }
   }
 
@@ -233,7 +235,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
       writer.directWrite(this.discriminant());
-      findAssetsByDomainName.write(writer, instance.findAssetsByDomainName)
+      findAssetsByDomainName.write(writer, instance.findAssetsByDomainName))
     }
   }
 
@@ -254,7 +256,7 @@ public abstract class QueryBox {
         instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
       writer.directWrite(this.discriminant());
       findAssetsByAccountIdAndAssetDefinitionId.write(writer,
-          instance.findAssetsByAccountIdAndAssetDefinitionId)
+          instance.findAssetsByAccountIdAndAssetDefinitionId))
     }
   }
 
@@ -275,7 +277,7 @@ public abstract class QueryBox {
         instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
       writer.directWrite(this.discriminant());
       findAssetsByDomainNameAndAssetDefinitionId.write(writer,
-          instance.findAssetsByDomainNameAndAssetDefinitionId)
+          instance.findAssetsByDomainNameAndAssetDefinitionId))
     }
   }
 
@@ -293,7 +295,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
       writer.directWrite(this.discriminant());
-      findAssetQuantityById.write(writer, instance.findAssetQuantityById)
+      findAssetQuantityById.write(writer, instance.findAssetQuantityById))
     }
   }
 
@@ -313,7 +315,7 @@ public abstract class QueryBox {
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
         Unit {
       writer.directWrite(this.discriminant());
-      findAssetKeyValueByIdAndKey.write(writer, instance.findAssetKeyValueByIdAndKey)
+      findAssetKeyValueByIdAndKey.write(writer, instance.findAssetKeyValueByIdAndKey))
     }
   }
 
@@ -331,7 +333,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
       writer.directWrite(this.discriminant());
-      findAllDomains.write(writer, instance.findAllDomains)
+      findAllDomains.write(writer, instance.findAllDomains))
     }
   }
 
@@ -349,7 +351,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
       writer.directWrite(this.discriminant());
-      findDomainByName.write(writer, instance.findDomainByName)
+      findDomainByName.write(writer, instance.findDomainByName))
     }
   }
 
@@ -366,7 +368,7 @@ public abstract class QueryBox {
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
       writer.directWrite(this.discriminant());
-      findAllPeers.write(writer, instance.findAllPeers)
+      findAllPeers.write(writer, instance.findAllPeers))
     }
   }
 
@@ -386,7 +388,7 @@ public abstract class QueryBox {
     public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
         Unit {
       writer.directWrite(this.discriminant());
-      findTransactionsByAccountId.write(writer, instance.findTransactionsByAccountId)
+      findTransactionsByAccountId.write(writer, instance.findTransactionsByAccountId))
     }
   }
 
@@ -406,7 +408,7 @@ public abstract class QueryBox {
     public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId):
         Unit {
       writer.directWrite(this.discriminant());
-      findPermissionTokensByAccountId.write(writer, instance.findPermissionTokensByAccountId)
+      findPermissionTokensByAccountId.write(writer, instance.findPermissionTokensByAccountId))
     }
   }
 }

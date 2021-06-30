@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -15,9 +17,10 @@ import kotlin.Unit
 public class Not(
   private val expression: EvaluatesTo
 ) : ScaleReader<Not>, ScaleWriter<Not> {
-  public override fun read(reader: ScaleCodecReader): Not = Not(expression.read(reader))
+  public override fun read(reader: ScaleCodecReader): Not =
+      Not(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-    expression.write(writer, instance.expression)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

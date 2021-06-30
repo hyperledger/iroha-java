@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -17,10 +19,10 @@ public class ContainsAny(
   private val elements: EvaluatesTo
 ) : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
   public override fun read(reader: ScaleCodecReader): ContainsAny =
-      ContainsAny(collection.read(reader), elements.read(reader))
+      ContainsAny(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-    collection.write(writer, instance.collection),
-    elements.write(writer, instance.elements)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

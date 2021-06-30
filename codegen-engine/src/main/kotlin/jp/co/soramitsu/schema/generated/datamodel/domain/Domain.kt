@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Pair
 import kotlin.String
 import kotlin.Unit
@@ -20,12 +22,14 @@ public class Domain(
   private val accounts: List<Pair<String, String>>,
   private val assetDefinitions: List<Pair<String, String>>
 ) : ScaleReader<Domain>, ScaleWriter<Domain> {
-  public override fun read(reader: ScaleCodecReader): Domain = Domain(name.read(reader),
-      accounts.read(reader), assetDefinitions.read(reader))
+  public override fun read(reader: ScaleCodecReader): Domain =
+      Domain(reader.readString(),kotlin.collections.List<kotlin.Pair<kotlin.String,
+      kotlin.String>>.READER.read(reader),kotlin.collections.List<kotlin.Pair<kotlin.String,
+      kotlin.String>>.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-    name.write(writer, instance.name),
-    accounts.write(writer, instance.accounts),
-    assetDefinitions.write(writer, instance.assetDefinitions)
+    reader.readString(),
+    kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader),
+    kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader)
   }
 }

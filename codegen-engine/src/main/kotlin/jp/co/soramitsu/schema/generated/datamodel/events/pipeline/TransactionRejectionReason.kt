@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -32,7 +34,7 @@ public abstract class TransactionRejectionReason {
 
     public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
       writer.directWrite(this.discriminant());
-      notPermitted.write(writer, instance.notPermitted)
+      notPermitted.write(writer, instance.notPermitted))
     }
   }
 
@@ -51,7 +53,7 @@ public abstract class TransactionRejectionReason {
     public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
         Unit {
       writer.directWrite(this.discriminant());
-      unsatisfiedSignatureCondition.write(writer, instance.unsatisfiedSignatureCondition)
+      unsatisfiedSignatureCondition.write(writer, instance.unsatisfiedSignatureCondition))
     }
   }
 
@@ -69,7 +71,7 @@ public abstract class TransactionRejectionReason {
 
     public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
       writer.directWrite(this.discriminant());
-      instructionExecution.write(writer, instance.instructionExecution)
+      instructionExecution.write(writer, instance.instructionExecution))
     }
   }
 
@@ -87,7 +89,7 @@ public abstract class TransactionRejectionReason {
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
       writer.directWrite(this.discriminant());
-      signatureVerification.write(writer, instance.signatureVerification)
+      signatureVerification.write(writer, instance.signatureVerification))
     }
   }
 

@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 import kotlin.Unit
 
@@ -18,10 +20,10 @@ public class RemoveKeyValueBox(
   private val key: EvaluatesTo
 ) : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
   public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox =
-      RemoveKeyValueBox(objectId.read(reader), key.read(reader))
+      RemoveKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
-    objectId.write(writer, instance.objectId),
-    key.write(writer, instance.key)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

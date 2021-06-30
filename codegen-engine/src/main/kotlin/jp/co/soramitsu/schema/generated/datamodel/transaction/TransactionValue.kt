@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -32,7 +34,7 @@ public abstract class TransactionValue {
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
       writer.directWrite(this.discriminant());
-      transaction.write(writer, instance.transaction)
+      transaction.write(writer, instance.transaction))
     }
   }
 
@@ -49,7 +51,7 @@ public abstract class TransactionValue {
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
       writer.directWrite(this.discriminant());
-      rejectedTransaction.write(writer, instance.rejectedTransaction)
+      rejectedTransaction.write(writer, instance.rejectedTransaction))
     }
   }
 }

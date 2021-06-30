@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -16,11 +18,11 @@ public class Greater(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) : ScaleReader<Greater>, ScaleWriter<Greater> {
-  public override fun read(reader: ScaleCodecReader): Greater = Greater(left.read(reader),
-      right.read(reader))
+  public override fun read(reader: ScaleCodecReader): Greater =
+      Greater(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-    left.write(writer, instance.left),
-    right.write(writer, instance.right)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

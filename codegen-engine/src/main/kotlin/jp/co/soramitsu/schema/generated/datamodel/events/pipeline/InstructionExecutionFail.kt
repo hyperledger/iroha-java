@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.isi.Instruction
 import kotlin.String
 import kotlin.Unit
@@ -19,10 +21,10 @@ public class InstructionExecutionFail(
   private val reason: String
 ) : ScaleReader<InstructionExecutionFail>, ScaleWriter<InstructionExecutionFail> {
   public override fun read(reader: ScaleCodecReader): InstructionExecutionFail =
-      InstructionExecutionFail(instruction.read(reader), reason.read(reader))
+      InstructionExecutionFail(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader),reader.readString())
 
   public override fun write(writer: ScaleCodecWriter, instance: InstructionExecutionFail): Unit {
-    instruction.write(writer, instance.instruction),
-    reason.write(writer, instance.reason)
+    jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader),
+    reader.readString()
   }
 }

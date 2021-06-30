@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 import kotlin.Unit
 
@@ -17,9 +19,9 @@ public class FindAssetsByAccountId(
   private val accountId: EvaluatesTo
 ) : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId> {
   public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
-      FindAssetsByAccountId(accountId.read(reader))
+      FindAssetsByAccountId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
-    accountId.write(writer, instance.accountId)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

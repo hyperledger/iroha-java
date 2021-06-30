@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -31,7 +33,7 @@ public abstract class Event {
 
     public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
       writer.directWrite(this.discriminant());
-      pipeline.write(writer, instance.pipeline)
+      pipeline.write(writer, instance.pipeline))
     }
   }
 
@@ -47,7 +49,7 @@ public abstract class Event {
 
     public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
       writer.directWrite(this.discriminant());
-      data.write(writer, instance.data)
+      data.write(writer, instance.data))
     }
   }
 }

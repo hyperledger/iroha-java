@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -17,12 +19,12 @@ public class If(
   private val thenExpression: EvaluatesTo,
   private val elseExpression: EvaluatesTo
 ) : ScaleReader<If>, ScaleWriter<If> {
-  public override fun read(reader: ScaleCodecReader): If = If(condition.read(reader),
-      thenExpression.read(reader), elseExpression.read(reader))
+  public override fun read(reader: ScaleCodecReader): If =
+      If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-    condition.write(writer, instance.condition),
-    thenExpression.write(writer, instance.thenExpression),
-    elseExpression.write(writer, instance.elseExpression)
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader)
   }
 }

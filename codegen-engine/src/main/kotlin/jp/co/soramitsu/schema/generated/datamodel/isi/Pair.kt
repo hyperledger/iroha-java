@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Unit
 
 /**
@@ -16,11 +18,11 @@ public class Pair(
   private val leftInstruction: Instruction,
   private val rightInstruction: Instruction
 ) : ScaleReader<Pair>, ScaleWriter<Pair> {
-  public override fun read(reader: ScaleCodecReader): Pair = Pair(leftInstruction.read(reader),
-      rightInstruction.read(reader))
+  public override fun read(reader: ScaleCodecReader): Pair =
+      Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader),jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader))
 
   public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-    leftInstruction.write(writer, instance.leftInstruction),
-    rightInstruction.write(writer, instance.rightInstruction)
+    jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader),
+    jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader)
   }
 }

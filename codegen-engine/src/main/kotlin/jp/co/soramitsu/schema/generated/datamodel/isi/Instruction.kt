@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -31,7 +33,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
       writer.directWrite(this.discriminant());
-      register.write(writer, instance.register)
+      register.write(writer, instance.register))
     }
   }
 
@@ -48,7 +50,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
       writer.directWrite(this.discriminant());
-      unregister.write(writer, instance.unregister)
+      unregister.write(writer, instance.unregister))
     }
   }
 
@@ -64,7 +66,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
       writer.directWrite(this.discriminant());
-      mint.write(writer, instance.mint)
+      mint.write(writer, instance.mint))
     }
   }
 
@@ -80,7 +82,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
       writer.directWrite(this.discriminant());
-      burn.write(writer, instance.burn)
+      burn.write(writer, instance.burn))
     }
   }
 
@@ -96,7 +98,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
       writer.directWrite(this.discriminant());
-      transfer.write(writer, instance.transfer)
+      transfer.write(writer, instance.transfer))
     }
   }
 
@@ -112,7 +114,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       writer.directWrite(this.discriminant());
-      if.write(writer, instance.if)
+      if.write(writer, instance.if))
     }
   }
 
@@ -128,7 +130,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
       writer.directWrite(this.discriminant());
-      pair.write(writer, instance.pair)
+      pair.write(writer, instance.pair))
     }
   }
 
@@ -144,7 +146,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
       writer.directWrite(this.discriminant());
-      sequence.write(writer, instance.sequence)
+      sequence.write(writer, instance.sequence))
     }
   }
 
@@ -160,7 +162,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
       writer.directWrite(this.discriminant());
-      fail.write(writer, instance.fail)
+      fail.write(writer, instance.fail))
     }
   }
 
@@ -177,7 +179,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
       writer.directWrite(this.discriminant());
-      setKeyValue.write(writer, instance.setKeyValue)
+      setKeyValue.write(writer, instance.setKeyValue))
     }
   }
 
@@ -194,7 +196,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
       writer.directWrite(this.discriminant());
-      removeKeyValue.write(writer, instance.removeKeyValue)
+      removeKeyValue.write(writer, instance.removeKeyValue))
     }
   }
 
@@ -210,7 +212,7 @@ public abstract class Instruction {
 
     public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {
       writer.directWrite(this.discriminant());
-      grant.write(writer, instance.grant)
+      grant.write(writer, instance.grant))
     }
   }
 }

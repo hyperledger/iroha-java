@@ -5,6 +5,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.codegen.read
+import jp.co.soramitsu.schema.codegen.write
 import kotlin.Int
 import kotlin.Unit
 
@@ -32,7 +34,7 @@ public abstract class Parameter {
 
     public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount): Unit {
       writer.directWrite(this.discriminant());
-      maximumFaultyPeersAmount.write(writer, instance.maximumFaultyPeersAmount)
+      maximumFaultyPeersAmount.write(writer, instance.maximumFaultyPeersAmount))
     }
   }
 
@@ -49,7 +51,7 @@ public abstract class Parameter {
 
     public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
       writer.directWrite(this.discriminant());
-      blockTime.write(writer, instance.blockTime)
+      blockTime.write(writer, instance.blockTime))
     }
   }
 
@@ -66,7 +68,7 @@ public abstract class Parameter {
 
     public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
       writer.directWrite(this.discriminant());
-      commitTime.write(writer, instance.commitTime)
+      commitTime.write(writer, instance.commitTime))
     }
   }
 
@@ -83,7 +85,7 @@ public abstract class Parameter {
 
     public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
       writer.directWrite(this.discriminant());
-      transactionReceiptTime.write(writer, instance.transactionReceiptTime)
+      transactionReceiptTime.write(writer, instance.transactionReceiptTime))
     }
   }
 }
