@@ -2,10 +2,10 @@ package jp.co.soramitsu.schema.codegen
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import jp.co.soramitsu.schema.StringType
 import jp.co.soramitsu.schema.TypePreset
 import jp.co.soramitsu.schema.definitions.types.Type
+import jp.co.soramitsu.schema.definitions.types.TypeReference
 import jp.co.soramitsu.schema.definitions.types.composite.*
 import jp.co.soramitsu.schema.definitions.types.primitives.*
 import java.nio.file.Paths
@@ -43,7 +43,7 @@ object CodeGenerator {
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' regular structure")
 
-        implementScaleCodec(clazz, className, packageName)
+        implementScaleCodec(clazz, className, packageName, implScaleReaderForStructs(type, className), implScaleWriterForStructs(type, className))
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
@@ -71,6 +71,56 @@ object CodeGenerator {
             .addType(clazz.build())
     }
 
+    private fun implScaleWriterForStructs(type: Struct, structName: String): CodeBlock {
+        val code = StringJoiner(",\n")
+        for ((name, _) in type.mapping) {
+            code.add("${convertToCamelCase(name)}.write(writer)")
+        }
+        return CodeBlock.builder()
+            .add("$code")
+            .build()
+    }
+
+    private fun implScaleReaderForStructs(type: Struct, structName: String): CodeBlock {
+        val code = StringJoiner(", ")
+        for ((name, _) in type.mapping) {
+            code.add("${convertToCamelCase(name)}.read(reader)")
+        }
+        return CodeBlock.builder()
+            .add("return $structName($code)" )
+            .build()
+    }
+
+    private fun implScaleWriterForTupleStructs(type: TupleStruct, structName: String): CodeBlock {
+        val code = StringJoiner(",\n")
+        for (typeRef in type.types) {
+            code.add(".write(writer)")
+        }
+        return CodeBlock.builder()
+            .add("$code")
+            .build()
+    }
+
+    private fun implScaleReaderForTupleStructs(type: TupleStruct, structName: String): CodeBlock {
+        val code = StringJoiner(", ")
+        for (typeRef in type.types) {
+            code.add("${createTupleStructName(typeRef.value!!)}.read(reader)")
+        }
+        return CodeBlock.builder()
+            .add("return $structName($code)" )
+            .build()
+    }
+
+    private fun implScaleReaderForEnumVariant(type: TupleStruct, structName: String): CodeBlock {
+        val code = StringJoiner(", ")
+        for (typeRef in type.types) {
+            code.add("${createTupleStructName(typeRef.value!!)}.read(reader)")
+        }
+        return CodeBlock.builder()
+            .add("return $structName($code)" )
+            .build()
+    }
+
     private fun generateTupleStruct(type: TupleStruct): FileSpec.Builder? {
         val (className, packageName, _) = defineFullClassNames(type.name)
 
@@ -78,20 +128,12 @@ object CodeGenerator {
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' tuple structure")
 
-        implementScaleCodec(clazz, className, packageName)
+        implementScaleCodec(clazz, className, packageName, implScaleReaderForTupleStructs(type, className), implScaleWriterForTupleStructs(type, className))
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
         for (typeRef in type.types) {
-            val normalizedName = when (typeRef.value!!) {
-                is FixedByteArray -> {
-                    "array"
-                }
-                else -> {
-                    val (propertyName, _) = defineFullClassNames(typeRef.value!!.name)
-                    propertyName.decapitalize(Locale.getDefault())
-                }
-            }
+            val normalizedName = createTupleStructName(typeRef.value!!)
             val kotlinType = resolveKotlinType(typeRef.value!!)
 
             constructorBuilder.addParameter(
@@ -112,6 +154,18 @@ object CodeGenerator {
 
         return FileSpec.builder("jp.co.soramitsu.schema.generated.$packageName", className)
             .addType(clazz.build())
+    }
+
+    private fun createTupleStructName(type: Type<*>) : String {
+       return when (type) {
+           is FixedByteArray -> {
+               "array"
+           }
+           else -> {
+               val (propertyName, _) = defineFullClassNames(type.name)
+               propertyName.decapitalize(Locale.getDefault())
+           }
+       }
     }
 
     private fun generateEnum(type: EnumType): FileSpec.Builder? {
@@ -155,7 +209,7 @@ object CodeGenerator {
 
                 variantClass.primaryConstructor(constructorBuilder.build())
             }
-            implementScaleCodec(variantClass, variant.name, "$packageName.$className")
+//            implementScaleCodec(variantClass, variant.name, "$packageName.$className")
             clazz.addType(variantClass.build())
         }
 
@@ -233,6 +287,8 @@ object CodeGenerator {
         clazz: TypeSpec.Builder,
         className: String,
         packageName: String,
+        readerCode: CodeBlock,
+        writerCode: CodeBlock,
     ) {
         clazz.addSuperinterface(
             ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
@@ -262,6 +318,7 @@ object CodeGenerator {
                         )
                         .build()
                 )
+                .addCode(readerCode)
                 .addModifiers(KModifier.OVERRIDE)
                 .returns(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
                 .build()
@@ -284,6 +341,7 @@ object CodeGenerator {
                         )
                         .build()
                 )
+                .addCode(writerCode)
                 .addModifiers(KModifier.OVERRIDE)
                 .build()
         );
