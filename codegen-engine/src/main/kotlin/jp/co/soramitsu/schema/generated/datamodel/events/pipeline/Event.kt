@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.crypto.Hash
+import kotlin.Unit
 
 /**
  * Event
@@ -15,10 +18,14 @@ public class Event(
   private val status: Status,
   private val hash: Hash
 ) {
-  public companion object READER : ScaleReader<Event> {
-    public override fun read(reader: ScaleCodecReader): Event =
-        Event(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.READER.read(reader),
-        jp.co.soramitsu.schema.generated.crypto.Hash.READER.read(reader))
+  public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
+    public override fun read(reader: ScaleCodecReader): Event = Event(EntityType.read(reader),
+        Status.read(reader), Hash.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
+      EntityType.write(writer, instance.entityType)
+      Status.write(writer, instance.status)
+      Hash.write(writer, instance.hash)
+    }
   }
 }

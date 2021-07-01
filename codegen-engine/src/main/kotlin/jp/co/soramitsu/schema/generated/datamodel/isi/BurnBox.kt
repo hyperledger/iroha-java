@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * BurnBox
@@ -14,9 +17,13 @@ public class BurnBox(
   private val `object`: EvaluatesTo,
   private val destinationId: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<BurnBox> {
-    public override fun read(reader: ScaleCodecReader): BurnBox =
-        BurnBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+  public companion object CODEC : ScaleReader<BurnBox>, ScaleWriter<BurnBox> {
+    public override fun read(reader: ScaleCodecReader): BurnBox = BurnBox(EvaluatesTo.read(reader),
+        EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit {
+      EvaluatesTo.write(writer, instance.object)
+      EvaluatesTo.write(writer, instance.destinationId)
+    }
   }
 }

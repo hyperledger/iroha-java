@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.String
+import kotlin.Unit
 
 /**
  * Id
@@ -14,8 +17,13 @@ public class Id(
   private val name: String,
   private val domainName: String
 ) {
-  public companion object READER : ScaleReader<Id> {
+  public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
         reader.readString())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
+      writer.writeString(instance.name)
+      writer.writeString(instance.domainName)
+    }
   }
 }

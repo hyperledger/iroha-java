@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * EventSocketMessage
@@ -25,8 +28,14 @@ public abstract class EventSocketMessage {
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<SubscriptionRequest> {
+    public companion object CODEC : ScaleReader<SubscriptionRequest>,
+        ScaleWriter<SubscriptionRequest> {
       public override fun read(reader: ScaleCodecReader): SubscriptionRequest {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
+        writer.directWrite(this.discriminant())
+        SubscriptionRequest.write(writer, instance.subscriptionRequest)
       }
     }
   }
@@ -46,8 +55,13 @@ public abstract class EventSocketMessage {
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = 2
 
-    public companion object READER : ScaleReader<Event> {
+    public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
       public override fun read(reader: ScaleCodecReader): Event {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
+        writer.directWrite(this.discriminant())
+        Event.write(writer, instance.event)
       }
     }
   }

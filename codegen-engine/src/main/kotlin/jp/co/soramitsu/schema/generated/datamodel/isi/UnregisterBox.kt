@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * UnregisterBox
@@ -13,8 +16,12 @@ import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 public class UnregisterBox(
   private val objectId: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<UnregisterBox> {
+  public companion object CODEC : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
     public override fun read(reader: ScaleCodecReader): UnregisterBox =
-        UnregisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        UnregisterBox(EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
+      EvaluatesTo.write(writer, instance.objectId)
+    }
   }
 }

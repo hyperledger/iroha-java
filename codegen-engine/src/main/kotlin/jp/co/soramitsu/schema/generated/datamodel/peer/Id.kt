@@ -2,9 +2,12 @@
 package jp.co.soramitsu.schema.generated.datamodel.peer
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.crypto.PublicKey
 import kotlin.String
+import kotlin.Unit
 
 /**
  * Id
@@ -15,8 +18,13 @@ public class Id(
   private val address: String,
   private val publicKey: PublicKey
 ) {
-  public companion object READER : ScaleReader<Id> {
+  public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
-        jp.co.soramitsu.schema.generated.crypto.PublicKey.READER.read(reader))
+        PublicKey.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
+      writer.writeString(instance.address)
+      PublicKey.write(writer, instance.publicKey)
+    }
   }
 }

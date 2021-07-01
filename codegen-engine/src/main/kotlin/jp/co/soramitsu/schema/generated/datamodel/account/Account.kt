@@ -2,13 +2,16 @@
 package jp.co.soramitsu.schema.generated.datamodel.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.crypto.PublicKey
+import jp.co.soramitsu.schema.generated.datamodel.asset.Asset
 import jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken
-import kotlin.Pair
-import kotlin.String
+import kotlin.Unit
 import kotlin.collections.List
+import kotlin.collections.Map
 import kotlin.collections.Set
 
 /**
@@ -18,19 +21,24 @@ import kotlin.collections.Set
  */
 public class Account(
   private val id: Id,
-  private val assets: List<Pair<String, String>>,
+  private val assets: Map<jp.co.soramitsu.schema.generated.datamodel.asset.Id, Asset>,
   private val signatories: List<PublicKey>,
   private val permissionTokens: Set<PermissionToken>,
   private val signatureCheckCondition: SignatureCheckCondition,
   private val metadata: Metadata
 ) {
-  public companion object READER : ScaleReader<Account> {
-    public override fun read(reader: ScaleCodecReader): Account =
-        Account(jp.co.soramitsu.schema.generated.datamodel.account.Id.READER.read(reader),
-        kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader),
-        kotlin.collections.List<jp.co.soramitsu.schema.generated.crypto.PublicKey>.READER.read(reader),
-        kotlin.collections.Set<jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken>.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.READER.read(reader))
+  public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
+    public override fun read(reader: ScaleCodecReader): Account = Account(Id.read(reader),
+        reader.read(), reader.read(), Set.read(reader), SignatureCheckCondition.read(reader),
+        Metadata.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
+      Id.write(writer, instance.id)
+      Map.write(writer, instance.assets)
+      List.write(writer, instance.signatories)
+      Set.write(writer, instance.permissionTokens)
+      SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
+      Metadata.write(writer, instance.metadata)
+    }
   }
 }

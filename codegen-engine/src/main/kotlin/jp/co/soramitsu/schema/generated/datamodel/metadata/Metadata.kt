@@ -2,10 +2,13 @@
 package jp.co.soramitsu.schema.generated.datamodel.metadata
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import kotlin.Pair
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.generated.datamodel.Value
 import kotlin.String
-import kotlin.collections.List
+import kotlin.Unit
+import kotlin.collections.Map
 
 /**
  * Metadata
@@ -13,11 +16,13 @@ import kotlin.collections.List
  * Generated from 'iroha_data_model::metadata::Metadata' regular structure
  */
 public class Metadata(
-  private val map: List<Pair<String, String>>
+  private val map: Map<String, Value>
 ) {
-  public companion object READER : ScaleReader<Metadata> {
-    public override fun read(reader: ScaleCodecReader): Metadata =
-        Metadata(kotlin.collections.List<kotlin.Pair<kotlin.String,
-        kotlin.String>>.READER.read(reader))
+  public companion object CODEC : ScaleReader<Metadata>, ScaleWriter<Metadata> {
+    public override fun read(reader: ScaleCodecReader): Metadata = Metadata(reader.read())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit {
+      Map.write(writer, instance.map)
+    }
   }
 }

@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * SetKeyValueBox
@@ -15,10 +18,14 @@ public class SetKeyValueBox(
   private val key: EvaluatesTo,
   private val `value`: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<SetKeyValueBox> {
+  public companion object CODEC : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): SetKeyValueBox =
-        SetKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        SetKeyValueBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
+      EvaluatesTo.write(writer, instance.objectId)
+      EvaluatesTo.write(writer, instance.key)
+      EvaluatesTo.write(writer, instance.value)
+    }
   }
 }

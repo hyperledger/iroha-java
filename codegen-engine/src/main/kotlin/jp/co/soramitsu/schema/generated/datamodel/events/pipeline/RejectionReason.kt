@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * RejectionReason
@@ -24,8 +27,13 @@ public abstract class RejectionReason {
   ) : RejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<Block> {
+    public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
       public override fun read(reader: ScaleCodecReader): Block {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
+        writer.directWrite(this.discriminant())
+        BlockRejectionReason.write(writer, instance.block)
       }
     }
   }
@@ -38,8 +46,13 @@ public abstract class RejectionReason {
   ) : RejectionReason() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<Transaction> {
+    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
+        writer.directWrite(this.discriminant())
+        TransactionRejectionReason.write(writer, instance.transaction)
       }
     }
   }

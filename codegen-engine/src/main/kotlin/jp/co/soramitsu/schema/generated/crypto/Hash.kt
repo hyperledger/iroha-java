@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.crypto
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * Hash
@@ -13,7 +16,11 @@ import kotlin.ByteArray
 public class Hash(
   private val array: ByteArray
 ) {
-  public companion object READER : ScaleReader<Hash> {
+  public companion object CODEC : ScaleReader<Hash>, ScaleWriter<Hash> {
     public override fun read(reader: ScaleCodecReader): Hash = Hash(reader.readByteArray())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Hash): Unit {
+      writer.writeByteArray(instance.array)
+    }
   }
 }

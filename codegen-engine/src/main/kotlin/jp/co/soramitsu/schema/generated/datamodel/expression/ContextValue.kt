@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.String
+import kotlin.Unit
 
 /**
  * ContextValue
@@ -13,8 +16,12 @@ import kotlin.String
 public class ContextValue(
   private val valueName: String
 ) {
-  public companion object READER : ScaleReader<ContextValue> {
+  public companion object CODEC : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
     public override fun read(reader: ScaleCodecReader): ContextValue =
         ContextValue(reader.readString())
+
+    public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
+      writer.writeString(instance.valueName)
+    }
   }
 }

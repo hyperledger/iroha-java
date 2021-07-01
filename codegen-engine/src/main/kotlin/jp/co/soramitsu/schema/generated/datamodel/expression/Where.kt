@@ -2,10 +2,12 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import kotlin.Pair
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.String
-import kotlin.collections.List
+import kotlin.Unit
+import kotlin.collections.Map
 
 /**
  * Where
@@ -14,11 +16,15 @@ import kotlin.collections.List
  */
 public class Where(
   private val expression: EvaluatesTo,
-  private val values: List<Pair<String, String>>
+  private val values: Map<String, EvaluatesTo>
 ) {
-  public companion object READER : ScaleReader<Where> {
-    public override fun read(reader: ScaleCodecReader): Where =
-        Where(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader))
+  public companion object CODEC : ScaleReader<Where>, ScaleWriter<Where> {
+    public override fun read(reader: ScaleCodecReader): Where = Where(EvaluatesTo.read(reader),
+        reader.read())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
+      EvaluatesTo.write(writer, instance.expression)
+      Map.write(writer, instance.values)
+    }
   }
 }

@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * ContainsAll
@@ -13,9 +16,13 @@ public class ContainsAll(
   private val collection: EvaluatesTo,
   private val elements: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<ContainsAll> {
+  public companion object CODEC : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
     public override fun read(reader: ScaleCodecReader): ContainsAll =
-        ContainsAll(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        ContainsAll(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
+      EvaluatesTo.write(writer, instance.collection)
+      EvaluatesTo.write(writer, instance.elements)
+    }
   }
 }

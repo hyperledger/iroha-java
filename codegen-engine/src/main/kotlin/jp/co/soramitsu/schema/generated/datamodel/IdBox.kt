@@ -2,11 +2,14 @@
 package jp.co.soramitsu.schema.generated.datamodel
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.account.Id
 import jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * IdBox
@@ -27,8 +30,13 @@ public abstract class IdBox {
   ) : IdBox() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<AccountId> {
+    public companion object CODEC : ScaleReader<AccountId>, ScaleWriter<AccountId> {
       public override fun read(reader: ScaleCodecReader): AccountId {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
+        writer.directWrite(this.discriminant())
+        Id.write(writer, instance.accountId)
       }
     }
   }
@@ -41,8 +49,13 @@ public abstract class IdBox {
   ) : IdBox() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<AssetId> {
+    public companion object CODEC : ScaleReader<AssetId>, ScaleWriter<AssetId> {
       public override fun read(reader: ScaleCodecReader): AssetId {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
+        writer.directWrite(this.discriminant())
+        Id.write(writer, instance.assetId)
       }
     }
   }
@@ -55,8 +68,13 @@ public abstract class IdBox {
   ) : IdBox() {
     public override fun discriminant(): Int = 2
 
-    public companion object READER : ScaleReader<AssetDefinitionId> {
+    public companion object CODEC : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
       public override fun read(reader: ScaleCodecReader): AssetDefinitionId {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
+        writer.directWrite(this.discriminant())
+        DefinitionId.write(writer, instance.assetDefinitionId)
       }
     }
   }
@@ -69,8 +87,13 @@ public abstract class IdBox {
   ) : IdBox() {
     public override fun discriminant(): Int = 3
 
-    public companion object READER : ScaleReader<DomainName> {
+    public companion object CODEC : ScaleReader<DomainName>, ScaleWriter<DomainName> {
       public override fun read(reader: ScaleCodecReader): DomainName {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
+        writer.directWrite(this.discriminant())
+        writer.writeString(instance.domainName)
       }
     }
   }
@@ -83,8 +106,13 @@ public abstract class IdBox {
   ) : IdBox() {
     public override fun discriminant(): Int = 4
 
-    public companion object READER : ScaleReader<PeerId> {
+    public companion object CODEC : ScaleReader<PeerId>, ScaleWriter<PeerId> {
       public override fun read(reader: ScaleCodecReader): PeerId {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
+        writer.directWrite(this.discriminant())
+        Id.write(writer, instance.peerId)
       }
     }
   }

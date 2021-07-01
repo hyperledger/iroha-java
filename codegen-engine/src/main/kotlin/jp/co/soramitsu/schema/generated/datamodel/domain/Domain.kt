@@ -2,10 +2,16 @@
 package jp.co.soramitsu.schema.generated.datamodel.domain
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import kotlin.Pair
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.generated.datamodel.account.Account
+import jp.co.soramitsu.schema.generated.datamodel.account.Id
+import jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinitionEntry
+import jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId
 import kotlin.String
-import kotlin.collections.List
+import kotlin.Unit
+import kotlin.collections.Map
 
 /**
  * Domain
@@ -14,12 +20,17 @@ import kotlin.collections.List
  */
 public class Domain(
   private val name: String,
-  private val accounts: List<Pair<String, String>>,
-  private val assetDefinitions: List<Pair<String, String>>
+  private val accounts: Map<Id, Account>,
+  private val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
 ) {
-  public companion object READER : ScaleReader<Domain> {
+  public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
     public override fun read(reader: ScaleCodecReader): Domain = Domain(reader.readString(),
-        kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader),
-        kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>.READER.read(reader))
+        reader.read(), reader.read())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
+      writer.writeString(instance.name)
+      Map.write(writer, instance.accounts)
+      Map.write(writer, instance.assetDefinitions)
+    }
   }
 }

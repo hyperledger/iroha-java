@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * Pair
@@ -13,9 +16,13 @@ public class Pair(
   private val leftInstruction: Instruction,
   private val rightInstruction: Instruction
 ) {
-  public companion object READER : ScaleReader<Pair> {
-    public override fun read(reader: ScaleCodecReader): Pair =
-        Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.READER.read(reader))
+  public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
+    public override fun read(reader: ScaleCodecReader): Pair = Pair(Instruction.read(reader),
+        Instruction.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
+      Instruction.write(writer, instance.leftInstruction)
+      Instruction.write(writer, instance.rightInstruction)
+    }
   }
 }

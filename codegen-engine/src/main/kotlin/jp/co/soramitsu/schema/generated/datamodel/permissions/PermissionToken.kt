@@ -2,10 +2,13 @@
 package jp.co.soramitsu.schema.generated.datamodel.permissions
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
-import kotlin.Pair
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.schema.generated.datamodel.Value
 import kotlin.String
-import kotlin.collections.List
+import kotlin.Unit
+import kotlin.collections.Map
 
 /**
  * PermissionToken
@@ -14,11 +17,15 @@ import kotlin.collections.List
  */
 public class PermissionToken(
   private val name: String,
-  private val params: List<Pair<String, String>>
+  private val params: Map<String, Value>
 ) {
-  public companion object READER : ScaleReader<PermissionToken> {
+  public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
     public override fun read(reader: ScaleCodecReader): PermissionToken =
-        PermissionToken(reader.readString(), kotlin.collections.List<kotlin.Pair<kotlin.String,
-        kotlin.String>>.READER.read(reader))
+        PermissionToken(reader.readString(), reader.read())
+
+    public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
+      writer.writeString(instance.name)
+      Map.write(writer, instance.params)
+    }
   }
 }

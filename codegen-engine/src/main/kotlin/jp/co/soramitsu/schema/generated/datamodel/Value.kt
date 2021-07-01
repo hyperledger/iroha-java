@@ -2,9 +2,12 @@
 package jp.co.soramitsu.schema.generated.datamodel
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -26,8 +29,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<U32> {
+    public companion object CODEC : ScaleReader<U32>, ScaleWriter<U32> {
       public override fun read(reader: ScaleCodecReader): U32 {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
+        writer.directWrite(this.discriminant())
+        writer.writeLong(instance.u32)
       }
     }
   }
@@ -40,8 +48,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<Bool> {
+    public companion object CODEC : ScaleReader<Bool>, ScaleWriter<Bool> {
       public override fun read(reader: ScaleCodecReader): Bool {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
+        writer.directWrite(this.discriminant())
+        writer.writeBoolean(instance.bool)
       }
     }
   }
@@ -54,8 +67,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 2
 
-    public companion object READER : ScaleReader<String> {
+    public companion object CODEC : ScaleReader<String>, ScaleWriter<String> {
       public override fun read(reader: ScaleCodecReader): String {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
+        writer.directWrite(this.discriminant())
+        writer.writeString(instance.string)
       }
     }
   }
@@ -68,8 +86,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 3
 
-    public companion object READER : ScaleReader<Vec> {
+    public companion object CODEC : ScaleReader<Vec>, ScaleWriter<Vec> {
       public override fun read(reader: ScaleCodecReader): Vec {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
+        writer.directWrite(this.discriminant())
+        List.write(writer, instance.vec)
       }
     }
   }
@@ -82,8 +105,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 4
 
-    public companion object READER : ScaleReader<Id> {
+    public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
       public override fun read(reader: ScaleCodecReader): Id {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
+        writer.directWrite(this.discriminant())
+        IdBox.write(writer, instance.id)
       }
     }
   }
@@ -96,8 +124,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 5
 
-    public companion object READER : ScaleReader<Identifiable> {
+    public companion object CODEC : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
       public override fun read(reader: ScaleCodecReader): Identifiable {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
+        writer.directWrite(this.discriminant())
+        IdentifiableBox.write(writer, instance.identifiable)
       }
     }
   }
@@ -110,8 +143,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 6
 
-    public companion object READER : ScaleReader<PublicKey> {
+    public companion object CODEC : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
       public override fun read(reader: ScaleCodecReader): PublicKey {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
+        writer.directWrite(this.discriminant())
+        PublicKey.write(writer, instance.publicKey)
       }
     }
   }
@@ -124,8 +162,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 7
 
-    public companion object READER : ScaleReader<Parameter> {
+    public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
       public override fun read(reader: ScaleCodecReader): Parameter {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
+        writer.directWrite(this.discriminant())
+        Parameter.write(writer, instance.parameter)
       }
     }
   }
@@ -139,8 +182,14 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 8
 
-    public companion object READER : ScaleReader<SignatureCheckCondition> {
+    public companion object CODEC : ScaleReader<SignatureCheckCondition>,
+        ScaleWriter<SignatureCheckCondition> {
       public override fun read(reader: ScaleCodecReader): SignatureCheckCondition {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
+        writer.directWrite(this.discriminant())
+        SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
       }
     }
   }
@@ -154,8 +203,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 9
 
-    public companion object READER : ScaleReader<TransactionValue> {
+    public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
       public override fun read(reader: ScaleCodecReader): TransactionValue {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
+        writer.directWrite(this.discriminant())
+        TransactionValue.write(writer, instance.transactionValue)
       }
     }
   }
@@ -169,8 +223,13 @@ public abstract class Value {
   ) : Value() {
     public override fun discriminant(): Int = 10
 
-    public companion object READER : ScaleReader<PermissionToken> {
+    public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
       public override fun read(reader: ScaleCodecReader): PermissionToken {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
+        writer.directWrite(this.discriminant())
+        PermissionToken.write(writer, instance.permissionToken)
       }
     }
   }

@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * SignatureCheckCondition
@@ -13,8 +16,13 @@ import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
 public class SignatureCheckCondition(
   private val evaluatesTo: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<SignatureCheckCondition> {
+  public companion object CODEC : ScaleReader<SignatureCheckCondition>,
+      ScaleWriter<SignatureCheckCondition> {
     public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
-        SignatureCheckCondition(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        SignatureCheckCondition(EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
+      EvaluatesTo.write(writer, instance.evaluatesTo)
+    }
   }
 }

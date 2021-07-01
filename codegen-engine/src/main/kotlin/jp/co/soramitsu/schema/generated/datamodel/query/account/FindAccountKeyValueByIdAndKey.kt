@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.query.account
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -15,9 +18,15 @@ public class FindAccountKeyValueByIdAndKey(
   private val id: EvaluatesTo,
   private val key: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<FindAccountKeyValueByIdAndKey> {
+  public companion object CODEC : ScaleReader<FindAccountKeyValueByIdAndKey>,
+      ScaleWriter<FindAccountKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
-        FindAccountKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        FindAccountKeyValueByIdAndKey(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
+        Unit {
+      EvaluatesTo.write(writer, instance.id)
+      EvaluatesTo.write(writer, instance.key)
+    }
   }
 }

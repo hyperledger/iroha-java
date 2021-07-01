@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.transaction
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * _VersionedTransactionV1
@@ -12,8 +15,13 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 public class _VersionedTransactionV1(
   private val transaction: Transaction
 ) {
-  public companion object READER : ScaleReader<_VersionedTransactionV1> {
+  public companion object CODEC : ScaleReader<_VersionedTransactionV1>,
+      ScaleWriter<_VersionedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
-        _VersionedTransactionV1(jp.co.soramitsu.schema.generated.datamodel.transaction.Transaction.READER.read(reader))
+        _VersionedTransactionV1(Transaction.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {
+      Transaction.write(writer, instance.transaction)
+    }
   }
 }

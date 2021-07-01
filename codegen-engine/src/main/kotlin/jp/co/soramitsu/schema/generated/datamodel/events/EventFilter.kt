@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * EventFilter
@@ -24,8 +27,13 @@ public abstract class EventFilter {
   ) : EventFilter() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<Pipeline> {
+    public companion object CODEC : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
       public override fun read(reader: ScaleCodecReader): Pipeline {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
+        writer.directWrite(this.discriminant())
+        EventFilter.write(writer, instance.pipeline)
       }
     }
   }
@@ -38,8 +46,13 @@ public abstract class EventFilter {
   ) : EventFilter() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<Data> {
+    public companion object CODEC : ScaleReader<Data>, ScaleWriter<Data> {
       public override fun read(reader: ScaleCodecReader): Data {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
+        writer.directWrite(this.discriminant())
+        EventFilter.write(writer, instance.data)
       }
     }
   }

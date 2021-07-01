@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.crypto
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * Signature
@@ -14,9 +17,13 @@ public class Signature(
   private val publicKey: PublicKey,
   private val signature: ByteArray
 ) {
-  public companion object READER : ScaleReader<Signature> {
+  public companion object CODEC : ScaleReader<Signature>, ScaleWriter<Signature> {
     public override fun read(reader: ScaleCodecReader): Signature =
-        Signature(jp.co.soramitsu.schema.generated.crypto.PublicKey.READER.read(reader),
-        reader.readByteArray())
+        Signature(PublicKey.read(reader), reader.readByteArray())
+
+    public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
+      PublicKey.write(writer, instance.publicKey)
+      writer.writeByteArray(instance.signature)
+    }
   }
 }

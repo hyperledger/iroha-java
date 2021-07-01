@@ -2,7 +2,6 @@ package jp.co.soramitsu.schema.codegen
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import io.emeraldpay.polkaj.scale.reader.UnionReader
 import jp.co.soramitsu.schema.StringType
 import jp.co.soramitsu.schema.TypePreset
 import jp.co.soramitsu.schema.definitions.types.Type
@@ -93,9 +92,15 @@ object CodeGenerator {
             is Compact -> "reader.readCompactInt()"
             is UIntType -> "reader.readLong().toInt()"
             is FixedByteArray, is DynamicByteArray -> "reader.readByteArray()"
+            is Vec -> {
+                "reader.read()"
+            }
             else -> {
-                val kotlinType = resolveKotlinType(type)
-                "$kotlinType.READER.read(reader)"
+                when (val kotlinType = resolveKotlinType(type)) {
+                    is ClassName -> "${kotlinType.simpleName}.read(reader)"
+                    is ParameterizedTypeName -> "${kotlinType.rawType.simpleName}.read(reader)"
+                    else -> throw RuntimeException("fooWrite")
+                }
             }
         }
     }
@@ -109,8 +114,11 @@ object CodeGenerator {
             is UIntType -> "writer.writeLong(instance.$propertyName)"
             is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.$propertyName)"
             else -> {
-                val kotlinType = resolveKotlinType(type)
-                "${kotlinType}.WRITER.write(writer)"
+                when (val kotlinType = resolveKotlinType(type)) {
+                    is ClassName -> "${kotlinType.simpleName}.write(writer, instance.$propertyName)"
+                    is ParameterizedTypeName -> "${kotlinType.rawType.simpleName}.write(writer, instance.$propertyName)"
+                    else -> throw RuntimeException("fooWrite")
+                }
             }
         }
     }
@@ -314,8 +322,18 @@ object CodeGenerator {
                 ClassName("jp.co.soramitsu.schema.generated.$packageName", className)
             }
             is Vec -> {
-                ClassName("kotlin.collections", "List")
-                    .parameterizedBy(resolveKotlinType(type.innerType!!))
+                when (type.innerType) {
+                    is Tuple -> {
+                        val tuple = type.innerType as Tuple
+                        ClassName("kotlin.collections", "Map")
+                            .parameterizedBy(resolveKotlinType(tuple.typeReferences.first().value!!), resolveKotlinType(tuple.typeReferences.last().value!!))
+                    }
+                    else -> {
+                        ClassName("kotlin.collections", "List")
+                            .parameterizedBy(resolveKotlinType(type.innerType!!))
+                    }
+                }
+
             }
             is SetType -> {
                 ClassName("kotlin.collections", "Set")
@@ -345,43 +363,19 @@ object CodeGenerator {
         readerCode: CodeBlock,
         writerCode: CodeBlock,
     ) {
-//        clazz.addSuperinterface(
-//            ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
-//                .parameterizedBy(
-//                    ClassName(
-//                        "jp.co.soramitsu.schema.generated.$packageName",
-//                        className
-//                    )
-//                )
-//        )
-//        clazz.addSuperinterface(
-//            ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
-//                .parameterizedBy(
-//                    ClassName(
-//                        "jp.co.soramitsu.schema.generated.$packageName",
-//                        className
-//                    )
-//                )
-//        )
-//        clazz.addFunction(
-//            FunSpec.builder("read")
-//                .addParameter(
-//                    ParameterSpec
-//                        .builder(
-//                            "reader",
-//                            ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
-//                        )
-//                        .build()
-//                )
-//                .addCode(readerCode)
-//                .addModifiers(KModifier.OVERRIDE)
-//                .returns(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
-//                .build()
-//        )
         clazz.addType(
-            TypeSpec.companionObjectBuilder("READER")
+            TypeSpec.companionObjectBuilder("CODEC")
                 .addSuperinterface(
                     ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
+                        .parameterizedBy(
+                            ClassName(
+                                "jp.co.soramitsu.schema.generated.$packageName",
+                                className
+                            )
+                        )
+                )
+                .addSuperinterface(
+                    ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
                         .parameterizedBy(
                             ClassName(
                                 "jp.co.soramitsu.schema.generated.$packageName",
@@ -409,30 +403,33 @@ object CodeGenerator {
                         )
                         .build()
                 )
+                .addFunction(
+                    FunSpec.builder("write")
+                        .addParameter(
+                            ParameterSpec
+                                .builder(
+                                    "writer",
+                                    ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
+                                )
+                                .build()
+                        )
+                        .addParameter(
+                            ParameterSpec
+                                .builder(
+                                    "instance",
+                                    ClassName(
+                                        "jp.co.soramitsu.schema.generated.$packageName",
+                                        className
+                                    )
+                                )
+                                .build()
+                        )
+                        .addCode(writerCode)
+                        .addModifiers(KModifier.OVERRIDE)
+                        .build()
+                )
                 .build()
         )
-//        clazz.addFunction(
-//            FunSpec.builder("write")
-//                .addParameter(
-//                    ParameterSpec
-//                        .builder(
-//                            "writer",
-//                            ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
-//                        )
-//                        .build()
-//                )
-//                .addParameter(
-//                    ParameterSpec
-//                        .builder(
-//                            "instance",
-//                            ClassName("jp.co.soramitsu.schema.generated.$packageName", className)
-//                        )
-//                        .build()
-//                )
-//                .addCode(writerCode)
-//                .addModifiers(KModifier.OVERRIDE)
-//                .build()
-//        );
     }
 
 }

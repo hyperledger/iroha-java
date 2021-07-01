@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * TransactionRejectionReason
@@ -24,8 +27,13 @@ public abstract class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<NotPermitted> {
+    public companion object CODEC : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
       public override fun read(reader: ScaleCodecReader): NotPermitted {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
+        writer.directWrite(this.discriminant())
+        NotPermittedFail.write(writer, instance.notPermitted)
       }
     }
   }
@@ -38,8 +46,15 @@ public abstract class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<UnsatisfiedSignatureCondition> {
+    public companion object CODEC : ScaleReader<UnsatisfiedSignatureCondition>,
+        ScaleWriter<UnsatisfiedSignatureCondition> {
       public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
+          Unit {
+        writer.directWrite(this.discriminant())
+        UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureCondition)
       }
     }
   }
@@ -52,8 +67,14 @@ public abstract class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 2
 
-    public companion object READER : ScaleReader<InstructionExecution> {
+    public companion object CODEC : ScaleReader<InstructionExecution>,
+        ScaleWriter<InstructionExecution> {
       public override fun read(reader: ScaleCodecReader): InstructionExecution {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
+        writer.directWrite(this.discriminant())
+        InstructionExecutionFail.write(writer, instance.instructionExecution)
       }
     }
   }
@@ -66,8 +87,14 @@ public abstract class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 3
 
-    public companion object READER : ScaleReader<SignatureVerification> {
+    public companion object CODEC : ScaleReader<SignatureVerification>,
+        ScaleWriter<SignatureVerification> {
       public override fun read(reader: ScaleCodecReader): SignatureVerification {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
+        writer.directWrite(this.discriminant())
+        SignatureVerificationFail.write(writer, instance.signatureVerification)
       }
     }
   }

@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events.pipeline
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * Status
@@ -31,8 +34,13 @@ public abstract class Status {
   ) : Status() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<Rejected> {
+    public companion object CODEC : ScaleReader<Rejected>, ScaleWriter<Rejected> {
       public override fun read(reader: ScaleCodecReader): Rejected {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
+        writer.directWrite(this.discriminant())
+        RejectionReason.write(writer, instance.rejected)
       }
     }
   }

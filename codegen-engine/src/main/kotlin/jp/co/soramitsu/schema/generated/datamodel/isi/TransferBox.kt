@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.isi
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * TransferBox
@@ -15,10 +18,14 @@ public class TransferBox(
   private val `object`: EvaluatesTo,
   private val destinationId: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<TransferBox> {
+  public companion object CODEC : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
     public override fun read(reader: ScaleCodecReader): TransferBox =
-        TransferBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        TransferBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
+      EvaluatesTo.write(writer, instance.sourceId)
+      EvaluatesTo.write(writer, instance.object)
+      EvaluatesTo.write(writer, instance.destinationId)
+    }
   }
 }

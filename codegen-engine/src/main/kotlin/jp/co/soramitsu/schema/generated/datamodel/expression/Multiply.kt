@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * Multiply
@@ -13,9 +16,13 @@ public class Multiply(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<Multiply> {
+  public companion object CODEC : ScaleReader<Multiply>, ScaleWriter<Multiply> {
     public override fun read(reader: ScaleCodecReader): Multiply =
-        Multiply(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+        Multiply(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
+      EvaluatesTo.write(writer, instance.left)
+      EvaluatesTo.write(writer, instance.right)
+    }
   }
 }

@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * SubscriptionRequest
@@ -12,8 +15,13 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 public class SubscriptionRequest(
   private val eventFilter: EventFilter
 ) {
-  public companion object READER : ScaleReader<SubscriptionRequest> {
+  public companion object CODEC : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest>
+      {
     public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-        SubscriptionRequest(jp.co.soramitsu.schema.generated.datamodel.events.EventFilter.READER.read(reader))
+        SubscriptionRequest(EventFilter.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
+      EventFilter.write(writer, instance.eventFilter)
+    }
   }
 }

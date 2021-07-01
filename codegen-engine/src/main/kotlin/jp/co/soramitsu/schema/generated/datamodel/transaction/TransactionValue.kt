@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.transaction
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * TransactionValue
@@ -24,8 +27,13 @@ public abstract class TransactionValue {
   ) : TransactionValue() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<Transaction> {
+    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
+        writer.directWrite(this.discriminant())
+        VersionedTransaction.write(writer, instance.transaction)
       }
     }
   }
@@ -38,8 +46,14 @@ public abstract class TransactionValue {
   ) : TransactionValue() {
     public override fun discriminant(): Int = 1
 
-    public companion object READER : ScaleReader<RejectedTransaction> {
+    public companion object CODEC : ScaleReader<RejectedTransaction>,
+        ScaleWriter<RejectedTransaction> {
       public override fun read(reader: ScaleCodecReader): RejectedTransaction {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
+        writer.directWrite(this.discriminant())
+        VersionedRejectedTransaction.write(writer, instance.rejectedTransaction)
       }
     }
   }

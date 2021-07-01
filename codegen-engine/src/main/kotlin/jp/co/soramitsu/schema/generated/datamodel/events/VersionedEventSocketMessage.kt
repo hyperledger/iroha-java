@@ -2,8 +2,11 @@
 package jp.co.soramitsu.schema.generated.datamodel.events
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * VersionedEventSocketMessage
@@ -24,8 +27,13 @@ public abstract class VersionedEventSocketMessage {
   ) : VersionedEventSocketMessage() {
     public override fun discriminant(): Int = 0
 
-    public companion object READER : ScaleReader<V1> {
+    public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
       public override fun read(reader: ScaleCodecReader): V1 {
+      }
+
+      public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
+        writer.directWrite(this.discriminant())
+        _VersionedEventSocketMessageV1.write(writer, instance.v1)
       }
     }
   }

@@ -2,7 +2,10 @@
 package jp.co.soramitsu.schema.generated.datamodel.expression
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * Mod
@@ -13,9 +16,13 @@ public class Mod(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object READER : ScaleReader<Mod> {
-    public override fun read(reader: ScaleCodecReader): Mod =
-        Mod(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader),
-        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.READER.read(reader))
+  public companion object CODEC : ScaleReader<Mod>, ScaleWriter<Mod> {
+    public override fun read(reader: ScaleCodecReader): Mod = Mod(EvaluatesTo.read(reader),
+        EvaluatesTo.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
+      EvaluatesTo.write(writer, instance.left)
+      EvaluatesTo.write(writer, instance.right)
+    }
   }
 }
