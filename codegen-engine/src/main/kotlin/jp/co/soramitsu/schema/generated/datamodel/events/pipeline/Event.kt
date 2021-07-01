@@ -19,13 +19,17 @@ public class Event(
   private val hash: Hash
 ) {
   public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
-    public override fun read(reader: ScaleCodecReader): Event = Event(EntityType.read(reader),
-        Status.read(reader), Hash.read(reader))
+    public override fun read(reader: ScaleCodecReader): Event =
+        Event(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.read(reader),
+        jp.co.soramitsu.schema.generated.crypto.Hash.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-      EntityType.write(writer, instance.entityType)
-      Status.write(writer, instance.status)
-      Hash.write(writer, instance.hash)
+      jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.write(writer,
+          instance.entityType)
+      jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.write(writer,
+          instance.status)
+      jp.co.soramitsu.schema.generated.crypto.Hash.write(writer, instance.hash)
     }
   }
 }

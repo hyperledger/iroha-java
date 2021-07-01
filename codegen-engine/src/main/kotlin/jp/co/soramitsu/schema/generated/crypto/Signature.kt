@@ -19,10 +19,11 @@ public class Signature(
 ) {
   public companion object CODEC : ScaleReader<Signature>, ScaleWriter<Signature> {
     public override fun read(reader: ScaleCodecReader): Signature =
-        Signature(PublicKey.read(reader), reader.readByteArray())
+        Signature(jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader),
+        reader.readByteArray())
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
-      PublicKey.write(writer, instance.publicKey)
+      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
       writer.writeByteArray(instance.signature)
     }
   }

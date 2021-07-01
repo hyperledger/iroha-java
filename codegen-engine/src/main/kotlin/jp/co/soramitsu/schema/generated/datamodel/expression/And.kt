@@ -17,12 +17,14 @@ public class And(
   private val right: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<And>, ScaleWriter<And> {
-    public override fun read(reader: ScaleCodecReader): And = And(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): And =
+        And(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

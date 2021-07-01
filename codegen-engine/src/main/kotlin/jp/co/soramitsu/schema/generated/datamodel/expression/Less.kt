@@ -17,12 +17,14 @@ public class Less(
   private val right: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<Less>, ScaleWriter<Less> {
-    public override fun read(reader: ScaleCodecReader): Less = Less(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): Less =
+        Less(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

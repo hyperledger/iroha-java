@@ -29,10 +29,11 @@ public sealed class TransactionRejectionReason {
 
     public companion object CODEC : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
       public override fun read(reader: ScaleCodecReader): NotPermitted =
-          NotPermitted(NotPermittedFail.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.NotPermitted(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.NotPermittedFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
-        NotPermittedFail.write(writer, instance.notPermitted)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.NotPermittedFail.write(writer,
+            instance.notPermitted)
       }
     }
   }
@@ -48,11 +49,12 @@ public sealed class TransactionRejectionReason {
     public companion object CODEC : ScaleReader<UnsatisfiedSignatureCondition>,
         ScaleWriter<UnsatisfiedSignatureCondition> {
       public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
-          UnsatisfiedSignatureCondition(UnsatisfiedSignatureConditionFail.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.UnsatisfiedSignatureCondition(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.UnsatisfiedSignatureConditionFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
           Unit {
-        UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureCondition)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.UnsatisfiedSignatureConditionFail.write(writer,
+            instance.unsatisfiedSignatureCondition)
       }
     }
   }
@@ -68,10 +70,11 @@ public sealed class TransactionRejectionReason {
     public companion object CODEC : ScaleReader<InstructionExecution>,
         ScaleWriter<InstructionExecution> {
       public override fun read(reader: ScaleCodecReader): InstructionExecution =
-          InstructionExecution(InstructionExecutionFail.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.InstructionExecution(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.InstructionExecutionFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
-        InstructionExecutionFail.write(writer, instance.instructionExecution)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.InstructionExecutionFail.write(writer,
+            instance.instructionExecution)
       }
     }
   }
@@ -87,10 +90,11 @@ public sealed class TransactionRejectionReason {
     public companion object CODEC : ScaleReader<SignatureVerification>,
         ScaleWriter<SignatureVerification> {
       public override fun read(reader: ScaleCodecReader): SignatureVerification =
-          SignatureVerification(SignatureVerificationFail.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.SignatureVerification(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.SignatureVerificationFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
-        SignatureVerificationFail.write(writer, instance.signatureVerification)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.SignatureVerificationFail.write(writer,
+            instance.signatureVerification)
       }
     }
   }

@@ -19,11 +19,13 @@ public class RemoveKeyValueBox(
 ) {
   public companion object CODEC : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox =
-        RemoveKeyValueBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        RemoveKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
-      EvaluatesTo.write(writer, instance.objectId)
-      EvaluatesTo.write(writer, instance.key)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.objectId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
     }
   }
 }

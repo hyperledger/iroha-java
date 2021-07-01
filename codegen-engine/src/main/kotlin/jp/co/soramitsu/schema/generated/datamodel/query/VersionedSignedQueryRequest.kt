@@ -29,10 +29,11 @@ public sealed class VersionedSignedQueryRequest {
 
     public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
       public override fun read(reader: ScaleCodecReader): V1 =
-          V1(_VersionedSignedQueryRequestV1.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.VersionedSignedQueryRequest.V1(jp.co.soramitsu.schema.generated.datamodel.query._VersionedSignedQueryRequestV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-        _VersionedSignedQueryRequestV1.write(writer, instance.v1)
+        jp.co.soramitsu.schema.generated.datamodel.query._VersionedSignedQueryRequestV1.write(writer,
+            instance.v1)
       }
     }
   }

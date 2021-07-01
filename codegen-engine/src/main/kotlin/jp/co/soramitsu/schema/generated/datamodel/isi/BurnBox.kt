@@ -18,12 +18,15 @@ public class BurnBox(
   private val destinationId: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<BurnBox>, ScaleWriter<BurnBox> {
-    public override fun read(reader: ScaleCodecReader): BurnBox = BurnBox(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): BurnBox =
+        BurnBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit {
-      EvaluatesTo.write(writer, instance.object)
-      EvaluatesTo.write(writer, instance.destinationId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.object)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.destinationId)
     }
   }
 }

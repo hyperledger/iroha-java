@@ -20,12 +20,17 @@ public class TransferBox(
 ) {
   public companion object CODEC : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
     public override fun read(reader: ScaleCodecReader): TransferBox =
-        TransferBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        TransferBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
-      EvaluatesTo.write(writer, instance.sourceId)
-      EvaluatesTo.write(writer, instance.object)
-      EvaluatesTo.write(writer, instance.destinationId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.sourceId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.object)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.destinationId)
     }
   }
 }

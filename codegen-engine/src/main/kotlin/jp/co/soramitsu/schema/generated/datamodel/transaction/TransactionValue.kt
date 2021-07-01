@@ -29,10 +29,11 @@ public sealed class TransactionValue {
 
     public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction =
-          Transaction(VersionedTransaction.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.Transaction(jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedTransaction.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-        VersionedTransaction.write(writer, instance.transaction)
+        jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedTransaction.write(writer,
+            instance.transaction)
       }
     }
   }
@@ -48,10 +49,11 @@ public sealed class TransactionValue {
     public companion object CODEC : ScaleReader<RejectedTransaction>,
         ScaleWriter<RejectedTransaction> {
       public override fun read(reader: ScaleCodecReader): RejectedTransaction =
-          RejectedTransaction(VersionedRejectedTransaction.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.RejectedTransaction(jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedRejectedTransaction.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-        VersionedRejectedTransaction.write(writer, instance.rejectedTransaction)
+        jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedRejectedTransaction.write(writer,
+            instance.rejectedTransaction)
       }
     }
   }

@@ -19,10 +19,11 @@ public class FindAssetsByDomainName(
   public companion object CODEC : ScaleReader<FindAssetsByDomainName>,
       ScaleWriter<FindAssetsByDomainName> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
-        FindAssetsByDomainName(EvaluatesTo.read(reader))
+        FindAssetsByDomainName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
-      EvaluatesTo.write(writer, instance.domainName)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.domainName)
     }
   }
 }

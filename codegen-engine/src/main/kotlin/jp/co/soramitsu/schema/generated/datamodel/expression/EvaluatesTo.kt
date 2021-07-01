@@ -18,10 +18,11 @@ public class EvaluatesTo(
 ) {
   public companion object CODEC : ScaleReader<EvaluatesTo>, ScaleWriter<EvaluatesTo> {
     public override fun read(reader: ScaleCodecReader): EvaluatesTo =
-        EvaluatesTo(Expression.read(reader))
+        EvaluatesTo(jp.co.soramitsu.schema.generated.datamodel.expression.Expression.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo): Unit {
-      Expression.write(writer, instance.expression)
+      jp.co.soramitsu.schema.generated.datamodel.expression.Expression.write(writer,
+          instance.expression)
     }
   }
 }

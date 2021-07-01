@@ -18,10 +18,11 @@ public class _VersionedQueryResultV1(
   public companion object CODEC : ScaleReader<_VersionedQueryResultV1>,
       ScaleWriter<_VersionedQueryResultV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedQueryResultV1 =
-        _VersionedQueryResultV1(QueryResult.read(reader))
+        _VersionedQueryResultV1(jp.co.soramitsu.schema.generated.datamodel.query.QueryResult.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedQueryResultV1): Unit {
-      QueryResult.write(writer, instance.queryResult)
+      jp.co.soramitsu.schema.generated.datamodel.query.QueryResult.write(writer,
+          instance.queryResult)
     }
   }
 }

@@ -30,10 +30,10 @@ public sealed class AssetValue {
 
     public companion object CODEC : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public override fun read(reader: ScaleCodecReader): Quantity =
-          Quantity(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.Quantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-        writer.writeLong(instance.quantity.toInt())
+        writer.writeLong(instance.quantity.toLong())
       }
     }
   }
@@ -48,7 +48,7 @@ public sealed class AssetValue {
 
     public companion object CODEC : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
       public override fun read(reader: ScaleCodecReader): BigQuantity =
-          BigQuantity(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.BigQuantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
         writer.writeLong(instance.bigQuantity.toLong())
@@ -65,10 +65,11 @@ public sealed class AssetValue {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Store>, ScaleWriter<Store> {
-      public override fun read(reader: ScaleCodecReader): Store = Store(Metadata.read(reader))
+      public override fun read(reader: ScaleCodecReader): Store =
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.Store(jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-        Metadata.write(writer, instance.store)
+        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.store)
       }
     }
   }

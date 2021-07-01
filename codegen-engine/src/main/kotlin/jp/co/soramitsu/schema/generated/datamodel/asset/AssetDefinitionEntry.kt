@@ -20,11 +20,13 @@ public class AssetDefinitionEntry(
   public companion object CODEC : ScaleReader<AssetDefinitionEntry>,
       ScaleWriter<AssetDefinitionEntry> {
     public override fun read(reader: ScaleCodecReader): AssetDefinitionEntry =
-        AssetDefinitionEntry(AssetDefinition.read(reader), Id.read(reader))
+        AssetDefinitionEntry(jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionEntry): Unit {
-      AssetDefinition.write(writer, instance.definition)
-      Id.write(writer, instance.registeredBy)
+      jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.write(writer,
+          instance.definition)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.registeredBy)
     }
   }
 }

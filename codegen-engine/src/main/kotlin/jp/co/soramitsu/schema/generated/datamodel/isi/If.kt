@@ -20,12 +20,15 @@ public class If(
   private val otherwise: Optional<Instruction>
 ) {
   public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-    public override fun read(reader: ScaleCodecReader): If = If(EvaluatesTo.read(reader),
-        Instruction.read(reader), reader.readOptional())
+    public override fun read(reader: ScaleCodecReader): If =
+        If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),
+        reader.readOptional())
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-      EvaluatesTo.write(writer, instance.condition)
-      Instruction.write(writer, instance.then)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.condition)
+      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer, instance.then)
       writer.writeOptional(instance.otherwise)
     }
   }

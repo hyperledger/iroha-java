@@ -17,12 +17,14 @@ public class Or(
   private val right: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<Or>, ScaleWriter<Or> {
-    public override fun read(reader: ScaleCodecReader): Or = Or(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): Or =
+        Or(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

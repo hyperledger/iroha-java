@@ -20,12 +20,16 @@ public class SetKeyValueBox(
 ) {
   public companion object CODEC : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): SetKeyValueBox =
-        SetKeyValueBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        SetKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
-      EvaluatesTo.write(writer, instance.objectId)
-      EvaluatesTo.write(writer, instance.key)
-      EvaluatesTo.write(writer, instance.value)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.objectId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.value)
     }
   }
 }

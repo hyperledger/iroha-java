@@ -18,12 +18,15 @@ public class MintBox(
   private val destinationId: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<MintBox>, ScaleWriter<MintBox> {
-    public override fun read(reader: ScaleCodecReader): MintBox = MintBox(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): MintBox =
+        MintBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: MintBox): Unit {
-      EvaluatesTo.write(writer, instance.object)
-      EvaluatesTo.write(writer, instance.destinationId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.object)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.destinationId)
     }
   }
 }

@@ -18,11 +18,13 @@ public class Subtract(
 ) {
   public companion object CODEC : ScaleReader<Subtract>, ScaleWriter<Subtract> {
     public override fun read(reader: ScaleCodecReader): Subtract =
-        Subtract(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        Subtract(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

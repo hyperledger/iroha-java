@@ -18,11 +18,13 @@ public class Multiply(
 ) {
   public companion object CODEC : ScaleReader<Multiply>, ScaleWriter<Multiply> {
     public override fun read(reader: ScaleCodecReader): Multiply =
-        Multiply(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        Multiply(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

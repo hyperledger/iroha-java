@@ -20,11 +20,12 @@ public class Transaction(
 ) {
   public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
     public override fun read(reader: ScaleCodecReader): Transaction =
-        Transaction(Payload.read(reader), reader.read())
+        Transaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.read(reader),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-      Payload.write(writer, instance.payload)
-      List.write(writer, instance.signatures)
+      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer, instance.payload)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
     }
   }
 }

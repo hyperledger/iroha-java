@@ -36,10 +36,11 @@ public sealed class Status {
 
     public companion object CODEC : ScaleReader<Rejected>, ScaleWriter<Rejected> {
       public override fun read(reader: ScaleCodecReader): Rejected =
-          Rejected(RejectionReason.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Rejected(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
-        RejectionReason.write(writer, instance.rejected)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.write(writer,
+            instance.rejected)
       }
     }
   }

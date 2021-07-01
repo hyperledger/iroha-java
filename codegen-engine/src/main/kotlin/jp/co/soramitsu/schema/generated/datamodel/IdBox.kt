@@ -31,10 +31,11 @@ public sealed class IdBox {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<AccountId>, ScaleWriter<AccountId> {
-      public override fun read(reader: ScaleCodecReader): AccountId = AccountId(Id.read(reader))
+      public override fun read(reader: ScaleCodecReader): AccountId =
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.AccountId(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
-        Id.write(writer, instance.accountId)
+        jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
       }
     }
   }
@@ -48,10 +49,11 @@ public sealed class IdBox {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<AssetId>, ScaleWriter<AssetId> {
-      public override fun read(reader: ScaleCodecReader): AssetId = AssetId(Id.read(reader))
+      public override fun read(reader: ScaleCodecReader): AssetId =
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.AssetId(jp.co.soramitsu.schema.generated.datamodel.asset.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
-        Id.write(writer, instance.assetId)
+        jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.assetId)
       }
     }
   }
@@ -66,10 +68,11 @@ public sealed class IdBox {
 
     public companion object CODEC : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
       public override fun read(reader: ScaleCodecReader): AssetDefinitionId =
-          AssetDefinitionId(DefinitionId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.AssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
-        DefinitionId.write(writer, instance.assetDefinitionId)
+        jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer,
+            instance.assetDefinitionId)
       }
     }
   }
@@ -84,7 +87,7 @@ public sealed class IdBox {
 
     public companion object CODEC : ScaleReader<DomainName>, ScaleWriter<DomainName> {
       public override fun read(reader: ScaleCodecReader): DomainName =
-          DomainName(reader.readString())
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.DomainName(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
         writer.writeString(instance.domainName)
@@ -101,10 +104,11 @@ public sealed class IdBox {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<PeerId>, ScaleWriter<PeerId> {
-      public override fun read(reader: ScaleCodecReader): PeerId = PeerId(Id.read(reader))
+      public override fun read(reader: ScaleCodecReader): PeerId =
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.PeerId(jp.co.soramitsu.schema.generated.datamodel.peer.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
-        Id.write(writer, instance.peerId)
+        jp.co.soramitsu.schema.generated.datamodel.peer.Id.write(writer, instance.peerId)
       }
     }
   }

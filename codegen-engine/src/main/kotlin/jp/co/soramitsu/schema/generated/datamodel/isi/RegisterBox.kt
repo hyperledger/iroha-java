@@ -18,10 +18,11 @@ public class RegisterBox(
 ) {
   public companion object CODEC : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
     public override fun read(reader: ScaleCodecReader): RegisterBox =
-        RegisterBox(EvaluatesTo.read(reader))
+        RegisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit {
-      EvaluatesTo.write(writer, instance.object)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.object)
     }
   }
 }

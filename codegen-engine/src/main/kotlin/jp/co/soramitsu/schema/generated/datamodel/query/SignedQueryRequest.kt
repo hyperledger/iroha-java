@@ -21,12 +21,14 @@ public class SignedQueryRequest(
 ) {
   public companion object CODEC : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
     public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
-        SignedQueryRequest(reader.readCompactInt(), Signature.read(reader), QueryBox.read(reader))
+        SignedQueryRequest(reader.readCompactInt(),
+        jp.co.soramitsu.schema.generated.crypto.Signature.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
       writer.writeCompactInt(instance.timestampMs)
-      Signature.write(writer, instance.signature)
-      QueryBox.write(writer, instance.query)
+      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.signature)
+      jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.query)
     }
   }
 }

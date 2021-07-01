@@ -28,10 +28,11 @@ public sealed class IdentifiableBox {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
-      public override fun read(reader: ScaleCodecReader): Account = Account(Account.read(reader))
+      public override fun read(reader: ScaleCodecReader): Account =
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Account(jp.co.soramitsu.schema.generated.datamodel.account.Account.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-        Account.write(writer, instance.account)
+        jp.co.soramitsu.schema.generated.datamodel.account.Account.write(writer, instance.account)
       }
     }
   }
@@ -46,10 +47,11 @@ public sealed class IdentifiableBox {
 
     public companion object CODEC : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
       public override fun read(reader: ScaleCodecReader): NewAccount =
-          NewAccount(NewAccount.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.NewAccount.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-        NewAccount.write(writer, instance.newAccount)
+        jp.co.soramitsu.schema.generated.datamodel.account.NewAccount.write(writer,
+            instance.newAccount)
       }
     }
   }
@@ -63,10 +65,11 @@ public sealed class IdentifiableBox {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Asset>, ScaleWriter<Asset> {
-      public override fun read(reader: ScaleCodecReader): Asset = Asset(Asset.read(reader))
+      public override fun read(reader: ScaleCodecReader): Asset =
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Asset(jp.co.soramitsu.schema.generated.datamodel.asset.Asset.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-        Asset.write(writer, instance.asset)
+        jp.co.soramitsu.schema.generated.datamodel.asset.Asset.write(writer, instance.asset)
       }
     }
   }
@@ -81,10 +84,11 @@ public sealed class IdentifiableBox {
 
     public companion object CODEC : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
       public override fun read(reader: ScaleCodecReader): AssetDefinition =
-          AssetDefinition(AssetDefinition.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.AssetDefinition(jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-        AssetDefinition.write(writer, instance.assetDefinition)
+        jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.write(writer,
+            instance.assetDefinition)
       }
     }
   }
@@ -98,10 +102,11 @@ public sealed class IdentifiableBox {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
-      public override fun read(reader: ScaleCodecReader): Domain = Domain(Domain.read(reader))
+      public override fun read(reader: ScaleCodecReader): Domain =
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Domain(jp.co.soramitsu.schema.generated.datamodel.domain.Domain.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-        Domain.write(writer, instance.domain)
+        jp.co.soramitsu.schema.generated.datamodel.domain.Domain.write(writer, instance.domain)
       }
     }
   }
@@ -115,10 +120,11 @@ public sealed class IdentifiableBox {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<Peer>, ScaleWriter<Peer> {
-      public override fun read(reader: ScaleCodecReader): Peer = Peer(Peer.read(reader))
+      public override fun read(reader: ScaleCodecReader): Peer =
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Peer.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-        Peer.write(writer, instance.peer)
+        jp.co.soramitsu.schema.generated.datamodel.peer.Peer.write(writer, instance.peer)
       }
     }
   }

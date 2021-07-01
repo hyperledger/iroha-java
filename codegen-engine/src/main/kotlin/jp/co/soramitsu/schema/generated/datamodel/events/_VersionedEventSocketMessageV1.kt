@@ -18,11 +18,12 @@ public class _VersionedEventSocketMessageV1(
   public companion object CODEC : ScaleReader<_VersionedEventSocketMessageV1>,
       ScaleWriter<_VersionedEventSocketMessageV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedEventSocketMessageV1 =
-        _VersionedEventSocketMessageV1(EventSocketMessage.read(reader))
+        _VersionedEventSocketMessageV1(jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedEventSocketMessageV1):
         Unit {
-      EventSocketMessage.write(writer, instance.eventSocketMessage)
+      jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.write(writer,
+          instance.eventSocketMessage)
     }
   }
 }

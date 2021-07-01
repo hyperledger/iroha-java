@@ -30,10 +30,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
       public override fun read(reader: ScaleCodecReader): FindAllAccounts =
-          FindAllAccounts(FindAllAccounts.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAllAccounts(jp.co.soramitsu.schema.generated.datamodel.query.account.FindAllAccounts.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
-        FindAllAccounts.write(writer, instance.findAllAccounts)
+        jp.co.soramitsu.schema.generated.datamodel.query.account.FindAllAccounts.write(writer,
+            instance.findAllAccounts)
       }
     }
   }
@@ -49,10 +50,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAccountById>, ScaleWriter<FindAccountById> {
       public override fun read(reader: ScaleCodecReader): FindAccountById =
-          FindAccountById(FindAccountById.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAccountById(jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
-        FindAccountById.write(writer, instance.findAccountById)
+        jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountById.write(writer,
+            instance.findAccountById)
       }
     }
   }
@@ -69,11 +71,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
       public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
-          FindAccountKeyValueByIdAndKey(FindAccountKeyValueByIdAndKey.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAccountKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
           Unit {
-        FindAccountKeyValueByIdAndKey.write(writer, instance.findAccountKeyValueByIdAndKey)
+        jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey.write(writer,
+            instance.findAccountKeyValueByIdAndKey)
       }
     }
   }
@@ -90,10 +93,11 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName>
         {
       public override fun read(reader: ScaleCodecReader): FindAccountsByName =
-          FindAccountsByName(FindAccountsByName.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAccountsByName(jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit {
-        FindAccountsByName.write(writer, instance.findAccountsByName)
+        jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByName.write(writer,
+            instance.findAccountsByName)
       }
     }
   }
@@ -110,11 +114,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAccountsByDomainName>,
         ScaleWriter<FindAccountsByDomainName> {
       public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
-          FindAccountsByDomainName(FindAccountsByDomainName.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAccountsByDomainName(jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName):
           Unit {
-        FindAccountsByDomainName.write(writer, instance.findAccountsByDomainName)
+        jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByDomainName.write(writer,
+            instance.findAccountsByDomainName)
       }
     }
   }
@@ -129,10 +134,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
       public override fun read(reader: ScaleCodecReader): FindAllAssets =
-          FindAllAssets(FindAllAssets.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAllAssets(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssets.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
-        FindAllAssets.write(writer, instance.findAllAssets)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssets.write(writer,
+            instance.findAllAssets)
       }
     }
   }
@@ -149,11 +155,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAllAssetsDefinitions>,
         ScaleWriter<FindAllAssetsDefinitions> {
       public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions =
-          FindAllAssetsDefinitions(FindAllAssetsDefinitions.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAllAssetsDefinitions(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssetsDefinitions.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions):
           Unit {
-        FindAllAssetsDefinitions.write(writer, instance.findAllAssetsDefinitions)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssetsDefinitions.write(writer,
+            instance.findAllAssetsDefinitions)
       }
     }
   }
@@ -168,10 +175,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetById>, ScaleWriter<FindAssetById> {
       public override fun read(reader: ScaleCodecReader): FindAssetById =
-          FindAssetById(FindAssetById.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetById(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetById): Unit {
-        FindAssetById.write(writer, instance.findAssetById)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetById.write(writer,
+            instance.findAssetById)
       }
     }
   }
@@ -187,10 +195,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByName =
-          FindAssetsByName(FindAssetsByName.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByName(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
-        FindAssetsByName.write(writer, instance.findAssetsByName)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByName.write(writer,
+            instance.findAssetsByName)
       }
     }
   }
@@ -207,10 +216,11 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAssetsByAccountId>,
         ScaleWriter<FindAssetsByAccountId> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
-          FindAssetsByAccountId(FindAssetsByAccountId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByAccountId(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
-        FindAssetsByAccountId.write(writer, instance.findAssetsByAccountId)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountId.write(writer,
+            instance.findAssetsByAccountId)
       }
     }
   }
@@ -227,11 +237,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAssetsByAssetDefinitionId>,
         ScaleWriter<FindAssetsByAssetDefinitionId> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
-          FindAssetsByAssetDefinitionId(FindAssetsByAssetDefinitionId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
           Unit {
-        FindAssetsByAssetDefinitionId.write(writer, instance.findAssetsByAssetDefinitionId)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId.write(writer,
+            instance.findAssetsByAssetDefinitionId)
       }
     }
   }
@@ -248,10 +259,11 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAssetsByDomainName>,
         ScaleWriter<FindAssetsByDomainName> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
-          FindAssetsByDomainName(FindAssetsByDomainName.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByDomainName(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
-        FindAssetsByDomainName.write(writer, instance.findAssetsByDomainName)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainName.write(writer,
+            instance.findAssetsByDomainName)
       }
     }
   }
@@ -269,11 +281,11 @@ public sealed class QueryBox {
         ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByAccountIdAndAssetDefinitionId
           =
-          FindAssetsByAccountIdAndAssetDefinitionId(FindAssetsByAccountIdAndAssetDefinitionId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByAccountIdAndAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
-        FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
             instance.findAssetsByAccountIdAndAssetDefinitionId)
       }
     }
@@ -292,11 +304,11 @@ public sealed class QueryBox {
         ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
       public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId
           =
-          FindAssetsByDomainNameAndAssetDefinitionId(FindAssetsByDomainNameAndAssetDefinitionId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetsByDomainNameAndAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
-        FindAssetsByDomainNameAndAssetDefinitionId.write(writer,
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.write(writer,
             instance.findAssetsByDomainNameAndAssetDefinitionId)
       }
     }
@@ -314,10 +326,11 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAssetQuantityById>,
         ScaleWriter<FindAssetQuantityById> {
       public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
-          FindAssetQuantityById(FindAssetQuantityById.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetQuantityById(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetQuantityById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
-        FindAssetQuantityById.write(writer, instance.findAssetQuantityById)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetQuantityById.write(writer,
+            instance.findAssetQuantityById)
       }
     }
   }
@@ -334,11 +347,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindAssetKeyValueByIdAndKey>,
         ScaleWriter<FindAssetKeyValueByIdAndKey> {
       public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
-          FindAssetKeyValueByIdAndKey(FindAssetKeyValueByIdAndKey.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAssetKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
           Unit {
-        FindAssetKeyValueByIdAndKey.write(writer, instance.findAssetKeyValueByIdAndKey)
+        jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey.write(writer,
+            instance.findAssetKeyValueByIdAndKey)
       }
     }
   }
@@ -354,10 +368,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
       public override fun read(reader: ScaleCodecReader): FindAllDomains =
-          FindAllDomains(FindAllDomains.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAllDomains(jp.co.soramitsu.schema.generated.datamodel.query.domain.FindAllDomains.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
-        FindAllDomains.write(writer, instance.findAllDomains)
+        jp.co.soramitsu.schema.generated.datamodel.query.domain.FindAllDomains.write(writer,
+            instance.findAllDomains)
       }
     }
   }
@@ -373,10 +388,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
       public override fun read(reader: ScaleCodecReader): FindDomainByName =
-          FindDomainByName(FindDomainByName.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindDomainByName(jp.co.soramitsu.schema.generated.datamodel.query.domain.FindDomainByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
-        FindDomainByName.write(writer, instance.findDomainByName)
+        jp.co.soramitsu.schema.generated.datamodel.query.domain.FindDomainByName.write(writer,
+            instance.findDomainByName)
       }
     }
   }
@@ -391,10 +407,11 @@ public sealed class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
       public override fun read(reader: ScaleCodecReader): FindAllPeers =
-          FindAllPeers(FindAllPeers.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindAllPeers(jp.co.soramitsu.schema.generated.datamodel.query.peer.FindAllPeers.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
-        FindAllPeers.write(writer, instance.findAllPeers)
+        jp.co.soramitsu.schema.generated.datamodel.query.peer.FindAllPeers.write(writer,
+            instance.findAllPeers)
       }
     }
   }
@@ -411,11 +428,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindTransactionsByAccountId>,
         ScaleWriter<FindTransactionsByAccountId> {
       public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
-          FindTransactionsByAccountId(FindTransactionsByAccountId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindTransactionsByAccountId(jp.co.soramitsu.schema.generated.datamodel.query.transaction.FindTransactionsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
           Unit {
-        FindTransactionsByAccountId.write(writer, instance.findTransactionsByAccountId)
+        jp.co.soramitsu.schema.generated.datamodel.query.transaction.FindTransactionsByAccountId.write(writer,
+            instance.findTransactionsByAccountId)
       }
     }
   }
@@ -432,11 +450,12 @@ public sealed class QueryBox {
     public companion object CODEC : ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
       public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
-          FindPermissionTokensByAccountId(FindPermissionTokensByAccountId.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.FindPermissionTokensByAccountId(jp.co.soramitsu.schema.generated.datamodel.query.permissions.FindPermissionTokensByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindPermissionTokensByAccountId): Unit {
-        FindPermissionTokensByAccountId.write(writer, instance.findPermissionTokensByAccountId)
+        jp.co.soramitsu.schema.generated.datamodel.query.permissions.FindPermissionTokensByAccountId.write(writer,
+            instance.findPermissionTokensByAccountId)
       }
     }
   }

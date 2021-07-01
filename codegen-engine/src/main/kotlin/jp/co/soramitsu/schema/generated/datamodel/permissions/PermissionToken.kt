@@ -21,11 +21,14 @@ public class PermissionToken(
 ) {
   public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
     public override fun read(reader: ScaleCodecReader): PermissionToken =
-        PermissionToken(reader.readString(), reader.read())
+        PermissionToken(reader.readString(),
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,
+        jp.co.soramitsu.schema.generated.datamodel.Value)))
 
     public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
       writer.writeString(instance.name)
-      Map.write(writer, instance.params)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.params)
     }
   }
 }

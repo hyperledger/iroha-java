@@ -21,13 +21,15 @@ public class FindAssetsByDomainNameAndAssetDefinitionId(
   public companion object CODEC : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
       ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
-        FindAssetsByDomainNameAndAssetDefinitionId(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+        FindAssetsByDomainNameAndAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter,
         instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
-      EvaluatesTo.write(writer, instance.domainName)
-      EvaluatesTo.write(writer, instance.assetDefinitionId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.domainName)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.assetDefinitionId)
     }
   }
 }

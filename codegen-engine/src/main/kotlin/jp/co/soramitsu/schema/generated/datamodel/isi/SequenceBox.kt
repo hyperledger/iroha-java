@@ -17,10 +17,11 @@ public class SequenceBox(
   private val instructions: List<Instruction>
 ) {
   public companion object CODEC : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
-    public override fun read(reader: ScaleCodecReader): SequenceBox = SequenceBox(reader.read())
+    public override fun read(reader: ScaleCodecReader): SequenceBox =
+        SequenceBox(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)))
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
-      List.write(writer, instance.instructions)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
     }
   }
 }

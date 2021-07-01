@@ -25,12 +25,18 @@ public class Domain(
 ) {
   public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
     public override fun read(reader: ScaleCodecReader): Domain = Domain(reader.readString(),
-        reader.read(), reader.read())
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(jp.co.soramitsu.schema.generated.datamodel.account.Id,
+        jp.co.soramitsu.schema.generated.datamodel.account.Account)),
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId,
+        jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinitionEntry)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
       writer.writeString(instance.name)
-      Map.write(writer, instance.accounts)
-      Map.write(writer, instance.assetDefinitions)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.account.Id,
+          jp.co.soramitsu.schema.generated.datamodel.account.Account), instance.accounts)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId,
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinitionEntry),
+          instance.assetDefinitions)
     }
   }
 }

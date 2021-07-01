@@ -28,17 +28,25 @@ public class Account(
   private val metadata: Metadata
 ) {
   public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
-    public override fun read(reader: ScaleCodecReader): Account = Account(Id.read(reader),
-        reader.read(), reader.read(), Set.read(reader), SignatureCheckCondition.read(reader),
-        Metadata.read(reader))
+    public override fun read(reader: ScaleCodecReader): Account =
+        Account(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(jp.co.soramitsu.schema.generated.datamodel.asset.Id,
+        jp.co.soramitsu.schema.generated.datamodel.asset.Asset)),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(PublicKey)),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(PermissionToken)).toSet(),
+        jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-      Id.write(writer, instance.id)
-      Map.write(writer, instance.assets)
-      List.write(writer, instance.signatories)
-      Set.write(writer, instance.permissionTokens)
-      SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
-      Metadata.write(writer, instance.metadata)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.id)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.asset.Id,
+          jp.co.soramitsu.schema.generated.datamodel.asset.Asset), instance.assets)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.signatories)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PermissionToken),
+          instance.permissionTokens.toList())
+      jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.write(writer,
+          instance.signatureCheckCondition)
+      jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.metadata)
     }
   }
 }

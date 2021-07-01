@@ -31,10 +31,11 @@ public sealed class EventSocketMessage {
     public companion object CODEC : ScaleReader<SubscriptionRequest>,
         ScaleWriter<SubscriptionRequest> {
       public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-          SubscriptionRequest(SubscriptionRequest.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.SubscriptionRequest(jp.co.soramitsu.schema.generated.datamodel.events.SubscriptionRequest.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-        SubscriptionRequest.write(writer, instance.subscriptionRequest)
+        jp.co.soramitsu.schema.generated.datamodel.events.SubscriptionRequest.write(writer,
+            instance.subscriptionRequest)
       }
     }
   }
@@ -55,10 +56,11 @@ public sealed class EventSocketMessage {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
-      public override fun read(reader: ScaleCodecReader): Event = Event(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Event =
+          jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.Event(jp.co.soramitsu.schema.generated.datamodel.events.Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-        Event.write(writer, instance.event)
+        jp.co.soramitsu.schema.generated.datamodel.events.Event.write(writer, instance.event)
       }
     }
   }

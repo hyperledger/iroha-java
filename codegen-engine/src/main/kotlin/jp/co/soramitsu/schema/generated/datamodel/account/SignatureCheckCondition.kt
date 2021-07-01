@@ -19,10 +19,11 @@ public class SignatureCheckCondition(
   public companion object CODEC : ScaleReader<SignatureCheckCondition>,
       ScaleWriter<SignatureCheckCondition> {
     public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
-        SignatureCheckCondition(EvaluatesTo.read(reader))
+        SignatureCheckCondition(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-      EvaluatesTo.write(writer, instance.evaluatesTo)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.evaluatesTo)
     }
   }
 }

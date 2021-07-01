@@ -29,10 +29,11 @@ public sealed class VersionedTransaction {
 
     public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
       public override fun read(reader: ScaleCodecReader): V1 =
-          V1(_VersionedTransactionV1.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedTransaction.V1(jp.co.soramitsu.schema.generated.datamodel.transaction._VersionedTransactionV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-        _VersionedTransactionV1.write(writer, instance.v1)
+        jp.co.soramitsu.schema.generated.datamodel.transaction._VersionedTransactionV1.write(writer,
+            instance.v1)
       }
     }
   }

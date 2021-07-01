@@ -21,13 +21,15 @@ public class NewAccount(
   private val metadata: Metadata
 ) {
   public companion object CODEC : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-    public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(Id.read(reader),
-        reader.read(), Metadata.read(reader))
+    public override fun read(reader: ScaleCodecReader): NewAccount =
+        NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(PublicKey)),
+        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-      Id.write(writer, instance.id)
-      List.write(writer, instance.signatories)
-      Metadata.write(writer, instance.metadata)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.id)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.signatories)
+      jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.metadata)
     }
   }
 }

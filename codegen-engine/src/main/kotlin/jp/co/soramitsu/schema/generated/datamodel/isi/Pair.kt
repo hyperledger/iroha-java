@@ -17,12 +17,15 @@ public class Pair(
   private val rightInstruction: Instruction
 ) {
   public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
-    public override fun read(reader: ScaleCodecReader): Pair = Pair(Instruction.read(reader),
-        Instruction.read(reader))
+    public override fun read(reader: ScaleCodecReader): Pair =
+        Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-      Instruction.write(writer, instance.leftInstruction)
-      Instruction.write(writer, instance.rightInstruction)
+      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer,
+          instance.leftInstruction)
+      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer,
+          instance.rightInstruction)
     }
   }
 }

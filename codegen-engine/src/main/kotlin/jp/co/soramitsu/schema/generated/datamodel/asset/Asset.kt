@@ -17,12 +17,13 @@ public class Asset(
   private val `value`: AssetValue
 ) {
   public companion object CODEC : ScaleReader<Asset>, ScaleWriter<Asset> {
-    public override fun read(reader: ScaleCodecReader): Asset = Asset(Id.read(reader),
-        AssetValue.read(reader))
+    public override fun read(reader: ScaleCodecReader): Asset =
+        Asset(jp.co.soramitsu.schema.generated.datamodel.asset.Id.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-      Id.write(writer, instance.id)
-      AssetValue.write(writer, instance.value)
+      jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.id)
+      jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.write(writer, instance.value)
     }
   }
 }

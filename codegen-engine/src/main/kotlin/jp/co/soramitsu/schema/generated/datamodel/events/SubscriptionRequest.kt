@@ -18,10 +18,11 @@ public class SubscriptionRequest(
   public companion object CODEC : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest>
       {
     public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-        SubscriptionRequest(EventFilter.read(reader))
+        SubscriptionRequest(jp.co.soramitsu.schema.generated.datamodel.events.EventFilter.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-      EventFilter.write(writer, instance.eventFilter)
+      jp.co.soramitsu.schema.generated.datamodel.events.EventFilter.write(writer,
+          instance.eventFilter)
     }
   }
 }

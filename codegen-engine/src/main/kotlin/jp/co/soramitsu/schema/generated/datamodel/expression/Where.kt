@@ -19,12 +19,16 @@ public class Where(
   private val values: Map<String, EvaluatesTo>
 ) {
   public companion object CODEC : ScaleReader<Where>, ScaleWriter<Where> {
-    public override fun read(reader: ScaleCodecReader): Where = Where(EvaluatesTo.read(reader),
-        reader.read())
+    public override fun read(reader: ScaleCodecReader): Where =
+        Where(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-      EvaluatesTo.write(writer, instance.expression)
-      Map.write(writer, instance.values)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.expression)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
+          jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo), instance.values)
     }
   }
 }

@@ -28,10 +28,12 @@ public sealed class Event {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
-      public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Pipeline =
+          jp.co.soramitsu.schema.generated.datamodel.events.Event.Pipeline(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
-        Event.write(writer, instance.pipeline)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Event.write(writer,
+            instance.pipeline)
       }
     }
   }
@@ -45,10 +47,11 @@ public sealed class Event {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Data>, ScaleWriter<Data> {
-      public override fun read(reader: ScaleCodecReader): Data = Data(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Data =
+          jp.co.soramitsu.schema.generated.datamodel.events.Event.Data(jp.co.soramitsu.schema.generated.datamodel.events.data.Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-        Event.write(writer, instance.data)
+        jp.co.soramitsu.schema.generated.datamodel.events.data.Event.write(writer, instance.data)
       }
     }
   }

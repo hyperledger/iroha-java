@@ -18,11 +18,14 @@ public class Contains(
 ) {
   public companion object CODEC : ScaleReader<Contains>, ScaleWriter<Contains> {
     public override fun read(reader: ScaleCodecReader): Contains =
-        Contains(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        Contains(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
-      EvaluatesTo.write(writer, instance.collection)
-      EvaluatesTo.write(writer, instance.element)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.collection)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.element)
     }
   }
 }

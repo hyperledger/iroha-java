@@ -18,11 +18,14 @@ public class ContainsAny(
 ) {
   public companion object CODEC : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
     public override fun read(reader: ScaleCodecReader): ContainsAny =
-        ContainsAny(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        ContainsAny(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-      EvaluatesTo.write(writer, instance.collection)
-      EvaluatesTo.write(writer, instance.elements)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.collection)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.elements)
     }
   }
 }

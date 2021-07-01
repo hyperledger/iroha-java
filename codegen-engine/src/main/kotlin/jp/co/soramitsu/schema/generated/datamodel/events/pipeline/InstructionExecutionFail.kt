@@ -21,10 +21,11 @@ public class InstructionExecutionFail(
   public companion object CODEC : ScaleReader<InstructionExecutionFail>,
       ScaleWriter<InstructionExecutionFail> {
     public override fun read(reader: ScaleCodecReader): InstructionExecutionFail =
-        InstructionExecutionFail(Instruction.read(reader), reader.readString())
+        InstructionExecutionFail(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),
+        reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: InstructionExecutionFail): Unit {
-      Instruction.write(writer, instance.instruction)
+      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer, instance.instruction)
       writer.writeString(instance.reason)
     }
   }

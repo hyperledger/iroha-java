@@ -19,10 +19,13 @@ public class Metadata(
   private val map: Map<String, Value>
 ) {
   public companion object CODEC : ScaleReader<Metadata>, ScaleWriter<Metadata> {
-    public override fun read(reader: ScaleCodecReader): Metadata = Metadata(reader.read())
+    public override fun read(reader: ScaleCodecReader): Metadata =
+        Metadata(reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,
+        jp.co.soramitsu.schema.generated.datamodel.Value)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit {
-      Map.write(writer, instance.map)
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.map)
     }
   }
 }

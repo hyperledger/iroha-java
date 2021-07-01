@@ -93,13 +93,42 @@ object CodeGenerator {
             is UIntType -> "reader.readLong().toInt()"
             is FixedByteArray, is DynamicByteArray -> "reader.readByteArray()"
             is Vec -> {
-                "reader.read()"
+                when (type.innerType) {
+                    is Tuple -> {
+                        val tuple = type.innerType as Tuple
+                        val keyClassName = when (val kotlinType = resolveKotlinType(tuple.typeReferences.first().value!!)) {
+                            is ClassName -> kotlinType.canonicalName
+                            is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                        val valueClassName = when (val kotlinType = resolveKotlinType(tuple.typeReferences.last().value!!)) {
+                            is ClassName -> kotlinType.canonicalName
+                            is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                        "reader.read(jp.co.soramitsu.schema.codegen.MapReader($keyClassName, $valueClassName))"
+                    }
+                    else -> {
+                        when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                            is ClassName -> "reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(${kotlinType.simpleName}))"
+                            is ParameterizedTypeName -> "reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(${kotlinType.rawType.simpleName}))"
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                    }
+                }
+            }
+            is SetType -> {
+                when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                    is ClassName -> "reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(${kotlinType.simpleName})).toSet()"
+                    is ParameterizedTypeName -> "reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(${kotlinType.rawType.simpleName})).toSet()"
+                    else -> throw RuntimeException("Unexpected type")
+                }
             }
             else -> {
                 when (val kotlinType = resolveKotlinType(type)) {
-                    is ClassName -> "${kotlinType.simpleName}.read(reader)"
-                    is ParameterizedTypeName -> "${kotlinType.rawType.simpleName}.read(reader)"
-                    else -> throw RuntimeException("fooWrite")
+                    is ClassName -> "${kotlinType.canonicalName}.read(reader)"
+                    is ParameterizedTypeName -> "${kotlinType.rawType.canonicalName}.read(reader)"
+                    else -> throw RuntimeException("Unexpected type")
                 }
             }
         }
@@ -113,11 +142,43 @@ object CodeGenerator {
             is Compact -> "writer.writeCompactInt(instance.$propertyName)"
             is UIntType -> "writer.writeLong(instance.$propertyName.toLong())"
             is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.$propertyName)"
+            is Vec -> {
+                when (type.innerType) {
+                    is Tuple -> {
+                        val tuple = type.innerType as Tuple
+                        val keyClassName = when (val kotlinType = resolveKotlinType(tuple.typeReferences.first().value!!)) {
+                            is ClassName -> kotlinType.canonicalName
+                            is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                        val valueClassName = when (val kotlinType = resolveKotlinType(tuple.typeReferences.last().value!!)) {
+                            is ClassName -> kotlinType.canonicalName
+                            is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                        "writer.write(jp.co.soramitsu.schema.codegen.MapWriter($keyClassName, $valueClassName), instance.$propertyName)"
+                    }
+                    else -> {
+                        when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                            is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.$propertyName)"
+                            is ParameterizedTypeName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.rawType.simpleName}), instance.$propertyName)"
+                            else -> throw RuntimeException("Unexpected type")
+                        }
+                    }
+                }
+            }
+            is SetType -> {
+                when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                    is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.$propertyName.toList())"
+                    is ParameterizedTypeName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.rawType.simpleName}), instance.${propertyName.toList()}()))"
+                    else -> throw RuntimeException("Unexpected type")
+                }
+            }
             else -> {
                 when (val kotlinType = resolveKotlinType(type)) {
-                    is ClassName -> "${kotlinType.simpleName}.write(writer, instance.$propertyName)"
-                    is ParameterizedTypeName -> "${kotlinType.rawType.simpleName}.write(writer, instance.$propertyName)"
-                    else -> throw RuntimeException("fooWrite")
+                    is ClassName -> "${kotlinType.canonicalName}.write(writer, instance.$propertyName)"
+                    is ParameterizedTypeName -> "${kotlinType.rawType.canonicalName}.write(writer, instance.$propertyName)"
+                    else -> throw RuntimeException("Unexpected type")
                 }
             }
         }
@@ -150,17 +211,17 @@ object CodeGenerator {
 
     private fun implScaleReaderForEnumVariant(
         variant: EnumType.Variant,
-        innerPropertyName: String
+        canonicalName: String
     ): CodeBlock {
         val code = CodeBlock.of(fooRead(variant.type!!.value!!))
-        return CodeBlock.of("return ${variant.name}($code)")
+        return CodeBlock.of("return ${canonicalName}($code)")
     }
 
     private fun implScaleWriterForEnumVariant(
         variant: EnumType.Variant,
-        innerPropertyName: String
+        propertyName: String,
     ): CodeBlock {
-        val code = CodeBlock.of(fooWrite(variant.type!!.value!!, innerPropertyName))
+        val code = CodeBlock.of(fooWrite(variant.type!!.value!!, propertyName))
         return CodeBlock.builder()
             .add("$code")
             .build()
@@ -268,7 +329,7 @@ object CodeGenerator {
                     variantClass,
                     variant.name,
                     "$packageName.$className",
-                    implScaleReaderForEnumVariant(variant, normalizedName),
+                    implScaleReaderForEnumVariant(variant, "jp.co.soramitsu.schema.generated.$packageName.$className.${variant.name}"),
                     implScaleWriterForEnumVariant(variant, normalizedName)
                 )
             }
@@ -355,7 +416,6 @@ object CodeGenerator {
                             .parameterizedBy(resolveKotlinType(type.innerType!!))
                     }
                 }
-
             }
             is SetType -> {
                 ClassName("kotlin.collections", "Set")

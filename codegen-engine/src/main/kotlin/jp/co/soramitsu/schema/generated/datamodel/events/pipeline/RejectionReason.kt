@@ -29,10 +29,11 @@ public sealed class RejectionReason {
 
     public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
       public override fun read(reader: ScaleCodecReader): Block =
-          Block(BlockRejectionReason.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.Block(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
-        BlockRejectionReason.write(writer, instance.block)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.write(writer,
+            instance.block)
       }
     }
   }
@@ -47,10 +48,11 @@ public sealed class RejectionReason {
 
     public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction =
-          Transaction(TransactionRejectionReason.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.Transaction(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-        TransactionRejectionReason.write(writer, instance.transaction)
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.write(writer,
+            instance.transaction)
       }
     }
   }

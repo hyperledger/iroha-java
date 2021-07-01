@@ -20,11 +20,11 @@ public class Id(
 ) {
   public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
-        PublicKey.read(reader))
+        jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
       writer.writeString(instance.address)
-      PublicKey.write(writer, instance.publicKey)
+      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
     }
   }
 }

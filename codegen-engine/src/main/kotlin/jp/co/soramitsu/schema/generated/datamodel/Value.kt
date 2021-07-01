@@ -30,10 +30,11 @@ public sealed class Value {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<U32>, ScaleWriter<U32> {
-      public override fun read(reader: ScaleCodecReader): U32 = U32(reader.readLong().toInt())
+      public override fun read(reader: ScaleCodecReader): U32 =
+          jp.co.soramitsu.schema.generated.datamodel.Value.U32(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        writer.writeLong(instance.u32.toInt())
+        writer.writeLong(instance.u32.toLong())
       }
     }
   }
@@ -47,7 +48,8 @@ public sealed class Value {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Bool>, ScaleWriter<Bool> {
-      public override fun read(reader: ScaleCodecReader): Bool = Bool(reader.readBoolean())
+      public override fun read(reader: ScaleCodecReader): Bool =
+          jp.co.soramitsu.schema.generated.datamodel.Value.Bool(reader.readBoolean())
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
         writer.writeBoolean(instance.bool)
@@ -64,7 +66,8 @@ public sealed class Value {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<String>, ScaleWriter<String> {
-      public override fun read(reader: ScaleCodecReader): String = String(reader.readString())
+      public override fun read(reader: ScaleCodecReader): String =
+          jp.co.soramitsu.schema.generated.datamodel.Value.String(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
         writer.writeString(instance.string)
@@ -81,10 +84,11 @@ public sealed class Value {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Vec>, ScaleWriter<Vec> {
-      public override fun read(reader: ScaleCodecReader): Vec = Vec(reader.read())
+      public override fun read(reader: ScaleCodecReader): Vec =
+          jp.co.soramitsu.schema.generated.datamodel.Value.Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        List.write(writer, instance.vec)
+        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.vec)
       }
     }
   }
@@ -98,10 +102,11 @@ public sealed class Value {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
-      public override fun read(reader: ScaleCodecReader): Id = Id(IdBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Id =
+          jp.co.soramitsu.schema.generated.datamodel.Value.Id(jp.co.soramitsu.schema.generated.datamodel.IdBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-        IdBox.write(writer, instance.id)
+        jp.co.soramitsu.schema.generated.datamodel.IdBox.write(writer, instance.id)
       }
     }
   }
@@ -116,10 +121,11 @@ public sealed class Value {
 
     public companion object CODEC : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
       public override fun read(reader: ScaleCodecReader): Identifiable =
-          Identifiable(IdentifiableBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.Identifiable(jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
-        IdentifiableBox.write(writer, instance.identifiable)
+        jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.write(writer,
+            instance.identifiable)
       }
     }
   }
@@ -134,10 +140,10 @@ public sealed class Value {
 
     public companion object CODEC : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
       public override fun read(reader: ScaleCodecReader): PublicKey =
-          PublicKey(PublicKey.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.PublicKey(jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-        PublicKey.write(writer, instance.publicKey)
+        jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
       }
     }
   }
@@ -152,10 +158,10 @@ public sealed class Value {
 
     public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
       public override fun read(reader: ScaleCodecReader): Parameter =
-          Parameter(Parameter.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.Parameter(jp.co.soramitsu.schema.generated.datamodel.Parameter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-        Parameter.write(writer, instance.parameter)
+        jp.co.soramitsu.schema.generated.datamodel.Parameter.write(writer, instance.parameter)
       }
     }
   }
@@ -172,10 +178,11 @@ public sealed class Value {
     public companion object CODEC : ScaleReader<SignatureCheckCondition>,
         ScaleWriter<SignatureCheckCondition> {
       public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
-          SignatureCheckCondition(SignatureCheckCondition.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.SignatureCheckCondition(jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-        SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
+        jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.write(writer,
+            instance.signatureCheckCondition)
       }
     }
   }
@@ -191,10 +198,11 @@ public sealed class Value {
 
     public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
       public override fun read(reader: ScaleCodecReader): TransactionValue =
-          TransactionValue(TransactionValue.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.TransactionValue(jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
-        TransactionValue.write(writer, instance.transactionValue)
+        jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.write(writer,
+            instance.transactionValue)
       }
     }
   }
@@ -210,10 +218,11 @@ public sealed class Value {
 
     public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
       public override fun read(reader: ScaleCodecReader): PermissionToken =
-          PermissionToken(PermissionToken.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.Value.PermissionToken(jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-        PermissionToken.write(writer, instance.permissionToken)
+        jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken.write(writer,
+            instance.permissionToken)
       }
     }
   }

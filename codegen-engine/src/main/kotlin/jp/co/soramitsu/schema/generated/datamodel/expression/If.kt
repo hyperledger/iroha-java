@@ -18,13 +18,18 @@ public class If(
   private val elseExpression: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-    public override fun read(reader: ScaleCodecReader): If = If(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): If =
+        If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-      EvaluatesTo.write(writer, instance.condition)
-      EvaluatesTo.write(writer, instance.thenExpression)
-      EvaluatesTo.write(writer, instance.elseExpression)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.condition)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.thenExpression)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.elseExpression)
     }
   }
 }

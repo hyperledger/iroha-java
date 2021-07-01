@@ -29,10 +29,10 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<Register>, ScaleWriter<Register> {
       public override fun read(reader: ScaleCodecReader): Register =
-          Register(RegisterBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Register(jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
-        RegisterBox.write(writer, instance.register)
+        jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.write(writer, instance.register)
       }
     }
   }
@@ -47,10 +47,11 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<Unregister>, ScaleWriter<Unregister> {
       public override fun read(reader: ScaleCodecReader): Unregister =
-          Unregister(UnregisterBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Unregister(jp.co.soramitsu.schema.generated.datamodel.isi.UnregisterBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
-        UnregisterBox.write(writer, instance.unregister)
+        jp.co.soramitsu.schema.generated.datamodel.isi.UnregisterBox.write(writer,
+            instance.unregister)
       }
     }
   }
@@ -64,10 +65,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Mint>, ScaleWriter<Mint> {
-      public override fun read(reader: ScaleCodecReader): Mint = Mint(MintBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Mint =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Mint(jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
-        MintBox.write(writer, instance.mint)
+        jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.write(writer, instance.mint)
       }
     }
   }
@@ -81,10 +83,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Burn>, ScaleWriter<Burn> {
-      public override fun read(reader: ScaleCodecReader): Burn = Burn(BurnBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Burn =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Burn(jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
-        BurnBox.write(writer, instance.burn)
+        jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.write(writer, instance.burn)
       }
     }
   }
@@ -99,10 +102,10 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<Transfer>, ScaleWriter<Transfer> {
       public override fun read(reader: ScaleCodecReader): Transfer =
-          Transfer(TransferBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Transfer(jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
-        TransferBox.write(writer, instance.transfer)
+        jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.write(writer, instance.transfer)
       }
     }
   }
@@ -116,10 +119,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-      public override fun read(reader: ScaleCodecReader): If = If(If.read(reader))
+      public override fun read(reader: ScaleCodecReader): If =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.If(jp.co.soramitsu.schema.generated.datamodel.isi.If.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        If.write(writer, instance.if)
+        jp.co.soramitsu.schema.generated.datamodel.isi.If.write(writer, instance.if)
       }
     }
   }
@@ -133,10 +137,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 6
 
     public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
-      public override fun read(reader: ScaleCodecReader): Pair = Pair(Pair.read(reader))
+      public override fun read(reader: ScaleCodecReader): Pair =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Pair.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-        Pair.write(writer, instance.pair)
+        jp.co.soramitsu.schema.generated.datamodel.isi.Pair.write(writer, instance.pair)
       }
     }
   }
@@ -151,10 +156,10 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<Sequence>, ScaleWriter<Sequence> {
       public override fun read(reader: ScaleCodecReader): Sequence =
-          Sequence(SequenceBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Sequence(jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
-        SequenceBox.write(writer, instance.sequence)
+        jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.write(writer, instance.sequence)
       }
     }
   }
@@ -168,10 +173,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 8
 
     public companion object CODEC : ScaleReader<Fail>, ScaleWriter<Fail> {
-      public override fun read(reader: ScaleCodecReader): Fail = Fail(FailBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Fail =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Fail(jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
-        FailBox.write(writer, instance.fail)
+        jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.write(writer, instance.fail)
       }
     }
   }
@@ -186,10 +192,11 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
       public override fun read(reader: ScaleCodecReader): SetKeyValue =
-          SetKeyValue(SetKeyValueBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.SetKeyValue(jp.co.soramitsu.schema.generated.datamodel.isi.SetKeyValueBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
-        SetKeyValueBox.write(writer, instance.setKeyValue)
+        jp.co.soramitsu.schema.generated.datamodel.isi.SetKeyValueBox.write(writer,
+            instance.setKeyValue)
       }
     }
   }
@@ -204,10 +211,11 @@ public sealed class Instruction {
 
     public companion object CODEC : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
       public override fun read(reader: ScaleCodecReader): RemoveKeyValue =
-          RemoveKeyValue(RemoveKeyValueBox.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.RemoveKeyValue(jp.co.soramitsu.schema.generated.datamodel.isi.RemoveKeyValueBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
-        RemoveKeyValueBox.write(writer, instance.removeKeyValue)
+        jp.co.soramitsu.schema.generated.datamodel.isi.RemoveKeyValueBox.write(writer,
+            instance.removeKeyValue)
       }
     }
   }
@@ -221,10 +229,11 @@ public sealed class Instruction {
     public override fun discriminant(): Int = 11
 
     public companion object CODEC : ScaleReader<Grant>, ScaleWriter<Grant> {
-      public override fun read(reader: ScaleCodecReader): Grant = Grant(GrantBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Grant =
+          jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Grant(jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {
-        GrantBox.write(writer, instance.grant)
+        jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.write(writer, instance.grant)
       }
     }
   }

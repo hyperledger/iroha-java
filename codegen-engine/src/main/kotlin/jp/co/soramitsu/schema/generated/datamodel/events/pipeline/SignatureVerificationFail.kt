@@ -21,10 +21,11 @@ public class SignatureVerificationFail(
   public companion object CODEC : ScaleReader<SignatureVerificationFail>,
       ScaleWriter<SignatureVerificationFail> {
     public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
-        SignatureVerificationFail(Signature.read(reader), reader.readString())
+        SignatureVerificationFail(jp.co.soramitsu.schema.generated.crypto.Signature.read(reader),
+        reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail): Unit {
-      Signature.write(writer, instance.signature)
+      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.signature)
       writer.writeString(instance.reason)
     }
   }

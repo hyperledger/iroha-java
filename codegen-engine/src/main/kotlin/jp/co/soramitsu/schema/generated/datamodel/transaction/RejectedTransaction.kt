@@ -23,13 +23,15 @@ public class RejectedTransaction(
   public companion object CODEC : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction>
       {
     public override fun read(reader: ScaleCodecReader): RejectedTransaction =
-        RejectedTransaction(Payload.read(reader), reader.read(),
-        TransactionRejectionReason.read(reader))
+        RejectedTransaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.read(reader),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)),
+        jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-      Payload.write(writer, instance.payload)
-      List.write(writer, instance.signatures)
-      TransactionRejectionReason.write(writer, instance.rejectionReason)
+      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer, instance.payload)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
+      jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.write(writer,
+          instance.rejectionReason)
     }
   }
 }

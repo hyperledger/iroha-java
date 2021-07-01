@@ -30,10 +30,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Add>, ScaleWriter<Add> {
-      public override fun read(reader: ScaleCodecReader): Add = Add(Add.read(reader))
+      public override fun read(reader: ScaleCodecReader): Add =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Add(jp.co.soramitsu.schema.generated.datamodel.expression.Add.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
-        Add.write(writer, instance.add)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Add.write(writer, instance.add)
       }
     }
   }
@@ -47,10 +48,12 @@ public sealed class Expression {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Subtract>, ScaleWriter<Subtract> {
-      public override fun read(reader: ScaleCodecReader): Subtract = Subtract(Subtract.read(reader))
+      public override fun read(reader: ScaleCodecReader): Subtract =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Subtract(jp.co.soramitsu.schema.generated.datamodel.expression.Subtract.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-        Subtract.write(writer, instance.subtract)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Subtract.write(writer,
+            instance.subtract)
       }
     }
   }
@@ -64,10 +67,12 @@ public sealed class Expression {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Multiply>, ScaleWriter<Multiply> {
-      public override fun read(reader: ScaleCodecReader): Multiply = Multiply(Multiply.read(reader))
+      public override fun read(reader: ScaleCodecReader): Multiply =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Multiply(jp.co.soramitsu.schema.generated.datamodel.expression.Multiply.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
-        Multiply.write(writer, instance.multiply)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Multiply.write(writer,
+            instance.multiply)
       }
     }
   }
@@ -81,10 +86,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Divide>, ScaleWriter<Divide> {
-      public override fun read(reader: ScaleCodecReader): Divide = Divide(Divide.read(reader))
+      public override fun read(reader: ScaleCodecReader): Divide =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Divide(jp.co.soramitsu.schema.generated.datamodel.expression.Divide.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-        Divide.write(writer, instance.divide)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Divide.write(writer, instance.divide)
       }
     }
   }
@@ -98,10 +104,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Mod>, ScaleWriter<Mod> {
-      public override fun read(reader: ScaleCodecReader): Mod = Mod(Mod.read(reader))
+      public override fun read(reader: ScaleCodecReader): Mod =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Mod(jp.co.soramitsu.schema.generated.datamodel.expression.Mod.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-        Mod.write(writer, instance.mod)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Mod.write(writer, instance.mod)
       }
     }
   }
@@ -115,10 +122,12 @@ public sealed class Expression {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
-      public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(RaiseTo.read(reader))
+      public override fun read(reader: ScaleCodecReader): RaiseTo =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.RaiseTo(jp.co.soramitsu.schema.generated.datamodel.expression.RaiseTo.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-        RaiseTo.write(writer, instance.raiseTo)
+        jp.co.soramitsu.schema.generated.datamodel.expression.RaiseTo.write(writer,
+            instance.raiseTo)
       }
     }
   }
@@ -132,10 +141,12 @@ public sealed class Expression {
     public override fun discriminant(): Int = 6
 
     public companion object CODEC : ScaleReader<Greater>, ScaleWriter<Greater> {
-      public override fun read(reader: ScaleCodecReader): Greater = Greater(Greater.read(reader))
+      public override fun read(reader: ScaleCodecReader): Greater =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Greater(jp.co.soramitsu.schema.generated.datamodel.expression.Greater.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-        Greater.write(writer, instance.greater)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Greater.write(writer,
+            instance.greater)
       }
     }
   }
@@ -149,10 +160,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 7
 
     public companion object CODEC : ScaleReader<Less>, ScaleWriter<Less> {
-      public override fun read(reader: ScaleCodecReader): Less = Less(Less.read(reader))
+      public override fun read(reader: ScaleCodecReader): Less =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Less(jp.co.soramitsu.schema.generated.datamodel.expression.Less.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-        Less.write(writer, instance.less)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Less.write(writer, instance.less)
       }
     }
   }
@@ -166,10 +178,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 8
 
     public companion object CODEC : ScaleReader<Equal>, ScaleWriter<Equal> {
-      public override fun read(reader: ScaleCodecReader): Equal = Equal(Equal.read(reader))
+      public override fun read(reader: ScaleCodecReader): Equal =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Equal(jp.co.soramitsu.schema.generated.datamodel.expression.Equal.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-        Equal.write(writer, instance.equal)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Equal.write(writer, instance.equal)
       }
     }
   }
@@ -183,10 +196,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 9
 
     public companion object CODEC : ScaleReader<Not>, ScaleWriter<Not> {
-      public override fun read(reader: ScaleCodecReader): Not = Not(Not.read(reader))
+      public override fun read(reader: ScaleCodecReader): Not =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Not(jp.co.soramitsu.schema.generated.datamodel.expression.Not.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-        Not.write(writer, instance.not)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Not.write(writer, instance.not)
       }
     }
   }
@@ -200,10 +214,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 10
 
     public companion object CODEC : ScaleReader<And>, ScaleWriter<And> {
-      public override fun read(reader: ScaleCodecReader): And = And(And.read(reader))
+      public override fun read(reader: ScaleCodecReader): And =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.And(jp.co.soramitsu.schema.generated.datamodel.expression.And.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-        And.write(writer, instance.and)
+        jp.co.soramitsu.schema.generated.datamodel.expression.And.write(writer, instance.and)
       }
     }
   }
@@ -217,10 +232,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 11
 
     public companion object CODEC : ScaleReader<Or>, ScaleWriter<Or> {
-      public override fun read(reader: ScaleCodecReader): Or = Or(Or.read(reader))
+      public override fun read(reader: ScaleCodecReader): Or =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Or(jp.co.soramitsu.schema.generated.datamodel.expression.Or.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-        Or.write(writer, instance.or)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Or.write(writer, instance.or)
       }
     }
   }
@@ -234,10 +250,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 12
 
     public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-      public override fun read(reader: ScaleCodecReader): If = If(If.read(reader))
+      public override fun read(reader: ScaleCodecReader): If =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.If(jp.co.soramitsu.schema.generated.datamodel.expression.If.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        If.write(writer, instance.if)
+        jp.co.soramitsu.schema.generated.datamodel.expression.If.write(writer, instance.`if`)
       }
     }
   }
@@ -251,10 +268,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 13
 
     public companion object CODEC : ScaleReader<Raw>, ScaleWriter<Raw> {
-      public override fun read(reader: ScaleCodecReader): Raw = Raw(Value.read(reader))
+      public override fun read(reader: ScaleCodecReader): Raw =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Raw(jp.co.soramitsu.schema.generated.datamodel.Value.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
-        Value.write(writer, instance.raw)
+        jp.co.soramitsu.schema.generated.datamodel.Value.write(writer, instance.raw)
       }
     }
   }
@@ -268,10 +286,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 14
 
     public companion object CODEC : ScaleReader<Query>, ScaleWriter<Query> {
-      public override fun read(reader: ScaleCodecReader): Query = Query(QueryBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Query =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Query(jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
-        QueryBox.write(writer, instance.query)
+        jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.query)
       }
     }
   }
@@ -285,10 +304,12 @@ public sealed class Expression {
     public override fun discriminant(): Int = 15
 
     public companion object CODEC : ScaleReader<Contains>, ScaleWriter<Contains> {
-      public override fun read(reader: ScaleCodecReader): Contains = Contains(Contains.read(reader))
+      public override fun read(reader: ScaleCodecReader): Contains =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Contains(jp.co.soramitsu.schema.generated.datamodel.expression.Contains.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
-        Contains.write(writer, instance.contains)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Contains.write(writer,
+            instance.contains)
       }
     }
   }
@@ -303,10 +324,11 @@ public sealed class Expression {
 
     public companion object CODEC : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
       public override fun read(reader: ScaleCodecReader): ContainsAll =
-          ContainsAll(ContainsAll.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.ContainsAll(jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAll.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
-        ContainsAll.write(writer, instance.containsAll)
+        jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAll.write(writer,
+            instance.containsAll)
       }
     }
   }
@@ -321,10 +343,11 @@ public sealed class Expression {
 
     public companion object CODEC : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
       public override fun read(reader: ScaleCodecReader): ContainsAny =
-          ContainsAny(ContainsAny.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.ContainsAny(jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAny.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-        ContainsAny.write(writer, instance.containsAny)
+        jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAny.write(writer,
+            instance.containsAny)
       }
     }
   }
@@ -338,10 +361,11 @@ public sealed class Expression {
     public override fun discriminant(): Int = 18
 
     public companion object CODEC : ScaleReader<Where>, ScaleWriter<Where> {
-      public override fun read(reader: ScaleCodecReader): Where = Where(Where.read(reader))
+      public override fun read(reader: ScaleCodecReader): Where =
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Where(jp.co.soramitsu.schema.generated.datamodel.expression.Where.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-        Where.write(writer, instance.where)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Where.write(writer, instance.where)
       }
     }
   }
@@ -356,10 +380,11 @@ public sealed class Expression {
 
     public companion object CODEC : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
       public override fun read(reader: ScaleCodecReader): ContextValue =
-          ContextValue(ContextValue.read(reader))
+          jp.co.soramitsu.schema.generated.datamodel.expression.Expression.ContextValue(jp.co.soramitsu.schema.generated.datamodel.expression.ContextValue.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-        ContextValue.write(writer, instance.contextValue)
+        jp.co.soramitsu.schema.generated.datamodel.expression.ContextValue.write(writer,
+            instance.contextValue)
       }
     }
   }

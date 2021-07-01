@@ -17,12 +17,14 @@ public class RaiseTo(
   private val right: EvaluatesTo
 ) {
   public companion object CODEC : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
-    public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(EvaluatesTo.read(reader),
-        EvaluatesTo.read(reader))
+    public override fun read(reader: ScaleCodecReader): RaiseTo =
+        RaiseTo(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-      EvaluatesTo.write(writer, instance.left)
-      EvaluatesTo.write(writer, instance.right)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.left)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.right)
     }
   }
 }

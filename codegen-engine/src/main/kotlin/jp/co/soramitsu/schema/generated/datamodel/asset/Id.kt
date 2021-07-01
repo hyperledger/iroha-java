@@ -17,12 +17,14 @@ public class Id(
   private val accountId: jp.co.soramitsu.schema.generated.datamodel.account.Id
 ) {
   public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
-    public override fun read(reader: ScaleCodecReader): Id = Id(DefinitionId.read(reader),
-        Id.read(reader))
+    public override fun read(reader: ScaleCodecReader): Id =
+        Id(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-      DefinitionId.write(writer, instance.definitionId)
-      Id.write(writer, instance.accountId)
+      jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer,
+          instance.definitionId)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
     }
   }
 }

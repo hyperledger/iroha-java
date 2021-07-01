@@ -18,10 +18,10 @@ public class FindAssetsByName(
 ) {
   public companion object CODEC : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByName =
-        FindAssetsByName(EvaluatesTo.read(reader))
+        FindAssetsByName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
-      EvaluatesTo.write(writer, instance.name)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.name)
     }
   }
 }

@@ -30,11 +30,11 @@ public sealed class Parameter {
     public companion object CODEC : ScaleReader<MaximumFaultyPeersAmount>,
         ScaleWriter<MaximumFaultyPeersAmount> {
       public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
-          MaximumFaultyPeersAmount(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.Parameter.MaximumFaultyPeersAmount(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
-        writer.writeLong(instance.maximumFaultyPeersAmount.toInt())
+        writer.writeLong(instance.maximumFaultyPeersAmount.toLong())
       }
     }
   }
@@ -49,10 +49,10 @@ public sealed class Parameter {
 
     public companion object CODEC : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
       public override fun read(reader: ScaleCodecReader): BlockTime =
-          BlockTime(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.Parameter.BlockTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-        writer.writeLong(instance.blockTime.toInt())
+        writer.writeLong(instance.blockTime.toLong())
       }
     }
   }
@@ -67,10 +67,10 @@ public sealed class Parameter {
 
     public companion object CODEC : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
       public override fun read(reader: ScaleCodecReader): CommitTime =
-          CommitTime(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.Parameter.CommitTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-        writer.writeLong(instance.commitTime.toInt())
+        writer.writeLong(instance.commitTime.toLong())
       }
     }
   }
@@ -86,10 +86,10 @@ public sealed class Parameter {
     public companion object CODEC : ScaleReader<TransactionReceiptTime>,
         ScaleWriter<TransactionReceiptTime> {
       public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
-          TransactionReceiptTime(reader.readLong().toInt())
+          jp.co.soramitsu.schema.generated.datamodel.Parameter.TransactionReceiptTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-        writer.writeLong(instance.transactionReceiptTime.toInt())
+        writer.writeLong(instance.transactionReceiptTime.toLong())
       }
     }
   }

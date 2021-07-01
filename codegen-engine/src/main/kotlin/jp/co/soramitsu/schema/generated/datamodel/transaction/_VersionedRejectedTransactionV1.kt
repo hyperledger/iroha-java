@@ -18,11 +18,12 @@ public class _VersionedRejectedTransactionV1(
   public companion object CODEC : ScaleReader<_VersionedRejectedTransactionV1>,
       ScaleWriter<_VersionedRejectedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedRejectedTransactionV1 =
-        _VersionedRejectedTransactionV1(RejectedTransaction.read(reader))
+        _VersionedRejectedTransactionV1(jp.co.soramitsu.schema.generated.datamodel.transaction.RejectedTransaction.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedRejectedTransactionV1):
         Unit {
-      RejectedTransaction.write(writer, instance.rejectedTransaction)
+      jp.co.soramitsu.schema.generated.datamodel.transaction.RejectedTransaction.write(writer,
+          instance.rejectedTransaction)
     }
   }
 }

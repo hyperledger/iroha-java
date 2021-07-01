@@ -27,15 +27,20 @@ public class Payload(
   private val metadata: Map<String, Value>
 ) {
   public companion object CODEC : ScaleReader<Payload>, ScaleWriter<Payload> {
-    public override fun read(reader: ScaleCodecReader): Payload = Payload(Id.read(reader),
-        reader.read(), reader.readLong().toInt(), reader.readLong().toInt(), reader.read())
+    public override fun read(reader: ScaleCodecReader): Payload =
+        Payload(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
+        reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)),
+        reader.readLong().toInt(), reader.readLong().toInt(),
+        reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,
+        jp.co.soramitsu.schema.generated.datamodel.Value)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-      Id.write(writer, instance.accountId)
-      List.write(writer, instance.instructions)
-      writer.writeLong(instance.creationTime.toInt())
-      writer.writeLong(instance.timeToLiveMs.toInt())
-      Map.write(writer, instance.metadata)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
+      writer.writeLong(instance.creationTime.toLong())
+      writer.writeLong(instance.timeToLiveMs.toLong())
+      writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.metadata)
     }
   }
 }

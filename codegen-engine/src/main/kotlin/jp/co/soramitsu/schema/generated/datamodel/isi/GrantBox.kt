@@ -19,11 +19,14 @@ public class GrantBox(
 ) {
   public companion object CODEC : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
     public override fun read(reader: ScaleCodecReader): GrantBox =
-        GrantBox(EvaluatesTo.read(reader), EvaluatesTo.read(reader))
+        GrantBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
+        jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: GrantBox): Unit {
-      EvaluatesTo.write(writer, instance.object)
-      EvaluatesTo.write(writer, instance.destinationId)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.object)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.destinationId)
     }
   }
 }
