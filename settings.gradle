@@ -2,4 +2,4 @@ rootProject.name = 'iroha2-java'
 
 include 'testcontainers'
 include 'codegen-engine'
-include 'datamodel-generated'
+

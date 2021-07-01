@@ -49,14 +49,6 @@ fun main() {
     CodeGenerator.generate(result.typePreset)
 }
 
-object EvaluatesToExtension : WrapperExtension() {
-    override val wrapperName: String
-        get() = "iroha_data_model::expression::EvaluatesTo"
-
-    override fun createWrapper(name: String, innerTypeRef: TypeReference): Type<*> {
-       return EvaluatesTo(name, innerTypeRef)
-    }
-}
 
 object MapExtension : DynamicTypeExtension {
 
@@ -150,16 +142,3 @@ class MapType(name: String) : Type<MapType>(name) {
 
 }
 
-class EvaluatesTo(name : String, innerTypeRef: TypeReference) : WrapperType<EvaluatesTo>(name, innerTypeRef) {
-
-    override fun isValidInstance(instance: Any?): Boolean = instance is EvaluatesTo
-
-    override fun decode(scaleCodecReader: ScaleCodecReader): EvaluatesTo {
-        TODO("Not yet implemented")
-    }
-
-    override fun encode(scaleCodecWriter: ScaleCodecWriter, value: EvaluatesTo) {
-        TODO("Not yet implemented")
-    }
-
-}
