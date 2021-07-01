@@ -25,8 +25,9 @@ public class FindAssetKeyValueByIdAndKey(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
         Unit {
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.id)
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.`id`)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.`key`)
     }
   }
 }

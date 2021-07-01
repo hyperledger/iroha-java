@@ -33,7 +33,7 @@ public sealed class TransactionValue {
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
         jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedTransaction.write(writer,
-            instance.transaction)
+            instance.`transaction`)
       }
     }
   }
@@ -53,7 +53,7 @@ public sealed class TransactionValue {
 
       public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
         jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedRejectedTransaction.write(writer,
-            instance.rejectedTransaction)
+            instance.`rejectedTransaction`)
       }
     }
   }
@@ -67,6 +67,7 @@ public sealed class TransactionValue {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Transaction.write(writer, instance as Transaction)
       	1 -> RejectedTransaction.write(writer, instance as RejectedTransaction)

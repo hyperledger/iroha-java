@@ -23,8 +23,8 @@ public class Id(
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
       jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer,
-          instance.definitionId)
-      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
+          instance.`definitionId`)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.`accountId`)
     }
   }
 }

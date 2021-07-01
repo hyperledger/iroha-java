@@ -26,9 +26,9 @@ public class PermissionToken(
         jp.co.soramitsu.schema.generated.datamodel.Value)))
 
     public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-      writer.writeString(instance.name)
+      writer.writeString(instance.`name`)
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
-          jp.co.soramitsu.schema.generated.datamodel.Value), instance.params)
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.`params`)
     }
   }
 }

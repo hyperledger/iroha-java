@@ -20,7 +20,7 @@ public class FailBox(
     public override fun read(reader: ScaleCodecReader): FailBox = FailBox(reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: FailBox): Unit {
-      writer.writeString(instance.message)
+      writer.writeString(instance.`message`)
     }
   }
 }

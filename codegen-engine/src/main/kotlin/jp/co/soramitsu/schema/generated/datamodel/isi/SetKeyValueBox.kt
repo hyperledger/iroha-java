@@ -26,10 +26,11 @@ public class SetKeyValueBox(
 
     public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.objectId)
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
+          instance.`objectId`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.value)
+          instance.`key`)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.`value`)
     }
   }
 }

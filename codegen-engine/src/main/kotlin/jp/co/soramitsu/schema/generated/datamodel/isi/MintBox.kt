@@ -24,9 +24,9 @@ public class MintBox(
 
     public override fun write(writer: ScaleCodecWriter, instance: MintBox): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.object)
+          instance.`object`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.destinationId)
+          instance.`destinationId`)
     }
   }
 }

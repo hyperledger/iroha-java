@@ -8,8 +8,11 @@ import java.util.stream.Collectors
 
 class MapReader<K, V>(keyReader: ScaleReader<K>, valueReader: ScaleReader<V>) :
     ScaleReader<Map<K, V>> {
+
     private val listReader: ListReader<Map.Entry<K, V>> =
         ListReader(EntryReader(keyReader, valueReader))
+
+    constructor(companion: String.Companion, valueReader: ScaleReader<V>) : this(ScaleReader<String> { p0 -> p0.readString() } as ScaleReader<K>, valueReader)
 
     override fun read(reader: ScaleCodecReader): Map<K, V> {
         return reader.read(listReader).stream()

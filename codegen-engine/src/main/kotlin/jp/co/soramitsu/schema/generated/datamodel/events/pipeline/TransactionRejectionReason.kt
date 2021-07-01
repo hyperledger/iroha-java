@@ -33,7 +33,7 @@ public sealed class TransactionRejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.NotPermittedFail.write(writer,
-            instance.notPermitted)
+            instance.`notPermitted`)
       }
     }
   }
@@ -54,7 +54,7 @@ public sealed class TransactionRejectionReason {
       public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.UnsatisfiedSignatureConditionFail.write(writer,
-            instance.unsatisfiedSignatureCondition)
+            instance.`unsatisfiedSignatureCondition`)
       }
     }
   }
@@ -74,7 +74,7 @@ public sealed class TransactionRejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.InstructionExecutionFail.write(writer,
-            instance.instructionExecution)
+            instance.`instructionExecution`)
       }
     }
   }
@@ -94,7 +94,7 @@ public sealed class TransactionRejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.SignatureVerificationFail.write(writer,
-            instance.signatureVerification)
+            instance.`signatureVerification`)
       }
     }
   }
@@ -104,6 +104,17 @@ public sealed class TransactionRejectionReason {
    */
   public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
     public override fun discriminant(): Int = 4
+
+    public companion object CODEC : ScaleReader<UnexpectedGenesisAccountSignature>,
+        ScaleWriter<UnexpectedGenesisAccountSignature> {
+      public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.UnexpectedGenesisAccountSignature()
+
+      public override fun write(writer: ScaleCodecWriter,
+          instance: UnexpectedGenesisAccountSignature): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<TransactionRejectionReason>,
@@ -120,6 +131,7 @@ public sealed class TransactionRejectionReason {
 
     public override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason):
         Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> NotPermitted.write(writer, instance as NotPermitted)
       	1 -> UnsatisfiedSignatureCondition.write(writer, instance as UnsatisfiedSignatureCondition)

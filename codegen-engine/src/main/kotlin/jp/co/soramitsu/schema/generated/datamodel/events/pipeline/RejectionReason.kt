@@ -33,7 +33,7 @@ public sealed class RejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.write(writer,
-            instance.block)
+            instance.`block`)
       }
     }
   }
@@ -52,7 +52,7 @@ public sealed class RejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.write(writer,
-            instance.transaction)
+            instance.`transaction`)
       }
     }
   }
@@ -65,6 +65,7 @@ public sealed class RejectionReason {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectionReason): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Block.write(writer, instance as Block)
       	1 -> Transaction.write(writer, instance as Transaction)

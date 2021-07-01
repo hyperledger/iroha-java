@@ -23,7 +23,7 @@ public class _VersionedRejectedTransactionV1(
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedRejectedTransactionV1):
         Unit {
       jp.co.soramitsu.schema.generated.datamodel.transaction.RejectedTransaction.write(writer,
-          instance.rejectedTransaction)
+          instance.`rejectedTransaction`)
     }
   }
 }

@@ -21,7 +21,7 @@ public class NotPermittedFail(
         NotPermittedFail(reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: NotPermittedFail): Unit {
-      writer.writeString(instance.reason)
+      writer.writeString(instance.`reason`)
     }
   }
 }

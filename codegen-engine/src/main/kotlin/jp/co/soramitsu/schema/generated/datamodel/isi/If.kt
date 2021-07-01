@@ -27,9 +27,9 @@ public class If(
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.condition)
-      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer, instance.then)
-      writer.writeOptional(instance.otherwise)
+          instance.`condition`)
+      jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer, instance.`then`)
+      writer.writeOptional(instance.`otherwise`)
     }
   }
 }

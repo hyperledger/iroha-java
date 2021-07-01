@@ -24,8 +24,9 @@ public class Transaction(
         reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer, instance.payload)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
+      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer,
+          instance.`payload`)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.`signatures`)
     }
   }
 }

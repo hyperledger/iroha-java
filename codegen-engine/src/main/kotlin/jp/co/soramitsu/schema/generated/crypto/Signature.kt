@@ -23,8 +23,8 @@ public class Signature(
         reader.readByteArray())
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
-      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
-      writer.writeByteArray(instance.signature)
+      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.`publicKey`)
+      writer.writeByteArray(instance.`signature`)
     }
   }
 }

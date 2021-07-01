@@ -23,9 +23,9 @@ public class Pair(
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
       jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer,
-          instance.leftInstruction)
+          instance.`leftInstruction`)
       jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer,
-          instance.rightInstruction)
+          instance.`rightInstruction`)
     }
   }
 }

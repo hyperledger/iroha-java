@@ -24,6 +24,15 @@ public sealed class AssetValueType {
    */
   public class Quantity : AssetValueType() {
     public override fun discriminant(): Int = 0
+
+    public companion object CODEC : ScaleReader<Quantity>, ScaleWriter<Quantity> {
+      public override fun read(reader: ScaleCodecReader): Quantity =
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.Quantity()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   /**
@@ -31,6 +40,15 @@ public sealed class AssetValueType {
    */
   public class BigQuantity : AssetValueType() {
     public override fun discriminant(): Int = 1
+
+    public companion object CODEC : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
+      public override fun read(reader: ScaleCodecReader): BigQuantity =
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.BigQuantity()
+
+      public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   /**
@@ -38,6 +56,15 @@ public sealed class AssetValueType {
    */
   public class Store : AssetValueType() {
     public override fun discriminant(): Int = 2
+
+    public companion object CODEC : ScaleReader<Store>, ScaleWriter<Store> {
+      public override fun read(reader: ScaleCodecReader): Store =
+          jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.Store()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
@@ -49,6 +76,7 @@ public sealed class AssetValueType {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetValueType): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Quantity.write(writer, instance as Quantity)
       	1 -> BigQuantity.write(writer, instance as BigQuantity)

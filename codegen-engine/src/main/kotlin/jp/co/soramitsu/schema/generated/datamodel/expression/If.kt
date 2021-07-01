@@ -25,11 +25,11 @@ public class If(
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.condition)
+          instance.`condition`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.thenExpression)
+          instance.`thenExpression`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.elseExpression)
+          instance.`elseExpression`)
     }
   }
 }

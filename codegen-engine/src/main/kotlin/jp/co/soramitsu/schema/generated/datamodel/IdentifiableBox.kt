@@ -32,7 +32,7 @@ public sealed class IdentifiableBox {
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Account(jp.co.soramitsu.schema.generated.datamodel.account.Account.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.account.Account.write(writer, instance.account)
+        jp.co.soramitsu.schema.generated.datamodel.account.Account.write(writer, instance.`account`)
       }
     }
   }
@@ -51,7 +51,7 @@ public sealed class IdentifiableBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
         jp.co.soramitsu.schema.generated.datamodel.account.NewAccount.write(writer,
-            instance.newAccount)
+            instance.`newAccount`)
       }
     }
   }
@@ -69,7 +69,7 @@ public sealed class IdentifiableBox {
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Asset(jp.co.soramitsu.schema.generated.datamodel.asset.Asset.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.asset.Asset.write(writer, instance.asset)
+        jp.co.soramitsu.schema.generated.datamodel.asset.Asset.write(writer, instance.`asset`)
       }
     }
   }
@@ -88,7 +88,7 @@ public sealed class IdentifiableBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
         jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.write(writer,
-            instance.assetDefinition)
+            instance.`assetDefinition`)
       }
     }
   }
@@ -106,7 +106,7 @@ public sealed class IdentifiableBox {
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Domain(jp.co.soramitsu.schema.generated.datamodel.domain.Domain.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.domain.Domain.write(writer, instance.domain)
+        jp.co.soramitsu.schema.generated.datamodel.domain.Domain.write(writer, instance.`domain`)
       }
     }
   }
@@ -124,7 +124,7 @@ public sealed class IdentifiableBox {
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Peer.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.peer.Peer.write(writer, instance.peer)
+        jp.co.soramitsu.schema.generated.datamodel.peer.Peer.write(writer, instance.`peer`)
       }
     }
   }
@@ -134,6 +134,15 @@ public sealed class IdentifiableBox {
    */
   public class World : IdentifiableBox() {
     public override fun discriminant(): Int = 6
+
+    public companion object CODEC : ScaleReader<World>, ScaleWriter<World> {
+      public override fun read(reader: ScaleCodecReader): World =
+          jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.World()
+
+      public override fun write(writer: ScaleCodecWriter, instance: World): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<IdentifiableBox>, ScaleWriter<IdentifiableBox> {
@@ -149,6 +158,7 @@ public sealed class IdentifiableBox {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: IdentifiableBox): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Account.write(writer, instance as Account)
       	1 -> NewAccount.write(writer, instance as NewAccount)

@@ -23,7 +23,7 @@ public class SignatureCheckCondition(
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.evaluatesTo)
+          instance.`evaluatesTo`)
     }
   }
 }

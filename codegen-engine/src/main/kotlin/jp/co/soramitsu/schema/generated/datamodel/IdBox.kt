@@ -35,7 +35,7 @@ public sealed class IdBox {
           jp.co.soramitsu.schema.generated.datamodel.IdBox.AccountId(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
+        jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.`accountId`)
       }
     }
   }
@@ -53,7 +53,7 @@ public sealed class IdBox {
           jp.co.soramitsu.schema.generated.datamodel.IdBox.AssetId(jp.co.soramitsu.schema.generated.datamodel.asset.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.assetId)
+        jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.`assetId`)
       }
     }
   }
@@ -72,7 +72,7 @@ public sealed class IdBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
         jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer,
-            instance.assetDefinitionId)
+            instance.`assetDefinitionId`)
       }
     }
   }
@@ -90,7 +90,7 @@ public sealed class IdBox {
           jp.co.soramitsu.schema.generated.datamodel.IdBox.DomainName(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
-        writer.writeString(instance.domainName)
+        writer.writeString(instance.`domainName`)
       }
     }
   }
@@ -108,7 +108,7 @@ public sealed class IdBox {
           jp.co.soramitsu.schema.generated.datamodel.IdBox.PeerId(jp.co.soramitsu.schema.generated.datamodel.peer.Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.peer.Id.write(writer, instance.peerId)
+        jp.co.soramitsu.schema.generated.datamodel.peer.Id.write(writer, instance.`peerId`)
       }
     }
   }
@@ -118,6 +118,15 @@ public sealed class IdBox {
    */
   public class WorldId : IdBox() {
     public override fun discriminant(): Int = 5
+
+    public companion object CODEC : ScaleReader<WorldId>, ScaleWriter<WorldId> {
+      public override fun read(reader: ScaleCodecReader): WorldId =
+          jp.co.soramitsu.schema.generated.datamodel.IdBox.WorldId()
+
+      public override fun write(writer: ScaleCodecWriter, instance: WorldId): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<IdBox>, ScaleWriter<IdBox> {
@@ -132,6 +141,7 @@ public sealed class IdBox {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: IdBox): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> AccountId.write(writer, instance as AccountId)
       	1 -> AssetId.write(writer, instance as AssetId)

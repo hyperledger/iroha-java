@@ -22,7 +22,7 @@ public class _VersionedTransactionV1(
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {
       jp.co.soramitsu.schema.generated.datamodel.transaction.Transaction.write(writer,
-          instance.transaction)
+          instance.`transaction`)
     }
   }
 }

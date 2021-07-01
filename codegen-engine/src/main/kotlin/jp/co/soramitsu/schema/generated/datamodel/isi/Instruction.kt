@@ -32,7 +32,8 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Register(jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.write(writer, instance.register)
+        jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.write(writer,
+            instance.`register`)
       }
     }
   }
@@ -51,7 +52,7 @@ public sealed class Instruction {
 
       public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
         jp.co.soramitsu.schema.generated.datamodel.isi.UnregisterBox.write(writer,
-            instance.unregister)
+            instance.`unregister`)
       }
     }
   }
@@ -69,7 +70,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Mint(jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.write(writer, instance.mint)
+        jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.write(writer, instance.`mint`)
       }
     }
   }
@@ -87,7 +88,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Burn(jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.write(writer, instance.burn)
+        jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.write(writer, instance.`burn`)
       }
     }
   }
@@ -105,7 +106,8 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Transfer(jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.write(writer, instance.transfer)
+        jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.write(writer,
+            instance.`transfer`)
       }
     }
   }
@@ -123,7 +125,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.If(jp.co.soramitsu.schema.generated.datamodel.isi.If.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.If.write(writer, instance.if)
+        jp.co.soramitsu.schema.generated.datamodel.isi.If.write(writer, instance.`if`)
       }
     }
   }
@@ -141,7 +143,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Pair.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.Pair.write(writer, instance.pair)
+        jp.co.soramitsu.schema.generated.datamodel.isi.Pair.write(writer, instance.`pair`)
       }
     }
   }
@@ -159,7 +161,8 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Sequence(jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.write(writer, instance.sequence)
+        jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.write(writer,
+            instance.`sequence`)
       }
     }
   }
@@ -177,7 +180,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Fail(jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.write(writer, instance.fail)
+        jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.write(writer, instance.`fail`)
       }
     }
   }
@@ -196,7 +199,7 @@ public sealed class Instruction {
 
       public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
         jp.co.soramitsu.schema.generated.datamodel.isi.SetKeyValueBox.write(writer,
-            instance.setKeyValue)
+            instance.`setKeyValue`)
       }
     }
   }
@@ -215,7 +218,7 @@ public sealed class Instruction {
 
       public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
         jp.co.soramitsu.schema.generated.datamodel.isi.RemoveKeyValueBox.write(writer,
-            instance.removeKeyValue)
+            instance.`removeKeyValue`)
       }
     }
   }
@@ -233,7 +236,7 @@ public sealed class Instruction {
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Grant(jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.write(writer, instance.grant)
+        jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.write(writer, instance.`grant`)
       }
     }
   }
@@ -256,6 +259,7 @@ public sealed class Instruction {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Instruction): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Register.write(writer, instance as Register)
       	1 -> Unregister.write(writer, instance as Unregister)

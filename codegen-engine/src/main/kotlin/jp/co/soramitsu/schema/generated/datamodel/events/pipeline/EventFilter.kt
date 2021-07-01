@@ -23,8 +23,8 @@ public class EventFilter(
         EventFilter(reader.readOptional(), reader.readOptional())
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-      writer.writeOptional(instance.entity)
-      writer.writeOptional(instance.hash)
+      writer.writeOptional(instance.`entity`)
+      writer.writeOptional(instance.`hash`)
     }
   }
 }

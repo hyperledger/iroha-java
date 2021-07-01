@@ -34,7 +34,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.U32(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        writer.writeLong(instance.u32.toLong())
+        writer.writeLong(instance.`u32`.toLong())
       }
     }
   }
@@ -52,7 +52,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.Bool(reader.readBoolean())
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
-        writer.writeBoolean(instance.bool)
+        writer.writeBoolean(instance.`bool`)
       }
     }
   }
@@ -70,7 +70,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.String(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
-        writer.writeString(instance.string)
+        writer.writeString(instance.`string`)
       }
     }
   }
@@ -88,7 +88,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.vec)
+        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.`vec`)
       }
     }
   }
@@ -106,7 +106,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.Id(jp.co.soramitsu.schema.generated.datamodel.IdBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.IdBox.write(writer, instance.id)
+        jp.co.soramitsu.schema.generated.datamodel.IdBox.write(writer, instance.`id`)
       }
     }
   }
@@ -125,7 +125,7 @@ public sealed class Value {
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
         jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.write(writer,
-            instance.identifiable)
+            instance.`identifiable`)
       }
     }
   }
@@ -143,7 +143,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.PublicKey(jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-        jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
+        jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.`publicKey`)
       }
     }
   }
@@ -161,7 +161,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.Parameter(jp.co.soramitsu.schema.generated.datamodel.Parameter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.Parameter.write(writer, instance.parameter)
+        jp.co.soramitsu.schema.generated.datamodel.Parameter.write(writer, instance.`parameter`)
       }
     }
   }
@@ -182,7 +182,7 @@ public sealed class Value {
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
         jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.write(writer,
-            instance.signatureCheckCondition)
+            instance.`signatureCheckCondition`)
       }
     }
   }
@@ -202,7 +202,7 @@ public sealed class Value {
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
         jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.write(writer,
-            instance.transactionValue)
+            instance.`transactionValue`)
       }
     }
   }
@@ -222,7 +222,7 @@ public sealed class Value {
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
         jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken.write(writer,
-            instance.permissionToken)
+            instance.`permissionToken`)
       }
     }
   }
@@ -244,6 +244,7 @@ public sealed class Value {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Value): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> U32.write(writer, instance as U32)
       	1 -> Bool.write(writer, instance as Bool)

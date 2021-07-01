@@ -38,15 +38,16 @@ public class Account(
         jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.id)
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.`id`)
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.asset.Id,
-          jp.co.soramitsu.schema.generated.datamodel.asset.Asset), instance.assets)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.signatories)
+          jp.co.soramitsu.schema.generated.datamodel.asset.Asset), instance.`assets`)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.`signatories`)
       writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PermissionToken),
-          instance.permissionTokens.toList())
+          instance.`permissionTokens`.toList())
       jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.write(writer,
-          instance.signatureCheckCondition)
-      jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.metadata)
+          instance.`signatureCheckCondition`)
+      jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer,
+          instance.`metadata`)
     }
   }
 }

@@ -25,8 +25,8 @@ public class SignatureVerificationFail(
         reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail): Unit {
-      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.signature)
-      writer.writeString(instance.reason)
+      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.`signature`)
+      writer.writeString(instance.`reason`)
     }
   }
 }

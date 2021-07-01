@@ -24,7 +24,7 @@ public class UnsatisfiedSignatureConditionFail(
 
     public override fun write(writer: ScaleCodecWriter,
         instance: UnsatisfiedSignatureConditionFail): Unit {
-      writer.writeString(instance.reason)
+      writer.writeString(instance.`reason`)
     }
   }
 }

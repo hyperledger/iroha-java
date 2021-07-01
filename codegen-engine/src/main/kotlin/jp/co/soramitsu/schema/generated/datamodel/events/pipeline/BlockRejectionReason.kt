@@ -24,6 +24,16 @@ public sealed class BlockRejectionReason {
    */
   public class ConsensusBlockRejection : BlockRejectionReason() {
     public override fun discriminant(): Int = 0
+
+    public companion object CODEC : ScaleReader<ConsensusBlockRejection>,
+        ScaleWriter<ConsensusBlockRejection> {
+      public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.ConsensusBlockRejection()
+
+      public override fun write(writer: ScaleCodecWriter, instance: ConsensusBlockRejection): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<BlockRejectionReason>,
@@ -35,6 +45,7 @@ public sealed class BlockRejectionReason {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: BlockRejectionReason): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> ConsensusBlockRejection.write(writer, instance as ConsensusBlockRejection)
       	else -> throw RuntimeException("Unresolved discriminant of the enum variant")

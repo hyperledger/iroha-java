@@ -25,7 +25,7 @@ public class Metadata(
 
     public override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit {
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
-          jp.co.soramitsu.schema.generated.datamodel.Value), instance.map)
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.`map`)
     }
   }
 }

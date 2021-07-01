@@ -34,7 +34,7 @@ public sealed class Parameter {
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
-        writer.writeLong(instance.maximumFaultyPeersAmount.toLong())
+        writer.writeLong(instance.`maximumFaultyPeersAmount`.toLong())
       }
     }
   }
@@ -52,7 +52,7 @@ public sealed class Parameter {
           jp.co.soramitsu.schema.generated.datamodel.Parameter.BlockTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-        writer.writeLong(instance.blockTime.toLong())
+        writer.writeLong(instance.`blockTime`.toLong())
       }
     }
   }
@@ -70,7 +70,7 @@ public sealed class Parameter {
           jp.co.soramitsu.schema.generated.datamodel.Parameter.CommitTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-        writer.writeLong(instance.commitTime.toLong())
+        writer.writeLong(instance.`commitTime`.toLong())
       }
     }
   }
@@ -89,7 +89,7 @@ public sealed class Parameter {
           jp.co.soramitsu.schema.generated.datamodel.Parameter.TransactionReceiptTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-        writer.writeLong(instance.transactionReceiptTime.toLong())
+        writer.writeLong(instance.`transactionReceiptTime`.toLong())
       }
     }
   }
@@ -104,6 +104,7 @@ public sealed class Parameter {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> MaximumFaultyPeersAmount.write(writer, instance as MaximumFaultyPeersAmount)
       	1 -> BlockTime.write(writer, instance as BlockTime)

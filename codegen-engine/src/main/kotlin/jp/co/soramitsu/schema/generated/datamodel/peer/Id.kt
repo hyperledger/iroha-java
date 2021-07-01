@@ -23,8 +23,8 @@ public class Id(
         jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-      writer.writeString(instance.address)
-      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.publicKey)
+      writer.writeString(instance.`address`)
+      jp.co.soramitsu.schema.generated.crypto.PublicKey.write(writer, instance.`publicKey`)
     }
   }
 }

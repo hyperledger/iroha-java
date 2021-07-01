@@ -20,7 +20,7 @@ public class Peer(
         Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Id.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.peer.Id.write(writer, instance.id)
+      jp.co.soramitsu.schema.generated.datamodel.peer.Id.write(writer, instance.`id`)
     }
   }
 }

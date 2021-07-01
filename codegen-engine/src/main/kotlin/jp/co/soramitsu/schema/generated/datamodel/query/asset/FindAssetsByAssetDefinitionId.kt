@@ -24,7 +24,7 @@ public class FindAssetsByAssetDefinitionId(
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
         Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.assetDefinitionId)
+          instance.`assetDefinitionId`)
     }
   }
 }

@@ -34,7 +34,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.account.FindAllAccounts.write(writer,
-            instance.findAllAccounts)
+            instance.`findAllAccounts`)
       }
     }
   }
@@ -54,7 +54,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountById.write(writer,
-            instance.findAccountById)
+            instance.`findAccountById`)
       }
     }
   }
@@ -76,7 +76,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey.write(writer,
-            instance.findAccountKeyValueByIdAndKey)
+            instance.`findAccountKeyValueByIdAndKey`)
       }
     }
   }
@@ -97,7 +97,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByName.write(writer,
-            instance.findAccountsByName)
+            instance.`findAccountsByName`)
       }
     }
   }
@@ -119,7 +119,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.account.FindAccountsByDomainName.write(writer,
-            instance.findAccountsByDomainName)
+            instance.`findAccountsByDomainName`)
       }
     }
   }
@@ -138,7 +138,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssets.write(writer,
-            instance.findAllAssets)
+            instance.`findAllAssets`)
       }
     }
   }
@@ -160,7 +160,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAllAssetsDefinitions.write(writer,
-            instance.findAllAssetsDefinitions)
+            instance.`findAllAssetsDefinitions`)
       }
     }
   }
@@ -179,7 +179,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetById): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetById.write(writer,
-            instance.findAssetById)
+            instance.`findAssetById`)
       }
     }
   }
@@ -199,7 +199,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByName.write(writer,
-            instance.findAssetsByName)
+            instance.`findAssetsByName`)
       }
     }
   }
@@ -220,7 +220,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountId.write(writer,
-            instance.findAssetsByAccountId)
+            instance.`findAssetsByAccountId`)
       }
     }
   }
@@ -242,7 +242,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId.write(writer,
-            instance.findAssetsByAssetDefinitionId)
+            instance.`findAssetsByAssetDefinitionId`)
       }
     }
   }
@@ -263,7 +263,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainName.write(writer,
-            instance.findAssetsByDomainName)
+            instance.`findAssetsByDomainName`)
       }
     }
   }
@@ -286,7 +286,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
-            instance.findAssetsByAccountIdAndAssetDefinitionId)
+            instance.`findAssetsByAccountIdAndAssetDefinitionId`)
       }
     }
   }
@@ -309,7 +309,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.write(writer,
-            instance.findAssetsByDomainNameAndAssetDefinitionId)
+            instance.`findAssetsByDomainNameAndAssetDefinitionId`)
       }
     }
   }
@@ -330,7 +330,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetQuantityById.write(writer,
-            instance.findAssetQuantityById)
+            instance.`findAssetQuantityById`)
       }
     }
   }
@@ -352,7 +352,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey.write(writer,
-            instance.findAssetKeyValueByIdAndKey)
+            instance.`findAssetKeyValueByIdAndKey`)
       }
     }
   }
@@ -372,7 +372,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.domain.FindAllDomains.write(writer,
-            instance.findAllDomains)
+            instance.`findAllDomains`)
       }
     }
   }
@@ -392,7 +392,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.domain.FindDomainByName.write(writer,
-            instance.findDomainByName)
+            instance.`findDomainByName`)
       }
     }
   }
@@ -411,7 +411,7 @@ public sealed class QueryBox {
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.peer.FindAllPeers.write(writer,
-            instance.findAllPeers)
+            instance.`findAllPeers`)
       }
     }
   }
@@ -433,7 +433,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
           Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.transaction.FindTransactionsByAccountId.write(writer,
-            instance.findTransactionsByAccountId)
+            instance.`findTransactionsByAccountId`)
       }
     }
   }
@@ -455,7 +455,7 @@ public sealed class QueryBox {
       public override fun write(writer: ScaleCodecWriter,
           instance: FindPermissionTokensByAccountId): Unit {
         jp.co.soramitsu.schema.generated.datamodel.query.permissions.FindPermissionTokensByAccountId.write(writer,
-            instance.findPermissionTokensByAccountId)
+            instance.`findPermissionTokensByAccountId`)
       }
     }
   }
@@ -487,6 +487,7 @@ public sealed class QueryBox {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: QueryBox): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> FindAllAccounts.write(writer, instance as FindAllAccounts)
       	1 -> FindAccountById.write(writer, instance as FindAccountById)

@@ -22,7 +22,7 @@ public class _VersionedQueryResultV1(
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedQueryResultV1): Unit {
       jp.co.soramitsu.schema.generated.datamodel.query.QueryResult.write(writer,
-          instance.queryResult)
+          instance.`queryResult`)
     }
   }
 }

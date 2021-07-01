@@ -21,7 +21,7 @@ public class ContextValue(
         ContextValue(reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-      writer.writeString(instance.valueName)
+      writer.writeString(instance.`valueName`)
     }
   }
 }

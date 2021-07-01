@@ -20,7 +20,7 @@ public class Hash(
     public override fun read(reader: ScaleCodecReader): Hash = Hash(reader.readByteArray())
 
     public override fun write(writer: ScaleCodecWriter, instance: Hash): Unit {
-      writer.writeByteArray(instance.array)
+      writer.writeByteArray(instance.`array`)
     }
   }
 }

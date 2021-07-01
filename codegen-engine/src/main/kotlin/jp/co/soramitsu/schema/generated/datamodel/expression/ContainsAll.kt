@@ -23,9 +23,9 @@ public class ContainsAll(
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.collection)
+          instance.`collection`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.elements)
+          instance.`elements`)
     }
   }
 }

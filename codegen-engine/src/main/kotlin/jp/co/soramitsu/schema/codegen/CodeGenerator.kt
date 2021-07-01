@@ -136,12 +136,12 @@ object CodeGenerator {
 
     private fun fooWrite(type: Type<*>, propertyName: String): String {
         return when (type) {
-            is StringType -> "writer.writeString(instance.$propertyName)"
-            is BooleanType -> "writer.writeBoolean(instance.$propertyName)"
-            is Option -> "writer.writeOptional(instance.$propertyName)"
-            is Compact -> "writer.writeCompactInt(instance.$propertyName)"
-            is UIntType -> "writer.writeLong(instance.$propertyName.toLong())"
-            is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.$propertyName)"
+            is StringType -> "writer.writeString(instance.`$propertyName`)"
+            is BooleanType -> "writer.writeBoolean(instance.`$propertyName`)"
+            is Option -> "writer.writeOptional(instance.`$propertyName`)"
+            is Compact -> "writer.writeCompact(instance.`$propertyName`)"
+            is UIntType -> "writer.writeLong(instance.`$propertyName`.toLong())"
+            is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.`$propertyName`)"
             is Vec -> {
                 when (type.innerType) {
                     is Tuple -> {
@@ -156,12 +156,12 @@ object CodeGenerator {
                             is ParameterizedTypeName -> kotlinType.rawType.canonicalName
                             else -> throw RuntimeException("Unexpected type")
                         }
-                        "writer.write(jp.co.soramitsu.schema.codegen.MapWriter($keyClassName, $valueClassName), instance.$propertyName)"
+                        "writer.write(jp.co.soramitsu.schema.codegen.MapWriter($keyClassName, $valueClassName), instance.`$propertyName`)"
                     }
                     else -> {
                         when (val kotlinType = resolveKotlinType(type.innerType!!)) {
-                            is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.$propertyName)"
-                            is ParameterizedTypeName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.rawType.simpleName}), instance.$propertyName)"
+                            is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.`$propertyName`)"
+                            is ParameterizedTypeName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.rawType.simpleName}), instance.`$propertyName`)"
                             else -> throw RuntimeException("Unexpected type")
                         }
                     }
@@ -169,15 +169,15 @@ object CodeGenerator {
             }
             is SetType -> {
                 when (val kotlinType = resolveKotlinType(type.innerType!!)) {
-                    is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.$propertyName.toList())"
+                    is ClassName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.simpleName}), instance.`$propertyName`.toList())"
                     is ParameterizedTypeName -> "writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(${kotlinType.rawType.simpleName}), instance.${propertyName.toList()}()))"
                     else -> throw RuntimeException("Unexpected type")
                 }
             }
             else -> {
                 when (val kotlinType = resolveKotlinType(type)) {
-                    is ClassName -> "${kotlinType.canonicalName}.write(writer, instance.$propertyName)"
-                    is ParameterizedTypeName -> "${kotlinType.rawType.canonicalName}.write(writer, instance.$propertyName)"
+                    is ClassName -> "${kotlinType.canonicalName}.write(writer, instance.`$propertyName`)"
+                    is ParameterizedTypeName -> "${kotlinType.rawType.canonicalName}.write(writer, instance.`$propertyName`)"
                     else -> throw RuntimeException("Unexpected type")
                 }
             }
@@ -332,6 +332,14 @@ object CodeGenerator {
                     implScaleReaderForEnumVariant(variant, "jp.co.soramitsu.schema.generated.$packageName.$className.${variant.name}"),
                     implScaleWriterForEnumVariant(variant, normalizedName)
                 )
+            } else {
+                implementScaleCodec(
+                    variantClass,
+                    variant.name,
+                    "$packageName.$className",
+                    CodeBlock.of("return jp.co.soramitsu.schema.generated.$packageName.$className.${variant.name}()"),
+                    CodeBlock.of("//nothing to write, enum variant do not have properties")
+                )
             }
             clazz.addType(variantClass.build())
         }
@@ -359,6 +367,7 @@ object CodeGenerator {
 
     private fun implScaleWriterForEnum(variants: List<EnumType.Variant>) : CodeBlock {
         val rawCode = StringJoiner("\n")
+        rawCode.add("writer.directWrite(instance.discriminant())")
         rawCode.add("when(instance.discriminant()) {")
         for ((name, discriminant, _) in variants) {
             rawCode.add("\t$discriminant -> $name.write(writer, instance as $name)")

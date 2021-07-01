@@ -33,7 +33,7 @@ public sealed class VersionedEventSocketMessage {
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events._VersionedEventSocketMessageV1.write(writer,
-            instance.v1)
+            instance.`v1`)
       }
     }
   }
@@ -48,6 +48,7 @@ public sealed class VersionedEventSocketMessage {
 
     public override fun write(writer: ScaleCodecWriter, instance: VersionedEventSocketMessage):
         Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> V1.write(writer, instance as V1)
       	else -> throw RuntimeException("Unresolved discriminant of the enum variant")

@@ -26,8 +26,9 @@ public class FindAccountKeyValueByIdAndKey(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
         Unit {
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.id)
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.`id`)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.`key`)
     }
   }
 }

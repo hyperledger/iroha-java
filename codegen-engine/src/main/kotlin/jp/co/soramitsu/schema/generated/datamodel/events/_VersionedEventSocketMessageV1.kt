@@ -23,7 +23,7 @@ public class _VersionedEventSocketMessageV1(
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedEventSocketMessageV1):
         Unit {
       jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.write(writer,
-          instance.eventSocketMessage)
+          instance.`eventSocketMessage`)
     }
   }
 }

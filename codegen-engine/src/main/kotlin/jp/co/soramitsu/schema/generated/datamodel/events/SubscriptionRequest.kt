@@ -22,7 +22,7 @@ public class SubscriptionRequest(
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
       jp.co.soramitsu.schema.generated.datamodel.events.EventFilter.write(writer,
-          instance.eventFilter)
+          instance.`eventFilter`)
     }
   }
 }

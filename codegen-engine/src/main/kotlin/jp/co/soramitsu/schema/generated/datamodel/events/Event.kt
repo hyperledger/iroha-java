@@ -33,7 +33,7 @@ public sealed class Event {
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Event.write(writer,
-            instance.pipeline)
+            instance.`pipeline`)
       }
     }
   }
@@ -51,7 +51,7 @@ public sealed class Event {
           jp.co.soramitsu.schema.generated.datamodel.events.Event.Data(jp.co.soramitsu.schema.generated.datamodel.events.data.Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.events.data.Event.write(writer, instance.data)
+        jp.co.soramitsu.schema.generated.datamodel.events.data.Event.write(writer, instance.`data`)
       }
     }
   }
@@ -64,6 +64,7 @@ public sealed class Event {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Pipeline.write(writer, instance as Pipeline)
       	1 -> Data.write(writer, instance as Data)

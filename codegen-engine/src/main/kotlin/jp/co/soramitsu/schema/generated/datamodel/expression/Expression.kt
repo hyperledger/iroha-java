@@ -34,7 +34,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Add(jp.co.soramitsu.schema.generated.datamodel.expression.Add.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Add.write(writer, instance.add)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Add.write(writer, instance.`add`)
       }
     }
   }
@@ -53,7 +53,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.Subtract.write(writer,
-            instance.subtract)
+            instance.`subtract`)
       }
     }
   }
@@ -72,7 +72,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.Multiply.write(writer,
-            instance.multiply)
+            instance.`multiply`)
       }
     }
   }
@@ -90,7 +90,8 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Divide(jp.co.soramitsu.schema.generated.datamodel.expression.Divide.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Divide.write(writer, instance.divide)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Divide.write(writer,
+            instance.`divide`)
       }
     }
   }
@@ -108,7 +109,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Mod(jp.co.soramitsu.schema.generated.datamodel.expression.Mod.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Mod.write(writer, instance.mod)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Mod.write(writer, instance.`mod`)
       }
     }
   }
@@ -127,7 +128,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.RaiseTo.write(writer,
-            instance.raiseTo)
+            instance.`raiseTo`)
       }
     }
   }
@@ -146,7 +147,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.Greater.write(writer,
-            instance.greater)
+            instance.`greater`)
       }
     }
   }
@@ -164,7 +165,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Less(jp.co.soramitsu.schema.generated.datamodel.expression.Less.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Less.write(writer, instance.less)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Less.write(writer, instance.`less`)
       }
     }
   }
@@ -182,7 +183,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Equal(jp.co.soramitsu.schema.generated.datamodel.expression.Equal.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Equal.write(writer, instance.equal)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Equal.write(writer, instance.`equal`)
       }
     }
   }
@@ -200,7 +201,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Not(jp.co.soramitsu.schema.generated.datamodel.expression.Not.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Not.write(writer, instance.not)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Not.write(writer, instance.`not`)
       }
     }
   }
@@ -218,7 +219,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.And(jp.co.soramitsu.schema.generated.datamodel.expression.And.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.And.write(writer, instance.and)
+        jp.co.soramitsu.schema.generated.datamodel.expression.And.write(writer, instance.`and`)
       }
     }
   }
@@ -236,7 +237,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Or(jp.co.soramitsu.schema.generated.datamodel.expression.Or.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Or.write(writer, instance.or)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Or.write(writer, instance.`or`)
       }
     }
   }
@@ -272,7 +273,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Raw(jp.co.soramitsu.schema.generated.datamodel.Value.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.Value.write(writer, instance.raw)
+        jp.co.soramitsu.schema.generated.datamodel.Value.write(writer, instance.`raw`)
       }
     }
   }
@@ -290,7 +291,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Query(jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.query)
+        jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.`query`)
       }
     }
   }
@@ -309,7 +310,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.Contains.write(writer,
-            instance.contains)
+            instance.`contains`)
       }
     }
   }
@@ -328,7 +329,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAll.write(writer,
-            instance.containsAll)
+            instance.`containsAll`)
       }
     }
   }
@@ -347,7 +348,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.ContainsAny.write(writer,
-            instance.containsAny)
+            instance.`containsAny`)
       }
     }
   }
@@ -365,7 +366,7 @@ public sealed class Expression {
           jp.co.soramitsu.schema.generated.datamodel.expression.Expression.Where(jp.co.soramitsu.schema.generated.datamodel.expression.Where.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.expression.Where.write(writer, instance.where)
+        jp.co.soramitsu.schema.generated.datamodel.expression.Where.write(writer, instance.`where`)
       }
     }
   }
@@ -384,7 +385,7 @@ public sealed class Expression {
 
       public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
         jp.co.soramitsu.schema.generated.datamodel.expression.ContextValue.write(writer,
-            instance.contextValue)
+            instance.`contextValue`)
       }
     }
   }
@@ -415,6 +416,7 @@ public sealed class Expression {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Expression): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Add.write(writer, instance as Add)
       	1 -> Subtract.write(writer, instance as Subtract)

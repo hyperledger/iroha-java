@@ -24,8 +24,9 @@ public class RemoveKeyValueBox(
 
     public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.objectId)
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.key)
+          instance.`objectId`)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
+          instance.`key`)
     }
   }
 }

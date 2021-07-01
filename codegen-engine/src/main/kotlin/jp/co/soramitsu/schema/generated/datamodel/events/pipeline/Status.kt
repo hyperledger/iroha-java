@@ -24,6 +24,15 @@ public sealed class Status {
    */
   public class Validating : Status() {
     public override fun discriminant(): Int = 0
+
+    public companion object CODEC : ScaleReader<Validating>, ScaleWriter<Validating> {
+      public override fun read(reader: ScaleCodecReader): Validating =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Validating()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Validating): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   /**
@@ -40,7 +49,7 @@ public sealed class Status {
 
       public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.write(writer,
-            instance.rejected)
+            instance.`rejected`)
       }
     }
   }
@@ -50,6 +59,15 @@ public sealed class Status {
    */
   public class Committed : Status() {
     public override fun discriminant(): Int = 2
+
+    public companion object CODEC : ScaleReader<Committed>, ScaleWriter<Committed> {
+      public override fun read(reader: ScaleCodecReader): Committed =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Committed()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Committed): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<Status>, ScaleWriter<Status> {
@@ -61,6 +79,7 @@ public sealed class Status {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: Status): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Validating.write(writer, instance as Validating)
       	1 -> Rejected.write(writer, instance as Rejected)

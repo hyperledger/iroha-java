@@ -23,8 +23,8 @@ public class AssetDefinition(
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
       jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.write(writer,
-          instance.valueType)
-      jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer, instance.id)
+          instance.`valueType`)
+      jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.write(writer, instance.`id`)
     }
   }
 }

@@ -35,12 +35,13 @@ public class Payload(
         jp.co.soramitsu.schema.generated.datamodel.Value)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.accountId)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
-      writer.writeLong(instance.creationTime.toLong())
-      writer.writeLong(instance.timeToLiveMs.toLong())
+      jp.co.soramitsu.schema.generated.datamodel.account.Id.write(writer, instance.`accountId`)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction),
+          instance.`instructions`)
+      writer.writeLong(instance.`creationTime`.toLong())
+      writer.writeLong(instance.`timeToLiveMs`.toLong())
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
-          jp.co.soramitsu.schema.generated.datamodel.Value), instance.metadata)
+          jp.co.soramitsu.schema.generated.datamodel.Value), instance.`metadata`)
     }
   }
 }

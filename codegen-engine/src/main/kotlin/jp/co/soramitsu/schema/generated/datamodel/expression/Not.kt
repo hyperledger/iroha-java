@@ -21,7 +21,7 @@ public class Not(
 
     public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.expression)
+          instance.`expression`)
     }
   }
 }

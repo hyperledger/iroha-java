@@ -33,7 +33,7 @@ public sealed class AssetValue {
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.Quantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-        writer.writeLong(instance.quantity.toLong())
+        writer.writeLong(instance.`quantity`.toLong())
       }
     }
   }
@@ -51,7 +51,7 @@ public sealed class AssetValue {
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.BigQuantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
-        writer.writeLong(instance.bigQuantity.toLong())
+        writer.writeLong(instance.`bigQuantity`.toLong())
       }
     }
   }
@@ -69,7 +69,7 @@ public sealed class AssetValue {
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.Store(jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.store)
+        jp.co.soramitsu.schema.generated.datamodel.metadata.Metadata.write(writer, instance.`store`)
       }
     }
   }
@@ -83,6 +83,7 @@ public sealed class AssetValue {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetValue): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Quantity.write(writer, instance as Quantity)
       	1 -> BigQuantity.write(writer, instance as BigQuantity)

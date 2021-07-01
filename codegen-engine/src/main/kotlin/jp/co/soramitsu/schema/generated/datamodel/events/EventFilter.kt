@@ -33,7 +33,7 @@ public sealed class EventFilter {
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EventFilter.write(writer,
-            instance.pipeline)
+            instance.`pipeline`)
       }
     }
   }
@@ -52,7 +52,7 @@ public sealed class EventFilter {
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.data.EventFilter.write(writer,
-            instance.data)
+            instance.`data`)
       }
     }
   }
@@ -65,6 +65,7 @@ public sealed class EventFilter {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Pipeline.write(writer, instance as Pipeline)
       	1 -> Data.write(writer, instance as Data)

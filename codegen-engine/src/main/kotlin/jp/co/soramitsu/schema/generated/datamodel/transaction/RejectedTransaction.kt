@@ -28,10 +28,11 @@ public class RejectedTransaction(
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer, instance.payload)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
+      jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.write(writer,
+          instance.`payload`)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.`signatures`)
       jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.write(writer,
-          instance.rejectionReason)
+          instance.`rejectionReason`)
     }
   }
 }

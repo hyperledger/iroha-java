@@ -24,7 +24,7 @@ public class FindPermissionTokensByAccountId(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId):
         Unit {
-      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.id)
+      jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer, instance.`id`)
     }
   }
 }

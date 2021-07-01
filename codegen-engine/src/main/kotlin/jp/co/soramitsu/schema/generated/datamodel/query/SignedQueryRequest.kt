@@ -26,9 +26,9 @@ public class SignedQueryRequest(
         jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
-      writer.writeCompactInt(instance.timestampMs)
-      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.signature)
-      jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.query)
+      writer.writeCompact(instance.`timestampMs`)
+      jp.co.soramitsu.schema.generated.crypto.Signature.write(writer, instance.`signature`)
+      jp.co.soramitsu.schema.generated.datamodel.query.QueryBox.write(writer, instance.`query`)
     }
   }
 }

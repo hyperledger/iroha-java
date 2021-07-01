@@ -23,8 +23,8 @@ public class PublicKey(
         reader.readByteArray())
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-      writer.writeString(instance.digestFunction)
-      writer.writeByteArray(instance.payload)
+      writer.writeString(instance.`digestFunction`)
+      writer.writeByteArray(instance.`payload`)
     }
   }
 }

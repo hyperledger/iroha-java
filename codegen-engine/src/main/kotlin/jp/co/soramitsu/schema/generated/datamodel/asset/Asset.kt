@@ -22,8 +22,8 @@ public class Asset(
         jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-      jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.id)
-      jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.write(writer, instance.value)
+      jp.co.soramitsu.schema.generated.datamodel.asset.Id.write(writer, instance.`id`)
+      jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.write(writer, instance.`value`)
     }
   }
 }

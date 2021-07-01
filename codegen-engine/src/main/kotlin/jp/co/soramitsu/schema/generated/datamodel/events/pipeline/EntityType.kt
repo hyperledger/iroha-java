@@ -24,6 +24,15 @@ public sealed class EntityType {
    */
   public class Block : EntityType() {
     public override fun discriminant(): Int = 0
+
+    public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
+      public override fun read(reader: ScaleCodecReader): Block =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.Block()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   /**
@@ -31,6 +40,15 @@ public sealed class EntityType {
    */
   public class Transaction : EntityType() {
     public override fun discriminant(): Int = 1
+
+    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+      public override fun read(reader: ScaleCodecReader): Transaction =
+          jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.Transaction()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<EntityType>, ScaleWriter<EntityType> {
@@ -41,6 +59,7 @@ public sealed class EntityType {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: EntityType): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> Block.write(writer, instance as Block)
       	1 -> Transaction.write(writer, instance as Transaction)

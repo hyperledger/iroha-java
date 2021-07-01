@@ -22,8 +22,8 @@ public class DefinitionId(
         DefinitionId(reader.readString(), reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: DefinitionId): Unit {
-      writer.writeString(instance.name)
-      writer.writeString(instance.domainName)
+      writer.writeString(instance.`name`)
+      writer.writeString(instance.`domainName`)
     }
   }
 }

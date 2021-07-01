@@ -25,7 +25,7 @@ public class FindTransactionsByAccountId(
     public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
         Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.accountId)
+          instance.`accountId`)
     }
   }
 }

@@ -23,7 +23,7 @@ public class FindAssetsByDomainName(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.domainName)
+          instance.`domainName`)
     }
   }
 }

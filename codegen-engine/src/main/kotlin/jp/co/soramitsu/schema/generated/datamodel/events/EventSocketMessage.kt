@@ -35,7 +35,7 @@ public sealed class EventSocketMessage {
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
         jp.co.soramitsu.schema.generated.datamodel.events.SubscriptionRequest.write(writer,
-            instance.subscriptionRequest)
+            instance.`subscriptionRequest`)
       }
     }
   }
@@ -45,6 +45,16 @@ public sealed class EventSocketMessage {
    */
   public class SubscriptionAccepted : EventSocketMessage() {
     public override fun discriminant(): Int = 1
+
+    public companion object CODEC : ScaleReader<SubscriptionAccepted>,
+        ScaleWriter<SubscriptionAccepted> {
+      public override fun read(reader: ScaleCodecReader): SubscriptionAccepted =
+          jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.SubscriptionAccepted()
+
+      public override fun write(writer: ScaleCodecWriter, instance: SubscriptionAccepted): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   /**
@@ -60,7 +70,7 @@ public sealed class EventSocketMessage {
           jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.Event(jp.co.soramitsu.schema.generated.datamodel.events.Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-        jp.co.soramitsu.schema.generated.datamodel.events.Event.write(writer, instance.event)
+        jp.co.soramitsu.schema.generated.datamodel.events.Event.write(writer, instance.`event`)
       }
     }
   }
@@ -70,6 +80,15 @@ public sealed class EventSocketMessage {
    */
   public class EventReceived : EventSocketMessage() {
     public override fun discriminant(): Int = 3
+
+    public companion object CODEC : ScaleReader<EventReceived>, ScaleWriter<EventReceived> {
+      public override fun read(reader: ScaleCodecReader): EventReceived =
+          jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.EventReceived()
+
+      public override fun write(writer: ScaleCodecWriter, instance: EventReceived): Unit {
+        //nothing to write, enum variant do not have properties
+      }
+    }
   }
 
   public companion object CODEC : ScaleReader<EventSocketMessage>, ScaleWriter<EventSocketMessage> {
@@ -83,6 +102,7 @@ public sealed class EventSocketMessage {
     }
 
     public override fun write(writer: ScaleCodecWriter, instance: EventSocketMessage): Unit {
+      writer.directWrite(instance.discriminant())
       when(instance.discriminant()) {
       	0 -> SubscriptionRequest.write(writer, instance as SubscriptionRequest)
       	1 -> SubscriptionAccepted.write(writer, instance as SubscriptionAccepted)

@@ -26,9 +26,9 @@ public class Where(
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.expression)
+          instance.`expression`)
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(kotlin.String,
-          jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo), instance.values)
+          jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo), instance.`values`)
     }
   }
 }

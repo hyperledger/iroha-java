@@ -23,7 +23,7 @@ public class _VersionedSignedQueryRequestV1(
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedSignedQueryRequestV1):
         Unit {
       jp.co.soramitsu.schema.generated.datamodel.query.SignedQueryRequest.write(writer,
-          instance.signedQueryRequest)
+          instance.`signedQueryRequest`)
     }
   }
 }

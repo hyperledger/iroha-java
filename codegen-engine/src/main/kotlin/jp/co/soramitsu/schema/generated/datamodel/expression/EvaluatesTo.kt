@@ -22,7 +22,7 @@ public class EvaluatesTo(
 
     public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.Expression.write(writer,
-          instance.expression)
+          instance.`expression`)
     }
   }
 }

@@ -24,9 +24,9 @@ public class BurnBox(
 
     public override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.object)
+          instance.`object`)
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
-          instance.destinationId)
+          instance.`destinationId`)
     }
   }
 }

@@ -26,10 +26,10 @@ public class Event(
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
       jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.write(writer,
-          instance.entityType)
+          instance.`entityType`)
       jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.write(writer,
-          instance.status)
-      jp.co.soramitsu.schema.generated.crypto.Hash.write(writer, instance.hash)
+          instance.`status`)
+      jp.co.soramitsu.schema.generated.crypto.Hash.write(writer, instance.`hash`)
     }
   }
 }

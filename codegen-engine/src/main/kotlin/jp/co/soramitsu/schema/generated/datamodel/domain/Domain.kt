@@ -31,12 +31,12 @@ public class Domain(
         jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinitionEntry)))
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-      writer.writeString(instance.name)
+      writer.writeString(instance.`name`)
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.account.Id,
-          jp.co.soramitsu.schema.generated.datamodel.account.Account), instance.accounts)
+          jp.co.soramitsu.schema.generated.datamodel.account.Account), instance.`accounts`)
       writer.write(jp.co.soramitsu.schema.codegen.MapWriter(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId,
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinitionEntry),
-          instance.assetDefinitions)
+          instance.`assetDefinitions`)
     }
   }
 }
