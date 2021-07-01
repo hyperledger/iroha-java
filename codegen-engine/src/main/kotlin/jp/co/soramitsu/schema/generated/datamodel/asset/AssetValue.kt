@@ -14,7 +14,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::asset::AssetValue' enum
  */
-public abstract class AssetValue {
+public sealed class AssetValue {
   /**
    * @return Discriminator of variant in enum
    */
@@ -29,12 +29,11 @@ public abstract class AssetValue {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Quantity>, ScaleWriter<Quantity> {
-      public override fun read(reader: ScaleCodecReader): Quantity {
-      }
+      public override fun read(reader: ScaleCodecReader): Quantity =
+          Quantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.quantity)
+        writer.writeLong(instance.quantity.toInt())
       }
     }
   }
@@ -48,12 +47,11 @@ public abstract class AssetValue {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
-      public override fun read(reader: ScaleCodecReader): BigQuantity {
-      }
+      public override fun read(reader: ScaleCodecReader): BigQuantity =
+          BigQuantity(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.bigQuantity)
+        writer.writeLong(instance.bigQuantity.toLong())
       }
     }
   }
@@ -67,12 +65,28 @@ public abstract class AssetValue {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Store>, ScaleWriter<Store> {
-      public override fun read(reader: ScaleCodecReader): Store {
-      }
+      public override fun read(reader: ScaleCodecReader): Store = Store(Metadata.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-        writer.directWrite(this.discriminant())
         Metadata.write(writer, instance.store)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<AssetValue>, ScaleWriter<AssetValue> {
+    public override fun read(reader: ScaleCodecReader): AssetValue = when(reader.readUByte()) {
+    	0 -> Quantity.read(reader)
+    	1 -> BigQuantity.read(reader)
+    	2 -> Store.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: AssetValue): Unit {
+      when(instance.discriminant()) {
+      	0 -> Quantity.write(writer, instance as Quantity)
+      	1 -> BigQuantity.write(writer, instance as BigQuantity)
+      	2 -> Store.write(writer, instance as Store)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

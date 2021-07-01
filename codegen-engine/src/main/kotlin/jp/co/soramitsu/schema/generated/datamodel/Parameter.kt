@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::Parameter' enum
  */
-public abstract class Parameter {
+public sealed class Parameter {
   /**
    * @return Discriminator of variant in enum
    */
@@ -29,13 +29,12 @@ public abstract class Parameter {
 
     public companion object CODEC : ScaleReader<MaximumFaultyPeersAmount>,
         ScaleWriter<MaximumFaultyPeersAmount> {
-      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount {
-      }
+      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
+          MaximumFaultyPeersAmount(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.maximumFaultyPeersAmount)
+        writer.writeLong(instance.maximumFaultyPeersAmount.toInt())
       }
     }
   }
@@ -49,12 +48,11 @@ public abstract class Parameter {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
-      public override fun read(reader: ScaleCodecReader): BlockTime {
-      }
+      public override fun read(reader: ScaleCodecReader): BlockTime =
+          BlockTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.blockTime)
+        writer.writeLong(instance.blockTime.toInt())
       }
     }
   }
@@ -68,12 +66,11 @@ public abstract class Parameter {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
-      public override fun read(reader: ScaleCodecReader): CommitTime {
-      }
+      public override fun read(reader: ScaleCodecReader): CommitTime =
+          CommitTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.commitTime)
+        writer.writeLong(instance.commitTime.toInt())
       }
     }
   }
@@ -88,12 +85,31 @@ public abstract class Parameter {
 
     public companion object CODEC : ScaleReader<TransactionReceiptTime>,
         ScaleWriter<TransactionReceiptTime> {
-      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime {
-      }
+      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
+          TransactionReceiptTime(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.transactionReceiptTime)
+        writer.writeLong(instance.transactionReceiptTime.toInt())
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
+    public override fun read(reader: ScaleCodecReader): Parameter = when(reader.readUByte()) {
+    	0 -> MaximumFaultyPeersAmount.read(reader)
+    	1 -> BlockTime.read(reader)
+    	2 -> CommitTime.read(reader)
+    	3 -> TransactionReceiptTime.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
+      when(instance.discriminant()) {
+      	0 -> MaximumFaultyPeersAmount.write(writer, instance as MaximumFaultyPeersAmount)
+      	1 -> BlockTime.write(writer, instance as BlockTime)
+      	2 -> CommitTime.write(writer, instance as CommitTime)
+      	3 -> TransactionReceiptTime.write(writer, instance as TransactionReceiptTime)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

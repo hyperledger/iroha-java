@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::Event' enum
  */
-public abstract class Event {
+public sealed class Event {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,9 @@ public abstract class Event {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
-      public override fun read(reader: ScaleCodecReader): Pipeline {
-      }
+      public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
-        writer.directWrite(this.discriminant())
         Event.write(writer, instance.pipeline)
       }
     }
@@ -47,12 +45,26 @@ public abstract class Event {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Data>, ScaleWriter<Data> {
-      public override fun read(reader: ScaleCodecReader): Data {
-      }
+      public override fun read(reader: ScaleCodecReader): Data = Data(Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-        writer.directWrite(this.discriminant())
         Event.write(writer, instance.data)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
+    public override fun read(reader: ScaleCodecReader): Event = when(reader.readUByte()) {
+    	0 -> Pipeline.read(reader)
+    	1 -> Data.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
+      when(instance.discriminant()) {
+      	0 -> Pipeline.write(writer, instance as Pipeline)
+      	1 -> Data.write(writer, instance as Data)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

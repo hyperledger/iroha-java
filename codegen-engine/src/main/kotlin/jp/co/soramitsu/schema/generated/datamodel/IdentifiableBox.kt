@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::IdentifiableBox' enum
  */
-public abstract class IdentifiableBox {
+public sealed class IdentifiableBox {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,9 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
-      public override fun read(reader: ScaleCodecReader): Account {
-      }
+      public override fun read(reader: ScaleCodecReader): Account = Account(Account.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-        writer.directWrite(this.discriminant())
         Account.write(writer, instance.account)
       }
     }
@@ -47,11 +45,10 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-      public override fun read(reader: ScaleCodecReader): NewAccount {
-      }
+      public override fun read(reader: ScaleCodecReader): NewAccount =
+          NewAccount(NewAccount.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-        writer.directWrite(this.discriminant())
         NewAccount.write(writer, instance.newAccount)
       }
     }
@@ -66,11 +63,9 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Asset>, ScaleWriter<Asset> {
-      public override fun read(reader: ScaleCodecReader): Asset {
-      }
+      public override fun read(reader: ScaleCodecReader): Asset = Asset(Asset.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-        writer.directWrite(this.discriminant())
         Asset.write(writer, instance.asset)
       }
     }
@@ -85,11 +80,10 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-      public override fun read(reader: ScaleCodecReader): AssetDefinition {
-      }
+      public override fun read(reader: ScaleCodecReader): AssetDefinition =
+          AssetDefinition(AssetDefinition.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-        writer.directWrite(this.discriminant())
         AssetDefinition.write(writer, instance.assetDefinition)
       }
     }
@@ -104,11 +98,9 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
-      public override fun read(reader: ScaleCodecReader): Domain {
-      }
+      public override fun read(reader: ScaleCodecReader): Domain = Domain(Domain.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-        writer.directWrite(this.discriminant())
         Domain.write(writer, instance.domain)
       }
     }
@@ -123,11 +115,9 @@ public abstract class IdentifiableBox {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<Peer>, ScaleWriter<Peer> {
-      public override fun read(reader: ScaleCodecReader): Peer {
-      }
+      public override fun read(reader: ScaleCodecReader): Peer = Peer(Peer.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-        writer.directWrite(this.discriminant())
         Peer.write(writer, instance.peer)
       }
     }
@@ -138,5 +128,31 @@ public abstract class IdentifiableBox {
    */
   public class World : IdentifiableBox() {
     public override fun discriminant(): Int = 6
+  }
+
+  public companion object CODEC : ScaleReader<IdentifiableBox>, ScaleWriter<IdentifiableBox> {
+    public override fun read(reader: ScaleCodecReader): IdentifiableBox = when(reader.readUByte()) {
+    	0 -> Account.read(reader)
+    	1 -> NewAccount.read(reader)
+    	2 -> Asset.read(reader)
+    	3 -> AssetDefinition.read(reader)
+    	4 -> Domain.read(reader)
+    	5 -> Peer.read(reader)
+    	6 -> World.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: IdentifiableBox): Unit {
+      when(instance.discriminant()) {
+      	0 -> Account.write(writer, instance as Account)
+      	1 -> NewAccount.write(writer, instance as NewAccount)
+      	2 -> Asset.write(writer, instance as Asset)
+      	3 -> AssetDefinition.write(writer, instance as AssetDefinition)
+      	4 -> Domain.write(writer, instance as Domain)
+      	5 -> Peer.write(writer, instance as Peer)
+      	6 -> World.write(writer, instance as World)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+      }
+    }
   }
 }

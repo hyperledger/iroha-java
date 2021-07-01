@@ -33,8 +33,8 @@ public class Payload(
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
       Id.write(writer, instance.accountId)
       List.write(writer, instance.instructions)
-      writer.writeLong(instance.creationTime)
-      writer.writeLong(instance.timeToLiveMs)
+      writer.writeLong(instance.creationTime.toInt())
+      writer.writeLong(instance.timeToLiveMs.toInt())
       Map.write(writer, instance.metadata)
     }
   }

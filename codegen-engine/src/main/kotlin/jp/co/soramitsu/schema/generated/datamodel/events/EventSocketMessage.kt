@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::EventSocketMessage' enum
  */
-public abstract class EventSocketMessage {
+public sealed class EventSocketMessage {
   /**
    * @return Discriminator of variant in enum
    */
@@ -30,11 +30,10 @@ public abstract class EventSocketMessage {
 
     public companion object CODEC : ScaleReader<SubscriptionRequest>,
         ScaleWriter<SubscriptionRequest> {
-      public override fun read(reader: ScaleCodecReader): SubscriptionRequest {
-      }
+      public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
+          SubscriptionRequest(SubscriptionRequest.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-        writer.directWrite(this.discriminant())
         SubscriptionRequest.write(writer, instance.subscriptionRequest)
       }
     }
@@ -56,11 +55,9 @@ public abstract class EventSocketMessage {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
-      public override fun read(reader: ScaleCodecReader): Event {
-      }
+      public override fun read(reader: ScaleCodecReader): Event = Event(Event.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-        writer.directWrite(this.discriminant())
         Event.write(writer, instance.event)
       }
     }
@@ -71,5 +68,26 @@ public abstract class EventSocketMessage {
    */
   public class EventReceived : EventSocketMessage() {
     public override fun discriminant(): Int = 3
+  }
+
+  public companion object CODEC : ScaleReader<EventSocketMessage>, ScaleWriter<EventSocketMessage> {
+    public override fun read(reader: ScaleCodecReader): EventSocketMessage =
+        when(reader.readUByte()) {
+    	0 -> SubscriptionRequest.read(reader)
+    	1 -> SubscriptionAccepted.read(reader)
+    	2 -> Event.read(reader)
+    	3 -> EventReceived.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: EventSocketMessage): Unit {
+      when(instance.discriminant()) {
+      	0 -> SubscriptionRequest.write(writer, instance as SubscriptionRequest)
+      	1 -> SubscriptionAccepted.write(writer, instance as SubscriptionAccepted)
+      	2 -> Event.write(writer, instance as Event)
+      	3 -> EventReceived.write(writer, instance as EventReceived)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+      }
+    }
   }
 }

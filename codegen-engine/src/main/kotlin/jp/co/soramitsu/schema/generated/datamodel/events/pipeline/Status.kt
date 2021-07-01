@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::pipeline::Status' enum
  */
-public abstract class Status {
+public sealed class Status {
   /**
    * @return Discriminator of variant in enum
    */
@@ -35,11 +35,10 @@ public abstract class Status {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Rejected>, ScaleWriter<Rejected> {
-      public override fun read(reader: ScaleCodecReader): Rejected {
-      }
+      public override fun read(reader: ScaleCodecReader): Rejected =
+          Rejected(RejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
-        writer.directWrite(this.discriminant())
         RejectionReason.write(writer, instance.rejected)
       }
     }
@@ -50,5 +49,23 @@ public abstract class Status {
    */
   public class Committed : Status() {
     public override fun discriminant(): Int = 2
+  }
+
+  public companion object CODEC : ScaleReader<Status>, ScaleWriter<Status> {
+    public override fun read(reader: ScaleCodecReader): Status = when(reader.readUByte()) {
+    	0 -> Validating.read(reader)
+    	1 -> Rejected.read(reader)
+    	2 -> Committed.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Status): Unit {
+      when(instance.discriminant()) {
+      	0 -> Validating.write(writer, instance as Validating)
+      	1 -> Rejected.write(writer, instance as Rejected)
+      	2 -> Committed.write(writer, instance as Committed)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+      }
+    }
   }
 }

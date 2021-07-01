@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::transaction::TransactionValue' enum
  */
-public abstract class TransactionValue {
+public sealed class TransactionValue {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,10 @@ public abstract class TransactionValue {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-      public override fun read(reader: ScaleCodecReader): Transaction {
-      }
+      public override fun read(reader: ScaleCodecReader): Transaction =
+          Transaction(VersionedTransaction.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-        writer.directWrite(this.discriminant())
         VersionedTransaction.write(writer, instance.transaction)
       }
     }
@@ -48,12 +47,28 @@ public abstract class TransactionValue {
 
     public companion object CODEC : ScaleReader<RejectedTransaction>,
         ScaleWriter<RejectedTransaction> {
-      public override fun read(reader: ScaleCodecReader): RejectedTransaction {
-      }
+      public override fun read(reader: ScaleCodecReader): RejectedTransaction =
+          RejectedTransaction(VersionedRejectedTransaction.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-        writer.directWrite(this.discriminant())
         VersionedRejectedTransaction.write(writer, instance.rejectedTransaction)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
+    public override fun read(reader: ScaleCodecReader): TransactionValue = when(reader.readUByte())
+        {
+    	0 -> Transaction.read(reader)
+    	1 -> RejectedTransaction.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
+      when(instance.discriminant()) {
+      	0 -> Transaction.write(writer, instance as Transaction)
+      	1 -> RejectedTransaction.write(writer, instance as RejectedTransaction)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

@@ -16,7 +16,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::IdBox' enum
  */
-public abstract class IdBox {
+public sealed class IdBox {
   /**
    * @return Discriminator of variant in enum
    */
@@ -31,11 +31,9 @@ public abstract class IdBox {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<AccountId>, ScaleWriter<AccountId> {
-      public override fun read(reader: ScaleCodecReader): AccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): AccountId = AccountId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
-        writer.directWrite(this.discriminant())
         Id.write(writer, instance.accountId)
       }
     }
@@ -50,11 +48,9 @@ public abstract class IdBox {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<AssetId>, ScaleWriter<AssetId> {
-      public override fun read(reader: ScaleCodecReader): AssetId {
-      }
+      public override fun read(reader: ScaleCodecReader): AssetId = AssetId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
-        writer.directWrite(this.discriminant())
         Id.write(writer, instance.assetId)
       }
     }
@@ -69,11 +65,10 @@ public abstract class IdBox {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
-      public override fun read(reader: ScaleCodecReader): AssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): AssetDefinitionId =
+          AssetDefinitionId(DefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
-        writer.directWrite(this.discriminant())
         DefinitionId.write(writer, instance.assetDefinitionId)
       }
     }
@@ -88,11 +83,10 @@ public abstract class IdBox {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<DomainName>, ScaleWriter<DomainName> {
-      public override fun read(reader: ScaleCodecReader): DomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): DomainName =
+          DomainName(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
-        writer.directWrite(this.discriminant())
         writer.writeString(instance.domainName)
       }
     }
@@ -107,11 +101,9 @@ public abstract class IdBox {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<PeerId>, ScaleWriter<PeerId> {
-      public override fun read(reader: ScaleCodecReader): PeerId {
-      }
+      public override fun read(reader: ScaleCodecReader): PeerId = PeerId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
-        writer.directWrite(this.discriminant())
         Id.write(writer, instance.peerId)
       }
     }
@@ -122,5 +114,29 @@ public abstract class IdBox {
    */
   public class WorldId : IdBox() {
     public override fun discriminant(): Int = 5
+  }
+
+  public companion object CODEC : ScaleReader<IdBox>, ScaleWriter<IdBox> {
+    public override fun read(reader: ScaleCodecReader): IdBox = when(reader.readUByte()) {
+    	0 -> AccountId.read(reader)
+    	1 -> AssetId.read(reader)
+    	2 -> AssetDefinitionId.read(reader)
+    	3 -> DomainName.read(reader)
+    	4 -> PeerId.read(reader)
+    	5 -> WorldId.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: IdBox): Unit {
+      when(instance.discriminant()) {
+      	0 -> AccountId.write(writer, instance as AccountId)
+      	1 -> AssetId.write(writer, instance as AssetId)
+      	2 -> AssetDefinitionId.write(writer, instance as AssetDefinitionId)
+      	3 -> DomainName.write(writer, instance as DomainName)
+      	4 -> PeerId.write(writer, instance as PeerId)
+      	5 -> WorldId.write(writer, instance as WorldId)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+      }
+    }
   }
 }

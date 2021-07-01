@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::query::QueryBox' enum
  */
-public abstract class QueryBox {
+public sealed class QueryBox {
   /**
    * @return Discriminator of variant in enum
    */
@@ -29,11 +29,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
-      public override fun read(reader: ScaleCodecReader): FindAllAccounts {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAccounts =
+          FindAllAccounts(FindAllAccounts.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
-        writer.directWrite(this.discriminant())
         FindAllAccounts.write(writer, instance.findAllAccounts)
       }
     }
@@ -49,11 +48,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<FindAccountById>, ScaleWriter<FindAccountById> {
-      public override fun read(reader: ScaleCodecReader): FindAccountById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountById =
+          FindAccountById(FindAccountById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
-        writer.directWrite(this.discriminant())
         FindAccountById.write(writer, instance.findAccountById)
       }
     }
@@ -70,12 +68,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
-      public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
+          FindAccountKeyValueByIdAndKey(FindAccountKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
           Unit {
-        writer.directWrite(this.discriminant())
         FindAccountKeyValueByIdAndKey.write(writer, instance.findAccountKeyValueByIdAndKey)
       }
     }
@@ -92,11 +89,10 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName>
         {
-      public override fun read(reader: ScaleCodecReader): FindAccountsByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountsByName =
+          FindAccountsByName(FindAccountsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit {
-        writer.directWrite(this.discriminant())
         FindAccountsByName.write(writer, instance.findAccountsByName)
       }
     }
@@ -113,12 +109,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAccountsByDomainName>,
         ScaleWriter<FindAccountsByDomainName> {
-      public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
+          FindAccountsByDomainName(FindAccountsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName):
           Unit {
-        writer.directWrite(this.discriminant())
         FindAccountsByDomainName.write(writer, instance.findAccountsByDomainName)
       }
     }
@@ -133,11 +128,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
-      public override fun read(reader: ScaleCodecReader): FindAllAssets {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAssets =
+          FindAllAssets(FindAllAssets.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
-        writer.directWrite(this.discriminant())
         FindAllAssets.write(writer, instance.findAllAssets)
       }
     }
@@ -154,12 +148,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAllAssetsDefinitions>,
         ScaleWriter<FindAllAssetsDefinitions> {
-      public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions =
+          FindAllAssetsDefinitions(FindAllAssetsDefinitions.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions):
           Unit {
-        writer.directWrite(this.discriminant())
         FindAllAssetsDefinitions.write(writer, instance.findAllAssetsDefinitions)
       }
     }
@@ -174,11 +167,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 7
 
     public companion object CODEC : ScaleReader<FindAssetById>, ScaleWriter<FindAssetById> {
-      public override fun read(reader: ScaleCodecReader): FindAssetById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetById =
+          FindAssetById(FindAssetById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetById): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetById.write(writer, instance.findAssetById)
       }
     }
@@ -194,11 +186,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 8
 
     public companion object CODEC : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
-      public override fun read(reader: ScaleCodecReader): FindAssetsByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByName =
+          FindAssetsByName(FindAssetsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByName.write(writer, instance.findAssetsByName)
       }
     }
@@ -215,11 +206,10 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByAccountId>,
         ScaleWriter<FindAssetsByAccountId> {
-      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
+          FindAssetsByAccountId(FindAssetsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByAccountId.write(writer, instance.findAssetsByAccountId)
       }
     }
@@ -236,12 +226,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByAssetDefinitionId>,
         ScaleWriter<FindAssetsByAssetDefinitionId> {
-      public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
+          FindAssetsByAssetDefinitionId(FindAssetsByAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
           Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByAssetDefinitionId.write(writer, instance.findAssetsByAssetDefinitionId)
       }
     }
@@ -258,11 +247,10 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByDomainName>,
         ScaleWriter<FindAssetsByDomainName> {
-      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
+          FindAssetsByDomainName(FindAssetsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByDomainName.write(writer, instance.findAssetsByDomainName)
       }
     }
@@ -279,13 +267,12 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
-      public override fun read(reader: ScaleCodecReader):
-          FindAssetsByAccountIdAndAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountIdAndAssetDefinitionId
+          =
+          FindAssetsByAccountIdAndAssetDefinitionId(FindAssetsByAccountIdAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
             instance.findAssetsByAccountIdAndAssetDefinitionId)
       }
@@ -303,13 +290,12 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
-      public override fun read(reader: ScaleCodecReader):
-          FindAssetsByDomainNameAndAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId
+          =
+          FindAssetsByDomainNameAndAssetDefinitionId(FindAssetsByDomainNameAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetsByDomainNameAndAssetDefinitionId.write(writer,
             instance.findAssetsByDomainNameAndAssetDefinitionId)
       }
@@ -327,11 +313,10 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetQuantityById>,
         ScaleWriter<FindAssetQuantityById> {
-      public override fun read(reader: ScaleCodecReader): FindAssetQuantityById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
+          FindAssetQuantityById(FindAssetQuantityById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
-        writer.directWrite(this.discriminant())
         FindAssetQuantityById.write(writer, instance.findAssetQuantityById)
       }
     }
@@ -348,12 +333,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindAssetKeyValueByIdAndKey>,
         ScaleWriter<FindAssetKeyValueByIdAndKey> {
-      public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
+          FindAssetKeyValueByIdAndKey(FindAssetKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
           Unit {
-        writer.directWrite(this.discriminant())
         FindAssetKeyValueByIdAndKey.write(writer, instance.findAssetKeyValueByIdAndKey)
       }
     }
@@ -369,11 +353,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 16
 
     public companion object CODEC : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-      public override fun read(reader: ScaleCodecReader): FindAllDomains {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllDomains =
+          FindAllDomains(FindAllDomains.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
-        writer.directWrite(this.discriminant())
         FindAllDomains.write(writer, instance.findAllDomains)
       }
     }
@@ -389,11 +372,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 17
 
     public companion object CODEC : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
-      public override fun read(reader: ScaleCodecReader): FindDomainByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindDomainByName =
+          FindDomainByName(FindDomainByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
-        writer.directWrite(this.discriminant())
         FindDomainByName.write(writer, instance.findDomainByName)
       }
     }
@@ -408,11 +390,10 @@ public abstract class QueryBox {
     public override fun discriminant(): Int = 18
 
     public companion object CODEC : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
-      public override fun read(reader: ScaleCodecReader): FindAllPeers {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllPeers =
+          FindAllPeers(FindAllPeers.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
-        writer.directWrite(this.discriminant())
         FindAllPeers.write(writer, instance.findAllPeers)
       }
     }
@@ -429,12 +410,11 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindTransactionsByAccountId>,
         ScaleWriter<FindTransactionsByAccountId> {
-      public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
+          FindTransactionsByAccountId(FindTransactionsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
           Unit {
-        writer.directWrite(this.discriminant())
         FindTransactionsByAccountId.write(writer, instance.findTransactionsByAccountId)
       }
     }
@@ -451,13 +431,69 @@ public abstract class QueryBox {
 
     public companion object CODEC : ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
-      public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
+          FindPermissionTokensByAccountId(FindPermissionTokensByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindPermissionTokensByAccountId): Unit {
-        writer.directWrite(this.discriminant())
         FindPermissionTokensByAccountId.write(writer, instance.findPermissionTokensByAccountId)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<QueryBox>, ScaleWriter<QueryBox> {
+    public override fun read(reader: ScaleCodecReader): QueryBox = when(reader.readUByte()) {
+    	0 -> FindAllAccounts.read(reader)
+    	1 -> FindAccountById.read(reader)
+    	2 -> FindAccountKeyValueByIdAndKey.read(reader)
+    	3 -> FindAccountsByName.read(reader)
+    	4 -> FindAccountsByDomainName.read(reader)
+    	5 -> FindAllAssets.read(reader)
+    	6 -> FindAllAssetsDefinitions.read(reader)
+    	7 -> FindAssetById.read(reader)
+    	8 -> FindAssetsByName.read(reader)
+    	9 -> FindAssetsByAccountId.read(reader)
+    	10 -> FindAssetsByAssetDefinitionId.read(reader)
+    	11 -> FindAssetsByDomainName.read(reader)
+    	12 -> FindAssetsByAccountIdAndAssetDefinitionId.read(reader)
+    	13 -> FindAssetsByDomainNameAndAssetDefinitionId.read(reader)
+    	14 -> FindAssetQuantityById.read(reader)
+    	15 -> FindAssetKeyValueByIdAndKey.read(reader)
+    	16 -> FindAllDomains.read(reader)
+    	17 -> FindDomainByName.read(reader)
+    	18 -> FindAllPeers.read(reader)
+    	19 -> FindTransactionsByAccountId.read(reader)
+    	20 -> FindPermissionTokensByAccountId.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: QueryBox): Unit {
+      when(instance.discriminant()) {
+      	0 -> FindAllAccounts.write(writer, instance as FindAllAccounts)
+      	1 -> FindAccountById.write(writer, instance as FindAccountById)
+      	2 -> FindAccountKeyValueByIdAndKey.write(writer, instance as FindAccountKeyValueByIdAndKey)
+      	3 -> FindAccountsByName.write(writer, instance as FindAccountsByName)
+      	4 -> FindAccountsByDomainName.write(writer, instance as FindAccountsByDomainName)
+      	5 -> FindAllAssets.write(writer, instance as FindAllAssets)
+      	6 -> FindAllAssetsDefinitions.write(writer, instance as FindAllAssetsDefinitions)
+      	7 -> FindAssetById.write(writer, instance as FindAssetById)
+      	8 -> FindAssetsByName.write(writer, instance as FindAssetsByName)
+      	9 -> FindAssetsByAccountId.write(writer, instance as FindAssetsByAccountId)
+      	10 -> FindAssetsByAssetDefinitionId.write(writer, instance as FindAssetsByAssetDefinitionId)
+      	11 -> FindAssetsByDomainName.write(writer, instance as FindAssetsByDomainName)
+      	12 -> FindAssetsByAccountIdAndAssetDefinitionId.write(writer, instance as
+          FindAssetsByAccountIdAndAssetDefinitionId)
+      	13 -> FindAssetsByDomainNameAndAssetDefinitionId.write(writer, instance as
+          FindAssetsByDomainNameAndAssetDefinitionId)
+      	14 -> FindAssetQuantityById.write(writer, instance as FindAssetQuantityById)
+      	15 -> FindAssetKeyValueByIdAndKey.write(writer, instance as FindAssetKeyValueByIdAndKey)
+      	16 -> FindAllDomains.write(writer, instance as FindAllDomains)
+      	17 -> FindDomainByName.write(writer, instance as FindDomainByName)
+      	18 -> FindAllPeers.write(writer, instance as FindAllPeers)
+      	19 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
+      	20 -> FindPermissionTokensByAccountId.write(writer, instance as
+          FindPermissionTokensByAccountId)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::isi::Instruction' enum
  */
-public abstract class Instruction {
+public sealed class Instruction {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Register>, ScaleWriter<Register> {
-      public override fun read(reader: ScaleCodecReader): Register {
-      }
+      public override fun read(reader: ScaleCodecReader): Register =
+          Register(RegisterBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
-        writer.directWrite(this.discriminant())
         RegisterBox.write(writer, instance.register)
       }
     }
@@ -47,11 +46,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Unregister>, ScaleWriter<Unregister> {
-      public override fun read(reader: ScaleCodecReader): Unregister {
-      }
+      public override fun read(reader: ScaleCodecReader): Unregister =
+          Unregister(UnregisterBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
-        writer.directWrite(this.discriminant())
         UnregisterBox.write(writer, instance.unregister)
       }
     }
@@ -66,11 +64,9 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Mint>, ScaleWriter<Mint> {
-      public override fun read(reader: ScaleCodecReader): Mint {
-      }
+      public override fun read(reader: ScaleCodecReader): Mint = Mint(MintBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
-        writer.directWrite(this.discriminant())
         MintBox.write(writer, instance.mint)
       }
     }
@@ -85,11 +81,9 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Burn>, ScaleWriter<Burn> {
-      public override fun read(reader: ScaleCodecReader): Burn {
-      }
+      public override fun read(reader: ScaleCodecReader): Burn = Burn(BurnBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
-        writer.directWrite(this.discriminant())
         BurnBox.write(writer, instance.burn)
       }
     }
@@ -104,11 +98,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Transfer>, ScaleWriter<Transfer> {
-      public override fun read(reader: ScaleCodecReader): Transfer {
-      }
+      public override fun read(reader: ScaleCodecReader): Transfer =
+          Transfer(TransferBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
-        writer.directWrite(this.discriminant())
         TransferBox.write(writer, instance.transfer)
       }
     }
@@ -123,11 +116,9 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-      public override fun read(reader: ScaleCodecReader): If {
-      }
+      public override fun read(reader: ScaleCodecReader): If = If(If.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        writer.directWrite(this.discriminant())
         If.write(writer, instance.if)
       }
     }
@@ -142,11 +133,9 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 6
 
     public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
-      public override fun read(reader: ScaleCodecReader): Pair {
-      }
+      public override fun read(reader: ScaleCodecReader): Pair = Pair(Pair.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-        writer.directWrite(this.discriminant())
         Pair.write(writer, instance.pair)
       }
     }
@@ -161,11 +150,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 7
 
     public companion object CODEC : ScaleReader<Sequence>, ScaleWriter<Sequence> {
-      public override fun read(reader: ScaleCodecReader): Sequence {
-      }
+      public override fun read(reader: ScaleCodecReader): Sequence =
+          Sequence(SequenceBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
-        writer.directWrite(this.discriminant())
         SequenceBox.write(writer, instance.sequence)
       }
     }
@@ -180,11 +168,9 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 8
 
     public companion object CODEC : ScaleReader<Fail>, ScaleWriter<Fail> {
-      public override fun read(reader: ScaleCodecReader): Fail {
-      }
+      public override fun read(reader: ScaleCodecReader): Fail = Fail(FailBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
-        writer.directWrite(this.discriminant())
         FailBox.write(writer, instance.fail)
       }
     }
@@ -199,11 +185,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 9
 
     public companion object CODEC : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
-      public override fun read(reader: ScaleCodecReader): SetKeyValue {
-      }
+      public override fun read(reader: ScaleCodecReader): SetKeyValue =
+          SetKeyValue(SetKeyValueBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
-        writer.directWrite(this.discriminant())
         SetKeyValueBox.write(writer, instance.setKeyValue)
       }
     }
@@ -218,11 +203,10 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 10
 
     public companion object CODEC : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
-      public override fun read(reader: ScaleCodecReader): RemoveKeyValue {
-      }
+      public override fun read(reader: ScaleCodecReader): RemoveKeyValue =
+          RemoveKeyValue(RemoveKeyValueBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
-        writer.directWrite(this.discriminant())
         RemoveKeyValueBox.write(writer, instance.removeKeyValue)
       }
     }
@@ -237,12 +221,46 @@ public abstract class Instruction {
     public override fun discriminant(): Int = 11
 
     public companion object CODEC : ScaleReader<Grant>, ScaleWriter<Grant> {
-      public override fun read(reader: ScaleCodecReader): Grant {
-      }
+      public override fun read(reader: ScaleCodecReader): Grant = Grant(GrantBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {
-        writer.directWrite(this.discriminant())
         GrantBox.write(writer, instance.grant)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<Instruction>, ScaleWriter<Instruction> {
+    public override fun read(reader: ScaleCodecReader): Instruction = when(reader.readUByte()) {
+    	0 -> Register.read(reader)
+    	1 -> Unregister.read(reader)
+    	2 -> Mint.read(reader)
+    	3 -> Burn.read(reader)
+    	4 -> Transfer.read(reader)
+    	5 -> If.read(reader)
+    	6 -> Pair.read(reader)
+    	7 -> Sequence.read(reader)
+    	8 -> Fail.read(reader)
+    	9 -> SetKeyValue.read(reader)
+    	10 -> RemoveKeyValue.read(reader)
+    	11 -> Grant.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Instruction): Unit {
+      when(instance.discriminant()) {
+      	0 -> Register.write(writer, instance as Register)
+      	1 -> Unregister.write(writer, instance as Unregister)
+      	2 -> Mint.write(writer, instance as Mint)
+      	3 -> Burn.write(writer, instance as Burn)
+      	4 -> Transfer.write(writer, instance as Transfer)
+      	5 -> If.write(writer, instance as If)
+      	6 -> Pair.write(writer, instance as Pair)
+      	7 -> Sequence.write(writer, instance as Sequence)
+      	8 -> Fail.write(writer, instance as Fail)
+      	9 -> SetKeyValue.write(writer, instance as SetKeyValue)
+      	10 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
+      	11 -> Grant.write(writer, instance as Grant)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

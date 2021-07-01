@@ -15,7 +15,7 @@ import kotlin.collections.List
  *
  * Generated from 'iroha_data_model::Value' enum
  */
-public abstract class Value {
+public sealed class Value {
   /**
    * @return Discriminator of variant in enum
    */
@@ -30,12 +30,10 @@ public abstract class Value {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<U32>, ScaleWriter<U32> {
-      public override fun read(reader: ScaleCodecReader): U32 {
-      }
+      public override fun read(reader: ScaleCodecReader): U32 = U32(reader.readLong().toInt())
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        writer.directWrite(this.discriminant())
-        writer.writeLong(instance.u32)
+        writer.writeLong(instance.u32.toInt())
       }
     }
   }
@@ -49,11 +47,9 @@ public abstract class Value {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Bool>, ScaleWriter<Bool> {
-      public override fun read(reader: ScaleCodecReader): Bool {
-      }
+      public override fun read(reader: ScaleCodecReader): Bool = Bool(reader.readBoolean())
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
-        writer.directWrite(this.discriminant())
         writer.writeBoolean(instance.bool)
       }
     }
@@ -68,11 +64,9 @@ public abstract class Value {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<String>, ScaleWriter<String> {
-      public override fun read(reader: ScaleCodecReader): String {
-      }
+      public override fun read(reader: ScaleCodecReader): String = String(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
-        writer.directWrite(this.discriminant())
         writer.writeString(instance.string)
       }
     }
@@ -87,11 +81,9 @@ public abstract class Value {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Vec>, ScaleWriter<Vec> {
-      public override fun read(reader: ScaleCodecReader): Vec {
-      }
+      public override fun read(reader: ScaleCodecReader): Vec = Vec(reader.read())
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        writer.directWrite(this.discriminant())
         List.write(writer, instance.vec)
       }
     }
@@ -106,11 +98,9 @@ public abstract class Value {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
-      public override fun read(reader: ScaleCodecReader): Id {
-      }
+      public override fun read(reader: ScaleCodecReader): Id = Id(IdBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-        writer.directWrite(this.discriminant())
         IdBox.write(writer, instance.id)
       }
     }
@@ -125,11 +115,10 @@ public abstract class Value {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
-      public override fun read(reader: ScaleCodecReader): Identifiable {
-      }
+      public override fun read(reader: ScaleCodecReader): Identifiable =
+          Identifiable(IdentifiableBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
-        writer.directWrite(this.discriminant())
         IdentifiableBox.write(writer, instance.identifiable)
       }
     }
@@ -144,11 +133,10 @@ public abstract class Value {
     public override fun discriminant(): Int = 6
 
     public companion object CODEC : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
-      public override fun read(reader: ScaleCodecReader): PublicKey {
-      }
+      public override fun read(reader: ScaleCodecReader): PublicKey =
+          PublicKey(PublicKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-        writer.directWrite(this.discriminant())
         PublicKey.write(writer, instance.publicKey)
       }
     }
@@ -163,11 +151,10 @@ public abstract class Value {
     public override fun discriminant(): Int = 7
 
     public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
-      public override fun read(reader: ScaleCodecReader): Parameter {
-      }
+      public override fun read(reader: ScaleCodecReader): Parameter =
+          Parameter(Parameter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-        writer.directWrite(this.discriminant())
         Parameter.write(writer, instance.parameter)
       }
     }
@@ -184,11 +171,10 @@ public abstract class Value {
 
     public companion object CODEC : ScaleReader<SignatureCheckCondition>,
         ScaleWriter<SignatureCheckCondition> {
-      public override fun read(reader: ScaleCodecReader): SignatureCheckCondition {
-      }
+      public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
+          SignatureCheckCondition(SignatureCheckCondition.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-        writer.directWrite(this.discriminant())
         SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
       }
     }
@@ -204,11 +190,10 @@ public abstract class Value {
     public override fun discriminant(): Int = 9
 
     public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
-      public override fun read(reader: ScaleCodecReader): TransactionValue {
-      }
+      public override fun read(reader: ScaleCodecReader): TransactionValue =
+          TransactionValue(TransactionValue.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
-        writer.directWrite(this.discriminant())
         TransactionValue.write(writer, instance.transactionValue)
       }
     }
@@ -224,12 +209,45 @@ public abstract class Value {
     public override fun discriminant(): Int = 10
 
     public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
-      public override fun read(reader: ScaleCodecReader): PermissionToken {
-      }
+      public override fun read(reader: ScaleCodecReader): PermissionToken =
+          PermissionToken(PermissionToken.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-        writer.directWrite(this.discriminant())
         PermissionToken.write(writer, instance.permissionToken)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<Value>, ScaleWriter<Value> {
+    public override fun read(reader: ScaleCodecReader): Value = when(reader.readUByte()) {
+    	0 -> U32.read(reader)
+    	1 -> Bool.read(reader)
+    	2 -> String.read(reader)
+    	3 -> Vec.read(reader)
+    	4 -> Id.read(reader)
+    	5 -> Identifiable.read(reader)
+    	6 -> PublicKey.read(reader)
+    	7 -> Parameter.read(reader)
+    	8 -> SignatureCheckCondition.read(reader)
+    	9 -> TransactionValue.read(reader)
+    	10 -> PermissionToken.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Value): Unit {
+      when(instance.discriminant()) {
+      	0 -> U32.write(writer, instance as U32)
+      	1 -> Bool.write(writer, instance as Bool)
+      	2 -> String.write(writer, instance as String)
+      	3 -> Vec.write(writer, instance as Vec)
+      	4 -> Id.write(writer, instance as Id)
+      	5 -> Identifiable.write(writer, instance as Identifiable)
+      	6 -> PublicKey.write(writer, instance as PublicKey)
+      	7 -> Parameter.write(writer, instance as Parameter)
+      	8 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
+      	9 -> TransactionValue.write(writer, instance as TransactionValue)
+      	10 -> PermissionToken.write(writer, instance as PermissionToken)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

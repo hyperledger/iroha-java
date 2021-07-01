@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::pipeline::TransactionRejectionReason' enum
  */
-public abstract class TransactionRejectionReason {
+public sealed class TransactionRejectionReason {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,10 @@ public abstract class TransactionRejectionReason {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
-      public override fun read(reader: ScaleCodecReader): NotPermitted {
-      }
+      public override fun read(reader: ScaleCodecReader): NotPermitted =
+          NotPermitted(NotPermittedFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
-        writer.directWrite(this.discriminant())
         NotPermittedFail.write(writer, instance.notPermitted)
       }
     }
@@ -48,12 +47,11 @@ public abstract class TransactionRejectionReason {
 
     public companion object CODEC : ScaleReader<UnsatisfiedSignatureCondition>,
         ScaleWriter<UnsatisfiedSignatureCondition> {
-      public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition {
-      }
+      public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
+          UnsatisfiedSignatureCondition(UnsatisfiedSignatureConditionFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
           Unit {
-        writer.directWrite(this.discriminant())
         UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureCondition)
       }
     }
@@ -69,11 +67,10 @@ public abstract class TransactionRejectionReason {
 
     public companion object CODEC : ScaleReader<InstructionExecution>,
         ScaleWriter<InstructionExecution> {
-      public override fun read(reader: ScaleCodecReader): InstructionExecution {
-      }
+      public override fun read(reader: ScaleCodecReader): InstructionExecution =
+          InstructionExecution(InstructionExecutionFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
-        writer.directWrite(this.discriminant())
         InstructionExecutionFail.write(writer, instance.instructionExecution)
       }
     }
@@ -89,11 +86,10 @@ public abstract class TransactionRejectionReason {
 
     public companion object CODEC : ScaleReader<SignatureVerification>,
         ScaleWriter<SignatureVerification> {
-      public override fun read(reader: ScaleCodecReader): SignatureVerification {
-      }
+      public override fun read(reader: ScaleCodecReader): SignatureVerification =
+          SignatureVerification(SignatureVerificationFail.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
-        writer.directWrite(this.discriminant())
         SignatureVerificationFail.write(writer, instance.signatureVerification)
       }
     }
@@ -104,5 +100,31 @@ public abstract class TransactionRejectionReason {
    */
   public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
     public override fun discriminant(): Int = 4
+  }
+
+  public companion object CODEC : ScaleReader<TransactionRejectionReason>,
+      ScaleWriter<TransactionRejectionReason> {
+    public override fun read(reader: ScaleCodecReader): TransactionRejectionReason =
+        when(reader.readUByte()) {
+    	0 -> NotPermitted.read(reader)
+    	1 -> UnsatisfiedSignatureCondition.read(reader)
+    	2 -> InstructionExecution.read(reader)
+    	3 -> SignatureVerification.read(reader)
+    	4 -> UnexpectedGenesisAccountSignature.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason):
+        Unit {
+      when(instance.discriminant()) {
+      	0 -> NotPermitted.write(writer, instance as NotPermitted)
+      	1 -> UnsatisfiedSignatureCondition.write(writer, instance as UnsatisfiedSignatureCondition)
+      	2 -> InstructionExecution.write(writer, instance as InstructionExecution)
+      	3 -> SignatureVerification.write(writer, instance as SignatureVerification)
+      	4 -> UnexpectedGenesisAccountSignature.write(writer, instance as
+          UnexpectedGenesisAccountSignature)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+      }
+    }
   }
 }

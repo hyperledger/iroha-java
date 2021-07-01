@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::transaction::VersionedRejectedTransaction' enum
  */
-public abstract class VersionedRejectedTransaction {
+public sealed class VersionedRejectedTransaction {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,12 +28,28 @@ public abstract class VersionedRejectedTransaction {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
-      public override fun read(reader: ScaleCodecReader): V1 {
-      }
+      public override fun read(reader: ScaleCodecReader): V1 =
+          V1(_VersionedRejectedTransactionV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-        writer.directWrite(this.discriminant())
         _VersionedRejectedTransactionV1.write(writer, instance.v1)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<VersionedRejectedTransaction>,
+      ScaleWriter<VersionedRejectedTransaction> {
+    public override fun read(reader: ScaleCodecReader): VersionedRejectedTransaction =
+        when(reader.readUByte()) {
+    	1 -> V1.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: VersionedRejectedTransaction):
+        Unit {
+      when(instance.discriminant()) {
+      	1 -> V1.write(writer, instance as V1)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

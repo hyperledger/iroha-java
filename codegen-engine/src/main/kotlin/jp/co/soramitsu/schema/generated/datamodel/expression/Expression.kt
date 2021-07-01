@@ -15,7 +15,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::expression::Expression' enum
  */
-public abstract class Expression {
+public sealed class Expression {
   /**
    * @return Discriminator of variant in enum
    */
@@ -30,11 +30,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Add>, ScaleWriter<Add> {
-      public override fun read(reader: ScaleCodecReader): Add {
-      }
+      public override fun read(reader: ScaleCodecReader): Add = Add(Add.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
-        writer.directWrite(this.discriminant())
         Add.write(writer, instance.add)
       }
     }
@@ -49,11 +47,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Subtract>, ScaleWriter<Subtract> {
-      public override fun read(reader: ScaleCodecReader): Subtract {
-      }
+      public override fun read(reader: ScaleCodecReader): Subtract = Subtract(Subtract.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-        writer.directWrite(this.discriminant())
         Subtract.write(writer, instance.subtract)
       }
     }
@@ -68,11 +64,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 2
 
     public companion object CODEC : ScaleReader<Multiply>, ScaleWriter<Multiply> {
-      public override fun read(reader: ScaleCodecReader): Multiply {
-      }
+      public override fun read(reader: ScaleCodecReader): Multiply = Multiply(Multiply.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
-        writer.directWrite(this.discriminant())
         Multiply.write(writer, instance.multiply)
       }
     }
@@ -87,11 +81,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 3
 
     public companion object CODEC : ScaleReader<Divide>, ScaleWriter<Divide> {
-      public override fun read(reader: ScaleCodecReader): Divide {
-      }
+      public override fun read(reader: ScaleCodecReader): Divide = Divide(Divide.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-        writer.directWrite(this.discriminant())
         Divide.write(writer, instance.divide)
       }
     }
@@ -106,11 +98,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 4
 
     public companion object CODEC : ScaleReader<Mod>, ScaleWriter<Mod> {
-      public override fun read(reader: ScaleCodecReader): Mod {
-      }
+      public override fun read(reader: ScaleCodecReader): Mod = Mod(Mod.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-        writer.directWrite(this.discriminant())
         Mod.write(writer, instance.mod)
       }
     }
@@ -125,11 +115,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 5
 
     public companion object CODEC : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
-      public override fun read(reader: ScaleCodecReader): RaiseTo {
-      }
+      public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(RaiseTo.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-        writer.directWrite(this.discriminant())
         RaiseTo.write(writer, instance.raiseTo)
       }
     }
@@ -144,11 +132,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 6
 
     public companion object CODEC : ScaleReader<Greater>, ScaleWriter<Greater> {
-      public override fun read(reader: ScaleCodecReader): Greater {
-      }
+      public override fun read(reader: ScaleCodecReader): Greater = Greater(Greater.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-        writer.directWrite(this.discriminant())
         Greater.write(writer, instance.greater)
       }
     }
@@ -163,11 +149,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 7
 
     public companion object CODEC : ScaleReader<Less>, ScaleWriter<Less> {
-      public override fun read(reader: ScaleCodecReader): Less {
-      }
+      public override fun read(reader: ScaleCodecReader): Less = Less(Less.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-        writer.directWrite(this.discriminant())
         Less.write(writer, instance.less)
       }
     }
@@ -182,11 +166,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 8
 
     public companion object CODEC : ScaleReader<Equal>, ScaleWriter<Equal> {
-      public override fun read(reader: ScaleCodecReader): Equal {
-      }
+      public override fun read(reader: ScaleCodecReader): Equal = Equal(Equal.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-        writer.directWrite(this.discriminant())
         Equal.write(writer, instance.equal)
       }
     }
@@ -201,11 +183,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 9
 
     public companion object CODEC : ScaleReader<Not>, ScaleWriter<Not> {
-      public override fun read(reader: ScaleCodecReader): Not {
-      }
+      public override fun read(reader: ScaleCodecReader): Not = Not(Not.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-        writer.directWrite(this.discriminant())
         Not.write(writer, instance.not)
       }
     }
@@ -220,11 +200,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 10
 
     public companion object CODEC : ScaleReader<And>, ScaleWriter<And> {
-      public override fun read(reader: ScaleCodecReader): And {
-      }
+      public override fun read(reader: ScaleCodecReader): And = And(And.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-        writer.directWrite(this.discriminant())
         And.write(writer, instance.and)
       }
     }
@@ -239,11 +217,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 11
 
     public companion object CODEC : ScaleReader<Or>, ScaleWriter<Or> {
-      public override fun read(reader: ScaleCodecReader): Or {
-      }
+      public override fun read(reader: ScaleCodecReader): Or = Or(Or.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-        writer.directWrite(this.discriminant())
         Or.write(writer, instance.or)
       }
     }
@@ -258,11 +234,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 12
 
     public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
-      public override fun read(reader: ScaleCodecReader): If {
-      }
+      public override fun read(reader: ScaleCodecReader): If = If(If.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        writer.directWrite(this.discriminant())
         If.write(writer, instance.if)
       }
     }
@@ -277,11 +251,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 13
 
     public companion object CODEC : ScaleReader<Raw>, ScaleWriter<Raw> {
-      public override fun read(reader: ScaleCodecReader): Raw {
-      }
+      public override fun read(reader: ScaleCodecReader): Raw = Raw(Value.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
-        writer.directWrite(this.discriminant())
         Value.write(writer, instance.raw)
       }
     }
@@ -296,11 +268,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 14
 
     public companion object CODEC : ScaleReader<Query>, ScaleWriter<Query> {
-      public override fun read(reader: ScaleCodecReader): Query {
-      }
+      public override fun read(reader: ScaleCodecReader): Query = Query(QueryBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
-        writer.directWrite(this.discriminant())
         QueryBox.write(writer, instance.query)
       }
     }
@@ -315,11 +285,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 15
 
     public companion object CODEC : ScaleReader<Contains>, ScaleWriter<Contains> {
-      public override fun read(reader: ScaleCodecReader): Contains {
-      }
+      public override fun read(reader: ScaleCodecReader): Contains = Contains(Contains.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
-        writer.directWrite(this.discriminant())
         Contains.write(writer, instance.contains)
       }
     }
@@ -334,11 +302,10 @@ public abstract class Expression {
     public override fun discriminant(): Int = 16
 
     public companion object CODEC : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
-      public override fun read(reader: ScaleCodecReader): ContainsAll {
-      }
+      public override fun read(reader: ScaleCodecReader): ContainsAll =
+          ContainsAll(ContainsAll.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
-        writer.directWrite(this.discriminant())
         ContainsAll.write(writer, instance.containsAll)
       }
     }
@@ -353,11 +320,10 @@ public abstract class Expression {
     public override fun discriminant(): Int = 17
 
     public companion object CODEC : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
-      public override fun read(reader: ScaleCodecReader): ContainsAny {
-      }
+      public override fun read(reader: ScaleCodecReader): ContainsAny =
+          ContainsAny(ContainsAny.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-        writer.directWrite(this.discriminant())
         ContainsAny.write(writer, instance.containsAny)
       }
     }
@@ -372,11 +338,9 @@ public abstract class Expression {
     public override fun discriminant(): Int = 18
 
     public companion object CODEC : ScaleReader<Where>, ScaleWriter<Where> {
-      public override fun read(reader: ScaleCodecReader): Where {
-      }
+      public override fun read(reader: ScaleCodecReader): Where = Where(Where.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-        writer.directWrite(this.discriminant())
         Where.write(writer, instance.where)
       }
     }
@@ -391,12 +355,63 @@ public abstract class Expression {
     public override fun discriminant(): Int = 19
 
     public companion object CODEC : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
-      public override fun read(reader: ScaleCodecReader): ContextValue {
-      }
+      public override fun read(reader: ScaleCodecReader): ContextValue =
+          ContextValue(ContextValue.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-        writer.directWrite(this.discriminant())
         ContextValue.write(writer, instance.contextValue)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<Expression>, ScaleWriter<Expression> {
+    public override fun read(reader: ScaleCodecReader): Expression = when(reader.readUByte()) {
+    	0 -> Add.read(reader)
+    	1 -> Subtract.read(reader)
+    	2 -> Multiply.read(reader)
+    	3 -> Divide.read(reader)
+    	4 -> Mod.read(reader)
+    	5 -> RaiseTo.read(reader)
+    	6 -> Greater.read(reader)
+    	7 -> Less.read(reader)
+    	8 -> Equal.read(reader)
+    	9 -> Not.read(reader)
+    	10 -> And.read(reader)
+    	11 -> Or.read(reader)
+    	12 -> If.read(reader)
+    	13 -> Raw.read(reader)
+    	14 -> Query.read(reader)
+    	15 -> Contains.read(reader)
+    	16 -> ContainsAll.read(reader)
+    	17 -> ContainsAny.read(reader)
+    	18 -> Where.read(reader)
+    	19 -> ContextValue.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: Expression): Unit {
+      when(instance.discriminant()) {
+      	0 -> Add.write(writer, instance as Add)
+      	1 -> Subtract.write(writer, instance as Subtract)
+      	2 -> Multiply.write(writer, instance as Multiply)
+      	3 -> Divide.write(writer, instance as Divide)
+      	4 -> Mod.write(writer, instance as Mod)
+      	5 -> RaiseTo.write(writer, instance as RaiseTo)
+      	6 -> Greater.write(writer, instance as Greater)
+      	7 -> Less.write(writer, instance as Less)
+      	8 -> Equal.write(writer, instance as Equal)
+      	9 -> Not.write(writer, instance as Not)
+      	10 -> And.write(writer, instance as And)
+      	11 -> Or.write(writer, instance as Or)
+      	12 -> If.write(writer, instance as If)
+      	13 -> Raw.write(writer, instance as Raw)
+      	14 -> Query.write(writer, instance as Query)
+      	15 -> Contains.write(writer, instance as Contains)
+      	16 -> ContainsAll.write(writer, instance as ContainsAll)
+      	17 -> ContainsAny.write(writer, instance as ContainsAny)
+      	18 -> Where.write(writer, instance as Where)
+      	19 -> ContextValue.write(writer, instance as ContextValue)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

@@ -13,7 +13,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::pipeline::RejectionReason' enum
  */
-public abstract class RejectionReason {
+public sealed class RejectionReason {
   /**
    * @return Discriminator of variant in enum
    */
@@ -28,11 +28,10 @@ public abstract class RejectionReason {
     public override fun discriminant(): Int = 0
 
     public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
-      public override fun read(reader: ScaleCodecReader): Block {
-      }
+      public override fun read(reader: ScaleCodecReader): Block =
+          Block(BlockRejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
-        writer.directWrite(this.discriminant())
         BlockRejectionReason.write(writer, instance.block)
       }
     }
@@ -47,12 +46,27 @@ public abstract class RejectionReason {
     public override fun discriminant(): Int = 1
 
     public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-      public override fun read(reader: ScaleCodecReader): Transaction {
-      }
+      public override fun read(reader: ScaleCodecReader): Transaction =
+          Transaction(TransactionRejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-        writer.directWrite(this.discriminant())
         TransactionRejectionReason.write(writer, instance.transaction)
+      }
+    }
+  }
+
+  public companion object CODEC : ScaleReader<RejectionReason>, ScaleWriter<RejectionReason> {
+    public override fun read(reader: ScaleCodecReader): RejectionReason = when(reader.readUByte()) {
+    	0 -> Block.read(reader)
+    	1 -> Transaction.read(reader)
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
+    }
+
+    public override fun write(writer: ScaleCodecWriter, instance: RejectionReason): Unit {
+      when(instance.discriminant()) {
+      	0 -> Block.write(writer, instance as Block)
+      	1 -> Transaction.write(writer, instance as Transaction)
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant")
       }
     }
   }

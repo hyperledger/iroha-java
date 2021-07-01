@@ -111,7 +111,7 @@ object CodeGenerator {
             is BooleanType -> "writer.writeBoolean(instance.$propertyName)"
             is Option -> "writer.writeOptional(instance.$propertyName)"
             is Compact -> "writer.writeCompactInt(instance.$propertyName)"
-            is UIntType -> "writer.writeLong(instance.$propertyName)"
+            is UIntType -> "writer.writeLong(instance.$propertyName.toLong())"
             is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.$propertyName)"
             else -> {
                 when (val kotlinType = resolveKotlinType(type)) {
@@ -149,14 +149,11 @@ object CodeGenerator {
     }
 
     private fun implScaleReaderForEnumVariant(
-        variantName: String,
+        variant: EnumType.Variant,
         innerPropertyName: String
     ): CodeBlock {
-//        val code = CodeBlock.of(fooWrite(variant.type!!.value!!, innerPropertyName))
-        return CodeBlock.builder()
-//            .add(".directWrite(this.discriminant())\n")
-//            .add("$code")
-            .build()
+        val code = CodeBlock.of(fooRead(variant.type!!.value!!))
+        return CodeBlock.of("return ${variant.name}($code)")
     }
 
     private fun implScaleWriterForEnumVariant(
@@ -165,7 +162,6 @@ object CodeGenerator {
     ): CodeBlock {
         val code = CodeBlock.of(fooWrite(variant.type!!.value!!, innerPropertyName))
         return CodeBlock.builder()
-            .add("writer.directWrite(this.discriminant())\n")
             .add("$code")
             .build()
     }
@@ -227,7 +223,7 @@ object CodeGenerator {
         val (className, packageName, _) = defineFullClassNames(type.name)
 
         val clazz = generateClassSkeleton(type, className)
-            .addModifiers(KModifier.ABSTRACT)
+            .addModifiers(KModifier.SEALED)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' enum")
             .addFunction(
@@ -240,7 +236,6 @@ object CodeGenerator {
         for (variant in type.variants) {
 
             val variantClass = TypeSpec.classBuilder(variant.name)
-                .addModifiers(KModifier.PUBLIC)
                 .superclass(ClassName("jp.co.soramitsu.schema.generated.$packageName", className))
                 .addFunction(
                     FunSpec.builder("discriminant")
@@ -273,15 +268,42 @@ object CodeGenerator {
                     variantClass,
                     variant.name,
                     "$packageName.$className",
-                    implScaleReaderForEnumVariant(variant.name, normalizedName),
+                    implScaleReaderForEnumVariant(variant, normalizedName),
                     implScaleWriterForEnumVariant(variant, normalizedName)
                 )
             }
             clazz.addType(variantClass.build())
         }
 
-        return FileSpec.builder("jp.co.soramitsu.schema.generated.$packageName", className)
+        implementScaleCodec(
+            clazz,
+            className,
+            packageName,
+            implScaleReaderForEnum(type.variants),
+            implScaleWriterForEnum(type.variants)
+        )
+            return FileSpec.builder("jp.co.soramitsu.schema.generated.$packageName", className)
             .addType(clazz.build())
+    }
+
+    private fun implScaleReaderForEnum(variants: List<EnumType.Variant>): CodeBlock {
+        val rawCode = StringJoiner("\n")
+        rawCode.add("return when(reader.readUByte()) {")
+        for ((name, discriminant, _) in variants) {
+            rawCode.add("\t$discriminant -> $name.read(reader)")
+        }
+        rawCode.add("\telse -> throw RuntimeException(\"Unresolved discriminant of the enum variant\")")
+        return CodeBlock.of(rawCode.add("}").toString())
+    }
+
+    private fun implScaleWriterForEnum(variants: List<EnumType.Variant>) : CodeBlock {
+        val rawCode = StringJoiner("\n")
+        rawCode.add("when(instance.discriminant()) {")
+        for ((name, discriminant, _) in variants) {
+            rawCode.add("\t$discriminant -> $name.write(writer, instance as $name)")
+        }
+        rawCode.add("\telse -> throw RuntimeException(\"Unresolved discriminant of the enum variant\")")
+        return CodeBlock.of(rawCode.add("}").toString())
     }
 
     private fun defineFullClassNames(typeFullName: String): Foo {
