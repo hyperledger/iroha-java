@@ -20,11 +20,13 @@ public class EventFilter(
 ) {
   public companion object CODEC : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
     public override fun read(reader: ScaleCodecReader): EventFilter =
-        EventFilter(reader.readOptional(), reader.readOptional())
+        EventFilter(reader.readOptional(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType),
+        reader.readOptional(jp.co.soramitsu.schema.generated.crypto.Hash))
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-      writer.writeOptional(instance.`entity`)
-      writer.writeOptional(instance.`hash`)
+      writer.writeOptional(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType,
+          instance.`entity`)
+      writer.writeOptional(jp.co.soramitsu.schema.generated.crypto.Hash, instance.`hash`)
     }
   }
 }

@@ -52,7 +52,7 @@ public sealed class Value {
           jp.co.soramitsu.schema.generated.datamodel.Value.Bool(reader.readBoolean())
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
-        writer.writeBoolean(instance.`bool`)
+        writer.writeByte(if (instance.bool) {1} else {0})
       }
     }
   }

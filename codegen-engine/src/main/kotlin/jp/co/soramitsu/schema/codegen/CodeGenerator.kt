@@ -28,7 +28,7 @@ object CodeGenerator {
             .forEach { it.writeTo(Paths.get("codegen-engine/src/main/kotlin")) }
     }
 
-    private fun generateClassSkeleton(type: Type<*>, className: String): TypeSpec.Builder {
+    private fun generateClassSkeleton(className: String): TypeSpec.Builder {
         val clazz = TypeSpec.classBuilder(className)
             .addModifiers(KModifier.PUBLIC)
 
@@ -38,7 +38,7 @@ object CodeGenerator {
     private fun generateRegularStruct(type: Struct): FileSpec.Builder? {
         val (className, packageName, _) = defineFullClassNames(type.name)
 
-        val clazz = generateClassSkeleton(type, className)
+        val clazz = generateClassSkeleton(className)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' regular structure")
 
@@ -47,7 +47,7 @@ object CodeGenerator {
             className,
             packageName,
             implScaleReaderForStructs(type, className),
-            implScaleWriterForStructs(type, className)
+            implScaleWriterForStructs(type)
         )
 
         val constructorBuilder = FunSpec.constructorBuilder()
@@ -76,19 +76,26 @@ object CodeGenerator {
             .addType(clazz.build())
     }
 
-    private fun implScaleWriterForStructs(type: Struct, structName: String): CodeBlock {
+    private fun implScaleWriterForStructs(type: Struct): CodeBlock {
         val code = StringJoiner("\n")
         for ((propertyName, typeRef) in type.mapping) {
-            code.add(fooWrite(typeRef.value!!, convertToCamelCase(propertyName)))
+            code.add(resolveWriteImplementation(typeRef.value!!, convertToCamelCase(propertyName)))
         }
         return CodeBlock.of("$code")
     }
 
-    private fun fooRead(type: Type<*>): String {
+    private fun resolveReadImplementation(type: Type<*>): String {
         return when (type) {
             is StringType -> "reader.readString()"
             is BooleanType -> "reader.readBoolean()"
-            is Option -> "reader.readOptional()"
+            is Option -> {
+                val className = when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                    is ClassName -> kotlinType.canonicalName
+                    is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                    else -> throw RuntimeException("Unexpected type")
+                }
+                "reader.readOptional($className)"
+            }
             is Compact -> "reader.readCompactInt()"
             is UIntType -> "reader.readLong().toInt()"
             is FixedByteArray, is DynamicByteArray -> "reader.readByteArray()"
@@ -134,11 +141,18 @@ object CodeGenerator {
         }
     }
 
-    private fun fooWrite(type: Type<*>, propertyName: String): String {
+    private fun resolveWriteImplementation(type: Type<*>, propertyName: String): String {
         return when (type) {
             is StringType -> "writer.writeString(instance.`$propertyName`)"
-            is BooleanType -> "writer.writeBoolean(instance.`$propertyName`)"
-            is Option -> "writer.writeOptional(instance.`$propertyName`)"
+            is BooleanType -> "writer.writeByte(if (instance.$propertyName) {1} else {0})\n"
+            is Option -> {
+                val className = when (val kotlinType = resolveKotlinType(type.innerType!!)) {
+                    is ClassName -> kotlinType.canonicalName
+                    is ParameterizedTypeName -> kotlinType.rawType.canonicalName
+                    else -> throw RuntimeException("Unexpected type")
+                }
+                "writer.writeOptional($className, instance.`$propertyName`)"
+            }
             is Compact -> "writer.writeCompact(instance.`$propertyName`)"
             is UIntType -> "writer.writeLong(instance.`$propertyName`.toLong())"
             is FixedByteArray, is DynamicByteArray -> "writer.writeByteArray(instance.`$propertyName`)"
@@ -187,16 +201,16 @@ object CodeGenerator {
     private fun implScaleReaderForStructs(type: Struct, structName: String): CodeBlock {
         val code = StringJoiner(", ")
         for ((_, typeRef) in type.mapping) {
-            code.add(fooRead(typeRef.value!!))
+            code.add(resolveReadImplementation(typeRef.value!!))
         }
         return CodeBlock.of("return $structName($code)")
     }
 
-    private fun implScaleWriterForTupleStructs(type: TupleStruct, structName: String): CodeBlock {
+    private fun implScaleWriterForTupleStructs(type: TupleStruct): CodeBlock {
         val code = StringJoiner("\n")
         for (typeRef in type.types) {
             val propertyName = createTupleStructName(typeRef.value!!)
-            code.add(fooWrite(typeRef.value!!, convertToCamelCase(propertyName)))
+            code.add(resolveWriteImplementation(typeRef.value!!, convertToCamelCase(propertyName)))
         }
         return CodeBlock.of("$code")
     }
@@ -204,7 +218,7 @@ object CodeGenerator {
     private fun implScaleReaderForTupleStructs(type: TupleStruct, structName: String): CodeBlock {
         val code = StringJoiner(", ")
         for (typeRef in type.types) {
-            code.add(fooRead(typeRef.value!!))
+            code.add(resolveReadImplementation(typeRef.value!!))
         }
         return CodeBlock.of("return $structName($code)")
     }
@@ -213,7 +227,7 @@ object CodeGenerator {
         variant: EnumType.Variant,
         canonicalName: String
     ): CodeBlock {
-        val code = CodeBlock.of(fooRead(variant.type!!.value!!))
+        val code = CodeBlock.of(resolveReadImplementation(variant.type!!.value!!))
         return CodeBlock.of("return ${canonicalName}($code)")
     }
 
@@ -221,7 +235,7 @@ object CodeGenerator {
         variant: EnumType.Variant,
         propertyName: String,
     ): CodeBlock {
-        val code = CodeBlock.of(fooWrite(variant.type!!.value!!, propertyName))
+        val code = CodeBlock.of(resolveWriteImplementation(variant.type!!.value!!, propertyName))
         return CodeBlock.builder()
             .add("$code")
             .build()
@@ -230,7 +244,7 @@ object CodeGenerator {
     private fun generateTupleStruct(type: TupleStruct): FileSpec.Builder? {
         val (className, packageName, _) = defineFullClassNames(type.name)
 
-        val clazz = generateClassSkeleton(type, className)
+        val clazz = generateClassSkeleton(className)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' tuple structure")
 
@@ -239,7 +253,7 @@ object CodeGenerator {
             className,
             packageName,
             implScaleReaderForTupleStructs(type, className),
-            implScaleWriterForTupleStructs(type, className)
+            implScaleWriterForTupleStructs(type)
         )
 
         val constructorBuilder = FunSpec.constructorBuilder()
@@ -283,7 +297,7 @@ object CodeGenerator {
     private fun generateEnum(type: EnumType): FileSpec.Builder? {
         val (className, packageName, _) = defineFullClassNames(type.name)
 
-        val clazz = generateClassSkeleton(type, className)
+        val clazz = generateClassSkeleton(className)
             .addModifiers(KModifier.SEALED)
             .addKdoc("$className\n\n")
             .addKdoc("Generated from '${type.name}' enum")
@@ -376,7 +390,7 @@ object CodeGenerator {
         return CodeBlock.of(rawCode.add("}").toString())
     }
 
-    private fun defineFullClassNames(typeFullName: String): Foo {
+    private fun defineFullClassNames(typeFullName: String): ClassBlueprint {
         //expected only one wildcard at most
         val wildcard = typeFullName.substringAfter('<', "")
             .substringBeforeLast('>', "")
@@ -387,10 +401,10 @@ object CodeGenerator {
             .removePrefix("iroha")
             .replace("::", ".")
             .replace("_", "")
-        return Foo(className, packageName, wildcard)
+        return ClassBlueprint(className, packageName, wildcard)
     }
 
-    private data class Foo(val className: String, val packageName: String, val wildcard: String)
+    private data class ClassBlueprint(val className: String, val packageName: String, val wildcard: String)
 
     private fun convertToCamelCase(target: String): String {
         val tokenizer = StringTokenizer(target, "_")

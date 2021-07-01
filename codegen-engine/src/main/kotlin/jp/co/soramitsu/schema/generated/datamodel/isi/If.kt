@@ -23,13 +23,14 @@ public class If(
     public override fun read(reader: ScaleCodecReader): If =
         If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),
-        reader.readOptional())
+        reader.readOptional(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction))
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.write(writer,
           instance.`condition`)
       jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.write(writer, instance.`then`)
-      writer.writeOptional(instance.`otherwise`)
+      writer.writeOptional(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction,
+          instance.`otherwise`)
     }
   }
 }
