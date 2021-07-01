@@ -16,7 +16,7 @@ import kotlin.Unit
 public class EvaluatesTo(
   private val expression: Expression
 ) {
-  public companion object CODEC : ScaleReader<EvaluatesTo>, ScaleWriter<EvaluatesTo> {
+  public companion object : ScaleReader<EvaluatesTo>, ScaleWriter<EvaluatesTo> {
     public override fun read(reader: ScaleCodecReader): EvaluatesTo =
         EvaluatesTo(jp.co.soramitsu.schema.generated.datamodel.expression.Expression.read(reader))
 

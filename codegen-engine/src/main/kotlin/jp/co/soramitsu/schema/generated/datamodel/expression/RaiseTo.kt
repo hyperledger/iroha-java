@@ -16,7 +16,7 @@ public class RaiseTo(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
+  public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
     public override fun read(reader: ScaleCodecReader): RaiseTo =
         RaiseTo(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

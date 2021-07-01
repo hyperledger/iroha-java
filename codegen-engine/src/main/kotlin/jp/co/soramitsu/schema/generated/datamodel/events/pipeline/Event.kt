@@ -18,7 +18,7 @@ public class Event(
   private val status: Status,
   private val hash: Hash
 ) {
-  public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
+  public companion object : ScaleReader<Event>, ScaleWriter<Event> {
     public override fun read(reader: ScaleCodecReader): Event =
         Event(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.read(reader),

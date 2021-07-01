@@ -17,7 +17,7 @@ public class FindAssetKeyValueByIdAndKey(
   private val id: EvaluatesTo,
   private val key: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindAssetKeyValueByIdAndKey>,
+  public companion object : ScaleReader<FindAssetKeyValueByIdAndKey>,
       ScaleWriter<FindAssetKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
         FindAssetKeyValueByIdAndKey(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),

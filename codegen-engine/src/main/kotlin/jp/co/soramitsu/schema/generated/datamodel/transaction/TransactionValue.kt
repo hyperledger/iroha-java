@@ -27,7 +27,7 @@ public sealed class TransactionValue {
   ) : TransactionValue() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+    public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction =
           jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.Transaction(jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedTransaction.read(reader))
 
@@ -46,8 +46,7 @@ public sealed class TransactionValue {
   ) : TransactionValue() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<RejectedTransaction>,
-        ScaleWriter<RejectedTransaction> {
+    public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
       public override fun read(reader: ScaleCodecReader): RejectedTransaction =
           jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.RejectedTransaction(jp.co.soramitsu.schema.generated.datamodel.transaction.VersionedRejectedTransaction.read(reader))
 
@@ -58,7 +57,7 @@ public sealed class TransactionValue {
     }
   }
 
-  public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
+  public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
     public override fun read(reader: ScaleCodecReader): TransactionValue = when(reader.readUByte())
         {
     	0 -> Transaction.read(reader)

@@ -13,7 +13,7 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::events::data::Event' tuple structure
  */
 public class Event {
-  public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
+  public companion object : ScaleReader<Event>, ScaleWriter<Event> {
     public override fun read(reader: ScaleCodecReader): Event = Event()
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {

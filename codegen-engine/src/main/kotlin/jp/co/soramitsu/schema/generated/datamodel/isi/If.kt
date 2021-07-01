@@ -19,7 +19,7 @@ public class If(
   private val then: Instruction,
   private val otherwise: Optional<Instruction>
 ) {
-  public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
+  public companion object : ScaleReader<If>, ScaleWriter<If> {
     public override fun read(reader: ScaleCodecReader): If =
         If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),

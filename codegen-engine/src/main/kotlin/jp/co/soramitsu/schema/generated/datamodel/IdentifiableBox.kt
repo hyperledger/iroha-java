@@ -27,7 +27,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
+    public companion object : ScaleReader<Account>, ScaleWriter<Account> {
       public override fun read(reader: ScaleCodecReader): Account =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Account(jp.co.soramitsu.schema.generated.datamodel.account.Account.read(reader))
 
@@ -45,7 +45,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
+    public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
       public override fun read(reader: ScaleCodecReader): NewAccount =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.NewAccount.read(reader))
 
@@ -64,7 +64,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<Asset>, ScaleWriter<Asset> {
+    public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
       public override fun read(reader: ScaleCodecReader): Asset =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Asset(jp.co.soramitsu.schema.generated.datamodel.asset.Asset.read(reader))
 
@@ -82,7 +82,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
+    public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
       public override fun read(reader: ScaleCodecReader): AssetDefinition =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.AssetDefinition(jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.read(reader))
 
@@ -101,7 +101,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 4
 
-    public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
+    public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
       public override fun read(reader: ScaleCodecReader): Domain =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Domain(jp.co.soramitsu.schema.generated.datamodel.domain.Domain.read(reader))
 
@@ -119,7 +119,7 @@ public sealed class IdentifiableBox {
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = 5
 
-    public companion object CODEC : ScaleReader<Peer>, ScaleWriter<Peer> {
+    public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
       public override fun read(reader: ScaleCodecReader): Peer =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Peer.read(reader))
 
@@ -135,7 +135,7 @@ public sealed class IdentifiableBox {
   public class World : IdentifiableBox() {
     public override fun discriminant(): Int = 6
 
-    public companion object CODEC : ScaleReader<World>, ScaleWriter<World> {
+    public companion object : ScaleReader<World>, ScaleWriter<World> {
       public override fun read(reader: ScaleCodecReader): World =
           jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.World()
 
@@ -145,7 +145,7 @@ public sealed class IdentifiableBox {
     }
   }
 
-  public companion object CODEC : ScaleReader<IdentifiableBox>, ScaleWriter<IdentifiableBox> {
+  public companion object : ScaleReader<IdentifiableBox>, ScaleWriter<IdentifiableBox> {
     public override fun read(reader: ScaleCodecReader): IdentifiableBox = when(reader.readUByte()) {
     	0 -> Account.read(reader)
     	1 -> NewAccount.read(reader)

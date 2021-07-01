@@ -16,7 +16,7 @@ import kotlin.Unit
 public class RegisterBox(
   private val `object`: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
+  public companion object : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
     public override fun read(reader: ScaleCodecReader): RegisterBox =
         RegisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 

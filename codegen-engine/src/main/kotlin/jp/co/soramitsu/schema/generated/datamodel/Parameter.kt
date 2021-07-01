@@ -27,7 +27,7 @@ public sealed class Parameter {
   ) : Parameter() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<MaximumFaultyPeersAmount>,
+    public companion object : ScaleReader<MaximumFaultyPeersAmount>,
         ScaleWriter<MaximumFaultyPeersAmount> {
       public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
           jp.co.soramitsu.schema.generated.datamodel.Parameter.MaximumFaultyPeersAmount(reader.readLong().toInt())
@@ -47,7 +47,7 @@ public sealed class Parameter {
   ) : Parameter() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
+    public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
       public override fun read(reader: ScaleCodecReader): BlockTime =
           jp.co.soramitsu.schema.generated.datamodel.Parameter.BlockTime(reader.readLong().toInt())
 
@@ -65,7 +65,7 @@ public sealed class Parameter {
   ) : Parameter() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
+    public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
       public override fun read(reader: ScaleCodecReader): CommitTime =
           jp.co.soramitsu.schema.generated.datamodel.Parameter.CommitTime(reader.readLong().toInt())
 
@@ -83,7 +83,7 @@ public sealed class Parameter {
   ) : Parameter() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<TransactionReceiptTime>,
+    public companion object : ScaleReader<TransactionReceiptTime>,
         ScaleWriter<TransactionReceiptTime> {
       public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
           jp.co.soramitsu.schema.generated.datamodel.Parameter.TransactionReceiptTime(reader.readLong().toInt())
@@ -94,7 +94,7 @@ public sealed class Parameter {
     }
   }
 
-  public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
+  public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
     public override fun read(reader: ScaleCodecReader): Parameter = when(reader.readUByte()) {
     	0 -> MaximumFaultyPeersAmount.read(reader)
     	1 -> BlockTime.read(reader)

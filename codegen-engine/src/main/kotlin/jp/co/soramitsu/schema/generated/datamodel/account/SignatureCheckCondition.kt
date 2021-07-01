@@ -16,7 +16,7 @@ import kotlin.Unit
 public class SignatureCheckCondition(
   private val evaluatesTo: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<SignatureCheckCondition>,
+  public companion object : ScaleReader<SignatureCheckCondition>,
       ScaleWriter<SignatureCheckCondition> {
     public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
         SignatureCheckCondition(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

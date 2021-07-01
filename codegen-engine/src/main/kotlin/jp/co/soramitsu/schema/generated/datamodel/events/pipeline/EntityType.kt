@@ -25,7 +25,7 @@ public sealed class EntityType {
   public class Block : EntityType() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
+    public companion object : ScaleReader<Block>, ScaleWriter<Block> {
       public override fun read(reader: ScaleCodecReader): Block =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.Block()
 
@@ -41,7 +41,7 @@ public sealed class EntityType {
   public class Transaction : EntityType() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+    public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType.Transaction()
 
@@ -51,7 +51,7 @@ public sealed class EntityType {
     }
   }
 
-  public companion object CODEC : ScaleReader<EntityType>, ScaleWriter<EntityType> {
+  public companion object : ScaleReader<EntityType>, ScaleWriter<EntityType> {
     public override fun read(reader: ScaleCodecReader): EntityType = when(reader.readUByte()) {
     	0 -> Block.read(reader)
     	1 -> Transaction.read(reader)

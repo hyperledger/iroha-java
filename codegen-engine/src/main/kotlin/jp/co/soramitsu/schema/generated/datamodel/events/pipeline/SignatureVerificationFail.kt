@@ -18,7 +18,7 @@ public class SignatureVerificationFail(
   private val signature: Signature,
   private val reason: String
 ) {
-  public companion object CODEC : ScaleReader<SignatureVerificationFail>,
+  public companion object : ScaleReader<SignatureVerificationFail>,
       ScaleWriter<SignatureVerificationFail> {
     public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
         SignatureVerificationFail(jp.co.soramitsu.schema.generated.crypto.Signature.read(reader),

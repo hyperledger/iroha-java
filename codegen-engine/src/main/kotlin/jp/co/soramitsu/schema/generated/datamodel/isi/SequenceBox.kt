@@ -16,7 +16,7 @@ import kotlin.collections.List
 public class SequenceBox(
   private val instructions: List<Instruction>
 ) {
-  public companion object CODEC : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
+  public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
     public override fun read(reader: ScaleCodecReader): SequenceBox =
         SequenceBox(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)))
 

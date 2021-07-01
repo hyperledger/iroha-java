@@ -16,7 +16,7 @@ public class Add(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Add>, ScaleWriter<Add> {
+  public companion object : ScaleReader<Add>, ScaleWriter<Add> {
     public override fun read(reader: ScaleCodecReader): Add =
         Add(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

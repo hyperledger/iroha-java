@@ -16,7 +16,7 @@ public class Or(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Or>, ScaleWriter<Or> {
+  public companion object : ScaleReader<Or>, ScaleWriter<Or> {
     public override fun read(reader: ScaleCodecReader): Or =
         Or(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

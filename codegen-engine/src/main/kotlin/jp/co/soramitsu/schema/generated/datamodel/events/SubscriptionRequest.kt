@@ -15,8 +15,7 @@ import kotlin.Unit
 public class SubscriptionRequest(
   private val eventFilter: EventFilter
 ) {
-  public companion object CODEC : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest>
-      {
+  public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
     public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
         SubscriptionRequest(jp.co.soramitsu.schema.generated.datamodel.events.EventFilter.read(reader))
 

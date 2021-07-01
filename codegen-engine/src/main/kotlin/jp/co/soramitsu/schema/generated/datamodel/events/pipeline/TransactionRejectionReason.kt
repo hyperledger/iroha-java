@@ -27,7 +27,7 @@ public sealed class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
+    public companion object : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
       public override fun read(reader: ScaleCodecReader): NotPermitted =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.NotPermitted(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.NotPermittedFail.read(reader))
 
@@ -46,7 +46,7 @@ public sealed class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<UnsatisfiedSignatureCondition>,
+    public companion object : ScaleReader<UnsatisfiedSignatureCondition>,
         ScaleWriter<UnsatisfiedSignatureCondition> {
       public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.UnsatisfiedSignatureCondition(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.UnsatisfiedSignatureConditionFail.read(reader))
@@ -67,8 +67,7 @@ public sealed class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<InstructionExecution>,
-        ScaleWriter<InstructionExecution> {
+    public companion object : ScaleReader<InstructionExecution>, ScaleWriter<InstructionExecution> {
       public override fun read(reader: ScaleCodecReader): InstructionExecution =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.InstructionExecution(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.InstructionExecutionFail.read(reader))
 
@@ -87,8 +86,8 @@ public sealed class TransactionRejectionReason {
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<SignatureVerification>,
-        ScaleWriter<SignatureVerification> {
+    public companion object : ScaleReader<SignatureVerification>, ScaleWriter<SignatureVerification>
+        {
       public override fun read(reader: ScaleCodecReader): SignatureVerification =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.SignatureVerification(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.SignatureVerificationFail.read(reader))
 
@@ -105,7 +104,7 @@ public sealed class TransactionRejectionReason {
   public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
     public override fun discriminant(): Int = 4
 
-    public companion object CODEC : ScaleReader<UnexpectedGenesisAccountSignature>,
+    public companion object : ScaleReader<UnexpectedGenesisAccountSignature>,
         ScaleWriter<UnexpectedGenesisAccountSignature> {
       public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.UnexpectedGenesisAccountSignature()
@@ -117,7 +116,7 @@ public sealed class TransactionRejectionReason {
     }
   }
 
-  public companion object CODEC : ScaleReader<TransactionRejectionReason>,
+  public companion object : ScaleReader<TransactionRejectionReason>,
       ScaleWriter<TransactionRejectionReason> {
     public override fun read(reader: ScaleCodecReader): TransactionRejectionReason =
         when(reader.readUByte()) {

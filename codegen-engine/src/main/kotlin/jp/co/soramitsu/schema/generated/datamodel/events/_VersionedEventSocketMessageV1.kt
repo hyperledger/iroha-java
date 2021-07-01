@@ -15,7 +15,7 @@ import kotlin.Unit
 public class _VersionedEventSocketMessageV1(
   private val eventSocketMessage: EventSocketMessage
 ) {
-  public companion object CODEC : ScaleReader<_VersionedEventSocketMessageV1>,
+  public companion object : ScaleReader<_VersionedEventSocketMessageV1>,
       ScaleWriter<_VersionedEventSocketMessageV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedEventSocketMessageV1 =
         _VersionedEventSocketMessageV1(jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.read(reader))

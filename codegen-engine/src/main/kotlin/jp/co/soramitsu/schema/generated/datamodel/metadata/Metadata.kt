@@ -18,7 +18,7 @@ import kotlin.collections.Map
 public class Metadata(
   private val map: Map<String, Value>
 ) {
-  public companion object CODEC : ScaleReader<Metadata>, ScaleWriter<Metadata> {
+  public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
     public override fun read(reader: ScaleCodecReader): Metadata =
         Metadata(reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,
         jp.co.soramitsu.schema.generated.datamodel.Value)))

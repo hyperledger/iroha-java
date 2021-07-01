@@ -17,8 +17,7 @@ public class AssetDefinitionEntry(
   private val definition: AssetDefinition,
   private val registeredBy: Id
 ) {
-  public companion object CODEC : ScaleReader<AssetDefinitionEntry>,
-      ScaleWriter<AssetDefinitionEntry> {
+  public companion object : ScaleReader<AssetDefinitionEntry>, ScaleWriter<AssetDefinitionEntry> {
     public override fun read(reader: ScaleCodecReader): AssetDefinitionEntry =
         AssetDefinitionEntry(jp.co.soramitsu.schema.generated.datamodel.asset.AssetDefinition.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))

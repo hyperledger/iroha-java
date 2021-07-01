@@ -16,7 +16,7 @@ import kotlin.Unit
 public class UnregisterBox(
   private val objectId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
+  public companion object : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
     public override fun read(reader: ScaleCodecReader): UnregisterBox =
         UnregisterBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 

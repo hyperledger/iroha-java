@@ -18,7 +18,7 @@ public class Where(
   private val expression: EvaluatesTo,
   private val values: Map<String, EvaluatesTo>
 ) {
-  public companion object CODEC : ScaleReader<Where>, ScaleWriter<Where> {
+  public companion object : ScaleReader<Where>, ScaleWriter<Where> {
     public override fun read(reader: ScaleCodecReader): Where =
         Where(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,

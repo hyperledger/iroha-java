@@ -25,7 +25,7 @@ public sealed class BlockRejectionReason {
   public class ConsensusBlockRejection : BlockRejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<ConsensusBlockRejection>,
+    public companion object : ScaleReader<ConsensusBlockRejection>,
         ScaleWriter<ConsensusBlockRejection> {
       public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.ConsensusBlockRejection()
@@ -36,8 +36,7 @@ public sealed class BlockRejectionReason {
     }
   }
 
-  public companion object CODEC : ScaleReader<BlockRejectionReason>,
-      ScaleWriter<BlockRejectionReason> {
+  public companion object : ScaleReader<BlockRejectionReason>, ScaleWriter<BlockRejectionReason> {
     public override fun read(reader: ScaleCodecReader): BlockRejectionReason =
         when(reader.readUByte()) {
     	0 -> ConsensusBlockRejection.read(reader)

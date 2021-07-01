@@ -17,7 +17,7 @@ public class DefinitionId(
   private val name: String,
   private val domainName: String
 ) {
-  public companion object CODEC : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
+  public companion object : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
     public override fun read(reader: ScaleCodecReader): DefinitionId =
         DefinitionId(reader.readString(), reader.readString())
 

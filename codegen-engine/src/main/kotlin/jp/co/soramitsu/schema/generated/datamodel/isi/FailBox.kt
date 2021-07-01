@@ -16,7 +16,7 @@ import kotlin.Unit
 public class FailBox(
   private val message: String
 ) {
-  public companion object CODEC : ScaleReader<FailBox>, ScaleWriter<FailBox> {
+  public companion object : ScaleReader<FailBox>, ScaleWriter<FailBox> {
     public override fun read(reader: ScaleCodecReader): FailBox = FailBox(reader.readString())
 
     public override fun write(writer: ScaleCodecWriter, instance: FailBox): Unit {

@@ -27,7 +27,7 @@ public class Account(
   private val signatureCheckCondition: SignatureCheckCondition,
   private val metadata: Metadata
 ) {
-  public companion object CODEC : ScaleReader<Account>, ScaleWriter<Account> {
+  public companion object : ScaleReader<Account>, ScaleWriter<Account> {
     public override fun read(reader: ScaleCodecReader): Account =
         Account(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
         reader.read(jp.co.soramitsu.schema.codegen.MapReader(jp.co.soramitsu.schema.generated.datamodel.asset.Id,

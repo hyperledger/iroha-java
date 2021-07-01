@@ -16,7 +16,7 @@ public class ContainsAll(
   private val collection: EvaluatesTo,
   private val elements: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
+  public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
     public override fun read(reader: ScaleCodecReader): ContainsAll =
         ContainsAll(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

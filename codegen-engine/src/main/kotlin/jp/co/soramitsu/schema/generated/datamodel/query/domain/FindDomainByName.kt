@@ -16,7 +16,7 @@ import kotlin.Unit
 public class FindDomainByName(
   private val name: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
+  public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
     public override fun read(reader: ScaleCodecReader): FindDomainByName =
         FindDomainByName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 

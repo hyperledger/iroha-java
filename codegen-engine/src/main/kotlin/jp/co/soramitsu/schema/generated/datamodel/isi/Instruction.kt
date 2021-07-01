@@ -27,7 +27,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Register>, ScaleWriter<Register> {
+    public companion object : ScaleReader<Register>, ScaleWriter<Register> {
       public override fun read(reader: ScaleCodecReader): Register =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Register(jp.co.soramitsu.schema.generated.datamodel.isi.RegisterBox.read(reader))
 
@@ -46,7 +46,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<Unregister>, ScaleWriter<Unregister> {
+    public companion object : ScaleReader<Unregister>, ScaleWriter<Unregister> {
       public override fun read(reader: ScaleCodecReader): Unregister =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Unregister(jp.co.soramitsu.schema.generated.datamodel.isi.UnregisterBox.read(reader))
 
@@ -65,7 +65,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<Mint>, ScaleWriter<Mint> {
+    public companion object : ScaleReader<Mint>, ScaleWriter<Mint> {
       public override fun read(reader: ScaleCodecReader): Mint =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Mint(jp.co.soramitsu.schema.generated.datamodel.isi.MintBox.read(reader))
 
@@ -83,7 +83,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<Burn>, ScaleWriter<Burn> {
+    public companion object : ScaleReader<Burn>, ScaleWriter<Burn> {
       public override fun read(reader: ScaleCodecReader): Burn =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Burn(jp.co.soramitsu.schema.generated.datamodel.isi.BurnBox.read(reader))
 
@@ -101,7 +101,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 4
 
-    public companion object CODEC : ScaleReader<Transfer>, ScaleWriter<Transfer> {
+    public companion object : ScaleReader<Transfer>, ScaleWriter<Transfer> {
       public override fun read(reader: ScaleCodecReader): Transfer =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Transfer(jp.co.soramitsu.schema.generated.datamodel.isi.TransferBox.read(reader))
 
@@ -120,7 +120,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 5
 
-    public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
+    public companion object : ScaleReader<If>, ScaleWriter<If> {
       public override fun read(reader: ScaleCodecReader): If =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.If(jp.co.soramitsu.schema.generated.datamodel.isi.If.read(reader))
 
@@ -138,7 +138,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 6
 
-    public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
+    public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
       public override fun read(reader: ScaleCodecReader): Pair =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Pair.read(reader))
 
@@ -156,7 +156,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 7
 
-    public companion object CODEC : ScaleReader<Sequence>, ScaleWriter<Sequence> {
+    public companion object : ScaleReader<Sequence>, ScaleWriter<Sequence> {
       public override fun read(reader: ScaleCodecReader): Sequence =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Sequence(jp.co.soramitsu.schema.generated.datamodel.isi.SequenceBox.read(reader))
 
@@ -175,7 +175,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 8
 
-    public companion object CODEC : ScaleReader<Fail>, ScaleWriter<Fail> {
+    public companion object : ScaleReader<Fail>, ScaleWriter<Fail> {
       public override fun read(reader: ScaleCodecReader): Fail =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Fail(jp.co.soramitsu.schema.generated.datamodel.isi.FailBox.read(reader))
 
@@ -193,7 +193,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 9
 
-    public companion object CODEC : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
+    public companion object : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
       public override fun read(reader: ScaleCodecReader): SetKeyValue =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.SetKeyValue(jp.co.soramitsu.schema.generated.datamodel.isi.SetKeyValueBox.read(reader))
 
@@ -212,7 +212,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 10
 
-    public companion object CODEC : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
+    public companion object : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
       public override fun read(reader: ScaleCodecReader): RemoveKeyValue =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.RemoveKeyValue(jp.co.soramitsu.schema.generated.datamodel.isi.RemoveKeyValueBox.read(reader))
 
@@ -231,7 +231,7 @@ public sealed class Instruction {
   ) : Instruction() {
     public override fun discriminant(): Int = 11
 
-    public companion object CODEC : ScaleReader<Grant>, ScaleWriter<Grant> {
+    public companion object : ScaleReader<Grant>, ScaleWriter<Grant> {
       public override fun read(reader: ScaleCodecReader): Grant =
           jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.Grant(jp.co.soramitsu.schema.generated.datamodel.isi.GrantBox.read(reader))
 
@@ -241,7 +241,7 @@ public sealed class Instruction {
     }
   }
 
-  public companion object CODEC : ScaleReader<Instruction>, ScaleWriter<Instruction> {
+  public companion object : ScaleReader<Instruction>, ScaleWriter<Instruction> {
     public override fun read(reader: ScaleCodecReader): Instruction = when(reader.readUByte()) {
     	0 -> Register.read(reader)
     	1 -> Unregister.read(reader)

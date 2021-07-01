@@ -16,7 +16,7 @@ import kotlin.Unit
 public class NotPermittedFail(
   private val reason: String
 ) {
-  public companion object CODEC : ScaleReader<NotPermittedFail>, ScaleWriter<NotPermittedFail> {
+  public companion object : ScaleReader<NotPermittedFail>, ScaleWriter<NotPermittedFail> {
     public override fun read(reader: ScaleCodecReader): NotPermittedFail =
         NotPermittedFail(reader.readString())
 

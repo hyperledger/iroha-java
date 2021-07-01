@@ -18,7 +18,7 @@ public class Transaction(
   private val payload: Payload,
   private val signatures: List<Signature>
 ) {
-  public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+  public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
     public override fun read(reader: ScaleCodecReader): Transaction =
         Transaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.read(reader),
         reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)))

@@ -18,7 +18,7 @@ public class SetKeyValueBox(
   private val key: EvaluatesTo,
   private val `value`: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
+  public companion object : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): SetKeyValueBox =
         SetKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),

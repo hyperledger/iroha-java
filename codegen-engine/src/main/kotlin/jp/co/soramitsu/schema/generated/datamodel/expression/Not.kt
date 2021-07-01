@@ -15,7 +15,7 @@ import kotlin.Unit
 public class Not(
   private val expression: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Not>, ScaleWriter<Not> {
+  public companion object : ScaleReader<Not>, ScaleWriter<Not> {
     public override fun read(reader: ScaleCodecReader): Not =
         Not(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 

@@ -19,7 +19,7 @@ public class PermissionToken(
   private val name: String,
   private val params: Map<String, Value>
 ) {
-  public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
+  public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
     public override fun read(reader: ScaleCodecReader): PermissionToken =
         PermissionToken(reader.readString(),
         reader.read(jp.co.soramitsu.schema.codegen.MapReader(kotlin.String,

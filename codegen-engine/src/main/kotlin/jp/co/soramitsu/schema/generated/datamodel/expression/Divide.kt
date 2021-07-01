@@ -16,7 +16,7 @@ public class Divide(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Divide>, ScaleWriter<Divide> {
+  public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
     public override fun read(reader: ScaleCodecReader): Divide =
         Divide(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

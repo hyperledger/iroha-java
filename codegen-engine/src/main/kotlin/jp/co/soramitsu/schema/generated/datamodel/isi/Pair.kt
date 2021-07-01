@@ -16,7 +16,7 @@ public class Pair(
   private val leftInstruction: Instruction,
   private val rightInstruction: Instruction
 ) {
-  public companion object CODEC : ScaleReader<Pair>, ScaleWriter<Pair> {
+  public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
     public override fun read(reader: ScaleCodecReader): Pair =
         Pair(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader))

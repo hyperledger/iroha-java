@@ -16,7 +16,7 @@ public class Id(
   private val definitionId: DefinitionId,
   private val accountId: jp.co.soramitsu.schema.generated.datamodel.account.Id
 ) {
-  public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
+  public companion object : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id =
         Id(jp.co.soramitsu.schema.generated.datamodel.asset.DefinitionId.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader))

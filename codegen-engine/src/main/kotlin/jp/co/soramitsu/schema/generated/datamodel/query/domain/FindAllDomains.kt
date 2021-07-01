@@ -13,7 +13,7 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::query::domain::FindAllDomains' regular structure
  */
 public class FindAllDomains {
-  public companion object CODEC : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
+  public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
     public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains()
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {

@@ -16,7 +16,7 @@ public class Subtract(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Subtract>, ScaleWriter<Subtract> {
+  public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
     public override fun read(reader: ScaleCodecReader): Subtract =
         Subtract(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

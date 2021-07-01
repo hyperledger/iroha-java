@@ -20,7 +20,7 @@ public class NewAccount(
   private val signatories: List<PublicKey>,
   private val metadata: Metadata
 ) {
-  public companion object CODEC : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
+  public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
     public override fun read(reader: ScaleCodecReader): NewAccount =
         NewAccount(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
         reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(PublicKey)),

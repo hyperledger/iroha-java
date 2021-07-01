@@ -16,7 +16,7 @@ public class Multiply(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Multiply>, ScaleWriter<Multiply> {
+  public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
     public override fun read(reader: ScaleCodecReader): Multiply =
         Multiply(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

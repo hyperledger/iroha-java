@@ -473,7 +473,7 @@ object CodeGenerator {
         writerCode: CodeBlock,
     ) {
         clazz.addType(
-            TypeSpec.companionObjectBuilder("CODEC")
+            TypeSpec.companionObjectBuilder()
                 .addSuperinterface(
                     ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
                         .parameterizedBy(

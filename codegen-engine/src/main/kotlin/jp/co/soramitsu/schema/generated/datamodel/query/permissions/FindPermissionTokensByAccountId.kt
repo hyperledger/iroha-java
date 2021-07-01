@@ -17,7 +17,7 @@ import kotlin.Unit
 public class FindPermissionTokensByAccountId(
   private val id: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindPermissionTokensByAccountId>,
+  public companion object : ScaleReader<FindPermissionTokensByAccountId>,
       ScaleWriter<FindPermissionTokensByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
         FindPermissionTokensByAccountId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

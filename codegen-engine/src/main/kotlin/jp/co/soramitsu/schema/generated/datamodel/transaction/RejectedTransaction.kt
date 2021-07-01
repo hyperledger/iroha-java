@@ -20,8 +20,7 @@ public class RejectedTransaction(
   private val signatures: List<Signature>,
   private val rejectionReason: TransactionRejectionReason
 ) {
-  public companion object CODEC : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction>
-      {
+  public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
     public override fun read(reader: ScaleCodecReader): RejectedTransaction =
         RejectedTransaction(jp.co.soramitsu.schema.generated.datamodel.transaction.Payload.read(reader),
         reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)),

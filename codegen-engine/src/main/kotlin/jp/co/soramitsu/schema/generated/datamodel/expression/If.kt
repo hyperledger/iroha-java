@@ -17,7 +17,7 @@ public class If(
   private val thenExpression: EvaluatesTo,
   private val elseExpression: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<If>, ScaleWriter<If> {
+  public companion object : ScaleReader<If>, ScaleWriter<If> {
     public override fun read(reader: ScaleCodecReader): If =
         If(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),

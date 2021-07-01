@@ -15,7 +15,7 @@ import kotlin.Unit
 public class _VersionedRejectedTransactionV1(
   private val rejectedTransaction: RejectedTransaction
 ) {
-  public companion object CODEC : ScaleReader<_VersionedRejectedTransactionV1>,
+  public companion object : ScaleReader<_VersionedRejectedTransactionV1>,
       ScaleWriter<_VersionedRejectedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedRejectedTransactionV1 =
         _VersionedRejectedTransactionV1(jp.co.soramitsu.schema.generated.datamodel.transaction.RejectedTransaction.read(reader))

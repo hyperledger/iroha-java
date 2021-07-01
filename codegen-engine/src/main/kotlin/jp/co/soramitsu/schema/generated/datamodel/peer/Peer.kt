@@ -15,7 +15,7 @@ import kotlin.Unit
 public class Peer(
   private val id: Id
 ) {
-  public companion object CODEC : ScaleReader<Peer>, ScaleWriter<Peer> {
+  public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
     public override fun read(reader: ScaleCodecReader): Peer =
         Peer(jp.co.soramitsu.schema.generated.datamodel.peer.Id.read(reader))
 

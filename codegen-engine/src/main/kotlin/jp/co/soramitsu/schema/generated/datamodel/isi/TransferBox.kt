@@ -18,7 +18,7 @@ public class TransferBox(
   private val `object`: EvaluatesTo,
   private val destinationId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
+  public companion object : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
     public override fun read(reader: ScaleCodecReader): TransferBox =
         TransferBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),

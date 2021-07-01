@@ -18,7 +18,7 @@ public class Id(
   private val address: String,
   private val publicKey: PublicKey
 ) {
-  public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
+  public companion object : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
         jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 

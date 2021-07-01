@@ -16,7 +16,7 @@ public class Equal(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Equal>, ScaleWriter<Equal> {
+  public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
     public override fun read(reader: ScaleCodecReader): Equal =
         Equal(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

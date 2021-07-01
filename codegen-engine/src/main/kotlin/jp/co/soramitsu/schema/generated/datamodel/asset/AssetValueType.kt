@@ -25,7 +25,7 @@ public sealed class AssetValueType {
   public class Quantity : AssetValueType() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Quantity>, ScaleWriter<Quantity> {
+    public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public override fun read(reader: ScaleCodecReader): Quantity =
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.Quantity()
 
@@ -41,7 +41,7 @@ public sealed class AssetValueType {
   public class BigQuantity : AssetValueType() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
+    public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
       public override fun read(reader: ScaleCodecReader): BigQuantity =
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.BigQuantity()
 
@@ -57,7 +57,7 @@ public sealed class AssetValueType {
   public class Store : AssetValueType() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<Store>, ScaleWriter<Store> {
+    public companion object : ScaleReader<Store>, ScaleWriter<Store> {
       public override fun read(reader: ScaleCodecReader): Store =
           jp.co.soramitsu.schema.generated.datamodel.asset.AssetValueType.Store()
 
@@ -67,7 +67,7 @@ public sealed class AssetValueType {
     }
   }
 
-  public companion object CODEC : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
+  public companion object : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
     public override fun read(reader: ScaleCodecReader): AssetValueType = when(reader.readUByte()) {
     	0 -> Quantity.read(reader)
     	1 -> BigQuantity.read(reader)

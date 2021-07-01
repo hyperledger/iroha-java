@@ -16,7 +16,7 @@ import kotlin.Unit
 public class FindAccountsByDomainName(
   private val domainName: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindAccountsByDomainName>,
+  public companion object : ScaleReader<FindAccountsByDomainName>,
       ScaleWriter<FindAccountsByDomainName> {
     public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
         FindAccountsByDomainName(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

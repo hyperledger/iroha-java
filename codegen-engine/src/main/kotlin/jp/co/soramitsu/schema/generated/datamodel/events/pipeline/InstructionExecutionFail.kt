@@ -18,7 +18,7 @@ public class InstructionExecutionFail(
   private val instruction: Instruction,
   private val reason: String
 ) {
-  public companion object CODEC : ScaleReader<InstructionExecutionFail>,
+  public companion object : ScaleReader<InstructionExecutionFail>,
       ScaleWriter<InstructionExecutionFail> {
     public override fun read(reader: ScaleCodecReader): InstructionExecutionFail =
         InstructionExecutionFail(jp.co.soramitsu.schema.generated.datamodel.isi.Instruction.read(reader),

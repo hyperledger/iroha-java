@@ -16,7 +16,7 @@ public class Less(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Less>, ScaleWriter<Less> {
+  public companion object : ScaleReader<Less>, ScaleWriter<Less> {
     public override fun read(reader: ScaleCodecReader): Less =
         Less(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

@@ -18,7 +18,7 @@ public class PublicKey(
   private val digestFunction: String,
   private val payload: ByteArray
 ) {
-  public companion object CODEC : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
+  public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
     public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(reader.readString(),
         reader.readByteArray())
 

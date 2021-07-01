@@ -18,7 +18,7 @@ public class FindAssetsByAccountIdAndAssetDefinitionId(
   private val accountId: EvaluatesTo,
   private val assetDefinitionId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
+  public companion object : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
       ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByAccountIdAndAssetDefinitionId =
         FindAssetsByAccountIdAndAssetDefinitionId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),

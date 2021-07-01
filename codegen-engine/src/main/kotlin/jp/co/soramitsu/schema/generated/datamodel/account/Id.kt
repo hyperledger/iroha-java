@@ -17,7 +17,7 @@ public class Id(
   private val name: String,
   private val domainName: String
 ) {
-  public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
+  public companion object : ScaleReader<Id>, ScaleWriter<Id> {
     public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
         reader.readString())
 

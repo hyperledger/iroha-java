@@ -16,7 +16,7 @@ import kotlin.Unit
 public class QueryResult(
   private val `value`: Value
 ) {
-  public companion object CODEC : ScaleReader<QueryResult>, ScaleWriter<QueryResult> {
+  public companion object : ScaleReader<QueryResult>, ScaleWriter<QueryResult> {
     public override fun read(reader: ScaleCodecReader): QueryResult =
         QueryResult(jp.co.soramitsu.schema.generated.datamodel.Value.read(reader))
 

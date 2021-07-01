@@ -17,7 +17,7 @@ import kotlin.Unit
 public class UnsatisfiedSignatureConditionFail(
   private val reason: String
 ) {
-  public companion object CODEC : ScaleReader<UnsatisfiedSignatureConditionFail>,
+  public companion object : ScaleReader<UnsatisfiedSignatureConditionFail>,
       ScaleWriter<UnsatisfiedSignatureConditionFail> {
     public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureConditionFail =
         UnsatisfiedSignatureConditionFail(reader.readString())

@@ -17,7 +17,7 @@ public class Signature(
   private val publicKey: PublicKey,
   private val signature: ByteArray
 ) {
-  public companion object CODEC : ScaleReader<Signature>, ScaleWriter<Signature> {
+  public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
     public override fun read(reader: ScaleCodecReader): Signature =
         Signature(jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader),
         reader.readByteArray())

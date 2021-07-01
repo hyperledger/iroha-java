@@ -16,7 +16,7 @@ public class Greater(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Greater>, ScaleWriter<Greater> {
+  public companion object : ScaleReader<Greater>, ScaleWriter<Greater> {
     public override fun read(reader: ScaleCodecReader): Greater =
         Greater(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

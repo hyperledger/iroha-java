@@ -18,7 +18,7 @@ public class EventFilter(
   private val entity: Optional<EntityType>,
   private val hash: Optional<Hash>
 ) {
-  public companion object CODEC : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
+  public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
     public override fun read(reader: ScaleCodecReader): EventFilter =
         EventFilter(reader.readOptional(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.EntityType),
         reader.readOptional(jp.co.soramitsu.schema.generated.crypto.Hash))

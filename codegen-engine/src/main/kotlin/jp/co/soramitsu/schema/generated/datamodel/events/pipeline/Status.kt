@@ -25,7 +25,7 @@ public sealed class Status {
   public class Validating : Status() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Validating>, ScaleWriter<Validating> {
+    public companion object : ScaleReader<Validating>, ScaleWriter<Validating> {
       public override fun read(reader: ScaleCodecReader): Validating =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Validating()
 
@@ -43,7 +43,7 @@ public sealed class Status {
   ) : Status() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<Rejected>, ScaleWriter<Rejected> {
+    public companion object : ScaleReader<Rejected>, ScaleWriter<Rejected> {
       public override fun read(reader: ScaleCodecReader): Rejected =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Rejected(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.read(reader))
 
@@ -60,7 +60,7 @@ public sealed class Status {
   public class Committed : Status() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<Committed>, ScaleWriter<Committed> {
+    public companion object : ScaleReader<Committed>, ScaleWriter<Committed> {
       public override fun read(reader: ScaleCodecReader): Committed =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.Status.Committed()
 
@@ -70,7 +70,7 @@ public sealed class Status {
     }
   }
 
-  public companion object CODEC : ScaleReader<Status>, ScaleWriter<Status> {
+  public companion object : ScaleReader<Status>, ScaleWriter<Status> {
     public override fun read(reader: ScaleCodecReader): Status = when(reader.readUByte()) {
     	0 -> Validating.read(reader)
     	1 -> Rejected.read(reader)

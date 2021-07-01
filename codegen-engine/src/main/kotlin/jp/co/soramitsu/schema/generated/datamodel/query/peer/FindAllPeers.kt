@@ -13,7 +13,7 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::query::peer::FindAllPeers' regular structure
  */
 public class FindAllPeers {
-  public companion object CODEC : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
+  public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
     public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers()
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {

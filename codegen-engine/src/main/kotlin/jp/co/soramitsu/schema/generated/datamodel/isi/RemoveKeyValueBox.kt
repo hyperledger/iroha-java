@@ -17,7 +17,7 @@ public class RemoveKeyValueBox(
   private val objectId: EvaluatesTo,
   private val key: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
+  public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox =
         RemoveKeyValueBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

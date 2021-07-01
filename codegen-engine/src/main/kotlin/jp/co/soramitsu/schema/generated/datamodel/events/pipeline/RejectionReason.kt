@@ -27,7 +27,7 @@ public sealed class RejectionReason {
   ) : RejectionReason() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<Block>, ScaleWriter<Block> {
+    public companion object : ScaleReader<Block>, ScaleWriter<Block> {
       public override fun read(reader: ScaleCodecReader): Block =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.Block(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.BlockRejectionReason.read(reader))
 
@@ -46,7 +46,7 @@ public sealed class RejectionReason {
   ) : RejectionReason() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+    public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public override fun read(reader: ScaleCodecReader): Transaction =
           jp.co.soramitsu.schema.generated.datamodel.events.pipeline.RejectionReason.Transaction(jp.co.soramitsu.schema.generated.datamodel.events.pipeline.TransactionRejectionReason.read(reader))
 
@@ -57,7 +57,7 @@ public sealed class RejectionReason {
     }
   }
 
-  public companion object CODEC : ScaleReader<RejectionReason>, ScaleWriter<RejectionReason> {
+  public companion object : ScaleReader<RejectionReason>, ScaleWriter<RejectionReason> {
     public override fun read(reader: ScaleCodecReader): RejectionReason = when(reader.readUByte()) {
     	0 -> Block.read(reader)
     	1 -> Transaction.read(reader)

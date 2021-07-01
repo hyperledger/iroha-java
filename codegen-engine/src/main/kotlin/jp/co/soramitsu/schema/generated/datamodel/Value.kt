@@ -29,7 +29,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<U32>, ScaleWriter<U32> {
+    public companion object : ScaleReader<U32>, ScaleWriter<U32> {
       public override fun read(reader: ScaleCodecReader): U32 =
           jp.co.soramitsu.schema.generated.datamodel.Value.U32(reader.readLong().toInt())
 
@@ -47,7 +47,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<Bool>, ScaleWriter<Bool> {
+    public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
       public override fun read(reader: ScaleCodecReader): Bool =
           jp.co.soramitsu.schema.generated.datamodel.Value.Bool(reader.readBoolean())
 
@@ -65,7 +65,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<String>, ScaleWriter<String> {
+    public companion object : ScaleReader<String>, ScaleWriter<String> {
       public override fun read(reader: ScaleCodecReader): String =
           jp.co.soramitsu.schema.generated.datamodel.Value.String(reader.readString())
 
@@ -83,7 +83,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<Vec>, ScaleWriter<Vec> {
+    public companion object : ScaleReader<Vec>, ScaleWriter<Vec> {
       public override fun read(reader: ScaleCodecReader): Vec =
           jp.co.soramitsu.schema.generated.datamodel.Value.Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
 
@@ -101,7 +101,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 4
 
-    public companion object CODEC : ScaleReader<Id>, ScaleWriter<Id> {
+    public companion object : ScaleReader<Id>, ScaleWriter<Id> {
       public override fun read(reader: ScaleCodecReader): Id =
           jp.co.soramitsu.schema.generated.datamodel.Value.Id(jp.co.soramitsu.schema.generated.datamodel.IdBox.read(reader))
 
@@ -119,7 +119,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 5
 
-    public companion object CODEC : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
+    public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
       public override fun read(reader: ScaleCodecReader): Identifiable =
           jp.co.soramitsu.schema.generated.datamodel.Value.Identifiable(jp.co.soramitsu.schema.generated.datamodel.IdentifiableBox.read(reader))
 
@@ -138,7 +138,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 6
 
-    public companion object CODEC : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
+    public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
       public override fun read(reader: ScaleCodecReader): PublicKey =
           jp.co.soramitsu.schema.generated.datamodel.Value.PublicKey(jp.co.soramitsu.schema.generated.crypto.PublicKey.read(reader))
 
@@ -156,7 +156,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 7
 
-    public companion object CODEC : ScaleReader<Parameter>, ScaleWriter<Parameter> {
+    public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
       public override fun read(reader: ScaleCodecReader): Parameter =
           jp.co.soramitsu.schema.generated.datamodel.Value.Parameter(jp.co.soramitsu.schema.generated.datamodel.Parameter.read(reader))
 
@@ -175,7 +175,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 8
 
-    public companion object CODEC : ScaleReader<SignatureCheckCondition>,
+    public companion object : ScaleReader<SignatureCheckCondition>,
         ScaleWriter<SignatureCheckCondition> {
       public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
           jp.co.soramitsu.schema.generated.datamodel.Value.SignatureCheckCondition(jp.co.soramitsu.schema.generated.datamodel.account.SignatureCheckCondition.read(reader))
@@ -196,7 +196,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 9
 
-    public companion object CODEC : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
+    public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
       public override fun read(reader: ScaleCodecReader): TransactionValue =
           jp.co.soramitsu.schema.generated.datamodel.Value.TransactionValue(jp.co.soramitsu.schema.generated.datamodel.transaction.TransactionValue.read(reader))
 
@@ -216,7 +216,7 @@ public sealed class Value {
   ) : Value() {
     public override fun discriminant(): Int = 10
 
-    public companion object CODEC : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
+    public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
       public override fun read(reader: ScaleCodecReader): PermissionToken =
           jp.co.soramitsu.schema.generated.datamodel.Value.PermissionToken(jp.co.soramitsu.schema.generated.datamodel.permissions.PermissionToken.read(reader))
 
@@ -227,7 +227,7 @@ public sealed class Value {
     }
   }
 
-  public companion object CODEC : ScaleReader<Value>, ScaleWriter<Value> {
+  public companion object : ScaleReader<Value>, ScaleWriter<Value> {
     public override fun read(reader: ScaleCodecReader): Value = when(reader.readUByte()) {
     	0 -> U32.read(reader)
     	1 -> Bool.read(reader)

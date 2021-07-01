@@ -17,7 +17,7 @@ public class GrantBox(
   private val `object`: EvaluatesTo,
   private val destinationId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
+  public companion object : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
     public override fun read(reader: ScaleCodecReader): GrantBox =
         GrantBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

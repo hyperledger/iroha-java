@@ -13,7 +13,7 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::query::account::FindAllAccounts' regular structure
  */
 public class FindAllAccounts {
-  public companion object CODEC : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
+  public companion object : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
     public override fun read(reader: ScaleCodecReader): FindAllAccounts = FindAllAccounts()
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {

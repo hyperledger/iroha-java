@@ -17,7 +17,7 @@ public class MintBox(
   private val `object`: EvaluatesTo,
   private val destinationId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<MintBox>, ScaleWriter<MintBox> {
+  public companion object : ScaleReader<MintBox>, ScaleWriter<MintBox> {
     public override fun read(reader: ScaleCodecReader): MintBox =
         MintBox(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

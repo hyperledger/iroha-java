@@ -16,7 +16,7 @@ public class And(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<And>, ScaleWriter<And> {
+  public companion object : ScaleReader<And>, ScaleWriter<And> {
     public override fun read(reader: ScaleCodecReader): And =
         And(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

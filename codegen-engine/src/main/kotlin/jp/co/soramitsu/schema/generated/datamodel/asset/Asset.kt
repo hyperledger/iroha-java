@@ -16,7 +16,7 @@ public class Asset(
   private val id: Id,
   private val `value`: AssetValue
 ) {
-  public companion object CODEC : ScaleReader<Asset>, ScaleWriter<Asset> {
+  public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
     public override fun read(reader: ScaleCodecReader): Asset =
         Asset(jp.co.soramitsu.schema.generated.datamodel.asset.Id.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.asset.AssetValue.read(reader))

@@ -16,7 +16,7 @@ import kotlin.Unit
 public class ContextValue(
   private val valueName: String
 ) {
-  public companion object CODEC : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
+  public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
     public override fun read(reader: ScaleCodecReader): ContextValue =
         ContextValue(reader.readString())
 

@@ -27,7 +27,7 @@ public sealed class VersionedEventSocketMessage {
   ) : VersionedEventSocketMessage() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
+    public companion object : ScaleReader<V1>, ScaleWriter<V1> {
       public override fun read(reader: ScaleCodecReader): V1 =
           jp.co.soramitsu.schema.generated.datamodel.events.VersionedEventSocketMessage.V1(jp.co.soramitsu.schema.generated.datamodel.events._VersionedEventSocketMessageV1.read(reader))
 
@@ -38,7 +38,7 @@ public sealed class VersionedEventSocketMessage {
     }
   }
 
-  public companion object CODEC : ScaleReader<VersionedEventSocketMessage>,
+  public companion object : ScaleReader<VersionedEventSocketMessage>,
       ScaleWriter<VersionedEventSocketMessage> {
     public override fun read(reader: ScaleCodecReader): VersionedEventSocketMessage =
         when(reader.readUByte()) {

@@ -15,7 +15,7 @@ import kotlin.Unit
 public class _VersionedTransactionV1(
   private val transaction: Transaction
 ) {
-  public companion object CODEC : ScaleReader<_VersionedTransactionV1>,
+  public companion object : ScaleReader<_VersionedTransactionV1>,
       ScaleWriter<_VersionedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
         _VersionedTransactionV1(jp.co.soramitsu.schema.generated.datamodel.transaction.Transaction.read(reader))

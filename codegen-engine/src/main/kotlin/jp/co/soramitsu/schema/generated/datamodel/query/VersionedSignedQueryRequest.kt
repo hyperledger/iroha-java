@@ -27,7 +27,7 @@ public sealed class VersionedSignedQueryRequest {
   ) : VersionedSignedQueryRequest() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<V1>, ScaleWriter<V1> {
+    public companion object : ScaleReader<V1>, ScaleWriter<V1> {
       public override fun read(reader: ScaleCodecReader): V1 =
           jp.co.soramitsu.schema.generated.datamodel.query.VersionedSignedQueryRequest.V1(jp.co.soramitsu.schema.generated.datamodel.query._VersionedSignedQueryRequestV1.read(reader))
 
@@ -38,7 +38,7 @@ public sealed class VersionedSignedQueryRequest {
     }
   }
 
-  public companion object CODEC : ScaleReader<VersionedSignedQueryRequest>,
+  public companion object : ScaleReader<VersionedSignedQueryRequest>,
       ScaleWriter<VersionedSignedQueryRequest> {
     public override fun read(reader: ScaleCodecReader): VersionedSignedQueryRequest =
         when(reader.readUByte()) {

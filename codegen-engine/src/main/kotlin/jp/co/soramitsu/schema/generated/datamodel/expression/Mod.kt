@@ -16,7 +16,7 @@ public class Mod(
   private val left: EvaluatesTo,
   private val right: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<Mod>, ScaleWriter<Mod> {
+  public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
     public override fun read(reader: ScaleCodecReader): Mod =
         Mod(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader),
         jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))

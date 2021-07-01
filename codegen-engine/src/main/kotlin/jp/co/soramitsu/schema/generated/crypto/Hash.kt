@@ -16,7 +16,7 @@ import kotlin.Unit
 public class Hash(
   private val array: ByteArray
 ) {
-  public companion object CODEC : ScaleReader<Hash>, ScaleWriter<Hash> {
+  public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
     public override fun read(reader: ScaleCodecReader): Hash = Hash(reader.readByteArray())
 
     public override fun write(writer: ScaleCodecWriter, instance: Hash): Unit {

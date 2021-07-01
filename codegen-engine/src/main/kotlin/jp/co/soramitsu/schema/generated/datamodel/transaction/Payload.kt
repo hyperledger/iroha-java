@@ -26,7 +26,7 @@ public class Payload(
   private val timeToLiveMs: Int,
   private val metadata: Map<String, Value>
 ) {
-  public companion object CODEC : ScaleReader<Payload>, ScaleWriter<Payload> {
+  public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
     public override fun read(reader: ScaleCodecReader): Payload =
         Payload(jp.co.soramitsu.schema.generated.datamodel.account.Id.read(reader),
         reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)),

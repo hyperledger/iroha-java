@@ -15,7 +15,7 @@ import kotlin.Unit
 public class _VersionedSignedQueryRequestV1(
   private val signedQueryRequest: SignedQueryRequest
 ) {
-  public companion object CODEC : ScaleReader<_VersionedSignedQueryRequestV1>,
+  public companion object : ScaleReader<_VersionedSignedQueryRequestV1>,
       ScaleWriter<_VersionedSignedQueryRequestV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedSignedQueryRequestV1 =
         _VersionedSignedQueryRequestV1(jp.co.soramitsu.schema.generated.datamodel.query.SignedQueryRequest.read(reader))

@@ -19,7 +19,7 @@ public class SignedQueryRequest(
   private val signature: Signature,
   private val query: QueryBox
 ) {
-  public companion object CODEC : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
+  public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
     public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
         SignedQueryRequest(reader.readCompactInt(),
         jp.co.soramitsu.schema.generated.crypto.Signature.read(reader),

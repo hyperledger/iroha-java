@@ -28,8 +28,7 @@ public sealed class EventSocketMessage {
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = 0
 
-    public companion object CODEC : ScaleReader<SubscriptionRequest>,
-        ScaleWriter<SubscriptionRequest> {
+    public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
       public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
           jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.SubscriptionRequest(jp.co.soramitsu.schema.generated.datamodel.events.SubscriptionRequest.read(reader))
 
@@ -46,8 +45,7 @@ public sealed class EventSocketMessage {
   public class SubscriptionAccepted : EventSocketMessage() {
     public override fun discriminant(): Int = 1
 
-    public companion object CODEC : ScaleReader<SubscriptionAccepted>,
-        ScaleWriter<SubscriptionAccepted> {
+    public companion object : ScaleReader<SubscriptionAccepted>, ScaleWriter<SubscriptionAccepted> {
       public override fun read(reader: ScaleCodecReader): SubscriptionAccepted =
           jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.SubscriptionAccepted()
 
@@ -65,7 +63,7 @@ public sealed class EventSocketMessage {
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = 2
 
-    public companion object CODEC : ScaleReader<Event>, ScaleWriter<Event> {
+    public companion object : ScaleReader<Event>, ScaleWriter<Event> {
       public override fun read(reader: ScaleCodecReader): Event =
           jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.Event(jp.co.soramitsu.schema.generated.datamodel.events.Event.read(reader))
 
@@ -81,7 +79,7 @@ public sealed class EventSocketMessage {
   public class EventReceived : EventSocketMessage() {
     public override fun discriminant(): Int = 3
 
-    public companion object CODEC : ScaleReader<EventReceived>, ScaleWriter<EventReceived> {
+    public companion object : ScaleReader<EventReceived>, ScaleWriter<EventReceived> {
       public override fun read(reader: ScaleCodecReader): EventReceived =
           jp.co.soramitsu.schema.generated.datamodel.events.EventSocketMessage.EventReceived()
 
@@ -91,7 +89,7 @@ public sealed class EventSocketMessage {
     }
   }
 
-  public companion object CODEC : ScaleReader<EventSocketMessage>, ScaleWriter<EventSocketMessage> {
+  public companion object : ScaleReader<EventSocketMessage>, ScaleWriter<EventSocketMessage> {
     public override fun read(reader: ScaleCodecReader): EventSocketMessage =
         when(reader.readUByte()) {
     	0 -> SubscriptionRequest.read(reader)

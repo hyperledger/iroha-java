@@ -23,7 +23,7 @@ public class Domain(
   private val accounts: Map<Id, Account>,
   private val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
 ) {
-  public companion object CODEC : ScaleReader<Domain>, ScaleWriter<Domain> {
+  public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
     public override fun read(reader: ScaleCodecReader): Domain = Domain(reader.readString(),
         reader.read(jp.co.soramitsu.schema.codegen.MapReader(jp.co.soramitsu.schema.generated.datamodel.account.Id,
         jp.co.soramitsu.schema.generated.datamodel.account.Account)),

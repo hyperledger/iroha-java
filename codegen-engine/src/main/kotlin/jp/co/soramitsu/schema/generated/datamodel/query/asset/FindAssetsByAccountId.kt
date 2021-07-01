@@ -16,8 +16,7 @@ import kotlin.Unit
 public class FindAssetsByAccountId(
   private val accountId: EvaluatesTo
 ) {
-  public companion object CODEC : ScaleReader<FindAssetsByAccountId>,
-      ScaleWriter<FindAssetsByAccountId> {
+  public companion object : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
         FindAssetsByAccountId(jp.co.soramitsu.schema.generated.datamodel.expression.EvaluatesTo.read(reader))
 
