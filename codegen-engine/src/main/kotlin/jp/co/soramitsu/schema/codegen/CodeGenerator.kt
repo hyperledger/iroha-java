@@ -30,6 +30,7 @@ object CodeGenerator {
 
     private fun generateClassSkeleton(className: String): TypeSpec.Builder {
         val clazz = TypeSpec.classBuilder(className)
+
             .addModifiers(KModifier.PUBLIC)
 
         return clazz
@@ -49,6 +50,7 @@ object CodeGenerator {
             implScaleReaderForStructs(type, className),
             implScaleWriterForStructs(type)
         )
+
 
         val constructorBuilder = FunSpec.constructorBuilder()
 
@@ -260,6 +262,7 @@ object CodeGenerator {
 
         for (typeRef in type.types) {
             val normalizedName = createTupleStructName(typeRef.value!!)
+
             val kotlinType = resolveKotlinType(typeRef.value!!)
 
             constructorBuilder.addParameter(
@@ -320,6 +323,7 @@ object CodeGenerator {
                         .build()
                 )
                 .addKdoc("'${variant.name}' variant")
+
 
             if (variant.type != null) {
                 val (variantPropertyName, _, _) = defineFullClassNames(variant.name)
@@ -536,5 +540,4 @@ object CodeGenerator {
                 .build()
         )
     }
-
 }

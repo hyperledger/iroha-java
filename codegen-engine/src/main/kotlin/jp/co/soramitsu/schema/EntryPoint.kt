@@ -49,6 +49,7 @@ fun main() {
     CodeGenerator.generate(result.typePreset)
 }
 
+
 object MapExtension : DynamicTypeExtension {
 
     override fun createType(name: String, typeDef: String, typeProvider: TypeProvider): Type<*>? {
@@ -140,3 +141,4 @@ class MapType(name: String) : Type<MapType>(name) {
     }
 
 }
+

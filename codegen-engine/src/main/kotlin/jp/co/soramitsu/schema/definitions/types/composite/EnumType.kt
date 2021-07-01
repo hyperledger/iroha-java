@@ -13,6 +13,7 @@ class EnumType(
 
     data class Variant(val name: String, val discriminant: Int, val type: TypeReference?)
 
+
     override fun decode(scaleCodecReader: ScaleCodecReader): EnumType {
         TODO("Not yet implemented")
     }
