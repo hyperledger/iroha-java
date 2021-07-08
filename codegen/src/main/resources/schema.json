@@ -1,5 +1,4 @@
 {
-  "String": "String",
   "BTreeMap<String, iroha_data_model::Value>": {
     "Map": {
       "key": "String",
@@ -39,7 +38,7 @@
   "Option<iroha_data_model::isi::Instruction>": {
     "Option": "iroha_data_model::isi::Instruction"
   },
-
+  "String": "String",
   "Vec<iroha_crypto::PublicKey>": {
     "Vec": "iroha_crypto::PublicKey"
   },

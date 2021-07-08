@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.parse
 
 import jp.co.soramitsu.iroha2.Schema
+import jp.co.soramitsu.iroha2.type.Type
 
 typealias Types = Map<String, Type?>
 
@@ -13,12 +14,9 @@ object SchemaParser {
         val preprocessed = schema
             .map { (name, typeValue) -> createAndGet(name, typeValue) }
             .toSet()
-        preprocessed.forEach (::println)
         return preprocessed
-            .onEach (::println)
-            .associateBy(TypeNest::name, TypeNest::value)
+            .associateBy(TypeNest::name) {it.requireValue()}
     }
-
 
     fun getOrCreate(name : String): TypeNest {
         return registry.getOrPut(name) { TypeNest(name, null) }

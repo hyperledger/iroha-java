@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2.parse
 
+import jp.co.soramitsu.iroha2.type.*
+
 class TypeResolver(private val schemaParser: SchemaParser) {
 
     private val resolvers = listOf<Resolver<*>>(
@@ -162,5 +164,12 @@ object UIntResolver : Resolver<UIntType> {
             "u256" -> U256Type
             else -> null
         }
+    }
+}
+
+class TypeNest(val name: String, var value: Type?) {
+    fun requireValue() = value ?: throw IllegalArgumentException("TypeReference is null")
+    override fun toString(): String {
+        return "TypeNest(name='$name', value=$value)"
     }
 }
