@@ -10,12 +10,9 @@ import jp.co.soramitsu.schema.definitions.dynamic.TypeProvider
 import jp.co.soramitsu.schema.definitions.dynamic.extentsions.OptionExtension
 import jp.co.soramitsu.schema.definitions.dynamic.extentsions.TupleExtension
 import jp.co.soramitsu.schema.definitions.dynamic.extentsions.VectorExtension
-import jp.co.soramitsu.schema.definitions.dynamic.extentsions.WrapperExtension
 import jp.co.soramitsu.schema.definitions.types.Type
-import jp.co.soramitsu.schema.definitions.types.TypeReference
 import jp.co.soramitsu.schema.definitions.types.composite.SetType
 import jp.co.soramitsu.schema.definitions.types.composite.Vec
-import jp.co.soramitsu.schema.definitions.types.composite.WrapperType
 import jp.co.soramitsu.schema.definitions.types.primitives.*
 import jp.co.soramitsu.schema.parser.TypeDefinitionParserImpl.parseBaseDefinitions
 import java.io.InputStreamReader
@@ -141,4 +138,3 @@ class MapType(name: String) : Type<MapType>(name) {
     }
 
 }
-
