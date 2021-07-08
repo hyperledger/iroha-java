@@ -2,7 +2,9 @@ package jp.co.soramitsu.iroha2.type
 
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
-abstract class WrapperType(name: String, innerType: TypeNest) : Type(name)
+abstract class WrapperType(name: String, val innerType: TypeNest) : Type(name) {
+    override fun notResolvedTypes() = innerType.notResolvedTypes()
+}
 
 class OptionType(fullName: String, innerType: TypeNest) : WrapperType(fullName, innerType)
 

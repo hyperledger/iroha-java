@@ -2,18 +2,22 @@ package jp.co.soramitsu.iroha2.type
 
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
-abstract class Type(val name: String)
+abstract class Type(val name: String) {
+    open fun notResolvedTypes() : Set<String> = setOf()
+}
 
 object BooleanType : Type("bool")
 
-class MapType(name: String, key: TypeNest, value: TypeNest) : Type(name)
-
-class EnumType(name: String, val variants: List<Variant>) : Type(name) {
-    class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
+class MapType(name: String, val key: TypeNest, val value: TypeNest) : Type(name) {
+    override fun notResolvedTypes(): Set<String> {
+        val result = mutableSetOf<String>()
+        if (key.value == null) {
+            result.add(key.name)
+        } else if (value.value == null) {
+            result.add(value.name)
+        }
+        return result
+    }
 }
-
-class TupleStructType(name: String, val types: List<TypeNest>) : Type(name)
-
-class StructType(name: String, val mapping: LinkedHashMap<String, TypeNest>) : Type(name)
 
 object StringType : Type("String")

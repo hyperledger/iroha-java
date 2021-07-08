@@ -18,11 +18,10 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         UIntResolver,
     )
 
-    fun resolve(name: String, typeValue: Any): TypeNest {
+    fun resolve(name: String, typeValue: Any): Type {
         val candidates = resolvers
             .asSequence()
             .mapNotNull { it.resolve(name, typeValue, schemaParser) }
-            .map { TypeNest(it.name, it) }
             .toSet()
         if (candidates.size != 1) {
             throw RuntimeException(
@@ -52,6 +51,7 @@ object MapResolver : Resolver<MapType> {
         val wildcards = name.removePrefix("BTreeMap")
             .removeSurrounding("<", ">")
             .split(',')
+            .map { it.trim() }
         if (wildcards.size != 2) return null
         return MapType(
             name,
@@ -143,7 +143,7 @@ object StructResolver : Resolver<StructType> {
 
 object StringResolver : Resolver<StringType> {
     override fun resolve(name: String, typeValue: Any, schemaParser: SchemaParser): StringType? {
-        return if (name.startsWith("String")) {
+        return if (name.endsWith("String")) {
             StringType
         } else null
     }
@@ -168,7 +168,21 @@ object UIntResolver : Resolver<UIntType> {
 }
 
 class TypeNest(val name: String, var value: Type?) {
-    fun requireValue() = value ?: throw IllegalArgumentException("TypeReference is null")
+
+    private var resolutionInProgress: Boolean = false
+
+    fun requireValue() = value ?: throw IllegalArgumentException("Type is not resolved: $name")
+
+    fun notResolvedTypes() : Set<String> {
+        if (resolutionInProgress) {
+            return setOf()
+        }
+        resolutionInProgress = true
+        val resolutionResult = value?.notResolvedTypes() ?: setOf()
+        resolutionInProgress = false
+        return resolutionResult
+    }
+
     override fun toString(): String {
         return "TypeNest(name='$name', value=$value)"
     }
