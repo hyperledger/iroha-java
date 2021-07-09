@@ -20,7 +20,7 @@ typealias Schema = Map<String, Any>
 fun main() {
     val schema = readSchema()
     val parseResult = SchemaParser.parse(schema)
-    CodeGenerator.generate()
+    CodeGenerator.generate(parseResult)
 }
 
 fun readSchema(fileName : String = DEFAULT_SCHEMA_FILE_NAME): Schema {

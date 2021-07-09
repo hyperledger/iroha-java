@@ -16,6 +16,7 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         StringResolver,
         CompactResolver,
         UIntResolver,
+        SetResolver
     )
 
     fun resolve(name: String, typeValue: Any): Type {
@@ -79,6 +80,10 @@ object OptionResolver : WrapperResolver<OptionType>("Option") {
 
 object VectorResolver : WrapperResolver<VecType>("Vec") {
     override fun createWrapper(name: String, innerType: TypeNest) = VecType(name, innerType)
+}
+
+object SetResolver : WrapperResolver<SetType>("BTreeSet") {
+    override fun createWrapper(name: String, innerType: TypeNest) = SetType(name, innerType)
 }
 
 object ArrayResolver : Resolver<ArrayType> {
