@@ -23,12 +23,16 @@ object SchemaParser {
         return preprocessed.mapValues{ it.value.requireValue() }
     }
 
-    fun getOrCreate(name : String): TypeNest {
+    private fun getOrCreate(name : String): TypeNest {
         return registry.getOrPut(name) { TypeNest(name, null) }
     }
 
-    private fun createAndGet(name: String, typeValue: Any) : TypeNest {
+    fun createAndGet(name: String, typeValue: Any? = null) : TypeNest {
         return getOrCreate(name)
-            .also { it.value = resolver.resolve(name, typeValue) }
+            .also {
+                if (it.value == null) {
+                    it.value = resolver.resolve(name, typeValue)
+                }
+            }
     }
 }
