@@ -24,12 +24,6 @@ class TypeResolver(private val schemaParser: SchemaParser) {
             .asSequence()
             .mapNotNull { it.resolve(name, typeValue, schemaParser) }
             .toSet()
-//        if (candidates.size != 1) {
-//            throw RuntimeException(
-//                "Expected exactly one candidate for ($name: $typeValue)," +
-//                        " but got ${candidates.size}: $candidates"
-//            )
-//        }
         return candidates.firstOrNull()
     }
 }
@@ -56,17 +50,17 @@ object MapResolver : Resolver<MapType> {
         if (wildcards.size != 2) return null
         return MapType(
             name,
-            schemaParser.createAndGet(wildcards[0]),
-            schemaParser.createAndGet(wildcards[1])
+            schemaParser.createAndGetNest(wildcards[0]),
+            schemaParser.createAndGetNest(wildcards[1])
         )
     }
 }
 
-abstract class WrapperResolver<T : Type>(private val wrapperName: String) : Resolver<T> {
+abstract class WrapperResolver<T : Type>( val wrapperName: String) : Resolver<T> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
         if (!name.startsWith("$wrapperName<")) return null
         val innerTypeName = name.removeSurrounding("$wrapperName<", ">")
-        val innerType = schemaParser.createAndGet(innerTypeName)
+        val innerType = schemaParser.createAndGetNest(innerTypeName)
         return createWrapper(name, innerType)
     }
 
@@ -80,6 +74,12 @@ object OptionResolver : WrapperResolver<OptionType>("Option") {
 
 object VectorResolver : WrapperResolver<VecType>("Vec") {
     override fun createWrapper(name: String, innerType: TypeNest) = VecType(name, innerType)
+
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
+        if (!name.startsWith(wrapperName) && !name.startsWith("alloc::vec::Vec")) return null
+        val innerType = extractGeneric(name, schemaParser)
+        return createWrapper(name, innerType.first())
+    }
 }
 
 object SetResolver : WrapperResolver<SetType>("BTreeSet") {
@@ -93,7 +93,7 @@ object ArrayResolver : Resolver<ArrayType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
         if (!name.startsWith("[")) return null;
         val groups = REGEX.find(name)?.groupValues ?: return null
-        return ArrayType(name, schemaParser.createAndGet(groups[1]), groups[2].toUInt())
+        return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toUInt())
     }
 
 }
@@ -108,10 +108,11 @@ object EnumResolver : Resolver<EnumType> {
                 EnumType.Variant(
                     it["name"]!! as String,
                     (it["discriminant"]!! as Double).toInt(),
-                    variantProperty?.let(schemaParser::createAndGet)
+                    variantProperty?.let(schemaParser::createAndGetNest)
                 )
             }
-            EnumType(name, variants)
+            val generics = extractGeneric(name, schemaParser)
+            EnumType(name, generics, variants)
         } else null
     }
 }
@@ -124,8 +125,9 @@ object TupleStructResolver : Resolver<TupleStructType> {
     ): TupleStructType? {
         return if (typeValue is Map<*, *> && typeValue["TupleStruct"] != null) {
             val components = (typeValue["TupleStruct"] as Map<String, List<String>>)["types"]!!
-            val children = components.map(schemaParser::createAndGet)
-            TupleStructType(name, children)
+            val children = components.map(schemaParser::createAndGetNest)
+            val generics = extractGeneric(name, schemaParser)
+            TupleStructType(name, generics, children)
         } else null
     }
 }
@@ -139,9 +141,10 @@ object StructResolver : Resolver<StructType> {
             for (singleMapping in components) {
                 val fieldName = singleMapping["name"]!!
                 val fieldType = singleMapping["ty"]!!
-                children[fieldName] = schemaParser.createAndGet(fieldType)
+                children[fieldName] = schemaParser.createAndGetNest(fieldType)
             }
-            StructType(name, children)
+            val generics = extractGeneric(name, schemaParser)
+            StructType(name, generics, children)
         } else null
     }
 }

@@ -12,7 +12,7 @@ object SchemaParser {
 
     fun parse(schema: Schema): Types {
         val preprocessed = schema
-            .map { (name, typeValue) -> createAndGet(name, typeValue) }
+            .map { (name, typeValue) -> createAndGetNest(name, typeValue) }
             .associateBy { it.name }
         val notResolvedTypes = preprocessed
             .flatMap { it.value.notResolvedTypes() }
@@ -23,12 +23,8 @@ object SchemaParser {
         return preprocessed.mapValues{ it.value.requireValue() }
     }
 
-    private fun getOrCreate(name : String): TypeNest {
+    fun createAndGetNest(name: String, typeValue: Any? = null) : TypeNest {
         return registry.getOrPut(name) { TypeNest(name, null) }
-    }
-
-    fun createAndGet(name: String, typeValue: Any? = null) : TypeNest {
-        return getOrCreate(name)
             .also {
                 if (it.value == null) {
                     it.value = resolver.resolve(name, typeValue)
