@@ -7,11 +7,10 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url 'https://artifactory.cronapp.io/public-release/' }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation "com.google.code.gson:gson:2.8.5"
-    implementation "com.google.code.gson:gson-extras:2.8.5"
+    implementation group: 'com.squareup', name: 'kotlinpoet', version: '1.9.0'
 }

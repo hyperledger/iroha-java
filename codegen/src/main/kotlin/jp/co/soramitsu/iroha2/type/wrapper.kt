@@ -12,7 +12,7 @@ class VecType(fullName: String, innerType: TypeNest) : WrapperType(fullName, inn
 
 class SetType(fullName: String, innerType: TypeNest) : WrapperType(fullName, innerType)
 
-class ArrayType(fullName: String, innerType: TypeNest, size: UInt) :
+class ArrayType(fullName: String, innerType: TypeNest, size: Int) :
     WrapperType(fullName, innerType)
 
 class CompactType(name: String, innerType: TypeNest) : WrapperType(name, innerType)

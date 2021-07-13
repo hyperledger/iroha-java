@@ -1,7 +1,9 @@
 package jp.co.soramitsu.iroha2.parse
 
 import jp.co.soramitsu.iroha2.type.*
+import kotlin.text.toInt
 
+//todo replace to extractRegex
 class TypeResolver(private val schemaParser: SchemaParser) {
 
     private val resolvers = listOf<Resolver<*>>(
@@ -93,7 +95,7 @@ object ArrayResolver : Resolver<ArrayType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
         if (!name.startsWith("[")) return null;
         val groups = REGEX.find(name)?.groupValues ?: return null
-        return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toUInt())
+        return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
 
 }

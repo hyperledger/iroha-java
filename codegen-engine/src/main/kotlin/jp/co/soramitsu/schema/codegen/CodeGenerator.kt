@@ -51,7 +51,6 @@ object CodeGenerator {
             implScaleWriterForStructs(type)
         )
 
-
         val constructorBuilder = FunSpec.constructorBuilder()
 
         for ((name, typeRef) in type.mapping) {
