@@ -3,25 +3,24 @@ package jp.co.soramitsu.iroha2.codegen
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
-import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import jp.co.soramitsu.iroha2.type.*
 import java.math.BigInteger
 import java.util.*
+import kotlin.reflect.KClass
 
+@ExperimentalUnsignedTypes
 class StructBlueprint(val type: StructType) {
-
-    //todo move in helpers
     val className: String = defineClassName(type)
-    val packageName: String = definePackageName(className)
+    val packageName: String = definePackageName(className, type)
     val properties = getProperties(type)
 
     private fun getProperties(type: StructType): List<Property> {
         return type.mapping
             .map { (name, type) ->
                 Property(
-                    convertToCamelCase(name),
-                    resolveKotlinType(type.value!!, className, packageName)
+                    normalizeName(name),
+                    resolveKotlinType(type.value!!)
                 )
             }
     }
@@ -29,7 +28,7 @@ class StructBlueprint(val type: StructType) {
     private fun defineClassName(type: Type) = type.name.substringBefore('<')
         .substringAfterLast("::")
 
-    private fun definePackageName(className: String): String {
+    private fun definePackageName(className: String, type: Type): String {
         return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)
             .removeSuffix("::")
             .removePrefix("iroha")
@@ -37,52 +36,11 @@ class StructBlueprint(val type: StructType) {
             .replace("_", "")
     }
 
-    private fun resolveKotlinType(type: Type, className: String, packageName: String): TypeName {
+    private fun resolveKotlinType(type: Type): TypeName {
         return when (type) {
-            is StringType -> String::class.java.asClassName()
-            is BooleanType -> Boolean::class.java.asTypeName()
-            is VecType -> {
-                List::class.java.asClassName()
-                    .parameterizedBy(
-                        resolveKotlinType(
-                            type.innerType.requireValue(),
-                            className,
-                            packageName
-                        )
-                    )
-            }
-            is SetType -> {
-                Set::class.java.asClassName()
-                    .parameterizedBy(
-                        resolveKotlinType(
-                            type.innerType.requireValue(),
-                            className,
-                            packageName
-                        )
-                    )
-            }
-            is OptionType -> resolveKotlinType(
-                type.innerType.requireValue(),
-                className,
-                packageName
-            ).copy(nullable = true)
-            is U8Type -> UByte::class.java.asClassName()
-            is U16Type -> UShort::class.java.asClassName()
-            is U32Type, is CompactType -> UInt::class.java.asClassName()
-            is U64Type -> ULong::class.java.asClassName()
-            is U128Type, is U256Type -> BigInteger::class.java.asClassName()
-            is MapType -> Map::class.java.asClassName()
-                .parameterizedBy(
-                    resolveKotlinType(type.key.requireValue(), className, packageName),
-                    resolveKotlinType(
-                        type.value.requireValue(),
-                        className,
-                        packageName
-                    )
-                )
             is CompositeType -> {
                 val propClassName = defineClassName(type)
-                val propPackageName = definePackageName(propClassName)
+                val propPackageName = definePackageName(propClassName, type)
                 val clazz = ClassName(propPackageName, propClassName)
                 if (type.generics.isEmpty()) {
                     clazz
@@ -90,32 +48,68 @@ class StructBlueprint(val type: StructType) {
                     clazz.parameterizedBy(type.generics.map {
                         resolveKotlinType(
                             it.requireValue(),
-                            propClassName,
-                            propPackageName
                         )
                     })
                 }
             }
-            else -> throw RuntimeException("unexpected type: $type")
+            //must be before 'WrapperType'
+            is OptionType -> resolveKotlinType(type.innerType.requireValue()).copy(nullable = true)
+            is WrapperType -> {
+                val wrapperType = builtinKotlinTypes[type::class]
+                    ?: throw RuntimeException("unexpected type: $type")
+                (wrapperType as ClassName).parameterizedBy(resolveKotlinType(type.innerType.requireValue()))
+            }
+            is MapType -> {
+                val wrapperType = builtinKotlinTypes[type::class]
+                    ?: throw RuntimeException("unexpected type: $type")
+                (wrapperType as ClassName).parameterizedBy(
+                    resolveKotlinType(type.key.requireValue()),
+                    resolveKotlinType(type.value.requireValue())
+                )
+            }
+            //only "primitive" types left"
+            else -> builtinKotlinTypes[type::class]
+                ?: throw RuntimeException("unexpected type: $type")
         }
     }
+
+    private fun normalizeName(target: String): String {
+        val tokenizer = StringTokenizer(target, "_")
+        return if (tokenizer.hasMoreTokens()) {
+            val resultBuilder = StringBuilder(tokenizer.nextToken())
+            for (token in tokenizer) {
+                resultBuilder.append((token as String).capitalize(Locale.getDefault()))
+            }
+            resultBuilder.toString()
+        } else {
+            target
+        }
+    }
+
+    override fun toString(): String {
+        return "StructBlueprint(className='$className', packageName='$packageName', properties=$properties)"
+    }
+
+    companion object {
+        val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
+            StringType::class to String::class.asTypeName(),
+            BooleanType::class to Boolean::class.asTypeName(),
+            U8Type::class to UByte::class.asTypeName(),
+            U16Type::class to UShort::class.asTypeName(),
+            U32Type::class to UInt::class.asTypeName(),
+            CompactType::class to UInt::class.asTypeName(),
+            U64Type::class to ULong::class.asTypeName(),
+            U128Type::class to BigInteger::class.asTypeName(),
+            U256Type::class to BigInteger::class.asTypeName(),
+            VecType::class to ClassName("kotlin.collections", "MutableList"),
+            SetType::class to ClassName("kotlin.collections", "MutableSet"),
+            MapType::class to ClassName("kotlin.collections", "MutableMap"),
+        )
+    }
+
 }
 
 
 data class Property(val normalizedPropName: String, val propTypeName: TypeName)
 
 //todo move to helpers
-private fun convertToCamelCase(target: String): String {
-    val tokenizer = StringTokenizer(target, "_")
-    return if (tokenizer.hasMoreTokens()) {
-        val resultBuilder = StringBuilder(tokenizer.nextToken())
-        for (token in tokenizer) {
-            resultBuilder.append((token as String).capitalize(Locale.getDefault()))
-        }
-        resultBuilder.toString()
-    } else {
-        target
-    }
-}
-
-//todo move to hel[er

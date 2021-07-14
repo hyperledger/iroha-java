@@ -3,9 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
 
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.EntityType
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.Status
+import jp.co.soramitsu.iroha2.generated.crypto.Hash
 
 /**
  * Event

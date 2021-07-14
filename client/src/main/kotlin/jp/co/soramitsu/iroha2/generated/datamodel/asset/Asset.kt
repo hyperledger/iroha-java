@@ -3,9 +3,6 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset.AssetValue
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset.Id
-
 /**
  * Asset
  *

@@ -3,9 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.crypto
 
-import java.util.List
-import jp.co.soramitsu.iroha2.generated.crypto.Signature.PublicKey
 import kotlin.UByte
+import kotlin.collections.MutableList
 
 /**
  * Signature
@@ -14,5 +13,5 @@ import kotlin.UByte
  */
 public class Signature(
   public val publicKey: PublicKey,
-  public val signature: List<UByte>
+  public val signature: MutableList<UByte>
 )

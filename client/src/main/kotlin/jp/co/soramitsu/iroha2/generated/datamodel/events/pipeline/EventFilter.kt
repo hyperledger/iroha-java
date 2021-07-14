@@ -3,8 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
 
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.EntityType
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.Hash
+import jp.co.soramitsu.iroha2.generated.crypto.Hash
 
 /**
  * EventFilter

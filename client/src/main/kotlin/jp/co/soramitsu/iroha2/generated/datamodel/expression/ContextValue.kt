@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import java.lang.String
+import kotlin.String
 
 /**
  * ContextValue

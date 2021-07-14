@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 
 /**
  * AssetDefinitionEntry

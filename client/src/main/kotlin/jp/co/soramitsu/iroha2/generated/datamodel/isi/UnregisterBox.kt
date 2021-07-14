@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 
 /**
  * UnregisterBox
@@ -11,5 +12,5 @@ import kotlin.Any
  * Generated from 'iroha_data_model::isi::UnregisterBox' regular structure
  */
 public class UnregisterBox(
-  public val objectId: Any
+  public val objectId: EvaluatesTo<IdBox>
 )

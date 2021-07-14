@@ -3,7 +3,9 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.account
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.String
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -12,6 +14,6 @@ import kotlin.Any
  * structure
  */
 public class FindAccountKeyValueByIdAndKey(
-  public val id: Any,
-  public val key: Any
+  public val id: EvaluatesTo<Id>,
+  public val key: EvaluatesTo<String>
 )

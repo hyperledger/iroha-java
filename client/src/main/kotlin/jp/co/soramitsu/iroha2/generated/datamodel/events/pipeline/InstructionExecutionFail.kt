@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
 
-import java.lang.String
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import kotlin.String
 
 /**
  * InstructionExecutionFail

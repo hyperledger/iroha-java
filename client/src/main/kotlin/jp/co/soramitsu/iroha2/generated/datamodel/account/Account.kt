@@ -3,15 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.account
 
-import java.util.List
-import java.util.Map
-import java.util.Set
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.Asset
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.PermissionToken
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.PublicKey
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
 
 /**
  * Account
@@ -20,9 +18,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account.SignatureCheck
  */
 public class Account(
   public val id: Id,
-  public val assets: Map<Id, Asset>,
-  public val signatories: List<PublicKey>,
-  public val permissionTokens: Set<PermissionToken>,
+  public val assets: MutableMap<jp.co.soramitsu.iroha2.generated.datamodel.asset.Id, Asset>,
+  public val signatories: MutableList<PublicKey>,
+  public val permissionTokens: MutableSet<PermissionToken>,
   public val signatureCheckCondition: SignatureCheckCondition,
   public val metadata: Metadata
 )

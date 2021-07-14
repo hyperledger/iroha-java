@@ -3,11 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
-import kotlin.Any
-import kotlin.Int
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import kotlin.String
-import kotlin.collections.List
-import kotlin.collections.Map
+import kotlin.ULong
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
 
 /**
  * Payload
@@ -15,9 +17,9 @@ import kotlin.collections.Map
  * Generated from 'iroha_data_model::transaction::Payload' regular structure
  */
 public class Payload(
-  public val accountId: Any,
-  public val instructions: List<Any>,
-  public val creationTime: Int,
-  public val timeToLiveMs: Int,
-  public val metadata: Map<String, Any>
+  public val accountId: Id,
+  public val instructions: MutableList<Instruction>,
+  public val creationTime: ULong,
+  public val timeToLiveMs: ULong,
+  public val metadata: MutableMap<String, Value>
 )

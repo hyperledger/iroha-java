@@ -3,12 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.domain
 
-import java.lang.String
-import java.util.Map
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.Account
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.AssetDefinitionEntry
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import kotlin.String
+import kotlin.collections.MutableMap
 
 /**
  * Domain
@@ -17,6 +17,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.Id
  */
 public class Domain(
   public val name: String,
-  public val accounts: Map<Id, Account>,
-  public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
+  public val accounts: MutableMap<Id, Account>,
+  public val assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry>
 )

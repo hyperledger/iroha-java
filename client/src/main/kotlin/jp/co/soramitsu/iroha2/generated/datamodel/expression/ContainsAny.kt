@@ -3,9 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import java.util.List
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import kotlin.collections.MutableList
 
 /**
  * ContainsAny
@@ -13,6 +12,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.Value
  * Generated from 'iroha_data_model::expression::ContainsAny' regular structure
  */
 public class ContainsAny(
-  public val collection: EvaluatesTo<List<Value>>,
-  public val elements: EvaluatesTo<List<Value>>
+  public val collection: EvaluatesTo<MutableList<Value>>,
+  public val elements: EvaluatesTo<MutableList<Value>>
 )

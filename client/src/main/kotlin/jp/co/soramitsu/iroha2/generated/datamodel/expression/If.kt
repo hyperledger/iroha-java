@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import kotlin.Boolean
 
 /**
  * If
@@ -11,7 +12,7 @@ import kotlin.Any
  * Generated from 'iroha_data_model::expression::If' regular structure
  */
 public class If(
-  public val condition: Any,
-  public val thenExpression: Any,
-  public val elseExpression: Any
+  public val condition: EvaluatesTo<Boolean>,
+  public val thenExpression: EvaluatesTo<Value>,
+  public val elseExpression: EvaluatesTo<Value>
 )

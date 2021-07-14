@@ -3,8 +3,6 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.DefinitionId
-
 /**
  * Id
  *
@@ -12,5 +10,5 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.DefinitionId
  */
 public class Id(
   public val definitionId: DefinitionId,
-  public val accountId: Id
+  public val accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 )

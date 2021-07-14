@@ -3,7 +3,6 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.And.EvaluatesTo
 import kotlin.Boolean
 
 /**

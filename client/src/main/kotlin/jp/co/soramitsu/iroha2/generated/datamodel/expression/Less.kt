@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import kotlin.Any
+import kotlin.UInt
 
 /**
  * Less
@@ -11,6 +11,6 @@ import kotlin.Any
  * Generated from 'iroha_data_model::expression::Less' regular structure
  */
 public class Less(
-  public val left: Any,
-  public val right: Any
+  public val left: EvaluatesTo<UInt>,
+  public val right: EvaluatesTo<UInt>
 )

@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.peer
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import kotlin.String
 
 /**
@@ -13,5 +13,5 @@ import kotlin.String
  */
 public class Id(
   public val address: String,
-  public val publicKey: Any
+  public val publicKey: PublicKey
 )

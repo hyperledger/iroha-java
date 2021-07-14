@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.permissions
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 
 /**
  * FindPermissionTokensByAccountId
@@ -12,5 +13,5 @@ import kotlin.Any
  * structure
  */
 public class FindPermissionTokensByAccountId(
-  public val id: Any
+  public val id: EvaluatesTo<Id>
 )

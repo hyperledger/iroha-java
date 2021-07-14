@@ -20,6 +20,7 @@ object CodeGenerator {
 //todo make interface
 abstract class AbstractGenerator<T : StructBlueprint> : ScaleCodecGenerator {
     fun generate(blueprint: T) {
+        println(blueprint)
         pipelineClass(blueprint)
     }
 

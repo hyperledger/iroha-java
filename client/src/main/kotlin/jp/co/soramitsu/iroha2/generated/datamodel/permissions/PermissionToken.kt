@@ -3,9 +3,9 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.permissions
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import kotlin.String
-import kotlin.collections.Map
+import kotlin.collections.MutableMap
 
 /**
  * PermissionToken
@@ -14,5 +14,5 @@ import kotlin.collections.Map
  */
 public class PermissionToken(
   public val name: String,
-  public val params: Map<String, Any>
+  public val params: MutableMap<String, Value>
 )

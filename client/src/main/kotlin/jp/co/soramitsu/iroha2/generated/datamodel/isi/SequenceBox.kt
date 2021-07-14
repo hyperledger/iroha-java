@@ -3,8 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import kotlin.Any
-import kotlin.collections.List
+import kotlin.collections.MutableList
 
 /**
  * SequenceBox
@@ -12,5 +11,5 @@ import kotlin.collections.List
  * Generated from 'iroha_data_model::isi::SequenceBox' regular structure
  */
 public class SequenceBox(
-  public val instructions: List<Any>
+  public val instructions: MutableList<Instruction>
 )

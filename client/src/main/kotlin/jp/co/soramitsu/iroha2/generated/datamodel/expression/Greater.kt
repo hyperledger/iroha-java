@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import kotlin.Any
+import kotlin.UInt
 
 /**
  * Greater
@@ -11,6 +11,6 @@ import kotlin.Any
  * Generated from 'iroha_data_model::expression::Greater' regular structure
  */
 public class Greater(
-  public val left: Any,
-  public val right: Any
+  public val left: EvaluatesTo<UInt>,
+  public val right: EvaluatesTo<UInt>
 )

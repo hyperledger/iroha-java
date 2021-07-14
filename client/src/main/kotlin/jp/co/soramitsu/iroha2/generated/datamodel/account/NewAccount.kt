@@ -3,10 +3,9 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.account
 
-import java.util.List
-import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.PublicKey
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import kotlin.collections.MutableList
 
 /**
  * NewAccount
@@ -15,6 +14,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.PublicKey
  */
 public class NewAccount(
   public val id: Id,
-  public val signatories: List<PublicKey>,
+  public val signatories: MutableList<PublicKey>,
   public val metadata: Metadata
 )

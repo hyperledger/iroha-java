@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.account
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.String
 
 /**
  * FindAccountsByDomainName
@@ -11,5 +12,5 @@ import kotlin.Any
  * Generated from 'iroha_data_model::query::account::FindAccountsByDomainName' regular structure
  */
 public class FindAccountsByDomainName(
-  public val domainName: Any
+  public val domainName: EvaluatesTo<String>
 )

@@ -3,7 +3,9 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.String
 
 /**
  * RemoveKeyValueBox
@@ -11,6 +13,6 @@ import kotlin.Any
  * Generated from 'iroha_data_model::isi::RemoveKeyValueBox' regular structure
  */
 public class RemoveKeyValueBox(
-  public val objectId: Any,
-  public val key: Any
+  public val objectId: EvaluatesTo<IdBox>,
+  public val key: EvaluatesTo<String>
 )

@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.account
 
-import java.lang.String
+import kotlin.String
 
 /**
  * Id

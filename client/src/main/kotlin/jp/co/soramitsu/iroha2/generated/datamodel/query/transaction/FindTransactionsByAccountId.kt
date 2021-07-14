@@ -3,7 +3,8 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.transaction
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 
 /**
  * FindTransactionsByAccountId
@@ -12,5 +13,5 @@ import kotlin.Any
  * structure
  */
 public class FindTransactionsByAccountId(
-  public val accountId: Any
+  public val accountId: EvaluatesTo<Id>
 )

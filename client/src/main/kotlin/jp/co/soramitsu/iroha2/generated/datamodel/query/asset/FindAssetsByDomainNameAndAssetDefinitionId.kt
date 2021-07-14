@@ -3,7 +3,9 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.asset
 
-import kotlin.Any
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.String
 
 /**
  * FindAssetsByDomainNameAndAssetDefinitionId
@@ -12,6 +14,6 @@ import kotlin.Any
  * regular structure
  */
 public class FindAssetsByDomainNameAndAssetDefinitionId(
-  public val domainName: Any,
-  public val assetDefinitionId: Any
+  public val domainName: EvaluatesTo<String>,
+  public val assetDefinitionId: EvaluatesTo<DefinitionId>
 )

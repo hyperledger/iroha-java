@@ -3,7 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import kotlin.Any
+import kotlin.Boolean
 
 /**
  * Not
@@ -11,5 +11,5 @@ import kotlin.Any
  * Generated from 'iroha_data_model::expression::Not' regular structure
  */
 public class Not(
-  public val expression: Any
+  public val expression: EvaluatesTo<Boolean>
 )
