@@ -11,6 +11,7 @@ object CodeGenerator {
         for ((_, type) in types) {
             when (type) {
                 is StructType -> StructGenerator.generate(StructBlueprint(type))
+                is TupleStructType -> TupleStructGenerator.generate(TupleStructBlueprint(type))
             }
         }
     }
@@ -18,7 +19,7 @@ object CodeGenerator {
 
 
 //todo make interface
-abstract class AbstractGenerator<T : StructBlueprint> : ScaleCodecGenerator {
+abstract class AbstractGenerator<T : Blueprint<*>> : ScaleCodecGenerator {
     fun generate(blueprint: T) {
         println(blueprint)
         pipelineClass(blueprint)
@@ -72,19 +73,20 @@ abstract class AbstractGenerator<T : StructBlueprint> : ScaleCodecGenerator {
         return clazz
     }
 
-    override fun implScaleReaderCode(blueprint: StructBlueprint): CodeBlock {
-        val code = StringJoiner(", ")
-        for ((_, typeRef) in blueprint.type.mapping) {
-            code.add(resolveReadImplementationByType(typeRef.value!!))
-        }
-        return CodeBlock.of("return ${blueprint.className}($code)")
+    override fun implScaleReaderCode(blueprint: Blueprint<*>): CodeBlock {
+//        val code = StringJoiner(", ")
+//        for ((_, typeRef) in blueprint.type.mapping) {
+//            code.add(resolveReadImplementationByType(typeRef.value!!))
+//        }
+//        return CodeBlock.of("return ${blueprint.className}($code)")
+        return CodeBlock.of("foo")
     }
 
-    override fun implScaleWriterCode(blueprint: StructBlueprint): CodeBlock {
+    override fun implScaleWriterCode(blueprint: Blueprint<*>): CodeBlock {
         TODO("Not yet implemented")
     }
 
-    override fun implCodec(blueprint: StructBlueprint, clazz: TypeSpec.Builder): TypeSpec.Builder {
+    override fun implCodec(blueprint: Blueprint<*>, clazz: TypeSpec.Builder): TypeSpec.Builder {
         return clazz
 //        return clazz.addType(
 //            TypeSpec.companionObjectBuilder()
@@ -169,11 +171,11 @@ abstract class AbstractGenerator<T : StructBlueprint> : ScaleCodecGenerator {
 }
 
 interface ScaleCodecGenerator {
-    fun implCodec(blueprint: StructBlueprint, clazz: TypeSpec.Builder): TypeSpec.Builder
+    fun implCodec(blueprint: Blueprint<*>, clazz: TypeSpec.Builder): TypeSpec.Builder
 
-    fun implScaleReaderCode(blueprint: StructBlueprint): CodeBlock
+    fun implScaleReaderCode(blueprint: Blueprint<*>): CodeBlock
 
-    fun implScaleWriterCode(blueprint: StructBlueprint): CodeBlock
+    fun implScaleWriterCode(blueprint: Blueprint<*>): CodeBlock
 
     fun resolveReadImplementationByType(type: Type): String {
         return when (type) {

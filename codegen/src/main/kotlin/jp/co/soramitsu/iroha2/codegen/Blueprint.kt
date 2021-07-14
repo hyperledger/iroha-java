@@ -9,26 +9,68 @@ import java.math.BigInteger
 import java.util.*
 import kotlin.reflect.KClass
 
-@ExperimentalUnsignedTypes
-class StructBlueprint(val type: StructType) {
-    val className: String = defineClassName(type)
-    val packageName: String = definePackageName(className, type)
-    val properties = getProperties(type)
-
-    private fun getProperties(type: StructType): List<Property> {
+class StructBlueprint(type: StructType) : Blueprint<StructType>(type){
+    override fun getProperties(type: StructType): List<Property> {
         return type.mapping
-            .map { (name, type) ->
+            .map { (name, ty) ->
                 Property(
-                    normalizeName(name),
-                    resolveKotlinType(type.value!!)
+                    resolvePropertyName(ty.requireValue(), name),
+                    resolveKotlinType(ty.requireValue())
                 )
             }
     }
 
-    private fun defineClassName(type: Type) = type.name.substringBefore('<')
+    /**
+     * Create property name by converting from snake case to camel case
+     */
+    override fun resolvePropertyName(type: Type, name: String?): String {
+        val tokenizer = StringTokenizer(name!!, "_")
+        return if (tokenizer.hasMoreTokens()) {
+            val resultBuilder = StringBuilder(tokenizer.nextToken())
+            for (token in tokenizer) {
+                resultBuilder.append((token as String).capitalize(Locale.getDefault()))
+            }
+            resultBuilder.toString()
+        } else {
+            type.name
+        }
+    }
+}
+
+class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(type){
+    override fun getProperties(type: TupleStructType): List<Property> {
+        return type.types
+            .map {
+                Property(
+                    resolvePropertyName(it.requireValue()),
+                    resolveKotlinType(it.requireValue())
+                )
+            }
+    }
+
+    override fun resolvePropertyName(type: Type, name: String?) : String {
+        return when (type) {
+            is ArrayType -> "array"
+            else -> defineClassName(type.name).decapitalize()
+        }
+    }
+
+}
+
+@ExperimentalUnsignedTypes
+abstract class Blueprint<T : CompositeType>(val type: T) {
+    val className: String = defineClassName(type.name)
+    val packageName: String = definePackageName(className, type)
+    val properties = getProperties(type)
+
+    abstract fun getProperties(type: T) : List<Property>
+
+    abstract fun resolvePropertyName(type: Type, name: String? = null): String
+
+    protected fun defineClassName(typeName: String) = typeName.substringBefore('<')
         .substringAfterLast("::")
 
-    private fun definePackageName(className: String, type: Type): String {
+    protected fun definePackageName(className: String, type: Type): String {
         return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)
             .removeSuffix("::")
             .removePrefix("iroha")
@@ -36,10 +78,10 @@ class StructBlueprint(val type: StructType) {
             .replace("_", "")
     }
 
-    private fun resolveKotlinType(type: Type): TypeName {
+    protected fun resolveKotlinType(type: Type): TypeName {
         return when (type) {
             is CompositeType -> {
-                val propClassName = defineClassName(type)
+                val propClassName = defineClassName(type.name)
                 val propPackageName = definePackageName(propClassName, type)
                 val clazz = ClassName(propPackageName, propClassName)
                 if (type.generics.isEmpty()) {
@@ -73,21 +115,8 @@ class StructBlueprint(val type: StructType) {
         }
     }
 
-    private fun normalizeName(target: String): String {
-        val tokenizer = StringTokenizer(target, "_")
-        return if (tokenizer.hasMoreTokens()) {
-            val resultBuilder = StringBuilder(tokenizer.nextToken())
-            for (token in tokenizer) {
-                resultBuilder.append((token as String).capitalize(Locale.getDefault()))
-            }
-            resultBuilder.toString()
-        } else {
-            target
-        }
-    }
-
     override fun toString(): String {
-        return "StructBlueprint(className='$className', packageName='$packageName', properties=$properties)"
+        return "${this::class}(type=$type, className='$className', packageName='$packageName', properties=$properties)"
     }
 
     companion object {
@@ -104,12 +133,10 @@ class StructBlueprint(val type: StructType) {
             VecType::class to ClassName("kotlin.collections", "MutableList"),
             SetType::class to ClassName("kotlin.collections", "MutableSet"),
             MapType::class to ClassName("kotlin.collections", "MutableMap"),
+            ArrayType::class to Array::class.asTypeName()
         )
     }
 
 }
 
-
 data class Property(val normalizedPropName: String, val propTypeName: TypeName)
-
-//todo move to helpers
