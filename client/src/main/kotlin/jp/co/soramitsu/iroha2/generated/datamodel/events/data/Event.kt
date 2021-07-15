@@ -8,4 +8,4 @@ package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`
  *
  * Generated from 'iroha_data_model::events::data::Event' tuple structure
  */
-public class Event()
+public class Event

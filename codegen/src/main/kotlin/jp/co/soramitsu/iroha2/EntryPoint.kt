@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2
 
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
-import jp.co.soramitsu.iroha2.codegen.CodeGenerator
+import jp.co.soramitsu.iroha2.codegen.GeneratorEntryPoint
 import jp.co.soramitsu.iroha2.parse.SchemaParser
 import java.io.InputStreamReader
 
@@ -20,7 +20,7 @@ typealias Schema = Map<String, Any>
 fun main() {
     val schema = readSchema()
     val parseResult = SchemaParser.parse(schema)
-    CodeGenerator.generate(parseResult)
+    GeneratorEntryPoint.generate(parseResult)
 }
 
 fun readSchema(fileName : String = DEFAULT_SCHEMA_FILE_NAME): Schema {

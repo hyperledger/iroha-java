@@ -4,33 +4,32 @@ import com.squareup.kotlinpoet.*
 import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.*
 import java.nio.file.Paths
-import java.util.*
 
-object CodeGenerator {
+object GeneratorEntryPoint {
     fun generate(types: Types) {
         for ((_, type) in types) {
             when (type) {
                 is StructType -> StructGenerator.generate(StructBlueprint(type))
                 is TupleStructType -> TupleStructGenerator.generate(TupleStructBlueprint(type))
+                is EnumType -> EnumGenerator.generate(EnumBlueprint(type))
             }
         }
     }
 }
 
 
-//todo make interface
-abstract class AbstractGenerator<T : Blueprint<*>> : ScaleCodecGenerator {
+abstract class AbstractGenerator<T : Blueprint<*>> {
     fun generate(blueprint: T) {
-        println(blueprint)
         pipelineClass(blueprint)
     }
 
-    private fun pipelineClass(blueprint: T) {
+    fun pipelineClass(blueprint: T) {
         val clazz = TypeSpec.classBuilder(blueprint.className)
         implClassModifiers(blueprint, clazz)
         implKDoc(blueprint, clazz)
         implConstructor(blueprint, clazz)
-        implBody(blueprint, clazz)
+
+        implBody(blueprint, clazz);
 
         val file = FileSpec.builder(blueprint.packageName, blueprint.className)
             .addType(clazz.build())
@@ -38,11 +37,20 @@ abstract class AbstractGenerator<T : Blueprint<*>> : ScaleCodecGenerator {
         writeToFIle(file)
     }
 
-    open fun implClassModifiers(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        return clazz.addModifiers(KModifier.PUBLIC)
+    fun implBody(blueprint: T, clazz: TypeSpec.Builder) {
+        implInnerMembers(blueprint, clazz);
     }
 
-    open fun implConstructor(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
+    open fun implInnerMembers(blueprint: T, clazz: TypeSpec.Builder) = Unit
+
+    open fun implClassModifiers(blueprint: T, clazz: TypeSpec.Builder) {
+        clazz.addModifiers(KModifier.PUBLIC)
+    }
+
+    open fun implConstructor(blueprint: T, clazz: TypeSpec.Builder) {
+        if (blueprint.properties.isEmpty()) {
+            return
+        }
         val constructorBuilder = FunSpec.constructorBuilder()
         for ((name, type) in blueprint.properties) {
             constructorBuilder.addParameter(
@@ -55,114 +63,16 @@ abstract class AbstractGenerator<T : Blueprint<*>> : ScaleCodecGenerator {
                     .build()
             )
         }
-        return clazz.primaryConstructor(constructorBuilder.build())
+        clazz.primaryConstructor(constructorBuilder.build())
     }
 
-    open fun implBody(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        implCodec(blueprint, clazz)
-        implFunctions(blueprint, clazz)
-        implSealedClasses(blueprint, clazz)
-        return clazz
+    open fun implKDoc(blueprint: T, clazz: TypeSpec.Builder) {
+        clazz.addKdoc(blueprint.className)
     }
 
-    open fun implSealedClasses(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        return clazz
-    }
 
-    open fun implFunctions(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        return clazz
-    }
-
-    override fun implScaleReaderCode(blueprint: Blueprint<*>): CodeBlock {
-//        val code = StringJoiner(", ")
-//        for ((_, typeRef) in blueprint.type.mapping) {
-//            code.add(resolveReadImplementationByType(typeRef.value!!))
-//        }
-//        return CodeBlock.of("return ${blueprint.className}($code)")
-        return CodeBlock.of("foo")
-    }
-
-    override fun implScaleWriterCode(blueprint: Blueprint<*>): CodeBlock {
-        TODO("Not yet implemented")
-    }
-
-    override fun implCodec(blueprint: Blueprint<*>, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        return clazz
-//        return clazz.addType(
-//            TypeSpec.companionObjectBuilder()
-//                .addSuperinterface(
-//                    ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
-//                        .parameterizedBy(
-//                            ClassName(
-//                                blueprint.packageName,
-//                                blueprint.className
-//                            )
-//                        )
-//                )
-//                .addSuperinterface(
-//                    ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
-//                        .parameterizedBy(
-//                            ClassName(
-//                                blueprint.packageName,
-//                                blueprint.className
-//                            )
-//                        )
-//                )
-//                .addFunction(
-//                    FunSpec.builder("read")
-//                        .addParameter(
-//                            ParameterSpec
-//                                .builder(
-//                                    "reader",
-//                                    ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
-//                                )
-//                                .build()
-//                        )
-//                        .addCode(this.implScaleReaderCode(blueprint))
-//                        .addModifiers(KModifier.OVERRIDE)
-//                        .returns(
-//                            ClassName(
-//                                blueprint.packageName,
-//                                blueprint.className
-//                            )
-//                        )
-//                        .build()
-//                )
-//                .addFunction(
-//                    FunSpec.builder("write")
-//                        .addParameter(
-//                            ParameterSpec
-//                                .builder(
-//                                    "writer",
-//                                    ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
-//                                )
-//                                .build()
-//                        )
-//                        .addParameter(
-//                            ParameterSpec
-//                                .builder(
-//                                    "instance",
-//                                    ClassName(
-//                                        blueprint.packageName,
-//                                        blueprint.className
-//                                    )
-//                                )
-//                                .build()
-//                        )
-////                        .addCode(implScaleWriterCode(blueprint))
-//                        .addModifiers(KModifier.OVERRIDE)
-//                        .build()
-//                )
-//                .build()
-//        )
-    }
-
-    open fun implKDoc(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        return clazz.addKdoc(blueprint.className)
-    }
-
-    open fun implFileComments(file: FileSpec.Builder): FileSpec.Builder {
-        return file.addComment("\nAuto-generated file. DO NOT EDIT!\n")
+    open fun implFileComments(file: FileSpec.Builder) {
+        file.addComment("\nAuto-generated file. DO NOT EDIT!\n")
     }
 
     open fun writeToFIle(file: FileSpec.Builder) {
@@ -246,4 +156,69 @@ interface ScaleCodecGenerator {
 //                }
         }
     }
+}
+
+object StructGenerator : AbstractGenerator<StructBlueprint>() {
+    override fun implKDoc(blueprint: StructBlueprint, clazz: TypeSpec.Builder) {
+        super.implKDoc(blueprint, clazz)
+        clazz.addKdoc("\n\nGenerated from '${blueprint.type.name}' regular structure")
+    }
+}
+
+
+object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
+    override fun implKDoc(
+        blueprint: TupleStructBlueprint,
+        clazz: TypeSpec.Builder
+    ) {
+        super.implKDoc(blueprint, clazz)
+        //todo fix generic names
+        clazz.addKdoc("\n\nGenerated from '${blueprint.type.name}' tuple structure")
+    }
+}
+
+object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
+    override fun implKDoc(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
+        super.implKDoc(blueprint, clazz)
+        clazz.addKdoc("\n\nGenerated from '${blueprint.packageName}.${blueprint.className}' enum")
+    }
+
+    override fun implClassModifiers(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
+        super.implClassModifiers(blueprint, clazz)
+        clazz.addModifiers(KModifier.SEALED)
+    }
+
+    // Class generated from Rust Enums no need to have constructor due they are not intended
+    // to be instantiated
+    override fun implConstructor(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) = Unit
+
+    override fun implInnerMembers(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
+        for (variant in blueprint.variants) {
+            val variantClass = TypeSpec.classBuilder(variant.variantName)
+                .superclass(ClassName(blueprint.packageName, blueprint.className))
+                .addKdoc("'${variant.variantName}' variant")
+            if (variant.innerValue != null) {
+                val innerValue = variant.innerValue
+                val constructorBuilder = FunSpec.constructorBuilder()
+                    .addParameter(
+                        ParameterSpec.builder(
+                            innerValue.normalizedPropName,
+                            innerValue.propTypeName
+                        ).build()
+                    )
+                variantClass.addProperty(
+                    PropertySpec.builder(
+                        innerValue.normalizedPropName,
+                        innerValue.propTypeName,
+                        KModifier.PRIVATE
+                    )
+                        .initializer(innerValue.normalizedPropName)
+                        .build()
+                )
+                variantClass.primaryConstructor(constructorBuilder.build())
+            }
+            clazz.addType(variantClass.build())
+        }
+    }
+
 }

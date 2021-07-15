@@ -10,49 +10,55 @@ import java.util.*
 import kotlin.reflect.KClass
 
 class StructBlueprint(type: StructType) : Blueprint<StructType>(type){
-    override fun getProperties(type: StructType): List<Property> {
+    override fun resolveProperties(type: StructType): List<Property> {
         return type.mapping
             .map { (name, ty) ->
                 Property(
-                    resolvePropertyName(ty.requireValue(), name),
+                    resolvePropName(name),
                     resolveKotlinType(ty.requireValue())
                 )
             }
     }
 
-    /**
-     * Create property name by converting from snake case to camel case
-     */
-    override fun resolvePropertyName(type: Type, name: String?): String {
-        val tokenizer = StringTokenizer(name!!, "_")
-        return if (tokenizer.hasMoreTokens()) {
-            val resultBuilder = StringBuilder(tokenizer.nextToken())
-            for (token in tokenizer) {
-                resultBuilder.append((token as String).capitalize(Locale.getDefault()))
-            }
-            resultBuilder.toString()
-        } else {
-            type.name
-        }
-    }
+
 }
 
 class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(type){
-    override fun getProperties(type: TupleStructType): List<Property> {
+    override fun resolveProperties(type: TupleStructType): List<Property> {
         return type.types
             .map {
                 Property(
-                    resolvePropertyName(it.requireValue()),
+                    createPropName(it.requireValue()),
                     resolveKotlinType(it.requireValue())
                 )
             }
     }
 
-    override fun resolvePropertyName(type: Type, name: String?) : String {
+    private fun createPropName(type: Type): String {
         return when (type) {
             is ArrayType -> "array"
             else -> defineClassName(type.name).decapitalize()
         }
+    }
+}
+
+class EnumBlueprint(type: EnumType) : Blueprint<EnumType>(type) {
+    val variants = resolveVariants()
+
+    private fun resolveVariants(): List<VariantDetails> {
+        return type.variants.map {
+            VariantDetails(it.name, it.discriminant, resolveVariantInnerType(it))
+        }
+    }
+
+    private fun resolveVariantInnerType(variant: EnumType.Variant): Property? {
+        return variant.type?.requireValue()?.let {
+            return Property(
+                resolvePropName(variant.name).replaceFirstChar(Char::lowercase),
+                resolveKotlinType(it)
+            )
+        }
+
     }
 
 }
@@ -61,11 +67,9 @@ class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(t
 abstract class Blueprint<T : CompositeType>(val type: T) {
     val className: String = defineClassName(type.name)
     val packageName: String = definePackageName(className, type)
-    val properties = getProperties(type)
+    val properties = resolveProperties(type)
 
-    abstract fun getProperties(type: T) : List<Property>
-
-    abstract fun resolvePropertyName(type: Type, name: String? = null): String
+    open fun resolveProperties(type: T): List<Property> = listOf()
 
     protected fun defineClassName(typeName: String) = typeName.substringBefore('<')
         .substringAfterLast("::")
@@ -140,3 +144,31 @@ abstract class Blueprint<T : CompositeType>(val type: T) {
 }
 
 data class Property(val normalizedPropName: String, val propTypeName: TypeName)
+
+/**
+ * Blueprint of the enum variant
+ */
+//todo rename
+data class VariantDetails(
+    val variantName: String,
+    val discriminant: Int,
+    val innerValue: Property?
+)
+
+/**
+ * Create property name by converting from snake case to camel case
+ */
+fun resolvePropName(
+    name: String,
+): String {
+    val tokenizer = StringTokenizer(name, "_")
+    return if (tokenizer.hasMoreTokens()) {
+        val resultBuilder = StringBuilder(tokenizer.nextToken())
+        for (token in tokenizer) {
+            resultBuilder.append((token as String).replaceFirstChar(Char::uppercase))
+        }
+        resultBuilder.toString()
+    } else {
+        name
+    }
+}

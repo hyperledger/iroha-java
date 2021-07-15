@@ -3,6 +3,7 @@
 //
 package jp.co.soramitsu.iroha2.generated.crypto
 
+import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSocketMessage
 import kotlin.String
 import kotlin.UByte
 import kotlin.collections.MutableList

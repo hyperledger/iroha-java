@@ -8,4 +8,4 @@ package jp.co.soramitsu.iroha2.generated.datamodel.query.asset
  *
  * Generated from 'iroha_data_model::query::asset::FindAllAssets' regular structure
  */
-public class FindAllAssets()
+public class FindAllAssets

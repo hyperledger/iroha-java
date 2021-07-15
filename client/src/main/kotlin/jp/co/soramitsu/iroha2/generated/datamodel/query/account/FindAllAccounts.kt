@@ -8,4 +8,4 @@ package jp.co.soramitsu.iroha2.generated.datamodel.query.account
  *
  * Generated from 'iroha_data_model::query::account::FindAllAccounts' regular structure
  */
-public class FindAllAccounts()
+public class FindAllAccounts

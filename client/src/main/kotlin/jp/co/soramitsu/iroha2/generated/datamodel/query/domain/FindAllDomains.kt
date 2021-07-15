@@ -8,4 +8,4 @@ package jp.co.soramitsu.iroha2.generated.datamodel.query.domain
  *
  * Generated from 'iroha_data_model::query::domain::FindAllDomains' regular structure
  */
-public class FindAllDomains()
+public class FindAllDomains

@@ -291,7 +291,7 @@ object CodeGenerator {
             }
             else -> {
                 val (propertyName, _) = defineFullClassNames(type.name)
-                propertyName.decapitalize(Locale.getDefault())
+                propertyName.replaceFirstChar { it.lowercase(Locale.getDefault()) }
             }
         }
     }
