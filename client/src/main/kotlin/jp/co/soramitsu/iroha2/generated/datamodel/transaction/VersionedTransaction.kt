@@ -44,13 +44,13 @@ public sealed class VersionedTransaction {
     public override fun read(reader: ScaleCodecReader): VersionedTransaction = when(val discriminant
         = reader.readUByte()) {
     	1 -> V1.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: VersionedTransaction): Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
       	1 -> V1.write(writer, instance as V1)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

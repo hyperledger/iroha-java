@@ -60,7 +60,7 @@ public sealed class Status {
     	0 -> Validating.read(reader)
     	1 -> Rejected.read(reader)
     	2 -> Committed.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Status): Unit {
       writer.directWrite(instance.discriminant())
@@ -68,7 +68,7 @@ public sealed class Status {
       	0 -> Validating.write(writer, instance as Validating)
       	1 -> Rejected.write(writer, instance as Rejected)
       	2 -> Committed.write(writer, instance as Committed)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

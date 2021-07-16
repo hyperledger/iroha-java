@@ -64,14 +64,14 @@ public sealed class Event {
         reader.readUByte()) {
     	0 -> Pipeline.read(reader)
     	1 -> Data.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
       	0 -> Pipeline.write(writer, instance as Pipeline)
       	1 -> Data.write(writer, instance as Data)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

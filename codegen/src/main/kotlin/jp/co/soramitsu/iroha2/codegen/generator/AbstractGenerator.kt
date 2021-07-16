@@ -3,46 +3,39 @@ package jp.co.soramitsu.iroha2.codegen.generator
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import jp.co.soramitsu.iroha2.codegen.Blueprint
-import java.nio.file.Paths
+import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_CODEC_READER
+import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_CODEC_WRITER
+import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_READER
+import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_WRITER
 
 abstract class AbstractGenerator<T : Blueprint<*>> {
-    fun generate(blueprint: T) {
-        pipelineClass(blueprint)
-    }
+    fun generate(blueprint: T) : TypeSpec = pipelineClass(blueprint)
 
-    fun pipelineClass(blueprint: T) {
+    open fun pipelineClass(blueprint: T) : TypeSpec {
         val clazz = TypeSpec.classBuilder(blueprint.className)
         implClassModifiers(blueprint, clazz)
         implKDoc(blueprint, clazz)
         implConstructor(blueprint, clazz)
-        implClassBody(blueprint, clazz);
+        implClassBody(blueprint, clazz)
 
-        val file = FileSpec.builder(blueprint.packageName, blueprint.className)
-            .addType(clazz.build())
-        implFileComments(file)
-        writeToFIle(file)
+        return clazz.build()
     }
 
     open fun implClassBody(blueprint: T, clazz: TypeSpec.Builder) {
         implFunctions(blueprint, clazz)
-        implInnerMembers(blueprint, clazz)
+        implInnerClasses(blueprint, clazz)
         //todo also change as below
         clazz.addType(implCompanions(blueprint, clazz).build())
     }
 
     open fun implCompanions(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
         val thisType = ClassName(blueprint.packageName, blueprint.className)
-        //todo move in companion?
-        val scaleReader = ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
-        val scaleCodecReader = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
-        val scaleWriter = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
-        val scaleCodecWriter = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
         return TypeSpec.companionObjectBuilder()
-            .addSuperinterface(scaleReader.parameterizedBy(thisType))
-            .addSuperinterface(scaleWriter.parameterizedBy(thisType))
+            .addSuperinterface(SCALE_READER.parameterizedBy(thisType))
+            .addSuperinterface(SCALE_WRITER.parameterizedBy(thisType))
             .addFunction(
                 FunSpec.builder("read")
-                    .addParameter(ParameterSpec.builder("reader", scaleCodecReader).build())
+                    .addParameter(ParameterSpec.builder("reader", SCALE_CODEC_READER).build())
                     .addCode(scaleReaderCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
                     .returns(thisType)
@@ -50,7 +43,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             )
             .addFunction(
                 FunSpec.builder("write")
-                    .addParameter(ParameterSpec.builder("writer", scaleCodecWriter).build())
+                    .addParameter(ParameterSpec.builder("writer", SCALE_CODEC_WRITER).build())
                     .addParameter(ParameterSpec.builder("instance", thisType).build())
                     .addCode(scaleWriterCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
@@ -60,8 +53,8 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
     //todo move to separate interface
     open fun scaleReaderCode(blueprint: T): CodeBlock {
-        val code =
-            blueprint.properties.joinToString(",\n") { resolveScaleReadImplementation(it).toString() }
+        val code = blueprint.properties
+                .joinToString(",\n") { resolveScaleReadImplementation(it).toString() }
 
         return CodeBlock.of("return ${blueprint.className}($code)")
     }
@@ -73,7 +66,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
     open fun implFunctions(blueprint: T, clazz: TypeSpec.Builder) = Unit
 
-    open fun implInnerMembers(blueprint: T, clazz: TypeSpec.Builder) = Unit
+    open fun implInnerClasses(blueprint: T, clazz: TypeSpec.Builder) = Unit
 
     open fun implClassModifiers(blueprint: T, clazz: TypeSpec.Builder) {
         clazz.addModifiers(KModifier.PUBLIC)
@@ -102,12 +95,4 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         clazz.addKdoc(blueprint.className)
     }
 
-
-    open fun implFileComments(file: FileSpec.Builder) {
-        file.addComment("\nAuto-generated file. DO NOT EDIT!\n")
-    }
-
-    open fun writeToFIle(file: FileSpec.Builder) {
-        file.build().writeTo(Paths.get("client/src/main/kotlin"))
-    }
 }

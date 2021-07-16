@@ -87,7 +87,7 @@ public sealed class AssetValue {
     	0 -> Quantity.read(reader)
     	1 -> BigQuantity.read(reader)
     	2 -> Store.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetValue): Unit {
       writer.directWrite(instance.discriminant())
@@ -95,7 +95,7 @@ public sealed class AssetValue {
       	0 -> Quantity.write(writer, instance as Quantity)
       	1 -> BigQuantity.write(writer, instance as BigQuantity)
       	2 -> Store.write(writer, instance as Store)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

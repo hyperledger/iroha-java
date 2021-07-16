@@ -264,7 +264,7 @@ public sealed class Instruction {
     	9 -> SetKeyValue.read(reader)
     	10 -> RemoveKeyValue.read(reader)
     	11 -> Grant.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Instruction): Unit {
       writer.directWrite(instance.discriminant())
@@ -281,7 +281,7 @@ public sealed class Instruction {
       	9 -> SetKeyValue.write(writer, instance as SetKeyValue)
       	10 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
       	11 -> Grant.write(writer, instance as Grant)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

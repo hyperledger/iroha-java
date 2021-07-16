@@ -64,14 +64,14 @@ public sealed class RejectionReason {
         reader.readUByte()) {
     	0 -> Block.read(reader)
     	1 -> Transaction.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectionReason): Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
       	0 -> Block.write(writer, instance as Block)
       	1 -> Transaction.write(writer, instance as Transaction)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

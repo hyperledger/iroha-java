@@ -426,7 +426,7 @@ public sealed class Expression {
     	17 -> ContainsAny.read(reader)
     	18 -> Where.read(reader)
     	19 -> ContextValue.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Expression): Unit {
       writer.directWrite(instance.discriminant())
@@ -451,7 +451,7 @@ public sealed class Expression {
       	17 -> ContainsAny.write(writer, instance as ContainsAny)
       	18 -> Where.write(writer, instance as Where)
       	19 -> ContextValue.write(writer, instance as ContextValue)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

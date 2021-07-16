@@ -32,13 +32,13 @@ public sealed class BlockRejectionReason {
     public override fun read(reader: ScaleCodecReader): BlockRejectionReason = when(val discriminant
         = reader.readUByte()) {
     	0 -> ConsensusBlockRejection.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: BlockRejectionReason): Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
       	0 -> ConsensusBlockRejection.write(writer, instance as ConsensusBlockRejection)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

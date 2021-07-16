@@ -116,7 +116,7 @@ public sealed class TransactionRejectionReason {
     	2 -> InstructionExecution.read(reader)
     	3 -> SignatureVerification.read(reader)
     	4 -> UnexpectedGenesisAccountSignature.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason):
         Unit {
@@ -128,7 +128,7 @@ public sealed class TransactionRejectionReason {
       	3 -> SignatureVerification.write(writer, instance as SignatureVerification)
       	4 -> UnexpectedGenesisAccountSignature.write(writer, instance as
           UnexpectedGenesisAccountSignature)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

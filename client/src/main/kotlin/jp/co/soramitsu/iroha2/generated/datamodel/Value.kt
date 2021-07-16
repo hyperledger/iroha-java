@@ -251,7 +251,7 @@ public sealed class Value {
     	8 -> SignatureCheckCondition.read(reader)
     	9 -> TransactionValue.read(reader)
     	10 -> PermissionToken.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Value): Unit {
       writer.directWrite(instance.discriminant())
@@ -267,7 +267,7 @@ public sealed class Value {
       	8 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
       	9 -> TransactionValue.write(writer, instance as TransactionValue)
       	10 -> PermissionToken.write(writer, instance as PermissionToken)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

@@ -81,7 +81,7 @@ public sealed class EventSocketMessage {
     	1 -> SubscriptionAccepted.read(reader)
     	2 -> Event.read(reader)
     	3 -> EventReceived.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: EventSocketMessage): Unit {
       writer.directWrite(instance.discriminant())
@@ -90,7 +90,7 @@ public sealed class EventSocketMessage {
       	1 -> SubscriptionAccepted.write(writer, instance as SubscriptionAccepted)
       	2 -> Event.write(writer, instance as Event)
       	3 -> EventReceived.write(writer, instance as EventReceived)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

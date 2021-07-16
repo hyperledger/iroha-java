@@ -135,7 +135,7 @@ public sealed class IdBox {
     	3 -> DomainName.read(reader)
     	4 -> PeerId.read(reader)
     	5 -> WorldId.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: IdBox): Unit {
       writer.directWrite(instance.discriminant())
@@ -146,7 +146,7 @@ public sealed class IdBox {
       	3 -> DomainName.write(writer, instance as DomainName)
       	4 -> PeerId.write(writer, instance as PeerId)
       	5 -> WorldId.write(writer, instance as WorldId)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

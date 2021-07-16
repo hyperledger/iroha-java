@@ -46,9 +46,9 @@ class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(t
 class EnumBlueprint(type: EnumType) : Blueprint<EnumType>(type) {
     val variants = resolveVariants()
 
-    private fun resolveVariants(): List<VariantDetails> {
+    private fun resolveVariants(): List<EnumVariantBlueprint> {
         return type.variants.map {
-            VariantDetails(it.name, it.discriminant, resolveVariantInnerType(it))
+            EnumVariantBlueprint(it.name, it.discriminant, resolveVariantInnerType(it))
         }
     }
 
@@ -132,10 +132,10 @@ abstract class Blueprint<T : CompositeType>(val type: T) {
             U8Type::class to UByte::class.asTypeName(),
             U16Type::class to UShort::class.asTypeName(),
             U32Type::class to UInt::class.asTypeName(),
-            CompactType::class to UInt::class.asTypeName(),
             U64Type::class to ULong::class.asTypeName(),
             U128Type::class to BigInteger::class.asTypeName(),
             U256Type::class to BigInteger::class.asTypeName(),
+            CompactType::class to UInt::class.asTypeName(),
             VecType::class to ClassName("kotlin.collections", "MutableList"),
             SetType::class to ClassName("kotlin.collections", "MutableSet"),
             MapType::class to ClassName("kotlin.collections", "MutableMap"),
@@ -150,12 +150,7 @@ data class Property(val name: String, val typeName: TypeName, val original: Type
 /**
  * Blueprint of the enum variant
  */
-//todo rename
-data class VariantDetails(
-    val variantName: String,
-    val discriminant: Int,
-    val innerValue: Property?
-)
+data class EnumVariantBlueprint(val discriminant: Int) : Blueprint<StructType>(StructType())
 
 /**
  * Create property name by converting from snake case to camel case

@@ -485,7 +485,7 @@ public sealed class QueryBox {
     	18 -> FindAllPeers.read(reader)
     	19 -> FindTransactionsByAccountId.read(reader)
     	20 -> FindPermissionTokensByAccountId.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: QueryBox): Unit {
       writer.directWrite(instance.discriminant())
@@ -514,7 +514,7 @@ public sealed class QueryBox {
       	19 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
       	20 -> FindPermissionTokensByAccountId.write(writer, instance as
           FindPermissionTokensByAccountId)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

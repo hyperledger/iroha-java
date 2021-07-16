@@ -45,14 +45,14 @@ public sealed class VersionedEventSocketMessage {
     public override fun read(reader: ScaleCodecReader): VersionedEventSocketMessage = when(val
         discriminant = reader.readUByte()) {
     	0 -> V1.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: VersionedEventSocketMessage):
         Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
       	0 -> V1.write(writer, instance as V1)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }

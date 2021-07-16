@@ -109,7 +109,7 @@ public sealed class Parameter {
     	1 -> BlockTime.read(reader)
     	2 -> CommitTime.read(reader)
     	3 -> TransactionReceiptTime.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
       writer.directWrite(instance.discriminant())
@@ -118,7 +118,7 @@ public sealed class Parameter {
       	1 -> BlockTime.write(writer, instance as BlockTime)
       	2 -> CommitTime.write(writer, instance as CommitTime)
       	3 -> TransactionReceiptTime.write(writer, instance as TransactionReceiptTime)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant $discriminant")}
+      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
 }
