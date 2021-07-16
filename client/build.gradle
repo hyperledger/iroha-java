@@ -7,8 +7,15 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    // polkaj public repo
+    maven { url "https://dl.bintray.com/emerald/polkaj" }
+    // required for com.github.multiformats:java-multibase library
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+//    implementation(fileTree("libs") {include("polkaj-scale-0.3.0.jar")})
+    implementation 'io.emeraldpay.polkaj:polkaj-scale:0.3.0'
+
 }

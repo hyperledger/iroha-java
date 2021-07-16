@@ -3,7 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import kotlin.Unit
 
 /**
  * Equal
@@ -13,4 +18,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 public class Equal(
   public val left: EvaluatesTo<Value>,
   public val right: EvaluatesTo<Value>
-)
+) {
+  public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
+    public override fun read(reader: ScaleCodecReader): Equal = Equal(Value.read(reader),
+    Value.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
+      Value.write(writer, instance.left)
+      Value.write(writer, instance.right)
+    }
+  }
+}

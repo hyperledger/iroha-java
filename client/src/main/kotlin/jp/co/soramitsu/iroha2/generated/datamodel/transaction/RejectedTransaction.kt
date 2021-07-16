@@ -3,8 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
+import kotlin.Unit
 import kotlin.collections.MutableList
 
 /**
@@ -16,4 +21,17 @@ public class RejectedTransaction(
   public val payload: Payload,
   public val signatures: MutableList<Signature>,
   public val rejectionReason: TransactionRejectionReason
-)
+) {
+  public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
+    public override fun read(reader: ScaleCodecReader): RejectedTransaction =
+        RejectedTransaction(Payload.read(reader),
+    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)),
+    TransactionRejectionReason.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
+      Payload.write(writer, instance.payload)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.signatures)
+      TransactionRejectionReason.write(writer, instance.rejectionReason)
+    }
+  }
+}

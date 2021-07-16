@@ -3,7 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import kotlin.Unit
 import kotlin.collections.MutableList
 
 /**
@@ -14,4 +19,15 @@ import kotlin.collections.MutableList
 public class ContainsAny(
   public val collection: EvaluatesTo<MutableList<Value>>,
   public val elements: EvaluatesTo<MutableList<Value>>
-)
+) {
+  public companion object : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
+    public override fun read(reader: ScaleCodecReader): ContainsAny =
+        ContainsAny(Value.read(reader),
+    Value.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
+      Value.write(writer, instance.collection)
+      Value.write(writer, instance.elements)
+    }
+  }
+}

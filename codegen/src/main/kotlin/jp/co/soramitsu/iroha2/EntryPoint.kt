@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2
 
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
-import jp.co.soramitsu.iroha2.codegen.GeneratorEntryPoint
+import jp.co.soramitsu.iroha2.codegen.generator.GeneratorEntryPoint
 import jp.co.soramitsu.iroha2.parse.SchemaParser
 import java.io.InputStreamReader
 

@@ -3,7 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.Boolean
+import kotlin.Unit
 
 /**
  * Or
@@ -13,4 +18,14 @@ import kotlin.Boolean
 public class Or(
   public val left: EvaluatesTo<Boolean>,
   public val right: EvaluatesTo<Boolean>
-)
+) {
+  public companion object : ScaleReader<Or>, ScaleWriter<Or> {
+    public override fun read(reader: ScaleCodecReader): Or = Or(Boolean.read(reader),
+    Boolean.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
+      Boolean.write(writer, instance.left)
+      Boolean.write(writer, instance.right)
+    }
+  }
+}

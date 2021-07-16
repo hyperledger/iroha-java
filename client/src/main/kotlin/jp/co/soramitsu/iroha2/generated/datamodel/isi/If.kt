@@ -3,8 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.Boolean
+import kotlin.Unit
 
 /**
  * If
@@ -15,4 +20,16 @@ public class If(
   public val condition: EvaluatesTo<Boolean>,
   public val then: Instruction,
   public val otherwise: Instruction?
-)
+) {
+  public companion object : ScaleReader<If>, ScaleWriter<If> {
+    public override fun read(reader: ScaleCodecReader): If = If(Boolean.read(reader),
+    Instruction.read(reader),
+    reader.readOptional(Instruction))
+
+    public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
+      Boolean.write(writer, instance.condition)
+      Instruction.write(writer, instance.then)
+      writer.writeOptional(Instruction, instance.otherwise)
+    }
+  }
+}

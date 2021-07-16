@@ -15,21 +15,22 @@ class StructBlueprint(type: StructType) : Blueprint<StructType>(type){
             .map { (name, ty) ->
                 Property(
                     resolvePropName(name),
-                    resolveKotlinType(ty.requireValue())
+                    resolveKotlinType(ty.requireValue()),
+                    ty.requireValue()
                 )
             }
     }
-
-
 }
 
 class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(type){
     override fun resolveProperties(type: TupleStructType): List<Property> {
         return type.types
+            .map { it.requireValue() }
             .map {
                 Property(
-                    createPropName(it.requireValue()),
-                    resolveKotlinType(it.requireValue())
+                    createPropName(it),
+                    resolveKotlinType(it),
+                    it
                 )
             }
     }
@@ -55,7 +56,8 @@ class EnumBlueprint(type: EnumType) : Blueprint<EnumType>(type) {
         return variant.type?.requireValue()?.let {
             return Property(
                 resolvePropName(variant.name).replaceFirstChar(Char::lowercase),
-                resolveKotlinType(it)
+                resolveKotlinType(it),
+                it
             )
         }
 
@@ -143,7 +145,7 @@ abstract class Blueprint<T : CompositeType>(val type: T) {
 
 }
 
-data class Property(val normalizedPropName: String, val propTypeName: TypeName)
+data class Property(val name: String, val typeName: TypeName, val original: Type)
 
 /**
  * Blueprint of the enum variant

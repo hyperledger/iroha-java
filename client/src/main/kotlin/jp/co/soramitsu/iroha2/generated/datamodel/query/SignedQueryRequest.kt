@@ -3,9 +3,14 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
 import java.math.BigInteger
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import kotlin.UInt
+import kotlin.Unit
 
 /**
  * SignedQueryRequest
@@ -16,4 +21,17 @@ public class SignedQueryRequest(
   public val timestampMs: UInt<BigInteger>,
   public val signature: Signature,
   public val query: QueryBox
-)
+) {
+  public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
+    public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
+        SignedQueryRequest(reader.readCompactInt(),
+    Signature.read(reader),
+    QueryBox.read(reader))
+
+    public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
+      writer.writeCompact(instance.timestampMs)
+      Signature.write(writer, instance.signature)
+      QueryBox.write(writer, instance.query)
+    }
+  }
+}
