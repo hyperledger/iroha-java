@@ -9,80 +9,15 @@ import java.math.BigInteger
 import java.util.*
 import kotlin.reflect.KClass
 
-class StructBlueprint(type: StructType) : Blueprint<StructType>(type){
-    override fun resolveProperties(type: StructType): List<Property> {
-        return type.mapping
-            .map { (name, ty) ->
-                Property(
-                    resolvePropName(name),
-                    resolveKotlinType(ty.requireValue()),
-                    ty.requireValue()
-                )
-            }
-    }
-}
-
-class TupleStructBlueprint(type: TupleStructType) : Blueprint<TupleStructType>(type){
-    override fun resolveProperties(type: TupleStructType): List<Property> {
-        return type.types
-            .map { it.requireValue() }
-            .map {
-                Property(
-                    createPropName(it),
-                    resolveKotlinType(it),
-                    it
-                )
-            }
-    }
-
-    private fun createPropName(type: Type): String {
-        return when (type) {
-            is ArrayType -> "array"
-            else -> defineClassName(type.name).decapitalize()
-        }
-    }
-}
-
-class EnumBlueprint(type: EnumType) : Blueprint<EnumType>(type) {
-    val variants = resolveVariants()
-
-    private fun resolveVariants(): List<EnumVariantBlueprint> {
-        return type.variants.map {
-            EnumVariantBlueprint(it.name, it.discriminant, resolveVariantInnerType(it))
-        }
-    }
-
-    private fun resolveVariantInnerType(variant: EnumType.Variant): Property? {
-        return variant.type?.requireValue()?.let {
-            return Property(
-                resolvePropName(variant.name).replaceFirstChar(Char::lowercase),
-                resolveKotlinType(it),
-                it
-            )
-        }
-
-    }
-
-}
-
-@ExperimentalUnsignedTypes
-abstract class Blueprint<T : CompositeType>(val type: T) {
-    val className: String = defineClassName(type.name)
-    val packageName: String = definePackageName(className, type)
-    val properties = resolveProperties(type)
-
-    open fun resolveProperties(type: T): List<Property> = listOf()
+abstract class Blueprint<T>(val source: T) {
+    abstract val className: String
+    abstract val packageName: String
+    abstract val properties : List<Property>
 
     protected fun defineClassName(typeName: String) = typeName.substringBefore('<')
         .substringAfterLast("::")
 
-    protected fun definePackageName(className: String, type: Type): String {
-        return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)
-            .removeSuffix("::")
-            .removePrefix("iroha")
-            .replace("::", ".")
-            .replace("_", "")
-    }
+    open fun resolveProperties(type: T): List<Property> = listOf()
 
     protected fun resolveKotlinType(type: Type): TypeName {
         return when (type) {
@@ -121,8 +56,30 @@ abstract class Blueprint<T : CompositeType>(val type: T) {
         }
     }
 
-    override fun toString(): String {
-        return "${this::class}(type=$type, className='$className', packageName='$packageName', properties=$properties)"
+    protected fun definePackageName(className: String, type: Type): String {
+        return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)
+            .removeSuffix("::")
+            .removePrefix("iroha")
+            .replace("::", ".")
+            .replace("_", "")
+    }
+
+    /**
+     * Create property name by converting from snake case to camel case
+     */
+    protected fun convertToCamelCase(
+        name: String,
+    ): String {
+        val tokenizer = StringTokenizer(name, "_")
+        return if (tokenizer.hasMoreTokens()) {
+            val resultBuilder = StringBuilder(tokenizer.nextToken())
+            for (token in tokenizer) {
+                resultBuilder.append((token as String).replaceFirstChar(Char::uppercase))
+            }
+            resultBuilder.toString()
+        } else {
+            name
+        }
     }
 
     companion object {
@@ -142,30 +99,6 @@ abstract class Blueprint<T : CompositeType>(val type: T) {
             ArrayType::class to Array::class.asTypeName()
         )
     }
-
 }
 
 data class Property(val name: String, val typeName: TypeName, val original: Type)
-
-/**
- * Blueprint of the enum variant
- */
-data class EnumVariantBlueprint(val discriminant: Int) : Blueprint<StructType>(StructType())
-
-/**
- * Create property name by converting from snake case to camel case
- */
-fun resolvePropName(
-    name: String,
-): String {
-    val tokenizer = StringTokenizer(name, "_")
-    return if (tokenizer.hasMoreTokens()) {
-        val resultBuilder = StringBuilder(tokenizer.nextToken())
-        for (token in tokenizer) {
-            resultBuilder.append((token as String).replaceFirstChar(Char::uppercase))
-        }
-        resultBuilder.toString()
-    } else {
-        name
-    }
-}

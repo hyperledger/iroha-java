@@ -4,12 +4,12 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
-import jp.co.soramitsu.iroha2.codegen.EnumBlueprint
+import jp.co.soramitsu.iroha2.codegen.blueprint.EnumBlueprint
 
 object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
     override fun implKDoc(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         super.implKDoc(blueprint, clazz)
-        clazz.addKdoc("\n\nGenerated from '${blueprint.type.name}' enum")
+        clazz.addKdoc("\n\nGenerated from '${blueprint.source.name}' enum")
     }
 
     override fun implClassModifiers(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {

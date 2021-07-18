@@ -27,16 +27,17 @@ public sealed class QueryBox {
   public class FindAllAccounts(
     private val findAllAccounts:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): FindAllAccounts {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAccounts =
+          FindAllAccounts(FindAllAccounts.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
+        FindAllAccounts.write(writer, instance.findAllAccounts)
       }
     }
   }
@@ -47,16 +48,17 @@ public sealed class QueryBox {
   public class FindAccountById(
     private val findAccountById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountById>, ScaleWriter<FindAccountById> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): FindAccountById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountById =
+          FindAccountById(FindAccountById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
+        FindAccountById.write(writer, instance.findAccountById)
       }
     }
   }
@@ -67,18 +69,19 @@ public sealed class QueryBox {
   public class FindAccountKeyValueByIdAndKey(
     private val findAccountKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
+          FindAccountKeyValueByIdAndKey(FindAccountKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
           Unit {
+        FindAccountKeyValueByIdAndKey.write(writer, instance.findAccountKeyValueByIdAndKey)
       }
     }
   }
@@ -89,16 +92,17 @@ public sealed class QueryBox {
   public class FindAccountsByName(
     private val findAccountsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): FindAccountsByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountsByName =
+          FindAccountsByName(FindAccountsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit {
+        FindAccountsByName.write(writer, instance.findAccountsByName)
       }
     }
   }
@@ -109,18 +113,19 @@ public sealed class QueryBox {
   public class FindAccountsByDomainName(
     private val findAccountsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountsByDomainName>,
         ScaleWriter<FindAccountsByDomainName> {
       public const val DISCRIMINANT: Int = 4
 
-      public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
+          FindAccountsByDomainName(FindAccountsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName):
           Unit {
+        FindAccountsByDomainName.write(writer, instance.findAccountsByDomainName)
       }
     }
   }
@@ -130,16 +135,17 @@ public sealed class QueryBox {
    */
   public class FindAllAssets(
     private val findAllAssets: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
       public const val DISCRIMINANT: Int = 5
 
-      public override fun read(reader: ScaleCodecReader): FindAllAssets {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAssets =
+          FindAllAssets(FindAllAssets.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
+        FindAllAssets.write(writer, instance.findAllAssets)
       }
     }
   }
@@ -150,18 +156,19 @@ public sealed class QueryBox {
   public class FindAllAssetsDefinitions(
     private val findAllAssetsDefinitions:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAssetsDefinitions>,
         ScaleWriter<FindAllAssetsDefinitions> {
       public const val DISCRIMINANT: Int = 6
 
-      public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions =
+          FindAllAssetsDefinitions(FindAllAssetsDefinitions.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions):
           Unit {
+        FindAllAssetsDefinitions.write(writer, instance.findAllAssetsDefinitions)
       }
     }
   }
@@ -171,16 +178,17 @@ public sealed class QueryBox {
    */
   public class FindAssetById(
     private val findAssetById: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetById>, ScaleWriter<FindAssetById> {
       public const val DISCRIMINANT: Int = 7
 
-      public override fun read(reader: ScaleCodecReader): FindAssetById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetById =
+          FindAssetById(FindAssetById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetById): Unit {
+        FindAssetById.write(writer, instance.findAssetById)
       }
     }
   }
@@ -191,16 +199,17 @@ public sealed class QueryBox {
   public class FindAssetsByName(
     private val findAssetsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
       public const val DISCRIMINANT: Int = 8
 
-      public override fun read(reader: ScaleCodecReader): FindAssetsByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByName =
+          FindAssetsByName(FindAssetsByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
+        FindAssetsByName.write(writer, instance.findAssetsByName)
       }
     }
   }
@@ -211,17 +220,18 @@ public sealed class QueryBox {
   public class FindAssetsByAccountId(
     private val findAssetsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId>
         {
       public const val DISCRIMINANT: Int = 9
 
-      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
+          FindAssetsByAccountId(FindAssetsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
+        FindAssetsByAccountId.write(writer, instance.findAssetsByAccountId)
       }
     }
   }
@@ -232,18 +242,19 @@ public sealed class QueryBox {
   public class FindAssetsByAssetDefinitionId(
     private val findAssetsByAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAssetDefinitionId>,
         ScaleWriter<FindAssetsByAssetDefinitionId> {
       public const val DISCRIMINANT: Int = 10
 
-      public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
+          FindAssetsByAssetDefinitionId(FindAssetsByAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
           Unit {
+        FindAssetsByAssetDefinitionId.write(writer, instance.findAssetsByAssetDefinitionId)
       }
     }
   }
@@ -254,17 +265,18 @@ public sealed class QueryBox {
   public class FindAssetsByDomainName(
     private val findAssetsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByDomainName>,
         ScaleWriter<FindAssetsByDomainName> {
       public const val DISCRIMINANT: Int = 11
 
-      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
+          FindAssetsByDomainName(FindAssetsByDomainName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
+        FindAssetsByDomainName.write(writer, instance.findAssetsByDomainName)
       }
     }
   }
@@ -275,19 +287,21 @@ public sealed class QueryBox {
   public class FindAssetsByAccountIdAndAssetDefinitionId(
     private val findAssetsByAccountIdAndAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
       public const val DISCRIMINANT: Int = 12
 
-      public override fun read(reader: ScaleCodecReader):
-          FindAssetsByAccountIdAndAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountIdAndAssetDefinitionId
+          =
+          FindAssetsByAccountIdAndAssetDefinitionId(FindAssetsByAccountIdAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
+        FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
+            instance.findAssetsByAccountIdAndAssetDefinitionId)
       }
     }
   }
@@ -298,19 +312,21 @@ public sealed class QueryBox {
   public class FindAssetsByDomainNameAndAssetDefinitionId(
     private val findAssetsByDomainNameAndAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
       public const val DISCRIMINANT: Int = 13
 
-      public override fun read(reader: ScaleCodecReader):
-          FindAssetsByDomainNameAndAssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId
+          =
+          FindAssetsByDomainNameAndAssetDefinitionId(FindAssetsByDomainNameAndAssetDefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
+        FindAssetsByDomainNameAndAssetDefinitionId.write(writer,
+            instance.findAssetsByDomainNameAndAssetDefinitionId)
       }
     }
   }
@@ -321,17 +337,18 @@ public sealed class QueryBox {
   public class FindAssetQuantityById(
     private val findAssetQuantityById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById>
         {
       public const val DISCRIMINANT: Int = 14
 
-      public override fun read(reader: ScaleCodecReader): FindAssetQuantityById {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
+          FindAssetQuantityById(FindAssetQuantityById.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
+        FindAssetQuantityById.write(writer, instance.findAssetQuantityById)
       }
     }
   }
@@ -342,18 +359,19 @@ public sealed class QueryBox {
   public class FindAssetKeyValueByIdAndKey(
     private val findAssetKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetKeyValueByIdAndKey>,
         ScaleWriter<FindAssetKeyValueByIdAndKey> {
       public const val DISCRIMINANT: Int = 15
 
-      public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
+          FindAssetKeyValueByIdAndKey(FindAssetKeyValueByIdAndKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
           Unit {
+        FindAssetKeyValueByIdAndKey.write(writer, instance.findAssetKeyValueByIdAndKey)
       }
     }
   }
@@ -364,16 +382,17 @@ public sealed class QueryBox {
   public class FindAllDomains(
     private val findAllDomains:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
       public const val DISCRIMINANT: Int = 16
 
-      public override fun read(reader: ScaleCodecReader): FindAllDomains {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllDomains =
+          FindAllDomains(FindAllDomains.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
+        FindAllDomains.write(writer, instance.findAllDomains)
       }
     }
   }
@@ -384,16 +403,17 @@ public sealed class QueryBox {
   public class FindDomainByName(
     private val findDomainByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
       public const val DISCRIMINANT: Int = 17
 
-      public override fun read(reader: ScaleCodecReader): FindDomainByName {
-      }
+      public override fun read(reader: ScaleCodecReader): FindDomainByName =
+          FindDomainByName(FindDomainByName.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
+        FindDomainByName.write(writer, instance.findDomainByName)
       }
     }
   }
@@ -403,16 +423,17 @@ public sealed class QueryBox {
    */
   public class FindAllPeers(
     private val findAllPeers: jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
       public const val DISCRIMINANT: Int = 18
 
-      public override fun read(reader: ScaleCodecReader): FindAllPeers {
-      }
+      public override fun read(reader: ScaleCodecReader): FindAllPeers =
+          FindAllPeers(FindAllPeers.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
+        FindAllPeers.write(writer, instance.findAllPeers)
       }
     }
   }
@@ -423,18 +444,19 @@ public sealed class QueryBox {
   public class FindTransactionsByAccountId(
     private val findTransactionsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindTransactionsByAccountId>,
         ScaleWriter<FindTransactionsByAccountId> {
       public const val DISCRIMINANT: Int = 19
 
-      public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
+          FindTransactionsByAccountId(FindTransactionsByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
           Unit {
+        FindTransactionsByAccountId.write(writer, instance.findTransactionsByAccountId)
       }
     }
   }
@@ -445,18 +467,19 @@ public sealed class QueryBox {
   public class FindPermissionTokensByAccountId(
     private val findPermissionTokensByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
-  ) : QueryBox() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
       public const val DISCRIMINANT: Int = 20
 
-      public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
+          FindPermissionTokensByAccountId(FindPermissionTokensByAccountId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter,
           instance: FindPermissionTokensByAccountId): Unit {
+        FindPermissionTokensByAccountId.write(writer, instance.findPermissionTokensByAccountId)
       }
     }
   }

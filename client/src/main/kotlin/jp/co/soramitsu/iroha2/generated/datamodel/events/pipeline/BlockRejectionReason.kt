@@ -24,8 +24,19 @@ public sealed class BlockRejectionReason {
   /**
    * 'ConsensusBlockRejection' variant
    */
-  public class ConsensusBlockRejection : BlockRejectionReason() {
+  public class ConsensusBlockRejection {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<ConsensusBlockRejection>,
+        ScaleWriter<ConsensusBlockRejection> {
+      public const val DISCRIMINANT: Int = 0
+
+      public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection =
+          ConsensusBlockRejection()
+
+      public override fun write(writer: ScaleCodecWriter, instance: ConsensusBlockRejection): Unit {
+      }
+    }
   }
 
   public companion object : ScaleReader<BlockRejectionReason>, ScaleWriter<BlockRejectionReason> {

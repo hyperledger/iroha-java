@@ -25,17 +25,18 @@ public sealed class VersionedEventSocketMessage {
    * 'V1' variant
    */
   public class V1(
-    private val v1: _VersionedEventSocketMessageV1
-  ) : VersionedEventSocketMessage() {
+    private val _VersionedEventSocketMessageV1: _VersionedEventSocketMessageV1
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): V1 {
-      }
+      public override fun read(reader: ScaleCodecReader): V1 =
+          V1(_VersionedEventSocketMessageV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
+        _VersionedEventSocketMessageV1.write(writer, instance._VersionedEventSocketMessageV1)
       }
     }
   }

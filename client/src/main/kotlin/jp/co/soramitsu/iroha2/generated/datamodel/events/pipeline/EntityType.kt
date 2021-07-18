@@ -24,15 +24,33 @@ public sealed class EntityType {
   /**
    * 'Block' variant
    */
-  public class Block : EntityType() {
+  public class Block {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<Block>, ScaleWriter<Block> {
+      public const val DISCRIMINANT: Int = 0
+
+      public override fun read(reader: ScaleCodecReader): Block = Block()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
+      }
+    }
   }
 
   /**
    * 'Transaction' variant
    */
-  public class Transaction : EntityType() {
+  public class Transaction {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+      public const val DISCRIMINANT: Int = 1
+
+      public override fun read(reader: ScaleCodecReader): Transaction = Transaction()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
+      }
+    }
   }
 
   public companion object : ScaleReader<EntityType>, ScaleWriter<EntityType> {

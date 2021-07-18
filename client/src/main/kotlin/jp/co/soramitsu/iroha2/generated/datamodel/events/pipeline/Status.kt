@@ -24,25 +24,35 @@ public sealed class Status {
   /**
    * 'Validating' variant
    */
-  public class Validating : Status() {
+  public class Validating {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<Validating>, ScaleWriter<Validating> {
+      public const val DISCRIMINANT: Int = 0
+
+      public override fun read(reader: ScaleCodecReader): Validating = Validating()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Validating): Unit {
+      }
+    }
   }
 
   /**
    * 'Rejected' variant
    */
   public class Rejected(
-    private val rejected: RejectionReason
-  ) : Status() {
+    private val rejectionReason: RejectionReason
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Rejected>, ScaleWriter<Rejected> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Rejected {
-      }
+      public override fun read(reader: ScaleCodecReader): Rejected =
+          Rejected(RejectionReason.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
+        RejectionReason.write(writer, instance.rejectionReason)
       }
     }
   }
@@ -50,8 +60,17 @@ public sealed class Status {
   /**
    * 'Committed' variant
    */
-  public class Committed : Status() {
+  public class Committed {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<Committed>, ScaleWriter<Committed> {
+      public const val DISCRIMINANT: Int = 2
+
+      public override fun read(reader: ScaleCodecReader): Committed = Committed()
+
+      public override fun write(writer: ScaleCodecWriter, instance: Committed): Unit {
+      }
+    }
   }
 
   public companion object : ScaleReader<Status>, ScaleWriter<Status> {

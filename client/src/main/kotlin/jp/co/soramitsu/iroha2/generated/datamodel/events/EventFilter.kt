@@ -25,17 +25,18 @@ public sealed class EventFilter {
    * 'Pipeline' variant
    */
   public class Pipeline(
-    private val pipeline: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter
-  ) : EventFilter() {
+    private val eventFilter: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Pipeline {
-      }
+      public override fun read(reader: ScaleCodecReader): Pipeline =
+          Pipeline(EventFilter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
+        EventFilter.write(writer, instance.eventFilter)
       }
     }
   }
@@ -44,17 +45,17 @@ public sealed class EventFilter {
    * 'Data' variant
    */
   public class Data(
-    private val `data`: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.EventFilter
-  ) : EventFilter() {
+    private val eventFilter: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.EventFilter
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Data>, ScaleWriter<Data> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Data {
-      }
+      public override fun read(reader: ScaleCodecReader): Data = Data(EventFilter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
+        EventFilter.write(writer, instance.eventFilter)
       }
     }
   }

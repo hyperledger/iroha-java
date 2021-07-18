@@ -29,16 +29,17 @@ public sealed class Value {
    */
   public class U32(
     private val u32: UInt
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<U32>, ScaleWriter<U32> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): U32 {
-      }
+      public override fun read(reader: ScaleCodecReader): U32 = U32(UInt.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
+        U32(UInt.MAX_VALUE);
+        UInt.write(writer, instance.u32)
       }
     }
   }
@@ -48,16 +49,16 @@ public sealed class Value {
    */
   public class Bool(
     private val bool: Boolean
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Bool {
-      }
+      public override fun read(reader: ScaleCodecReader): Bool = Bool(reader.readBoolean())
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
+        writer.writeByte(if (instance.bool) {1} else {0})
       }
     }
   }
@@ -67,16 +68,16 @@ public sealed class Value {
    */
   public class String(
     private val string: kotlin.String
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<String>, ScaleWriter<String> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): String {
-      }
+      public override fun read(reader: ScaleCodecReader): String = String(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
+        writer.writeAsList(instance.string.encodeToByteArray())
       }
     }
   }
@@ -86,16 +87,17 @@ public sealed class Value {
    */
   public class Vec(
     private val vec: MutableList<Value>
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Vec>, ScaleWriter<Vec> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): Vec {
-      }
+      public override fun read(reader: ScaleCodecReader): Vec =
+          Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
+        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.vec)
       }
     }
   }
@@ -104,17 +106,17 @@ public sealed class Value {
    * 'Id' variant
    */
   public class Id(
-    private val id: IdBox
-  ) : Value() {
+    private val idBox: IdBox
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Id>, ScaleWriter<Id> {
       public const val DISCRIMINANT: Int = 4
 
-      public override fun read(reader: ScaleCodecReader): Id {
-      }
+      public override fun read(reader: ScaleCodecReader): Id = Id(IdBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
+        IdBox.write(writer, instance.idBox)
       }
     }
   }
@@ -123,17 +125,18 @@ public sealed class Value {
    * 'Identifiable' variant
    */
   public class Identifiable(
-    private val identifiable: IdentifiableBox
-  ) : Value() {
+    private val identifiableBox: IdentifiableBox
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
       public const val DISCRIMINANT: Int = 5
 
-      public override fun read(reader: ScaleCodecReader): Identifiable {
-      }
+      public override fun read(reader: ScaleCodecReader): Identifiable =
+          Identifiable(IdentifiableBox.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
+        IdentifiableBox.write(writer, instance.identifiableBox)
       }
     }
   }
@@ -143,16 +146,17 @@ public sealed class Value {
    */
   public class PublicKey(
     private val publicKey: jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
       public const val DISCRIMINANT: Int = 6
 
-      public override fun read(reader: ScaleCodecReader): PublicKey {
-      }
+      public override fun read(reader: ScaleCodecReader): PublicKey =
+          PublicKey(PublicKey.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
+        PublicKey.write(writer, instance.publicKey)
       }
     }
   }
@@ -162,16 +166,17 @@ public sealed class Value {
    */
   public class Parameter(
     private val parameter: jp.co.soramitsu.iroha2.generated.datamodel.Parameter
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
       public const val DISCRIMINANT: Int = 7
 
-      public override fun read(reader: ScaleCodecReader): Parameter {
-      }
+      public override fun read(reader: ScaleCodecReader): Parameter =
+          Parameter(Parameter.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
+        Parameter.write(writer, instance.parameter)
       }
     }
   }
@@ -182,17 +187,18 @@ public sealed class Value {
   public class SignatureCheckCondition(
     private val signatureCheckCondition:
         jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SignatureCheckCondition>,
         ScaleWriter<SignatureCheckCondition> {
       public const val DISCRIMINANT: Int = 8
 
-      public override fun read(reader: ScaleCodecReader): SignatureCheckCondition {
-      }
+      public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
+          SignatureCheckCondition(SignatureCheckCondition.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
+        SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
       }
     }
   }
@@ -203,16 +209,17 @@ public sealed class Value {
   public class TransactionValue(
     private val transactionValue:
         jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
       public const val DISCRIMINANT: Int = 9
 
-      public override fun read(reader: ScaleCodecReader): TransactionValue {
-      }
+      public override fun read(reader: ScaleCodecReader): TransactionValue =
+          TransactionValue(TransactionValue.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
+        TransactionValue.write(writer, instance.transactionValue)
       }
     }
   }
@@ -223,16 +230,17 @@ public sealed class Value {
   public class PermissionToken(
     private val permissionToken:
         jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-  ) : Value() {
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
       public const val DISCRIMINANT: Int = 10
 
-      public override fun read(reader: ScaleCodecReader): PermissionToken {
-      }
+      public override fun read(reader: ScaleCodecReader): PermissionToken =
+          PermissionToken(PermissionToken.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
+        PermissionToken.write(writer, instance.permissionToken)
       }
     }
   }

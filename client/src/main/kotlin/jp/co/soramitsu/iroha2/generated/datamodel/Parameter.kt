@@ -27,19 +27,20 @@ public sealed class Parameter {
    * 'MaximumFaultyPeersAmount' variant
    */
   public class MaximumFaultyPeersAmount(
-    private val maximumFaultyPeersAmount: UInt
-  ) : Parameter() {
+    private val u32: UInt
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<MaximumFaultyPeersAmount>,
         ScaleWriter<MaximumFaultyPeersAmount> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount {
-      }
+      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
+          MaximumFaultyPeersAmount(UInt.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
+        UInt.write(writer, instance.u32)
       }
     }
   }
@@ -48,17 +49,18 @@ public sealed class Parameter {
    * 'BlockTime' variant
    */
   public class BlockTime(
-    private val blockTime: BigInteger
-  ) : Parameter() {
+    private val u128: BigInteger
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): BlockTime {
-      }
+      public override fun read(reader: ScaleCodecReader): BlockTime =
+          BlockTime(BigInteger.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
+        BigInteger.write(writer, instance.u128)
       }
     }
   }
@@ -67,17 +69,18 @@ public sealed class Parameter {
    * 'CommitTime' variant
    */
   public class CommitTime(
-    private val commitTime: BigInteger
-  ) : Parameter() {
+    private val u128: BigInteger
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): CommitTime {
-      }
+      public override fun read(reader: ScaleCodecReader): CommitTime =
+          CommitTime(BigInteger.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
+        BigInteger.write(writer, instance.u128)
       }
     }
   }
@@ -86,18 +89,19 @@ public sealed class Parameter {
    * 'TransactionReceiptTime' variant
    */
   public class TransactionReceiptTime(
-    private val transactionReceiptTime: BigInteger
-  ) : Parameter() {
+    private val u128: BigInteger
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<TransactionReceiptTime>,
         ScaleWriter<TransactionReceiptTime> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime {
-      }
+      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
+          TransactionReceiptTime(BigInteger.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
+        BigInteger.write(writer, instance.u128)
       }
     }
   }

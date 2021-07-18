@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
 import com.squareup.kotlinpoet.TypeSpec
-import jp.co.soramitsu.iroha2.codegen.TupleStructBlueprint
+import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 
 object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
     override fun implKDoc(
@@ -10,6 +10,6 @@ object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
     ) {
         super.implKDoc(blueprint, clazz)
         //todo fix generic names
-        clazz.addKdoc("\n\nGenerated from '${blueprint.type.name}' tuple structure")
+        clazz.addKdoc("\n\nGenerated from '${blueprint.source.name}' tuple structure")
     }
 }

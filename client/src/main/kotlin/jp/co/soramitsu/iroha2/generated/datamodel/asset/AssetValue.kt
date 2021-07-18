@@ -28,17 +28,17 @@ public sealed class AssetValue {
    * 'Quantity' variant
    */
   public class Quantity(
-    private val quantity: UInt
-  ) : AssetValue() {
+    private val u32: UInt
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Quantity {
-      }
+      public override fun read(reader: ScaleCodecReader): Quantity = Quantity(UInt.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
+        UInt.write(writer, instance.u32)
       }
     }
   }
@@ -47,17 +47,18 @@ public sealed class AssetValue {
    * 'BigQuantity' variant
    */
   public class BigQuantity(
-    private val bigQuantity: BigInteger
-  ) : AssetValue() {
+    private val u128: BigInteger
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): BigQuantity {
-      }
+      public override fun read(reader: ScaleCodecReader): BigQuantity =
+          BigQuantity(BigInteger.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
+        BigInteger.write(writer, instance.u128)
       }
     }
   }
@@ -66,17 +67,17 @@ public sealed class AssetValue {
    * 'Store' variant
    */
   public class Store(
-    private val store: Metadata
-  ) : AssetValue() {
+    private val metadata: Metadata
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Store>, ScaleWriter<Store> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): Store {
-      }
+      public override fun read(reader: ScaleCodecReader): Store = Store(Metadata.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
+        Metadata.write(writer, instance.metadata)
       }
     }
   }

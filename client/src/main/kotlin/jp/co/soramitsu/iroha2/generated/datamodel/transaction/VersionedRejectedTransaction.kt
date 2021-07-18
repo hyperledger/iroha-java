@@ -25,17 +25,18 @@ public sealed class VersionedRejectedTransaction {
    * 'V1' variant
    */
   public class V1(
-    private val v1: _VersionedRejectedTransactionV1
-  ) : VersionedRejectedTransaction() {
+    private val _VersionedRejectedTransactionV1: _VersionedRejectedTransactionV1
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): V1 {
-      }
+      public override fun read(reader: ScaleCodecReader): V1 =
+          V1(_VersionedRejectedTransactionV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
+        _VersionedRejectedTransactionV1.write(writer, instance._VersionedRejectedTransactionV1)
       }
     }
   }

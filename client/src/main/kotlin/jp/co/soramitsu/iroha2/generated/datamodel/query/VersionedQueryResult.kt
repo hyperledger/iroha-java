@@ -25,17 +25,18 @@ public sealed class VersionedQueryResult {
    * 'V1' variant
    */
   public class V1(
-    private val v1: _VersionedQueryResultV1
-  ) : VersionedQueryResult() {
+    private val _VersionedQueryResultV1: _VersionedQueryResultV1
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): V1 {
-      }
+      public override fun read(reader: ScaleCodecReader): V1 =
+          V1(_VersionedQueryResultV1.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
+        _VersionedQueryResultV1.write(writer, instance._VersionedQueryResultV1)
       }
     }
   }

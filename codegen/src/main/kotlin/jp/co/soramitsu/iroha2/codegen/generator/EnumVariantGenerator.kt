@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
 import com.squareup.kotlinpoet.*
-import jp.co.soramitsu.iroha2.codegen.EnumVariantBlueprint
+import jp.co.soramitsu.iroha2.codegen.blueprint.EnumVariantBlueprint
 
 object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
@@ -44,32 +44,11 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
         blueprint: EnumVariantBlueprint,
         clazz: TypeSpec.Builder
     ): TypeSpec.Builder {
-        val typeSpec = super.implCompanions(blueprint, clazz)
-        typeSpec.addProperty(
-            PropertySpec.builder("DISCRIMINANT", Int::class, KModifier.CONST)
-                .initializer("%L", blueprint.discriminant)
-                .build()
-        )
-        return typeSpec
-
-//        TypeSpec.companionObjectBuilder()
-//            .addSuperinterface(SCALE_READER.parameterizedBy(thisType))
-//            .addSuperinterface(SCALE_WRITER.parameterizedBy(thisType))
-//            .addFunction(
-//                FunSpec.builder("read")
-//                    .addParameter(ParameterSpec.builder("reader", ScaleConstants.SCALE_CODEC_READER).build())
-//                    .addCode(scaleReaderCode(blueprint))
-//                    .addModifiers(KModifier.OVERRIDE)
-//                    .returns(thisType)
-//                    .build()
-//            )
-//            .addFunction(
-//                FunSpec.builder("write")
-//                    .addParameter(ParameterSpec.builder("writer", ScaleConstants.SCALE_CODEC_WRITER).build())
-//                    .addParameter(ParameterSpec.builder("instance", thisType).build())
-//                    .addCode(scaleWriterCode(blueprint))
-//                    .addModifiers(KModifier.OVERRIDE)
-//                    .build()
-//        )
+        return super.implCompanions(blueprint, clazz)
+            .addProperty(
+                PropertySpec.builder("DISCRIMINANT", Int::class, KModifier.CONST)
+                    .initializer("%L", blueprint.discriminant)
+                    .build()
+            )
     }
 }

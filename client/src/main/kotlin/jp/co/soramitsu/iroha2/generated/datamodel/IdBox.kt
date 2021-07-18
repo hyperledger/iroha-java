@@ -28,17 +28,17 @@ public sealed class IdBox {
    * 'AccountId' variant
    */
   public class AccountId(
-    private val accountId: Id
-  ) : IdBox() {
+    private val id: Id
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AccountId>, ScaleWriter<AccountId> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): AccountId {
-      }
+      public override fun read(reader: ScaleCodecReader): AccountId = AccountId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
+        Id.write(writer, instance.id)
       }
     }
   }
@@ -47,17 +47,17 @@ public sealed class IdBox {
    * 'AssetId' variant
    */
   public class AssetId(
-    private val assetId: jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
-  ) : IdBox() {
+    private val id: jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AssetId>, ScaleWriter<AssetId> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): AssetId {
-      }
+      public override fun read(reader: ScaleCodecReader): AssetId = AssetId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
+        Id.write(writer, instance.id)
       }
     }
   }
@@ -66,17 +66,18 @@ public sealed class IdBox {
    * 'AssetDefinitionId' variant
    */
   public class AssetDefinitionId(
-    private val assetDefinitionId: DefinitionId
-  ) : IdBox() {
+    private val definitionId: DefinitionId
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): AssetDefinitionId {
-      }
+      public override fun read(reader: ScaleCodecReader): AssetDefinitionId =
+          AssetDefinitionId(DefinitionId.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
+        DefinitionId.write(writer, instance.definitionId)
       }
     }
   }
@@ -85,17 +86,18 @@ public sealed class IdBox {
    * 'DomainName' variant
    */
   public class DomainName(
-    private val domainName: String
-  ) : IdBox() {
+    private val string: String
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<DomainName>, ScaleWriter<DomainName> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): DomainName {
-      }
+      public override fun read(reader: ScaleCodecReader): DomainName =
+          DomainName(reader.readString())
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
+        writer.writeAsList(instance.string.encodeToByteArray())
       }
     }
   }
@@ -104,17 +106,17 @@ public sealed class IdBox {
    * 'PeerId' variant
    */
   public class PeerId(
-    private val peerId: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
-  ) : IdBox() {
+    private val id: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
+  ) {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PeerId>, ScaleWriter<PeerId> {
       public const val DISCRIMINANT: Int = 4
 
-      public override fun read(reader: ScaleCodecReader): PeerId {
-      }
+      public override fun read(reader: ScaleCodecReader): PeerId = PeerId(Id.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
+        Id.write(writer, instance.id)
       }
     }
   }
@@ -122,8 +124,17 @@ public sealed class IdBox {
   /**
    * 'WorldId' variant
    */
-  public class WorldId : IdBox() {
+  public class WorldId {
     public override fun discriminant(): Int = DISCRIMINANT
+
+    public companion object : ScaleReader<WorldId>, ScaleWriter<WorldId> {
+      public const val DISCRIMINANT: Int = 5
+
+      public override fun read(reader: ScaleCodecReader): WorldId = WorldId()
+
+      public override fun write(writer: ScaleCodecWriter, instance: WorldId): Unit {
+      }
+    }
   }
 
   public companion object : ScaleReader<IdBox>, ScaleWriter<IdBox> {
