@@ -20,7 +20,7 @@ public class ContextValue(
 ) {
   public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
     public override fun read(reader: ScaleCodecReader): ContextValue =
-        ContextValue(reader.readString())
+        ContextValue(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
       writer.writeAsList(instance.valueName.encodeToByteArray())

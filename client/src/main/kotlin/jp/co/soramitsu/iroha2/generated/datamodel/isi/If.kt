@@ -24,7 +24,7 @@ public class If(
   public companion object : ScaleReader<If>, ScaleWriter<If> {
     public override fun read(reader: ScaleCodecReader): If = If(Boolean.read(reader),
     Instruction.read(reader),
-    reader.readOptional(Instruction))
+    jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction?).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       Boolean.write(writer, instance.condition)

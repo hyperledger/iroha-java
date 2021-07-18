@@ -23,7 +23,8 @@ public class Where(
 ) {
   public companion object : ScaleReader<Where>, ScaleWriter<Where> {
     public override fun read(reader: ScaleCodecReader): Where = Where(Value.read(reader),
-    String.read(reader))
+    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
+        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
       Value.write(writer, instance.expression)

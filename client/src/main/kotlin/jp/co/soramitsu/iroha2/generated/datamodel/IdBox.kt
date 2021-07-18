@@ -94,7 +94,7 @@ public sealed class IdBox {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): DomainName =
-          DomainName(reader.readString())
+          DomainName(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
         writer.writeAsList(instance.string.encodeToByteArray())

@@ -21,8 +21,8 @@ public class EventFilter(
 ) {
   public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
     public override fun read(reader: ScaleCodecReader): EventFilter =
-        EventFilter(reader.readOptional(EntityType),
-    reader.readOptional(Hash))
+        EventFilter(jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType?).read(reader),
+    jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.crypto.Hash?).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
       writer.writeOptional(EntityType, instance.entity)

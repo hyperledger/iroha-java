@@ -21,7 +21,8 @@ public class Id(
   public val publicKey: PublicKey
 ) {
   public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-    public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
+    public override fun read(reader: ScaleCodecReader): Id =
+        Id(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
     PublicKey.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {

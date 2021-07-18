@@ -20,7 +20,7 @@ public class SequenceBox(
 ) {
   public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
     public override fun read(reader: ScaleCodecReader): SequenceBox =
-        SequenceBox(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)))
+        SequenceBox(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
       writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)

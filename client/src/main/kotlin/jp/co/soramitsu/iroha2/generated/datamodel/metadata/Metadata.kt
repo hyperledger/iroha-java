@@ -21,7 +21,9 @@ public class Metadata(
   public val map: MutableMap<String, Value>
 ) {
   public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
-    public override fun read(reader: ScaleCodecReader): Metadata = Metadata(String.read(reader))
+    public override fun read(reader: ScaleCodecReader): Metadata =
+        Metadata(jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
+        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit {
       String.write(writer, instance.map)

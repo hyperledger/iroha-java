@@ -35,7 +35,8 @@ public sealed class AssetValue {
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Quantity = Quantity(UInt.read(reader))
+      public override fun read(reader: ScaleCodecReader): Quantity =
+          Quantity(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
         UInt.write(writer, instance.u32)
@@ -55,7 +56,7 @@ public sealed class AssetValue {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): BigQuantity =
-          BigQuantity(BigInteger.read(reader))
+          BigQuantity(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
         BigInteger.write(writer, instance.u128)

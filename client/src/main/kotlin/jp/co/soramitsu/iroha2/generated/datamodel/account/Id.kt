@@ -20,8 +20,9 @@ public class Id(
   public val domainName: String
 ) {
   public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-    public override fun read(reader: ScaleCodecReader): Id = Id(reader.readString(),
-    reader.readString())
+    public override fun read(reader: ScaleCodecReader): Id =
+        Id(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
       writer.writeAsList(instance.name.encodeToByteArray())

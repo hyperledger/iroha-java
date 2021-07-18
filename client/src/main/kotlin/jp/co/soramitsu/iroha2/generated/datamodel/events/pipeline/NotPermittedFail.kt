@@ -20,7 +20,7 @@ public class NotPermittedFail(
 ) {
   public companion object : ScaleReader<NotPermittedFail>, ScaleWriter<NotPermittedFail> {
     public override fun read(reader: ScaleCodecReader): NotPermittedFail =
-        NotPermittedFail(reader.readString())
+        NotPermittedFail(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: NotPermittedFail): Unit {
       writer.writeAsList(instance.reason.encodeToByteArray())

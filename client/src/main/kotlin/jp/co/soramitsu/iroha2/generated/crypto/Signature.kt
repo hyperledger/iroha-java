@@ -23,7 +23,7 @@ public class Signature(
   public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
     public override fun read(reader: ScaleCodecReader): Signature =
         Signature(PublicKey.read(reader),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(UByte)))
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.UByteReader).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
       PublicKey.write(writer, instance.publicKey)

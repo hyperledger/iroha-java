@@ -26,9 +26,12 @@ public class Domain(
   public val assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry>
 ) {
   public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
-    public override fun read(reader: ScaleCodecReader): Domain = Domain(reader.readString(),
-    Id.read(reader),
-    DefinitionId.read(reader))
+    public override fun read(reader: ScaleCodecReader): Domain =
+        Domain(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
+        jp.co.soramitsu.iroha2.generated.datamodel.account.Account).read(reader),
+    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId,
+        jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
       writer.writeAsList(instance.name.encodeToByteArray())

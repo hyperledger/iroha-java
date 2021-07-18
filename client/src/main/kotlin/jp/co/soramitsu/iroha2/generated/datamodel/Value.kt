@@ -35,7 +35,8 @@ public sealed class Value {
     public companion object : ScaleReader<U32>, ScaleWriter<U32> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): U32 = U32(UInt.read(reader))
+      public override fun read(reader: ScaleCodecReader): U32 =
+          U32(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
         UInt.write(writer, instance.u32)
@@ -54,7 +55,8 @@ public sealed class Value {
     public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Bool = Bool(reader.readBoolean())
+      public override fun read(reader: ScaleCodecReader): Bool =
+          Bool(jp.co.soramitsu.iroha2.scale.BooleanReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
         writer.writeByte(if (instance.bool) {1} else {0})
@@ -73,7 +75,8 @@ public sealed class Value {
     public companion object : ScaleReader<String>, ScaleWriter<String> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): String = String(reader.readString())
+      public override fun read(reader: ScaleCodecReader): String =
+          String(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
         writer.writeAsList(instance.string.encodeToByteArray())
@@ -93,7 +96,7 @@ public sealed class Value {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): Vec =
-          Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
+          Vec(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
         writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.vec)

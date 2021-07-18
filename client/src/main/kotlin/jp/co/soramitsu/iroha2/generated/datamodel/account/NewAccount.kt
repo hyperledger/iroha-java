@@ -24,7 +24,7 @@ public class NewAccount(
 ) {
   public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
     public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(Id.read(reader),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(PublicKey)),
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.PublicKey).read(reader),
     Metadata.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {

@@ -30,10 +30,11 @@ public class Payload(
 ) {
   public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
     public override fun read(reader: ScaleCodecReader): Payload = Payload(Id.read(reader),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)),
-    ULong.read(reader),
-    ULong.read(reader),
-    String.read(reader))
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader),
+    jp.co.soramitsu.iroha2.scale.UByteReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.UByteReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
+        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
       Id.write(writer, instance.accountId)

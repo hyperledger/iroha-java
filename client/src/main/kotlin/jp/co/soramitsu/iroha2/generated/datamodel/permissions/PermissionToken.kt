@@ -23,8 +23,9 @@ public class PermissionToken(
 ) {
   public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
     public override fun read(reader: ScaleCodecReader): PermissionToken =
-        PermissionToken(reader.readString(),
-    String.read(reader))
+        PermissionToken(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
+        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
       writer.writeAsList(instance.name.encodeToByteArray())

@@ -19,7 +19,8 @@ public class Hash(
   public val array: ByteArray
 ) {
   public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
-    public override fun read(reader: ScaleCodecReader): Hash = Hash(reader.readByteArray())
+    public override fun read(reader: ScaleCodecReader): Hash =
+        Hash(jp.co.soramitsu.iroha2.scale.ByteArrayReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Hash): Unit {
       writer.writeByteArray(instance.array)

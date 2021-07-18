@@ -24,7 +24,7 @@ public class SignatureVerificationFail(
       ScaleWriter<SignatureVerificationFail> {
     public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
         SignatureVerificationFail(Signature.read(reader),
-    reader.readString())
+    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail): Unit {
       Signature.write(writer, instance.signature)

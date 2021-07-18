@@ -4,4 +4,5 @@ include 'testcontainers'
 include 'codegen-engine'
 include 'codegen'
 include 'client'
+include 'java-interop'
 

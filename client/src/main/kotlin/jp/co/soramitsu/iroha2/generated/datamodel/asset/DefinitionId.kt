@@ -21,8 +21,8 @@ public class DefinitionId(
 ) {
   public companion object : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
     public override fun read(reader: ScaleCodecReader): DefinitionId =
-        DefinitionId(reader.readString(),
-    reader.readString())
+        DefinitionId(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: DefinitionId): Unit {
       writer.writeAsList(instance.name.encodeToByteArray())

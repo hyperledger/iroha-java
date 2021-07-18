@@ -23,7 +23,7 @@ public class Transaction(
   public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
     public override fun read(reader: ScaleCodecReader): Transaction =
         Transaction(Payload.read(reader),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)))
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.Signature).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
       Payload.write(writer, instance.payload)

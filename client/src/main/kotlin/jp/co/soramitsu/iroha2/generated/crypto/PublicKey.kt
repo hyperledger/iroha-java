@@ -22,8 +22,9 @@ public class PublicKey(
   public val payload: MutableList<UByte>
 ) {
   public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
-    public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(reader.readString(),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(UByte)))
+    public override fun read(reader: ScaleCodecReader): PublicKey =
+        PublicKey(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.UByteReader).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
       writer.writeAsList(instance.digestFunction.encodeToByteArray())

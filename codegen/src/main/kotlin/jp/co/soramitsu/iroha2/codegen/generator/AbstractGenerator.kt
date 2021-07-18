@@ -3,10 +3,6 @@ package jp.co.soramitsu.iroha2.codegen.generator
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import jp.co.soramitsu.iroha2.codegen.Blueprint
-import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_CODEC_READER
-import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_CODEC_WRITER
-import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_READER
-import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SCALE_WRITER
 
 abstract class AbstractGenerator<T : Blueprint<*>> {
     fun generate(blueprint: T) : TypeSpec = pipelineClass(blueprint)

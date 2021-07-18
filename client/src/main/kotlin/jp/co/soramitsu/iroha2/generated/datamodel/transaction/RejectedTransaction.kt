@@ -25,7 +25,7 @@ public class RejectedTransaction(
   public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
     public override fun read(reader: ScaleCodecReader): RejectedTransaction =
         RejectedTransaction(Payload.read(reader),
-    reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Signature)),
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.Signature).read(reader),
     TransactionRejectionReason.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {

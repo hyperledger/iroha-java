@@ -36,7 +36,7 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
-          MaximumFaultyPeersAmount(UInt.read(reader))
+          MaximumFaultyPeersAmount(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
@@ -57,7 +57,7 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): BlockTime =
-          BlockTime(BigInteger.read(reader))
+          BlockTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
         BigInteger.write(writer, instance.u128)
@@ -77,7 +77,7 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): CommitTime =
-          CommitTime(BigInteger.read(reader))
+          CommitTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
         BigInteger.write(writer, instance.u128)
@@ -98,7 +98,7 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
-          TransactionReceiptTime(BigInteger.read(reader))
+          TransactionReceiptTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
         BigInteger.write(writer, instance.u128)
