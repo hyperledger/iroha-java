@@ -27,7 +27,7 @@ public class Signature(
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
       PublicKey.write(writer, instance.publicKey)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.signature)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(UByte), instance.signature)
     }
   }
 }

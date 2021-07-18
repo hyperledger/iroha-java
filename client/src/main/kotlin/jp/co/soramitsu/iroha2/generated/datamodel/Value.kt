@@ -96,7 +96,7 @@ public sealed class Value {
           Vec(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Value)))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.vec)
+        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.vec)
       }
     }
   }

@@ -37,7 +37,7 @@ public class Payload(
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
       Id.write(writer, instance.accountId)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.instructions)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
       ULong.write(writer, instance.creationTime)
       ULong.write(writer, instance.timeToLiveMs)
       String.write(writer, instance.metadata)

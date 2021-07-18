@@ -40,8 +40,9 @@ public class Account(
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
       Id.write(writer, instance.id)
       Id.write(writer, instance.assets)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.signatories)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.permissionTokens.toList())
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.signatories)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PermissionToken),
+          instance.permissionTokens.toList())
       SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
       Metadata.write(writer, instance.metadata)
     }

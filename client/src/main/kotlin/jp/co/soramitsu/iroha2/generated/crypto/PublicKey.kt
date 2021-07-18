@@ -27,7 +27,7 @@ public class PublicKey(
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
       writer.writeAsList(instance.digestFunction.encodeToByteArray())
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.payload)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(UByte), instance.payload)
     }
   }
 }

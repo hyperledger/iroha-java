@@ -37,24 +37,35 @@ abstract class Blueprint<T>(val source: T) {
             }
             //must be before 'WrapperType'
             is OptionType -> resolveKotlinType(type.innerType.requireValue()).copy(nullable = true)
+            //must be before 'WrapperType'
+            is ArrayType -> {
+                when (type.innerType.requireValue()) {
+                    is U8Type -> ByteArray::class.asTypeName()
+                    else -> {
+                        val wrapperType = lookUpInBuiltInTypes(type)
+                        (wrapperType as ClassName).parameterizedBy(resolveKotlinType(type.innerType.requireValue()))
+                    }
+                }
+            }
             is WrapperType -> {
-                val wrapperType = builtinKotlinTypes[type::class]
-                    ?: throw RuntimeException("unexpected type: $type")
+                val wrapperType = lookUpInBuiltInTypes(type)
                 (wrapperType as ClassName).parameterizedBy(resolveKotlinType(type.innerType.requireValue()))
             }
             is MapType -> {
-                val wrapperType = builtinKotlinTypes[type::class]
-                    ?: throw RuntimeException("unexpected type: $type")
+                val wrapperType = lookUpInBuiltInTypes(type)
                 (wrapperType as ClassName).parameterizedBy(
                     resolveKotlinType(type.key.requireValue()),
                     resolveKotlinType(type.value.requireValue())
                 )
             }
             //only "primitive" types left"
-            else -> builtinKotlinTypes[type::class]
-                ?: throw RuntimeException("unexpected type: $type")
+            else -> lookUpInBuiltInTypes(type)
         }
     }
+
+    private fun lookUpInBuiltInTypes(type: Type): TypeName = builtinKotlinTypes[type::class]
+            ?: throw RuntimeException("unexpected type: $type")
+
 
     protected fun definePackageName(className: String, type: Type): String {
         return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)

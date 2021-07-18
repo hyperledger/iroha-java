@@ -23,7 +23,7 @@ public class SequenceBox(
         SequenceBox(reader.read(io.emeraldpay.polkaj.scale.reader.ListReader(Instruction)))
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.instructions)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
     }
   }
 }

@@ -29,7 +29,7 @@ public class NewAccount(
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
       Id.write(writer, instance.id)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.signatories)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(PublicKey), instance.signatories)
       Metadata.write(writer, instance.metadata)
     }
   }

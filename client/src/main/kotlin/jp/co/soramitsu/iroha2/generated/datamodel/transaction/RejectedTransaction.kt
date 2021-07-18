@@ -30,7 +30,7 @@ public class RejectedTransaction(
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
       Payload.write(writer, instance.payload)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter, instance.signatures)
+      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
       TransactionRejectionReason.write(writer, instance.rejectionReason)
     }
   }
