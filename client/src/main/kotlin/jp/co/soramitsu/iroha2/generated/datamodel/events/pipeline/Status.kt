@@ -24,7 +24,7 @@ public sealed class Status {
   /**
    * 'Validating' variant
    */
-  public class Validating {
+  public class Validating : Status() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Validating>, ScaleWriter<Validating> {
@@ -42,7 +42,7 @@ public sealed class Status {
    */
   public class Rejected(
     private val rejectionReason: RejectionReason
-  ) {
+  ) : Status() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Rejected>, ScaleWriter<Rejected> {
@@ -60,7 +60,7 @@ public sealed class Status {
   /**
    * 'Committed' variant
    */
-  public class Committed {
+  public class Committed : Status() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Committed>, ScaleWriter<Committed> {

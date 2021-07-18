@@ -24,7 +24,7 @@ public sealed class AssetValueType {
   /**
    * 'Quantity' variant
    */
-  public class Quantity {
+  public class Quantity : AssetValueType() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
@@ -40,7 +40,7 @@ public sealed class AssetValueType {
   /**
    * 'BigQuantity' variant
    */
-  public class BigQuantity {
+  public class BigQuantity : AssetValueType() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
@@ -56,7 +56,7 @@ public sealed class AssetValueType {
   /**
    * 'Store' variant
    */
-  public class Store {
+  public class Store : AssetValueType() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Store>, ScaleWriter<Store> {

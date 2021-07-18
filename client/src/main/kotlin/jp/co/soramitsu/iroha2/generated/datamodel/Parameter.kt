@@ -28,7 +28,7 @@ public sealed class Parameter {
    */
   public class MaximumFaultyPeersAmount(
     private val u32: UInt
-  ) {
+  ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<MaximumFaultyPeersAmount>,
@@ -50,7 +50,7 @@ public sealed class Parameter {
    */
   public class BlockTime(
     private val u128: BigInteger
-  ) {
+  ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
@@ -70,7 +70,7 @@ public sealed class Parameter {
    */
   public class CommitTime(
     private val u128: BigInteger
-  ) {
+  ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
@@ -90,7 +90,7 @@ public sealed class Parameter {
    */
   public class TransactionReceiptTime(
     private val u128: BigInteger
-  ) {
+  ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<TransactionReceiptTime>,

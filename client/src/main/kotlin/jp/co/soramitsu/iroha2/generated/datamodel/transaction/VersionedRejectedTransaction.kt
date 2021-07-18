@@ -26,7 +26,7 @@ public sealed class VersionedRejectedTransaction {
    */
   public class V1(
     private val _VersionedRejectedTransactionV1: _VersionedRejectedTransactionV1
-  ) {
+  ) : VersionedRejectedTransaction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {

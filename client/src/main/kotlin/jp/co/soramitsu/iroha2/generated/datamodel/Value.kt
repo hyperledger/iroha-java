@@ -29,7 +29,7 @@ public sealed class Value {
    */
   public class U32(
     private val u32: UInt
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<U32>, ScaleWriter<U32> {
@@ -38,7 +38,6 @@ public sealed class Value {
       public override fun read(reader: ScaleCodecReader): U32 = U32(UInt.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        U32(UInt.MAX_VALUE);
         UInt.write(writer, instance.u32)
       }
     }
@@ -49,7 +48,7 @@ public sealed class Value {
    */
   public class Bool(
     private val bool: Boolean
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
@@ -68,7 +67,7 @@ public sealed class Value {
    */
   public class String(
     private val string: kotlin.String
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<String>, ScaleWriter<String> {
@@ -87,7 +86,7 @@ public sealed class Value {
    */
   public class Vec(
     private val vec: MutableList<Value>
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Vec>, ScaleWriter<Vec> {
@@ -107,7 +106,7 @@ public sealed class Value {
    */
   public class Id(
     private val idBox: IdBox
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Id>, ScaleWriter<Id> {
@@ -126,7 +125,7 @@ public sealed class Value {
    */
   public class Identifiable(
     private val identifiableBox: IdentifiableBox
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
@@ -146,7 +145,7 @@ public sealed class Value {
    */
   public class PublicKey(
     private val publicKey: jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
@@ -166,7 +165,7 @@ public sealed class Value {
    */
   public class Parameter(
     private val parameter: jp.co.soramitsu.iroha2.generated.datamodel.Parameter
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
@@ -187,7 +186,7 @@ public sealed class Value {
   public class SignatureCheckCondition(
     private val signatureCheckCondition:
         jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SignatureCheckCondition>,
@@ -209,7 +208,7 @@ public sealed class Value {
   public class TransactionValue(
     private val transactionValue:
         jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
@@ -230,7 +229,7 @@ public sealed class Value {
   public class PermissionToken(
     private val permissionToken:
         jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-  ) {
+  ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {

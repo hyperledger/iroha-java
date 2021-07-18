@@ -28,7 +28,7 @@ public sealed class Expression {
    */
   public class Add(
     private val add: jp.co.soramitsu.iroha2.generated.datamodel.expression.Add
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Add>, ScaleWriter<Add> {
@@ -47,7 +47,7 @@ public sealed class Expression {
    */
   public class Subtract(
     private val subtract: jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
@@ -66,7 +66,7 @@ public sealed class Expression {
    */
   public class Multiply(
     private val multiply: jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
@@ -85,7 +85,7 @@ public sealed class Expression {
    */
   public class Divide(
     private val divide: jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
@@ -104,7 +104,7 @@ public sealed class Expression {
    */
   public class Mod(
     private val mod: jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
@@ -123,7 +123,7 @@ public sealed class Expression {
    */
   public class RaiseTo(
     private val raiseTo: jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
@@ -142,7 +142,7 @@ public sealed class Expression {
    */
   public class Greater(
     private val greater: jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Greater>, ScaleWriter<Greater> {
@@ -161,7 +161,7 @@ public sealed class Expression {
    */
   public class Less(
     private val less: jp.co.soramitsu.iroha2.generated.datamodel.expression.Less
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Less>, ScaleWriter<Less> {
@@ -180,7 +180,7 @@ public sealed class Expression {
    */
   public class Equal(
     private val equal: jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
@@ -199,7 +199,7 @@ public sealed class Expression {
    */
   public class Not(
     private val not: jp.co.soramitsu.iroha2.generated.datamodel.expression.Not
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Not>, ScaleWriter<Not> {
@@ -218,7 +218,7 @@ public sealed class Expression {
    */
   public class And(
     private val and: jp.co.soramitsu.iroha2.generated.datamodel.expression.And
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<And>, ScaleWriter<And> {
@@ -237,7 +237,7 @@ public sealed class Expression {
    */
   public class Or(
     private val or: jp.co.soramitsu.iroha2.generated.datamodel.expression.Or
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Or>, ScaleWriter<Or> {
@@ -256,7 +256,7 @@ public sealed class Expression {
    */
   public class If(
     private val `if`: jp.co.soramitsu.iroha2.generated.datamodel.expression.If
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<If>, ScaleWriter<If> {
@@ -275,7 +275,7 @@ public sealed class Expression {
    */
   public class Raw(
     private val `value`: Value
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Raw>, ScaleWriter<Raw> {
@@ -294,7 +294,7 @@ public sealed class Expression {
    */
   public class Query(
     private val queryBox: QueryBox
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Query>, ScaleWriter<Query> {
@@ -313,7 +313,7 @@ public sealed class Expression {
    */
   public class Contains(
     private val contains: jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Contains>, ScaleWriter<Contains> {
@@ -332,7 +332,7 @@ public sealed class Expression {
    */
   public class ContainsAll(
     private val containsAll: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
@@ -352,7 +352,7 @@ public sealed class Expression {
    */
   public class ContainsAny(
     private val containsAny: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
@@ -372,7 +372,7 @@ public sealed class Expression {
    */
   public class Where(
     private val `where`: jp.co.soramitsu.iroha2.generated.datamodel.expression.Where
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Where>, ScaleWriter<Where> {
@@ -391,7 +391,7 @@ public sealed class Expression {
    */
   public class ContextValue(
     private val contextValue: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue
-  ) {
+  ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {

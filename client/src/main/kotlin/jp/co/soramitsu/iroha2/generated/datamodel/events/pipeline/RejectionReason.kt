@@ -26,7 +26,7 @@ public sealed class RejectionReason {
    */
   public class Block(
     private val blockRejectionReason: BlockRejectionReason
-  ) {
+  ) : RejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Block>, ScaleWriter<Block> {
@@ -46,7 +46,7 @@ public sealed class RejectionReason {
    */
   public class Transaction(
     private val transactionRejectionReason: TransactionRejectionReason
-  ) {
+  ) : RejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {

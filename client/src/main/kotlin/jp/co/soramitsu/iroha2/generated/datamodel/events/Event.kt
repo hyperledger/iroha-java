@@ -26,7 +26,7 @@ public sealed class Event {
    */
   public class Pipeline(
     private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event
-  ) {
+  ) : Event() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
@@ -45,7 +45,7 @@ public sealed class Event {
    */
   public class Data(
     private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event
-  ) {
+  ) : Event() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Data>, ScaleWriter<Data> {

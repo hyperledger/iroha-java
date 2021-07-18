@@ -24,7 +24,7 @@ public sealed class EntityType {
   /**
    * 'Block' variant
    */
-  public class Block {
+  public class Block : EntityType() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Block>, ScaleWriter<Block> {
@@ -40,7 +40,7 @@ public sealed class EntityType {
   /**
    * 'Transaction' variant
    */
-  public class Transaction {
+  public class Transaction : EntityType() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {

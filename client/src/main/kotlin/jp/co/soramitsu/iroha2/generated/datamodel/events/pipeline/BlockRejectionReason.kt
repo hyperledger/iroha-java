@@ -24,7 +24,7 @@ public sealed class BlockRejectionReason {
   /**
    * 'ConsensusBlockRejection' variant
    */
-  public class ConsensusBlockRejection {
+  public class ConsensusBlockRejection : BlockRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<ConsensusBlockRejection>,

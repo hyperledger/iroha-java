@@ -29,7 +29,7 @@ public sealed class AssetValue {
    */
   public class Quantity(
     private val u32: UInt
-  ) {
+  ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
@@ -48,7 +48,7 @@ public sealed class AssetValue {
    */
   public class BigQuantity(
     private val u128: BigInteger
-  ) {
+  ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
@@ -68,7 +68,7 @@ public sealed class AssetValue {
    */
   public class Store(
     private val metadata: Metadata
-  ) {
+  ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Store>, ScaleWriter<Store> {

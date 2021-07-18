@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.type.EnumType
 /**
  * Blueprint of the enum variant
  */
-class EnumVariantBlueprint(val discriminant: Int, parentBlueprint: EnumBlueprint, source: EnumType.Variant) : Blueprint<EnumType.Variant>(source) {
+class EnumVariantBlueprint(val discriminant: Int, val parentBlueprint: EnumBlueprint, source: EnumType.Variant) : Blueprint<EnumType.Variant>(source) {
     override val className = defineClassName(source.name)
     override val packageName = "${parentBlueprint.packageName}.${parentBlueprint.className}"
     override val properties = resolveProperties(source)

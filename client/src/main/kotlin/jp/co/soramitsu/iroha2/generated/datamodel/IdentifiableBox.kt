@@ -26,7 +26,7 @@ public sealed class IdentifiableBox {
    */
   public class Account(
     private val account: jp.co.soramitsu.iroha2.generated.datamodel.account.Account
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
@@ -45,7 +45,7 @@ public sealed class IdentifiableBox {
    */
   public class NewAccount(
     private val newAccount: jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
@@ -65,7 +65,7 @@ public sealed class IdentifiableBox {
    */
   public class Asset(
     private val asset: jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
@@ -84,7 +84,7 @@ public sealed class IdentifiableBox {
    */
   public class AssetDefinition(
     private val assetDefinition: jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
@@ -104,7 +104,7 @@ public sealed class IdentifiableBox {
    */
   public class Domain(
     private val domain: jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
@@ -123,7 +123,7 @@ public sealed class IdentifiableBox {
    */
   public class Peer(
     private val peer: jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-  ) {
+  ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
@@ -140,7 +140,7 @@ public sealed class IdentifiableBox {
   /**
    * 'World' variant
    */
-  public class World {
+  public class World : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<World>, ScaleWriter<World> {

@@ -13,6 +13,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
     open fun pipelineClass(blueprint: T) : TypeSpec {
         val clazz = TypeSpec.classBuilder(blueprint.className)
+        implSuperClasses(blueprint, clazz)
         implClassModifiers(blueprint, clazz)
         implKDoc(blueprint, clazz)
         implConstructor(blueprint, clazz)
@@ -20,6 +21,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
         return clazz.build()
     }
+
 
     open fun implClassBody(blueprint: T, clazz: TypeSpec.Builder) {
         implFunctions(blueprint, clazz)
@@ -71,6 +73,8 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implClassModifiers(blueprint: T, clazz: TypeSpec.Builder) {
         clazz.addModifiers(KModifier.PUBLIC)
     }
+
+    open fun implSuperClasses(blueprint: T, clazz: TypeSpec.Builder) = Unit
 
     open fun implConstructor(blueprint: T, clazz: TypeSpec.Builder) {
         if (blueprint.properties.isEmpty()) {

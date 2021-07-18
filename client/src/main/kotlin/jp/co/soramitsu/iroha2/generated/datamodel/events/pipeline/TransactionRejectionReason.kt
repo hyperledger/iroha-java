@@ -26,7 +26,7 @@ public sealed class TransactionRejectionReason {
    */
   public class NotPermitted(
     private val notPermittedFail: NotPermittedFail
-  ) {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
@@ -46,7 +46,7 @@ public sealed class TransactionRejectionReason {
    */
   public class UnsatisfiedSignatureCondition(
     private val unsatisfiedSignatureConditionFail: UnsatisfiedSignatureConditionFail
-  ) {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<UnsatisfiedSignatureCondition>,
@@ -68,7 +68,7 @@ public sealed class TransactionRejectionReason {
    */
   public class InstructionExecution(
     private val instructionExecutionFail: InstructionExecutionFail
-  ) {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<InstructionExecution>, ScaleWriter<InstructionExecution> {
@@ -88,7 +88,7 @@ public sealed class TransactionRejectionReason {
    */
   public class SignatureVerification(
     private val signatureVerificationFail: SignatureVerificationFail
-  ) {
+  ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SignatureVerification>, ScaleWriter<SignatureVerification>
@@ -107,7 +107,7 @@ public sealed class TransactionRejectionReason {
   /**
    * 'UnexpectedGenesisAccountSignature' variant
    */
-  public class UnexpectedGenesisAccountSignature {
+  public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<UnexpectedGenesisAccountSignature>,

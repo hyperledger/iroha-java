@@ -26,7 +26,7 @@ public sealed class TransactionValue {
    */
   public class Transaction(
     private val versionedTransaction: VersionedTransaction
-  ) {
+  ) : TransactionValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
@@ -46,7 +46,7 @@ public sealed class TransactionValue {
    */
   public class RejectedTransaction(
     private val versionedRejectedTransaction: VersionedRejectedTransaction
-  ) {
+  ) : TransactionValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {

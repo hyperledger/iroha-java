@@ -27,7 +27,7 @@ public sealed class EventSocketMessage {
   public class SubscriptionRequest(
     private val subscriptionRequest:
         jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest
-  ) {
+  ) : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
@@ -45,7 +45,7 @@ public sealed class EventSocketMessage {
   /**
    * 'SubscriptionAccepted' variant
    */
-  public class SubscriptionAccepted {
+  public class SubscriptionAccepted : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SubscriptionAccepted>, ScaleWriter<SubscriptionAccepted> {
@@ -64,7 +64,7 @@ public sealed class EventSocketMessage {
    */
   public class Event(
     private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-  ) {
+  ) : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
@@ -81,7 +81,7 @@ public sealed class EventSocketMessage {
   /**
    * 'EventReceived' variant
    */
-  public class EventReceived {
+  public class EventReceived : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<EventReceived>, ScaleWriter<EventReceived> {

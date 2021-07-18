@@ -26,7 +26,7 @@ public sealed class VersionedEventSocketMessage {
    */
   public class V1(
     private val _VersionedEventSocketMessageV1: _VersionedEventSocketMessageV1
-  ) {
+  ) : VersionedEventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {

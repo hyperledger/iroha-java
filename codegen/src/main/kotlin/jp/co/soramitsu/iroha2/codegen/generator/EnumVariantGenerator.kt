@@ -51,4 +51,11 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
                     .build()
             )
     }
+
+    override fun implSuperClasses(blueprint: EnumVariantBlueprint, clazz: TypeSpec.Builder) {
+        super.implSuperClasses(blueprint, clazz)
+        clazz.superclass(ClassName(
+            blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className
+        ))
+    }
 }

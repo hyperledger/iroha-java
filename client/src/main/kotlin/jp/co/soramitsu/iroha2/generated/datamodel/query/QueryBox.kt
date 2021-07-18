@@ -27,7 +27,7 @@ public sealed class QueryBox {
   public class FindAllAccounts(
     private val findAllAccounts:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
@@ -48,7 +48,7 @@ public sealed class QueryBox {
   public class FindAccountById(
     private val findAccountById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountById>, ScaleWriter<FindAccountById> {
@@ -69,7 +69,7 @@ public sealed class QueryBox {
   public class FindAccountKeyValueByIdAndKey(
     private val findAccountKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountKeyValueByIdAndKey>,
@@ -92,7 +92,7 @@ public sealed class QueryBox {
   public class FindAccountsByName(
     private val findAccountsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName> {
@@ -113,7 +113,7 @@ public sealed class QueryBox {
   public class FindAccountsByDomainName(
     private val findAccountsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAccountsByDomainName>,
@@ -135,7 +135,7 @@ public sealed class QueryBox {
    */
   public class FindAllAssets(
     private val findAllAssets: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
@@ -156,7 +156,7 @@ public sealed class QueryBox {
   public class FindAllAssetsDefinitions(
     private val findAllAssetsDefinitions:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllAssetsDefinitions>,
@@ -178,7 +178,7 @@ public sealed class QueryBox {
    */
   public class FindAssetById(
     private val findAssetById: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetById>, ScaleWriter<FindAssetById> {
@@ -199,7 +199,7 @@ public sealed class QueryBox {
   public class FindAssetsByName(
     private val findAssetsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
@@ -220,7 +220,7 @@ public sealed class QueryBox {
   public class FindAssetsByAccountId(
     private val findAssetsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId>
@@ -242,7 +242,7 @@ public sealed class QueryBox {
   public class FindAssetsByAssetDefinitionId(
     private val findAssetsByAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAssetDefinitionId>,
@@ -265,7 +265,7 @@ public sealed class QueryBox {
   public class FindAssetsByDomainName(
     private val findAssetsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByDomainName>,
@@ -287,7 +287,7 @@ public sealed class QueryBox {
   public class FindAssetsByAccountIdAndAssetDefinitionId(
     private val findAssetsByAccountIdAndAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
@@ -312,7 +312,7 @@ public sealed class QueryBox {
   public class FindAssetsByDomainNameAndAssetDefinitionId(
     private val findAssetsByDomainNameAndAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
@@ -337,7 +337,7 @@ public sealed class QueryBox {
   public class FindAssetQuantityById(
     private val findAssetQuantityById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById>
@@ -359,7 +359,7 @@ public sealed class QueryBox {
   public class FindAssetKeyValueByIdAndKey(
     private val findAssetKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAssetKeyValueByIdAndKey>,
@@ -382,7 +382,7 @@ public sealed class QueryBox {
   public class FindAllDomains(
     private val findAllDomains:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
@@ -403,7 +403,7 @@ public sealed class QueryBox {
   public class FindDomainByName(
     private val findDomainByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
@@ -423,7 +423,7 @@ public sealed class QueryBox {
    */
   public class FindAllPeers(
     private val findAllPeers: jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
@@ -444,7 +444,7 @@ public sealed class QueryBox {
   public class FindTransactionsByAccountId(
     private val findTransactionsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindTransactionsByAccountId>,
@@ -467,7 +467,7 @@ public sealed class QueryBox {
   public class FindPermissionTokensByAccountId(
     private val findPermissionTokensByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
-  ) {
+  ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindPermissionTokensByAccountId>,

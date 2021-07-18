@@ -29,7 +29,7 @@ public sealed class IdBox {
    */
   public class AccountId(
     private val id: Id
-  ) {
+  ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AccountId>, ScaleWriter<AccountId> {
@@ -48,7 +48,7 @@ public sealed class IdBox {
    */
   public class AssetId(
     private val id: jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
-  ) {
+  ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AssetId>, ScaleWriter<AssetId> {
@@ -67,7 +67,7 @@ public sealed class IdBox {
    */
   public class AssetDefinitionId(
     private val definitionId: DefinitionId
-  ) {
+  ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
@@ -87,7 +87,7 @@ public sealed class IdBox {
    */
   public class DomainName(
     private val string: String
-  ) {
+  ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<DomainName>, ScaleWriter<DomainName> {
@@ -107,7 +107,7 @@ public sealed class IdBox {
    */
   public class PeerId(
     private val id: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
-  ) {
+  ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<PeerId>, ScaleWriter<PeerId> {
@@ -124,7 +124,7 @@ public sealed class IdBox {
   /**
    * 'WorldId' variant
    */
-  public class WorldId {
+  public class WorldId : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<WorldId>, ScaleWriter<WorldId> {

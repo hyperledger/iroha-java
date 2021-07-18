@@ -26,7 +26,7 @@ public sealed class Instruction {
    */
   public class Register(
     private val registerBox: RegisterBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Register>, ScaleWriter<Register> {
@@ -46,7 +46,7 @@ public sealed class Instruction {
    */
   public class Unregister(
     private val unregisterBox: UnregisterBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Unregister>, ScaleWriter<Unregister> {
@@ -66,7 +66,7 @@ public sealed class Instruction {
    */
   public class Mint(
     private val mintBox: MintBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Mint>, ScaleWriter<Mint> {
@@ -85,7 +85,7 @@ public sealed class Instruction {
    */
   public class Burn(
     private val burnBox: BurnBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Burn>, ScaleWriter<Burn> {
@@ -104,7 +104,7 @@ public sealed class Instruction {
    */
   public class Transfer(
     private val transferBox: TransferBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Transfer>, ScaleWriter<Transfer> {
@@ -124,7 +124,7 @@ public sealed class Instruction {
    */
   public class If(
     private val `if`: jp.co.soramitsu.iroha2.generated.datamodel.isi.If
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<If>, ScaleWriter<If> {
@@ -143,7 +143,7 @@ public sealed class Instruction {
    */
   public class Pair(
     private val pair: jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
@@ -162,7 +162,7 @@ public sealed class Instruction {
    */
   public class Sequence(
     private val sequenceBox: SequenceBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Sequence>, ScaleWriter<Sequence> {
@@ -182,7 +182,7 @@ public sealed class Instruction {
    */
   public class Fail(
     private val failBox: FailBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Fail>, ScaleWriter<Fail> {
@@ -201,7 +201,7 @@ public sealed class Instruction {
    */
   public class SetKeyValue(
     private val setKeyValueBox: SetKeyValueBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
@@ -221,7 +221,7 @@ public sealed class Instruction {
    */
   public class RemoveKeyValue(
     private val removeKeyValueBox: RemoveKeyValueBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
@@ -241,7 +241,7 @@ public sealed class Instruction {
    */
   public class Grant(
     private val grantBox: GrantBox
-  ) {
+  ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<Grant>, ScaleWriter<Grant> {
