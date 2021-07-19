@@ -107,7 +107,7 @@ fun resolveScaleReadImplementation(property: Property): CodeBlock {
             val valueReader = barReader(type.value.requireValue(), property.typeName, 1)
             CodeBlock.of("%T(%T, %T).read(reader)", MAP_READER, keyReader, valueReader)
         }
-        else -> CodeBlock.of("%T.read(reader)", getScaleReader(type))
+        else -> CodeBlock.of("%T.read(reader)", barReader(type, property.typeName))
     }
 //        else -> throw RuntimeException("Scale reader implementation is not resolved for type: '${property.original::class}'")
 }
@@ -137,7 +137,7 @@ fun resolveScaleWriteImplementation(property: Property): CodeBlock {
                 valueWriter
             )
         }
-        else -> CodeBlock.of("%T.write(writer, instance.${property.name})", getScaleWriter(type))
+        else -> CodeBlock.of("%T.write(writer, instance.${property.name})", barWriter(type, property.typeName))
     }
 }
 

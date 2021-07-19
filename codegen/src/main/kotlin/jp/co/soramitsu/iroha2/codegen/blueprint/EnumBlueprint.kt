@@ -10,14 +10,4 @@ class EnumBlueprint(type: EnumType) : TypeBasedBlueprint<EnumType>(type) {
             EnumVariantBlueprint(it.discriminant, this, it)
         }
     }
-
-//    private fun resolveVariantInnerType(variant: EnumType.Variant): Property? {
-//        return variant.type?.requireValue()?.let {
-//            return Property(
-//                resolvePropName(variant.name).replaceFirstChar(Char::lowercase),
-//                resolveKotlinType(it),
-//                it
-//            )
-//        }
-//    }
 }

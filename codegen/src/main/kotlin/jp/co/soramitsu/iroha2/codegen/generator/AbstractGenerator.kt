@@ -3,12 +3,15 @@ package jp.co.soramitsu.iroha2.codegen.generator
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import jp.co.soramitsu.iroha2.codegen.Blueprint
+import jp.co.soramitsu.iroha2.type.CompositeType
+import jp.co.soramitsu.iroha2.type.Type
 
 abstract class AbstractGenerator<T : Blueprint<*>> {
     fun generate(blueprint: T) : TypeSpec = pipelineClass(blueprint)
 
     open fun pipelineClass(blueprint: T) : TypeSpec {
-        val clazz = TypeSpec.classBuilder(blueprint.className)
+        val clazz = TypeSpec.classBuilder(ClassName(blueprint.packageName, blueprint.className))
+        implGenerics(blueprint, clazz)
         implSuperClasses(blueprint, clazz)
         implClassModifiers(blueprint, clazz)
         implKDoc(blueprint, clazz)
@@ -18,6 +21,14 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         return clazz.build()
     }
 
+    open fun implGenerics(blueprint: T, clazz: TypeSpec.Builder) {
+        if (blueprint.source is CompositeType) {
+            val generics = blueprint.source.generics
+            for (i in generics.indices) {
+                clazz.addTypeVariable(TypeVariableName.Companion.invoke("T$i"))
+            }
+        }
+    }
 
     open fun implClassBody(blueprint: T, clazz: TypeSpec.Builder) {
         implFunctions(blueprint, clazz)
@@ -27,7 +38,12 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     }
 
     open fun implCompanions(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        val thisType = ClassName(blueprint.packageName, blueprint.className)
+        val thisType = if (blueprint.source is CompositeType && blueprint.source.generics.isNotEmpty()) {
+            ClassName(blueprint.packageName, blueprint.className)
+                .parameterizedBy(WildcardTypeName.producerOf(ClassName("kotlin", "Any")))
+        } else {
+            ClassName(blueprint.packageName, blueprint.className)
+        }
         return TypeSpec.companionObjectBuilder()
             .addSuperinterface(SCALE_READER.parameterizedBy(thisType))
             .addSuperinterface(SCALE_WRITER.parameterizedBy(thisType))
