@@ -24,11 +24,12 @@ public class PublicKey(
   public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
     public override fun read(reader: ScaleCodecReader): PublicKey =
         PublicKey(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.UByteReader).read(reader))
+    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.U8Reader).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-      writer.writeAsList(instance.digestFunction.encodeToByteArray())
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(UByte), instance.payload)
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.digestFunction)
+      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.scale.U8Writer).write(writer,
+          instance.payload)
     }
   }
 }

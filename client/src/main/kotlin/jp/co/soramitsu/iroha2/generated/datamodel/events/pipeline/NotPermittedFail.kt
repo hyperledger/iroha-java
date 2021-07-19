@@ -23,7 +23,7 @@ public class NotPermittedFail(
         NotPermittedFail(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: NotPermittedFail): Unit {
-      writer.writeAsList(instance.reason.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
     }
   }
 }

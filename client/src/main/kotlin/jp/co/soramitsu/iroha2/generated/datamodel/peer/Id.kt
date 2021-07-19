@@ -26,7 +26,7 @@ public class Id(
     PublicKey.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-      writer.writeAsList(instance.address.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.address)
       PublicKey.write(writer, instance.publicKey)
     }
   }

@@ -31,17 +31,19 @@ public class Payload(
   public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
     public override fun read(reader: ScaleCodecReader): Payload = Payload(Id.read(reader),
     io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader),
-    jp.co.soramitsu.iroha2.scale.UByteReader.read(reader),
-    jp.co.soramitsu.iroha2.scale.UByteReader.read(reader),
+    jp.co.soramitsu.iroha2.scale.U64Reader.read(reader),
+    jp.co.soramitsu.iroha2.scale.U64Reader.read(reader),
     jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
         jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
       Id.write(writer, instance.accountId)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
-      ULong.write(writer, instance.creationTime)
-      ULong.write(writer, instance.timeToLiveMs)
-      String.write(writer, instance.metadata)
+      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).write(writer,
+          instance.instructions)
+      jp.co.soramitsu.iroha2.scale.U64Writer.write(writer, instance.creationTime)
+      jp.co.soramitsu.iroha2.scale.U64Writer.write(writer, instance.timeToLiveMs)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
+          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.metadata)
     }
   }
 }

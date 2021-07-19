@@ -29,7 +29,8 @@ public class If(
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
       Boolean.write(writer, instance.condition)
       Instruction.write(writer, instance.then)
-      writer.writeOptional(Instruction, instance.otherwise)
+      jp.co.soramitsu.iroha2.scale.OptionWriter(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction?).write(writer,
+          instance.otherwise)
     }
   }
 }

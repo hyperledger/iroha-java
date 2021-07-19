@@ -28,7 +28,8 @@ public class Where(
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
       Value.write(writer, instance.expression)
-      String.write(writer, instance.values)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
+          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.values)
     }
   }
 }

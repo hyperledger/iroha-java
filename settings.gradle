@@ -1,8 +1,5 @@
 rootProject.name = 'iroha2-java'
 
 include 'testcontainers'
-include 'codegen-engine'
 include 'codegen'
 include 'client'
-include 'java-interop'
-

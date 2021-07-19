@@ -26,7 +26,8 @@ public class Metadata(
         jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit {
-      String.write(writer, instance.map)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
+          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.map)
     }
   }
 }

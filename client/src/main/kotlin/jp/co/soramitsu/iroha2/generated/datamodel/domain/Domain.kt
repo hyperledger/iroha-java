@@ -34,9 +34,13 @@ public class Domain(
         jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-      writer.writeAsList(instance.name.encodeToByteArray())
-      Id.write(writer, instance.accounts)
-      DefinitionId.write(writer, instance.assetDefinitions)
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.name)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
+          jp.co.soramitsu.iroha2.generated.datamodel.account.Account).write(writer,
+          instance.accounts)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId,
+          jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry).write(writer,
+          instance.assetDefinitions)
     }
   }
 }

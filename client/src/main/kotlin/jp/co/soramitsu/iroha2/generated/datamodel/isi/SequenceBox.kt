@@ -23,7 +23,8 @@ public class SequenceBox(
         SequenceBox(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Instruction), instance.instructions)
+      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).write(writer,
+          instance.instructions)
     }
   }
 }

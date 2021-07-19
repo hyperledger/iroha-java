@@ -36,10 +36,10 @@ public sealed class Value {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): U32 =
-          U32(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
+          U32(jp.co.soramitsu.iroha2.scale.U32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        UInt.write(writer, instance.u32)
+        jp.co.soramitsu.iroha2.scale.U32Writer.write(writer, instance.u32)
       }
     }
   }
@@ -56,10 +56,10 @@ public sealed class Value {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): Bool =
-          Bool(jp.co.soramitsu.iroha2.scale.BooleanReader.read(reader))
+          Bool(jp.co.soramitsu.iroha2.scale.BoolReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
-        writer.writeByte(if (instance.bool) {1} else {0})
+        jp.co.soramitsu.iroha2.scale.BoolWriter.write(writer, instance.bool)
       }
     }
   }
@@ -79,7 +79,7 @@ public sealed class Value {
           String(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
-        writer.writeAsList(instance.string.encodeToByteArray())
+        jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.string)
       }
     }
   }
@@ -99,7 +99,8 @@ public sealed class Value {
           Vec(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Value), instance.vec)
+        io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer,
+            instance.vec)
       }
     }
   }

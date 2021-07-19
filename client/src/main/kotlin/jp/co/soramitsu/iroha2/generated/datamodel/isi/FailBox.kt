@@ -23,7 +23,7 @@ public class FailBox(
         FailBox(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: FailBox): Unit {
-      writer.writeAsList(instance.message.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.message)
     }
   }
 }

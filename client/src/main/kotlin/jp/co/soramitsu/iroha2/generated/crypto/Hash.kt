@@ -23,7 +23,7 @@ public class Hash(
         Hash(jp.co.soramitsu.iroha2.scale.ByteArrayReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: Hash): Unit {
-      writer.writeByteArray(instance.array)
+      jp.co.soramitsu.iroha2.scale.ByteArrayWriter.write(writer, instance.array)
     }
   }
 }

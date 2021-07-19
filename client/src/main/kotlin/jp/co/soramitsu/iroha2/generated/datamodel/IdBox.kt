@@ -97,7 +97,7 @@ public sealed class IdBox {
           DomainName(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: DomainName): Unit {
-        writer.writeAsList(instance.string.encodeToByteArray())
+        jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.string)
       }
     }
   }

@@ -36,10 +36,10 @@ public sealed class AssetValue {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Quantity =
-          Quantity(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
+          Quantity(jp.co.soramitsu.iroha2.scale.U32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-        UInt.write(writer, instance.u32)
+        jp.co.soramitsu.iroha2.scale.U32Writer.write(writer, instance.u32)
       }
     }
   }
@@ -56,10 +56,10 @@ public sealed class AssetValue {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): BigQuantity =
-          BigQuantity(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
+          BigQuantity(jp.co.soramitsu.iroha2.scale.U128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
-        BigInteger.write(writer, instance.u128)
+        jp.co.soramitsu.iroha2.scale.U128Writer.write(writer, instance.u128)
       }
     }
   }

@@ -23,7 +23,7 @@ public class ContextValue(
         ContextValue(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-      writer.writeAsList(instance.valueName.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.valueName)
     }
   }
 }

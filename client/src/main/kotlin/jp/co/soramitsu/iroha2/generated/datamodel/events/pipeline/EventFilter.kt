@@ -25,8 +25,10 @@ public class EventFilter(
     jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.crypto.Hash?).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-      writer.writeOptional(EntityType, instance.entity)
-      writer.writeOptional(Hash, instance.hash)
+      jp.co.soramitsu.iroha2.scale.OptionWriter(jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType?).write(writer,
+          instance.entity)
+      jp.co.soramitsu.iroha2.scale.OptionWriter(jp.co.soramitsu.iroha2.generated.crypto.Hash?).write(writer,
+          instance.hash)
     }
   }
 }

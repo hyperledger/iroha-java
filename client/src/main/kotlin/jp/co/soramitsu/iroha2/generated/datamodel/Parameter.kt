@@ -36,11 +36,11 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
-          MaximumFaultyPeersAmount(jp.co.soramitsu.iroha2.scale.UInt32Reader.read(reader))
+          MaximumFaultyPeersAmount(jp.co.soramitsu.iroha2.scale.U32Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
           Unit {
-        UInt.write(writer, instance.u32)
+        jp.co.soramitsu.iroha2.scale.U32Writer.write(writer, instance.u32)
       }
     }
   }
@@ -57,10 +57,10 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): BlockTime =
-          BlockTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
+          BlockTime(jp.co.soramitsu.iroha2.scale.U128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-        BigInteger.write(writer, instance.u128)
+        jp.co.soramitsu.iroha2.scale.U128Writer.write(writer, instance.u128)
       }
     }
   }
@@ -77,10 +77,10 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): CommitTime =
-          CommitTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
+          CommitTime(jp.co.soramitsu.iroha2.scale.U128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-        BigInteger.write(writer, instance.u128)
+        jp.co.soramitsu.iroha2.scale.U128Writer.write(writer, instance.u128)
       }
     }
   }
@@ -98,10 +98,10 @@ public sealed class Parameter {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
-          TransactionReceiptTime(jp.co.soramitsu.iroha2.scale.UInt128Reader.read(reader))
+          TransactionReceiptTime(jp.co.soramitsu.iroha2.scale.U128Reader.read(reader))
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-        BigInteger.write(writer, instance.u128)
+        jp.co.soramitsu.iroha2.scale.U128Writer.write(writer, instance.u128)
       }
     }
   }

@@ -28,8 +28,9 @@ public class PermissionToken(
         jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-      writer.writeAsList(instance.name.encodeToByteArray())
-      String.write(writer, instance.params)
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.name)
+      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
+          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.params)
     }
   }
 }

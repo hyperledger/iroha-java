@@ -25,8 +25,8 @@ public class DefinitionId(
     jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: DefinitionId): Unit {
-      writer.writeAsList(instance.name.encodeToByteArray())
-      writer.writeAsList(instance.domainName.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.name)
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.domainName)
     }
   }
 }

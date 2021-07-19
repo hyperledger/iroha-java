@@ -27,7 +27,8 @@ public class Transaction(
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
       Payload.write(writer, instance.payload)
-      writer.write(io.emeraldpay.polkaj.scale.writer.ListWriter(Signature), instance.signatures)
+      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.crypto.Signature).write(writer,
+          instance.signatures)
     }
   }
 }

@@ -24,12 +24,13 @@ public class SignedQueryRequest(
 ) {
   public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
     public override fun read(reader: ScaleCodecReader): SignedQueryRequest =
-        SignedQueryRequest(jp.co.soramitsu.iroha2.scale.UByteReader(jp.co.soramitsu.iroha2.scale.UInt128Reader).read(reader),
+        SignedQueryRequest(jp.co.soramitsu.iroha2.scale.U8Reader(jp.co.soramitsu.iroha2.scale.U128Reader).read(reader),
     Signature.read(reader),
     QueryBox.read(reader))
 
     public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
-      writer.writeCompact(instance.timestampMs)
+      jp.co.soramitsu.iroha2.scale.U8Reader(jp.co.soramitsu.iroha2.scale.U128Writer).write(writer,
+          instance.timestampMs)
       Signature.write(writer, instance.signature)
       QueryBox.write(writer, instance.query)
     }

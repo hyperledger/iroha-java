@@ -28,7 +28,7 @@ public class SignatureVerificationFail(
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail): Unit {
       Signature.write(writer, instance.signature)
-      writer.writeAsList(instance.reason.encodeToByteArray())
+      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
     }
   }
 }

@@ -11,6 +11,7 @@ import java.nio.file.Paths
 //todo all enum variants must imoplement discrimant behaviour
 //todo versions of dependencies
 //todo move modules to folder
+//todo add linter
 object GeneratorEntryPoint {
     fun generate(types: Types) {
         types.values.mapNotNull {

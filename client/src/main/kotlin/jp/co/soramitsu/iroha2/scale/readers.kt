@@ -8,23 +8,36 @@ import io.emeraldpay.polkaj.scale.reader.StringReader
 import java.math.BigInteger
 
 //todo impplement all numbers and types
-object UByteReader : ScaleReader<UByte> {
+object U8Reader : ScaleReader<UByte> {
     override fun read(reader: ScaleCodecReader) = reader.readUByte().toUByte()
 }
 
-object UInt32Reader : ScaleReader<UInt> {
+object U16Reader : ScaleReader<UShort> {
+    override fun read(reader: ScaleCodecReader) = reader.readUint16().toUShort()
+}
+
+object U32Reader : ScaleReader<UInt> {
     override fun read(reader: ScaleCodecReader) = reader.readUint32().toUInt()
 }
 
-object UInt128Reader : ScaleReader<BigInteger> {
+//todo possibly incorrect
+object U64Reader : ScaleReader<ULong> {
+    override fun read(reader: ScaleCodecReader) = reader.readUint128().toLong().toULong()
+}
+
+object U128Reader : ScaleReader<BigInteger> {
     override fun read(reader: ScaleCodecReader): BigInteger = reader.readUint128()
+}
+
+object U256Reader : ScaleReader<BigInteger> {
+    override fun read(reader: ScaleCodecReader): BigInteger = BigInteger(reader.readUint256())
 }
 
 object Compact32Reader : CompactUIntReader()
 
 object StringReader : StringReader()
 
-object BooleanReader : BoolReader()
+object BoolReader : BoolReader()
 
 object ByteArrayReader : ScaleReader<ByteArray> {
     override fun read(reader: ScaleCodecReader): ByteArray = reader.readByteArray()
