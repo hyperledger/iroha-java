@@ -10,7 +10,7 @@ repositories {
 }
 
 final def spockVersion = '1.2-groovy-2.4'
-final def edSha3Version = '2.0.1'
+final def edSha3Version = '2.1.0'
 final def edDsaVersion = '0.3.0'
 final def spockGenesisVersion = '0.6.0'
 final def lombokVersion = '1.18.4'
@@ -23,7 +23,7 @@ final def objgenesisVersion = '3.0.1'
 
 dependencies {
     compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
-    compile "com.github.warchant:ed25519-sha3-java:${edSha3Version}"
+    compile "com.github.soramitsu:ed25519-sha3-java:${edSha3Version}"
     compile "net.i2p.crypto:eddsa:${edDsaVersion}"
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
@@ -46,7 +46,9 @@ dependencies {
 }
 
 apply from: 'proto.gradle'
-
+tasks.withType(JavaCompile) {
+    options.incremental = false
+}
 sonarqube {
     properties {
         property "sonar.projectKey", "${project.group}:${rootProject.name}.${project.name}"

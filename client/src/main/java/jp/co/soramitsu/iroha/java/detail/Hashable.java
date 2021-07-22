@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha.java.detail;
 
 import com.google.protobuf.GeneratedMessageV3.Builder;
-import org.spongycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 public abstract class Hashable<T extends Builder<T>> {
 
