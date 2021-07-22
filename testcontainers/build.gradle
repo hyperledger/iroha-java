@@ -49,7 +49,9 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: "${junitVersion}"
 }
-
+tasks.withType(JavaCompile) {
+    options.incremental = false
+}
 sonarqube {
     properties {
         property "sonar.projectKey", "${project.group}:${rootProject.name}.${project.name}"
