@@ -1,6 +1,5 @@
 plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
 }
 
 version '1.0-SNAPSHOT'
@@ -10,10 +9,9 @@ repositories {
 }
 
 dependencies {
-    implementation "org.testcontainers:testcontainers:1.15.3"
-
-    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    implementation "org.testcontainers:testcontainers:$testContainersVer"
+    testImplementation "ch.qos.logback:logback-classic:$logbackVer"
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
 }
 
 test {

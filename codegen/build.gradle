@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
+    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
 }
 
 group 'jp.co.soramitsu'
@@ -11,8 +11,8 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "com.google.code.gson:gson:$gsonVersion"
-    implementation "com.squareup:kotlinpoet:$kotlinPoetVersion"
+    implementation "com.google.code.gson:gson:$gsonVer"
+    implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
 }
 
 task codegen(type: JavaExec) {
