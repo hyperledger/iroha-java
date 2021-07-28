@@ -7,7 +7,6 @@ import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.*
 import java.nio.file.Path
-import java.nio.file.Paths
 
 object GeneratorEntryPoint {
     fun generate(types: Types, outputPath: Path) {

@@ -1,5 +1,10 @@
 rootProject.name = 'iroha2-java'
 
-include 'testcontainers'
-include 'codegen'
 include 'client'
+project(':client').projectDir = 'modules/client' as File
+
+include 'codegen'
+project(':codegen').projectDir = 'modules/codegen' as File
+
+include 'testcontainers'
+project(':testcontainers').projectDir = 'modules/testcontainers' as File
