@@ -16,3 +16,8 @@ dependencies {
     implementation group: 'com.squareup', name: 'kotlinpoet-metadata', version: '1.9.0'
     implementation group: 'com.squareup', name: 'kotlinpoet-metadata-specs', version: '1.9.0'
 }
+
+task codegen(type: JavaExec) {
+    main = 'jp.co.soramitsu.iroha2.EntryPoint'
+    classpath = sourceSets.main.runtimeClasspath
+}

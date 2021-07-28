@@ -1,3 +1,5 @@
+@file:JvmName("EntryPoint")
+
 package jp.co.soramitsu.iroha2
 
 import com.google.gson.Gson
@@ -10,13 +12,6 @@ const val DEFAULT_SCHEMA_FILE_NAME = "schema.json"
 
 typealias Schema = Map<String, Any>
 
-//todo удалить старую версию либы
-//todo сделать плагин для градла
-//todo генерировать генезис
-//todo версии зависимостей выделить
-//todo проблема с репо bintray
-//todo detecting deadlocks?
-//todo проверка длины для fixed array
 fun main() {
     val schema = readSchema()
     val parseResult = SchemaParser.parse(schema)
