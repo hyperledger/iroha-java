@@ -10,6 +10,8 @@ val SCALE_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
 val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
 val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashSetWithSize")
+val OPTIONAL = ClassName("java.util", "Optional")
+val BIG_INTEGER = ClassName("java.math", "BigInteger")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
@@ -41,18 +43,29 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is StringType -> CodeBlock.of("reader.readString()")
         is BooleanType -> CodeBlock.of("reader.readBoolean()")
         is CompositeType -> {
-            val className = resolveKotlinType(type)
-            val classNameWithoutGeneric = foo(className)
-            CodeBlock.of("%1T.read(reader) as %2T", classNameWithoutGeneric, className)
+            val typeName = resolveKotlinType(type)
+            val typeNameWithoutGenerics = withoutGenerics(typeName)
+            CodeBlock.of("%1T.read(reader) as %2T", typeNameWithoutGenerics, typeName)
         }
-        is OptionType -> CodeBlock.of("reader.readOptional(%L).orElse(null)",
-            resolveScaleReadImpl(type.innerType.requireValue()))
-        is CompactType -> CodeBlock.of("reader.readCompactInt()")
+        is OptionType -> {
+            CodeBlock.of("reader.readOptional(%T).orElse(null)",  withoutGenerics(resolveKotlinType(type)))
+        }
+        is CompactType -> {
+            val conversionFunction = when(val innerType = type.innerType.requireValue()) {
+                is U8Type -> CodeBlock.of("toUByte()")
+                is U16Type -> CodeBlock.of("toUShort()")
+                is U32Type -> CodeBlock.of("toUInt()")
+                is U64Type -> CodeBlock.of("toULong()")
+                is U128Type, is U256Type -> CodeBlock.of("toBigInteger()")
+                else -> throw RuntimeException("Compact type implementation unresolved: $innerType")
+            }
+            CodeBlock.of("reader.readCompactInt().%L", conversionFunction)
+        }
         else -> throw RuntimeException("Unexpected type: $type")
     }
 }
 
-fun resolveScaleWriteImpl(type: Type, propName: String): CodeBlock {
+fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
     return when (type) {
         is ArrayType -> CodeBlock.of("writer.writeByteArray(%L)", propName)
         is VecType -> {
@@ -60,7 +73,7 @@ fun resolveScaleWriteImpl(type: Type, propName: String): CodeBlock {
                 "writer.writeCompact(%1L.size)\n" +
                 "%1L.forEach { value -> %2L }",
                 propName,
-                resolveScaleWriteImpl(type.innerType.requireValue(), "value")
+                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of( "value"))
             )
         }
         is SetType -> {
@@ -68,7 +81,7 @@ fun resolveScaleWriteImpl(type: Type, propName: String): CodeBlock {
                 "writer.writeCompact(%1L.size)\n" +
                 "%1L.forEach { value -> %2L }",
                 propName,
-                resolveScaleWriteImpl(type.innerType.requireValue(), "value")
+                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of( "value"))
             )
         }
         is MapType -> {
@@ -76,30 +89,36 @@ fun resolveScaleWriteImpl(type: Type, propName: String): CodeBlock {
                 "writer.writeCompact(%1L.size)\n" +
                 "%1L.forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
                 propName,
-                resolveScaleWriteImpl(type.key.requireValue(), "key"),
-                resolveScaleWriteImpl(type.value.requireValue(), "value")
+                resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
+                resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value"))
             )
         }
         is U8Type -> CodeBlock.of("writer.writeByte(%L.toByte())", propName)
         is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
         is U32Type -> CodeBlock.of("writer.writeUint32(%L.toInt())", propName)
-        is U64Type -> CodeBlock.of("writer.writeUint128(BigInteger.valueOf(%L.toLong()))", propName)
+        is U64Type -> CodeBlock.of("writer.writeUint128(%1T.valueOf(%2L.toLong()))", BIG_INTEGER, propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
         is U256Type -> CodeBlock.of("writer.writeUint256(%L.toByteArray())", propName)
         is StringType -> CodeBlock.of("writer.writeAsList(%L.toByteArray(Charsets.UTF_8))",
             propName)
         is BooleanType -> CodeBlock.of("if (%L) { writer.directWrite(1) } else { writer.directWrite(0) }",
             propName)
-        is CompositeType -> CodeBlock.of("%T.write(writer, %L)", foo(resolveKotlinType(type)).topLevelClassName(), propName)
-        is OptionType -> CodeBlock.of("writer.writeOptional(%1L), Optional.ofNullable(%2L))",
-            resolveScaleWriteImpl(type.innerType.requireValue(), propName),
+        is CompositeType -> CodeBlock.of("%T.write(writer, %L)",
+            withoutGenerics(resolveKotlinType(type)),
             propName)
-        is CompactType -> CodeBlock.of("writer.writeCompact(%L)", propName)
+        is OptionType -> {
+            CodeBlock.of("writer.writeOptional(%1T, %2T.ofNullable(%3L))",
+                withoutGenerics(resolveKotlinType(type)),
+                OPTIONAL,
+                propName
+            )
+        }
+        is CompactType -> CodeBlock.of("writer.writeCompact(%L.toInt())", propName)
         else -> throw RuntimeException("Unexpected type: $type")
     }
 }
 
-fun foo(typeName: TypeName): ClassName {
+fun withoutGenerics(typeName: TypeName): ClassName {
     return when (typeName) {
         is ClassName -> typeName.topLevelClassName()
         is ParameterizedTypeName -> typeName.rawType.topLevelClassName()

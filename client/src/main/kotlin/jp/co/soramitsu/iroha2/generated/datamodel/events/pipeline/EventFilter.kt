@@ -7,8 +7,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import java.util.Optional
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
-import java.util.*
 import kotlin.Unit
 
 /**
@@ -28,7 +28,7 @@ public class EventFilter(
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
         writer.writeOptional(EntityType, Optional.ofNullable(instance.entity))
-        writer.writeOptional(Hash.write(writer, instance.hash)), Optional.ofNullable(instance.hash))
+        writer.writeOptional(Hash, Optional.ofNullable(instance.hash))
     }
   }
 }

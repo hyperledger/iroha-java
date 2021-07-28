@@ -309,7 +309,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-          jp.co.soramitsu.iroha2.generated.datamodel.expression.If.write(writer, instance.if)
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.If.write(writer, instance.`if`)
       }
     }
   }
@@ -330,7 +330,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
-          Value.write(writer, instance.value)
+          Value.write(writer, instance.`value`)
       }
     }
   }
@@ -442,7 +442,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-          jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.write(writer, instance.where)
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.write(writer,
+              instance.`where`)
       }
     }
   }

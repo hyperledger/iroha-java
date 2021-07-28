@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import java.util.Optional
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.Boolean
 import kotlin.Unit
@@ -25,14 +26,13 @@ public class If(
     public override fun read(reader: ScaleCodecReader): If = If(
       EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
       Instruction.read(reader) as Instruction,
-      reader.readOptional(Instruction.read(reader) as Instruction).orElse(null),
+      reader.readOptional(Instruction).orElse(null),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
         EvaluatesTo.write(writer, instance.condition)
         Instruction.write(writer, instance.then)
-        writer.writeOptional(Instruction.write(writer, instance.otherwise)),
-            Optional.ofNullable(instance.otherwise))
+        writer.writeOptional(Instruction, Optional.ofNullable(instance.otherwise))
     }
   }
 }

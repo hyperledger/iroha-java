@@ -24,7 +24,7 @@ public class QueryResult(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: QueryResult): Unit {
-        Value.write(writer, instance.value)
+        Value.write(writer, instance.`value`)
     }
   }
 }

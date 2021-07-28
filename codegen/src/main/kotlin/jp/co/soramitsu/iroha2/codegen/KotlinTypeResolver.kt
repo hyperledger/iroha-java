@@ -36,6 +36,9 @@ fun resolveKotlinType(type: Type): TypeName {
                 }
             }
         }
+        is CompactType -> {
+            resolveKotlinType(type.innerType.requireValue())
+        }
         is WrapperType -> {
             val wrapperType = lookUpInBuiltInTypes(type)
             (wrapperType as ClassName).parameterizedBy(resolveKotlinType(type.innerType.requireValue()))
@@ -75,7 +78,7 @@ val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     U64Type::class to ULong::class.asTypeName(),
     U128Type::class to BigInteger::class.asTypeName(),
     U256Type::class to BigInteger::class.asTypeName(),
-    CompactType::class to UInt::class.asTypeName(),
+//    CompactType::class to UInt::class.asTypeName(),
     VecType::class to ClassName("kotlin.collections", "MutableList"),
     SetType::class to ClassName("kotlin.collections", "MutableSet"),
     MapType::class to ClassName("kotlin.collections", "MutableMap"),

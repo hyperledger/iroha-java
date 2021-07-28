@@ -13,6 +13,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.utils.hashMapWithSize
 import jp.co.soramitsu.iroha2.utils.hashSetWithSize
+import kotlin.Unit
+import kotlin.collections.MutableList
+import kotlin.collections.MutableMap
+import kotlin.collections.MutableSet
 
 /**
  * Account
@@ -29,16 +33,14 @@ public class Account(
 ) {
   public companion object : ScaleReader<Account>, ScaleWriter<Account> {
     public override fun read(reader: ScaleCodecReader): Account = Account(
-        Id.read(reader) as Id,
-        hashMapWithSize(reader.readCompactInt(),
-            {
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) as
-                        jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
-            }, { Asset.read(reader) as Asset }),
-        MutableList(reader.readCompactInt()) { PublicKey.read(reader) as PublicKey },
-        hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) as PermissionToken },
-        SignatureCheckCondition.read(reader) as SignatureCheckCondition,
-        Metadata.read(reader) as Metadata,
+      Id.read(reader) as Id,
+      hashMapWithSize(reader.readCompactInt(),
+          {jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) as
+          jp.co.soramitsu.iroha2.generated.datamodel.asset.Id}, {Asset.read(reader) as Asset}),
+      MutableList(reader.readCompactInt()) {PublicKey.read(reader) as PublicKey},
+      hashSetWithSize(reader.readCompactInt()) {PermissionToken.read(reader) as PermissionToken},
+      SignatureCheckCondition.read(reader) as SignatureCheckCondition,
+      Metadata.read(reader) as Metadata,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {

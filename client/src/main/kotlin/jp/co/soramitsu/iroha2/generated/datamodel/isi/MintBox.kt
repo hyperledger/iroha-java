@@ -28,7 +28,7 @@ public class MintBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: MintBox): Unit {
-        EvaluatesTo.write(writer, instance.object)
+        EvaluatesTo.write(writer, instance.`object`)
         EvaluatesTo.write(writer, instance.destinationId)
     }
   }

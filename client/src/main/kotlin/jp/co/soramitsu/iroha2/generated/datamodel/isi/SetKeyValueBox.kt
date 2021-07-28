@@ -33,7 +33,7 @@ public class SetKeyValueBox(
     public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
         EvaluatesTo.write(writer, instance.objectId)
         EvaluatesTo.write(writer, instance.key)
-        EvaluatesTo.write(writer, instance.value)
+        EvaluatesTo.write(writer, instance.`value`)
     }
   }
 }

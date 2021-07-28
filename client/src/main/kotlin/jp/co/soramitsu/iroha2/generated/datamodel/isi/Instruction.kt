@@ -143,7 +143,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-          jp.co.soramitsu.iroha2.generated.datamodel.isi.If.write(writer, instance.if)
+          jp.co.soramitsu.iroha2.generated.datamodel.isi.If.write(writer, instance.`if`)
       }
     }
   }

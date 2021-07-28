@@ -76,7 +76,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
     open fun scaleWriterCode(blueprint: T): CodeBlock {
         var result = CodeBlock.builder().indent()
-        val codeBlocks = blueprint.properties.map { resolveScaleWriteImpl(it.original, "instance.${it.name}") }.toList()
+        val codeBlocks = blueprint.properties.map { resolveScaleWriteImpl(it.original, CodeBlock.of("instance.%N", it.name)) }
         for (cb in codeBlocks) {
             result = result.add(cb).add("\n")
         }
