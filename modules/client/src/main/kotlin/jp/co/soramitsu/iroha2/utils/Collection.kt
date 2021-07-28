@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.utils
 
-//Copied from Google Guava library(com.google.common.collect.Maps)
+// Copied from Google Guava library(com.google.common.collect.Maps)
 
 /**
  * The largest power of two that can be represented as an `int`.

@@ -10,7 +10,6 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import java.math.BigInteger
 import kotlin.Int
 import kotlin.UInt
-import kotlin.Unit
 
 /**
  * Parameter
@@ -18,117 +17,122 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::Parameter' enum
  */
 public sealed class Parameter {
-  /**
-   * @return Discriminator of variant in enum
-   */
-  public abstract fun discriminant(): Int
+    /**
+     * @return Discriminator of variant in enum
+     */
+    public abstract fun discriminant(): Int
 
-  /**
-   * 'MaximumFaultyPeersAmount' variant
-   */
-  public class MaximumFaultyPeersAmount(
-    private val u32: UInt
-  ) : Parameter() {
-    public override fun discriminant(): Int = DISCRIMINANT
+    /**
+     * 'MaximumFaultyPeersAmount' variant
+     */
+    public class MaximumFaultyPeersAmount(
+        private val u32: UInt
+    ) : Parameter() {
+        public override fun discriminant(): Int = DISCRIMINANT
 
-    public companion object : ScaleReader<MaximumFaultyPeersAmount>,
-        ScaleWriter<MaximumFaultyPeersAmount> {
-      public const val DISCRIMINANT: Int = 0
+        public companion object :
+            ScaleReader<MaximumFaultyPeersAmount>,
+            ScaleWriter<MaximumFaultyPeersAmount> {
+            public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
-          MaximumFaultyPeersAmount(
-        reader.readUint32().toUInt(),
-      )
+            public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
+                MaximumFaultyPeersAmount(
+                    reader.readUint32().toUInt(),
+                )
 
-      public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount):
-          Unit {
-          writer.writeUint32(instance.u32.toInt())
-      }
+            public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount) {
+                writer.writeUint32(instance.u32.toInt())
+            }
+        }
     }
-  }
 
-  /**
-   * 'BlockTime' variant
-   */
-  public class BlockTime(
-    private val u128: BigInteger
-  ) : Parameter() {
-    public override fun discriminant(): Int = DISCRIMINANT
+    /**
+     * 'BlockTime' variant
+     */
+    public class BlockTime(
+        private val u128: BigInteger
+    ) : Parameter() {
+        public override fun discriminant(): Int = DISCRIMINANT
 
-    public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
-      public const val DISCRIMINANT: Int = 1
+        public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
+            public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): BlockTime = BlockTime(
-        reader.readUint128(),
-      )
+            public override fun read(reader: ScaleCodecReader): BlockTime = BlockTime(
+                reader.readUint128(),
+            )
 
-      public override fun write(writer: ScaleCodecWriter, instance: BlockTime): Unit {
-          writer.writeUint128(instance.u128)
-      }
+            public override fun write(writer: ScaleCodecWriter, instance: BlockTime) {
+                writer.writeUint128(instance.u128)
+            }
+        }
     }
-  }
 
-  /**
-   * 'CommitTime' variant
-   */
-  public class CommitTime(
-    private val u128: BigInteger
-  ) : Parameter() {
-    public override fun discriminant(): Int = DISCRIMINANT
+    /**
+     * 'CommitTime' variant
+     */
+    public class CommitTime(
+        private val u128: BigInteger
+    ) : Parameter() {
+        public override fun discriminant(): Int = DISCRIMINANT
 
-    public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
-      public const val DISCRIMINANT: Int = 2
+        public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
+            public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): CommitTime = CommitTime(
-        reader.readUint128(),
-      )
+            public override fun read(reader: ScaleCodecReader): CommitTime = CommitTime(
+                reader.readUint128(),
+            )
 
-      public override fun write(writer: ScaleCodecWriter, instance: CommitTime): Unit {
-          writer.writeUint128(instance.u128)
-      }
+            public override fun write(writer: ScaleCodecWriter, instance: CommitTime) {
+                writer.writeUint128(instance.u128)
+            }
+        }
     }
-  }
 
-  /**
-   * 'TransactionReceiptTime' variant
-   */
-  public class TransactionReceiptTime(
-    private val u128: BigInteger
-  ) : Parameter() {
-    public override fun discriminant(): Int = DISCRIMINANT
+    /**
+     * 'TransactionReceiptTime' variant
+     */
+    public class TransactionReceiptTime(
+        private val u128: BigInteger
+    ) : Parameter() {
+        public override fun discriminant(): Int = DISCRIMINANT
 
-    public companion object : ScaleReader<TransactionReceiptTime>,
-        ScaleWriter<TransactionReceiptTime> {
-      public const val DISCRIMINANT: Int = 3
+        public companion object :
+            ScaleReader<TransactionReceiptTime>,
+            ScaleWriter<TransactionReceiptTime> {
+            public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
-          TransactionReceiptTime(
-        reader.readUint128(),
-      )
+            public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
+                TransactionReceiptTime(
+                    reader.readUint128(),
+                )
 
-      public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime): Unit {
-          writer.writeUint128(instance.u128)
-      }
+            public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime) {
+                writer.writeUint128(instance.u128)
+            }
+        }
     }
-  }
 
-  public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
-    public override fun read(reader: ScaleCodecReader): Parameter = when(val discriminant =
-        reader.readUByte()) {
-    	0 -> MaximumFaultyPeersAmount.read(reader)
-    	1 -> BlockTime.read(reader)
-    	2 -> CommitTime.read(reader)
-    	3 -> TransactionReceiptTime.read(reader)
-    	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
+    public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
+        public override fun read(reader: ScaleCodecReader): Parameter = when (
+            val discriminant =
+                reader.readUByte()
+        ) {
+            0 -> MaximumFaultyPeersAmount.read(reader)
+            1 -> BlockTime.read(reader)
+            2 -> CommitTime.read(reader)
+            3 -> TransactionReceiptTime.read(reader)
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+        }
 
-    public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-      writer.directWrite(instance.discriminant())
-      when(val discriminant = instance.discriminant()) {
-      	0 -> MaximumFaultyPeersAmount.write(writer, instance as MaximumFaultyPeersAmount)
-      	1 -> BlockTime.write(writer, instance as BlockTime)
-      	2 -> CommitTime.write(writer, instance as CommitTime)
-      	3 -> TransactionReceiptTime.write(writer, instance as TransactionReceiptTime)
-      	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
+        public override fun write(writer: ScaleCodecWriter, instance: Parameter) {
+            writer.directWrite(instance.discriminant())
+            when (val discriminant = instance.discriminant()) {
+                0 -> MaximumFaultyPeersAmount.write(writer, instance as MaximumFaultyPeersAmount)
+                1 -> BlockTime.write(writer, instance as BlockTime)
+                2 -> CommitTime.write(writer, instance as CommitTime)
+                3 -> TransactionReceiptTime.write(writer, instance as TransactionReceiptTime)
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+            }
+        }
     }
-  }
 }

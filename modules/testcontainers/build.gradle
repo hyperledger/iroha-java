@@ -1,12 +1,8 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation "org.testcontainers:testcontainers:$testContainersVer"

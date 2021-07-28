@@ -10,7 +10,6 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.String
-import kotlin.Unit
 
 /**
  * FindAssetsByDomainNameAndAssetDefinitionId
@@ -19,21 +18,24 @@ import kotlin.Unit
  * regular structure
  */
 public class FindAssetsByDomainNameAndAssetDefinitionId(
-  public val domainName: EvaluatesTo<String>,
-  public val assetDefinitionId: EvaluatesTo<DefinitionId>
+    public val domainName: EvaluatesTo<String>,
+    public val assetDefinitionId: EvaluatesTo<DefinitionId>
 ) {
-  public companion object : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
-      ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
-    public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
-        FindAssetsByDomainNameAndAssetDefinitionId(
-      EvaluatesTo.read(reader) as EvaluatesTo<String>,
-      EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
-    )
+    public companion object :
+        ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
+        ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
+        public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
+            FindAssetsByDomainNameAndAssetDefinitionId(
+                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
+            )
 
-    public override fun write(writer: ScaleCodecWriter,
-        instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
-        EvaluatesTo.write(writer, instance.domainName)
-        EvaluatesTo.write(writer, instance.assetDefinitionId)
+        public override fun write(
+            writer: ScaleCodecWriter,
+            instance: FindAssetsByDomainNameAndAssetDefinitionId
+        ) {
+            EvaluatesTo.write(writer, instance.domainName)
+            EvaluatesTo.write(writer, instance.assetDefinitionId)
+        }
     }
-  }
 }

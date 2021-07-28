@@ -1,13 +1,9 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
