@@ -33,7 +33,7 @@ public sealed class TransactionValue {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-        VersionedTransaction.read(reader),
+        VersionedTransaction.read(reader) as VersionedTransaction,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
@@ -54,7 +54,7 @@ public sealed class TransactionValue {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): RejectedTransaction = RejectedTransaction(
-        VersionedRejectedTransaction.read(reader),
+        VersionedRejectedTransaction.read(reader) as VersionedRejectedTransaction,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {

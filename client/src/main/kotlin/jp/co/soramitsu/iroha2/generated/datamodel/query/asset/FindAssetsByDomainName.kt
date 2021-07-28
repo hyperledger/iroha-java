@@ -23,11 +23,11 @@ public class FindAssetsByDomainName(
       {
     public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
         FindAssetsByDomainName(
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
-        EvaluatesTo<String>.write(writer, instance.domainName)
+        EvaluatesTo.write(writer, instance.domainName)
     }
   }
 }

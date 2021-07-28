@@ -21,7 +21,7 @@ public class _VersionedEventSocketMessageV1(
       ScaleWriter<_VersionedEventSocketMessageV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedEventSocketMessageV1 =
         _VersionedEventSocketMessageV1(
-      EventSocketMessage.read(reader),
+      EventSocketMessage.read(reader) as EventSocketMessage,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedEventSocketMessageV1):

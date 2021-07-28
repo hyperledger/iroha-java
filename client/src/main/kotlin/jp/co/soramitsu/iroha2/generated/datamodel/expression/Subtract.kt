@@ -21,13 +21,13 @@ public class Subtract(
 ) {
   public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
     public override fun read(reader: ScaleCodecReader): Subtract = Subtract(
-      EvaluatesTo<UInt>.read(reader),
-      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-        EvaluatesTo<UInt>.write(writer, instance.left)
-        EvaluatesTo<UInt>.write(writer, instance.right)
+        EvaluatesTo.write(writer, instance.left)
+        EvaluatesTo.write(writer, instance.right)
     }
   }
 }

@@ -25,15 +25,15 @@ public class SetKeyValueBox(
 ) {
   public companion object : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): SetKeyValueBox = SetKeyValueBox(
-      EvaluatesTo<IdBox>.read(reader),
-      EvaluatesTo<String>.read(reader),
-      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit {
-        EvaluatesTo<IdBox>.write(writer, instance.objectId)
-        EvaluatesTo<String>.write(writer, instance.key)
-        EvaluatesTo<Value>.write(writer, instance.value)
+        EvaluatesTo.write(writer, instance.objectId)
+        EvaluatesTo.write(writer, instance.key)
+        EvaluatesTo.write(writer, instance.value)
     }
   }
 }

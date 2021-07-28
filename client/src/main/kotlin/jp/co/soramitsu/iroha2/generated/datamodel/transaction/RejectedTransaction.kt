@@ -24,9 +24,9 @@ public class RejectedTransaction(
 ) {
   public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
     public override fun read(reader: ScaleCodecReader): RejectedTransaction = RejectedTransaction(
-      Payload.read(reader),
-      MutableList(reader.readCompactInt()) {Signature.read(reader)},
-      TransactionRejectionReason.read(reader),
+      Payload.read(reader) as Payload,
+      MutableList(reader.readCompactInt()) {Signature.read(reader) as Signature},
+      TransactionRejectionReason.read(reader) as TransactionRejectionReason,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {

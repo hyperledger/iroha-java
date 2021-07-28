@@ -31,11 +31,12 @@ public class Payload(
 ) {
   public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
     public override fun read(reader: ScaleCodecReader): Payload = Payload(
-      Id.read(reader),
-      MutableList(reader.readCompactInt()) {Instruction.read(reader)},
+      Id.read(reader) as Id,
+      MutableList(reader.readCompactInt()) {Instruction.read(reader) as Instruction},
       reader.readUint128().toLong().toULong(),
       reader.readUint128().toLong().toULong(),
-      hashMapWithSize(reader.readCompactInt(), {reader.readString()}, {Value.read(reader)}),
+      hashMapWithSize(reader.readCompactInt(), {reader.readString()}, {Value.read(reader) as
+          Value}),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {

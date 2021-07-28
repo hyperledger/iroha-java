@@ -20,11 +20,11 @@ public class Not(
 ) {
   public companion object : ScaleReader<Not>, ScaleWriter<Not> {
     public override fun read(reader: ScaleCodecReader): Not = Not(
-      EvaluatesTo<Boolean>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-        EvaluatesTo<Boolean>.write(writer, instance.expression)
+        EvaluatesTo.write(writer, instance.expression)
     }
   }
 }

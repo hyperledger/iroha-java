@@ -33,7 +33,7 @@ public sealed class VersionedQueryResult {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): V1 = V1(
-        _VersionedQueryResultV1.read(reader),
+        _VersionedQueryResultV1.read(reader) as _VersionedQueryResultV1,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {

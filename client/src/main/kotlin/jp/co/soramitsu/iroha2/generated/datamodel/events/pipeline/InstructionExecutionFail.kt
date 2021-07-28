@@ -24,7 +24,7 @@ public class InstructionExecutionFail(
       ScaleWriter<InstructionExecutionFail> {
     public override fun read(reader: ScaleCodecReader): InstructionExecutionFail =
         InstructionExecutionFail(
-      Instruction.read(reader),
+      Instruction.read(reader) as Instruction,
       reader.readString(),
     )
 

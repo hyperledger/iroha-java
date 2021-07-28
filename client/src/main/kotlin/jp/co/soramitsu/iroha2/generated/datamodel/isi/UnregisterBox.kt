@@ -21,11 +21,11 @@ public class UnregisterBox(
 ) {
   public companion object : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
     public override fun read(reader: ScaleCodecReader): UnregisterBox = UnregisterBox(
-      EvaluatesTo<IdBox>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
-        EvaluatesTo<IdBox>.write(writer, instance.objectId)
+        EvaluatesTo.write(writer, instance.objectId)
     }
   }
 }

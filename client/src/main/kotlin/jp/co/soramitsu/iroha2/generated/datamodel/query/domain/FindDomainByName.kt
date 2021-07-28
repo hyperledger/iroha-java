@@ -21,11 +21,11 @@ public class FindDomainByName(
 ) {
   public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
     public override fun read(reader: ScaleCodecReader): FindDomainByName = FindDomainByName(
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
-        EvaluatesTo<String>.write(writer, instance.name)
+        EvaluatesTo.write(writer, instance.name)
     }
   }
 }

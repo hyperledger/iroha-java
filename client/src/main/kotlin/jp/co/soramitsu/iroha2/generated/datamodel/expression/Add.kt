@@ -21,13 +21,13 @@ public class Add(
 ) {
   public companion object : ScaleReader<Add>, ScaleWriter<Add> {
     public override fun read(reader: ScaleCodecReader): Add = Add(
-      EvaluatesTo<UInt>.read(reader),
-      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
-        EvaluatesTo<UInt>.write(writer, instance.left)
-        EvaluatesTo<UInt>.write(writer, instance.right)
+        EvaluatesTo.write(writer, instance.left)
+        EvaluatesTo.write(writer, instance.right)
     }
   }
 }

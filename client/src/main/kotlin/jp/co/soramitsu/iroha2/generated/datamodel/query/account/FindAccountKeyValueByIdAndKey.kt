@@ -26,14 +26,14 @@ public class FindAccountKeyValueByIdAndKey(
       ScaleWriter<FindAccountKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
         FindAccountKeyValueByIdAndKey(
-      EvaluatesTo<Id>.read(reader),
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
         Unit {
-        EvaluatesTo<Id>.write(writer, instance.id)
-        EvaluatesTo<String>.write(writer, instance.key)
+        EvaluatesTo.write(writer, instance.id)
+        EvaluatesTo.write(writer, instance.key)
     }
   }
 }

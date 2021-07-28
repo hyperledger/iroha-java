@@ -24,12 +24,12 @@ public class FindPermissionTokensByAccountId(
       ScaleWriter<FindPermissionTokensByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
         FindPermissionTokensByAccountId(
-      EvaluatesTo<Id>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId):
         Unit {
-        EvaluatesTo<Id>.write(writer, instance.id)
+        EvaluatesTo.write(writer, instance.id)
     }
   }
 }

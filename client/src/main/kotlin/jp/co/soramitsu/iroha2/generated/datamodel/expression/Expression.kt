@@ -35,7 +35,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Add = Add(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Add,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
@@ -56,7 +57,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): Subtract = Subtract(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
@@ -78,7 +80,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): Multiply = Multiply(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
@@ -100,7 +103,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): Divide = Divide(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
@@ -122,7 +126,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 4
 
       public override fun read(reader: ScaleCodecReader): Mod = Mod(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
@@ -143,7 +148,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 5
 
       public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
@@ -165,7 +171,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 6
 
       public override fun read(reader: ScaleCodecReader): Greater = Greater(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
@@ -187,7 +194,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 7
 
       public override fun read(reader: ScaleCodecReader): Less = Less(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Less,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
@@ -208,7 +216,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 8
 
       public override fun read(reader: ScaleCodecReader): Equal = Equal(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
@@ -229,7 +238,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 9
 
       public override fun read(reader: ScaleCodecReader): Not = Not(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Not,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
@@ -250,7 +260,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 10
 
       public override fun read(reader: ScaleCodecReader): And = And(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.And.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.And.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.And,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
@@ -271,7 +282,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 11
 
       public override fun read(reader: ScaleCodecReader): Or = Or(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Or,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
@@ -292,7 +304,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 12
 
       public override fun read(reader: ScaleCodecReader): If = If(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.If.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.If.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.If,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
@@ -313,7 +326,7 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 13
 
       public override fun read(reader: ScaleCodecReader): Raw = Raw(
-        Value.read(reader),
+        Value.read(reader) as Value,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
@@ -334,7 +347,7 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 14
 
       public override fun read(reader: ScaleCodecReader): Query = Query(
-        QueryBox.read(reader),
+        QueryBox.read(reader) as QueryBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
@@ -355,7 +368,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 15
 
       public override fun read(reader: ScaleCodecReader): Contains = Contains(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
@@ -377,7 +391,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 16
 
       public override fun read(reader: ScaleCodecReader): ContainsAll = ContainsAll(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
@@ -399,7 +414,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 17
 
       public override fun read(reader: ScaleCodecReader): ContainsAny = ContainsAny(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
@@ -421,7 +437,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 18
 
       public override fun read(reader: ScaleCodecReader): Where = Where(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.Where,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
@@ -442,7 +459,8 @@ public sealed class Expression {
       public const val DISCRIMINANT: Int = 19
 
       public override fun read(reader: ScaleCodecReader): ContextValue = ContextValue(
-        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {

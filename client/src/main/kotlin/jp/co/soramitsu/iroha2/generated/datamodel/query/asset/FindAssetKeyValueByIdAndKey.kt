@@ -25,14 +25,14 @@ public class FindAssetKeyValueByIdAndKey(
       ScaleWriter<FindAssetKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
         FindAssetKeyValueByIdAndKey(
-      EvaluatesTo<Id>.read(reader),
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
         Unit {
-        EvaluatesTo<Id>.write(writer, instance.id)
-        EvaluatesTo<String>.write(writer, instance.key)
+        EvaluatesTo.write(writer, instance.id)
+        EvaluatesTo.write(writer, instance.key)
     }
   }
 }

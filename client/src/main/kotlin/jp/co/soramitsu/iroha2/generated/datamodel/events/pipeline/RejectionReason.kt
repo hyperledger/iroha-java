@@ -33,7 +33,7 @@ public sealed class RejectionReason {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Block = Block(
-        BlockRejectionReason.read(reader),
+        BlockRejectionReason.read(reader) as BlockRejectionReason,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
@@ -54,7 +54,7 @@ public sealed class RejectionReason {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-        TransactionRejectionReason.read(reader),
+        TransactionRejectionReason.read(reader) as TransactionRejectionReason,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {

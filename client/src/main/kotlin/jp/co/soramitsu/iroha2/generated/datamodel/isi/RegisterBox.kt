@@ -21,11 +21,11 @@ public class RegisterBox(
 ) {
   public companion object : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
     public override fun read(reader: ScaleCodecReader): RegisterBox = RegisterBox(
-      EvaluatesTo<IdentifiableBox>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<IdentifiableBox>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit {
-        EvaluatesTo<IdentifiableBox>.write(writer, instance.object)
+        EvaluatesTo.write(writer, instance.object)
     }
   }
 }

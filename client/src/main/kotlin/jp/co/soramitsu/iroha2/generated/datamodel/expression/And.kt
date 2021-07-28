@@ -21,13 +21,13 @@ public class And(
 ) {
   public companion object : ScaleReader<And>, ScaleWriter<And> {
     public override fun read(reader: ScaleCodecReader): And = And(
-      EvaluatesTo<Boolean>.read(reader),
-      EvaluatesTo<Boolean>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
+      EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-        EvaluatesTo<Boolean>.write(writer, instance.left)
-        EvaluatesTo<Boolean>.write(writer, instance.right)
+        EvaluatesTo.write(writer, instance.left)
+        EvaluatesTo.write(writer, instance.right)
     }
   }
 }

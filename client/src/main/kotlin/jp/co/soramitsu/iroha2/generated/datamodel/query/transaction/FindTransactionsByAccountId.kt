@@ -24,12 +24,12 @@ public class FindTransactionsByAccountId(
       ScaleWriter<FindTransactionsByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
         FindTransactionsByAccountId(
-      EvaluatesTo<Id>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
         Unit {
-        EvaluatesTo<Id>.write(writer, instance.accountId)
+        EvaluatesTo.write(writer, instance.accountId)
     }
   }
 }

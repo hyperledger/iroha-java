@@ -23,12 +23,12 @@ public class FindAssetsByAssetDefinitionId(
       ScaleWriter<FindAssetsByAssetDefinitionId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
         FindAssetsByAssetDefinitionId(
-      EvaluatesTo<DefinitionId>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
         Unit {
-        EvaluatesTo<DefinitionId>.write(writer, instance.assetDefinitionId)
+        EvaluatesTo.write(writer, instance.assetDefinitionId)
     }
   }
 }

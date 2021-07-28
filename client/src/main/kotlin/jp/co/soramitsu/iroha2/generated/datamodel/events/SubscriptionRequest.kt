@@ -19,7 +19,7 @@ public class SubscriptionRequest(
 ) {
   public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
     public override fun read(reader: ScaleCodecReader): SubscriptionRequest = SubscriptionRequest(
-      EventFilter.read(reader),
+      EventFilter.read(reader) as EventFilter,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {

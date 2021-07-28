@@ -21,7 +21,7 @@ public class _VersionedTransactionV1(
       ScaleWriter<_VersionedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
         _VersionedTransactionV1(
-      Transaction.read(reader),
+      Transaction.read(reader) as Transaction,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {

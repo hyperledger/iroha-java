@@ -24,15 +24,15 @@ public class TransferBox(
 ) {
   public companion object : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
     public override fun read(reader: ScaleCodecReader): TransferBox = TransferBox(
-      EvaluatesTo<IdBox>.read(reader),
-      EvaluatesTo<Value>.read(reader),
-      EvaluatesTo<IdBox>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
-        EvaluatesTo<IdBox>.write(writer, instance.sourceId)
-        EvaluatesTo<Value>.write(writer, instance.object)
-        EvaluatesTo<IdBox>.write(writer, instance.destinationId)
+        EvaluatesTo.write(writer, instance.sourceId)
+        EvaluatesTo.write(writer, instance.object)
+        EvaluatesTo.write(writer, instance.destinationId)
     }
   }
 }

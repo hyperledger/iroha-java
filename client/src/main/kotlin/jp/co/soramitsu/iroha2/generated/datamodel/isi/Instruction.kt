@@ -33,7 +33,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Register = Register(
-        RegisterBox.read(reader),
+        RegisterBox.read(reader) as RegisterBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
@@ -54,7 +54,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): Unregister = Unregister(
-        UnregisterBox.read(reader),
+        UnregisterBox.read(reader) as UnregisterBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
@@ -75,7 +75,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): Mint = Mint(
-        MintBox.read(reader),
+        MintBox.read(reader) as MintBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
@@ -96,7 +96,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): Burn = Burn(
-        BurnBox.read(reader),
+        BurnBox.read(reader) as BurnBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
@@ -117,7 +117,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 4
 
       public override fun read(reader: ScaleCodecReader): Transfer = Transfer(
-        TransferBox.read(reader),
+        TransferBox.read(reader) as TransferBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
@@ -138,7 +138,8 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 5
 
       public override fun read(reader: ScaleCodecReader): If = If(
-        jp.co.soramitsu.iroha2.generated.datamodel.isi.If.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.isi.If.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.isi.If,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
@@ -159,7 +160,8 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 6
 
       public override fun read(reader: ScaleCodecReader): Pair = Pair(
-        jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
@@ -180,7 +182,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 7
 
       public override fun read(reader: ScaleCodecReader): Sequence = Sequence(
-        SequenceBox.read(reader),
+        SequenceBox.read(reader) as SequenceBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
@@ -201,7 +203,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 8
 
       public override fun read(reader: ScaleCodecReader): Fail = Fail(
-        FailBox.read(reader),
+        FailBox.read(reader) as FailBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
@@ -222,7 +224,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 9
 
       public override fun read(reader: ScaleCodecReader): SetKeyValue = SetKeyValue(
-        SetKeyValueBox.read(reader),
+        SetKeyValueBox.read(reader) as SetKeyValueBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
@@ -243,7 +245,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 10
 
       public override fun read(reader: ScaleCodecReader): RemoveKeyValue = RemoveKeyValue(
-        RemoveKeyValueBox.read(reader),
+        RemoveKeyValueBox.read(reader) as RemoveKeyValueBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
@@ -264,7 +266,7 @@ public sealed class Instruction {
       public const val DISCRIMINANT: Int = 11
 
       public override fun read(reader: ScaleCodecReader): Grant = Grant(
-        GrantBox.read(reader),
+        GrantBox.read(reader) as GrantBox,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {

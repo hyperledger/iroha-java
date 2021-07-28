@@ -33,7 +33,8 @@ public sealed class EventFilter {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(
-        jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
@@ -55,7 +56,8 @@ public sealed class EventFilter {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): Data = Data(
-        jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.EventFilter.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.EventFilter.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.EventFilter,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {

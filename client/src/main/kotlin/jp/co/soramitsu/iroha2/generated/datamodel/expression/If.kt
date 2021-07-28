@@ -23,15 +23,15 @@ public class If(
 ) {
   public companion object : ScaleReader<If>, ScaleWriter<If> {
     public override fun read(reader: ScaleCodecReader): If = If(
-      EvaluatesTo<Boolean>.read(reader),
-      EvaluatesTo<Value>.read(reader),
-      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-        EvaluatesTo<Boolean>.write(writer, instance.condition)
-        EvaluatesTo<Value>.write(writer, instance.thenExpression)
-        EvaluatesTo<Value>.write(writer, instance.elseExpression)
+        EvaluatesTo.write(writer, instance.condition)
+        EvaluatesTo.write(writer, instance.thenExpression)
+        EvaluatesTo.write(writer, instance.elseExpression)
     }
   }
 }

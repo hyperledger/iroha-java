@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
+import java.util.*
 import kotlin.Unit
 
 /**
@@ -21,13 +22,12 @@ public class EventFilter(
 ) {
   public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
     public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter(
-      reader.readOptional(EntityType.read(reader)).orElse(null),
-      reader.readOptional(Hash.read(reader)).orElse(null),
+      reader.readOptional(EntityType).orElse(null),
+      reader.readOptional(Hash).orElse(null),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-        writer.writeOptional(EntityType.write(writer, instance.entity)),
-            Optional.ofNullable(instance.entity))
+        writer.writeOptional(EntityType, Optional.ofNullable(instance.entity))
         writer.writeOptional(Hash.write(writer, instance.hash)), Optional.ofNullable(instance.hash))
     }
   }

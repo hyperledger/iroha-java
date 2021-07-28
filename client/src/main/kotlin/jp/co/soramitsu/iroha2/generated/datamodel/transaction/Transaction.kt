@@ -22,8 +22,8 @@ public class Transaction(
 ) {
   public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
     public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-      Payload.read(reader),
-      MutableList(reader.readCompactInt()) {Signature.read(reader)},
+      Payload.read(reader) as Payload,
+      MutableList(reader.readCompactInt()) {Signature.read(reader) as Signature},
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {

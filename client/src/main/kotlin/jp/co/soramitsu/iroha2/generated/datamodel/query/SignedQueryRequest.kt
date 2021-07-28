@@ -25,8 +25,8 @@ public class SignedQueryRequest(
   public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
     public override fun read(reader: ScaleCodecReader): SignedQueryRequest = SignedQueryRequest(
       reader.readCompactInt(),
-      Signature.read(reader),
-      QueryBox.read(reader),
+      Signature.read(reader) as Signature,
+      QueryBox.read(reader) as QueryBox,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {

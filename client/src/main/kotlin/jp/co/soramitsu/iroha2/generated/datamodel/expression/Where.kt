@@ -24,17 +24,17 @@ public class Where(
 ) {
   public companion object : ScaleReader<Where>, ScaleWriter<Where> {
     public override fun read(reader: ScaleCodecReader): Where = Where(
-      EvaluatesTo<Value>.read(reader),
-      hashMapWithSize(reader.readCompactInt(), {reader.readString()},
-          {EvaluatesTo<Value>.read(reader)}),
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+      hashMapWithSize(reader.readCompactInt(), {reader.readString()}, {EvaluatesTo.read(reader) as
+          EvaluatesTo<Value>}),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-        EvaluatesTo<Value>.write(writer, instance.expression)
+        EvaluatesTo.write(writer, instance.expression)
         writer.writeCompact(instance.values.size)
         instance.values.forEach { (key, value) ->  
         	writer.writeAsList(key.toByteArray(Charsets.UTF_8))
-        	EvaluatesTo<Value>.write(writer, value)
+        	EvaluatesTo.write(writer, value)
         }
     }
   }

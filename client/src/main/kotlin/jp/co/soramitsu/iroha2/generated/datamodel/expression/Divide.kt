@@ -21,13 +21,13 @@ public class Divide(
 ) {
   public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
     public override fun read(reader: ScaleCodecReader): Divide = Divide(
-      EvaluatesTo<UInt>.read(reader),
-      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-        EvaluatesTo<UInt>.write(writer, instance.left)
-        EvaluatesTo<UInt>.write(writer, instance.right)
+        EvaluatesTo.write(writer, instance.left)
+        EvaluatesTo.write(writer, instance.right)
     }
   }
 }

@@ -20,8 +20,8 @@ public class Pair(
 ) {
   public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
     public override fun read(reader: ScaleCodecReader): Pair = Pair(
-      Instruction.read(reader),
-      Instruction.read(reader),
+      Instruction.read(reader) as Instruction,
+      Instruction.read(reader) as Instruction,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {

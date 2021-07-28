@@ -23,13 +23,13 @@ public class RemoveKeyValueBox(
 ) {
   public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
     public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = RemoveKeyValueBox(
-      EvaluatesTo<IdBox>.read(reader),
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
-        EvaluatesTo<IdBox>.write(writer, instance.objectId)
-        EvaluatesTo<String>.write(writer, instance.key)
+        EvaluatesTo.write(writer, instance.objectId)
+        EvaluatesTo.write(writer, instance.key)
     }
   }
 }

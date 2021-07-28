@@ -21,13 +21,13 @@ public class Less(
 ) {
   public companion object : ScaleReader<Less>, ScaleWriter<Less> {
     public override fun read(reader: ScaleCodecReader): Less = Less(
-      EvaluatesTo<UInt>.read(reader),
-      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+      EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-        EvaluatesTo<UInt>.write(writer, instance.left)
-        EvaluatesTo<UInt>.write(writer, instance.right)
+        EvaluatesTo.write(writer, instance.left)
+        EvaluatesTo.write(writer, instance.right)
     }
   }
 }

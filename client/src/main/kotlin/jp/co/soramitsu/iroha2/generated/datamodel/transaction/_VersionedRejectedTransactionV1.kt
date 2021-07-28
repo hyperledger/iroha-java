@@ -21,7 +21,7 @@ public class _VersionedRejectedTransactionV1(
       ScaleWriter<_VersionedRejectedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedRejectedTransactionV1 =
         _VersionedRejectedTransactionV1(
-      RejectedTransaction.read(reader),
+      RejectedTransaction.read(reader) as RejectedTransaction,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedRejectedTransactionV1):

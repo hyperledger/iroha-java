@@ -26,14 +26,14 @@ public class FindAssetsByDomainNameAndAssetDefinitionId(
       ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
         FindAssetsByDomainNameAndAssetDefinitionId(
-      EvaluatesTo<String>.read(reader),
-      EvaluatesTo<DefinitionId>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
+      EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
     )
 
     public override fun write(writer: ScaleCodecWriter,
         instance: FindAssetsByDomainNameAndAssetDefinitionId): Unit {
-        EvaluatesTo<String>.write(writer, instance.domainName)
-        EvaluatesTo<DefinitionId>.write(writer, instance.assetDefinitionId)
+        EvaluatesTo.write(writer, instance.domainName)
+        EvaluatesTo.write(writer, instance.assetDefinitionId)
     }
   }
 }

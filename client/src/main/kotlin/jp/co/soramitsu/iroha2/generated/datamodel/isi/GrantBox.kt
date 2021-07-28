@@ -23,13 +23,13 @@ public class GrantBox(
 ) {
   public companion object : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
     public override fun read(reader: ScaleCodecReader): GrantBox = GrantBox(
-      EvaluatesTo<Value>.read(reader),
-      EvaluatesTo<IdBox>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: GrantBox): Unit {
-        EvaluatesTo<Value>.write(writer, instance.object)
-        EvaluatesTo<IdBox>.write(writer, instance.destinationId)
+        EvaluatesTo.write(writer, instance.object)
+        EvaluatesTo.write(writer, instance.destinationId)
     }
   }
 }

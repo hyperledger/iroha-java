@@ -22,11 +22,11 @@ public class FindAssetsByAccountId(
   public companion object : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId =
         FindAssetsByAccountId(
-      EvaluatesTo<Id>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAccountId): Unit {
-        EvaluatesTo<Id>.write(writer, instance.accountId)
+        EvaluatesTo.write(writer, instance.accountId)
     }
   }
 }

@@ -23,11 +23,11 @@ public class FindAccountsByDomainName(
       ScaleWriter<FindAccountsByDomainName> {
     public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
         FindAccountsByDomainName(
-      EvaluatesTo<String>.read(reader),
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName): Unit {
-        EvaluatesTo<String>.write(writer, instance.domainName)
+        EvaluatesTo.write(writer, instance.domainName)
     }
   }
 }

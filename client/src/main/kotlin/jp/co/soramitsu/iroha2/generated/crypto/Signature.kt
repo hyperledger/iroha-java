@@ -22,7 +22,7 @@ public class Signature(
 ) {
   public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
     public override fun read(reader: ScaleCodecReader): Signature = Signature(
-      PublicKey.read(reader),
+      PublicKey.read(reader) as PublicKey,
       MutableList(reader.readCompactInt()) {reader.readByte().toUByte()},
     )
 

@@ -36,7 +36,7 @@ public sealed class IdBox {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): AccountId = AccountId(
-        Id.read(reader),
+        Id.read(reader) as Id,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
@@ -57,7 +57,8 @@ public sealed class IdBox {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): AssetId = AssetId(
-        jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.asset.Id,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
@@ -78,7 +79,7 @@ public sealed class IdBox {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): AssetDefinitionId = AssetDefinitionId(
-        DefinitionId.read(reader),
+        DefinitionId.read(reader) as DefinitionId,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
@@ -120,7 +121,8 @@ public sealed class IdBox {
       public const val DISCRIMINANT: Int = 4
 
       public override fun read(reader: ScaleCodecReader): PeerId = PeerId(
-        jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.read(reader),
+        jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.read(reader) as
+            jp.co.soramitsu.iroha2.generated.datamodel.peer.Id,
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
