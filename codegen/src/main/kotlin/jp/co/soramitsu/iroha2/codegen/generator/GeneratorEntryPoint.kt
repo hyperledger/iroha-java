@@ -6,14 +6,11 @@ import jp.co.soramitsu.iroha2.codegen.blueprint.StructBlueprint
 import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.*
+import java.nio.file.Path
 import java.nio.file.Paths
 
-//todo all enum variants must imoplement discrimant behaviour
-//todo versions of dependencies
-//todo move modules to folder
-//todo add linter
 object GeneratorEntryPoint {
-    fun generate(types: Types) {
+    fun generate(types: Types, outputPath: Path) {
         types.values.mapNotNull {
             when(it) {
                 is StructType -> StructBlueprint(it)
@@ -32,7 +29,7 @@ object GeneratorEntryPoint {
                 .addType(typeSpec)
                 .addComment("\nAuto-generated file. DO NOT EDIT!\n")
                 .build()
-                .writeTo(Paths.get("client/src/main/kotlin"))
+                .writeTo(outputPath)
         }
     }
 }
