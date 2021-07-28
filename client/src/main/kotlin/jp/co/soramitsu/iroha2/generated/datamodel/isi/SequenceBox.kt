@@ -19,12 +19,13 @@ public class SequenceBox(
   public val instructions: MutableList<Instruction>
 ) {
   public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
-    public override fun read(reader: ScaleCodecReader): SequenceBox =
-        SequenceBox(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader))
+    public override fun read(reader: ScaleCodecReader): SequenceBox = SequenceBox(
+      MutableList(reader.readCompactInt()) {Instruction.read(reader)},
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).write(writer,
-          instance.instructions)
+        writer.writeCompact(instance.instructions.size)
+        repeat(instance.instructions.size) {  }
     }
   }
 }

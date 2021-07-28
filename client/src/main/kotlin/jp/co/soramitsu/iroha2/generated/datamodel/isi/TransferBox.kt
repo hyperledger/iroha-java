@@ -23,15 +23,16 @@ public class TransferBox(
   public val destinationId: EvaluatesTo<IdBox>
 ) {
   public companion object : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
-    public override fun read(reader: ScaleCodecReader): TransferBox =
-        TransferBox(IdBox.read(reader),
-    Value.read(reader),
-    IdBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): TransferBox = TransferBox(
+      EvaluatesTo<IdBox>.read(reader),
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<IdBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
-      IdBox.write(writer, instance.sourceId)
-      Value.write(writer, instance.object)
-      IdBox.write(writer, instance.destinationId)
+
+
+
     }
   }
 }

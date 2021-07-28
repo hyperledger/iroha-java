@@ -23,11 +23,13 @@ public class FindPermissionTokensByAccountId(
   public companion object : ScaleReader<FindPermissionTokensByAccountId>,
       ScaleWriter<FindPermissionTokensByAccountId> {
     public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
-        FindPermissionTokensByAccountId(Id.read(reader))
+        FindPermissionTokensByAccountId(
+      EvaluatesTo<Id>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId):
         Unit {
-      Id.write(writer, instance.id)
+
     }
   }
 }

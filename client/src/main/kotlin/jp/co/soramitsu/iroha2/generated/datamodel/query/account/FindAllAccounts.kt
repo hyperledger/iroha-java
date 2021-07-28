@@ -16,7 +16,8 @@ import kotlin.Unit
  */
 public class FindAllAccounts {
   public companion object : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {
-    public override fun read(reader: ScaleCodecReader): FindAllAccounts = FindAllAccounts()
+    public override fun read(reader: ScaleCodecReader): FindAllAccounts = FindAllAccounts(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAccounts): Unit {
     }

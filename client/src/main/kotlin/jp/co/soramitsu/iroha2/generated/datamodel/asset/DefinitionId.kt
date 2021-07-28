@@ -20,13 +20,14 @@ public class DefinitionId(
   public val domainName: String
 ) {
   public companion object : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
-    public override fun read(reader: ScaleCodecReader): DefinitionId =
-        DefinitionId(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
-    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+    public override fun read(reader: ScaleCodecReader): DefinitionId = DefinitionId(
+      reader.readString(),
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: DefinitionId): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.name)
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.domainName)
+        writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
+        writer.writeAsList(instance.domainName.toByteArray(Charsets.UTF_8))
     }
   }
 }

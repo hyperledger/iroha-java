@@ -20,11 +20,12 @@ public class FindAssetsByName(
   public val name: EvaluatesTo<String>
 ) {
   public companion object : ScaleReader<FindAssetsByName>, ScaleWriter<FindAssetsByName> {
-    public override fun read(reader: ScaleCodecReader): FindAssetsByName =
-        FindAssetsByName(String.read(reader))
+    public override fun read(reader: ScaleCodecReader): FindAssetsByName = FindAssetsByName(
+      EvaluatesTo<String>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
-      String.write(writer, instance.name)
+
     }
   }
 }

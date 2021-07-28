@@ -21,14 +21,15 @@ public class Transaction(
   public val signatures: MutableList<Signature>
 ) {
   public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-    public override fun read(reader: ScaleCodecReader): Transaction =
-        Transaction(Payload.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.Signature).read(reader))
+    public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
+      Payload.read(reader),
+      MutableList(reader.readCompactInt()) {Signature.read(reader)},
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-      Payload.write(writer, instance.payload)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.crypto.Signature).write(writer,
-          instance.signatures)
+
+        writer.writeCompact(instance.signatures.size)
+        repeat(instance.signatures.size) {  }
     }
   }
 }

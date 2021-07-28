@@ -21,14 +21,15 @@ public class Signature(
   public val signature: MutableList<UByte>
 ) {
   public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
-    public override fun read(reader: ScaleCodecReader): Signature =
-        Signature(PublicKey.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.U8Reader).read(reader))
+    public override fun read(reader: ScaleCodecReader): Signature = Signature(
+      PublicKey.read(reader),
+      MutableList(reader.readCompactInt()) {reader.readByte().toUByte()},
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
-      PublicKey.write(writer, instance.publicKey)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.scale.U8Writer).write(writer,
-          instance.signature)
+
+        writer.writeCompact(instance.signature.size)
+        repeat(instance.signature.size) { writer.writeByte(instance.it.toByte()) }
     }
   }
 }

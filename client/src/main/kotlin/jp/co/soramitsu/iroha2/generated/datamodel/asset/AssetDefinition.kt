@@ -19,13 +19,14 @@ public class AssetDefinition(
   public val id: DefinitionId
 ) {
   public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-    public override fun read(reader: ScaleCodecReader): AssetDefinition =
-        AssetDefinition(AssetValueType.read(reader),
-    DefinitionId.read(reader))
+    public override fun read(reader: ScaleCodecReader): AssetDefinition = AssetDefinition(
+      AssetValueType.read(reader),
+      DefinitionId.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-      AssetValueType.write(writer, instance.valueType)
-      DefinitionId.write(writer, instance.id)
+
+
     }
   }
 }

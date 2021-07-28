@@ -32,11 +32,12 @@ public sealed class TransactionRejectionReason {
     public companion object : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): NotPermitted =
-          NotPermitted(NotPermittedFail.read(reader))
+      public override fun read(reader: ScaleCodecReader): NotPermitted = NotPermitted(
+        NotPermittedFail.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
-        NotPermittedFail.write(writer, instance.notPermittedFail)
+
       }
     }
   }
@@ -54,11 +55,13 @@ public sealed class TransactionRejectionReason {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
-          UnsatisfiedSignatureCondition(UnsatisfiedSignatureConditionFail.read(reader))
+          UnsatisfiedSignatureCondition(
+        UnsatisfiedSignatureConditionFail.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
           Unit {
-        UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureConditionFail)
+
       }
     }
   }
@@ -75,10 +78,12 @@ public sealed class TransactionRejectionReason {
       public const val DISCRIMINANT: Int = 2
 
       public override fun read(reader: ScaleCodecReader): InstructionExecution =
-          InstructionExecution(InstructionExecutionFail.read(reader))
+          InstructionExecution(
+        InstructionExecutionFail.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
-        InstructionExecutionFail.write(writer, instance.instructionExecutionFail)
+
       }
     }
   }
@@ -96,10 +101,12 @@ public sealed class TransactionRejectionReason {
       public const val DISCRIMINANT: Int = 3
 
       public override fun read(reader: ScaleCodecReader): SignatureVerification =
-          SignatureVerification(SignatureVerificationFail.read(reader))
+          SignatureVerification(
+        SignatureVerificationFail.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
-        SignatureVerificationFail.write(writer, instance.signatureVerificationFail)
+
       }
     }
   }
@@ -115,7 +122,8 @@ public sealed class TransactionRejectionReason {
       public const val DISCRIMINANT: Int = 4
 
       public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature =
-          UnexpectedGenesisAccountSignature()
+          UnexpectedGenesisAccountSignature(
+      )
 
       public override fun write(writer: ScaleCodecWriter,
           instance: UnexpectedGenesisAccountSignature): Unit {

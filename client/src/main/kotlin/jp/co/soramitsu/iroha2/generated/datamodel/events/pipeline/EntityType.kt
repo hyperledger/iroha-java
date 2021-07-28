@@ -30,7 +30,8 @@ public sealed class EntityType {
     public companion object : ScaleReader<Block>, ScaleWriter<Block> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Block = Block()
+      public override fun read(reader: ScaleCodecReader): Block = Block(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
       }
@@ -46,7 +47,8 @@ public sealed class EntityType {
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Transaction = Transaction()
+      public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
       }

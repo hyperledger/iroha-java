@@ -23,16 +23,17 @@ public class RejectedTransaction(
   public val rejectionReason: TransactionRejectionReason
 ) {
   public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
-    public override fun read(reader: ScaleCodecReader): RejectedTransaction =
-        RejectedTransaction(Payload.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.Signature).read(reader),
-    TransactionRejectionReason.read(reader))
+    public override fun read(reader: ScaleCodecReader): RejectedTransaction = RejectedTransaction(
+      Payload.read(reader),
+      MutableList(reader.readCompactInt()) {Signature.read(reader)},
+      TransactionRejectionReason.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-      Payload.write(writer, instance.payload)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.crypto.Signature).write(writer,
-          instance.signatures)
-      TransactionRejectionReason.write(writer, instance.rejectionReason)
+
+        writer.writeCompact(instance.signatures.size)
+        repeat(instance.signatures.size) {  }
+
     }
   }
 }

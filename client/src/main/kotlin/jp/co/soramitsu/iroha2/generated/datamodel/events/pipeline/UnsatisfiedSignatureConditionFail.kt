@@ -22,11 +22,13 @@ public class UnsatisfiedSignatureConditionFail(
   public companion object : ScaleReader<UnsatisfiedSignatureConditionFail>,
       ScaleWriter<UnsatisfiedSignatureConditionFail> {
     public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureConditionFail =
-        UnsatisfiedSignatureConditionFail(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+        UnsatisfiedSignatureConditionFail(
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter,
         instance: UnsatisfiedSignatureConditionFail): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
+        writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
   }
 }

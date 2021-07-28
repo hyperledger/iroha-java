@@ -19,11 +19,12 @@ public class QueryResult(
   public val `value`: Value
 ) {
   public companion object : ScaleReader<QueryResult>, ScaleWriter<QueryResult> {
-    public override fun read(reader: ScaleCodecReader): QueryResult =
-        QueryResult(Value.read(reader))
+    public override fun read(reader: ScaleCodecReader): QueryResult = QueryResult(
+      Value.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: QueryResult): Unit {
-      Value.write(writer, instance.value)
+
     }
   }
 }

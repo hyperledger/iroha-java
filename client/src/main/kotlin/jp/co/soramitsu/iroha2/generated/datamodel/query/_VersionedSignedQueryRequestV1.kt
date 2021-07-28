@@ -20,11 +20,13 @@ public class _VersionedSignedQueryRequestV1(
   public companion object : ScaleReader<_VersionedSignedQueryRequestV1>,
       ScaleWriter<_VersionedSignedQueryRequestV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedSignedQueryRequestV1 =
-        _VersionedSignedQueryRequestV1(SignedQueryRequest.read(reader))
+        _VersionedSignedQueryRequestV1(
+      SignedQueryRequest.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedSignedQueryRequestV1):
         Unit {
-      SignedQueryRequest.write(writer, instance.signedQueryRequest)
+
     }
   }
 }

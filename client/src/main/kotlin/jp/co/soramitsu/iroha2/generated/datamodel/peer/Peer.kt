@@ -18,10 +18,12 @@ public class Peer(
   public val id: Id
 ) {
   public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
-    public override fun read(reader: ScaleCodecReader): Peer = Peer(Id.read(reader))
+    public override fun read(reader: ScaleCodecReader): Peer = Peer(
+      Id.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-      Id.write(writer, instance.id)
+
     }
   }
 }

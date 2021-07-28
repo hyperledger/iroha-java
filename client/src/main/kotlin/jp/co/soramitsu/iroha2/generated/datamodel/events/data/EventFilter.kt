@@ -16,7 +16,8 @@ import kotlin.Unit
  */
 public class EventFilter {
   public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-    public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter()
+    public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
     }

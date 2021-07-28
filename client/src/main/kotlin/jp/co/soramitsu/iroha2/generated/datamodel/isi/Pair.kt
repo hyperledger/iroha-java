@@ -19,12 +19,14 @@ public class Pair(
   public val rightInstruction: Instruction
 ) {
   public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
-    public override fun read(reader: ScaleCodecReader): Pair = Pair(Instruction.read(reader),
-    Instruction.read(reader))
+    public override fun read(reader: ScaleCodecReader): Pair = Pair(
+      Instruction.read(reader),
+      Instruction.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-      Instruction.write(writer, instance.leftInstruction)
-      Instruction.write(writer, instance.rightInstruction)
+
+
     }
   }
 }

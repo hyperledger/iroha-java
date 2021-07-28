@@ -20,11 +20,12 @@ public class FindAccountById(
   public val id: EvaluatesTo<Id>
 ) {
   public companion object : ScaleReader<FindAccountById>, ScaleWriter<FindAccountById> {
-    public override fun read(reader: ScaleCodecReader): FindAccountById =
-        FindAccountById(Id.read(reader))
+    public override fun read(reader: ScaleCodecReader): FindAccountById = FindAccountById(
+      EvaluatesTo<Id>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
-      Id.write(writer, instance.id)
+
     }
   }
 }

@@ -19,10 +19,12 @@ public class Not(
   public val expression: EvaluatesTo<Boolean>
 ) {
   public companion object : ScaleReader<Not>, ScaleWriter<Not> {
-    public override fun read(reader: ScaleCodecReader): Not = Not(Boolean.read(reader))
+    public override fun read(reader: ScaleCodecReader): Not = Not(
+      EvaluatesTo<Boolean>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-      Boolean.write(writer, instance.expression)
+
     }
   }
 }

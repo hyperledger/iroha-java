@@ -23,15 +23,17 @@ public class NewAccount(
   public val metadata: Metadata
 ) {
   public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-    public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(Id.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.PublicKey).read(reader),
-    Metadata.read(reader))
+    public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(
+      Id.read(reader),
+      MutableList(reader.readCompactInt()) {PublicKey.read(reader)},
+      Metadata.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-      Id.write(writer, instance.id)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.crypto.PublicKey).write(writer,
-          instance.signatories)
-      Metadata.write(writer, instance.metadata)
+
+        writer.writeCompact(instance.signatories.size)
+        repeat(instance.signatories.size) {  }
+
     }
   }
 }

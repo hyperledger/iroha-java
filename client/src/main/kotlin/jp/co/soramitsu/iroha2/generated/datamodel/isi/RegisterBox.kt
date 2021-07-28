@@ -20,11 +20,12 @@ public class RegisterBox(
   public val `object`: EvaluatesTo<IdentifiableBox>
 ) {
   public companion object : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
-    public override fun read(reader: ScaleCodecReader): RegisterBox =
-        RegisterBox(IdentifiableBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): RegisterBox = RegisterBox(
+      EvaluatesTo<IdentifiableBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit {
-      IdentifiableBox.write(writer, instance.object)
+
     }
   }
 }

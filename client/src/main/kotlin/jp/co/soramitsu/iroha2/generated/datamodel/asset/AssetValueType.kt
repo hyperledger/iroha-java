@@ -30,7 +30,8 @@ public sealed class AssetValueType {
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Quantity = Quantity()
+      public override fun read(reader: ScaleCodecReader): Quantity = Quantity(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
       }
@@ -46,7 +47,8 @@ public sealed class AssetValueType {
     public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): BigQuantity = BigQuantity()
+      public override fun read(reader: ScaleCodecReader): BigQuantity = BigQuantity(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
       }
@@ -62,7 +64,8 @@ public sealed class AssetValueType {
     public companion object : ScaleReader<Store>, ScaleWriter<Store> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): Store = Store()
+      public override fun read(reader: ScaleCodecReader): Store = Store(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
       }

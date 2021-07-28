@@ -20,15 +20,14 @@ public class EventFilter(
   public val hash: Hash?
 ) {
   public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-    public override fun read(reader: ScaleCodecReader): EventFilter =
-        EventFilter(jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType?).read(reader),
-    jp.co.soramitsu.iroha2.scale.OptionReader(jp.co.soramitsu.iroha2.generated.crypto.Hash?).read(reader))
+    public override fun read(reader: ScaleCodecReader): EventFilter = EventFilter(
+      reader.readOptional(EntityType.read(reader)).orElse(null),
+      reader.readOptional(Hash.read(reader)).orElse(null),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-      jp.co.soramitsu.iroha2.scale.OptionWriter(jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType?).write(writer,
-          instance.entity)
-      jp.co.soramitsu.iroha2.scale.OptionWriter(jp.co.soramitsu.iroha2.generated.crypto.Hash?).write(writer,
-          instance.hash)
+
+
     }
   }
 }

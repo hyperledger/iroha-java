@@ -20,12 +20,14 @@ public class Mod(
   public val right: EvaluatesTo<UInt>
 ) {
   public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
-    public override fun read(reader: ScaleCodecReader): Mod = Mod(UInt.read(reader),
-    UInt.read(reader))
+    public override fun read(reader: ScaleCodecReader): Mod = Mod(
+      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo<UInt>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-      UInt.write(writer, instance.left)
-      UInt.write(writer, instance.right)
+
+
     }
   }
 }

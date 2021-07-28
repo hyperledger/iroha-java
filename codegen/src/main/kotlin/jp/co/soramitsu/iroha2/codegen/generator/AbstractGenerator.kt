@@ -2,9 +2,8 @@ package jp.co.soramitsu.iroha2.codegen.generator
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import jp.co.soramitsu.iroha2.codegen.Blueprint
+import jp.co.soramitsu.iroha2.codegen.blueprint.Blueprint
 import jp.co.soramitsu.iroha2.type.CompositeType
-import jp.co.soramitsu.iroha2.type.Type
 
 abstract class AbstractGenerator<T : Blueprint<*>> {
     fun generate(blueprint: T) : TypeSpec = pipelineClass(blueprint)
@@ -67,15 +66,21 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
 
     //todo move to separate interface
     open fun scaleReaderCode(blueprint: T): CodeBlock {
-        val code = blueprint.properties
-                .joinToString(",\n") { resolveScaleReadImplementation(it).toString() }
-
-        return CodeBlock.of("return ${blueprint.className}($code)")
+        var result = CodeBlock.builder().add("return ${blueprint.className}(\n").indent()
+        val codeBlocks = blueprint.properties.map { resolveScaleReadImpl(it.original) }.toList()
+        for (cb in codeBlocks) {
+            result = result.add(cb).add(",\n")
+        }
+        return result.unindent().add(")").build()
     }
 
     open fun scaleWriterCode(blueprint: T): CodeBlock {
-        val code = blueprint.properties.joinToString ("\n") { resolveScaleWriteImplementation(it).toString()}
-        return CodeBlock.of(code)
+        var result = CodeBlock.builder().indent()
+        val codeBlocks = blueprint.properties.map { resolveScaleWriteImpl(it.original, it.name) }.toList()
+        for (cb in codeBlocks) {
+            result = result.add(cb).add("\n")
+        }
+        return result.unindent().build()
     }
 
     open fun implFunctions(blueprint: T, clazz: TypeSpec.Builder) = Unit

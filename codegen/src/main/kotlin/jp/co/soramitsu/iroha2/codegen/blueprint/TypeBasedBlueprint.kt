@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.codegen.blueprint
 
-import jp.co.soramitsu.iroha2.codegen.Blueprint
+import jp.co.soramitsu.iroha2.codegen.defineClassName
+import jp.co.soramitsu.iroha2.codegen.definePackageName
 import jp.co.soramitsu.iroha2.type.CompositeType
 
 @ExperimentalUnsignedTypes

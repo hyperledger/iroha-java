@@ -18,7 +18,8 @@ public class FindAllAssetsDefinitions {
   public companion object : ScaleReader<FindAllAssetsDefinitions>,
       ScaleWriter<FindAllAssetsDefinitions> {
     public override fun read(reader: ScaleCodecReader): FindAllAssetsDefinitions =
-        FindAllAssetsDefinitions()
+        FindAllAssetsDefinitions(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAssetsDefinitions): Unit {
     }

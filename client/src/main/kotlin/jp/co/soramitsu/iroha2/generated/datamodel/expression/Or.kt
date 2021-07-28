@@ -20,12 +20,14 @@ public class Or(
   public val right: EvaluatesTo<Boolean>
 ) {
   public companion object : ScaleReader<Or>, ScaleWriter<Or> {
-    public override fun read(reader: ScaleCodecReader): Or = Or(Boolean.read(reader),
-    Boolean.read(reader))
+    public override fun read(reader: ScaleCodecReader): Or = Or(
+      EvaluatesTo<Boolean>.read(reader),
+      EvaluatesTo<Boolean>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-      Boolean.write(writer, instance.left)
-      Boolean.write(writer, instance.right)
+
+
     }
   }
 }

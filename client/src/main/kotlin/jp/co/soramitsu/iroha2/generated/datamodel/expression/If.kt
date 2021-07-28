@@ -22,14 +22,16 @@ public class If(
   public val elseExpression: EvaluatesTo<Value>
 ) {
   public companion object : ScaleReader<If>, ScaleWriter<If> {
-    public override fun read(reader: ScaleCodecReader): If = If(Boolean.read(reader),
-    Value.read(reader),
-    Value.read(reader))
+    public override fun read(reader: ScaleCodecReader): If = If(
+      EvaluatesTo<Boolean>.read(reader),
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<Value>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-      Boolean.write(writer, instance.condition)
-      Value.write(writer, instance.thenExpression)
-      Value.write(writer, instance.elseExpression)
+
+
+
     }
   }
 }

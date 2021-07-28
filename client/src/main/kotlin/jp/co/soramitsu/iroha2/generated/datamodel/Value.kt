@@ -35,11 +35,12 @@ public sealed class Value {
     public companion object : ScaleReader<U32>, ScaleWriter<U32> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): U32 =
-          U32(jp.co.soramitsu.iroha2.scale.U32Reader.read(reader))
+      public override fun read(reader: ScaleCodecReader): U32 = U32(
+        reader.readUint32().toUInt(),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: U32): Unit {
-        jp.co.soramitsu.iroha2.scale.U32Writer.write(writer, instance.u32)
+          writer.writeUint32(instance.u32.toInt())
       }
     }
   }
@@ -55,11 +56,12 @@ public sealed class Value {
     public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Bool =
-          Bool(jp.co.soramitsu.iroha2.scale.BoolReader.read(reader))
+      public override fun read(reader: ScaleCodecReader): Bool = Bool(
+        reader.readBoolean(),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Bool): Unit {
-        jp.co.soramitsu.iroha2.scale.BoolWriter.write(writer, instance.bool)
+          if (instance.bool) { writer.directWrite(1) } else { writer.directWrite(0) }
       }
     }
   }
@@ -75,11 +77,12 @@ public sealed class Value {
     public companion object : ScaleReader<String>, ScaleWriter<String> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): String =
-          String(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+      public override fun read(reader: ScaleCodecReader): String = String(
+        reader.readString(),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: String): Unit {
-        jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.string)
+          writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
       }
     }
   }
@@ -95,12 +98,13 @@ public sealed class Value {
     public companion object : ScaleReader<Vec>, ScaleWriter<Vec> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): Vec =
-          Vec(io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
+      public override fun read(reader: ScaleCodecReader): Vec = Vec(
+        MutableList(reader.readCompactInt()) {Value.read(reader)},
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
-        io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer,
-            instance.vec)
+          writer.writeCompact(instance.vec.size)
+          repeat(instance.vec.size) {  }
       }
     }
   }
@@ -116,10 +120,12 @@ public sealed class Value {
     public companion object : ScaleReader<Id>, ScaleWriter<Id> {
       public const val DISCRIMINANT: Int = 4
 
-      public override fun read(reader: ScaleCodecReader): Id = Id(IdBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Id = Id(
+        IdBox.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-        IdBox.write(writer, instance.idBox)
+
       }
     }
   }
@@ -135,11 +141,12 @@ public sealed class Value {
     public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
       public const val DISCRIMINANT: Int = 5
 
-      public override fun read(reader: ScaleCodecReader): Identifiable =
-          Identifiable(IdentifiableBox.read(reader))
+      public override fun read(reader: ScaleCodecReader): Identifiable = Identifiable(
+        IdentifiableBox.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
-        IdentifiableBox.write(writer, instance.identifiableBox)
+
       }
     }
   }
@@ -155,11 +162,12 @@ public sealed class Value {
     public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
       public const val DISCRIMINANT: Int = 6
 
-      public override fun read(reader: ScaleCodecReader): PublicKey =
-          PublicKey(PublicKey.read(reader))
+      public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
+        jp.co.soramitsu.iroha2.generated.crypto.PublicKey.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-        PublicKey.write(writer, instance.publicKey)
+
       }
     }
   }
@@ -175,11 +183,12 @@ public sealed class Value {
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
       public const val DISCRIMINANT: Int = 7
 
-      public override fun read(reader: ScaleCodecReader): Parameter =
-          Parameter(Parameter.read(reader))
+      public override fun read(reader: ScaleCodecReader): Parameter = Parameter(
+        jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-        Parameter.write(writer, instance.parameter)
+
       }
     }
   }
@@ -198,10 +207,12 @@ public sealed class Value {
       public const val DISCRIMINANT: Int = 8
 
       public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
-          SignatureCheckCondition(SignatureCheckCondition.read(reader))
+          SignatureCheckCondition(
+        jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-        SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
+
       }
     }
   }
@@ -218,11 +229,12 @@ public sealed class Value {
     public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
       public const val DISCRIMINANT: Int = 9
 
-      public override fun read(reader: ScaleCodecReader): TransactionValue =
-          TransactionValue(TransactionValue.read(reader))
+      public override fun read(reader: ScaleCodecReader): TransactionValue = TransactionValue(
+        jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
-        TransactionValue.write(writer, instance.transactionValue)
+
       }
     }
   }
@@ -239,11 +251,12 @@ public sealed class Value {
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
       public const val DISCRIMINANT: Int = 10
 
-      public override fun read(reader: ScaleCodecReader): PermissionToken =
-          PermissionToken(PermissionToken.read(reader))
+      public override fun read(reader: ScaleCodecReader): PermissionToken = PermissionToken(
+        jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-        PermissionToken.write(writer, instance.permissionToken)
+
       }
     }
   }

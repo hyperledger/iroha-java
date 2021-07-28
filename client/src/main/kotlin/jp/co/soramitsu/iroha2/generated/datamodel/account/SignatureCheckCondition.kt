@@ -22,10 +22,12 @@ public class SignatureCheckCondition(
   public companion object : ScaleReader<SignatureCheckCondition>,
       ScaleWriter<SignatureCheckCondition> {
     public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
-        SignatureCheckCondition(Boolean.read(reader))
+        SignatureCheckCondition(
+      EvaluatesTo<Boolean>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-      Boolean.write(writer, instance.evaluatesTo)
+
     }
   }
 }

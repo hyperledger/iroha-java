@@ -16,7 +16,8 @@ import kotlin.Unit
  */
 public class FindAllDomains {
   public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-    public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains()
+    public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit {
     }

@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.utils.hashMapWithSize
 import kotlin.String
 import kotlin.Unit
 import kotlin.collections.MutableMap
@@ -26,21 +27,17 @@ public class Domain(
   public val assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry>
 ) {
   public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
-    public override fun read(reader: ScaleCodecReader): Domain =
-        Domain(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
-    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
-        jp.co.soramitsu.iroha2.generated.datamodel.account.Account).read(reader),
-    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId,
-        jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry).read(reader))
+    public override fun read(reader: ScaleCodecReader): Domain = Domain(
+      reader.readString(),
+      hashMapWithSize(reader.readCompactInt(), {Id.read(reader)}, {Account.read(reader)}),
+      hashMapWithSize(reader.readCompactInt(), {DefinitionId.read(reader)},
+          {AssetDefinitionEntry.read(reader)}),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.name)
-      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
-          jp.co.soramitsu.iroha2.generated.datamodel.account.Account).write(writer,
-          instance.accounts)
-      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId,
-          jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry).write(writer,
-          instance.assetDefinitions)
+        writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
+
+
     }
   }
 }

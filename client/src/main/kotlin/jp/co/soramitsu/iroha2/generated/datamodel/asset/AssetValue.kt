@@ -35,11 +35,12 @@ public sealed class AssetValue {
     public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Quantity =
-          Quantity(jp.co.soramitsu.iroha2.scale.U32Reader.read(reader))
+      public override fun read(reader: ScaleCodecReader): Quantity = Quantity(
+        reader.readUint32().toUInt(),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Quantity): Unit {
-        jp.co.soramitsu.iroha2.scale.U32Writer.write(writer, instance.u32)
+          writer.writeUint32(instance.u32.toInt())
       }
     }
   }
@@ -55,11 +56,12 @@ public sealed class AssetValue {
     public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): BigQuantity =
-          BigQuantity(jp.co.soramitsu.iroha2.scale.U128Reader.read(reader))
+      public override fun read(reader: ScaleCodecReader): BigQuantity = BigQuantity(
+        reader.readUint128(),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: BigQuantity): Unit {
-        jp.co.soramitsu.iroha2.scale.U128Writer.write(writer, instance.u128)
+          writer.writeUint128(instance.u128)
       }
     }
   }
@@ -75,10 +77,12 @@ public sealed class AssetValue {
     public companion object : ScaleReader<Store>, ScaleWriter<Store> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): Store = Store(Metadata.read(reader))
+      public override fun read(reader: ScaleCodecReader): Store = Store(
+        Metadata.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-        Metadata.write(writer, instance.metadata)
+
       }
     }
   }

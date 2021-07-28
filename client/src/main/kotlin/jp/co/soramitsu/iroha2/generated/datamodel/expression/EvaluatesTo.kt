@@ -19,11 +19,12 @@ public class EvaluatesTo<T0>(
   public val expression: Expression
 ) {
   public companion object : ScaleReader<EvaluatesTo<out Any>>, ScaleWriter<EvaluatesTo<out Any>> {
-    public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> =
-        EvaluatesTo(Expression.read(reader))
+    public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> = EvaluatesTo(
+      Expression.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo<out Any>): Unit {
-      Expression.write(writer, instance.expression)
+
     }
   }
 }

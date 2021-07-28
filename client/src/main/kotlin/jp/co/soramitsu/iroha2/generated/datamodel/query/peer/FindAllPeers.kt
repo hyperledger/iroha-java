@@ -16,7 +16,8 @@ import kotlin.Unit
  */
 public class FindAllPeers {
   public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
-    public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers()
+    public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers): Unit {
     }

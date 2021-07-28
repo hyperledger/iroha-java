@@ -11,6 +11,8 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.utils.hashMapWithSize
+import jp.co.soramitsu.iroha2.utils.hashSetWithSize
 import kotlin.Unit
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
@@ -30,24 +32,24 @@ public class Account(
   public val metadata: Metadata
 ) {
   public companion object : ScaleReader<Account>, ScaleWriter<Account> {
-    public override fun read(reader: ScaleCodecReader): Account = Account(Id.read(reader),
-    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.generated.datamodel.asset.Id,
-        jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset).read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.crypto.PublicKey).read(reader),
-    jp.co.soramitsu.iroha2.scale.SetReader(jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken).read(reader),
-    SignatureCheckCondition.read(reader),
-    Metadata.read(reader))
+    public override fun read(reader: ScaleCodecReader): Account = Account(
+      Id.read(reader),
+      hashMapWithSize(reader.readCompactInt(),
+          {jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader)}, {Asset.read(reader)}),
+      MutableList(reader.readCompactInt()) {PublicKey.read(reader)},
+      hashSetWithSize(reader.readCompactInt()) {PermissionToken.read(reader)},
+      SignatureCheckCondition.read(reader),
+      Metadata.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-      Id.write(writer, instance.id)
-      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.generated.datamodel.asset.Id,
-          jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset).write(writer, instance.assets)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.crypto.PublicKey).write(writer,
-          instance.signatories)
-      jp.co.soramitsu.iroha2.scale.SetWriter(jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken).write(writer,
-          instance.permissionTokens)
-      SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
-      Metadata.write(writer, instance.metadata)
+
+
+        writer.writeCompact(instance.signatories.size)
+        repeat(instance.signatories.size) {  }
+
+
+
     }
   }
 }

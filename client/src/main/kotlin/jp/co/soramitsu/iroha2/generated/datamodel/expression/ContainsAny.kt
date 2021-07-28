@@ -21,13 +21,14 @@ public class ContainsAny(
   public val elements: EvaluatesTo<MutableList<Value>>
 ) {
   public companion object : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
-    public override fun read(reader: ScaleCodecReader): ContainsAny =
-        ContainsAny(Value.read(reader),
-    Value.read(reader))
+    public override fun read(reader: ScaleCodecReader): ContainsAny = ContainsAny(
+      EvaluatesTo<MutableList<Value>>.read(reader),
+      EvaluatesTo<MutableList<Value>>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-      Value.write(writer, instance.collection)
-      Value.write(writer, instance.elements)
+
+
     }
   }
 }

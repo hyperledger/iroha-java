@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.codegen.blueprint
 
-import jp.co.soramitsu.iroha2.codegen.Property
+import jp.co.soramitsu.iroha2.codegen.defineClassName
+import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import jp.co.soramitsu.iroha2.type.Type

@@ -32,10 +32,12 @@ public sealed class Event {
     public companion object : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(
+        jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
-        Event.write(writer, instance.event)
+
       }
     }
   }
@@ -51,10 +53,12 @@ public sealed class Event {
     public companion object : ScaleReader<Data>, ScaleWriter<Data> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Data = Data(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Data = Data(
+        jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-        Event.write(writer, instance.event)
+
       }
     }
   }

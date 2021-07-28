@@ -22,14 +22,15 @@ public class PublicKey(
   public val payload: MutableList<UByte>
 ) {
   public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
-    public override fun read(reader: ScaleCodecReader): PublicKey =
-        PublicKey(jp.co.soramitsu.iroha2.scale.StringReader.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.scale.U8Reader).read(reader))
+    public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
+      reader.readString(),
+      MutableList(reader.readCompactInt()) {reader.readByte().toUByte()},
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.digestFunction)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.scale.U8Writer).write(writer,
-          instance.payload)
+        writer.writeAsList(instance.digestFunction.toByteArray(Charsets.UTF_8))
+        writer.writeCompact(instance.payload.size)
+        repeat(instance.payload.size) { writer.writeByte(it.toByte()) }
     }
   }
 }

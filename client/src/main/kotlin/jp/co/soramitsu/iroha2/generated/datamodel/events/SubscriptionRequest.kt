@@ -18,11 +18,12 @@ public class SubscriptionRequest(
   public val eventFilter: EventFilter
 ) {
   public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
-    public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-        SubscriptionRequest(EventFilter.read(reader))
+    public override fun read(reader: ScaleCodecReader): SubscriptionRequest = SubscriptionRequest(
+      EventFilter.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-      EventFilter.write(writer, instance.eventFilter)
+
     }
   }
 }

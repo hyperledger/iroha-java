@@ -20,11 +20,12 @@ public class UnregisterBox(
   public val objectId: EvaluatesTo<IdBox>
 ) {
   public companion object : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
-    public override fun read(reader: ScaleCodecReader): UnregisterBox =
-        UnregisterBox(IdBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): UnregisterBox = UnregisterBox(
+      EvaluatesTo<IdBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
-      IdBox.write(writer, instance.objectId)
+
     }
   }
 }

@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2.type
 
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
-abstract class Type(val name: String) {
+sealed class Type(val name: String) {
     open fun notResolvedTypes() : Set<String> = setOf()
 }
 

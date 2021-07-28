@@ -16,7 +16,8 @@ import kotlin.Unit
  */
 public class FindAllAssets {
   public companion object : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
-    public override fun read(reader: ScaleCodecReader): FindAllAssets = FindAllAssets()
+    public override fun read(reader: ScaleCodecReader): FindAllAssets = FindAllAssets(
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit {
     }

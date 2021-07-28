@@ -20,12 +20,14 @@ public class Greater(
   public val right: EvaluatesTo<UInt>
 ) {
   public companion object : ScaleReader<Greater>, ScaleWriter<Greater> {
-    public override fun read(reader: ScaleCodecReader): Greater = Greater(UInt.read(reader),
-    UInt.read(reader))
+    public override fun read(reader: ScaleCodecReader): Greater = Greater(
+      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo<UInt>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-      UInt.write(writer, instance.left)
-      UInt.write(writer, instance.right)
+
+
     }
   }
 }

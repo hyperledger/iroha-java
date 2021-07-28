@@ -19,11 +19,12 @@ public class ContextValue(
   public val valueName: String
 ) {
   public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
-    public override fun read(reader: ScaleCodecReader): ContextValue =
-        ContextValue(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+    public override fun read(reader: ScaleCodecReader): ContextValue = ContextValue(
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.valueName)
+        writer.writeAsList(instance.valueName.toByteArray(Charsets.UTF_8))
     }
   }
 }

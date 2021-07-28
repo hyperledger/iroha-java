@@ -19,11 +19,12 @@ public class NotPermittedFail(
   public val reason: String
 ) {
   public companion object : ScaleReader<NotPermittedFail>, ScaleWriter<NotPermittedFail> {
-    public override fun read(reader: ScaleCodecReader): NotPermittedFail =
-        NotPermittedFail(jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+    public override fun read(reader: ScaleCodecReader): NotPermittedFail = NotPermittedFail(
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: NotPermittedFail): Unit {
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
+        writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
   }
 }

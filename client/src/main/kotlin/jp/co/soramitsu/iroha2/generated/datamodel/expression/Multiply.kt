@@ -20,12 +20,14 @@ public class Multiply(
   public val right: EvaluatesTo<UInt>
 ) {
   public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
-    public override fun read(reader: ScaleCodecReader): Multiply = Multiply(UInt.read(reader),
-    UInt.read(reader))
+    public override fun read(reader: ScaleCodecReader): Multiply = Multiply(
+      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo<UInt>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
-      UInt.write(writer, instance.left)
-      UInt.write(writer, instance.right)
+
+
     }
   }
 }

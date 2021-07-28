@@ -23,12 +23,14 @@ public class SignatureVerificationFail(
   public companion object : ScaleReader<SignatureVerificationFail>,
       ScaleWriter<SignatureVerificationFail> {
     public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
-        SignatureVerificationFail(Signature.read(reader),
-    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+        SignatureVerificationFail(
+      Signature.read(reader),
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail): Unit {
-      Signature.write(writer, instance.signature)
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
+
+        writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
   }
 }

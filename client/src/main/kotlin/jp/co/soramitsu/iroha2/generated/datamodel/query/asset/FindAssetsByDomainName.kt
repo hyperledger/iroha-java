@@ -22,10 +22,12 @@ public class FindAssetsByDomainName(
   public companion object : ScaleReader<FindAssetsByDomainName>, ScaleWriter<FindAssetsByDomainName>
       {
     public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName =
-        FindAssetsByDomainName(String.read(reader))
+        FindAssetsByDomainName(
+      EvaluatesTo<String>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName): Unit {
-      String.write(writer, instance.domainName)
+
     }
   }
 }

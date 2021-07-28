@@ -21,14 +21,16 @@ public class Event(
   public val hash: Hash
 ) {
   public companion object : ScaleReader<Event>, ScaleWriter<Event> {
-    public override fun read(reader: ScaleCodecReader): Event = Event(EntityType.read(reader),
-    Status.read(reader),
-    Hash.read(reader))
+    public override fun read(reader: ScaleCodecReader): Event = Event(
+      EntityType.read(reader),
+      Status.read(reader),
+      Hash.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-      EntityType.write(writer, instance.entityType)
-      Status.write(writer, instance.status)
-      Hash.write(writer, instance.hash)
+
+
+
     }
   }
 }

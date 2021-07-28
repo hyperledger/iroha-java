@@ -23,12 +23,14 @@ public class InstructionExecutionFail(
   public companion object : ScaleReader<InstructionExecutionFail>,
       ScaleWriter<InstructionExecutionFail> {
     public override fun read(reader: ScaleCodecReader): InstructionExecutionFail =
-        InstructionExecutionFail(Instruction.read(reader),
-    jp.co.soramitsu.iroha2.scale.StringReader.read(reader))
+        InstructionExecutionFail(
+      Instruction.read(reader),
+      reader.readString(),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: InstructionExecutionFail): Unit {
-      Instruction.write(writer, instance.instruction)
-      jp.co.soramitsu.iroha2.scale.StringWriter.write(writer, instance.reason)
+
+        writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
   }
 }

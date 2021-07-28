@@ -20,12 +20,14 @@ public class Divide(
   public val right: EvaluatesTo<UInt>
 ) {
   public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
-    public override fun read(reader: ScaleCodecReader): Divide = Divide(UInt.read(reader),
-    UInt.read(reader))
+    public override fun read(reader: ScaleCodecReader): Divide = Divide(
+      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo<UInt>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-      UInt.write(writer, instance.left)
-      UInt.write(writer, instance.right)
+
+
     }
   }
 }

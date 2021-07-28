@@ -22,12 +22,14 @@ public class GrantBox(
   public val destinationId: EvaluatesTo<IdBox>
 ) {
   public companion object : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
-    public override fun read(reader: ScaleCodecReader): GrantBox = GrantBox(Value.read(reader),
-    IdBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): GrantBox = GrantBox(
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<IdBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: GrantBox): Unit {
-      Value.write(writer, instance.object)
-      IdBox.write(writer, instance.destinationId)
+
+
     }
   }
 }

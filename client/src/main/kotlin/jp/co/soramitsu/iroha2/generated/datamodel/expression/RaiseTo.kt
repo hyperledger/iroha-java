@@ -20,12 +20,14 @@ public class RaiseTo(
   public val right: EvaluatesTo<UInt>
 ) {
   public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
-    public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(UInt.read(reader),
-    UInt.read(reader))
+    public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(
+      EvaluatesTo<UInt>.read(reader),
+      EvaluatesTo<UInt>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-      UInt.write(writer, instance.left)
-      UInt.write(writer, instance.right)
+
+
     }
   }
 }

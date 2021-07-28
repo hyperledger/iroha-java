@@ -24,13 +24,15 @@ public class FindAssetKeyValueByIdAndKey(
   public companion object : ScaleReader<FindAssetKeyValueByIdAndKey>,
       ScaleWriter<FindAssetKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
-        FindAssetKeyValueByIdAndKey(Id.read(reader),
-    String.read(reader))
+        FindAssetKeyValueByIdAndKey(
+      EvaluatesTo<Id>.read(reader),
+      EvaluatesTo<String>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
         Unit {
-      Id.write(writer, instance.id)
-      String.write(writer, instance.key)
+
+
     }
   }
 }

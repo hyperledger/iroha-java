@@ -22,12 +22,14 @@ public class MintBox(
   public val destinationId: EvaluatesTo<IdBox>
 ) {
   public companion object : ScaleReader<MintBox>, ScaleWriter<MintBox> {
-    public override fun read(reader: ScaleCodecReader): MintBox = MintBox(Value.read(reader),
-    IdBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): MintBox = MintBox(
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<IdBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: MintBox): Unit {
-      Value.write(writer, instance.object)
-      IdBox.write(writer, instance.destinationId)
+
+
     }
   }
 }

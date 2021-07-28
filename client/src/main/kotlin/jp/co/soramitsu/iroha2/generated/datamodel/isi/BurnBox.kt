@@ -22,12 +22,14 @@ public class BurnBox(
   public val destinationId: EvaluatesTo<IdBox>
 ) {
   public companion object : ScaleReader<BurnBox>, ScaleWriter<BurnBox> {
-    public override fun read(reader: ScaleCodecReader): BurnBox = BurnBox(Value.read(reader),
-    IdBox.read(reader))
+    public override fun read(reader: ScaleCodecReader): BurnBox = BurnBox(
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<IdBox>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit {
-      Value.write(writer, instance.object)
-      IdBox.write(writer, instance.destinationId)
+
+
     }
   }
 }

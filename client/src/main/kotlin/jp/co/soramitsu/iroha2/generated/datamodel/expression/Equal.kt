@@ -20,12 +20,14 @@ public class Equal(
   public val right: EvaluatesTo<Value>
 ) {
   public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
-    public override fun read(reader: ScaleCodecReader): Equal = Equal(Value.read(reader),
-    Value.read(reader))
+    public override fun read(reader: ScaleCodecReader): Equal = Equal(
+      EvaluatesTo<Value>.read(reader),
+      EvaluatesTo<Value>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-      Value.write(writer, instance.left)
-      Value.write(writer, instance.right)
+
+
     }
   }
 }

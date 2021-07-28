@@ -20,12 +20,14 @@ public class And(
   public val right: EvaluatesTo<Boolean>
 ) {
   public companion object : ScaleReader<And>, ScaleWriter<And> {
-    public override fun read(reader: ScaleCodecReader): And = And(Boolean.read(reader),
-    Boolean.read(reader))
+    public override fun read(reader: ScaleCodecReader): And = And(
+      EvaluatesTo<Boolean>.read(reader),
+      EvaluatesTo<Boolean>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-      Boolean.write(writer, instance.left)
-      Boolean.write(writer, instance.right)
+
+
     }
   }
 }

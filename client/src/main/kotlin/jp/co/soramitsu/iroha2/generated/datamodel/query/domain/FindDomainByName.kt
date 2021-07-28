@@ -20,11 +20,12 @@ public class FindDomainByName(
   public val name: EvaluatesTo<String>
 ) {
   public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
-    public override fun read(reader: ScaleCodecReader): FindDomainByName =
-        FindDomainByName(String.read(reader))
+    public override fun read(reader: ScaleCodecReader): FindDomainByName = FindDomainByName(
+      EvaluatesTo<String>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
-      String.write(writer, instance.name)
+
     }
   }
 }

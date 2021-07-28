@@ -32,11 +32,12 @@ public sealed class RejectionReason {
     public companion object : ScaleReader<Block>, ScaleWriter<Block> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): Block =
-          Block(BlockRejectionReason.read(reader))
+      public override fun read(reader: ScaleCodecReader): Block = Block(
+        BlockRejectionReason.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
-        BlockRejectionReason.write(writer, instance.blockRejectionReason)
+
       }
     }
   }
@@ -52,11 +53,12 @@ public sealed class RejectionReason {
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
       public const val DISCRIMINANT: Int = 1
 
-      public override fun read(reader: ScaleCodecReader): Transaction =
-          Transaction(TransactionRejectionReason.read(reader))
+      public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
+        TransactionRejectionReason.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-        TransactionRejectionReason.write(writer, instance.transactionRejectionReason)
+
       }
     }
   }

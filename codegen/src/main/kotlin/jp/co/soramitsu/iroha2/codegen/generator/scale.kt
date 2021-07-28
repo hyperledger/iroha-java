@@ -1,21 +1,120 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.ParameterizedTypeName
-import com.squareup.kotlinpoet.TypeName
-import jp.co.soramitsu.iroha2.codegen.Property
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.BOOLEAN_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.BYTE_ARRAY_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.LIST_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.MAP_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.OPTION_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.SET_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.STRING_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.U128_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.U32_READER
-//import jp.co.soramitsu.iroha2.codegen.generator.ScaleConstants.Companion.UBYTE_READER
+import com.squareup.kotlinpoet.*
+import jp.co.soramitsu.iroha2.codegen.blueprint.Property
+import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.*
+
+
+fun resolveScaleReadImpl(type: Type) : CodeBlock {
+    return when (type) {
+        is ArrayType -> CodeBlock.of("reader.readByteArray()")
+        is VecType -> {
+            CodeBlock.of("MutableList(reader.readCompactInt()) {%L}",
+                resolveScaleReadImpl(type.innerType.requireValue()))
+        }
+        is SetType -> {
+            CodeBlock.of(
+                "%M(reader.readCompactInt()) {%L}",
+                MemberName("jp.co.soramitsu.iroha2.utils", "hashSetWithSize"),
+                resolveScaleReadImpl(type.innerType.requireValue()),
+            )
+        }
+        is MapType -> {
+            CodeBlock.of("%1M(reader.readCompactInt(), {%2L}, {%3L})",
+                MemberName("jp.co.soramitsu.iroha2.utils", "hashMapWithSize"),
+                resolveScaleReadImpl(type.key.requireValue()),
+                resolveScaleReadImpl(type.value.requireValue())
+            )
+        }
+        is U8Type -> CodeBlock.of("reader.readByte().toUByte()")
+        is U16Type -> CodeBlock.of("reader.readUint16().toUShort()")
+        is U32Type -> CodeBlock.of("reader.readUint32().toUInt()")
+        is U64Type -> CodeBlock.of("reader.readUint128().toLong().toULong()")
+        is U128Type -> CodeBlock.of("reader.readUint128()")
+        is U256Type -> CodeBlock.of("BigInteger(reader.readUint256())")
+        is StringType -> CodeBlock.of("reader.readString()")
+        is BooleanType -> CodeBlock.of("reader.readBoolean()")
+        is CompositeType -> CodeBlock.of("%T.read(reader)", resolveKotlinType(type))
+        is OptionType -> CodeBlock.of("reader.readOptional(%L).orElse(null)", resolveScaleReadImpl(type.innerType.requireValue()))
+        is CompactType -> CodeBlock.of("reader.readCompactInt()")
+        else -> throw java.lang.RuntimeException("Unexpected type: $type")
+    }
+}
+
+fun resolveScaleWriteImpl(type: Type, propName: String): CodeBlock {
+    return when (type) {
+        is ArrayType -> CodeBlock.of("writer.writeByteArray(instance.%L)", propName)
+        is VecType -> {
+            CodeBlock.of(
+                "writer.writeCompact(instance.%1L.size)\n" +
+                "repeat(instance.%1L.size) { %2L }",
+                propName,
+                resolveScaleWriteImpl(type.innerType.requireValue(), "it"))
+        }
+        //        is SetType -> {
+//            CodeBlock.of(
+//                "%M(reader.readCompactInt()) {%L}",
+//                MemberName("jp.co.soramitsu.iroha2.utils", "hashSetWithSize"),
+//                resolveScaleReadImpl(type.innerType.requireValue()),
+//            )
+//        }
+//        is MapType -> {
+//            CodeBlock.of("%1M(reader.readCompactInt(), {%2L}, {%3L})",
+//                MemberName("jp.co.soramitsu.iroha2.utils", "hashMapWithSize"),
+//                resolveScaleReadImpl(type.key.requireValue()),
+//                resolveScaleReadImpl(type.value.requireValue())
+//            )
+//        }
+        is U8Type -> CodeBlock.of("writer.writeByte(instance.%L.toByte())", propName)
+        is U16Type -> CodeBlock.of("writer.writeUint16(instance.%L.toInt())", propName)
+        is U32Type -> CodeBlock.of("writer.writeUint32(instance.%L.toInt())", propName)
+        is U64Type -> CodeBlock.of("writer.writeUint128(BigInteger.valueOf(instance.%L.toLong()))", propName)
+        is U128Type -> CodeBlock.of("writer.writeUint128(instance.%L)", propName)
+        is U256Type -> CodeBlock.of("writer.writeUint256(instance.%L.toByteArray())", propName)
+        is StringType -> CodeBlock.of("writer.writeAsList(instance.%L.toByteArray(Charsets.UTF_8))", propName)
+        is BooleanType -> CodeBlock.of("if (instance.%L) { writer.directWrite(1) } else { writer.directWrite(0) }", propName)
+
+//        is CompositeType -> CodeBlock.of("${resolveKotlinType(type)}.read(reader)")
+//        is OptionType -> CodeBlock.of("reader.readOptional(%L).orElse(null", resolveScaleReadImpl(type.innerType.requireValue()))
+//        is CompactType -> CodeBlock.of("reader.readCompactInt()")
+//        else -> throw java.lang.RuntimeException("Unexpected type: $type")
+
+//        is ArrayType -> CodeBlock.of(
+//            "%T.write(writer, instance.${property.name})",
+//            BYTE_ARRAY_WRITER
+//        )
+//        is CompositeType -> CodeBlock.of("${getRealClassName(property.typeName)}.write(writer, instance.${property.name})")
+//        is WrapperType -> {
+//            val innerValueWriter = barWriter(type.innerType.requireValue(), property.typeName)
+//            CodeBlock.of(
+//                "%T(%T).write(writer, instance.${property.name})",
+//                getScaleWriter(type),
+//                innerValueWriter
+//            )
+//        }
+//        is MapType -> {
+//            val keyWriter = barWriter(type.key.requireValue(), property.typeName, 0)
+//            val valueWriter = barWriter(type.value.requireValue(), property.typeName, 1)
+//            CodeBlock.of(
+//                "%T(%T, %T).write(writer, instance.${property.name})",
+//                MAP_WRITER,
+//                keyWriter,
+//                valueWriter
+//            )
+//        }
+//        else -> CodeBlock.of("%T.write(writer, instance.${property.name})", barWriter(type, property.typeName))
+        else -> CodeBlock.of("")
+    }
+}
+
+private fun getRealClassName(typeName: TypeName): String {
+    return when (typeName) {
+        is ClassName -> typeName.simpleName
+        is ParameterizedTypeName -> getRealClassName(typeName.typeArguments.first())
+        else -> throw RuntimeException("Unexpected type: $typeName")
+    }
+}
 
 //todo replcae with real classes
 val SCALE_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
@@ -49,140 +148,99 @@ val OPTION_WRITER = ClassName("jp.co.soramitsu.iroha2.scale", "OptionWriter")
 val MAP_READER = ClassName("jp.co.soramitsu.iroha2.scale", "MapReader")
 val MAP_WRITER = ClassName("jp.co.soramitsu.iroha2.scale", "MapWriter")
 
-private fun getScaleReader(type: Type): TypeName {
-    return when (type) {
-        is StringType -> STRING_READER
-        is ArrayType -> BYTE_ARRAY_READER
-        is VecType -> LIST_READER
-        is SetType -> SET_READER
-        is U8Type -> U8_READER
-        is U16Type -> U16_READER
-        is U32Type -> U32_READER
-        is U64Type -> U64_READER
-        is U128Type -> U128_READER
-        is U256Type -> U256_READER
-        is BooleanType -> BOOL_READER
-        is OptionType -> OPTION_READER
-        is CompactType -> {
-            when (type.innerType.requireValue()) {
-                is U8Type -> U8_READER
-                is U16Type -> U8_READER
-                is U32Type -> U8_READER
-                is U64Type -> U8_READER
-                is U128Type -> U8_READER
-                is U256Type -> U8_READER
-                else -> throw RuntimeException("Scale reader implementation is not resolved for compact type: '${type}'")
-            }
-        }
-        else -> throw RuntimeException("Scale reader implementation is not resolved for type: '${type}'")
-    }
-}
+//todo remove me
+//private fun getScaleReader(type: Type): TypeName {
+//    return when (type) {
+//        is StringType -> STRING_READER
+//        is ArrayType -> BYTE_ARRAY_READER
+//        is VecType -> LIST_READER
+//        is SetType -> SET_READER
+//        is U8Type -> U8_READER
+//        is U16Type -> U16_READER
+//        is U32Type -> U32_READER
+//        is U64Type -> U64_READER
+//        is U128Type -> U128_READER
+//        is U256Type -> U256_READER
+//        is BooleanType -> BOOL_READER
+//        is OptionType -> OPTION_READER
+//        is CompactType -> {
+//            when (type.innerType.requireValue()) {
+//                is U8Type -> U8_READER
+//                is U16Type -> U8_READER
+//                is U32Type -> U8_READER
+//                is U64Type -> U8_READER
+//                is U128Type -> U8_READER
+//                is U256Type -> U8_READER
+//                else -> throw RuntimeException("Scale reader implementation is not resolved for compact type: '${type}'")
+//            }
+//        }
+//        else -> throw RuntimeException("Scale reader implementation is not resolved for type: '${type}'")
+//    }
+//}
 
-private fun barReader(innerType: Type, fallback: TypeName, index: Int = 0): TypeName {
-    return when (innerType) {
-        is CompositeType -> foo(fallback, index)
-        else -> getScaleReader(innerType)
-    }
-}
+//todo remove me
+//private fun barReader(innerType: Type, fallback: TypeName, index: Int = 0): TypeName {
+//    return when (innerType) {
+//        is CompositeType -> foo(fallback, index)
+//        else -> getScaleReader(innerType)
+//    }
+//}
 
-private fun barWriter(innerType: Type, fallback: TypeName, index: Int = 0): TypeName {
-    return when (innerType) {
-        is CompositeType -> foo(fallback, index)
-        else -> getScaleWriter(innerType)
-    }
-}
+//todo remove me
 
+//private fun barWriter(innerType: Type, fallback: TypeName, index: Int = 0): TypeName {
+//    return when (innerType) {
+//        is CompositeType -> foo(fallback, index)
+//        else -> getScaleWriter(innerType)
+//    }
+//}
+
+//private fun renameMeLater(innerType: Type, fallback: TypeName, index: Int = 0): TypeName {
+//    return when (innerType) {
+//        is CompositeType -> foo(fallback, index)
+//        else -> getScaleReader(innerType)
+//    }
+//}
 
 //todo consider all types
-fun resolveScaleReadImplementation(property: Property): CodeBlock {
-    return when (val type = property.original) {
-        is ArrayType -> CodeBlock.of("%T.read(reader)", BYTE_ARRAY_READER)
-        is CompositeType -> CodeBlock.of("${getRealClassName(property.typeName)}.read(reader)")
-        is WrapperType -> {
-            val innerValueReader = barReader(type.innerType.requireValue(), property.typeName)
-            CodeBlock.of("%T(%T).read(reader)", getScaleReader(type), innerValueReader)
-        }
-        is MapType -> {
-            val keyReader = barReader(type.key.requireValue(), property.typeName, 0)
-            val valueReader = barReader(type.value.requireValue(), property.typeName, 1)
-            CodeBlock.of("%T(%T, %T).read(reader)", MAP_READER, keyReader, valueReader)
-        }
-        else -> CodeBlock.of("%T.read(reader)", barReader(type, property.typeName))
-    }
-//        else -> throw RuntimeException("Scale reader implementation is not resolved for type: '${property.original::class}'")
-}
 
-fun resolveScaleWriteImplementation(property: Property): CodeBlock {
-    return when (val type = property.original) {
-        is ArrayType -> CodeBlock.of(
-            "%T.write(writer, instance.${property.name})",
-            BYTE_ARRAY_WRITER
-        )
-        is CompositeType -> CodeBlock.of("${getRealClassName(property.typeName)}.write(writer, instance.${property.name})")
-        is WrapperType -> {
-            val innerValueWriter = barWriter(type.innerType.requireValue(), property.typeName)
-            CodeBlock.of(
-                "%T(%T).write(writer, instance.${property.name})",
-                getScaleWriter(type),
-                innerValueWriter
-            )
-        }
-        is MapType -> {
-            val keyWriter = barWriter(type.key.requireValue(), property.typeName, 0)
-            val valueWriter = barWriter(type.value.requireValue(), property.typeName, 1)
-            CodeBlock.of(
-                "%T(%T, %T).write(writer, instance.${property.name})",
-                MAP_WRITER,
-                keyWriter,
-                valueWriter
-            )
-        }
-        else -> CodeBlock.of("%T.write(writer, instance.${property.name})", barWriter(type, property.typeName))
-    }
-}
+//
+//fun getScaleWriter(type: Type): TypeName {
+//    return when (type) {
+//        is StringType -> STRING_WRITER
+//        is ArrayType -> BYTE_ARRAY_WRITER
+//        is VecType -> LIST_WRITER
+//        is SetType -> SET_WRITER
+//        is U8Type -> U8_WRITER
+//        is U16Type -> U16_WRITER
+//        is U32Type -> U32_WRITER
+//        is U64Type -> U64_WRITER
+//        is U128Type -> U128_WRITER
+//        is U256Type -> U256_WRITER
+//        is BooleanType -> BOOL_WRITER
+//        is OptionType -> OPTION_WRITER
+//        is CompactType -> {
+//            when (type.innerType.requireValue()) {
+//                is U8Type -> U8_READER
+//                is U16Type -> U8_READER
+//                is U32Type -> U8_READER
+//                is U64Type -> U8_READER
+//                is U128Type -> U8_READER
+//                is U256Type -> U8_READER
+//                else -> throw RuntimeException("Scale reader implementation is not resolved for compact type: '${type}'")
+//            }
+//        }
+//        else -> throw RuntimeException("Scale writer implementation is not resolved for type: '${type}'")
+//    }
+//}
+//
+////todo remove???
 
-fun getScaleWriter(type: Type): TypeName {
-    return when (type) {
-        is StringType -> STRING_WRITER
-        is ArrayType -> BYTE_ARRAY_WRITER
-        is VecType -> LIST_WRITER
-        is SetType -> SET_WRITER
-        is U8Type -> U8_WRITER
-        is U16Type -> U16_WRITER
-        is U32Type -> U32_WRITER
-        is U64Type -> U64_WRITER
-        is U128Type -> U128_WRITER
-        is U256Type -> U256_WRITER
-        is BooleanType -> BOOL_WRITER
-        is OptionType -> OPTION_WRITER
-        is CompactType -> {
-            when (type.innerType.requireValue()) {
-                is U8Type -> U8_READER
-                is U16Type -> U8_READER
-                is U32Type -> U8_READER
-                is U64Type -> U8_READER
-                is U128Type -> U8_READER
-                is U256Type -> U8_READER
-                else -> throw RuntimeException("Scale reader implementation is not resolved for compact type: '${type}'")
-            }
-        }
-        else -> throw RuntimeException("Scale writer implementation is not resolved for type: '${type}'")
-    }
-}
-
-//todo remove???
-private fun getRealClassName(typeName: TypeName): String {
-    return when (typeName) {
-        is ClassName -> typeName.simpleName
-        is ParameterizedTypeName -> getRealClassName(typeName.typeArguments.first())
-        else -> throw RuntimeException("Unexpected type: $typeName")
-    }
-}
-
-private fun foo(typeName: TypeName, index: Int = 0): TypeName {
-    return when (typeName) {
-        is ClassName -> typeName
-        is ParameterizedTypeName -> foo(typeName.typeArguments[index])
-        else -> throw RuntimeException("Unexpected type: $typeName")
-    }
-}
+////todo remove me
+//private fun foo(typeName: TypeName, index: Int = 0): TypeName {
+//    return when (typeName) {
+//        is ClassName -> typeName
+//        is ParameterizedTypeName -> foo(typeName.typeArguments[index])
+//        else -> throw RuntimeException("Unexpected type: $typeName")
+//    }
+//}

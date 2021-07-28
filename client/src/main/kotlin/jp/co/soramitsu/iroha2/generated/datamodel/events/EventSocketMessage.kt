@@ -33,11 +33,12 @@ public sealed class EventSocketMessage {
     public companion object : ScaleReader<SubscriptionRequest>, ScaleWriter<SubscriptionRequest> {
       public const val DISCRIMINANT: Int = 0
 
-      public override fun read(reader: ScaleCodecReader): SubscriptionRequest =
-          SubscriptionRequest(SubscriptionRequest.read(reader))
+      public override fun read(reader: ScaleCodecReader): SubscriptionRequest = SubscriptionRequest(
+        jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-        SubscriptionRequest.write(writer, instance.subscriptionRequest)
+
       }
     }
   }
@@ -52,7 +53,8 @@ public sealed class EventSocketMessage {
       public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): SubscriptionAccepted =
-          SubscriptionAccepted()
+          SubscriptionAccepted(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionAccepted): Unit {
       }
@@ -70,10 +72,12 @@ public sealed class EventSocketMessage {
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
       public const val DISCRIMINANT: Int = 2
 
-      public override fun read(reader: ScaleCodecReader): Event = Event(Event.read(reader))
+      public override fun read(reader: ScaleCodecReader): Event = Event(
+        jp.co.soramitsu.iroha2.generated.datamodel.events.Event.read(reader),
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-        Event.write(writer, instance.event)
+
       }
     }
   }
@@ -87,7 +91,8 @@ public sealed class EventSocketMessage {
     public companion object : ScaleReader<EventReceived>, ScaleWriter<EventReceived> {
       public const val DISCRIMINANT: Int = 3
 
-      public override fun read(reader: ScaleCodecReader): EventReceived = EventReceived()
+      public override fun read(reader: ScaleCodecReader): EventReceived = EventReceived(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: EventReceived): Unit {
       }

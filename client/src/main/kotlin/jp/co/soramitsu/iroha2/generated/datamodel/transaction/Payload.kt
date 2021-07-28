@@ -10,6 +10,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.utils.hashMapWithSize
 import kotlin.String
 import kotlin.ULong
 import kotlin.Unit
@@ -29,21 +30,21 @@ public class Payload(
   public val metadata: MutableMap<String, Value>
 ) {
   public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
-    public override fun read(reader: ScaleCodecReader): Payload = Payload(Id.read(reader),
-    io.emeraldpay.polkaj.scale.reader.ListReader(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).read(reader),
-    jp.co.soramitsu.iroha2.scale.U64Reader.read(reader),
-    jp.co.soramitsu.iroha2.scale.U64Reader.read(reader),
-    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
-        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
+    public override fun read(reader: ScaleCodecReader): Payload = Payload(
+      Id.read(reader),
+      MutableList(reader.readCompactInt()) {Instruction.read(reader)},
+      reader.readUint128().toLong().toULong(),
+      reader.readUint128().toLong().toULong(),
+      hashMapWithSize(reader.readCompactInt(), {reader.readString()}, {Value.read(reader)}),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-      Id.write(writer, instance.accountId)
-      io.emeraldpay.polkaj.scale.writer.ListWriter(jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction).write(writer,
-          instance.instructions)
-      jp.co.soramitsu.iroha2.scale.U64Writer.write(writer, instance.creationTime)
-      jp.co.soramitsu.iroha2.scale.U64Writer.write(writer, instance.timeToLiveMs)
-      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
-          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.metadata)
+
+        writer.writeCompact(instance.instructions.size)
+        repeat(instance.instructions.size) {  }
+        writer.writeUint128(BigInteger.valueOf(instance.creationTime.toLong()))
+        writer.writeUint128(BigInteger.valueOf(instance.timeToLiveMs.toLong()))
+
     }
   }
 }

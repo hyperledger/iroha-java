@@ -19,12 +19,14 @@ public class Id(
   public val accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 ) {
   public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-    public override fun read(reader: ScaleCodecReader): Id = Id(DefinitionId.read(reader),
-    Id.read(reader))
+    public override fun read(reader: ScaleCodecReader): Id = Id(
+      DefinitionId.read(reader),
+      jp.co.soramitsu.iroha2.generated.datamodel.account.Id.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-      DefinitionId.write(writer, instance.definitionId)
-      Id.write(writer, instance.accountId)
+
+
     }
   }
 }

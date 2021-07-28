@@ -20,10 +20,12 @@ public class _VersionedTransactionV1(
   public companion object : ScaleReader<_VersionedTransactionV1>,
       ScaleWriter<_VersionedTransactionV1> {
     public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
-        _VersionedTransactionV1(Transaction.read(reader))
+        _VersionedTransactionV1(
+      Transaction.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {
-      Transaction.write(writer, instance.transaction)
+
     }
   }
 }

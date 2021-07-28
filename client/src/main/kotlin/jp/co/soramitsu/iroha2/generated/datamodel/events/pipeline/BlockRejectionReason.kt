@@ -32,7 +32,8 @@ public sealed class BlockRejectionReason {
       public const val DISCRIMINANT: Int = 0
 
       public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection =
-          ConsensusBlockRejection()
+          ConsensusBlockRejection(
+      )
 
       public override fun write(writer: ScaleCodecWriter, instance: ConsensusBlockRejection): Unit {
       }

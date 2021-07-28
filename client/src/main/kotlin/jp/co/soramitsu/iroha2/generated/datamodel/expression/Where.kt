@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.utils.hashMapWithSize
 import kotlin.String
 import kotlin.Unit
 import kotlin.collections.MutableMap
@@ -22,14 +23,15 @@ public class Where(
   public val values: MutableMap<String, EvaluatesTo<Value>>
 ) {
   public companion object : ScaleReader<Where>, ScaleWriter<Where> {
-    public override fun read(reader: ScaleCodecReader): Where = Where(Value.read(reader),
-    jp.co.soramitsu.iroha2.scale.MapReader(jp.co.soramitsu.iroha2.scale.StringReader,
-        jp.co.soramitsu.iroha2.generated.datamodel.Value).read(reader))
+    public override fun read(reader: ScaleCodecReader): Where = Where(
+      EvaluatesTo<Value>.read(reader),
+      hashMapWithSize(reader.readCompactInt(), {reader.readString()},
+          {EvaluatesTo<Value>.read(reader)}),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-      Value.write(writer, instance.expression)
-      jp.co.soramitsu.iroha2.scale.MapWriter(jp.co.soramitsu.iroha2.scale.StringWriter,
-          jp.co.soramitsu.iroha2.generated.datamodel.Value).write(writer, instance.values)
+
+
     }
   }
 }

@@ -25,13 +25,15 @@ public class FindAccountKeyValueByIdAndKey(
   public companion object : ScaleReader<FindAccountKeyValueByIdAndKey>,
       ScaleWriter<FindAccountKeyValueByIdAndKey> {
     public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
-        FindAccountKeyValueByIdAndKey(Id.read(reader),
-    String.read(reader))
+        FindAccountKeyValueByIdAndKey(
+      EvaluatesTo<Id>.read(reader),
+      EvaluatesTo<String>.read(reader),
+    )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
         Unit {
-      Id.write(writer, instance.id)
-      String.write(writer, instance.key)
+
+
     }
   }
 }
