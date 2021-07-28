@@ -24,7 +24,7 @@ public class Not(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-
+        EvaluatesTo<Boolean>.write(writer, instance.expression)
     }
   }
 }

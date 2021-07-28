@@ -37,7 +37,7 @@ public sealed class VersionedTransaction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-
+          _VersionedTransactionV1.write(writer, instance._VersionedTransactionV1)
       }
     }
   }

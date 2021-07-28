@@ -30,10 +30,10 @@ public class NewAccount(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-
+        Id.write(writer, instance.id)
         writer.writeCompact(instance.signatories.size)
-        repeat(instance.signatories.size) {  }
-
+        instance.signatories.forEach { value -> PublicKey.write(writer, value) }
+        Metadata.write(writer, instance.metadata)
     }
   }
 }

@@ -26,8 +26,8 @@ public class And(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-
-
+        EvaluatesTo<Boolean>.write(writer, instance.left)
+        EvaluatesTo<Boolean>.write(writer, instance.right)
     }
   }
 }

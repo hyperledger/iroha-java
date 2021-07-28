@@ -30,10 +30,10 @@ public class RejectedTransaction(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction): Unit {
-
+        Payload.write(writer, instance.payload)
         writer.writeCompact(instance.signatures.size)
-        repeat(instance.signatures.size) {  }
-
+        instance.signatures.forEach { value -> Signature.write(writer, value) }
+        TransactionRejectionReason.write(writer, instance.rejectionReason)
     }
   }
 }

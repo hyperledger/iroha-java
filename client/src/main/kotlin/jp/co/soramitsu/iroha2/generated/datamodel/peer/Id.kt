@@ -28,7 +28,7 @@ public class Id(
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
         writer.writeAsList(instance.address.toByteArray(Charsets.UTF_8))
-
+        PublicKey.write(writer, instance.publicKey)
     }
   }
 }

@@ -26,8 +26,8 @@ public class Less(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

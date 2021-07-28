@@ -26,7 +26,7 @@ public class _VersionedRejectedTransactionV1(
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedRejectedTransactionV1):
         Unit {
-
+        RejectedTransaction.write(writer, instance.rejectedTransaction)
     }
   }
 }

@@ -23,7 +23,7 @@ public class SubscriptionRequest(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-
+        EventFilter.write(writer, instance.eventFilter)
     }
   }
 }

@@ -82,7 +82,7 @@ public sealed class AssetValue {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Store): Unit {
-
+          Metadata.write(writer, instance.metadata)
       }
     }
   }

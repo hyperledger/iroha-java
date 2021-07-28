@@ -104,7 +104,7 @@ public sealed class Value {
 
       public override fun write(writer: ScaleCodecWriter, instance: Vec): Unit {
           writer.writeCompact(instance.vec.size)
-          repeat(instance.vec.size) {  }
+          instance.vec.forEach { value -> Value.write(writer, value) }
       }
     }
   }
@@ -125,7 +125,7 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-
+          IdBox.write(writer, instance.idBox)
       }
     }
   }
@@ -146,7 +146,7 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Identifiable): Unit {
-
+          IdentifiableBox.write(writer, instance.identifiableBox)
       }
     }
   }
@@ -167,7 +167,7 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
-
+          jp.co.soramitsu.iroha2.generated.crypto.PublicKey.write(writer, instance.publicKey)
       }
     }
   }
@@ -188,7 +188,7 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.Parameter.write(writer, instance.parameter)
       }
     }
   }
@@ -212,7 +212,8 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.write(writer,
+              instance.signatureCheckCondition)
       }
     }
   }
@@ -234,7 +235,8 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.write(writer,
+              instance.transactionValue)
       }
     }
   }
@@ -256,7 +258,8 @@ public sealed class Value {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.write(writer,
+              instance.permissionToken)
       }
     }
   }

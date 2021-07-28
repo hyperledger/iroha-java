@@ -27,8 +27,8 @@ public class ContainsAny(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-
-
+        EvaluatesTo<MutableList<Value>>.write(writer, instance.collection)
+        EvaluatesTo<MutableList<Value>>.write(writer, instance.elements)
     }
   }
 }

@@ -54,7 +54,7 @@ public sealed class Status {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Rejected): Unit {
-
+          RejectionReason.write(writer, instance.rejectionReason)
       }
     }
   }

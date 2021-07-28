@@ -26,8 +26,8 @@ public class Subtract(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

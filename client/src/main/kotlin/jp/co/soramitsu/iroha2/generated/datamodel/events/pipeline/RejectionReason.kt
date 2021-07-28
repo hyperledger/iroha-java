@@ -37,7 +37,7 @@ public sealed class RejectionReason {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Block): Unit {
-
+          BlockRejectionReason.write(writer, instance.blockRejectionReason)
       }
     }
   }
@@ -58,7 +58,7 @@ public sealed class RejectionReason {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transaction): Unit {
-
+          TransactionRejectionReason.write(writer, instance.transactionRejectionReason)
       }
     }
   }

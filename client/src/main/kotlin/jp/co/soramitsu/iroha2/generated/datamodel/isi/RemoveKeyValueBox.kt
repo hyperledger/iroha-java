@@ -28,8 +28,8 @@ public class RemoveKeyValueBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
-
-
+        EvaluatesTo<IdBox>.write(writer, instance.objectId)
+        EvaluatesTo<String>.write(writer, instance.key)
     }
   }
 }

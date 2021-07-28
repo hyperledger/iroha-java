@@ -27,9 +27,9 @@ public class Signature(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Signature): Unit {
-
+        PublicKey.write(writer, instance.publicKey)
         writer.writeCompact(instance.signature.size)
-        repeat(instance.signature.size) { writer.writeByte(instance.it.toByte()) }
+        instance.signature.forEach { value -> writer.writeByte(value.toByte()) }
     }
   }
 }

@@ -29,7 +29,7 @@ public class FindTransactionsByAccountId(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindTransactionsByAccountId):
         Unit {
-
+        EvaluatesTo<Id>.write(writer, instance.accountId)
     }
   }
 }

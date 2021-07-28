@@ -31,8 +31,8 @@ public class FindAssetKeyValueByIdAndKey(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetKeyValueByIdAndKey):
         Unit {
-
-
+        EvaluatesTo<Id>.write(writer, instance.id)
+        EvaluatesTo<String>.write(writer, instance.key)
     }
   }
 }

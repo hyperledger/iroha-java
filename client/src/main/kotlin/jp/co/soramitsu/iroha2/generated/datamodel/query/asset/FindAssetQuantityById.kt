@@ -26,7 +26,7 @@ public class FindAssetQuantityById(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
-
+        EvaluatesTo<Id>.write(writer, instance.id)
     }
   }
 }

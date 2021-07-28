@@ -28,8 +28,8 @@ public class BurnBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit {
-
-
+        EvaluatesTo<Value>.write(writer, instance.object)
+        EvaluatesTo<IdBox>.write(writer, instance.destinationId)
     }
   }
 }

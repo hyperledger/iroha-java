@@ -28,7 +28,7 @@ public class FindAssetsByAssetDefinitionId(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
         Unit {
-
+        EvaluatesTo<DefinitionId>.write(writer, instance.assetDefinitionId)
     }
   }
 }

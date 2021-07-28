@@ -37,7 +37,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Register): Unit {
-
+          RegisterBox.write(writer, instance.registerBox)
       }
     }
   }
@@ -58,7 +58,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Unregister): Unit {
-
+          UnregisterBox.write(writer, instance.unregisterBox)
       }
     }
   }
@@ -79,7 +79,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Mint): Unit {
-
+          MintBox.write(writer, instance.mintBox)
       }
     }
   }
@@ -100,7 +100,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Burn): Unit {
-
+          BurnBox.write(writer, instance.burnBox)
       }
     }
   }
@@ -121,7 +121,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Transfer): Unit {
-
+          TransferBox.write(writer, instance.transferBox)
       }
     }
   }
@@ -142,7 +142,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.isi.If.write(writer, instance.if)
       }
     }
   }
@@ -163,7 +163,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair.write(writer, instance.pair)
       }
     }
   }
@@ -184,7 +184,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Sequence): Unit {
-
+          SequenceBox.write(writer, instance.sequenceBox)
       }
     }
   }
@@ -205,7 +205,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Fail): Unit {
-
+          FailBox.write(writer, instance.failBox)
       }
     }
   }
@@ -226,7 +226,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue): Unit {
-
+          SetKeyValueBox.write(writer, instance.setKeyValueBox)
       }
     }
   }
@@ -247,7 +247,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue): Unit {
-
+          RemoveKeyValueBox.write(writer, instance.removeKeyValueBox)
       }
     }
   }
@@ -268,7 +268,7 @@ public sealed class Instruction {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Grant): Unit {
-
+          GrantBox.write(writer, instance.grantBox)
       }
     }
   }

@@ -27,7 +27,7 @@ public class SignatureCheckCondition(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition): Unit {
-
+        EvaluatesTo<Boolean>.write(writer, instance.evaluatesTo)
     }
   }
 }

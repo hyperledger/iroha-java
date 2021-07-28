@@ -40,7 +40,7 @@ public sealed class IdBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit {
-
+          Id.write(writer, instance.id)
       }
     }
   }
@@ -61,7 +61,7 @@ public sealed class IdBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, instance.id)
       }
     }
   }
@@ -82,7 +82,7 @@ public sealed class IdBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit {
-
+          DefinitionId.write(writer, instance.definitionId)
       }
     }
   }
@@ -124,7 +124,7 @@ public sealed class IdBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.write(writer, instance.id)
       }
     }
   }

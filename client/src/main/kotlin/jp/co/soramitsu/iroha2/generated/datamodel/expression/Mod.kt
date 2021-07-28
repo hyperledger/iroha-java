@@ -26,8 +26,8 @@ public class Mod(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

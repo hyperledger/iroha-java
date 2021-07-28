@@ -25,7 +25,7 @@ public class SequenceBox(
 
     public override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit {
         writer.writeCompact(instance.instructions.size)
-        repeat(instance.instructions.size) {  }
+        instance.instructions.forEach { value -> Instruction.write(writer, value) }
     }
   }
 }

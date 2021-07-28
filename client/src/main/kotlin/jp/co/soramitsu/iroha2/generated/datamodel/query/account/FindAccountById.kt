@@ -25,7 +25,7 @@ public class FindAccountById(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAccountById): Unit {
-
+        EvaluatesTo<Id>.write(writer, instance.id)
     }
   }
 }

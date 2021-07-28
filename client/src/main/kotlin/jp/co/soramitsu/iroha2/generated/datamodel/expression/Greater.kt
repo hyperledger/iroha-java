@@ -26,8 +26,8 @@ public class Greater(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

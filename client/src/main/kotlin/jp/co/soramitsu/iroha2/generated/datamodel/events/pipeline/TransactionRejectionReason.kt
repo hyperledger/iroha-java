@@ -37,7 +37,7 @@ public sealed class TransactionRejectionReason {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: NotPermitted): Unit {
-
+          NotPermittedFail.write(writer, instance.notPermittedFail)
       }
     }
   }
@@ -61,7 +61,8 @@ public sealed class TransactionRejectionReason {
 
       public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition):
           Unit {
-
+          UnsatisfiedSignatureConditionFail.write(writer,
+              instance.unsatisfiedSignatureConditionFail)
       }
     }
   }
@@ -83,7 +84,7 @@ public sealed class TransactionRejectionReason {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution): Unit {
-
+          InstructionExecutionFail.write(writer, instance.instructionExecutionFail)
       }
     }
   }
@@ -106,7 +107,7 @@ public sealed class TransactionRejectionReason {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification): Unit {
-
+          SignatureVerificationFail.write(writer, instance.signatureVerificationFail)
       }
     }
   }

@@ -43,13 +43,18 @@ public class Account(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-
-
+        Id.write(writer, instance.id)
+        writer.writeCompact(instance.assets.size)
+        instance.assets.forEach { (key, value) ->  
+        	jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, key)
+        	Asset.write(writer, value)
+        }
         writer.writeCompact(instance.signatories.size)
-        repeat(instance.signatories.size) {  }
-
-
-
+        instance.signatories.forEach { value -> PublicKey.write(writer, value) }
+        writer.writeCompact(instance.permissionTokens.size)
+        instance.permissionTokens.forEach { value -> PermissionToken.write(writer, value) }
+        SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
+        Metadata.write(writer, instance.metadata)
     }
   }
 }

@@ -25,7 +25,7 @@ public class _VersionedQueryResultV1(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedQueryResultV1): Unit {
-
+        QueryResult.write(writer, instance.queryResult)
     }
   }
 }

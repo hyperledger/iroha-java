@@ -26,8 +26,8 @@ public class AssetDefinitionEntry(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionEntry): Unit {
-
-
+        AssetDefinition.write(writer, instance.definition)
+        Id.write(writer, instance.registeredBy)
     }
   }
 }

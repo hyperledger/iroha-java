@@ -28,8 +28,8 @@ public class GrantBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: GrantBox): Unit {
-
-
+        EvaluatesTo<Value>.write(writer, instance.object)
+        EvaluatesTo<IdBox>.write(writer, instance.destinationId)
     }
   }
 }

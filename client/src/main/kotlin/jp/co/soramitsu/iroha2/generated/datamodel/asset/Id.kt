@@ -25,8 +25,8 @@ public class Id(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Id): Unit {
-
-
+        DefinitionId.write(writer, instance.definitionId)
+        jp.co.soramitsu.iroha2.generated.datamodel.account.Id.write(writer, instance.accountId)
     }
   }
 }

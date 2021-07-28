@@ -30,9 +30,9 @@ public class SignedQueryRequest(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest): Unit {
-
-
-
+        writer.writeCompact(instance.timestampMs)
+        Signature.write(writer, instance.signature)
+        QueryBox.write(writer, instance.query)
     }
   }
 }

@@ -39,12 +39,16 @@ public class Payload(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-
+        Id.write(writer, instance.accountId)
         writer.writeCompact(instance.instructions.size)
-        repeat(instance.instructions.size) {  }
+        instance.instructions.forEach { value -> Instruction.write(writer, value) }
         writer.writeUint128(BigInteger.valueOf(instance.creationTime.toLong()))
         writer.writeUint128(BigInteger.valueOf(instance.timeToLiveMs.toLong()))
-
+        writer.writeCompact(instance.metadata.size)
+        instance.metadata.forEach { (key, value) ->  
+        	writer.writeAsList(key.toByteArray(Charsets.UTF_8))
+        	Value.write(writer, value)
+        }
     }
   }
 }

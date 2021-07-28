@@ -29,7 +29,7 @@ public class InstructionExecutionFail(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: InstructionExecutionFail): Unit {
-
+        Instruction.write(writer, instance.instruction)
         writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
   }

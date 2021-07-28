@@ -28,9 +28,9 @@ public class Event(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-
-
-
+        EntityType.write(writer, instance.entityType)
+        Status.write(writer, instance.status)
+        Hash.write(writer, instance.hash)
     }
   }
 }

@@ -29,9 +29,9 @@ public class If(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-
-
-
+        EvaluatesTo<Boolean>.write(writer, instance.condition)
+        EvaluatesTo<Value>.write(writer, instance.thenExpression)
+        EvaluatesTo<Value>.write(writer, instance.elseExpression)
     }
   }
 }

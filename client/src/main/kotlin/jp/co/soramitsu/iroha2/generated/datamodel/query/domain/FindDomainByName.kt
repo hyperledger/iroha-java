@@ -25,7 +25,7 @@ public class FindDomainByName(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName): Unit {
-
+        EvaluatesTo<String>.write(writer, instance.name)
     }
   }
 }

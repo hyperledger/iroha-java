@@ -26,8 +26,8 @@ public class RaiseTo(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

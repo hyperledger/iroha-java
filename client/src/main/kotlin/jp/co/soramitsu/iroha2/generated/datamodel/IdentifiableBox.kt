@@ -37,7 +37,7 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Account): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.account.Account.write(writer, instance.account)
       }
     }
   }
@@ -58,7 +58,8 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.write(writer,
+              instance.newAccount)
       }
     }
   }
@@ -79,7 +80,7 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset.write(writer, instance.asset)
       }
     }
   }
@@ -100,7 +101,8 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition.write(writer,
+              instance.assetDefinition)
       }
     }
   }
@@ -121,7 +123,7 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.write(writer, instance.domain)
       }
     }
   }
@@ -142,7 +144,7 @@ public sealed class IdentifiableBox {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.write(writer, instance.peer)
       }
     }
   }

@@ -38,7 +38,8 @@ public sealed class EventSocketMessage {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest.write(writer,
+              instance.subscriptionRequest)
       }
     }
   }
@@ -77,7 +78,7 @@ public sealed class EventSocketMessage {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Event): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.events.Event.write(writer, instance.event)
       }
     }
   }

@@ -37,7 +37,7 @@ public sealed class VersionedEventSocketMessage {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-
+          _VersionedEventSocketMessageV1.write(writer, instance._VersionedEventSocketMessageV1)
       }
     }
   }

@@ -24,7 +24,7 @@ public class EvaluatesTo<T0>(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo<out Any>): Unit {
-
+        Expression.write(writer, instance.expression)
     }
   }
 }

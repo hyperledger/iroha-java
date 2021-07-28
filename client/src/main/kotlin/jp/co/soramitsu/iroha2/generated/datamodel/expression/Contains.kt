@@ -27,8 +27,8 @@ public class Contains(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
-
-
+        EvaluatesTo<MutableList<Value>>.write(writer, instance.collection)
+        EvaluatesTo<Value>.write(writer, instance.element)
     }
   }
 }

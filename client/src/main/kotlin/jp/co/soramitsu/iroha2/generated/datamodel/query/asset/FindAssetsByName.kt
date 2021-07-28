@@ -25,7 +25,7 @@ public class FindAssetsByName(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByName): Unit {
-
+        EvaluatesTo<String>.write(writer, instance.name)
     }
   }
 }

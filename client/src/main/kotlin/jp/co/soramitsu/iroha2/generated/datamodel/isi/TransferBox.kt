@@ -30,9 +30,9 @@ public class TransferBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
-
-
-
+        EvaluatesTo<IdBox>.write(writer, instance.sourceId)
+        EvaluatesTo<Value>.write(writer, instance.object)
+        EvaluatesTo<IdBox>.write(writer, instance.destinationId)
     }
   }
 }

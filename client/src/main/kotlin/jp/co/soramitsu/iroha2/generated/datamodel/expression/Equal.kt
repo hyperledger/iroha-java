@@ -26,8 +26,8 @@ public class Equal(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-
-
+        EvaluatesTo<Value>.write(writer, instance.left)
+        EvaluatesTo<Value>.write(writer, instance.right)
     }
   }
 }

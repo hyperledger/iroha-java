@@ -25,7 +25,7 @@ public class _VersionedTransactionV1(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {
-
+        Transaction.write(writer, instance.transaction)
     }
   }
 }

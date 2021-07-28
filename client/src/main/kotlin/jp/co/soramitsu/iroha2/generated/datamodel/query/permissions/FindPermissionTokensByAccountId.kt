@@ -29,7 +29,7 @@ public class FindPermissionTokensByAccountId(
 
     public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId):
         Unit {
-
+        EvaluatesTo<Id>.write(writer, instance.id)
     }
   }
 }

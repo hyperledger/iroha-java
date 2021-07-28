@@ -26,8 +26,8 @@ public class Divide(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-
-
+        EvaluatesTo<UInt>.write(writer, instance.left)
+        EvaluatesTo<UInt>.write(writer, instance.right)
     }
   }
 }

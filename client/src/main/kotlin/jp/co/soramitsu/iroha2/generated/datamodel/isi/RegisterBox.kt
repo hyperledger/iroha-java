@@ -25,7 +25,7 @@ public class RegisterBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit {
-
+        EvaluatesTo<IdentifiableBox>.write(writer, instance.object)
     }
   }
 }

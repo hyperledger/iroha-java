@@ -39,7 +39,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Add): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.write(writer, instance.add)
       }
     }
   }
@@ -60,7 +60,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.write(writer,
+              instance.subtract)
       }
     }
   }
@@ -81,7 +82,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.write(writer,
+              instance.multiply)
       }
     }
   }
@@ -102,7 +104,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Divide): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.write(writer,
+              instance.divide)
       }
     }
   }
@@ -123,7 +126,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Mod): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.write(writer, instance.mod)
       }
     }
   }
@@ -144,7 +147,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: RaiseTo): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.write(writer,
+              instance.raiseTo)
       }
     }
   }
@@ -165,7 +169,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Greater): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.write(writer,
+              instance.greater)
       }
     }
   }
@@ -186,7 +191,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Less): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.write(writer, instance.less)
       }
     }
   }
@@ -207,7 +212,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Equal): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.write(writer, instance.equal)
       }
     }
   }
@@ -228,7 +233,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Not): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.write(writer, instance.not)
       }
     }
   }
@@ -249,7 +254,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: And): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.And.write(writer, instance.and)
       }
     }
   }
@@ -270,7 +275,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.write(writer, instance.or)
       }
     }
   }
@@ -291,7 +296,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: If): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.If.write(writer, instance.if)
       }
     }
   }
@@ -312,7 +317,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Raw): Unit {
-
+          Value.write(writer, instance.value)
       }
     }
   }
@@ -333,7 +338,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Query): Unit {
-
+          QueryBox.write(writer, instance.queryBox)
       }
     }
   }
@@ -354,7 +359,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Contains): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.write(writer,
+              instance.contains)
       }
     }
   }
@@ -375,7 +381,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.write(writer,
+              instance.containsAll)
       }
     }
   }
@@ -396,7 +403,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContainsAny): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.write(writer,
+              instance.containsAny)
       }
     }
   }
@@ -417,7 +425,7 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.write(writer, instance.where)
       }
     }
   }
@@ -438,7 +446,8 @@ public sealed class Expression {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.write(writer,
+              instance.contextValue)
       }
     }
   }

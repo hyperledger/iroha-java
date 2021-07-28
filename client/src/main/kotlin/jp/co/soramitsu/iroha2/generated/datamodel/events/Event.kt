@@ -37,7 +37,8 @@ public sealed class Event {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Pipeline): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.write(writer,
+              instance.event)
       }
     }
   }
@@ -58,7 +59,8 @@ public sealed class Event {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: Data): Unit {
-
+          jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.write(writer,
+              instance.event)
       }
     }
   }

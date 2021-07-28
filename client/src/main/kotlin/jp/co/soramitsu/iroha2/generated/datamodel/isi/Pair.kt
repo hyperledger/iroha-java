@@ -25,8 +25,8 @@ public class Pair(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Pair): Unit {
-
-
+        Instruction.write(writer, instance.leftInstruction)
+        Instruction.write(writer, instance.rightInstruction)
     }
   }
 }

@@ -36,8 +36,16 @@ public class Domain(
 
     public override fun write(writer: ScaleCodecWriter, instance: Domain): Unit {
         writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
-
-
+        writer.writeCompact(instance.accounts.size)
+        instance.accounts.forEach { (key, value) ->  
+        	Id.write(writer, key)
+        	Account.write(writer, value)
+        }
+        writer.writeCompact(instance.assetDefinitions.size)
+        instance.assetDefinitions.forEach { (key, value) ->  
+        	DefinitionId.write(writer, key)
+        	AssetDefinitionEntry.write(writer, value)
+        }
     }
   }
 }

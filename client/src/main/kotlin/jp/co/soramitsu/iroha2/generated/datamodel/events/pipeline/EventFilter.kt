@@ -26,8 +26,9 @@ public class EventFilter(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: EventFilter): Unit {
-
-
+        writer.writeOptional(EntityType.write(writer, instance.entity)),
+            Optional.ofNullable(instance.entity))
+        writer.writeOptional(Hash.write(writer, instance.hash)), Optional.ofNullable(instance.hash))
     }
   }
 }

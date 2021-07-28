@@ -30,8 +30,12 @@ public class Where(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Where): Unit {
-
-
+        EvaluatesTo<Value>.write(writer, instance.expression)
+        writer.writeCompact(instance.values.size)
+        instance.values.forEach { (key, value) ->  
+        	writer.writeAsList(key.toByteArray(Charsets.UTF_8))
+        	EvaluatesTo<Value>.write(writer, value)
+        }
     }
   }
 }

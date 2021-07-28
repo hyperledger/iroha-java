@@ -30,7 +30,7 @@ public class PublicKey(
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
         writer.writeAsList(instance.digestFunction.toByteArray(Charsets.UTF_8))
         writer.writeCompact(instance.payload.size)
-        repeat(instance.payload.size) { writer.writeByte(it.toByte()) }
+        instance.payload.forEach { value -> writer.writeByte(value.toByte()) }
     }
   }
 }

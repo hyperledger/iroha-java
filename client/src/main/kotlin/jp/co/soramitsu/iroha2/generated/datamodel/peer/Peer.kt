@@ -23,7 +23,7 @@ public class Peer(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Peer): Unit {
-
+        Id.write(writer, instance.id)
     }
   }
 }

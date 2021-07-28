@@ -26,8 +26,8 @@ public class Or(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Or): Unit {
-
-
+        EvaluatesTo<Boolean>.write(writer, instance.left)
+        EvaluatesTo<Boolean>.write(writer, instance.right)
     }
   }
 }

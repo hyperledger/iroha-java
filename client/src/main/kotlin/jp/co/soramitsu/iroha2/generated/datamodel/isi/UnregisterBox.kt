@@ -25,7 +25,7 @@ public class UnregisterBox(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
-
+        EvaluatesTo<IdBox>.write(writer, instance.objectId)
     }
   }
 }

@@ -25,8 +25,8 @@ public class Asset(
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: Asset): Unit {
-
-
+        Id.write(writer, instance.id)
+        AssetValue.write(writer, instance.value)
     }
   }
 }

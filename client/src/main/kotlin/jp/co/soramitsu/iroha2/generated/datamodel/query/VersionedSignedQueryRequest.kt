@@ -37,7 +37,7 @@ public sealed class VersionedSignedQueryRequest {
       )
 
       public override fun write(writer: ScaleCodecWriter, instance: V1): Unit {
-
+          _VersionedSignedQueryRequestV1.write(writer, instance._VersionedSignedQueryRequestV1)
       }
     }
   }
