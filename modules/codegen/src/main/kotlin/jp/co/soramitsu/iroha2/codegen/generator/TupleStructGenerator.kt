@@ -9,7 +9,6 @@ object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
         clazz: TypeSpec.Builder
     ) {
         super.implKDoc(blueprint, clazz)
-        //todo fix generic names
         clazz.addKdoc("\n\nGenerated from '${blueprint.source.name}' tuple structure")
     }
 }

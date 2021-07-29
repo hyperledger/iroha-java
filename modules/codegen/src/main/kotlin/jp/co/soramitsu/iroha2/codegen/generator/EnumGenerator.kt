@@ -23,7 +23,6 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
 
     override fun implFunctions(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         clazz.addFunction(
-            //todo move name??
             FunSpec.builder("discriminant")
                 .addModifiers(KModifier.ABSTRACT)
                 .returns(Int::class, CodeBlock.of("Discriminator of variant in enum"))

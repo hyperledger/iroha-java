@@ -32,7 +32,6 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implClassBody(blueprint: T, clazz: TypeSpec.Builder) {
         implFunctions(blueprint, clazz)
         implInnerClasses(blueprint, clazz)
-        //todo also change as below
         clazz.addType(implCompanions(blueprint, clazz).build())
     }
 
@@ -64,7 +63,6 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             )
     }
 
-    //todo move to separate interface
     open fun scaleReaderCode(blueprint: T): CodeBlock {
         var result = CodeBlock.builder().add("return ${blueprint.className}(\n").indent()
         val codeBlocks = blueprint.properties.map { resolveScaleReadImpl(it.original) }.toList()

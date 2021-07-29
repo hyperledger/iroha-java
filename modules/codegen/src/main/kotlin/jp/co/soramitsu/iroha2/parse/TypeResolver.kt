@@ -3,7 +3,6 @@ package jp.co.soramitsu.iroha2.parse
 import jp.co.soramitsu.iroha2.type.*
 import kotlin.text.toInt
 
-//todo replace to extractRegex
 class TypeResolver(private val schemaParser: SchemaParser) {
 
     private val resolvers = listOf<Resolver<*>>(
