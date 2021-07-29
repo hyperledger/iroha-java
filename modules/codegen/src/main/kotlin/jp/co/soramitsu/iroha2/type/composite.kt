@@ -6,7 +6,7 @@ abstract class CompositeType(override val name: String, open val generics: List<
 
 data class EnumType(override val name: String, override val generics: List<TypeNest>, val variants: List<Variant>) :
     CompositeType(name, generics) {
-    class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
+    data class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
 
     private var resolutionInProgress: Boolean = false
     override fun notResolvedTypes(): Set<String> {

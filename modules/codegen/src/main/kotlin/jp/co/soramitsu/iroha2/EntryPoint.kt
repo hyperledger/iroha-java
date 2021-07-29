@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     val schemaFileName = tryExtractArg(argsMap, SCHEMA_FILE_ARG_NAME)
 
     val schema = readSchema(schemaFileName)
-    val parseResult = SchemaParser.parse(schema)
+    val parseResult = SchemaParser().parse(schema)
     GeneratorEntryPoint.generate(parseResult, outputPath)
 }
 

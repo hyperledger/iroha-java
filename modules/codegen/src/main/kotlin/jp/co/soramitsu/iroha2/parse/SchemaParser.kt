@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.type.Type
 typealias Types = Map<String, Type>
 typealias Schema = Map<String, Any>
 
-object SchemaParser {
+class SchemaParser {
 
     private val registry = HashMap<String, TypeNest>()
     private val resolver = TypeResolver(this)

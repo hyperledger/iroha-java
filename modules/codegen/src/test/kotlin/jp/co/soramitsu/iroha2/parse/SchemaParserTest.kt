@@ -5,11 +5,13 @@ import com.google.gson.reflect.TypeToken
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
+import jp.co.soramitsu.iroha2.type.EnumType
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
 import jp.co.soramitsu.iroha2.type.StringType
 import jp.co.soramitsu.iroha2.type.StructType
+import jp.co.soramitsu.iroha2.type.TupleStructType
 import jp.co.soramitsu.iroha2.type.Type
 import jp.co.soramitsu.iroha2.type.U128Type
 import jp.co.soramitsu.iroha2.type.U16Type
@@ -20,12 +22,10 @@ import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.VecType
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-//todo test generics
-//todo test not resolved types
-//todo test recursion
 class SchemaParserTest {
 
     private val gson = Gson()
@@ -36,7 +36,7 @@ class SchemaParserTest {
         {}    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assert(types.isEmpty())
     }
@@ -47,7 +47,7 @@ class SchemaParserTest {
         {"bool": "Bool"}    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(1, types.size)
         assertEquals(BooleanType, types["bool"])
@@ -59,7 +59,7 @@ class SchemaParserTest {
         {"String": "String"}    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(1, types.size)
         assertEquals(StringType, types["String"])
@@ -90,7 +90,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(6, types.size)
         assertEquals(U8Type, types["u8"])
@@ -126,7 +126,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         val assertAll = { type: Type?, inner: Type ->
             assertNotNull(type)
@@ -165,7 +165,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(3, types.size)
         assertEquals(StringType, types["String"])
@@ -197,7 +197,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
         val expectedStructType = StructType(structName, listOf(), linkedMapOf())
@@ -224,7 +224,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
         val expectedStructType = StructType(structName, listOf(), linkedMapOf())
@@ -251,7 +251,7 @@ class SchemaParserTest {
         }    
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
         val expectedStructType = StructType(structName, listOf(), linkedMapOf())
@@ -281,7 +281,7 @@ class SchemaParserTest {
         }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
-        val types = SchemaParser.parse(schema)
+        val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
         val expectedStructType = StructType(structName, listOf(), linkedMapOf())
@@ -290,5 +290,165 @@ class SchemaParserTest {
             ArrayType("[$structName; 256]", TypeNest(structName, expectedStructType), 256),
             types["[$structName; 256]"]
         )
+    }
+
+    @Test
+    fun `should parse structs`() {
+        val innerStructName = "foo::bar::Zulu"
+        val targetStructName = "foo:bar:IrohaStruct<u8>"
+        val schemaJson = """
+        {
+            "$targetStructName": {
+                "Struct": {
+                    "declarations": [
+                        {
+                          "name": "property",
+                          "ty": "$innerStructName"
+                        }
+                    ]
+                }
+            },
+            "$innerStructName": {
+                "Struct": {
+                    "declarations": []
+                }
+            },
+            "u8":{
+              "Int":"FixedWidth"
+            }
+        }
+        """.trimIndent()
+        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val types = SchemaParser().parse(schema)
+
+        assertEquals(3, types.size)
+        assertEquals(U8Type, types["u8"])
+        val innerStructType = StructType(innerStructName, listOf(), linkedMapOf())
+        assertEquals(innerStructType, types[innerStructName])
+
+        val targetStructType = StructType(
+            targetStructName,
+            listOf(
+                TypeNest("u8", U8Type)
+            ),
+            linkedMapOf(
+                Pair("property", TypeNest(innerStructName, innerStructType))
+            )
+        )
+        assertEquals(
+            targetStructType,
+            types[targetStructName]
+        )
+    }
+
+    @Test
+    fun `should parse tuple structs`() {
+        val innerStructName = "foo::bar::Zulu"
+        val targetTupleStructName = "foo:bar:IrohaTupleStruct<u8>"
+        val schemaJson = """
+        {
+            "$targetTupleStructName": {
+                "TupleStruct": {
+                    "types": ["$innerStructName"]
+                }
+            },
+            "$innerStructName": {
+                "Struct": {
+                    "declarations": []
+                }
+            },
+            "u8":{
+              "Int":"FixedWidth"
+            }
+        }
+        """.trimIndent()
+        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val types = SchemaParser().parse(schema)
+
+        assertEquals(3, types.size)
+        assertEquals(U8Type, types["u8"])
+        val innerStructType = StructType(innerStructName, listOf(), linkedMapOf())
+        assertEquals(innerStructType, types[innerStructName])
+
+        val targetTupleStructType = TupleStructType(
+            targetTupleStructName,
+            listOf(
+                TypeNest("u8", U8Type)
+            ),
+            listOf(TypeNest(innerStructName, innerStructType))
+        )
+        assertEquals(
+            targetTupleStructType,
+            types[targetTupleStructName]
+        )
+    }
+
+    @Test
+    fun `should parse enums`() {
+        val innerStructName = "foo::bar::Zulu"
+        val targetEnumName = "foo:bar:IrohaEnum<u8>"
+        val schemaJson = """
+        {
+            "$targetEnumName": {
+                "Enum": {
+                    "variants": [
+                        {
+                            "name": "Variant1",
+                            "discriminant": 5,
+                            "ty": "$innerStructName" 
+                        },
+                        {
+                            "name": "Variant2",
+                            "discriminant": 10
+                        }
+                    ]
+                }
+            },
+            "$innerStructName": {
+                "Struct": {
+                    "declarations": []
+                }
+            },
+            "u8":{
+              "Int":"FixedWidth"
+            }
+        }
+        """.trimIndent()
+        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val types = SchemaParser().parse(schema)
+
+        assertEquals(3, types.size)
+        assertEquals(U8Type, types["u8"])
+        val innerStructType = StructType(innerStructName, listOf(), linkedMapOf())
+        assertEquals(innerStructType, types[innerStructName])
+
+        val targetEnumType = EnumType(
+            targetEnumName,
+            listOf(
+                TypeNest("u8", U8Type)
+            ),
+            listOf(
+                EnumType.Variant("Variant1", 5, TypeNest(innerStructName, innerStructType)),
+                EnumType.Variant("Variant2", 10, null)
+            )
+        )
+        assertEquals(
+            targetEnumType,
+            types[targetEnumName]
+        )
+    }
+
+    @Test
+    fun `should throw exception if some types was not resolved`() {
+        val unresolvedStruct = "foo::bar::Zulu"
+        val schemaJson = """
+        {
+            "Vec<$unresolvedStruct>": {
+                "Vec": "$unresolvedStruct"
+            }
+        }    
+        """.trimIndent()
+        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        assertFailsWith(RuntimeException::class) { SchemaParser().parse(schema) }
     }
 }
