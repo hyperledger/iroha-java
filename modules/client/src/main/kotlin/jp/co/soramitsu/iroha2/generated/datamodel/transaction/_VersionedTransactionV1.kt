@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.Unit
 
 /**
  * _VersionedTransactionV1
@@ -14,18 +15,17 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  * Generated from 'iroha_data_model::transaction::_VersionedTransactionV1' tuple structure
  */
 public class _VersionedTransactionV1(
-    public val transaction: Transaction
+  public val transaction: Transaction
 ) {
-    public companion object :
-        ScaleReader<_VersionedTransactionV1>,
-        ScaleWriter<_VersionedTransactionV1> {
-        public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
-            _VersionedTransactionV1(
-                Transaction.read(reader) as Transaction,
-            )
+  public companion object : ScaleReader<_VersionedTransactionV1>,
+      ScaleWriter<_VersionedTransactionV1> {
+    public override fun read(reader: ScaleCodecReader): _VersionedTransactionV1 =
+        _VersionedTransactionV1(
+      Transaction.read(reader) as Transaction,
+    )
 
-        public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1) {
-            Transaction.write(writer, instance.transaction)
-        }
+    public override fun write(writer: ScaleCodecWriter, instance: _VersionedTransactionV1): Unit {
+        Transaction.write(writer, instance.transaction)
     }
+  }
 }

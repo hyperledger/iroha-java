@@ -1,7 +1,3 @@
-plugins {
-    id "org.jetbrains.kotlin.jvm"
-}
-
 group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 

@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import kotlin.String
+import kotlin.Unit
 
 /**
  * UnsatisfiedSignatureConditionFail
@@ -16,21 +17,18 @@ import kotlin.String
  * structure
  */
 public class UnsatisfiedSignatureConditionFail(
-    public val reason: String
+  public val reason: String
 ) {
-    public companion object :
-        ScaleReader<UnsatisfiedSignatureConditionFail>,
-        ScaleWriter<UnsatisfiedSignatureConditionFail> {
-        public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureConditionFail =
-            UnsatisfiedSignatureConditionFail(
-                reader.readString(),
-            )
+  public companion object : ScaleReader<UnsatisfiedSignatureConditionFail>,
+      ScaleWriter<UnsatisfiedSignatureConditionFail> {
+    public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureConditionFail =
+        UnsatisfiedSignatureConditionFail(
+      reader.readString(),
+    )
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: UnsatisfiedSignatureConditionFail
-        ) {
-            writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
-        }
+    public override fun write(writer: ScaleCodecWriter,
+        instance: UnsatisfiedSignatureConditionFail): Unit {
+        writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
     }
+  }
 }

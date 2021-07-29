@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * FindAssetsByAssetDefinitionId
@@ -16,18 +17,18 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
  * Generated from 'iroha_data_model::query::asset::FindAssetsByAssetDefinitionId' regular structure
  */
 public class FindAssetsByAssetDefinitionId(
-    public val assetDefinitionId: EvaluatesTo<DefinitionId>
+  public val assetDefinitionId: EvaluatesTo<DefinitionId>
 ) {
-    public companion object :
-        ScaleReader<FindAssetsByAssetDefinitionId>,
-        ScaleWriter<FindAssetsByAssetDefinitionId> {
-        public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
-            FindAssetsByAssetDefinitionId(
-                EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
-            )
+  public companion object : ScaleReader<FindAssetsByAssetDefinitionId>,
+      ScaleWriter<FindAssetsByAssetDefinitionId> {
+    public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
+        FindAssetsByAssetDefinitionId(
+      EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
+    )
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId) {
-            EvaluatesTo.write(writer, instance.assetDefinitionId)
-        }
+    public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId):
+        Unit {
+        EvaluatesTo.write(writer, instance.assetDefinitionId)
     }
+  }
 }

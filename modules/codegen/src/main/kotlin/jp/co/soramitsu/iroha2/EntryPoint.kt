@@ -5,6 +5,7 @@ package jp.co.soramitsu.iroha2
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import jp.co.soramitsu.iroha2.codegen.generator.GeneratorEntryPoint
+import jp.co.soramitsu.iroha2.parse.Schema
 import jp.co.soramitsu.iroha2.parse.SchemaParser
 import java.io.InputStreamReader
 import java.nio.file.Paths
@@ -13,7 +14,6 @@ import java.nio.file.Paths
 const val OUTPUT_PATH_ARG_NAME = "outputPath"
 const val SCHEMA_FILE_ARG_NAME = "schemaFileName"
 
-typealias Schema = Map<String, Any>
 
 fun main(args: Array<String>) {
     val argsMap = parseArgs(args)

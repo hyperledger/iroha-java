@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * FindAssetQuantityById
@@ -16,16 +17,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
  * Generated from 'iroha_data_model::query::asset::FindAssetQuantityById' regular structure
  */
 public class FindAssetQuantityById(
-    public val id: EvaluatesTo<Id>
+  public val id: EvaluatesTo<Id>
 ) {
-    public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById> {
-        public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
-            FindAssetQuantityById(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
-            )
+  public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById> {
+    public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
+        FindAssetQuantityById(
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+    )
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById) {
-            EvaluatesTo.write(writer, instance.id)
-        }
+    public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById): Unit {
+        EvaluatesTo.write(writer, instance.id)
     }
+  }
 }

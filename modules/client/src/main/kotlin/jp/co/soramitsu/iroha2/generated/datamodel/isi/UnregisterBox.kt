@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import kotlin.Unit
 
 /**
  * UnregisterBox
@@ -16,15 +17,15 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
  * Generated from 'iroha_data_model::isi::UnregisterBox' regular structure
  */
 public class UnregisterBox(
-    public val objectId: EvaluatesTo<IdBox>
+  public val objectId: EvaluatesTo<IdBox>
 ) {
-    public companion object : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
-        public override fun read(reader: ScaleCodecReader): UnregisterBox = UnregisterBox(
-            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-        )
+  public companion object : ScaleReader<UnregisterBox>, ScaleWriter<UnregisterBox> {
+    public override fun read(reader: ScaleCodecReader): UnregisterBox = UnregisterBox(
+      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+    )
 
-        public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox) {
-            EvaluatesTo.write(writer, instance.objectId)
-        }
+    public override fun write(writer: ScaleCodecWriter, instance: UnregisterBox): Unit {
+        EvaluatesTo.write(writer, instance.objectId)
     }
+  }
 }

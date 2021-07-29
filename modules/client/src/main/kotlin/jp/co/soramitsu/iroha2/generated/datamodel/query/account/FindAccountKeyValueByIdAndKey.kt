@@ -10,6 +10,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.String
+import kotlin.Unit
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -18,21 +19,21 @@ import kotlin.String
  * structure
  */
 public class FindAccountKeyValueByIdAndKey(
-    public val id: EvaluatesTo<Id>,
-    public val key: EvaluatesTo<String>
+  public val id: EvaluatesTo<Id>,
+  public val key: EvaluatesTo<String>
 ) {
-    public companion object :
-        ScaleReader<FindAccountKeyValueByIdAndKey>,
-        ScaleWriter<FindAccountKeyValueByIdAndKey> {
-        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
-            FindAccountKeyValueByIdAndKey(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
-            )
+  public companion object : ScaleReader<FindAccountKeyValueByIdAndKey>,
+      ScaleWriter<FindAccountKeyValueByIdAndKey> {
+    public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
+        FindAccountKeyValueByIdAndKey(
+      EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+      EvaluatesTo.read(reader) as EvaluatesTo<String>,
+    )
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) {
-            EvaluatesTo.write(writer, instance.id)
-            EvaluatesTo.write(writer, instance.key)
-        }
+    public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey):
+        Unit {
+        EvaluatesTo.write(writer, instance.id)
+        EvaluatesTo.write(writer, instance.key)
     }
+  }
 }

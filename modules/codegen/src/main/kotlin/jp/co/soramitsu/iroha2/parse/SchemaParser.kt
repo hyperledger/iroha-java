@@ -1,9 +1,9 @@
 package jp.co.soramitsu.iroha2.parse
 
-import jp.co.soramitsu.iroha2.Schema
 import jp.co.soramitsu.iroha2.type.Type
 
 typealias Types = Map<String, Type>
+typealias Schema = Map<String, Any>
 
 object SchemaParser {
 

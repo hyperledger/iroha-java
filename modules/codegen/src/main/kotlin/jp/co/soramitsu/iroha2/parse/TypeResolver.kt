@@ -93,7 +93,7 @@ object ArrayResolver : Resolver<ArrayType> {
     private val REGEX by lazy { "\\[(\\S+); (\\d+)\\]".toRegex() }
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
-        if (!name.startsWith("[")) return null;
+        if (!name.startsWith("[")) return null
         val groups = REGEX.find(name)?.groupValues ?: return null
         return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
@@ -177,7 +177,7 @@ object UIntResolver : Resolver<UIntType> {
     }
 }
 
-class TypeNest(val name: String, var value: Type?) {
+data class TypeNest(val name: String, var value: Type?) {
 
     private var resolutionInProgress: Boolean = false
 
