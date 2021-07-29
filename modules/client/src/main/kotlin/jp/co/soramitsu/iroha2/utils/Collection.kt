@@ -7,10 +7,10 @@ package jp.co.soramitsu.iroha2.utils
  */
 const val MAX_POWER_OF_TWO = 1 shl Integer.SIZE - 2
 
-inline fun <T> hashSetWithSize(size: Int, action: () -> T): MutableSet<T> {
+inline fun <T> hashSetWithSize(size: Int, supplier: () -> T): MutableSet<T> {
     val set = HashSet<T>(mapCapacity(size))
     for (index in 0 until size) {
-        set.add(action())
+        set.add(supplier())
     }
     return set
 }

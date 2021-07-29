@@ -10,6 +10,18 @@ repositories {
 }
 
 dependencies {
+    //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-async:$coroutinesVer"
+
+    //scale codec
     implementation "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
+
+    //crypto
+    implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
+    
+    //http client
+    implementation "io.ktor:ktor-client-core:$ktorVer"
+    implementation "io.ktor:ktor-client-websockets:$ktorVer"
+    implementation "io.ktor:ktor-client-cio:$ktorVer"
 }
