@@ -28,7 +28,7 @@ public sealed class Value {
    * 'U32' variant
    */
   public class U32(
-    private val u32: UInt
+    public val u32: UInt
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -49,7 +49,7 @@ public sealed class Value {
    * 'Bool' variant
    */
   public class Bool(
-    private val bool: Boolean
+    public val bool: Boolean
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -70,7 +70,7 @@ public sealed class Value {
    * 'String' variant
    */
   public class String(
-    private val string: kotlin.String
+    public val string: kotlin.String
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -91,7 +91,7 @@ public sealed class Value {
    * 'Vec' variant
    */
   public class Vec(
-    private val vec: MutableList<Value>
+    public val vec: MutableList<Value>
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -113,7 +113,7 @@ public sealed class Value {
    * 'Id' variant
    */
   public class Id(
-    private val idBox: IdBox
+    public val idBox: IdBox
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -134,7 +134,7 @@ public sealed class Value {
    * 'Identifiable' variant
    */
   public class Identifiable(
-    private val identifiableBox: IdentifiableBox
+    public val identifiableBox: IdentifiableBox
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -155,7 +155,7 @@ public sealed class Value {
    * 'PublicKey' variant
    */
   public class PublicKey(
-    private val publicKey: jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+    public val publicKey: jp.co.soramitsu.iroha2.generated.crypto.PublicKey
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -177,7 +177,7 @@ public sealed class Value {
    * 'Parameter' variant
    */
   public class Parameter(
-    private val parameter: jp.co.soramitsu.iroha2.generated.datamodel.Parameter
+    public val parameter: jp.co.soramitsu.iroha2.generated.datamodel.Parameter
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -199,7 +199,7 @@ public sealed class Value {
    * 'SignatureCheckCondition' variant
    */
   public class SignatureCheckCondition(
-    private val signatureCheckCondition:
+    public val signatureCheckCondition:
         jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -225,7 +225,7 @@ public sealed class Value {
    * 'TransactionValue' variant
    */
   public class TransactionValue(
-    private val transactionValue:
+    public val transactionValue:
         jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -249,7 +249,7 @@ public sealed class Value {
    * 'PermissionToken' variant
    */
   public class PermissionToken(
-    private val permissionToken:
+    public val permissionToken:
         jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
   ) : Value() {
     public override fun discriminant(): Int = DISCRIMINANT

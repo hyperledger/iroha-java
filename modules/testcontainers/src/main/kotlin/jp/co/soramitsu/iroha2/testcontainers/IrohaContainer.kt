@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.GenericContainer
@@ -16,7 +17,9 @@ import java.util.function.Consumer
 
 fun main() {
     val genesis = GenesisBuilder.builder()
-        .withInstructions(Instruction.Register())
+        .withInstructions(
+            Instructions.registerDomain("wonderland", )
+        )
         .build()
     genesis.writeToFile(Paths.get("./1"))
 }

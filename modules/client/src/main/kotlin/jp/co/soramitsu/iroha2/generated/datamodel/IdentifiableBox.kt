@@ -25,7 +25,7 @@ public sealed class IdentifiableBox {
    * 'Account' variant
    */
   public class Account(
-    private val account: jp.co.soramitsu.iroha2.generated.datamodel.account.Account
+    public val account: jp.co.soramitsu.iroha2.generated.datamodel.account.Account
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -47,7 +47,7 @@ public sealed class IdentifiableBox {
    * 'NewAccount' variant
    */
   public class NewAccount(
-    private val newAccount: jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
+    public val newAccount: jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -70,7 +70,7 @@ public sealed class IdentifiableBox {
    * 'Asset' variant
    */
   public class Asset(
-    private val asset: jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+    public val asset: jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -92,7 +92,7 @@ public sealed class IdentifiableBox {
    * 'AssetDefinition' variant
    */
   public class AssetDefinition(
-    private val assetDefinition: jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+    public val assetDefinition: jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -115,7 +115,7 @@ public sealed class IdentifiableBox {
    * 'Domain' variant
    */
   public class Domain(
-    private val domain: jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
+    public val domain: jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -137,7 +137,7 @@ public sealed class IdentifiableBox {
    * 'Peer' variant
    */
   public class Peer(
-    private val peer: jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
+    public val peer: jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
   ) : IdentifiableBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 

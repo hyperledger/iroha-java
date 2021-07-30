@@ -25,7 +25,7 @@ public sealed class VersionedQueryResult {
    * 'V1' variant
    */
   public class V1(
-    private val _VersionedQueryResultV1: _VersionedQueryResultV1
+    public val _VersionedQueryResultV1: _VersionedQueryResultV1
   ) : VersionedQueryResult() {
     public override fun discriminant(): Int = DISCRIMINANT
 

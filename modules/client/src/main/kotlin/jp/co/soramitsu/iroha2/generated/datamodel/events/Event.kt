@@ -25,7 +25,7 @@ public sealed class Event {
    * 'Pipeline' variant
    */
   public class Pipeline(
-    private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event
+    public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event
   ) : Event() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -48,7 +48,7 @@ public sealed class Event {
    * 'Data' variant
    */
   public class Data(
-    private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event
+    public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event
   ) : Event() {
     public override fun discriminant(): Int = DISCRIMINANT
 

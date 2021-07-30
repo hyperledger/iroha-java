@@ -25,7 +25,7 @@ public sealed class TransactionValue {
    * 'Transaction' variant
    */
   public class Transaction(
-    private val versionedTransaction: VersionedTransaction
+    public val versionedTransaction: VersionedTransaction
   ) : TransactionValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -46,7 +46,7 @@ public sealed class TransactionValue {
    * 'RejectedTransaction' variant
    */
   public class RejectedTransaction(
-    private val versionedRejectedTransaction: VersionedRejectedTransaction
+    public val versionedRejectedTransaction: VersionedRejectedTransaction
   ) : TransactionValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 

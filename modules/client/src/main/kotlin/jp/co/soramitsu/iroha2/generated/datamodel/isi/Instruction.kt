@@ -25,7 +25,7 @@ public sealed class Instruction {
    * 'Register' variant
    */
   public class Register(
-    private val registerBox: RegisterBox
+    public val registerBox: RegisterBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -46,7 +46,7 @@ public sealed class Instruction {
    * 'Unregister' variant
    */
   public class Unregister(
-    private val unregisterBox: UnregisterBox
+    public val unregisterBox: UnregisterBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -67,7 +67,7 @@ public sealed class Instruction {
    * 'Mint' variant
    */
   public class Mint(
-    private val mintBox: MintBox
+    public val mintBox: MintBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -88,7 +88,7 @@ public sealed class Instruction {
    * 'Burn' variant
    */
   public class Burn(
-    private val burnBox: BurnBox
+    public val burnBox: BurnBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -109,7 +109,7 @@ public sealed class Instruction {
    * 'Transfer' variant
    */
   public class Transfer(
-    private val transferBox: TransferBox
+    public val transferBox: TransferBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -130,7 +130,7 @@ public sealed class Instruction {
    * 'If' variant
    */
   public class If(
-    private val `if`: jp.co.soramitsu.iroha2.generated.datamodel.isi.If
+    public val `if`: jp.co.soramitsu.iroha2.generated.datamodel.isi.If
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -152,7 +152,7 @@ public sealed class Instruction {
    * 'Pair' variant
    */
   public class Pair(
-    private val pair: jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
+    public val pair: jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -174,7 +174,7 @@ public sealed class Instruction {
    * 'Sequence' variant
    */
   public class Sequence(
-    private val sequenceBox: SequenceBox
+    public val sequenceBox: SequenceBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -195,7 +195,7 @@ public sealed class Instruction {
    * 'Fail' variant
    */
   public class Fail(
-    private val failBox: FailBox
+    public val failBox: FailBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -216,7 +216,7 @@ public sealed class Instruction {
    * 'SetKeyValue' variant
    */
   public class SetKeyValue(
-    private val setKeyValueBox: SetKeyValueBox
+    public val setKeyValueBox: SetKeyValueBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -237,7 +237,7 @@ public sealed class Instruction {
    * 'RemoveKeyValue' variant
    */
   public class RemoveKeyValue(
-    private val removeKeyValueBox: RemoveKeyValueBox
+    public val removeKeyValueBox: RemoveKeyValueBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -258,7 +258,7 @@ public sealed class Instruction {
    * 'Grant' variant
    */
   public class Grant(
-    private val grantBox: GrantBox
+    public val grantBox: GrantBox
   ) : Instruction() {
     public override fun discriminant(): Int = DISCRIMINANT
 

@@ -25,7 +25,7 @@ public sealed class QueryBox {
    * 'FindAllAccounts' variant
    */
   public class FindAllAccounts(
-    private val findAllAccounts:
+    public val findAllAccounts:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -49,7 +49,7 @@ public sealed class QueryBox {
    * 'FindAccountById' variant
    */
   public class FindAccountById(
-    private val findAccountById:
+    public val findAccountById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -73,7 +73,7 @@ public sealed class QueryBox {
    * 'FindAccountKeyValueByIdAndKey' variant
    */
   public class FindAccountKeyValueByIdAndKey(
-    private val findAccountKeyValueByIdAndKey:
+    public val findAccountKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -101,7 +101,7 @@ public sealed class QueryBox {
    * 'FindAccountsByName' variant
    */
   public class FindAccountsByName(
-    private val findAccountsByName:
+    public val findAccountsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -125,7 +125,7 @@ public sealed class QueryBox {
    * 'FindAccountsByDomainName' variant
    */
   public class FindAccountsByDomainName(
-    private val findAccountsByDomainName:
+    public val findAccountsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -152,7 +152,7 @@ public sealed class QueryBox {
    * 'FindAllAssets' variant
    */
   public class FindAllAssets(
-    private val findAllAssets: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
+    public val findAllAssets: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -175,7 +175,7 @@ public sealed class QueryBox {
    * 'FindAllAssetsDefinitions' variant
    */
   public class FindAllAssetsDefinitions(
-    private val findAllAssetsDefinitions:
+    public val findAllAssetsDefinitions:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -202,7 +202,7 @@ public sealed class QueryBox {
    * 'FindAssetById' variant
    */
   public class FindAssetById(
-    private val findAssetById: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
+    public val findAssetById: jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -225,7 +225,7 @@ public sealed class QueryBox {
    * 'FindAssetsByName' variant
    */
   public class FindAssetsByName(
-    private val findAssetsByName:
+    public val findAssetsByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -249,7 +249,7 @@ public sealed class QueryBox {
    * 'FindAssetsByAccountId' variant
    */
   public class FindAssetsByAccountId(
-    private val findAssetsByAccountId:
+    public val findAssetsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -275,7 +275,7 @@ public sealed class QueryBox {
    * 'FindAssetsByAssetDefinitionId' variant
    */
   public class FindAssetsByAssetDefinitionId(
-    private val findAssetsByAssetDefinitionId:
+    public val findAssetsByAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -302,7 +302,7 @@ public sealed class QueryBox {
    * 'FindAssetsByDomainName' variant
    */
   public class FindAssetsByDomainName(
-    private val findAssetsByDomainName:
+    public val findAssetsByDomainName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -328,7 +328,7 @@ public sealed class QueryBox {
    * 'FindAssetsByDomainNameAndAssetDefinitionId' variant
    */
   public class FindAssetsByDomainNameAndAssetDefinitionId(
-    private val findAssetsByDomainNameAndAssetDefinitionId:
+    public val findAssetsByDomainNameAndAssetDefinitionId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -356,7 +356,7 @@ public sealed class QueryBox {
    * 'FindAssetQuantityById' variant
    */
   public class FindAssetQuantityById(
-    private val findAssetQuantityById:
+    public val findAssetQuantityById:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -382,7 +382,7 @@ public sealed class QueryBox {
    * 'FindAssetKeyValueByIdAndKey' variant
    */
   public class FindAssetKeyValueByIdAndKey(
-    private val findAssetKeyValueByIdAndKey:
+    public val findAssetKeyValueByIdAndKey:
         jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -409,7 +409,7 @@ public sealed class QueryBox {
    * 'FindAllDomains' variant
    */
   public class FindAllDomains(
-    private val findAllDomains:
+    public val findAllDomains:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -433,7 +433,7 @@ public sealed class QueryBox {
    * 'FindDomainByName' variant
    */
   public class FindDomainByName(
-    private val findDomainByName:
+    public val findDomainByName:
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -457,7 +457,7 @@ public sealed class QueryBox {
    * 'FindAllPeers' variant
    */
   public class FindAllPeers(
-    private val findAllPeers: jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
+    public val findAllPeers: jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -480,7 +480,7 @@ public sealed class QueryBox {
    * 'FindTransactionsByAccountId' variant
    */
   public class FindTransactionsByAccountId(
-    private val findTransactionsByAccountId:
+    public val findTransactionsByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -508,7 +508,7 @@ public sealed class QueryBox {
    * 'FindPermissionTokensByAccountId' variant
    */
   public class FindPermissionTokensByAccountId(
-    private val findPermissionTokensByAccountId:
+    public val findPermissionTokensByAccountId:
         jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
   ) : QueryBox() {
     public override fun discriminant(): Int = DISCRIMINANT

@@ -25,7 +25,7 @@ public sealed class VersionedEventSocketMessage {
    * 'V1' variant
    */
   public class V1(
-    private val _VersionedEventSocketMessageV1: _VersionedEventSocketMessageV1
+    public val _VersionedEventSocketMessageV1: _VersionedEventSocketMessageV1
   ) : VersionedEventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 

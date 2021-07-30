@@ -27,7 +27,7 @@ public sealed class Parameter {
    * 'MaximumFaultyPeersAmount' variant
    */
   public class MaximumFaultyPeersAmount(
-    private val u32: UInt
+    public val u32: UInt
   ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -51,7 +51,7 @@ public sealed class Parameter {
    * 'BlockTime' variant
    */
   public class BlockTime(
-    private val u128: BigInteger
+    public val u128: BigInteger
   ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -72,7 +72,7 @@ public sealed class Parameter {
    * 'CommitTime' variant
    */
   public class CommitTime(
-    private val u128: BigInteger
+    public val u128: BigInteger
   ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -93,7 +93,7 @@ public sealed class Parameter {
    * 'TransactionReceiptTime' variant
    */
   public class TransactionReceiptTime(
-    private val u128: BigInteger
+    public val u128: BigInteger
   ) : Parameter() {
     public override fun discriminant(): Int = DISCRIMINANT
 

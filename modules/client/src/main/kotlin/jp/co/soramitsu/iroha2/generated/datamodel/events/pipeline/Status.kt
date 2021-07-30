@@ -42,7 +42,7 @@ public sealed class Status {
    * 'Rejected' variant
    */
   public class Rejected(
-    private val rejectionReason: RejectionReason
+    public val rejectionReason: RejectionReason
   ) : Status() {
     public override fun discriminant(): Int = DISCRIMINANT
 

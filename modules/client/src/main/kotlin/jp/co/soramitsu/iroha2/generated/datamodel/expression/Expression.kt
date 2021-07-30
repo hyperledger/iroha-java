@@ -27,7 +27,7 @@ public sealed class Expression {
    * 'Add' variant
    */
   public class Add(
-    private val add: jp.co.soramitsu.iroha2.generated.datamodel.expression.Add
+    public val add: jp.co.soramitsu.iroha2.generated.datamodel.expression.Add
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -49,7 +49,7 @@ public sealed class Expression {
    * 'Subtract' variant
    */
   public class Subtract(
-    private val subtract: jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract
+    public val subtract: jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -72,7 +72,7 @@ public sealed class Expression {
    * 'Multiply' variant
    */
   public class Multiply(
-    private val multiply: jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply
+    public val multiply: jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -95,7 +95,7 @@ public sealed class Expression {
    * 'Divide' variant
    */
   public class Divide(
-    private val divide: jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide
+    public val divide: jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -118,7 +118,7 @@ public sealed class Expression {
    * 'Mod' variant
    */
   public class Mod(
-    private val mod: jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod
+    public val mod: jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -140,7 +140,7 @@ public sealed class Expression {
    * 'RaiseTo' variant
    */
   public class RaiseTo(
-    private val raiseTo: jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo
+    public val raiseTo: jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -163,7 +163,7 @@ public sealed class Expression {
    * 'Greater' variant
    */
   public class Greater(
-    private val greater: jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater
+    public val greater: jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -186,7 +186,7 @@ public sealed class Expression {
    * 'Less' variant
    */
   public class Less(
-    private val less: jp.co.soramitsu.iroha2.generated.datamodel.expression.Less
+    public val less: jp.co.soramitsu.iroha2.generated.datamodel.expression.Less
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -208,7 +208,7 @@ public sealed class Expression {
    * 'Equal' variant
    */
   public class Equal(
-    private val equal: jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal
+    public val equal: jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -230,7 +230,7 @@ public sealed class Expression {
    * 'Not' variant
    */
   public class Not(
-    private val not: jp.co.soramitsu.iroha2.generated.datamodel.expression.Not
+    public val not: jp.co.soramitsu.iroha2.generated.datamodel.expression.Not
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -252,7 +252,7 @@ public sealed class Expression {
    * 'And' variant
    */
   public class And(
-    private val and: jp.co.soramitsu.iroha2.generated.datamodel.expression.And
+    public val and: jp.co.soramitsu.iroha2.generated.datamodel.expression.And
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -274,7 +274,7 @@ public sealed class Expression {
    * 'Or' variant
    */
   public class Or(
-    private val or: jp.co.soramitsu.iroha2.generated.datamodel.expression.Or
+    public val or: jp.co.soramitsu.iroha2.generated.datamodel.expression.Or
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -296,7 +296,7 @@ public sealed class Expression {
    * 'If' variant
    */
   public class If(
-    private val `if`: jp.co.soramitsu.iroha2.generated.datamodel.expression.If
+    public val `if`: jp.co.soramitsu.iroha2.generated.datamodel.expression.If
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -318,7 +318,7 @@ public sealed class Expression {
    * 'Raw' variant
    */
   public class Raw(
-    private val `value`: Value
+    public val `value`: Value
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -339,7 +339,7 @@ public sealed class Expression {
    * 'Query' variant
    */
   public class Query(
-    private val queryBox: QueryBox
+    public val queryBox: QueryBox
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -360,7 +360,7 @@ public sealed class Expression {
    * 'Contains' variant
    */
   public class Contains(
-    private val contains: jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains
+    public val contains: jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -383,7 +383,7 @@ public sealed class Expression {
    * 'ContainsAll' variant
    */
   public class ContainsAll(
-    private val containsAll: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll
+    public val containsAll: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -406,7 +406,7 @@ public sealed class Expression {
    * 'ContainsAny' variant
    */
   public class ContainsAny(
-    private val containsAny: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny
+    public val containsAny: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -429,7 +429,7 @@ public sealed class Expression {
    * 'Where' variant
    */
   public class Where(
-    private val `where`: jp.co.soramitsu.iroha2.generated.datamodel.expression.Where
+    public val `where`: jp.co.soramitsu.iroha2.generated.datamodel.expression.Where
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -452,7 +452,7 @@ public sealed class Expression {
    * 'ContextValue' variant
    */
   public class ContextValue(
-    private val contextValue: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue
+    public val contextValue: jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue
   ) : Expression() {
     public override fun discriminant(): Int = DISCRIMINANT
 

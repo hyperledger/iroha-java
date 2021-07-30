@@ -25,7 +25,7 @@ public sealed class TransactionRejectionReason {
    * 'NotPermitted' variant
    */
   public class NotPermitted(
-    private val notPermittedFail: NotPermittedFail
+    public val notPermittedFail: NotPermittedFail
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -46,7 +46,7 @@ public sealed class TransactionRejectionReason {
    * 'UnsatisfiedSignatureCondition' variant
    */
   public class UnsatisfiedSignatureCondition(
-    private val unsatisfiedSignatureConditionFail: UnsatisfiedSignatureConditionFail
+    public val unsatisfiedSignatureConditionFail: UnsatisfiedSignatureConditionFail
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -71,7 +71,7 @@ public sealed class TransactionRejectionReason {
    * 'InstructionExecution' variant
    */
   public class InstructionExecution(
-    private val instructionExecutionFail: InstructionExecutionFail
+    public val instructionExecutionFail: InstructionExecutionFail
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -93,7 +93,7 @@ public sealed class TransactionRejectionReason {
    * 'SignatureVerification' variant
    */
   public class SignatureVerification(
-    private val signatureVerificationFail: SignatureVerificationFail
+    public val signatureVerificationFail: SignatureVerificationFail
   ) : TransactionRejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 

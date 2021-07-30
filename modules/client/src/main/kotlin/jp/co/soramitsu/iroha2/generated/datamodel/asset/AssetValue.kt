@@ -28,7 +28,7 @@ public sealed class AssetValue {
    * 'Quantity' variant
    */
   public class Quantity(
-    private val u32: UInt
+    public val u32: UInt
   ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -49,7 +49,7 @@ public sealed class AssetValue {
    * 'BigQuantity' variant
    */
   public class BigQuantity(
-    private val u128: BigInteger
+    public val u128: BigInteger
   ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -70,7 +70,7 @@ public sealed class AssetValue {
    * 'Store' variant
    */
   public class Store(
-    private val metadata: Metadata
+    public val metadata: Metadata
   ) : AssetValue() {
     public override fun discriminant(): Int = DISCRIMINANT
 

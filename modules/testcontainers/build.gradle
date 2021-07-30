@@ -7,6 +7,7 @@ dependencies {
     implementation "com.google.code.gson:gson:$gsonVer"
     implementation "ch.qos.logback:logback-classic:$logbackVer"
     testImplementation "org.jetbrains.kotlin:kotlin-test"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
 }
 
 test {

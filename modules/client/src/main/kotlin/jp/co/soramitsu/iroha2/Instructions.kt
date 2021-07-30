@@ -3,9 +3,13 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
@@ -48,7 +52,7 @@ object Instructions {
         }
     }
 
-    private fun registerSome(idBox: () -> IdentifiableBox): Instruction {
+    private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction {
         return Instruction.Register(
             RegisterBox(
                 EvaluatesTo(
@@ -58,5 +62,17 @@ object Instructions {
                 )
             )
         )
+    }
+
+    fun registerDomain(
+        domainName: String,
+        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
+        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
+    ): Instruction {
+        return registerSome {
+            IdentifiableBox.Domain(
+                Domain(domainName, accounts, assetDefinitions)
+            )
+        }
     }
 }

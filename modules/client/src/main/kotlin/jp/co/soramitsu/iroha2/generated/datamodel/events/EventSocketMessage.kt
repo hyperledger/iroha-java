@@ -25,7 +25,7 @@ public sealed class EventSocketMessage {
    * 'SubscriptionRequest' variant
    */
   public class SubscriptionRequest(
-    private val subscriptionRequest:
+    public val subscriptionRequest:
         jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
@@ -67,7 +67,7 @@ public sealed class EventSocketMessage {
    * 'Event' variant
    */
   public class Event(
-    private val event: jp.co.soramitsu.iroha2.generated.datamodel.events.Event
+    public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.Event
   ) : EventSocketMessage() {
     public override fun discriminant(): Int = DISCRIMINANT
 

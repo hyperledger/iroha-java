@@ -28,7 +28,7 @@ public sealed class IdBox {
    * 'AccountId' variant
    */
   public class AccountId(
-    private val id: Id
+    public val id: Id
   ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -49,7 +49,7 @@ public sealed class IdBox {
    * 'AssetId' variant
    */
   public class AssetId(
-    private val id: jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+    public val id: jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
   ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -71,7 +71,7 @@ public sealed class IdBox {
    * 'AssetDefinitionId' variant
    */
   public class AssetDefinitionId(
-    private val definitionId: DefinitionId
+    public val definitionId: DefinitionId
   ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -92,7 +92,7 @@ public sealed class IdBox {
    * 'DomainName' variant
    */
   public class DomainName(
-    private val string: String
+    public val string: String
   ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -113,7 +113,7 @@ public sealed class IdBox {
    * 'PeerId' variant
    */
   public class PeerId(
-    private val id: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
+    public val id: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
   ) : IdBox() {
     public override fun discriminant(): Int = DISCRIMINANT
 

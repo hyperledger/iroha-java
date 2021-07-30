@@ -25,7 +25,7 @@ public sealed class RejectionReason {
    * 'Block' variant
    */
   public class Block(
-    private val blockRejectionReason: BlockRejectionReason
+    public val blockRejectionReason: BlockRejectionReason
   ) : RejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 
@@ -46,7 +46,7 @@ public sealed class RejectionReason {
    * 'Transaction' variant
    */
   public class Transaction(
-    private val transactionRejectionReason: TransactionRejectionReason
+    public val transactionRejectionReason: TransactionRejectionReason
   ) : RejectionReason() {
     public override fun discriminant(): Int = DISCRIMINANT
 

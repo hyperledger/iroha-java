@@ -25,7 +25,7 @@ public sealed class VersionedRejectedTransaction {
    * 'V1' variant
    */
   public class V1(
-    private val _VersionedRejectedTransactionV1: _VersionedRejectedTransactionV1
+    public val _VersionedRejectedTransactionV1: _VersionedRejectedTransactionV1
   ) : VersionedRejectedTransaction() {
     public override fun discriminant(): Int = DISCRIMINANT
 

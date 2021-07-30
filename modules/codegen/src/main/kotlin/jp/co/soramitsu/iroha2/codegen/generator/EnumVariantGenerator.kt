@@ -30,8 +30,7 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
                 clazz.addProperty(
                     PropertySpec.builder(
                         property.name,
-                        property.typeName,
-                        KModifier.PRIVATE
+                        property.typeName
                     ).initializer(property.name)
                         .build()
                 )
