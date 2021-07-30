@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
@@ -9,8 +10,16 @@ import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forClasspathResource
+import java.nio.file.Paths
 import java.time.Duration
 import java.util.function.Consumer
+
+fun main() {
+    val genesis = GenesisBuilder.builder()
+        .withInstructions(Instruction.Register())
+        .build()
+    genesis.writeToFile(Paths.get("./1"))
+}
 
 class IrohaContainer(
     private val networkToJoin: Network = newNetwork(),
@@ -21,6 +30,7 @@ class IrohaContainer(
     private var shouldCloseNetwork = true
 
     override fun start() {
+
         withNetwork(networkToJoin)
             .withEnv(ENV_SUMERAGI_MAX_FAULTY_PEERS.first, ENV_SUMERAGI_MAX_FAULTY_PEERS.second)
             .withEnv(ENV_TORII_P2P_URL.first, ENV_TORII_P2P_URL.second)

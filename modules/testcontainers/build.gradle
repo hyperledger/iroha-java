@@ -1,8 +1,11 @@
+group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 
 dependencies {
+    api project(":client")
     implementation "org.testcontainers:testcontainers:$testContainersVer"
-    testImplementation "ch.qos.logback:logback-classic:$logbackVer"
+    implementation "com.google.code.gson:gson:$gsonVer"
+    implementation "ch.qos.logback:logback-classic:$logbackVer"
     testImplementation "org.jetbrains.kotlin:kotlin-test"
 }
 

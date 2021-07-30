@@ -39,6 +39,9 @@
     "Option": "iroha_data_model::isi::Instruction"
   },
   "String": "String",
+  "Vec<iroha::genesis::GenesisTransaction>": {
+    "Vec": "iroha::genesis::GenesisTransaction"
+  },
   "Vec<iroha_crypto::PublicKey>": {
     "Vec": "iroha_crypto::PublicKey"
   },
@@ -64,6 +67,26 @@
     }
   },
   "bool": "Bool",
+  "iroha::genesis::GenesisTransaction": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "isi",
+          "ty": "Vec<iroha_data_model::isi::Instruction>"
+        }
+      ]
+    }
+  },
+  "iroha::genesis::RawGenesisBlock": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "transactions",
+          "ty": "Vec<iroha::genesis::GenesisTransaction>"
+        }
+      ]
+    }
+  },
   "iroha_crypto::Hash": {
     "TupleStruct": {
       "types": [
@@ -532,7 +555,7 @@
       "variants": [
         {
           "name": "V1",
-          "discriminant": 0,
+          "discriminant": 1,
           "ty": "iroha_data_model::events::_VersionedEventSocketMessageV1"
         }
       ]
@@ -1462,6 +1485,24 @@
       ]
     }
   },
+  "iroha_data_model::query::Payload": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "timestamp_ms",
+          "ty": "iroha_schema::Compact<u128>"
+        },
+        {
+          "name": "query",
+          "ty": "iroha_data_model::query::QueryBox"
+        },
+        {
+          "name": "account_id",
+          "ty": "iroha_data_model::account::Id"
+        }
+      ]
+    }
+  },
   "iroha_data_model::query::QueryBox": {
     "Enum": {
       "variants": [
@@ -1526,48 +1567,43 @@
           "ty": "iroha_data_model::query::asset::FindAssetsByDomainName"
         },
         {
-          "name": "FindAssetsByAccountIdAndAssetDefinitionId",
-          "discriminant": 12,
-          "ty": "iroha_data_model::query::asset::FindAssetsByAccountIdAndAssetDefinitionId"
-        },
-        {
           "name": "FindAssetsByDomainNameAndAssetDefinitionId",
-          "discriminant": 13,
+          "discriminant": 12,
           "ty": "iroha_data_model::query::asset::FindAssetsByDomainNameAndAssetDefinitionId"
         },
         {
           "name": "FindAssetQuantityById",
-          "discriminant": 14,
+          "discriminant": 13,
           "ty": "iroha_data_model::query::asset::FindAssetQuantityById"
         },
         {
           "name": "FindAssetKeyValueByIdAndKey",
-          "discriminant": 15,
+          "discriminant": 14,
           "ty": "iroha_data_model::query::asset::FindAssetKeyValueByIdAndKey"
         },
         {
           "name": "FindAllDomains",
-          "discriminant": 16,
+          "discriminant": 15,
           "ty": "iroha_data_model::query::domain::FindAllDomains"
         },
         {
           "name": "FindDomainByName",
-          "discriminant": 17,
+          "discriminant": 16,
           "ty": "iroha_data_model::query::domain::FindDomainByName"
         },
         {
           "name": "FindAllPeers",
-          "discriminant": 18,
+          "discriminant": 17,
           "ty": "iroha_data_model::query::peer::FindAllPeers"
         },
         {
           "name": "FindTransactionsByAccountId",
-          "discriminant": 19,
+          "discriminant": 18,
           "ty": "iroha_data_model::query::transaction::FindTransactionsByAccountId"
         },
         {
           "name": "FindPermissionTokensByAccountId",
-          "discriminant": 20,
+          "discriminant": 19,
           "ty": "iroha_data_model::query::permissions::FindPermissionTokensByAccountId"
         }
       ]
@@ -1584,16 +1620,12 @@
     "Struct": {
       "declarations": [
         {
-          "name": "timestamp_ms",
-          "ty": "iroha_schema::Compact<u128>"
+          "name": "payload",
+          "ty": "iroha_data_model::query::Payload"
         },
         {
           "name": "signature",
           "ty": "iroha_crypto::Signature"
-        },
-        {
-          "name": "query",
-          "ty": "iroha_data_model::query::QueryBox"
         }
       ]
     }
@@ -1733,20 +1765,6 @@
         {
           "name": "account_id",
           "ty": "iroha_data_model::expression::EvaluatesTo<iroha_data_model::account::Id>"
-        }
-      ]
-    }
-  },
-  "iroha_data_model::query::asset::FindAssetsByAccountIdAndAssetDefinitionId": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "account_id",
-          "ty": "iroha_data_model::expression::EvaluatesTo<iroha_data_model::account::Id>"
-        },
-        {
-          "name": "asset_definition_id",
-          "ty": "iroha_data_model::expression::EvaluatesTo<iroha_data_model::asset::DefinitionId>"
         }
       ]
     }

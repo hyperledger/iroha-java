@@ -5,17 +5,13 @@ plugins {
 group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 
-repositories {
-    maven { url "https://dl.bintray.com/emerald/polkaj" }
-}
-
 dependencies {
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-async:$coroutinesVer"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
 
     //scale codec
-    implementation "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
+    api "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
 
     //crypto
     implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"

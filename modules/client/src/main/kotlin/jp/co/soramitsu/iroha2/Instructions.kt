@@ -1,0 +1,62 @@
+package jp.co.soramitsu.iroha2
+
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+
+object Instructions {
+
+    fun registerAccount(
+        name: String,
+        domainName: String,
+        signatories: MutableList<PublicKey>,
+        metadata: Metadata = Metadata(mutableMapOf())
+    ): Instruction {
+        return registerAccount(AccountId(name, domainName), signatories, metadata)
+    }
+
+    fun registerAccount(
+        id: AccountId,
+        signatories: MutableList<PublicKey>,
+        metadata: Metadata = Metadata(mutableMapOf())
+    ): Instruction {
+        return registerSome {
+            IdentifiableBox.NewAccount(
+                NewAccount(id, signatories, metadata)
+            )
+        }
+    }
+
+    fun registerAsset(
+        id: AssetId,
+        assetValue: AssetValue
+    ): Instruction {
+        return registerSome {
+            IdentifiableBox.Asset(
+                Asset(id, assetValue)
+            )
+        }
+    }
+
+    private fun registerSome(idBox: () -> IdentifiableBox): Instruction {
+        return Instruction.Register(
+            RegisterBox(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Identifiable(idBox())
+                    )
+                )
+            )
+        )
+    }
+}

@@ -325,34 +325,6 @@ public sealed class QueryBox {
   }
 
   /**
-   * 'FindAssetsByAccountIdAndAssetDefinitionId' variant
-   */
-  public class FindAssetsByAccountIdAndAssetDefinitionId(
-    private val findAssetsByAccountIdAndAssetDefinitionId:
-        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId
-  ) : QueryBox() {
-    public override fun discriminant(): Int = DISCRIMINANT
-
-    public companion object : ScaleReader<FindAssetsByAccountIdAndAssetDefinitionId>,
-        ScaleWriter<FindAssetsByAccountIdAndAssetDefinitionId> {
-      public const val DISCRIMINANT: Int = 12
-
-      public override fun read(reader: ScaleCodecReader): FindAssetsByAccountIdAndAssetDefinitionId
-          = FindAssetsByAccountIdAndAssetDefinitionId(
-        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId.read(reader)
-            as
-            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId,
-      )
-
-      public override fun write(writer: ScaleCodecWriter,
-          instance: FindAssetsByAccountIdAndAssetDefinitionId): Unit {
-          jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountIdAndAssetDefinitionId.write(writer,
-              instance.findAssetsByAccountIdAndAssetDefinitionId)
-      }
-    }
-  }
-
-  /**
    * 'FindAssetsByDomainNameAndAssetDefinitionId' variant
    */
   public class FindAssetsByDomainNameAndAssetDefinitionId(
@@ -363,7 +335,7 @@ public sealed class QueryBox {
 
     public companion object : ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
-      public const val DISCRIMINANT: Int = 13
+      public const val DISCRIMINANT: Int = 12
 
       public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId
           = FindAssetsByDomainNameAndAssetDefinitionId(
@@ -391,7 +363,7 @@ public sealed class QueryBox {
 
     public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById>
         {
-      public const val DISCRIMINANT: Int = 14
+      public const val DISCRIMINANT: Int = 13
 
       public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
           FindAssetQuantityById(
@@ -417,7 +389,7 @@ public sealed class QueryBox {
 
     public companion object : ScaleReader<FindAssetKeyValueByIdAndKey>,
         ScaleWriter<FindAssetKeyValueByIdAndKey> {
-      public const val DISCRIMINANT: Int = 15
+      public const val DISCRIMINANT: Int = 14
 
       public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey =
           FindAssetKeyValueByIdAndKey(
@@ -443,7 +415,7 @@ public sealed class QueryBox {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-      public const val DISCRIMINANT: Int = 16
+      public const val DISCRIMINANT: Int = 15
 
       public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains(
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains.read(reader) as
@@ -467,7 +439,7 @@ public sealed class QueryBox {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
-      public const val DISCRIMINANT: Int = 17
+      public const val DISCRIMINANT: Int = 16
 
       public override fun read(reader: ScaleCodecReader): FindDomainByName = FindDomainByName(
         jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName.read(reader) as
@@ -490,7 +462,7 @@ public sealed class QueryBox {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
-      public const val DISCRIMINANT: Int = 18
+      public const val DISCRIMINANT: Int = 17
 
       public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers(
         jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers.read(reader) as
@@ -515,7 +487,7 @@ public sealed class QueryBox {
 
     public companion object : ScaleReader<FindTransactionsByAccountId>,
         ScaleWriter<FindTransactionsByAccountId> {
-      public const val DISCRIMINANT: Int = 19
+      public const val DISCRIMINANT: Int = 18
 
       public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
           FindTransactionsByAccountId(
@@ -543,7 +515,7 @@ public sealed class QueryBox {
 
     public companion object : ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
-      public const val DISCRIMINANT: Int = 20
+      public const val DISCRIMINANT: Int = 19
 
       public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
           FindPermissionTokensByAccountId(
@@ -575,15 +547,14 @@ public sealed class QueryBox {
     	9 -> FindAssetsByAccountId.read(reader)
     	10 -> FindAssetsByAssetDefinitionId.read(reader)
     	11 -> FindAssetsByDomainName.read(reader)
-    	12 -> FindAssetsByAccountIdAndAssetDefinitionId.read(reader)
-    	13 -> FindAssetsByDomainNameAndAssetDefinitionId.read(reader)
-    	14 -> FindAssetQuantityById.read(reader)
-    	15 -> FindAssetKeyValueByIdAndKey.read(reader)
-    	16 -> FindAllDomains.read(reader)
-    	17 -> FindDomainByName.read(reader)
-    	18 -> FindAllPeers.read(reader)
-    	19 -> FindTransactionsByAccountId.read(reader)
-    	20 -> FindPermissionTokensByAccountId.read(reader)
+    	12 -> FindAssetsByDomainNameAndAssetDefinitionId.read(reader)
+    	13 -> FindAssetQuantityById.read(reader)
+    	14 -> FindAssetKeyValueByIdAndKey.read(reader)
+    	15 -> FindAllDomains.read(reader)
+    	16 -> FindDomainByName.read(reader)
+    	17 -> FindAllPeers.read(reader)
+    	18 -> FindTransactionsByAccountId.read(reader)
+    	19 -> FindPermissionTokensByAccountId.read(reader)
     	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: QueryBox): Unit {
@@ -601,17 +572,15 @@ public sealed class QueryBox {
       	9 -> FindAssetsByAccountId.write(writer, instance as FindAssetsByAccountId)
       	10 -> FindAssetsByAssetDefinitionId.write(writer, instance as FindAssetsByAssetDefinitionId)
       	11 -> FindAssetsByDomainName.write(writer, instance as FindAssetsByDomainName)
-      	12 -> FindAssetsByAccountIdAndAssetDefinitionId.write(writer, instance as
-          FindAssetsByAccountIdAndAssetDefinitionId)
-      	13 -> FindAssetsByDomainNameAndAssetDefinitionId.write(writer, instance as
+      	12 -> FindAssetsByDomainNameAndAssetDefinitionId.write(writer, instance as
           FindAssetsByDomainNameAndAssetDefinitionId)
-      	14 -> FindAssetQuantityById.write(writer, instance as FindAssetQuantityById)
-      	15 -> FindAssetKeyValueByIdAndKey.write(writer, instance as FindAssetKeyValueByIdAndKey)
-      	16 -> FindAllDomains.write(writer, instance as FindAllDomains)
-      	17 -> FindDomainByName.write(writer, instance as FindDomainByName)
-      	18 -> FindAllPeers.write(writer, instance as FindAllPeers)
-      	19 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
-      	20 -> FindPermissionTokensByAccountId.write(writer, instance as
+      	13 -> FindAssetQuantityById.write(writer, instance as FindAssetQuantityById)
+      	14 -> FindAssetKeyValueByIdAndKey.write(writer, instance as FindAssetKeyValueByIdAndKey)
+      	15 -> FindAllDomains.write(writer, instance as FindAllDomains)
+      	16 -> FindDomainByName.write(writer, instance as FindDomainByName)
+      	17 -> FindAllPeers.write(writer, instance as FindAllPeers)
+      	18 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
+      	19 -> FindPermissionTokensByAccountId.write(writer, instance as
           FindPermissionTokensByAccountId)
       	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }

@@ -30,7 +30,7 @@ public sealed class VersionedEventSocketMessage {
     public override fun discriminant(): Int = DISCRIMINANT
 
     public companion object : ScaleReader<V1>, ScaleWriter<V1> {
-      public const val DISCRIMINANT: Int = 0
+      public const val DISCRIMINANT: Int = 1
 
       public override fun read(reader: ScaleCodecReader): V1 = V1(
         _VersionedEventSocketMessageV1.read(reader) as _VersionedEventSocketMessageV1,
@@ -46,14 +46,14 @@ public sealed class VersionedEventSocketMessage {
       ScaleWriter<VersionedEventSocketMessage> {
     public override fun read(reader: ScaleCodecReader): VersionedEventSocketMessage = when(val
         discriminant = reader.readUByte()) {
-    	0 -> V1.read(reader)
+    	1 -> V1.read(reader)
     	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
 
     public override fun write(writer: ScaleCodecWriter, instance: VersionedEventSocketMessage):
         Unit {
       writer.directWrite(instance.discriminant())
       when(val discriminant = instance.discriminant()) {
-      	0 -> V1.write(writer, instance as V1)
+      	1 -> V1.write(writer, instance as V1)
       	else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")}
     }
   }
