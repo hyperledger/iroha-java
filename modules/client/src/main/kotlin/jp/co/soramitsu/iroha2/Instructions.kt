@@ -6,8 +6,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
@@ -42,16 +44,26 @@ object Instructions {
     }
 
     fun registerAsset(
-        id: AssetId,
-        assetValue: AssetValue
+        id: DefinitionId,
+        assetValueType: AssetValueType
     ): Instruction {
         return registerSome {
-            IdentifiableBox.Asset(
-                Asset(id, assetValue)
+            IdentifiableBox.AssetDefinition(
+                AssetDefinition(assetValueType, id)
             )
         }
     }
 
+    fun registerAsset(
+        assetName: String,
+        domainName: String,
+        assetValueType: AssetValueType
+    ): Instruction {
+        return registerAsset(
+            DefinitionId(assetName, domainName),
+            assetValueType
+        )
+    }
     private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction {
         return Instruction.Register(
             RegisterBox(

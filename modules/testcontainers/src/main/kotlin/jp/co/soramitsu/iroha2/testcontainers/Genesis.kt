@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
-import com.google.gson.GsonBuilder
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
 import java.nio.file.Files
 import java.nio.file.Path

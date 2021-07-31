@@ -14,7 +14,9 @@ dependencies {
     api "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
 
     //crypto
-    implementation "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
+    api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
+    api "net.i2p.crypto:eddsa:$i2pCryptoEddsa"
+    api "com.github.multiformats:java-multihash:$multihashVersion"
     
     //http client
     implementation "io.ktor:ktor-client-core:$ktorVer"

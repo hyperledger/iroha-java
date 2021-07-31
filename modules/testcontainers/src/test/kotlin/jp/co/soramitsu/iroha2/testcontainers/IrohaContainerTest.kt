@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 internal class IrohaContainerTest {
 
     @Test
-    fun check_container_can_start_and_stop() {
+    fun `check container can run and stop`() {
         val sut = IrohaContainer()
 
         assertFalse { sut.isCreated }
