@@ -1,0 +1,74 @@
+package jp.co.soramitsu.iroha2.util
+
+import jp.co.soramitsu.iroha2.utils.generateKeyPair
+import jp.co.soramitsu.iroha2.utils.hash
+import jp.co.soramitsu.iroha2.utils.keyPairFromHex
+import jp.co.soramitsu.iroha2.utils.sign
+import jp.co.soramitsu.iroha2.utils.verify
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import net.i2p.crypto.eddsa.EdDSAPrivateKey
+import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable
+import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec
+import org.bouncycastle.util.encoders.Hex
+import org.junit.jupiter.api.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+class CryptoTest {
+
+    @Test
+    fun `generating key pairs is thread safe`() {
+        val iterations = 1000
+        val  futureResults = generateSequence {  GlobalScope.async { generateKeyPair() } }
+            .take(iterations).toSet()
+
+        class ByteArrayWrapper(private val byteArray: ByteArray) {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is ByteArrayWrapper) return false
+                if (!byteArray.contentEquals(other.byteArray)) return false
+                return true
+            }
+            override fun hashCode() = byteArray.contentHashCode()
+        }
+
+        runBlocking {
+            assertEquals(
+                iterations,
+                futureResults.map { it.await().private.encoded }
+                    .map { ByteArrayWrapper(it) }
+                    .toSet().size
+            )
+        }
+    }
+
+    @Test
+    fun `signature created and verified`() {
+        val keyPair = generateKeyPair()
+        val message = "Test message to sign.".toByteArray()
+        val signature = sign(message, keyPair.private)
+
+        assertTrue { verify(signature, keyPair.public, message) }
+    }
+
+    @Test
+    fun `hash function returns expected result`() {
+        val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2";
+        val input = "6920616d2064617461"
+        assertEquals(expected, Hex.toHexString(hash(Hex.decode(input))))
+    }
+
+    @Test
+    fun `keypair serialized to hex and deserialized back`() {
+        val keyPair = generateKeyPair()
+        val pubKey = Hex.toHexString(keyPair.public.encoded)
+        val privKey = Hex.toHexString(keyPair.private.encoded)
+
+        val restoredKeyPair =  keyPairFromHex(pubKey, privKey)
+        assertEquals(keyPair.private, restoredKeyPair.private)
+        assertEquals(keyPair.public, restoredKeyPair.public)
+    }
+}

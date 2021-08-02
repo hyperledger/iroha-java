@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import io.emeraldpay.polkaj.scale.reader.ListReader
 import kotlin.String
 import kotlin.UByte
 import kotlin.Unit
@@ -19,18 +20,16 @@ import kotlin.collections.MutableList
  */
 public class PublicKey(
   public val digestFunction: String,
-  public val payload: MutableList<UByte>
+  public val payload: ByteArray
 ) {
   public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
     public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
-      reader.readString(),
-      MutableList(reader.readCompactInt()) {reader.readByte().toUByte()},
+      reader.readString(), reader.readByteArray(),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {
         writer.writeAsList(instance.digestFunction.toByteArray(Charsets.UTF_8))
-        writer.writeCompact(instance.payload.size)
-        instance.payload.forEach { value -> writer.writeByte(value.toByte()) }
+        writer.writeAsList(instance.payload)
     }
   }
 }

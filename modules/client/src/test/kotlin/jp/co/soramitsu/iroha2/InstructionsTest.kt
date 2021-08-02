@@ -35,7 +35,7 @@ class InstructionsTest {
 
     @AfterEach
     fun tearDown() {
-        irohaContainer.stop()
+        // irohaContainer.stop()
         client.close()
     }
 
@@ -49,13 +49,15 @@ class InstructionsTest {
                         ALICE_ACCOUNT_ID,
                         mutableListOf(),
                         System.currentTimeMillis().toULong(),
-                        10U,
+                        100U,
                         mutableMapOf()
                     )
                 )
             )
         )
-        System.err.println(Hex.encodeHexString(hash(encode(VersionedTransaction, transaction))))
-        client.sendTransaction(transaction)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            buildSigned(testKeyPair)
+        }
     }
 }

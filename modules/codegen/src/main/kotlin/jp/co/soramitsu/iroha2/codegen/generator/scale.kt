@@ -10,8 +10,8 @@ val SCALE_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
 val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
 val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashSetWithSize")
+val U64_WRITER = MemberName("jp.co.soramitsu.iroha2.utils", "writeUint64")
 val OPTIONAL = ClassName("java.util", "Optional")
-val BIG_INTEGER = ClassName("java.math", "BigInteger")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
@@ -96,7 +96,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         is U8Type -> CodeBlock.of("writer.writeByte(%L.toByte())", propName)
         is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
         is U32Type -> CodeBlock.of("writer.writeUint32(%L.toInt())", propName)
-        is U64Type -> CodeBlock.of("writer.writeUint128(%1T.valueOf(%2L.toLong()))", BIG_INTEGER, propName)
+        is U64Type -> CodeBlock.of("%1M(writer, %2L.toLong())", U64_WRITER, propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
         is U256Type -> CodeBlock.of("writer.writeUint256(%L.toByteArray())", propName)
         is StringType -> CodeBlock.of("writer.writeAsList(%L.toByteArray(Charsets.UTF_8))",

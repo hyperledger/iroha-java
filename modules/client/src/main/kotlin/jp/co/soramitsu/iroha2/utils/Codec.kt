@@ -4,8 +4,10 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import io.emeraldpay.polkaj.scale.reader.UInt128Reader
 import java.io.ByteArrayOutputStream
 import java.lang.Long.BYTES
+import java.math.BigInteger
 
 fun <T> encode(writer: ScaleWriter<T>, instance: T): ByteArray {
     //resource is freed inside `ScaleCodecWriter`
@@ -21,19 +23,19 @@ fun <T> decode(reader: ScaleReader<T>, source: ByteArray): T = ScaleCodecReader(
 
 fun writeUint64(writer: ScaleCodecWriter, value: Long) {
     require(value >= 0) { "Negative values are not supported: $value" }
-    writer.directWrite(longAsBytes(value and 255), 0, BYTES)
-    writer.directWrite(longAsBytes(value shr 8 and 255), 0, BYTES)
-    writer.directWrite(longAsBytes(value shr 16 and 255), 0, BYTES)
-    writer.directWrite(longAsBytes(value shr 24 and 255), 0, BYTES)
-    writer.directWrite(longAsBytes(value shr 32 and 255), 0, BYTES)
-}
-
-fun longAsBytes(value: Long) : ByteArray {
-    var mutableValue = value
-    val result = ByteArray(BYTES)
-    for (i in BYTES - 1 downTo 0) {
-        result[i] = (mutableValue and 0xFF).toByte()
-        mutableValue = mutableValue shr java.lang.Byte.SIZE
+    val array  = BigInteger.valueOf(value).toByteArray()
+    var pos = 0
+    if (array[0].toInt() == 0) {
+        ++pos
     }
-    return result
+
+    val len = array.size - pos
+    if (len > 8) {
+        throw IllegalArgumentException("Value is to big for 64 bits. Has: " + len * 8 + " bits")
+    } else {
+        val encoded = ByteArray(8)
+        System.arraycopy(array, pos, encoded, encoded.size - len, len)
+        UInt128Reader.reverse(encoded)
+        writer.directWrite(encoded, 0, 8)
+    }
 }
