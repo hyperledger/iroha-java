@@ -7,6 +7,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' }
+        //scale4j is hosted here
         maven { url "https://dl.bintray.com/emerald/polkaj" }
     }
 }
@@ -15,7 +16,11 @@ subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
 
     dependencies {
-        testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
+        testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
         testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2.testcontainers
 
 import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
@@ -19,6 +18,7 @@ import org.testcontainers.images.PullPolicy
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
+import java.net.URL
 import java.nio.file.Files
 import java.time.Duration
 import java.util.UUID.randomUUID
@@ -37,6 +37,7 @@ class IrohaContainer(
     private val genesisFileLocation = lazy { createTempFile("genesis-", randomUUID().toString()) }
 
     override fun start() {
+        logger().debug("Starting Iroha container")
         if (logger().isDebugEnabled) {
             val genesisAsJson = genesis.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
@@ -66,9 +67,11 @@ class IrohaContainer(
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
             )
         super.start()
+        logger().debug("Iroha container started")
     }
 
     override fun stop() {
+        logger().debug("Stopping Iroha container")
         super.stop()
         if (shouldCloseNetwork) {
             network.close()
@@ -78,7 +81,10 @@ class IrohaContainer(
         } catch (ex: IOException) {
             logger().warn("Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex")
         }
+        logger().debug("Iroha container stopped")
     }
+
+    fun getApiUrl() : URL = URL("http", containerIpAddress, this.getMappedPort(API_PORT), "")
 
     companion object {
         const val IROHA_ROOT_PUBLIC_KEY =
