@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.utils.hashMapWithSize
+import jp.co.soramitsu.iroha2.utils.writeUint64
 import kotlin.String
 import kotlin.ULong
 import kotlin.Unit
@@ -44,8 +45,8 @@ public class Payload(
         Id.write(writer, instance.accountId)
         writer.writeCompact(instance.instructions.size)
         instance.instructions.forEach { value -> Instruction.write(writer, value) }
-        writer.writeUint128(BigInteger.valueOf(instance.creationTime.toLong()))
-        writer.writeUint128(BigInteger.valueOf(instance.timeToLiveMs.toLong()))
+        writeUint64(writer, instance.creationTime.toLong())
+        writeUint64(writer, instance.timeToLiveMs.toLong())
         writer.writeCompact(instance.metadata.size)
         instance.metadata.forEach { (key, value) ->  
         	writer.writeAsList(key.toByteArray(Charsets.UTF_8))

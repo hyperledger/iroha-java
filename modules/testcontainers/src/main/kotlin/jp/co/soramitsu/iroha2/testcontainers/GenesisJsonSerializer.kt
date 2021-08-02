@@ -18,7 +18,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
-import org.testcontainers.shaded.org.bouncycastle.util.encoders.Hex
+import org.bouncycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties
@@ -75,6 +75,7 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
         Multihash.putUvarint(res, Ed25519.index.toLong())
         Multihash.putUvarint(res, src.payload.size.toLong())
         res.write(src.payload.toUByteArray().asByteArray())
+        //todo replace to proper hex encoder
         return context.serialize(String(Hex.encode(res.toByteArray())))
     }
 }
