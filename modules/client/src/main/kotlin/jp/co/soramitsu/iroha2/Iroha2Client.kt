@@ -42,7 +42,7 @@ class Iroha2Client(private val peerUrl: URL) : Closeable {
         runBlocking {
             interactWithPeerAsync(HttpMethod.Post, encoded).await()
         }
-        return hash(encoded)
+        return transaction.hash()
     }
 
     inline fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction) : ByteArray {

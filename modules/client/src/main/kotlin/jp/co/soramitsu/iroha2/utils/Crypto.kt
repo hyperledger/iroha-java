@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2.utils
 
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
 import net.i2p.crypto.eddsa.EdDSAEngine
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
@@ -17,7 +19,6 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
 import java.security.Signature
-import java.util.Arrays
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey as IrohaPublicKey
 
 val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
@@ -69,7 +70,7 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     EdDSAPublicKey(EdDSAPublicKeySpec(Hex.decodeStrict(publicKeyHex), spec))
 
-class PubKeyWrapper(pubKeySpec : EdDSAPublicKeySpec) : EdDSAPublicKey(pubKeySpec) {
+class PubKeyWrapper(pubKeySpec: EdDSAPublicKeySpec) : EdDSAPublicKey(pubKeySpec) {
     override fun getEncoded(): ByteArray = this.abyte
     override fun getFormat() = "RAW"
 }
@@ -77,4 +78,13 @@ class PubKeyWrapper(pubKeySpec : EdDSAPublicKeySpec) : EdDSAPublicKey(pubKeySpec
 class PrivateKeyWrapper(privKeySpec: EdDSAPrivateKeySpec) : EdDSAPrivateKey(privKeySpec) {
     override fun getEncoded(): ByteArray = this.seed
     override fun getFormat() = "RAW"
+}
+
+fun VersionedTransaction.V1.hash(): ByteArray {
+    val encoded = encode(Payload, this._VersionedTransactionV1.transaction.payload)
+    return hash(encoded)
+}
+
+fun VersionedTransaction.hash() = when (this) {
+    is VersionedTransaction.V1 -> this.hash()
 }

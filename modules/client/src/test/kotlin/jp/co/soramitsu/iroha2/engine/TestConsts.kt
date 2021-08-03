@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.engine
 
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 

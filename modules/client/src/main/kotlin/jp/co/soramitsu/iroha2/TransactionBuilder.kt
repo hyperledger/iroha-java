@@ -49,7 +49,6 @@ class TransactionBuilder private constructor() {
 
     fun buildSigned(vararg keyPairs: KeyPair): VersionedTransaction {
         check(keyPairs.isNotEmpty()) {"At least one key par to sign must be specified"}
-        // check(instructions.value.isNotEmpty()) {"At least one instruction must be specified"}
 
         val payload = Payload(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
@@ -63,7 +62,7 @@ class TransactionBuilder private constructor() {
        val signatures = keyPairs.map {
            Signature(
                it.public.toIrohaPublicKey(),
-               sign(encodedPayload, it.private).map { b -> b.toUByte() }.toMutableList()
+               sign(hash(encodedPayload), it.private).map { b -> b.toUByte() }.toMutableList()
            )
        }.toMutableList()
 
