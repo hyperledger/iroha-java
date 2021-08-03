@@ -40,8 +40,8 @@ class InstructionsTest {
     fun `register instruction committed`() {
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            timeToLiveMillis = 0U
             buildSigned(testKeyPair)
         }
+        Thread.sleep(10000)
     }
 }

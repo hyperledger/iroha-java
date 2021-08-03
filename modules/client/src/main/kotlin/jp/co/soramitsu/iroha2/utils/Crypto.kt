@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.utils
 
+import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
