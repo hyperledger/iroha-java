@@ -5,6 +5,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import io.emeraldpay.polkaj.scale.reader.UInt128Reader
+import org.bouncycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
 import java.lang.Long.BYTES
 import java.math.BigInteger
@@ -39,3 +40,7 @@ fun writeUint64(writer: ScaleCodecWriter, value: Long) {
         writer.directWrite(encoded, 0, 8)
     }
 }
+
+fun hex(array: ByteArray) = Hex.toHexString(array)
+
+fun hex(hexString: String) = Hex.decode(hexString)

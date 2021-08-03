@@ -113,6 +113,8 @@ class IrohaContainer(
     }
 }
 
+val ALICE_KEYPAIR = generateKeyPair();
+
 private fun defaultGenesis(): Genesis {
     val accountId = Id("alice", "wonderland")
     return Genesis(
@@ -123,7 +125,7 @@ private fun defaultGenesis(): Genesis {
                         Instructions.registerDomain("wonderland", mutableMapOf(), mutableMapOf()),
                         Instructions.registerAccount(
                             accountId,
-                            mutableListOf(generateKeyPair().public.toIrohaPublicKey()),
+                            mutableListOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
                         ),
                         Instructions.registerAsset(
                             "val",

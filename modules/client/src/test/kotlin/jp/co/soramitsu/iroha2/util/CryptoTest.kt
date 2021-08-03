@@ -1,9 +1,5 @@
 package jp.co.soramitsu.iroha2.util
 
-import io.ktor.util.hex
-import jp.co.soramitsu.iroha2.TransactionBuilder
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.generateKeyPair
 import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.keyPairFromHex
@@ -14,7 +10,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -58,7 +53,7 @@ class CryptoTest {
 
     @Test
     fun `hash function returns expected result`() {
-        val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2";
+        val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2"
         val input = "6920616d2064617461"
         assertEquals(expected, Hex.toHexString(hash(Hex.decode(input))))
     }

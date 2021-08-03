@@ -14,7 +14,7 @@ import kotlin.Unit
  *
  * Generated from 'iroha_data_model::events::_VersionedEventSocketMessageV1' tuple structure
  */
-public class _VersionedEventSocketMessageV1(
+public data class _VersionedEventSocketMessageV1(
   public val eventSocketMessage: EventSocketMessage
 ) {
   public companion object : ScaleReader<_VersionedEventSocketMessageV1>,

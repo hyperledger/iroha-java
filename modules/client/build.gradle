@@ -22,6 +22,7 @@ dependencies {
     implementation "io.ktor:ktor-client-core:$ktorVer"
     implementation "io.ktor:ktor-client-websockets:$ktorVer"
     implementation "io.ktor:ktor-client-okhttp:$ktorVer"
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.1'
 
     testImplementation project(":testcontainers")
 }
