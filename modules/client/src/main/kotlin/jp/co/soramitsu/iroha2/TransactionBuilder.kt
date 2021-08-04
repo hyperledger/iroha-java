@@ -62,7 +62,7 @@ class TransactionBuilder private constructor() {
        val signatures = keyPairs.map {
            Signature(
                it.public.toIrohaPublicKey(),
-               sign(hash(encodedPayload), it.private).map { b -> b.toUByte() }.toMutableList()
+               sign(hash(encodedPayload), it.private)
            )
        }.toMutableList()
 

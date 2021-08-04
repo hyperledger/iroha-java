@@ -7,11 +7,12 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
 @Execution(ExecutionMode.CONCURRENT)
-// @Timeout(10)
+@Timeout(10)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client
@@ -27,6 +28,7 @@ class InstructionsTest {
     @AfterEach
     fun tearDown() {
         irohaContainer.stop()
+        client.close()
     }
 
     @Test

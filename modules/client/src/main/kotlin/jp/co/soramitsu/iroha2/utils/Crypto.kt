@@ -44,10 +44,10 @@ fun PublicKey.toIrohaPublicKey(): IrohaPublicKey {
     return IrohaPublicKey(Ed25519.hashFunName, this.encoded)
 }
 
-fun sign(message: ByteArray, secretKey: PrivateKey): ByteArray {
+fun sign(prehashedMessage: ByteArray, secretKey: PrivateKey): ByteArray {
     val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
     sgr.initSign(secretKey)
-    sgr.update(message)
+    sgr.update(prehashedMessage)
     return sgr.sign()
 }
 
