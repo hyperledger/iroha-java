@@ -34,9 +34,6 @@ class InstructionsTest {
         Assertions.assertDoesNotThrow {
             client.sendTransactionAsync {
                 accountId = ALICE_ACCOUNT_ID
-                instruction {
-                    this.registerAccount()
-                }
                 buildSigned(ALICE_KEYPAIR)
             }.join()
         }

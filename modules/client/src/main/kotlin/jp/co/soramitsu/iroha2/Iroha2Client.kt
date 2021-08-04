@@ -60,14 +60,6 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         return result
     }
 
-    // fun sendQuery(query: VersionedSignedQueryRequest): VersionedQueryResult {
-    //     val encoded = encode(VersionedSignedQueryRequest, query)
-    //     val response = runBlocking {
-    //         interactWithPeerAsync(encoded).await()
-    //     }
-    //     return decode(VersionedQueryResult, response)
-    // }
-
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
         val hexHash = hex(hash)
         logger.debug("Creating subscription to transaction status: $hexHash")
@@ -127,8 +119,8 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                                             webSocket.close(1000, null)
                                         }
                                         is Status.Validating -> {
-                                            ack(webSocket)
                                             logger.debug("Transaction $hexHash is validating")
+                                            ack(webSocket)
                                         }
                                     }
                                 }
@@ -155,17 +147,6 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         )
         ws.send(encode(VersionedEventSocketMessage, eventReceived).toByteString())
     }
-    //
-    // private fun interactWithPeerAsync(payload: ByteArray): Deferred<ByteArray> {
-    //     return GlobalScope.async {
-    //         val statement : HttpStatement = client.value.request("$peerUrl$INSTRUCTION_ENDPOINT") {
-    //             method = httpMethod
-    //             body = ByteArrayContent(payload)
-    //         }
-    //         statement.receive()
-    //     }
-    // }
-
     companion object {
         const val INSTRUCTION_ENDPOINT = "/instruction"
         const val QUERY_ENDPOINT = "/query"
@@ -177,21 +158,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
        client.value.connectionPool.evictAll()
     }
 }
-//
-// private suspend fun readBinary(wsSession: DefaultWebSocketSession): ByteArray {
-//     return when (val frame = wsSession.incoming.receive()) {
-//         is Frame.Binary -> frame.readBytes()
-//         else -> throw RuntimeException("Expected frame with binary, but received with kind '${frame::class.simpleName}'")
-//     }
-// }
 
-// private suspend fun readText(wsSession: DefaultWebSocketSession): String {
-//     return when (val frame = wsSession.incoming.receive()) {
-//         is Frame.Text -> frame.readText()
-//         else -> throw RuntimeException("Expected frame with text, but received with kind '${frame::class.simpleName}'")
-//     }
-// }
-//
 private fun tryReadEventSocketMessage(message: ByteArray): EventSocketMessage {
     val versionedMessage = decode(VersionedEventSocketMessage, message)
     if (versionedMessage is VersionedEventSocketMessage.V1) {
@@ -200,12 +167,3 @@ private fun tryReadEventSocketMessage(message: ByteArray): EventSocketMessage {
         throw RuntimeException("Expected '${VersionedEventSocketMessage.V1::class.qualifiedName}', but got '${versionedMessage::class.qualifiedName}'")
     }
 }
-//
-// private suspend fun ack(wsSession: DefaultWebSocketSession) {
-//     val eventReceived = VersionedEventSocketMessage.V1(
-//         _VersionedEventSocketMessageV1(
-//             EventSocketMessage.EventReceived()
-//         )
-//     )
-//     wsSession.send(Frame.Binary(true, encode(VersionedEventSocketMessage, eventReceived)))
-// }
