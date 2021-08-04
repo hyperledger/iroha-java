@@ -73,7 +73,7 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
         val res = ByteArrayOutputStream()
         Multihash.putUvarint(res, Ed25519.index.toLong())
         Multihash.putUvarint(res, src.payload.size.toLong())
-        res.write(src.payload.toUByteArray().asByteArray())
+        res.write(src.payload)
         //todo replace to proper hex encoder
         return context.serialize(String(Hex.encode(res.toByteArray())))
     }

@@ -11,6 +11,7 @@ import kotlin.reflect.KClass
 fun resolveKotlinType(type: Type): TypeName {
     return when (type) {
         is CompositeType -> {
+
             val propClassName = defineClassName(type.name)
             val propPackageName = definePackageName(propClassName, type)
             val clazz = ClassName(propPackageName, propClassName)
@@ -40,6 +41,10 @@ fun resolveKotlinType(type: Type): TypeName {
             resolveKotlinType(type.innerType.requireValue())
         }
         is WrapperType -> {
+            //special case for vector of bytes
+            if (type is VecType && type.innerType.requireValue() is U8Type) {
+                return ByteArray::class.asTypeName()
+            }
             val wrapperType = lookUpInBuiltInTypes(type)
             (wrapperType as ClassName).parameterizedBy(resolveKotlinType(type.innerType.requireValue()))
         }
@@ -78,7 +83,6 @@ val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     U64Type::class to ULong::class.asTypeName(),
     U128Type::class to BigInteger::class.asTypeName(),
     U256Type::class to BigInteger::class.asTypeName(),
-//    CompactType::class to UInt::class.asTypeName(),
     VecType::class to ClassName("kotlin.collections", "MutableList"),
     SetType::class to ClassName("kotlin.collections", "MutableSet"),
     MapType::class to ClassName("kotlin.collections", "MutableMap"),

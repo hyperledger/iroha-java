@@ -7,11 +7,9 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import io.emeraldpay.polkaj.scale.reader.ListReader
+import kotlin.ByteArray
 import kotlin.String
-import kotlin.UByte
 import kotlin.Unit
-import kotlin.collections.MutableList
 
 /**
  * PublicKey
@@ -24,7 +22,8 @@ public class PublicKey(
 ) {
   public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
     public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
-      reader.readString(), reader.readByteArray(),
+      reader.readString(),
+      reader.readByteArray(),
     )
 
     public override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit {

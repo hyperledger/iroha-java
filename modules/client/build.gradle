@@ -19,10 +19,7 @@ dependencies {
     api "com.github.multiformats:java-multihash:$multihashVersion"
     
     //http client
-    implementation "io.ktor:ktor-client-core:$ktorVer"
-    implementation "io.ktor:ktor-client-websockets:$ktorVer"
-    implementation "io.ktor:ktor-client-okhttp:$ktorVer"
-    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.1'
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
 
     testImplementation project(":testcontainers")
 }

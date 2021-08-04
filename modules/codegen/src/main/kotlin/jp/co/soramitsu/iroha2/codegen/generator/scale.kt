@@ -1,8 +1,27 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.TypeName
 import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
-import jp.co.soramitsu.iroha2.type.*
+import jp.co.soramitsu.iroha2.type.ArrayType
+import jp.co.soramitsu.iroha2.type.BooleanType
+import jp.co.soramitsu.iroha2.type.CompactType
+import jp.co.soramitsu.iroha2.type.CompositeType
+import jp.co.soramitsu.iroha2.type.MapType
+import jp.co.soramitsu.iroha2.type.OptionType
+import jp.co.soramitsu.iroha2.type.SetType
+import jp.co.soramitsu.iroha2.type.StringType
+import jp.co.soramitsu.iroha2.type.Type
+import jp.co.soramitsu.iroha2.type.U128Type
+import jp.co.soramitsu.iroha2.type.U16Type
+import jp.co.soramitsu.iroha2.type.U256Type
+import jp.co.soramitsu.iroha2.type.U32Type
+import jp.co.soramitsu.iroha2.type.U64Type
+import jp.co.soramitsu.iroha2.type.U8Type
+import jp.co.soramitsu.iroha2.type.VecType
 
 val SCALE_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
 val SCALE_CODEC_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
@@ -15,10 +34,15 @@ val OPTIONAL = ClassName("java.util", "Optional")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
-        is ArrayType -> CodeBlock.of("reader.readByteArray()")
+        is ArrayType -> CodeBlock.of("reader.readByteArray(%L)", type.size)
         is VecType -> {
-            CodeBlock.of("MutableList(reader.readCompactInt()) {%L}",
-                resolveScaleReadImpl(type.innerType.requireValue()))
+            when (type.innerType.requireValue()) {
+                is U8Type -> CodeBlock.of("reader.readByteArray()")
+                else -> CodeBlock.of(
+                    "MutableList(reader.readCompactInt()) {%L}",
+                    resolveScaleReadImpl(type.innerType.requireValue())
+                )
+            }
         }
         is SetType -> {
             CodeBlock.of(
@@ -28,7 +52,8 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             )
         }
         is MapType -> {
-            CodeBlock.of("%1M(reader.readCompactInt(), {%2L}, {%3L})",
+            CodeBlock.of(
+                "%1M(reader.readCompactInt(), {%2L}, {%3L})",
                 HASH_MAP_CREATER,
                 resolveScaleReadImpl(type.key.requireValue()),
                 resolveScaleReadImpl(type.value.requireValue())
@@ -48,10 +73,10 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             CodeBlock.of("%1T.read(reader) as %2T", typeNameWithoutGenerics, typeName)
         }
         is OptionType -> {
-            CodeBlock.of("reader.readOptional(%T).orElse(null)",  withoutGenerics(resolveKotlinType(type)))
+            CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
         }
         is CompactType -> {
-            val conversionFunction = when(val innerType = type.innerType.requireValue()) {
+            val conversionFunction = when (val innerType = type.innerType.requireValue()) {
                 is U8Type -> CodeBlock.of("toUByte()")
                 is U16Type -> CodeBlock.of("toUShort()")
                 is U32Type -> CodeBlock.of("toUInt()")
@@ -69,25 +94,28 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
     return when (type) {
         is ArrayType -> CodeBlock.of("writer.writeByteArray(%L)", propName)
         is VecType -> {
-            CodeBlock.of(
-                "writer.writeCompact(%1L.size)\n" +
-                "%1L.forEach { value -> %2L }",
-                propName,
-                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of( "value"))
-            )
+            when (type.innerType.requireValue()) {
+                is U8Type -> CodeBlock.of("writer.writeAsList(%L)", propName)
+                else -> CodeBlock.of(
+                    "writer.writeCompact(%1L.size)\n" +
+                        "%1L.forEach { value -> %2L }",
+                    propName,
+                    resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
+                )
+            }
         }
         is SetType -> {
             CodeBlock.of(
                 "writer.writeCompact(%1L.size)\n" +
-                "%1L.forEach { value -> %2L }",
+                    "%1L.forEach { value -> %2L }",
                 propName,
-                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of( "value"))
+                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
             )
         }
         is MapType -> {
             CodeBlock.of(
                 "writer.writeCompact(%1L.size)\n" +
-                "%1L.forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
+                    "%1L.forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
                 propName,
                 resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
                 resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value"))
@@ -99,15 +127,22 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         is U64Type -> CodeBlock.of("%1M(writer, %2L.toLong())", U64_WRITER, propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
         is U256Type -> CodeBlock.of("writer.writeUint256(%L.toByteArray())", propName)
-        is StringType -> CodeBlock.of("writer.writeAsList(%L.toByteArray(Charsets.UTF_8))",
-            propName)
-        is BooleanType -> CodeBlock.of("if (%L) { writer.directWrite(1) } else { writer.directWrite(0) }",
-            propName)
-        is CompositeType -> CodeBlock.of("%T.write(writer, %L)",
+        is StringType -> CodeBlock.of(
+            "writer.writeAsList(%L.toByteArray(Charsets.UTF_8))",
+            propName
+        )
+        is BooleanType -> CodeBlock.of(
+            "if (%L) { writer.directWrite(1) } else { writer.directWrite(0) }",
+            propName
+        )
+        is CompositeType -> CodeBlock.of(
+            "%T.write(writer, %L)",
             withoutGenerics(resolveKotlinType(type)),
-            propName)
+            propName
+        )
         is OptionType -> {
-            CodeBlock.of("writer.writeOptional(%1T, %2T.ofNullable(%3L))",
+            CodeBlock.of(
+                "writer.writeOptional(%1T, %2T.ofNullable(%3L))",
                 withoutGenerics(resolveKotlinType(type)),
                 OPTIONAL,
                 propName
