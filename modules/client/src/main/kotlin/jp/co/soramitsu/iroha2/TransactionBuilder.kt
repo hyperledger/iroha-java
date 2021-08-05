@@ -30,6 +30,8 @@ class TransactionBuilder private constructor() {
 
     fun instructions(vararg instructions: Instruction) = this.apply { this.instructions.value.addAll(instructions) }
 
+    fun instructions(instructions: Iterable<Instruction>) = this.apply { this.instructions.value.addAll(instructions) }
+
     fun instruction(instruction: Instruction) = this.apply { instructions.value.add(instruction) }
 
     inline fun instruction(instruction: Instructions.() -> Instruction) =

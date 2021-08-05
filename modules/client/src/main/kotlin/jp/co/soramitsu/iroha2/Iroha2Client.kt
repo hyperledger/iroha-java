@@ -1,6 +1,16 @@
 package jp.co.soramitsu.iroha2
 
+import io.ktor.client.HttpClient
+import io.ktor.client.call.receive
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.header
+import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.HttpMethod
+import io.ktor.http.content.ByteArrayContent
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
+import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage
@@ -9,11 +19,15 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSocketMes
 import jp.co.soramitsu.iroha2.generated.datamodel.events._VersionedEventSocketMessageV1
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
+import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.decode
 import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.hex
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -39,6 +53,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
     }
 
     fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
+        VersionedQueryResult
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash ${hex(hash)}")
@@ -47,10 +62,12 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             .url("$peerUrl$INSTRUCTION_ENDPOINT")
             .post(encoded.toRequestBody())
             .build()
-        return client.value.newCall(request)
+        client.value.newCall(request)
             .execute()
-            .body!!
-            .bytes()
+            .use {
+                check(it.isSuccessful) {"Response returned with status code ${it.code}"}
+            }
+        return hash
     }
 
     fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
@@ -60,13 +77,24 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         return result
     }
 
-    // fun sendQuery(query: VersionedSignedQueryRequest): VersionedQueryResult {
-    //     val encoded = encode(VersionedSignedQueryRequest, query)
-    //     val response = runBlocking {
-    //         interactWithPeerAsync(encoded).await()
-    //     }
-    //     return decode(VersionedQueryResult, response)
-    // }
+    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult {
+        logger.debug("Sending query")
+        val signedQuery = query(QueryBuilder.builder())
+        val encoded = encode(VersionedSignedQueryRequest, signedQuery)
+        val client = HttpClient(CIO) {
+        }
+
+        val rawBody = runBlocking {
+            val response: HttpResponse = client.request("$peerUrl$QUERY_ENDPOINT") {
+                this.method = HttpMethod.Get
+                this.body = ByteArrayContent(encoded)
+            }
+            check(response.status.value == 200) {"Response returned with status code ${response.status.value}"}
+            response.receive<ByteArray>()
+        }
+        logger.debug("Received binary query: {}", hex(rawBody))
+        return decode(QueryResult, rawBody)
+    }
 
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
         val hexHash = hex(hash)
@@ -139,7 +167,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             }
 
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                logger.error("WebSocket opened")
+                logger.debug("WebSocket opened")
                 webSocket.send(payload.toByteString())
             }
         })
@@ -178,12 +206,3 @@ private fun tryReadMessage(message: ByteArray): EventSocketMessage {
         throw RuntimeException("Expected '${VersionedEventSocketMessage.V1::class.qualifiedName}', but got '${versionedMessage::class.qualifiedName}'")
     }
 }
-//
-// private suspend fun ack(wsSession: DefaultWebSocketSession) {
-//     val eventReceived = VersionedEventSocketMessage.V1(
-//         _VersionedEventSocketMessageV1(
-//             EventSocketMessage.EventReceived()
-//         )
-//     )
-//     wsSession.send(Frame.Binary(true, encode(VersionedEventSocketMessage, eventReceived)))
-// }

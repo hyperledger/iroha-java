@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testcontainers.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
+import jp.co.soramitsu.iroha2.utils.hex
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -34,11 +35,21 @@ class InstructionsTest {
     @Test
     fun `register instruction committed`() {
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            val rawHash = client.sendTransactionAsync {
                 accountId = ALICE_ACCOUNT_ID
+                instruction {
+                    this.registerAccount("foo", "wonderland", mutableListOf())
+                }
                 buildSigned(ALICE_KEYPAIR)
             }.join()
+            println(hex(rawHash))
         }
-
+        val result = client.sendQuery {
+            accountId = ALICE_ACCOUNT_ID
+            query {
+                findAccountById("foo", "wonderland")
+            }
+            buildSigned(ALICE_KEYPAIR)
+        }
     }
 }

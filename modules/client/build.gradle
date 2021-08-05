@@ -20,6 +20,9 @@ dependencies {
     
     //http client
     implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    implementation "io.ktor:ktor-client-core:$ktorVer"
+    implementation "io.ktor:ktor-client-cio:$ktorVer"
+
 
     testImplementation project(":testcontainers")
 }
