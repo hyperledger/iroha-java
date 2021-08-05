@@ -1,0 +1,18 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+}
+
+group 'jp.co.soramitsu'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(fileTree("libs") {include("*.jar")})
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.21"
+    implementation("org.bouncycastle:bcprov-jdk15on:1.60")
+    implementation group: 'com.squareup', name: 'kotlinpoet', version: '1.9.0'
+    implementation "com.google.code.gson:gson:2.8.2"
+}
