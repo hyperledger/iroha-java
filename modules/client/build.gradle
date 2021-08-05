@@ -1,0 +1,28 @@
+plugins {
+    id "org.jlleitschuh.gradle.ktlint"
+}
+
+group 'jp.co.soramitsu'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    //kotlin support
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
+
+    //scale codec
+    api "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
+
+    //crypto
+    api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
+    api "net.i2p.crypto:eddsa:$i2pCryptoEddsa"
+    api "com.github.multiformats:java-multihash:$multihashVersion"
+    
+    //http client
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
+    implementation "io.ktor:ktor-client-core:$ktorVer"
+    implementation "io.ktor:ktor-client-cio:$ktorVer"
+
+
+    testImplementation project(":testcontainers")
+}
