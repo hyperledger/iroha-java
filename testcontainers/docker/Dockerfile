@@ -1,4 +1,6 @@
-FROM hyperledger/iroha:1.1.0
+#ATTENTION PLEASE
+#this is my image and it should be changed to official before merging!!!!
+FROM pawlak00/my_iroha_builds:1.2.x
 WORKDIR /opt/iroha_data
 ENTRYPOINT [""]
 COPY run-iroha.sh wait-for-it.sh /
