@@ -6,7 +6,6 @@ group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 
 
-
 dependencies {
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib"

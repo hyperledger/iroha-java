@@ -56,7 +56,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         VersionedQueryResult
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
-        logger.debug("Sending transaction with hash ${hex(hash)}")
+        logger.debug("Sending transaction with hash ${hash.hex()}")
         val encoded = encode(VersionedTransaction, signedTransaction)
         val request = Request.Builder()
             .url("$peerUrl$INSTRUCTION_ENDPOINT")
@@ -92,12 +92,12 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             check(response.status.value == 200) {"Response returned with status code ${response.status.value}"}
             response.receive<ByteArray>()
         }
-        logger.debug("Received binary query: {}", hex(rawBody))
+        logger.debug("Received binary query: {}", rawBody.hex())
         return decode(QueryResult, rawBody)
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
-        val hexHash = hex(hash)
+        val hexHash = hash.hex()
         logger.debug("Creating subscription to transaction status: $hexHash")
         val subscriptionRequest = VersionedEventSocketMessage.V1(
             _VersionedEventSocketMessageV1(
