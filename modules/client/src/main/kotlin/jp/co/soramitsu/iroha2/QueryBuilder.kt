@@ -46,7 +46,7 @@ class QueryBuilder private constructor() {
         val encodedPayload = encode(Payload, payload)
         val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
-            sign(hash(encodedPayload), keyPair.private)
+            keyPair.private.sign(encodedPayload.hash())
         )
 
         return VersionedSignedQueryRequest.V1(
