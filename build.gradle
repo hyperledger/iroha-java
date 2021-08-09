@@ -14,6 +14,9 @@ allprojects {
 
 subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: 'maven'
+
+    group = 'jp.co.soramitsu.iroha-java'
 
     dependencies {
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
