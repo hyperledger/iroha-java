@@ -42,9 +42,8 @@ class InstructionsTest {
                 }
                 buildSigned(ALICE_KEYPAIR)
             }.join()
-            println(hex(rawHash))
         }
-        val result = client.sendQuery {
+        client.sendQuery {
             accountId = ALICE_ACCOUNT_ID
             query {
                 findAccountById("foo", "wonderland")
