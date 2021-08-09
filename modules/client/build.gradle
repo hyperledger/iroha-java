@@ -5,13 +5,15 @@ plugins {
 group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 
+
+
 dependencies {
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
 
     //scale codec
-    api "io.emeraldpay.polkaj:polkaj-scale:$polkajScaleVer"
+    api ":polkaj-scale:$polkajScaleVer"
 
     //crypto
     api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
