@@ -41,6 +41,6 @@ fun writeUint64(writer: ScaleCodecWriter, value: Long) {
     }
 }
 
-fun hex(array: ByteArray) = Hex.toHexString(array)
+fun ByteArray.hex() : String = Hex.toHexString(this)
 
-fun hex(hexString: String) = Hex.decode(hexString)
+fun String.hex() : ByteArray = Hex.decode(this)

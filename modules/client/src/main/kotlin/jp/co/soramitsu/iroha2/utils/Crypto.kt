@@ -44,23 +44,31 @@ fun PublicKey.toIrohaPublicKey(): IrohaPublicKey {
     return IrohaPublicKey(Ed25519.hashFunName, this.encoded)
 }
 
-fun sign(prehashedMessage: ByteArray, secretKey: PrivateKey): ByteArray {
+/**
+ * Sign the message by given private key
+ *
+ * Note: the message must not be prehashed
+ */
+fun PrivateKey.sign(message: ByteArray): ByteArray {
     val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
-    sgr.initSign(secretKey)
-    sgr.update(prehashedMessage)
+    sgr.initSign(this)
+    sgr.update(message.hash())
     return sgr.sign()
 }
 
-fun verify(signature: ByteArray, publicKey: PublicKey, message: ByteArray): Boolean {
-    val sgr: Signature = EdDSAEngine(
-        MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm)
-    )
-    sgr.initVerify(publicKey)
+/**
+ * Verify the signature against the message and public key
+ *
+ * Note: the message must not be prehashed
+ */
+fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean {
+    val sgr: Signature = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
+    sgr.initVerify(this)
     sgr.update(message)
     return sgr.verify(signature)
 }
 
-fun hash(target: ByteArray): ByteArray = Blake2b.Blake2b256().digest(target)
+fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
 
 fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     KeyPair(publicKeyFromHex(publicKeyHex, spec), privateKeyFromHex(privateKeyHex, spec))
@@ -83,7 +91,7 @@ class PrivateKeyWrapper(privKeySpec: EdDSAPrivateKeySpec) : EdDSAPrivateKey(priv
 
 fun VersionedTransaction.V1.hash(): ByteArray {
     val encoded = encode(Payload, this._VersionedTransactionV1.transaction.payload)
-    return hash(encoded)
+    return encoded.hash()
 }
 
 fun VersionedTransaction.hash() = when (this) {

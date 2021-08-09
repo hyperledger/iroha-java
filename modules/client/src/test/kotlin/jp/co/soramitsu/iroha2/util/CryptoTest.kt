@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.util
 
 import jp.co.soramitsu.iroha2.utils.generateKeyPair
 import jp.co.soramitsu.iroha2.utils.hash
+import jp.co.soramitsu.iroha2.utils.hex
 import jp.co.soramitsu.iroha2.utils.keyPairFromHex
 import jp.co.soramitsu.iroha2.utils.sign
 import jp.co.soramitsu.iroha2.utils.verify
@@ -46,16 +47,16 @@ class CryptoTest {
     fun `signature created and verified`() {
         val keyPair = generateKeyPair()
         val message = "Test message to sign.".toByteArray()
-        val signature = sign(message, keyPair.private)
+        val signature = keyPair.private.sign(message.hash())
 
-        assertTrue { verify(signature, keyPair.public, message) }
+        assertTrue { keyPair.public.verify(signature, message) }
     }
 
     @Test
     fun `hash function returns expected result`() {
         val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2"
         val input = "6920616d2064617461"
-        assertEquals(expected, Hex.toHexString(hash(Hex.decode(input))))
+        assertEquals(expected, Hex.toHexString(input.hex().hash()))
     }
 
     @Test

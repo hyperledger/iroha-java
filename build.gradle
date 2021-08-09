@@ -21,7 +21,7 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
 
     dependencies {
-        compile fileTree(dir: 'libs', include: ['*.jar'])
+        api fileTree(dir: 'libs', include: ['*.jar'])
         implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.5'
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
         testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
