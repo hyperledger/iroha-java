@@ -9,7 +9,6 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.String
-import kotlin.Unit
 
 /**
  * FindAccountsByDomainName
@@ -17,17 +16,18 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::query::account::FindAccountsByDomainName' regular structure
  */
 public class FindAccountsByDomainName(
-  public val domainName: EvaluatesTo<String>
+    public val domainName: EvaluatesTo<String>
 ) {
-  public companion object : ScaleReader<FindAccountsByDomainName>,
-      ScaleWriter<FindAccountsByDomainName> {
-    public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
-        FindAccountsByDomainName(
-      EvaluatesTo.read(reader) as EvaluatesTo<String>,
-    )
+    public companion object :
+        ScaleReader<FindAccountsByDomainName>,
+        ScaleWriter<FindAccountsByDomainName> {
+        public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName =
+            FindAccountsByDomainName(
+                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+            )
 
-    public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName): Unit {
-        EvaluatesTo.write(writer, instance.domainName)
+        public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName) {
+            EvaluatesTo.write(writer, instance.domainName)
+        }
     }
-  }
 }

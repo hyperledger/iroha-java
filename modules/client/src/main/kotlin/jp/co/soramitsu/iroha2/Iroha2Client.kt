@@ -3,14 +3,11 @@ package jp.co.soramitsu.iroha2
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.ByteArrayContent
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage
@@ -65,7 +62,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         client.value.newCall(request)
             .execute()
             .use {
-                check(it.isSuccessful) {"Response returned with status code ${it.code}"}
+                check(it.isSuccessful) { "Response returned with status code ${it.code}" }
             }
         return hash
     }
@@ -89,7 +86,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                 this.method = HttpMethod.Get
                 this.body = ByteArrayContent(encoded)
             }
-            check(response.status.value == 200) {"Response returned with status code ${response.status.value}"}
+            check(response.status.value == 200) { "Response returned with status code ${response.status.value}" }
             response.receive<ByteArray>()
         }
         logger.debug("Received binary query: {}", rawBody.hex())
@@ -110,67 +107,70 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             .url("$peerUrl$WS_ENDPOINT")
             .get()
             .build()
-        client.value.newWebSocket(request, object : WebSocketListener() {
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                logger.debug("WebSocket closed")
-                super.onClosed(webSocket, code, reason)
-            }
+        client.value.newWebSocket(
+            request,
+            object : WebSocketListener() {
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                    logger.debug("WebSocket closed")
+                    super.onClosed(webSocket, code, reason)
+                }
 
-            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                logger.debug("WebSocket is closing")
-                super.onClosing(webSocket, code, reason)
-            }
+                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                    logger.debug("WebSocket is closing")
+                    super.onClosing(webSocket, code, reason)
+                }
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                logger.error("WebSocket error", t)
-                result.completeExceptionally(t)
-            }
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    logger.error("WebSocket error", t)
+                    result.completeExceptionally(t)
+                }
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                logger.debug("Received text message")
-            }
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    logger.debug("Received text message")
+                }
 
-            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                logger.debug("Received binary message: {}", bytes.hex())
-                when (val message = tryReadMessage(bytes.toByteArray())) {
-                    is EventSocketMessage.SubscriptionAccepted -> {
-                        logger.debug("Subscription was accepted by peer")
-                    }
-                    is EventSocketMessage.Event -> {
-                        when (message.event) {
-                            is Event.Pipeline -> {
-                                val event3 = message.event.event
-                                if (event3.entityType is Transaction && hash.contentEquals(event3.hash.array)) {
-                                    when (event3.status) {
-                                        is Status.Committed -> {
-                                            logger.debug("Transaction $hexHash committed")
-                                            result.complete(hash)
-                                            ack(webSocket, true)
-                                            webSocket.close(1000, null)
-                                        }
-                                        is Status.Rejected -> {
-                                            logger.debug("Transaction $hexHash was rejected by reason: ${event3.status.rejectionReason}")
-                                            result.completeExceptionally(RuntimeException("Transaction rejected"))
-                                            ack(webSocket, true)
-                                        }
-                                        is Status.Validating -> {
-                                            logger.debug("Transaction $hexHash is validating")
-                                            ack(webSocket, false)
+                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                    logger.debug("Received binary message: {}", bytes.hex())
+                    when (val message = tryReadMessage(bytes.toByteArray())) {
+                        is EventSocketMessage.SubscriptionAccepted -> {
+                            logger.debug("Subscription was accepted by peer")
+                        }
+                        is EventSocketMessage.Event -> {
+                            when (message.event) {
+                                is Event.Pipeline -> {
+                                    val event3 = message.event.event
+                                    if (event3.entityType is Transaction && hash.contentEquals(event3.hash.array)) {
+                                        when (event3.status) {
+                                            is Status.Committed -> {
+                                                logger.debug("Transaction $hexHash committed")
+                                                result.complete(hash)
+                                                ack(webSocket, true)
+                                                webSocket.close(1000, null)
+                                            }
+                                            is Status.Rejected -> {
+                                                logger.debug("Transaction $hexHash was rejected by reason: ${event3.status.rejectionReason}")
+                                                result.completeExceptionally(RuntimeException("Transaction rejected"))
+                                                ack(webSocket, true)
+                                            }
+                                            is Status.Validating -> {
+                                                logger.debug("Transaction $hexHash is validating")
+                                                ack(webSocket, false)
+                                            }
                                         }
                                     }
                                 }
+                                else -> result.completeExceptionally(java.lang.RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
                             }
-                            else -> result.completeExceptionally(java.lang.RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
                         }
                     }
                 }
-            }
 
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                logger.debug("WebSocket opened")
-                webSocket.send(payload.toByteString())
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    logger.debug("WebSocket opened")
+                    webSocket.send(payload.toByteString())
+                }
             }
-        })
+        )
         return result
     }
 

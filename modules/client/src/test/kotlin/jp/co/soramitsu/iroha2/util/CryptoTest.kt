@@ -47,7 +47,7 @@ class CryptoTest {
     fun `signature created and verified`() {
         val keyPair = generateKeyPair()
         val message = "Test message to sign.".toByteArray()
-        val signature = keyPair.private.sign(message.hash())
+        val signature = keyPair.private.sign(message)
 
         assertTrue { keyPair.public.verify(signature, message) }
     }
