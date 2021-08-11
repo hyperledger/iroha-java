@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
 import jp.co.soramitsu.iroha2.utils.encode
-import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.sign
 import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import java.math.BigInteger
@@ -19,7 +18,7 @@ class QueryBuilder private constructor() {
 
     var accountId: Id? = null
     var creationTimeMillis: BigInteger? = null
-    var query: QueryBox? = null;
+    var query: QueryBox? = null
 
     fun account(accountId: Id) = this.apply { this.accountId = accountId }
 
@@ -46,7 +45,7 @@ class QueryBuilder private constructor() {
         val encodedPayload = encode(Payload, payload)
         val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
-            keyPair.private.sign(encodedPayload.hash())
+            keyPair.private.sign(encodedPayload)
         )
 
         return VersionedSignedQueryRequest.V1(
