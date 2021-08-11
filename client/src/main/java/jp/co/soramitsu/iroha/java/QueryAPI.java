@@ -205,15 +205,7 @@ public class QueryAPI {
                                                          Integer pageSize,
                                                          String firstHashHex,
                                                          QueryBuilder.Ordering ordering) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getAccountTransactions(accountId, pageSize, firstHashHex, ordering, null, null, null, null)
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getTransactionsPageResponse();
+    return getAccountTransactions(accountId, pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId,
@@ -238,15 +230,8 @@ public class QueryAPI {
                                                               String firstHashHex,
                                                               QueryBuilder.Ordering ordering) {
 
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null)
-        .buildSigned(keyPair);
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null);
 
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getTransactionsPageResponse();
   }
 //extended TxPaginationMeta version
   public TransactionsPageResponse getAccountAssetTransactions(String accountId,
@@ -418,15 +403,7 @@ public class QueryAPI {
           String firstHashHex,
           QueryBuilder.Ordering ordering
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getPendingTransactions(pageSize, firstHashHex, ordering, null, null, null, null)
-        .buildSigned(keyPair);
-
-    val res = api.query(q);
-
-    checkErrorResponse(res);
-
-    return res.getTransactionsResponse();
+    return getPendingTransactions(pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public TransactionsResponse getPendingTransactions(

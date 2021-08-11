@@ -1,9 +1,11 @@
 package jp.co.soramitsu.iroha.java;
 
+import com.google.protobuf.Timestamp;
 import iroha.protocol.BlockOuterClass;
 import iroha.protocol.Primitive.RolePermission;
 import java.math.BigDecimal;
 import java.security.KeyPair;
+import java.time.Instant;
 import java.util.Arrays;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3;
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer;
@@ -32,7 +34,7 @@ public class Example3 {
 
     /**
      * <pre>
-     * Our initial state cosists of:
+     * Our initial state consists of:
      * - domain "bank", with default role "user" - can transfer assets and can query their amount
      * - asset usd#bank with precision 2
      * - user_a@bank, which has 100 usd
@@ -54,7 +56,8 @@ public class Example3 {
                                                 RolePermission.can_get_my_acc_ast,
                                                 RolePermission.can_get_my_txs,
                                                 RolePermission.can_receive,
-                                                RolePermission.can_get_my_acc_txs
+                                                RolePermission.can_get_my_acc_txs,
+                                                RolePermission.can_get_all_acc_ast_txs
                                         )
                                 )
                                 .createDomain(bankDomain, userRole)
@@ -89,24 +92,36 @@ public class Example3 {
         return config;
     }
 
-    /**
-     * Custom facade over GRPC Query
-     */
-    public static void getTransactions(IrohaAPI api, String userId, KeyPair keyPair) {
+    public static void getAccountTransactionsExample(IrohaAPI api, String userId, KeyPair keyPair) {
         // build protobuf query, sign it
         val q = Query.builder(userId,1).getAccountTransactions(userId, 5,null, null, null, null, 1, 3).buildSigned(keyPair);
-//        make query and get it results
+        // make query and get it results
+        val res = api.query(q);
+        System.out.println("Query GetAccountTransactions response:");
+        System.out.println(res.getTransactionsPageResponse());
+    }
+
+    public static void getAccountAssetTransactionsExample(IrohaAPI api, String userId, KeyPair keyPair) {
+        // build protobuf query, sign it
+        val q = Query.builder(userId,1).getAccountAssetTransactions("user_a@bank", usd, 5, null, null, null, null, 1,3).buildSigned(keyPair);
+        // make query and get it results
         val res = api.query(q);
         val txs = res.getTransactionsResponse().getTransactionsList();
-
+        System.out.println("Query GetAccountAssetTransactions response:");
         System.out.println(res.getTransactionsPageResponse());
-
-        System.out.println("transactions response : ");
-
-        for (val tx: txs){
-            System.out.println(tx.getPayload().getAllFields());
-        }
-
+    }
+    public static void getPendingTransactionsExample(IrohaAPI api, String userId, KeyPair keyPair, Instant firstTime, Instant lastTime) {
+        // build protobuf query, sign it
+        Timestamp firstTxTime = Timestamp.newBuilder().setSeconds(firstTime.getEpochSecond())
+                .setNanos(firstTime.getNano()).build();
+        Timestamp lastTxTime = Timestamp.newBuilder().setSeconds(lastTime.getEpochSecond())
+                .setNanos(lastTime.getNano()).build();
+        System.out.println("time:");
+        val q = Query.builder(userId,1).getPendingTransactions(5, null, null, firstTxTime, lastTxTime, null,null).buildSigned(keyPair);
+        // make query and get it results
+        val res = api.query(q);
+        System.out.println("Query GetPendingTransactions response:");
+        System.out.println(res.getPendingTransactionsPageResponse());
     }
 
     public static void main(String[] args) {
@@ -125,7 +140,13 @@ public class Example3 {
                 .transferAsset("user_a@bank", "user_b@bank", usd, "For pizza", "10")
                 .sign(useraKeypair)
                 .build();
-
+        // transfer 100 usd from user_a to user_b but make it pending, uncomment to see it working
+        // Instant first_time = Instant.now();
+        // val tx1 = Transaction.builder("user_a@bank")
+        //        .transferAsset("user_a@bank", "user_b@bank", usd, "For pizza and water", "14")
+        //        .setQuorum(2)
+        //        .sign(useraKeypair)
+        //        .build();
         // create transaction observer
         // here you can specify any kind of handlers on transaction statuses
         val observer = TransactionStatusObserver.builder()
@@ -141,14 +162,22 @@ public class Example3 {
                 .onTransactionCommitted((t) -> System.out.println("Committed :)"))
                 // executed when transfer is complete (failed or succeed) and observable is closed
                 .onComplete(() -> System.out.println("Complete"))
+                // next line will print Pending Transactions each time they are proceeded in irohad,
+                // uncomment to see it working
+                //.onMstPending(toriiResponse -> getPendingTransactionsExample(api, user("user_a"), useraKeypair, first_time, Instant.now()))
                 .build();
 
         // blocking send.
         // use .subscribe() for async sending
         api.transaction(tx)
                 .blockingSubscribe(observer);
+        //uncomment to see PendingTransactions query working
+        // api.transaction(tx1)
+        //        .blockingSubscribe(observer);
 
-        /// now lets query balances
-       getTransactions(api, user("user_a"), useraKeypair);
+        /// now lets query !
+       getAccountTransactionsExample(api, user("user_a"), useraKeypair);
+       System.out.println("Account Asset Transactions for user_a: ");
+       getAccountAssetTransactionsExample(api, user("user_a"), useraKeypair);
     }
 }
