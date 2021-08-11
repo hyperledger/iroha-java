@@ -16,7 +16,7 @@ object Queries {
                 EvaluatesTo(
                     Expression.Raw(
                         Value.Id(
-                            IdBox.AccountId (
+                            IdBox.AccountId(
                                 Id(name, domain)
                             )
                         )

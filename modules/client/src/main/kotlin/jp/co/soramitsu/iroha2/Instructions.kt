@@ -5,10 +5,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
@@ -18,7 +16,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 object Instructions {
 
