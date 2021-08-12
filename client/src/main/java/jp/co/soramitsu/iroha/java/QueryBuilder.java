@@ -192,19 +192,7 @@ public class QueryBuilder {
       this.validator.checkPageSize(pageSize);
     }
 
-    Query query = newQuery();
-
-    query.getProto().setGetAccountAssetTransactions(
-            GetAccountAssetTransactions.newBuilder()
-                    .setAccountId(accountId)
-                    .setAssetId(assetId)
-                    .setPaginationMeta(
-                            getTxPaginationMeta(pageSize, firstHashHex, ordering, null, null, null, null)
-                    )
-                    .build()
-    );
-
-    return query;
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public Query getAccountAssetTransactions(
@@ -225,7 +213,6 @@ public class QueryBuilder {
     }
 
     Query query = newQuery();
-
     query.getProto().setGetAccountAssetTransactions(
         GetAccountAssetTransactions.newBuilder()
             .setAccountId(accountId)
@@ -235,7 +222,6 @@ public class QueryBuilder {
             )
             .build()
     );
-
     return query;
   }
 
@@ -542,36 +528,14 @@ public class QueryBuilder {
           String firstHashHex,
           Ordering ordering
   ) {
-    Query query = newQuery();
-
-    query.getProto().setGetPendingTransactions(
-            GetPendingTransactions.newBuilder()
-                    .setPaginationMeta(
-                            getTxPaginationMeta(pageSize, firstHashHex, ordering, null, null, null, null)
-                    )
-                    .build()
-    );
-
-    return query;
+    return getPendingTransactions(pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex, Ordering ordering) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
     }
-
-    Query query = newQuery();
-
-    query.getProto().setGetAccountTransactions(
-            GetAccountTransactions.newBuilder()
-                    .setAccountId(accountId)
-                    .setPaginationMeta(
-                            getTxPaginationMeta(pageSize, firstHashHex, ordering, null, null, null, null)
-                    )
-                    .build()
-    );
-
-    return query;
+    return getAccountTransactions(accountId, pageSize, firstHashHex, ordering, null,null, null, null);
   }
 
   public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex, Ordering ordering, Timestamp firstTxTime, Timestamp lastTxTime, Integer firstTxHeight, Integer lastTxHeight) {
@@ -616,7 +580,7 @@ public class QueryBuilder {
     }
 
     if (lastTxTime != null) {
-      paginationMetaBuilder.setFirstTxTime(lastTxTime);
+      paginationMetaBuilder.setLastTxTime(lastTxTime);
     }
 
     if (firstTxHeight != null) {
