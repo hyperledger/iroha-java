@@ -8,3 +8,6 @@ project(':codegen').projectDir = 'modules/codegen' as File
 
 include 'testcontainers'
 project(':testcontainers').projectDir = 'modules/testcontainers' as File
+
+include 'model'
+project(':model').projectDir = 'modules/model' as File

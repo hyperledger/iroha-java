@@ -1,0 +1,32 @@
+//
+// Auto-generated file. DO NOT EDIT!
+//
+package jp.co.soramitsu.iroha2.generated.datamodel.expression
+
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
+import io.emeraldpay.polkaj.scale.ScaleCodecWriter
+import io.emeraldpay.polkaj.scale.ScaleReader
+import io.emeraldpay.polkaj.scale.ScaleWriter
+import kotlin.UInt
+
+/**
+ * RaiseTo
+ *
+ * Generated from 'iroha_data_model::expression::RaiseTo' regular structure
+ */
+public data class RaiseTo(
+    public val left: EvaluatesTo<UInt>,
+    public val right: EvaluatesTo<UInt>
+) {
+    public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
+        public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(
+            EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+            EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+        )
+
+        public override fun write(writer: ScaleCodecWriter, instance: RaiseTo) {
+            EvaluatesTo.write(writer, instance.left)
+            EvaluatesTo.write(writer, instance.right)
+        }
+    }
+}

@@ -86,7 +86,9 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implInnerClasses(blueprint: T, clazz: TypeSpec.Builder) = Unit
 
     open fun implClassModifiers(blueprint: T, clazz: TypeSpec.Builder) {
-        clazz.addModifiers(KModifier.PUBLIC)
+        if (blueprint.properties.isNotEmpty()) {
+            clazz.addModifiers(KModifier.DATA)
+        }
     }
 
     open fun implSuperClasses(blueprint: T, clazz: TypeSpec.Builder) = Unit
