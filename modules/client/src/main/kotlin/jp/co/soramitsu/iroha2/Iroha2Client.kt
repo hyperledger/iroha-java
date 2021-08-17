@@ -24,8 +24,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.asIs
-import jp.co.soramitsu.iroha2.utils.decode
-import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.hex
 import kotlinx.coroutines.runBlocking
@@ -146,17 +144,11 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                             logger.debug("Subscription was accepted by peer")
                         }
                         is EventSocketMessage.Event -> {
-                            when (message.event) {
+                            when (val event = message.event) {
                                 is Event.Pipeline -> {
-<<<<<<< HEAD
-                                    val event = message.event.event
-                                    if (event.entityType is Transaction && hash.contentEquals(event.hash.array)) {
-                                        when (val status = event.status) {
-=======
-                                    val event3 = message.event.event
-                                    if (event3.entityType is Transaction && hash.contentEquals(event3.hash.array)) {
-                                        when (event3.status) {
->>>>>>> 10840ec... Fixed signature verification error
+                                    val eventInner = event.event
+                                    if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
+                                        when (val status = eventInner.status) {
                                             is Status.Committed -> {
                                                 logger.debug("Transaction $hexHash committed")
                                                 result.complete(hash)
@@ -164,14 +156,10 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                                                 webSocket.close(1000, null)
                                             }
                                             is Status.Rejected -> {
-<<<<<<< HEAD
                                                 logger.error(
                                                     "Transaction $hexHash was rejected by reason: `{}`",
                                                     getRejectionReason(status.rejectionReason)
                                                 )
-=======
-                                                logger.debug("Transaction $hexHash was rejected by reason: ${event3.status.rejectionReason}")
->>>>>>> 10840ec... Fixed signature verification error
                                                 result.completeExceptionally(RuntimeException("Transaction rejected"))
                                                 ack(webSocket, true)
                                             }
@@ -182,11 +170,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                                         }
                                     }
                                 }
-<<<<<<< HEAD
                                 else -> result.completeExceptionally(RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
-=======
-                                else -> result.completeExceptionally(java.lang.RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
->>>>>>> 10840ec... Fixed signature verification error
                             }
                         }
                     }

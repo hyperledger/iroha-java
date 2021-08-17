@@ -11,7 +11,7 @@ task codegen(type: JavaExec) {
     main = 'jp.co.soramitsu.iroha2.EntryPoint'
     classpath = sourceSets.main.runtimeClasspath
     //folder where to write generated classes
-    args "outputPath=../client/src/main/kotlin"
+    args "outputPath=../model/src/main/kotlin"
     //schema file expected to be find in classpath
     args "schemaFileName=schema.json"
 }
