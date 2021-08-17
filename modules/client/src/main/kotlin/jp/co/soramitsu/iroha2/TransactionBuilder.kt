@@ -9,14 +9,17 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
 import jp.co.soramitsu.iroha2.utils.encode
-import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.sign
 import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
 
-class TransactionBuilder private constructor() {
+class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
+
+    init {
+        builder(this)
+    }
 
     var accountId: Id? = null
     val instructions = lazy { ArrayList<Instruction>() }
@@ -50,8 +53,6 @@ class TransactionBuilder private constructor() {
     fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toULong()) }
 
     fun buildSigned(vararg keyPairs: KeyPair): VersionedTransaction {
-        check(keyPairs.isNotEmpty()) {"At least one key par to sign must be specified"}
-
         val payload = Payload(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             instructions.value,
@@ -61,12 +62,12 @@ class TransactionBuilder private constructor() {
         )
         val encodedPayload = encode(Payload, payload)
 
-       val signatures = keyPairs.map {
-           Signature(
-               it.public.toIrohaPublicKey(),
-               it.private.sign(encodedPayload.hash())
-           )
-       }.toMutableList()
+        val signatures = keyPairs.map {
+            Signature(
+                it.public.toIrohaPublicKey(),
+                it.private.sign(encodedPayload)
+            )
+        }.toMutableList()
 
         return VersionedTransaction.V1(
             _VersionedTransactionV1(

@@ -7,11 +7,10 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import io.emeraldpay.polkaj.scale.reader.UInt128Reader
 import org.bouncycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
-import java.lang.Long.BYTES
 import java.math.BigInteger
 
 fun <T> encode(writer: ScaleWriter<T>, instance: T): ByteArray {
-    //resource is freed inside `ScaleCodecWriter`
+    // resource is freed inside `ScaleCodecWriter`
     val buffer = ByteArrayOutputStream()
     return ScaleCodecWriter(buffer)
         .use {
@@ -24,7 +23,7 @@ fun <T> decode(reader: ScaleReader<T>, source: ByteArray): T = ScaleCodecReader(
 
 fun writeUint64(writer: ScaleCodecWriter, value: Long) {
     require(value >= 0) { "Negative values are not supported: $value" }
-    val array  = BigInteger.valueOf(value).toByteArray()
+    val array = BigInteger.valueOf(value).toByteArray()
     var pos = 0
     if (array[0].toInt() == 0) {
         ++pos
@@ -41,6 +40,6 @@ fun writeUint64(writer: ScaleCodecWriter, value: Long) {
     }
 }
 
-fun ByteArray.hex() : String = Hex.toHexString(this)
+fun ByteArray.hex(): String = Hex.toHexString(this)
 
-fun String.hex() : ByteArray = Hex.decode(this)
+fun String.hex(): ByteArray = Hex.decode(this)

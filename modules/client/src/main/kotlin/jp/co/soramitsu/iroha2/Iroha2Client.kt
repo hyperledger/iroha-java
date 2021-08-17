@@ -3,26 +3,27 @@ package jp.co.soramitsu.iroha2
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.request.header
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.content.ByteArrayContent
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSocketMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events._VersionedEventSocketMessageV1
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Transaction
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.utils.asIs
 import jp.co.soramitsu.iroha2.utils.decode
 import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.hash
@@ -65,19 +66,25 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         client.value.newCall(request)
             .execute()
             .use {
-                check(it.isSuccessful) {"Response returned with status code ${it.code}"}
+                check(it.isSuccessful) { "Response returned with status code ${it.code}" }
             }
         return hash
     }
 
     fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
-        val signedTransaction = transaction(TransactionBuilder.builder())
+        val signedTransaction = transaction(TransactionBuilder())
         val result = subscribeToTransactionStatus(signedTransaction.hash())
         sendTransaction { signedTransaction }
         return result
     }
 
-    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult {
+    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(::asIs, query)
+
+    /**
+     * Sends request to Iroha2 and extract payload.
+     * {@see Extractors}
+     */
+    fun <T> sendQuery(extractor: (QueryResult) -> T, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
         logger.debug("Sending query")
         val signedQuery = query(QueryBuilder.builder())
         val encoded = encode(VersionedSignedQueryRequest, signedQuery)
@@ -89,11 +96,11 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                 this.method = HttpMethod.Get
                 this.body = ByteArrayContent(encoded)
             }
-            check(response.status.value == 200) {"Response returned with status code ${response.status.value}"}
+            check(response.status.value == 200) { "Response returned with status code ${response.status.value}" }
             response.receive<ByteArray>()
         }
         logger.debug("Received binary query: {}", rawBody.hex())
-        return decode(QueryResult, rawBody)
+        return decode(QueryResult, rawBody).let(extractor)
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
@@ -110,67 +117,87 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             .url("$peerUrl$WS_ENDPOINT")
             .get()
             .build()
-        client.value.newWebSocket(request, object : WebSocketListener() {
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                logger.debug("WebSocket closed")
-                super.onClosed(webSocket, code, reason)
-            }
+        client.value.newWebSocket(
+            request,
+            object : WebSocketListener() {
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                    logger.debug("WebSocket closed")
+                    super.onClosed(webSocket, code, reason)
+                }
 
-            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                logger.debug("WebSocket is closing")
-                super.onClosing(webSocket, code, reason)
-            }
+                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                    logger.debug("WebSocket is closing")
+                    super.onClosing(webSocket, code, reason)
+                }
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                logger.error("WebSocket error", t)
-                result.completeExceptionally(t)
-            }
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    logger.error("WebSocket error", t)
+                    result.completeExceptionally(t)
+                }
 
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                logger.debug("Received text message")
-            }
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    logger.debug("Received text message")
+                }
 
-            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                logger.debug("Received binary message: {}", bytes.hex())
-                when (val message = tryReadMessage(bytes.toByteArray())) {
-                    is EventSocketMessage.SubscriptionAccepted -> {
-                        logger.debug("Subscription was accepted by peer")
-                    }
-                    is EventSocketMessage.Event -> {
-                        when (message.event) {
-                            is Event.Pipeline -> {
-                                val event3 = message.event.event
-                                if (event3.entityType is Transaction && hash.contentEquals(event3.hash.array)) {
-                                    when (event3.status) {
-                                        is Status.Committed -> {
-                                            logger.debug("Transaction $hexHash committed")
-                                            result.complete(hash)
-                                            ack(webSocket, true)
-                                            webSocket.close(1000, null)
-                                        }
-                                        is Status.Rejected -> {
-                                            logger.debug("Transaction $hexHash was rejected by reason: ${event3.status.rejectionReason}")
-                                            result.completeExceptionally(RuntimeException("Transaction rejected"))
-                                            ack(webSocket, true)
-                                        }
-                                        is Status.Validating -> {
-                                            logger.debug("Transaction $hexHash is validating")
-                                            ack(webSocket, false)
+                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                    logger.debug("Received binary message: {}", bytes.hex())
+                    when (val message = tryReadMessage(bytes.toByteArray())) {
+                        is EventSocketMessage.SubscriptionAccepted -> {
+                            logger.debug("Subscription was accepted by peer")
+                        }
+                        is EventSocketMessage.Event -> {
+                            when (message.event) {
+                                is Event.Pipeline -> {
+<<<<<<< HEAD
+                                    val event = message.event.event
+                                    if (event.entityType is Transaction && hash.contentEquals(event.hash.array)) {
+                                        when (val status = event.status) {
+=======
+                                    val event3 = message.event.event
+                                    if (event3.entityType is Transaction && hash.contentEquals(event3.hash.array)) {
+                                        when (event3.status) {
+>>>>>>> 10840ec... Fixed signature verification error
+                                            is Status.Committed -> {
+                                                logger.debug("Transaction $hexHash committed")
+                                                result.complete(hash)
+                                                ack(webSocket, true)
+                                                webSocket.close(1000, null)
+                                            }
+                                            is Status.Rejected -> {
+<<<<<<< HEAD
+                                                logger.error(
+                                                    "Transaction $hexHash was rejected by reason: `{}`",
+                                                    getRejectionReason(status.rejectionReason)
+                                                )
+=======
+                                                logger.debug("Transaction $hexHash was rejected by reason: ${event3.status.rejectionReason}")
+>>>>>>> 10840ec... Fixed signature verification error
+                                                result.completeExceptionally(RuntimeException("Transaction rejected"))
+                                                ack(webSocket, true)
+                                            }
+                                            is Status.Validating -> {
+                                                logger.debug("Transaction $hexHash is validating")
+                                                ack(webSocket, false)
+                                            }
                                         }
                                     }
                                 }
+<<<<<<< HEAD
+                                else -> result.completeExceptionally(RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
+=======
+                                else -> result.completeExceptionally(java.lang.RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
+>>>>>>> 10840ec... Fixed signature verification error
                             }
-                            else -> result.completeExceptionally(java.lang.RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
                         }
                     }
                 }
-            }
 
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                logger.debug("WebSocket opened")
-                webSocket.send(payload.toByteString())
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    logger.debug("WebSocket opened")
+                    webSocket.send(payload.toByteString())
+                }
             }
-        })
+        )
         return result
     }
 
@@ -183,6 +210,24 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         webSocket.send(encode(VersionedEventSocketMessage, eventReceived).toByteString())
         if (isTerminalMessage) {
             webSocket.close(1000, null)
+        }
+    }
+
+    private fun getRejectionReason(rejectionReason: RejectionReason): String {
+        return when (rejectionReason) {
+            is RejectionReason.Block -> when (rejectionReason.blockRejectionReason) {
+                is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
+            }
+            is RejectionReason.Transaction -> when (val reason = rejectionReason.transactionRejectionReason) {
+                is TransactionRejectionReason.InstructionExecution -> {
+                    val details = reason.instructionExecutionFail
+                    "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
+                }
+                is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
+                is TransactionRejectionReason.SignatureVerification -> reason.signatureVerificationFail.reason
+                is TransactionRejectionReason.UnexpectedGenesisAccountSignature -> "Genesis account can sign only transactions in the genesis block"
+                is TransactionRejectionReason.UnsatisfiedSignatureCondition -> reason.unsatisfiedSignatureConditionFail.reason
+            }
         }
     }
 

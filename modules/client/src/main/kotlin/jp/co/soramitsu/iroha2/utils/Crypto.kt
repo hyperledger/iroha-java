@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.utils
 
-import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
@@ -19,7 +18,6 @@ import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.SecureRandom
-import java.security.Signature
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey as IrohaPublicKey
 
 val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
@@ -28,6 +26,7 @@ enum class DigestFunction(val hashFunName: String, val index: Int) {
     Ed25519("ed25519", 0xed)
 }
 
+// todo throw ex
 fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
     val seed = ByteArray(spec.curve.field.getb() / 8)
     SecureRandom().nextBytes(seed)
@@ -62,9 +61,9 @@ fun PrivateKey.sign(message: ByteArray): ByteArray {
  * Note: the message must not be prehashed
  */
 fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean {
-    val sgr: Signature = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
+    val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
     sgr.initVerify(this)
-    sgr.update(message)
+    sgr.update(message.hash())
     return sgr.verify(signature)
 }
 
@@ -79,6 +78,7 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     EdDSAPublicKey(EdDSAPublicKeySpec(Hex.decodeStrict(publicKeyHex), spec))
 
+// todo remove it
 class PubKeyWrapper(pubKeySpec: EdDSAPublicKeySpec) : EdDSAPublicKey(pubKeySpec) {
     override fun getEncoded(): ByteArray = this.abyte
     override fun getFormat() = "RAW"
