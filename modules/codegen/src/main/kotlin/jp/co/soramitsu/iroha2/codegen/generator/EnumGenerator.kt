@@ -13,7 +13,6 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
     }
 
     override fun implClassModifiers(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
-        super.implClassModifiers(blueprint, clazz)
         clazz.addModifiers(KModifier.SEALED)
     }
 

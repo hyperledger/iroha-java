@@ -74,7 +74,7 @@ object Instructions {
         assetDomain: String,
         accountName: String,
         accountDomain: String = assetDomain,
-        key : String,
+        key: String,
         value: Value
     ): Instruction {
         val assetId = AssetId(
@@ -85,8 +85,8 @@ object Instructions {
     }
 
     fun storeAsset(
-        assetId : AssetId,
-        key : String,
+        assetId: AssetId,
+        key: String,
         value: Value
     ): Instruction {
         return Instruction.SetKeyValue(
@@ -104,18 +104,18 @@ object Instructions {
         accountName: String,
         accountDomain: String = assetDomain,
         quantity: BigInteger
-    ) : Instruction {
+    ): Instruction {
         val assetId = AssetId(
             DefinitionId(assetName, assetDomain),
             AccountId(accountName, accountDomain),
         )
-       return mintAssetInternal(assetId, AssetValue.BigQuantity(quantity))
+        return mintAssetInternal(assetId, AssetValue.BigQuantity(quantity))
     }
 
     fun mintAsset(
         assetId: AssetId,
         quantity: BigInteger
-    ) : Instruction {
+    ): Instruction {
         return mintAssetInternal(assetId, AssetValue.BigQuantity(quantity))
     }
 

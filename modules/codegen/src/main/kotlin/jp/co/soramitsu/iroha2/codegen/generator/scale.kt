@@ -27,9 +27,9 @@ val SCALE_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
 val SCALE_CODEC_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
 val SCALE_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
 val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
-val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashMapWithSize")
-val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2.utils", "hashSetWithSize")
-val U64_WRITER = MemberName("jp.co.soramitsu.iroha2.utils", "writeUint64")
+val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashMapWithSize")
+val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashSetWithSize")
+val U64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeUint64")
 val OPTIONAL = ClassName("java.util", "Optional")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {

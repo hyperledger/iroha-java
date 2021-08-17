@@ -24,8 +24,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.asIs
-import jp.co.soramitsu.iroha2.utils.decode
-import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.hash
 import jp.co.soramitsu.iroha2.utils.hex
 import kotlinx.coroutines.runBlocking
@@ -78,7 +76,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         return result
     }
 
-    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest) : QueryResult = sendQuery(::asIs, query)
+    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(::asIs, query)
 
     /**
      * Sends request to Iroha2 and extract payload.
@@ -146,11 +144,11 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
                             logger.debug("Subscription was accepted by peer")
                         }
                         is EventSocketMessage.Event -> {
-                            when (message.event) {
+                            when (val event = message.event) {
                                 is Event.Pipeline -> {
-                                    val event = message.event.event
-                                    if (event.entityType is Transaction && hash.contentEquals(event.hash.array)) {
-                                        when (val status = event.status) {
+                                    val eventInner = event.event
+                                    if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
+                                        when (val status = eventInner.status) {
                                             is Status.Committed -> {
                                                 logger.debug("Transaction $hexHash committed")
                                                 result.complete(hash)
