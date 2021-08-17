@@ -10,7 +10,6 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import kotlin.String
-import kotlin.Unit
 
 /**
  * RemoveKeyValueBox
@@ -18,18 +17,18 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::isi::RemoveKeyValueBox' regular structure
  */
 public data class RemoveKeyValueBox(
-  public val objectId: EvaluatesTo<IdBox>,
-  public val key: EvaluatesTo<String>
+    public val objectId: EvaluatesTo<IdBox>,
+    public val key: EvaluatesTo<String>
 ) {
-  public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
-    public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = RemoveKeyValueBox(
-      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-      EvaluatesTo.read(reader) as EvaluatesTo<String>,
-    )
+    public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
+        public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = RemoveKeyValueBox(
+            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+            EvaluatesTo.read(reader) as EvaluatesTo<String>,
+        )
 
-    public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit {
-        EvaluatesTo.write(writer, instance.objectId)
-        EvaluatesTo.write(writer, instance.key)
+        public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox) {
+            EvaluatesTo.write(writer, instance.objectId)
+            EvaluatesTo.write(writer, instance.key)
+        }
     }
-  }
 }

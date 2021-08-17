@@ -10,7 +10,6 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import kotlin.Unit
 
 /**
  * TransferBox
@@ -18,21 +17,21 @@ import kotlin.Unit
  * Generated from 'iroha_data_model::isi::TransferBox' regular structure
  */
 public data class TransferBox(
-  public val sourceId: EvaluatesTo<IdBox>,
-  public val `object`: EvaluatesTo<Value>,
-  public val destinationId: EvaluatesTo<IdBox>
+    public val sourceId: EvaluatesTo<IdBox>,
+    public val `object`: EvaluatesTo<Value>,
+    public val destinationId: EvaluatesTo<IdBox>
 ) {
-  public companion object : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
-    public override fun read(reader: ScaleCodecReader): TransferBox = TransferBox(
-      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-      EvaluatesTo.read(reader) as EvaluatesTo<Value>,
-      EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-    )
+    public companion object : ScaleReader<TransferBox>, ScaleWriter<TransferBox> {
+        public override fun read(reader: ScaleCodecReader): TransferBox = TransferBox(
+            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+            EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+        )
 
-    public override fun write(writer: ScaleCodecWriter, instance: TransferBox): Unit {
-        EvaluatesTo.write(writer, instance.sourceId)
-        EvaluatesTo.write(writer, instance.`object`)
-        EvaluatesTo.write(writer, instance.destinationId)
+        public override fun write(writer: ScaleCodecWriter, instance: TransferBox) {
+            EvaluatesTo.write(writer, instance.sourceId)
+            EvaluatesTo.write(writer, instance.`object`)
+            EvaluatesTo.write(writer, instance.destinationId)
+        }
     }
-  }
 }

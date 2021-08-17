@@ -14,7 +14,6 @@ import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.writeUint64
 import kotlin.String
 import kotlin.ULong
-import kotlin.Unit
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 
@@ -24,33 +23,38 @@ import kotlin.collections.MutableMap
  * Generated from 'iroha_data_model::transaction::Payload' regular structure
  */
 public data class Payload(
-  public val accountId: Id,
-  public val instructions: MutableList<Instruction>,
-  public val creationTime: ULong,
-  public val timeToLiveMs: ULong,
-  public val metadata: MutableMap<String, Value>
+    public val accountId: Id,
+    public val instructions: MutableList<Instruction>,
+    public val creationTime: ULong,
+    public val timeToLiveMs: ULong,
+    public val metadata: MutableMap<String, Value>
 ) {
-  public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
-    public override fun read(reader: ScaleCodecReader): Payload = Payload(
-      Id.read(reader) as Id,
-      MutableList(reader.readCompactInt()) {Instruction.read(reader) as Instruction},
-      reader.readUint128().toLong().toULong(),
-      reader.readUint128().toLong().toULong(),
-      hashMapWithSize(reader.readCompactInt(), {reader.readString()}, {Value.read(reader) as
-          Value}),
-    )
+    public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
+        public override fun read(reader: ScaleCodecReader): Payload = Payload(
+            Id.read(reader) as Id,
+            MutableList(reader.readCompactInt()) { Instruction.read(reader) as Instruction },
+            reader.readUint128().toLong().toULong(),
+            reader.readUint128().toLong().toULong(),
+            hashMapWithSize(
+                reader.readCompactInt(), { reader.readString() },
+                {
+                    Value.read(reader) as
+                        Value
+                }
+            ),
+        )
 
-    public override fun write(writer: ScaleCodecWriter, instance: Payload): Unit {
-        Id.write(writer, instance.accountId)
-        writer.writeCompact(instance.instructions.size)
-        instance.instructions.forEach { value -> Instruction.write(writer, value) }
-        writeUint64(writer, instance.creationTime.toLong())
-        writeUint64(writer, instance.timeToLiveMs.toLong())
-        writer.writeCompact(instance.metadata.size)
-        instance.metadata.forEach { (key, value) ->  
-        	writer.writeAsList(key.toByteArray(Charsets.UTF_8))
-        	Value.write(writer, value)
+        public override fun write(writer: ScaleCodecWriter, instance: Payload) {
+            Id.write(writer, instance.accountId)
+            writer.writeCompact(instance.instructions.size)
+            instance.instructions.forEach { value -> Instruction.write(writer, value) }
+            writeUint64(writer, instance.creationTime.toLong())
+            writeUint64(writer, instance.timeToLiveMs.toLong())
+            writer.writeCompact(instance.metadata.size)
+            instance.metadata.forEach { (key, value) ->
+                writer.writeAsList(key.toByteArray(Charsets.UTF_8))
+                Value.write(writer, value)
+            }
         }
     }
-  }
 }

@@ -8,7 +8,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import kotlin.Unit
 import kotlin.collections.MutableList
 
 /**
@@ -17,16 +16,16 @@ import kotlin.collections.MutableList
  * Generated from 'iroha::genesis::GenesisTransaction' regular structure
  */
 public data class GenesisTransaction(
-  public val isi: MutableList<Instruction>
+    public val isi: MutableList<Instruction>
 ) {
-  public companion object : ScaleReader<GenesisTransaction>, ScaleWriter<GenesisTransaction> {
-    public override fun read(reader: ScaleCodecReader): GenesisTransaction = GenesisTransaction(
-      MutableList(reader.readCompactInt()) {Instruction.read(reader) as Instruction},
-    )
+    public companion object : ScaleReader<GenesisTransaction>, ScaleWriter<GenesisTransaction> {
+        public override fun read(reader: ScaleCodecReader): GenesisTransaction = GenesisTransaction(
+            MutableList(reader.readCompactInt()) { Instruction.read(reader) as Instruction },
+        )
 
-    public override fun write(writer: ScaleCodecWriter, instance: GenesisTransaction): Unit {
-        writer.writeCompact(instance.isi.size)
-        instance.isi.forEach { value -> Instruction.write(writer, value) }
+        public override fun write(writer: ScaleCodecWriter, instance: GenesisTransaction) {
+            writer.writeCompact(instance.isi.size)
+            instance.isi.forEach { value -> Instruction.write(writer, value) }
+        }
     }
-  }
 }
