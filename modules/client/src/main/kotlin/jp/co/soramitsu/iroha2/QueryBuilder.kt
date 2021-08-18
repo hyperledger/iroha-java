@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
+import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.sign
 import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import java.math.BigInteger
@@ -41,7 +42,7 @@ class QueryBuilder private constructor() {
             checkNotNull(accountId) { "Account Id of the sender is mandatory" }
         )
 
-        val encodedPayload = encode(Payload, payload)
+        val encodedPayload = payload.encode(Payload)
         val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
             keyPair.private.sign(encodedPayload)

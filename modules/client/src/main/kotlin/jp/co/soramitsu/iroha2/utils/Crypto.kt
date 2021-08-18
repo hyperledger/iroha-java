@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.utils
 
-import jp.co.soramitsu.iroha2.encode
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
@@ -91,14 +90,13 @@ class PrivateKeyWrapper(privKeySpec: EdDSAPrivateKeySpec) : EdDSAPrivateKey(priv
 }
 
 fun VersionedTransaction.V1.hash(): ByteArray {
-    val encoded = encode(Payload, this._VersionedTransactionV1.transaction.payload)
-    return encoded.hash()
+    return this._VersionedTransactionV1
+        .transaction
+        .payload
+        .encode(Payload)
+        .hash()
 }
 
 fun VersionedTransaction.hash() = when (this) {
     is VersionedTransaction.V1 -> this.hash()
 }
-
-fun ByteArray.hex(): String = Hex.toHexString(this)
-
-fun String.hex(): ByteArray = Hex.decode(this)
