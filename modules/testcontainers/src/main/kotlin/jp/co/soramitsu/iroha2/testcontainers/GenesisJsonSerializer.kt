@@ -16,7 +16,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.utils.DigestFunction.Ed25519
+import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import org.bouncycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type

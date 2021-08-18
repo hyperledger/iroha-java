@@ -196,11 +196,3 @@ object Instructions {
         )
     }
 }
-
-fun String.asValue() = Value.String(this)
-
-fun Int.asValue() = this.toUInt().asValue()
-
-fun UInt.asValue() = Value.U32(this)
-
-fun Boolean.asValue() = Value.Bool(this)

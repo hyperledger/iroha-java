@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2.util
 
-import jp.co.soramitsu.iroha2.utils.generateKeyPair
-import jp.co.soramitsu.iroha2.utils.hash
-import jp.co.soramitsu.iroha2.utils.hex
-import jp.co.soramitsu.iroha2.utils.keyPairFromHex
-import jp.co.soramitsu.iroha2.utils.sign
-import jp.co.soramitsu.iroha2.utils.verify
+import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.hash
+import jp.co.soramitsu.iroha2.hex
+import jp.co.soramitsu.iroha2.keyPairFromHex
+import jp.co.soramitsu.iroha2.sign
+import jp.co.soramitsu.iroha2.verify
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
