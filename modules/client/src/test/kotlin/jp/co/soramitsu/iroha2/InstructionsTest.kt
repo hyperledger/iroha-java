@@ -6,7 +6,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.testcontainers.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testcontainers.DEFAULT_KEYPAIR
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import jp.co.soramitsu.iroha2.utils.accountExtractor
 import jp.co.soramitsu.iroha2.utils.assetExtractor
@@ -48,13 +48,13 @@ class InstructionsTest {
             client.sendTransactionAsync {
                 accountId = ALICE_ACCOUNT_ID
                 instruction { registerAccount(newAccountId, mutableListOf()) }
-                buildSigned(ALICE_KEYPAIR)
+                buildSigned(DEFAULT_KEYPAIR)
             }.join()
         }
         val account = client.sendQuery(::accountExtractor) {
             accountId = ALICE_ACCOUNT_ID
             query { findAccountById(newAccountId) }
-            buildSigned(ALICE_KEYPAIR)
+            buildSigned(DEFAULT_KEYPAIR)
         }
     }
 
@@ -73,7 +73,7 @@ class InstructionsTest {
                 instruction { storeAsset(assetId, pair1.first, pair1.second) }
                 instruction { storeAsset(assetId, pair2.first, pair2.second) }
                 instruction { storeAsset(assetId, pair3.first, pair3.second) }
-                buildSigned(ALICE_KEYPAIR)
+                buildSigned(DEFAULT_KEYPAIR)
             }.join()
         }
 
@@ -82,7 +82,7 @@ class InstructionsTest {
             query {
                 findAssetById(assetId)
             }
-            buildSigned(ALICE_KEYPAIR)
+            buildSigned(DEFAULT_KEYPAIR)
         }
 
         assertEquals(assetId.definitionId.name, asset.id.definitionId.name)
