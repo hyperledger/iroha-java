@@ -8,8 +8,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.testcontainers.DEFAULT_KEYPAIR
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
-import jp.co.soramitsu.iroha2.utils.accountExtractor
-import jp.co.soramitsu.iroha2.utils.assetExtractor
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

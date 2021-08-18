@@ -5,8 +5,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
-import jp.co.soramitsu.iroha2.utils.generateKeyPair
-import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
+import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
 
 val DEFAULT_KEYPAIR = generateKeyPair()
 val DEFAULT_ACCOUNT_ID = Id("alice", "wonderland")

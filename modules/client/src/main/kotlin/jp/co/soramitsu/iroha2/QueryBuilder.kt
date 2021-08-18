@@ -7,9 +7,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
-import jp.co.soramitsu.iroha2.utils.encode
-import jp.co.soramitsu.iroha2.utils.sign
-import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant

@@ -1,6 +1,5 @@
-package jp.co.soramitsu.iroha2.utils
+package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.QueryPayloadExtractionException
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account

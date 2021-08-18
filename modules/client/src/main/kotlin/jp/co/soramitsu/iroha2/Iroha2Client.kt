@@ -23,11 +23,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
-import jp.co.soramitsu.iroha2.utils.asIs
-import jp.co.soramitsu.iroha2.utils.decode
-import jp.co.soramitsu.iroha2.utils.encode
-import jp.co.soramitsu.iroha2.utils.hash
-import jp.co.soramitsu.iroha2.utils.hex
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
