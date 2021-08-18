@@ -1,12 +1,5 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
-import jp.co.soramitsu.iroha2.Instructions
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
-import jp.co.soramitsu.iroha2.utils.generateKeyPair
-import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
@@ -113,28 +106,4 @@ class IrohaContainer(
     }
 }
 
-val ALICE_KEYPAIR = generateKeyPair();
 
-private fun defaultGenesis(): Genesis {
-    val accountId = Id("alice", "wonderland")
-    return Genesis(
-        RawGenesisBlock(
-            mutableListOf(
-                GenesisTransaction(
-                    mutableListOf(
-                        Instructions.registerDomain("wonderland", mutableMapOf(), mutableMapOf()),
-                        Instructions.registerAccount(
-                            accountId,
-                            mutableListOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
-                        ),
-                        Instructions.registerAsset(
-                            "val",
-                            "wonderland",
-                            AssetValueType.Quantity()
-                        )
-                    )
-                )
-            )
-        )
-    )
-}

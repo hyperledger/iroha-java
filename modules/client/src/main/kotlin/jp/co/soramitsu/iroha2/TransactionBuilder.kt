@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
+import jp.co.soramitsu.iroha2.utils.encode
 import jp.co.soramitsu.iroha2.utils.sign
 import jp.co.soramitsu.iroha2.utils.toIrohaPublicKey
 import java.security.KeyPair
@@ -59,7 +60,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
             metadata.value
         )
-        val encodedPayload = encode(Payload, payload)
+        val encodedPayload = payload.encode(Payload)
 
         val signatures = keyPairs.map {
             Signature(

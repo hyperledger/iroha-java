@@ -20,7 +20,7 @@ import jp.co.soramitsu.iroha2.type.U32Type
 import jp.co.soramitsu.iroha2.type.U64Type
 import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.VecType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
