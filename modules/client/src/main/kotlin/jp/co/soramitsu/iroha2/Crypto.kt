@@ -49,4 +49,3 @@ class PrivateKeyWrapper(privKeySpec: EdDSAPrivateKeySpec) : EdDSAPrivateKey(priv
     override fun getEncoded(): ByteArray = this.seed
     override fun getFormat() = "RAW"
 }
-
