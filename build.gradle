@@ -40,5 +40,5 @@ subprojects {
 
     //todo remove shadow plugin as soon as fat `polkaj-scale-0.3.0.jar` will be moved from the repository (see /libs)
     // or native implementation of scale codec will be used
-    jar.finalizedBy(shadowJar)
+    install.finalizedBy(shadowJar)
 }
