@@ -49,15 +49,11 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
 
     fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
-        return sendTransaction(signedTransaction.encode(VersionedTransaction))
-    }
-
-    fun sendTransaction(signedTx: ByteArray) : ByteArray  {
-        val hash = signedTx.hash()
-        logger.debug("Sending transaction with hash ${hash.hex()}")
+        val hash = signedTransaction.hash()
+        logger.debug("Sending transaction with hash {}", hash.hex())
         val request = Request.Builder()
             .url("$peerUrl$INSTRUCTION_ENDPOINT")
-            .post(signedTx.toRequestBody())
+            .post(signedTransaction.encode(VersionedTransaction).toRequestBody())
             .build()
         client.value.newCall(request)
             .execute()
@@ -66,7 +62,6 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             }
         return hash
     }
-
 
     fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
         val signedTransaction = transaction(TransactionBuilder())
