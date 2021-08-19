@@ -33,7 +33,10 @@ subprojects {
 
     jar {
         from {
-            configurations.runtimeClasspath.collect {
+            configurations.runtimeClasspath
+            .filter { it.name.contains("polkaj-scale") }
+            .collect {
+                println("************" + it.name)
                 it.isDirectory() ? it : zipTree(it)
             }
         }
