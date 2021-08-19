@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.hashMapWithSize
+import jp.co.soramitsu.iroha2.readUint64
 import jp.co.soramitsu.iroha2.writeUint64
 import kotlin.String
 import kotlin.ULong
@@ -33,8 +34,8 @@ public data class Payload(
         public override fun read(reader: ScaleCodecReader): Payload = Payload(
             Id.read(reader) as Id,
             MutableList(reader.readCompactInt()) { Instruction.read(reader) as Instruction },
-            reader.readUint128().toLong().toULong(),
-            reader.readUint128().toLong().toULong(),
+            readUint64(reader),
+            readUint64(reader),
             hashMapWithSize(
                 reader.readCompactInt(), { reader.readString() },
                 {

@@ -18,7 +18,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     val instructions: Lazy<ArrayList<Instruction>>
     var creationTimeMillis: ULong?
     var timeToLiveMillis: ULong?
-    var metadata : Lazy<HashMap<String, Value>>
+    var metadata: Lazy<HashMap<String, Value>>
 
     init {
         accountId = null
@@ -28,8 +28,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         metadata = lazy { HashMap() }
         builder(this)
     }
-
-
 
     fun account(accountId: Id) = this.apply { this.accountId = accountId }
 

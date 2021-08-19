@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -47,9 +48,9 @@ class InstructionsTest {
                 accountId = ALICE_ACCOUNT_ID
                 instruction { registerAccount(newAccountId, mutableListOf()) }
                 buildSigned(DEFAULT_KEYPAIR)
-            }.join()
+            }.get(10, TimeUnit.SECONDS)
         }
-        val account = client.sendQuery(::accountExtractor) {
+        client.sendQuery(::accountExtractor) {
             accountId = ALICE_ACCOUNT_ID
             query { findAccountById(newAccountId) }
             buildSigned(DEFAULT_KEYPAIR)
@@ -72,7 +73,7 @@ class InstructionsTest {
                 instruction { storeAsset(assetId, pair2.first, pair2.second) }
                 instruction { storeAsset(assetId, pair3.first, pair3.second) }
                 buildSigned(DEFAULT_KEYPAIR)
-            }.join()
+            }.get(10, TimeUnit.SECONDS)
         }
 
         val asset = client.sendQuery(::assetExtractor) {

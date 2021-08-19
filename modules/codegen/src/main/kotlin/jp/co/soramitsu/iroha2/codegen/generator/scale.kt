@@ -30,6 +30,7 @@ val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWrit
 val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashSetWithSize")
 val U64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeUint64")
+val U64_READER = MemberName("jp.co.soramitsu.iroha2", "readUint64")
 val OPTIONAL = ClassName("java.util", "Optional")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
@@ -62,7 +63,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is U8Type -> CodeBlock.of("reader.readByte().toUByte()")
         is U16Type -> CodeBlock.of("reader.readUint16().toUShort()")
         is U32Type -> CodeBlock.of("reader.readUint32().toUInt()")
-        is U64Type -> CodeBlock.of("reader.readUint128().toLong().toULong()")
+        is U64Type -> CodeBlock.of("%1M(reader)", U64_READER)
         is U128Type -> CodeBlock.of("reader.readUint128()")
         is U256Type -> CodeBlock.of("BigInteger(reader.readUint256())")
         is StringType -> CodeBlock.of("reader.readString()")
