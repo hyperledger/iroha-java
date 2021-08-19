@@ -13,29 +13,25 @@ import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
 import java.util.function.Consumer
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
-class IrohaContainer(
+open class IrohaContainer(
     private val networkToJoin: Network = newNetwork(),
     private val logConsumer: Consumer<OutputFrame>? = Slf4jLogConsumer(getLogger(IrohaContainer::class.java)),
     imageTag: String = DEFAULT_IMAGE_TAG,
     private val genesis: Genesis = defaultGenesis(),
-    private val shouldCloseNetwork: Boolean = true
+    private val shouldCloseNetwork: Boolean = true,
 ) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:$imageTag")) {
 
-    private val genesisFileLocation = lazy { createTempFile("genesis-", randomUUID().toString()) }
+    val genesisFileLocation: Lazy<Path> = lazy { createTempFile("genesis-", randomUUID().toString()) }
 
-    override fun start() {
-        logger().debug("Starting Iroha container")
-        if (logger().isDebugEnabled) {
-            val genesisAsJson = genesis.asJson()
-            logger().debug("Serialized genesis block: {}", genesisAsJson)
-        }
-        withNetwork(networkToJoin)
+    init {
+        this.withNetwork(networkToJoin)
             .withEnv(ENV_SUMERAGI_MAX_FAULTY_PEERS.first, ENV_SUMERAGI_MAX_FAULTY_PEERS.second)
             .withEnv(ENV_TORII_P2P_URL.first, ENV_TORII_P2P_URL.second)
             .withEnv(ENV_TORII_API_URL.first, ENV_TORII_API_URL.second)
@@ -59,6 +55,14 @@ class IrohaContainer(
                     .forPath(HEALTHCHECK)
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
             )
+    }
+
+    override fun start() {
+        logger().debug("Starting Iroha container")
+        if (logger().isDebugEnabled) {
+            val genesisAsJson = genesis.asJson()
+            logger().debug("Serialized genesis block: {}", genesisAsJson)
+        }
         super.start()
         logger().debug("Iroha container started")
     }
