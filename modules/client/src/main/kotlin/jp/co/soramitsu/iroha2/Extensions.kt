@@ -4,6 +4,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
@@ -11,6 +12,7 @@ import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
 import java.io.ByteArrayOutputStream
+import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -81,4 +83,20 @@ fun VersionedTransaction.V1.hash(): ByteArray {
 
 fun VersionedTransaction.hash() = when (this) {
     is VersionedTransaction.V1 -> this.hash()
+}
+
+fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
+    when (this) {
+        is VersionedTransaction.V1 -> {
+            val encodedPayload = _VersionedTransactionV1.transaction.payload.encode(Payload)
+            val signatures = keypairs.map {
+                Signature(
+                    it.public.toIrohaPublicKey(),
+                    it.private.sign(encodedPayload)
+                )
+            }.toSet()
+            _VersionedTransactionV1.transaction.signatures.addAll(signatures)
+        }
+    }
+    return this
 }
