@@ -14,15 +14,22 @@ import java.time.Instant
 
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
+    var accountId: Id?
+    val instructions: Lazy<ArrayList<Instruction>>
+    var creationTimeMillis: ULong?
+    var timeToLiveMillis: ULong?
+    var metadata : Lazy<HashMap<String, Value>>
+
     init {
+        accountId = null
+        instructions = lazy { ArrayList() }
+        creationTimeMillis = null
+        timeToLiveMillis = null
+        metadata = lazy { HashMap() }
         builder(this)
     }
 
-    var accountId: Id? = null
-    val instructions = lazy { ArrayList<Instruction>() }
-    var creationTimeMillis: ULong? = null
-    var timeToLiveMillis: ULong? = null
-    var metadata = lazy { HashMap<String, Value>() }
+
 
     fun account(accountId: Id) = this.apply { this.accountId = accountId }
 
@@ -32,10 +39,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun instructions(instructions: Iterable<Instruction>) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instruction(instruction: Instruction) = this.apply { instructions.value.add(instruction) }
+    fun instruction(instruction: Instruction) = this.apply { this.instructions.value.add(instruction) }
 
     inline fun instruction(instruction: Instructions.() -> Instruction) =
-        this.apply { instructions.value.add(instruction(Instructions)) }
+        this.apply { this.instructions.value.add(instruction(Instructions)) }
 
     fun creationTime(creationTimeMillis: ULong) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
