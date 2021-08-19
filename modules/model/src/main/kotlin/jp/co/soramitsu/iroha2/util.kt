@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.reader.UInt128Reader
 import java.math.BigInteger
@@ -53,4 +54,17 @@ fun writeUint64(writer: ScaleCodecWriter, value: Long) {
         UInt128Reader.reverse(encoded)
         writer.directWrite(encoded, 0, 8)
     }
+}
+
+fun readUint64(reader: ScaleCodecReader): ULong {
+    var result = 0L
+    result += reader.readUByte().toLong()
+    result += reader.readUByte().toLong() shl 8
+    result += reader.readUByte().toLong() shl 16
+    result += reader.readUByte().toLong() shl 24
+    result += reader.readUByte().toLong() shl 32
+    result += reader.readUByte().toLong() shl 40
+    result += reader.readUByte().toLong() shl 48
+    result += reader.readUByte().toLong() shl 56
+    return result.toULong()
 }
