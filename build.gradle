@@ -1,7 +1,6 @@
 plugins {
     id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
     id "org.jlleitschuh.gradle.ktlint" version "$kotlinLinterVer"
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 allprojects {
@@ -17,7 +16,6 @@ allprojects {
 subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: 'maven'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
@@ -33,14 +31,12 @@ subprojects {
         useJUnitPlatform()
     }
 
-    shadowJar {
-        minimize()
-        // this allow to pick up fat jar by jitpack
-        // by default shadow plugin creates jar with suffix `-all`, but jitpack expects artifacts without such prefix.
-        archiveClassifier = ''
+    jar {
+        from {
+            configurations.runtimeClasspath.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
     }
 
-    //todo remove shadow plugin as soon as `polkaj-scale-0.3.0.jar` will be moved from the repository (see /libs)
-    // or native implementation of scale codec will be used
-    install.finalizedBy(shadowJar)
 }
