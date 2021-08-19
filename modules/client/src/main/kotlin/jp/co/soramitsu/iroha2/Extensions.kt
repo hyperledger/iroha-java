@@ -70,6 +70,7 @@ fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean {
 }
 
 fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
+
 fun VersionedTransaction.V1.hash(): ByteArray {
     return this._VersionedTransactionV1
         .transaction

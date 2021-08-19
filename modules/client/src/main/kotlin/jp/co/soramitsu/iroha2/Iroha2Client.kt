@@ -20,7 +20,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.RejectionReaso
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.runBlocking
@@ -49,14 +48,16 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
     }
 
     fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
-        VersionedQueryResult
         val signedTransaction = transaction(TransactionBuilder.builder())
-        val hash = signedTransaction.hash()
+        return sendTransaction(signedTransaction.encode(VersionedTransaction))
+    }
+
+    fun sendTransaction(signedTx: ByteArray) : ByteArray  {
+        val hash = signedTx.hash()
         logger.debug("Sending transaction with hash ${hash.hex()}")
-        val encoded = signedTransaction.encode(VersionedTransaction)
         val request = Request.Builder()
             .url("$peerUrl$INSTRUCTION_ENDPOINT")
-            .post(encoded.toRequestBody())
+            .post(signedTx.toRequestBody())
             .build()
         client.value.newCall(request)
             .execute()
@@ -65,6 +66,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
             }
         return hash
     }
+
 
     fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
         val signedTransaction = transaction(TransactionBuilder())
