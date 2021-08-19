@@ -34,9 +34,9 @@ subprojects {
     jar {
         from {
             configurations.runtimeClasspath
+            //todo remove it as soon as will be own implementation of scale codec
             .filter { it.name.contains("polkaj-scale") }
             .collect {
-                println("************" + it.name)
                 it.isDirectory() ? it : zipTree(it)
             }
         }
