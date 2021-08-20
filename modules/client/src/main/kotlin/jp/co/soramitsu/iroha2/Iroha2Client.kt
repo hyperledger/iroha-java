@@ -3,6 +3,8 @@ package jp.co.soramitsu.iroha2
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.request.post
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
@@ -25,7 +27,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -41,6 +42,13 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    private val ktorClient = lazy {
+        HttpClient(CIO) {
+            expectSuccess = true
+            install(WebSockets)
+        }
+    }
+
     private val client = lazy {
         OkHttpClient.Builder()
             .connectTimeout(0, TimeUnit.SECONDS)
@@ -51,15 +59,12 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.hex())
-        val request = Request.Builder()
-            .url("$peerUrl$INSTRUCTION_ENDPOINT")
-            .post(signedTransaction.encode(VersionedTransaction).toRequestBody())
-            .build()
-        client.value.newCall(request)
-            .execute()
-            .use {
-                check(it.isSuccessful) { "Response returned with status code ${it.code}" }
+        runBlocking {
+            val response: HttpResponse = ktorClient.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
+                body = signedTransaction.encode(VersionedTransaction)
             }
+            response.receive<Unit>()
+        }
         return hash
     }
 
@@ -80,15 +85,12 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         logger.debug("Sending query")
         val signedQuery = query(QueryBuilder.builder())
         val encoded = signedQuery.encode(VersionedSignedQueryRequest)
-        val client = HttpClient(CIO) {
-        }
 
         val rawBody = runBlocking {
-            val response: HttpResponse = client.request("$peerUrl$QUERY_ENDPOINT") {
+            val response: HttpResponse = ktorClient.value.request("$peerUrl$QUERY_ENDPOINT") {
                 this.method = HttpMethod.Get
                 this.body = ByteArrayContent(encoded)
             }
-            check(response.status.value == 200) { "Response returned with status code ${response.status.value}" }
             response.receive<ByteArray>()
         }
         logger.debug("Received binary query: {}", rawBody.hex())
@@ -215,10 +217,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         const val WS_ENDPOINT = "/events"
     }
 
-    override fun close() {
-        client.value.dispatcher.executorService.shutdown()
-        client.value.connectionPool.evictAll()
-    }
+    override fun close() = ktorClient.value.close()
 }
 
 private fun tryReadMessage(message: ByteArray): EventSocketMessage {
