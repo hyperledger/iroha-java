@@ -100,3 +100,8 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
     }
     return this
 }
+
+inline fun <reified B> Any.cast(): B {
+    return this as? B ?:
+        throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
+}

@@ -210,7 +210,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
     }
 
     companion object {
-        const val INSTRUCTION_ENDPOINT = "/instruction"
+        const val INSTRUCTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
     }
