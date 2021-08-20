@@ -110,7 +110,7 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
         val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
-        //todo use local scope instead
+        // todo use local scope instead
         GlobalScope.launch {
             client.value.webSocket(
                 host = peerUrl.host,
@@ -122,7 +122,7 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
-                    when(val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
+                    when (val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
                         is Event.Pipeline -> {
                             val eventInner = event.event
                             if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
@@ -160,7 +160,6 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
         return result
     }
 
-
     /**
      * Sends message to peer event was accepted
      */
@@ -197,7 +196,7 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
     /**
      * Tries to read message from the frame
      */
-    private inline fun<reified T: EventSocketMessage> tryReadMessage(frame: Frame): T {
+    private inline fun <reified T : EventSocketMessage> tryReadMessage(frame: Frame): T {
         return when (frame) {
             is Frame.Binary -> {
                 when (val versionedMessage = frame.readBytes().decode(VersionedEventSocketMessage)) {
@@ -221,5 +220,3 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
 
     override fun close() = client.value.close()
 }
-
-
