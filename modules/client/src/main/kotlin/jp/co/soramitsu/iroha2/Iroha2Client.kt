@@ -3,16 +3,24 @@ package jp.co.soramitsu.iroha2
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.features.logging.Logging
+import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
+import io.ktor.client.features.websocket.webSocket
 import io.ktor.client.request.post
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
+import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.close
+import io.ktor.http.cio.websocket.readBytes
+import io.ktor.http.cio.websocket.send
 import io.ktor.http.content.ByteArrayContent
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage.SubscriptionAccepted
 import jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSocketMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events._VersionedEventSocketMessageV1
@@ -24,35 +32,24 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRej
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okio.ByteString
-import okio.ByteString.Companion.toByteString
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
-class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
+class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val ktorClient = lazy {
+    private val client = lazy {
         HttpClient(CIO) {
             expectSuccess = true
+            if (log) { install(Logging) }
             install(WebSockets)
         }
-    }
-
-    private val client = lazy {
-        OkHttpClient.Builder()
-            .connectTimeout(0, TimeUnit.SECONDS)
-            .build()
     }
 
     fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
@@ -60,7 +57,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.hex())
         runBlocking {
-            val response: HttpResponse = ktorClient.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
+            val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
                 body = signedTransaction.encode(VersionedTransaction)
             }
             response.receive<Unit>()
@@ -70,9 +67,8 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
 
     fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
         val signedTransaction = transaction(TransactionBuilder())
-        val result = subscribeToTransactionStatus(signedTransaction.hash())
-        sendTransaction { signedTransaction }
-        return result
+        return subscribeToTransactionStatus(signedTransaction.hash())
+            .also { sendTransaction { signedTransaction } }
     }
 
     fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(::asIs, query)
@@ -87,7 +83,7 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         val encoded = signedQuery.encode(VersionedSignedQueryRequest)
 
         val rawBody = runBlocking {
-            val response: HttpResponse = ktorClient.value.request("$peerUrl$QUERY_ENDPOINT") {
+            val response: HttpResponse = client.value.request("$peerUrl$QUERY_ENDPOINT") {
                 this.method = HttpMethod.Get
                 this.body = ByteArrayContent(encoded)
             }
@@ -99,100 +95,87 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
 
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
         val hexHash = hash.hex()
-        logger.debug("Creating subscription to transaction status: $hexHash")
+        logger.debug("Creating subscription to transaction status: {}", hexHash)
         val subscriptionRequest = VersionedEventSocketMessage.V1(
             _VersionedEventSocketMessageV1(
-                EventSocketMessage.SubscriptionRequest(SubscriptionRequest(Pipeline(Filter(Transaction(), Hash(hash)))))
+                EventSocketMessage.SubscriptionRequest(
+                    SubscriptionRequest(
+                        Pipeline(
+                            Filter(Transaction(), Hash(hash))
+                        )
+                    )
+                )
             )
         )
         val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
-        val request = Request.Builder()
-            .url("$peerUrl$WS_ENDPOINT")
-            .get()
-            .build()
-        client.value.newWebSocket(
-            request,
-            object : WebSocketListener() {
-                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                    logger.debug("WebSocket closed")
-                    super.onClosed(webSocket, code, reason)
-                }
 
-                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                    logger.debug("WebSocket is closing")
-                    super.onClosing(webSocket, code, reason)
-                }
-
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    logger.error("WebSocket error", t)
-                    result.completeExceptionally(t)
-                }
-
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    logger.debug("Received text message")
-                }
-
-                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-                    logger.debug("Received binary message: {}", bytes.hex())
-                    when (val message = tryReadMessage(bytes.toByteArray())) {
-                        is EventSocketMessage.SubscriptionAccepted -> {
-                            logger.debug("Subscription was accepted by peer")
-                        }
-                        is EventSocketMessage.Event -> {
-                            when (val event = message.event) {
-                                is Event.Pipeline -> {
-                                    val eventInner = event.event
-                                    if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
-                                        when (val status = eventInner.status) {
-                                            is Status.Committed -> {
-                                                logger.debug("Transaction $hexHash committed")
-                                                result.complete(hash)
-                                                ack(webSocket, true)
-                                                webSocket.close(1000, null)
-                                            }
-                                            is Status.Rejected -> {
-                                                logger.error(
-                                                    "Transaction $hexHash was rejected by reason: `{}`",
-                                                    getRejectionReason(status.rejectionReason)
-                                                )
-                                                result.completeExceptionally(RuntimeException("Transaction rejected"))
-                                                ack(webSocket, true)
-                                            }
-                                            is Status.Validating -> {
-                                                logger.debug("Transaction $hexHash is validating")
-                                                ack(webSocket, false)
-                                            }
-                                        }
+        //todo use local scope instead
+        GlobalScope.launch {
+            client.value.webSocket(
+                host = peerUrl.host,
+                port = peerUrl.port,
+                path = WS_ENDPOINT
+            ) {
+                logger.debug("WebSocket opened")
+                send(payload)
+                tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                logger.debug("Subscription was accepted by peer")
+                while (true) {
+                    when(val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
+                        is Event.Pipeline -> {
+                            val eventInner = event.event
+                            if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
+                                when (val status = eventInner.status) {
+                                    is Status.Committed -> {
+                                        logger.debug("Transaction {} committed", hexHash)
+                                        result.complete(hash)
+                                        ack(this)
+                                        break
+                                    }
+                                    is Status.Rejected -> {
+                                        logger.error(
+                                            "Transaction {} was rejected by reason: `{}`",
+                                            hexHash, getRejectionReason(status.rejectionReason)
+                                        )
+                                        result.completeExceptionally(RuntimeException("Transaction rejected"))
+                                        ack(this)
+                                        break
+                                    }
+                                    is Status.Validating -> {
+                                        logger.debug("Transaction {} is validating", hexHash)
+                                        ack(this)
                                     }
                                 }
-                                else -> result.completeExceptionally(RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but got ${message.event::class.qualifiedName}"))
                             }
                         }
+                        else -> result.completeExceptionally(RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but was ${event::class.qualifiedName}"))
                     }
-                }
-
-                override fun onOpen(webSocket: WebSocket, response: Response) {
-                    logger.debug("WebSocket opened")
-                    webSocket.send(payload.toByteString())
+                    logger.debug("WebSocket is closing")
+                    this.close()
+                    logger.debug("WebSocket closed")
                 }
             }
-        )
+        }
         return result
     }
 
-    private fun ack(webSocket: WebSocket, isTerminalMessage: Boolean = false) {
+
+    /**
+     * Sends message to peer event was accepted
+     */
+    private suspend fun ack(webSocket: ClientWebSocketSession) {
         val eventReceived = VersionedEventSocketMessage.V1(
             _VersionedEventSocketMessageV1(
                 EventSocketMessage.EventReceived()
             )
         )
-        webSocket.send(eventReceived.encode(VersionedEventSocketMessage).toByteString())
-        if (isTerminalMessage) {
-            webSocket.close(1000, null)
-        }
+        webSocket.send(eventReceived.encode(VersionedEventSocketMessage))
     }
 
+    /**
+     * Extract rejection reason
+     */
     private fun getRejectionReason(rejectionReason: RejectionReason): String {
         return when (rejectionReason) {
             is RejectionReason.Block -> when (rejectionReason.blockRejectionReason) {
@@ -211,20 +194,32 @@ class Iroha2Client(private val peerUrl: URL) : AutoCloseable {
         }
     }
 
+    /**
+     * Tries to read message from the frame
+     */
+    private inline fun<reified T: EventSocketMessage> tryReadMessage(frame: Frame): T {
+        return when (frame) {
+            is Frame.Binary -> {
+                when (val versionedMessage = frame.readBytes().decode(VersionedEventSocketMessage)) {
+                    is VersionedEventSocketMessage.V1 -> {
+                        val actualMessage = versionedMessage._VersionedEventSocketMessageV1.eventSocketMessage
+                        actualMessage as? T
+                            ?: throw RuntimeException("Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}")
+                    }
+                    else -> throw RuntimeException("Expected `${VersionedEventSocketMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`")
+                }
+            }
+            else -> throw RuntimeException("Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`")
+        }
+    }
+
     companion object {
         const val INSTRUCTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
     }
 
-    override fun close() = ktorClient.value.close()
+    override fun close() = client.value.close()
 }
 
-private fun tryReadMessage(message: ByteArray): EventSocketMessage {
-    val versionedMessage = message.decode(VersionedEventSocketMessage)
-    if (versionedMessage is VersionedEventSocketMessage.V1) {
-        return versionedMessage._VersionedEventSocketMessageV1.eventSocketMessage
-    } else {
-        throw RuntimeException("Expected '${VersionedEventSocketMessage.V1::class.qualifiedName}', but got '${versionedMessage::class.qualifiedName}'")
-    }
-}
+
