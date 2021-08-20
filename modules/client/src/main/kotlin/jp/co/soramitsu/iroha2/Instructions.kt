@@ -15,14 +15,19 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import java.math.BigInteger
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+
+const val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN = "can_set_key_value_in_user_assets"
+const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
 
 object Instructions {
 
@@ -138,6 +143,30 @@ object Instructions {
         quantity: UInt
     ): Instruction {
         return mintAssetInternal(assetId, AssetValue.Quantity(quantity))
+    }
+
+    fun grantPermissionsToKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
+        return Instruction.Grant(
+            GrantBox(
+                destinationId = EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AccountId(target)
+                        )
+                    )
+                ),
+                `object` = EvaluatesTo(
+                    Expression.Raw(
+                        Value.PermissionToken(
+                            PermissionToken(
+                                name = CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN,
+                                params = mutableMapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
+                            )
+                        )
+                    )
+                )
+            )
+        )
     }
 
     /**
