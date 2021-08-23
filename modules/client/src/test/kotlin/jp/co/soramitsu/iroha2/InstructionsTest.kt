@@ -51,7 +51,7 @@ class InstructionsTest {
                 buildSigned(DEFAULT_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
-        client.sendQuery(::accountExtractor) {
+        client.sendQuery(AccountExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAccountById(newAccountId)
             buildSigned(DEFAULT_KEYPAIR)
@@ -77,7 +77,7 @@ class InstructionsTest {
             }.get(10, TimeUnit.SECONDS)
         }
 
-        val asset = client.sendQuery(::assetExtractor) {
+        val asset = client.sendQuery(AssetExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAssetById(assetId)
             buildSigned(DEFAULT_KEYPAIR)
@@ -125,7 +125,7 @@ class InstructionsTest {
             }.get(10, TimeUnit.SECONDS)
         }
 
-        val asset = client.sendQuery(::assetExtractor) {
+        val asset = client.sendQuery(AssetExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAssetById(aliceAssetId)
             buildSigned(DEFAULT_KEYPAIR)
