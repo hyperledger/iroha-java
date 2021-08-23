@@ -10,6 +10,7 @@ import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
@@ -37,6 +38,7 @@ object GenesisJsonSerializer {
             .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
             .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
             .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
+            .registerTypeAdapter(IdBox::class.java, EnumerationSerializer)
             .create()
     }
 
