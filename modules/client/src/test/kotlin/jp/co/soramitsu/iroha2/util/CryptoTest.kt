@@ -11,6 +11,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.bouncycastle.util.encoders.Hex
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -62,12 +63,19 @@ class CryptoTest {
     @Test
     fun `keypair serialized to hex and deserialized back`() {
         val keyPair = generateKeyPair()
-        val pubKey = Hex.toHexString(keyPair.public.encoded)
-        val privKey = Hex.toHexString(keyPair.private.encoded)
+        val pubKey = keyPair.public.encoded.hex()
+        val privKey = keyPair.private.encoded.hex()
+
+        val message = "foo".toByteArray()
+        val signature = keyPair.private.sign(message)
 
         val restoredKeyPair = keyPairFromHex(pubKey, privKey)
         assertEquals(keyPair.private, restoredKeyPair.private)
         assertEquals(keyPair.public, restoredKeyPair.public)
+
+        assertDoesNotThrow {
+            assertTrue { restoredKeyPair.public.verify(signature, message) }
+        }
     }
 
     // @Test

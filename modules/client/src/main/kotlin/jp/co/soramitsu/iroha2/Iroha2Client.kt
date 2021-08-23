@@ -71,13 +71,13 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
             .also { sendTransaction { signedTransaction } }
     }
 
-    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(::asIs, query)
+    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
 
     /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
      */
-    fun <T> sendQuery(extractor: (QueryResult) -> T, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
+    fun <T> sendQuery(extractor: ResultExtractor<T>, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
         logger.debug("Sending query")
         val signedQuery = query(QueryBuilder.builder())
         val encoded = signedQuery.encode(VersionedSignedQueryRequest)
@@ -90,7 +90,7 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
             response.receive<ByteArray>()
         }
         logger.debug("Received binary query: {}", rawBody.hex())
-        return rawBody.decode(QueryResult).let(extractor)
+        return rawBody.decode(QueryResult).let(extractor::extract)
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {

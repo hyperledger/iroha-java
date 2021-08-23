@@ -34,10 +34,10 @@ fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParam
     KeyPair(publicKeyFromHex(publicKeyHex, spec), privateKeyFromHex(privateKeyHex, spec))
 
 fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
-    EdDSAPrivateKey(EdDSAPrivateKeySpec(Hex.decodeStrict(privateKeyHex), spec))
+    PrivateKeyWrapper(EdDSAPrivateKeySpec(Hex.decodeStrict(privateKeyHex), spec))
 
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
-    EdDSAPublicKey(EdDSAPublicKeySpec(Hex.decodeStrict(publicKeyHex), spec))
+    PubKeyWrapper(EdDSAPublicKeySpec(Hex.decodeStrict(publicKeyHex), spec))
 
 // todo remove it
 class PubKeyWrapper(pubKeySpec: EdDSAPublicKeySpec) : EdDSAPublicKey(pubKeySpec) {
