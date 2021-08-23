@@ -28,7 +28,7 @@ open class IrohaContainer(
     private val shouldCloseNetwork: Boolean = true,
 ) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:$imageTag")) {
 
-    val genesisFileLocation: Lazy<Path> = lazy { createTempFile("genesis-", randomUUID().toString()) }
+    private val genesisFileLocation: Lazy<Path> = lazy { createTempFile("genesis-", randomUUID().toString()) }
 
     init {
         this.withNetwork(networkToJoin)

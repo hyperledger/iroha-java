@@ -1,20 +1,28 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
+import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
-    var accountId: Id?
+    var accountId: AccountId?
     val instructions: Lazy<ArrayList<Instruction>>
     var creationTimeMillis: ULong?
     var timeToLiveMillis: ULong?
@@ -29,18 +37,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         builder(this)
     }
 
-    fun account(accountId: Id) = this.apply { this.accountId = accountId }
+    fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: String, domain: String) = this.account(Id(accountName, domain))
+    fun account(accountName: String, domain: String) = this.account(AccountId(accountName, domain))
 
     fun instructions(vararg instructions: Instruction) = this.apply { this.instructions.value.addAll(instructions) }
 
     fun instructions(instructions: Iterable<Instruction>) = this.apply { this.instructions.value.addAll(instructions) }
 
     fun instruction(instruction: Instruction) = this.apply { this.instructions.value.add(instruction) }
-
-    inline fun instruction(instruction: Instructions.() -> Instruction) =
-        this.apply { this.instructions.value.add(instruction(Instructions)) }
 
     fun creationTime(creationTimeMillis: ULong) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -81,9 +86,43 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
-    private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
+    fun registerAccount(
+        id: AccountId,
+        signatories: MutableList<PublicKey>,
+        metadata: Metadata = Metadata(mutableMapOf())
+    ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
-    private fun fallBackMetadata() = mutableMapOf<String, Value>()
+    fun registerAsset(
+        id: DefinitionId,
+        assetValueType: AssetValueType
+    ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValueType)) }
+
+    fun storeAsset(
+        assetId: AssetId,
+        key: String,
+        value: Value
+    ) = this.apply { instructions.value.add(Instructions.storeAsset(assetId, key, value)) }
+
+    fun mintAsset(
+        assetId: AssetId,
+        quantity: BigInteger
+    ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
+
+    fun mintAsset(
+        assetId: AssetId,
+        quantity: UInt
+    ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
+
+    fun registerDomain(
+        domainName: String,
+        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
+        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
+    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainName, accounts, assetDefinitions)) }
+
+    fun grantPermissionsToKeyValueAsset(assetId: AssetId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantPermissionsToKeyValueAsset(assetId, target)) }
+
+    private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 
     companion object {
         fun builder() = TransactionBuilder()

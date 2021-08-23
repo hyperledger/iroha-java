@@ -18,8 +18,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
 @Timeout(10)
@@ -47,13 +47,13 @@ class InstructionsTest {
         Assertions.assertDoesNotThrow {
             client.sendTransactionAsync {
                 accountId = ALICE_ACCOUNT_ID
-                instruction { registerAccount(newAccountId, mutableListOf()) }
+                registerAccount(newAccountId, mutableListOf())
                 buildSigned(DEFAULT_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
         client.sendQuery(::accountExtractor) {
             accountId = ALICE_ACCOUNT_ID
-            query { findAccountById(newAccountId) }
+            findAccountById(newAccountId)
             buildSigned(DEFAULT_KEYPAIR)
         }
     }
@@ -69,19 +69,17 @@ class InstructionsTest {
         Assertions.assertDoesNotThrow {
             client.sendTransactionAsync {
                 account(ALICE_ACCOUNT_ID)
-                instruction { registerAsset(assetDefinition, AssetValueType.Store()) }
-                instruction { storeAsset(assetId, pair1.first, pair1.second) }
-                instruction { storeAsset(assetId, pair2.first, pair2.second) }
-                instruction { storeAsset(assetId, pair3.first, pair3.second) }
+                registerAsset(assetDefinition, AssetValueType.Store())
+                storeAsset(assetId, pair1.first, pair1.second)
+                storeAsset(assetId, pair2.first, pair2.second)
+                storeAsset(assetId, pair3.first, pair3.second)
                 buildSigned(DEFAULT_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
 
         val asset = client.sendQuery(::assetExtractor) {
             accountId = ALICE_ACCOUNT_ID
-            query {
-                findAssetById(assetId)
-            }
+            findAssetById(assetId)
             buildSigned(DEFAULT_KEYPAIR)
         }
 
@@ -109,11 +107,11 @@ class InstructionsTest {
             client.sendTransactionAsync {
                 account(ALICE_ACCOUNT_ID)
                 // register asset with type store
-                instruction { registerAsset(assetDefinition, AssetValueType.Store()) }
+                registerAsset(assetDefinition, AssetValueType.Store())
                 // register Bob's account
-                instruction { registerAccount(bobAccountId, mutableListOf(bobKeypair.public.toIrohaPublicKey())) }
+                registerAccount(bobAccountId, mutableListOf(bobKeypair.public.toIrohaPublicKey()))
                 // grant by Alice to Bob permissions to set key value in Asset.Store
-                instruction { grantPermissionsToKeyValueAsset(aliceAssetId, bobAccountId) }
+                grantPermissionsToKeyValueAsset(aliceAssetId, bobAccountId)
                 buildSigned(DEFAULT_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
@@ -122,16 +120,14 @@ class InstructionsTest {
         Assertions.assertDoesNotThrow {
             client.sendTransactionAsync {
                 account(bobAccountId)
-                instruction { storeAsset(aliceAssetId, "foo", "bar".asValue()) }
+                storeAsset(aliceAssetId, "foo", "bar".asValue())
                 buildSigned(bobKeypair)
             }.get(10, TimeUnit.SECONDS)
         }
 
         val asset = client.sendQuery(::assetExtractor) {
             accountId = ALICE_ACCOUNT_ID
-            query {
-                findAssetById(aliceAssetId)
-            }
+            findAssetById(aliceAssetId)
             buildSigned(DEFAULT_KEYPAIR)
         }
 

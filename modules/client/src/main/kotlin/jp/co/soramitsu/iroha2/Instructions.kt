@@ -32,15 +32,6 @@ const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
 object Instructions {
 
     fun registerAccount(
-        name: String,
-        domainName: String,
-        signatories: MutableList<PublicKey>,
-        metadata: Metadata = Metadata(mutableMapOf())
-    ): Instruction {
-        return registerAccount(AccountId(name, domainName), signatories, metadata)
-    }
-
-    fun registerAccount(
         id: AccountId,
         signatories: MutableList<PublicKey>,
         metadata: Metadata = Metadata(mutableMapOf())
@@ -63,32 +54,6 @@ object Instructions {
         }
     }
 
-    fun registerAsset(
-        assetName: String,
-        domainName: String,
-        assetValueType: AssetValueType
-    ): Instruction {
-        return registerAsset(
-            DefinitionId(assetName, domainName),
-            assetValueType
-        )
-    }
-
-    fun storeAsset(
-        assetName: String,
-        assetDomain: String,
-        accountName: String,
-        accountDomain: String = assetDomain,
-        key: String,
-        value: Value
-    ): Instruction {
-        val assetId = AssetId(
-            DefinitionId(assetName, assetDomain),
-            AccountId(accountName, accountDomain),
-        )
-        return storeAsset(assetId, key, value)
-    }
-
     fun storeAsset(
         assetId: AssetId,
         key: String,
@@ -104,38 +69,10 @@ object Instructions {
     }
 
     fun mintAsset(
-        assetName: String,
-        assetDomain: String,
-        accountName: String,
-        accountDomain: String = assetDomain,
-        quantity: BigInteger
-    ): Instruction {
-        val assetId = AssetId(
-            DefinitionId(assetName, assetDomain),
-            AccountId(accountName, accountDomain),
-        )
-        return mintAssetInternal(assetId, AssetValue.BigQuantity(quantity))
-    }
-
-    fun mintAsset(
         assetId: AssetId,
         quantity: BigInteger
     ): Instruction {
         return mintAssetInternal(assetId, AssetValue.BigQuantity(quantity))
-    }
-
-    fun mintAsset(
-        assetName: String,
-        assetDomain: String,
-        accountName: String,
-        accountDomain: String = assetDomain,
-        quantity: UInt
-    ): Instruction {
-        val assetId = AssetId(
-            DefinitionId(assetName, assetDomain),
-            AccountId(accountName, accountDomain),
-        )
-        return mintAssetInternal(assetId, AssetValue.Quantity(quantity))
     }
 
     fun mintAsset(
@@ -150,9 +87,7 @@ object Instructions {
             GrantBox(
                 destinationId = EvaluatesTo(
                     Expression.Raw(
-                        Value.Id(
-                            IdBox.AccountId(target)
-                        )
+                        Value.Id(IdBox.AccountId(target))
                     )
                 ),
                 `object` = EvaluatesTo(
@@ -163,6 +98,30 @@ object Instructions {
                                 params = mutableMapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
                             )
                         )
+                    )
+                )
+            )
+        )
+    }
+
+    fun registerDomain(
+        domainName: String,
+        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
+        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
+    ): Instruction {
+        return registerSome {
+            IdentifiableBox.Domain(
+                Domain(domainName, accounts, assetDefinitions)
+            )
+        }
+    }
+
+    private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction {
+        return Instruction.Register(
+            RegisterBox(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Identifiable(idBox())
                     )
                 )
             )
@@ -195,30 +154,6 @@ object Instructions {
                         Value.Id(
                             IdBox.AssetId(assetId)
                         )
-                    )
-                )
-            )
-        )
-    }
-
-    fun registerDomain(
-        domainName: String,
-        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
-        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
-    ): Instruction {
-        return registerSome {
-            IdentifiableBox.Domain(
-                Domain(domainName, accounts, assetDefinitions)
-            )
-        }
-    }
-
-    private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction {
-        return Instruction.Register(
-            RegisterBox(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Identifiable(idBox())
                     )
                 )
             )

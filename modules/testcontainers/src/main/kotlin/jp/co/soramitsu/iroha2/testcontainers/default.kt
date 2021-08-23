@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 
 val DEFAULT_KEYPAIR = generateKeyPair()
@@ -23,8 +24,7 @@ fun defaultGenesis(): Genesis {
                             mutableListOf(DEFAULT_KEYPAIR.public.toIrohaPublicKey()),
                         ),
                         Instructions.registerAsset(
-                            "val",
-                            "wonderland",
+                            DefinitionId("val","wonderland"),
                             AssetValueType.Quantity()
                         )
                     )

@@ -1,7 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
@@ -10,16 +9,25 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryReq
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
-class QueryBuilder private constructor() {
+class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
 
-    var accountId: Id? = null
-    var creationTimeMillis: BigInteger? = null
-    var query: QueryBox? = null
+    var accountId: AccountId?
+    var creationTimeMillis: BigInteger?
+    var query: QueryBox?
 
-    fun account(accountId: Id) = this.apply { this.accountId = accountId }
+    init {
+        accountId = null
+        creationTimeMillis = null
+        query = null
+        builder(this)
+    }
 
-    fun account(accountName: String, domain: String) = this.account(Id(accountName, domain))
+    fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
+
+    fun account(accountName: String, domain: String) = this.account(AccountId(accountName, domain))
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -29,8 +37,6 @@ class QueryBuilder private constructor() {
         this.apply { this.creationTime(BigInteger.valueOf(creationTimeMillis)) }
 
     fun query(query: QueryBox) = this.apply { this.query = query }
-
-    fun query(query: Queries.() -> QueryBox) = this.apply { this.query = query(Queries) }
 
     fun buildSigned(keyPair: KeyPair): VersionedSignedQueryRequest {
         val payload = Payload(
@@ -54,6 +60,10 @@ class QueryBuilder private constructor() {
             )
         )
     }
+
+    fun findAccountById(accountId: AccountId) = this.apply { query = Queries.findAccountById(accountId) }
+
+    fun findAssetById(assetId: AssetId) = this.apply { query = Queries.findAssetById(assetId) }
 
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 
