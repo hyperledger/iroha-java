@@ -41,5 +41,17 @@ subprojects {
             }
         }
     }
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ["-Xjsr305=strict"]
+            jvmTarget = 11
+        }
+    }
 
+    compileTestKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ["-Xjsr305=strict"]
+            jvmTarget = 11
+        }
+    }
 }
