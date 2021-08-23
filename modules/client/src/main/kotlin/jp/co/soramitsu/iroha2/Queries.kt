@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
@@ -29,8 +28,6 @@ object Queries {
         )
     }
 
-    fun findAccountById(name: String, domain: String) = findAccountById(AccountId(name, domain))
-
     fun findAssetById(assetId: AssetId): QueryBox {
         return QueryBox.FindAssetById(
             FindAssetById(
@@ -43,15 +40,6 @@ object Queries {
                         )
                     )
                 )
-            )
-        )
-    }
-
-    fun findAssetById(assetName: String, assetDomain: String, accountName: String, accountDomain: String): QueryBox {
-        return findAssetById(
-            AssetId(
-                definitionId = DefinitionId(assetName, assetDomain),
-                accountId = AccountId(accountName, accountDomain)
             )
         )
     }
