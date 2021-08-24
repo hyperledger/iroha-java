@@ -39,6 +39,7 @@ object GenesisJsonSerializer {
             .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
             .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
             .registerTypeAdapter(IdBox::class.java, EnumerationSerializer)
+            .registerTypeAdapter(UInt::class.java, UIntSerializer)
             .create()
     }
 
@@ -53,8 +54,12 @@ object EnumerationSerializer : JsonSerializer<Any> {
         if (memberProperties.size != 1) {
             throw RuntimeException("Expected enum which accept exactly 1 member as tuple")
         }
-        val inner = memberProperties.first()
-        jsonObject.add(src::class.simpleName, context.serialize(inner.call(src), inner.returnType.javaType))
+        val innerProp = memberProperties.first()
+        val innerPropVal = when(val actual = innerProp.call(src)) {
+            is UInt -> actual.toLong()//cannot cast UInt to Number
+            else  -> actual
+        }
+        jsonObject.add(src::class.simpleName, context.serialize(innerPropVal, innerProp.returnType.javaType))
         return jsonObject
     }
 }
@@ -83,5 +88,11 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
 object AssetValueTypeSerializer : JsonSerializer<AssetValueType> {
     override fun serialize(src: AssetValueType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return JsonPrimitive(src::class.java.simpleName)
+    }
+}
+
+object UIntSerializer : JsonSerializer<UInt>{
+    override fun serialize(src: UInt, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+        return context.serialize(src.toLong())
     }
 }
