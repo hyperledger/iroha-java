@@ -7,6 +7,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import io.emeraldpay.polkaj.scale.reader.CompactBigIntReader
+import io.emeraldpay.polkaj.scale.writer.CompactULongWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import java.math.BigInteger
 
@@ -22,13 +24,13 @@ public data class Payload(
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = Payload(
-            reader.readCompactInt().toBigInteger(),
+            reader.read(CompactBigIntReader()),
             QueryBox.read(reader) as QueryBox,
             Id.read(reader) as Id,
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Payload) {
-            writer.writeCompact(instance.timestampMs.toInt())
+            writer.write(CompactULongWriter(), instance.timestampMs.toLong())
             QueryBox.write(writer, instance.query)
             Id.write(writer, instance.accountId)
         }
