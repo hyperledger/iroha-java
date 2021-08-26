@@ -31,6 +31,8 @@ val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashSetWithSize")
 val U64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeUint64")
 val U64_READER = MemberName("jp.co.soramitsu.iroha2", "readUint64")
+val COMPACT_ULONG_WRITER = MemberName("io.emeraldpay.polkaj.scale.writer", "CompactULongWriter")
+val COMPACT_BIG_INT_READER = MemberName("io.emeraldpay.polkaj.scale.reader", "CompactBigIntReader")
 val OPTIONAL = ClassName("java.util", "Optional")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
@@ -77,15 +79,14 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
         }
         is CompactType -> {
-            val conversionFunction = when (val innerType = type.innerType.requireValue()) {
-                is U8Type -> CodeBlock.of("toUByte()")
-                is U16Type -> CodeBlock.of("toUShort()")
-                is U32Type -> CodeBlock.of("toUInt()")
-                is U64Type -> CodeBlock.of("toULong()")
-                is U128Type, is U256Type -> CodeBlock.of("toBigInteger()")
+            return when(val innerType = type.innerType.requireValue()) {
+                is U128Type, is U256Type -> CodeBlock.of("reader.read(%M())", COMPACT_BIG_INT_READER)
+                is U64Type -> CodeBlock.of("reader.read(%M()).toLong().toULong()", COMPACT_BIG_INT_READER)
+                is U8Type -> CodeBlock.of("reader.readCompactInt().toUByte()")
+                is U16Type -> CodeBlock.of("reader.readCompactInt().toUShort()")
+                is U32Type -> CodeBlock.of("reader.readCompactInt().toUInt()")
                 else -> throw RuntimeException("Compact type implementation unresolved: $innerType")
             }
-            CodeBlock.of("reader.readCompactInt().%L", conversionFunction)
         }
         else -> throw RuntimeException("Unexpected type: $type")
     }
@@ -149,7 +150,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
                 propName
             )
         }
-        is CompactType -> CodeBlock.of("writer.writeCompact(%L.toInt())", propName)
+        is CompactType -> CodeBlock.of("writer.write(%M(), %L.toLong())", COMPACT_ULONG_WRITER, propName)
         else -> throw RuntimeException("Unexpected type: $type")
     }
 }
