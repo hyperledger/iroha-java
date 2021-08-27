@@ -1,4 +1,3 @@
-
 FROM hyperledger/iroha:1.1.0
 WORKDIR /opt/iroha_data
 ENTRYPOINT [""]

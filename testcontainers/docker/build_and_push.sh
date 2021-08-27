@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/usr/bin/env
+
 export TAG=warchantua/iroha:1.1.0
 
 docker build -t $TAG --compress --squash .
