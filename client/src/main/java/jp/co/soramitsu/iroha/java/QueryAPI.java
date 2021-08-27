@@ -182,7 +182,6 @@ public class QueryAPI {
 
     return res.getBlockResponse();
   }
-//  extended TxPaginationMeta
   public TransactionsPageResponse getAccountTransactions(String accountId,
                                                          Integer pageSize,
                                                          String firstHashHex,
@@ -233,7 +232,7 @@ public class QueryAPI {
     return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null);
 
   }
-//extended TxPaginationMeta version
+
   public TransactionsPageResponse getAccountAssetTransactions(String accountId,
                                                               String assetId,
                                                               Integer pageSize,
