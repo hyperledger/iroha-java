@@ -18,7 +18,7 @@ public data class Peer(
 ) {
     public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
         public override fun read(reader: ScaleCodecReader): Peer = Peer(
-            Id.read(reader) as Id,
+            Id.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Peer) {

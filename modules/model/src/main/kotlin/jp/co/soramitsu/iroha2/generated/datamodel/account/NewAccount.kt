@@ -23,9 +23,9 @@ public data class NewAccount(
 ) {
     public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
         public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(
-            Id.read(reader) as Id,
-            MutableList(reader.readCompactInt()) { PublicKey.read(reader) as PublicKey },
-            Metadata.read(reader) as Metadata,
+            Id.read(reader),
+            MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
+            Metadata.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: NewAccount) {

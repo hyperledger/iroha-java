@@ -21,7 +21,7 @@ public data class _VersionedSignedQueryRequestV1(
         ScaleWriter<_VersionedSignedQueryRequestV1> {
         public override fun read(reader: ScaleCodecReader): _VersionedSignedQueryRequestV1 =
             _VersionedSignedQueryRequestV1(
-                SignedQueryRequest.read(reader) as SignedQueryRequest,
+                SignedQueryRequest.read(reader),
             )
 
         public override fun write(writer: ScaleCodecWriter, instance: _VersionedSignedQueryRequestV1) {

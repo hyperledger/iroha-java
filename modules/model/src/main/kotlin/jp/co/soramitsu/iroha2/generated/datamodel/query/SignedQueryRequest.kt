@@ -20,8 +20,8 @@ public data class SignedQueryRequest(
 ) {
     public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
         public override fun read(reader: ScaleCodecReader): SignedQueryRequest = SignedQueryRequest(
-            Payload.read(reader) as Payload,
-            Signature.read(reader) as Signature,
+            Payload.read(reader),
+            Signature.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest) {

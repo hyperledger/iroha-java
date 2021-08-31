@@ -2,9 +2,9 @@ package jp.co.soramitsu.iroha2.codegen.blueprint
 
 import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.StructType
-import java.util.*
+import java.util.StringTokenizer
 
-class StructBlueprint(type: StructType) : TypeBasedBlueprint<StructType>(type){
+class StructBlueprint(type: StructType) : TypeBasedBlueprint<StructType>(type) {
     override fun resolveProperties(type: StructType): List<Property> {
         return type.mapping
             .map { (name, ty) ->
@@ -33,5 +33,4 @@ class StructBlueprint(type: StructType) : TypeBasedBlueprint<StructType>(type){
             name
         }
     }
-
 }

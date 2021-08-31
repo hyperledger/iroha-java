@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2.type
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
 sealed class Type(open val name: String) {
-    open fun notResolvedTypes() : Set<String> = setOf()
+    open fun notResolvedTypes(): Set<String> = setOf()
 }
 
 object BooleanType : Type("bool")

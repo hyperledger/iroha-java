@@ -20,7 +20,7 @@ public data class GenesisTransaction(
 ) {
     public companion object : ScaleReader<GenesisTransaction>, ScaleWriter<GenesisTransaction> {
         public override fun read(reader: ScaleCodecReader): GenesisTransaction = GenesisTransaction(
-            MutableList(reader.readCompactInt()) { Instruction.read(reader) as Instruction },
+            MutableList(reader.readCompactInt()) { Instruction.read(reader) },
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: GenesisTransaction) {

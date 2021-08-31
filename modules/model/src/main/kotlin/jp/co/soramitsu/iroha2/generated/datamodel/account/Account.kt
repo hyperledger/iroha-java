@@ -32,19 +32,15 @@ public data class Account(
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
         public override fun read(reader: ScaleCodecReader): Account = Account(
-            Id.read(reader) as Id,
+            Id.read(reader),
             hashMapWithSize(
                 reader.readCompactInt(),
-                {
-                    jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) as
-                        jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
-                },
-                { Asset.read(reader) as Asset }
+                { jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) }, { Asset.read(reader) }
             ),
-            MutableList(reader.readCompactInt()) { PublicKey.read(reader) as PublicKey },
-            hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) as PermissionToken },
-            SignatureCheckCondition.read(reader) as SignatureCheckCondition,
-            Metadata.read(reader) as Metadata,
+            MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
+            hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) },
+            SignatureCheckCondition.read(reader),
+            Metadata.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Account) {

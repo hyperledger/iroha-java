@@ -19,7 +19,7 @@ public data class RawGenesisBlock(
 ) {
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
         public override fun read(reader: ScaleCodecReader): RawGenesisBlock = RawGenesisBlock(
-            MutableList(reader.readCompactInt()) { GenesisTransaction.read(reader) as GenesisTransaction },
+            MutableList(reader.readCompactInt()) { GenesisTransaction.read(reader) },
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) {

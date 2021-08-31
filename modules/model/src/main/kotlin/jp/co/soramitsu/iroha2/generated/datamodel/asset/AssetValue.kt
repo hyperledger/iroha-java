@@ -77,7 +77,7 @@ public sealed class AssetValue {
             public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Store = Store(
-                Metadata.read(reader) as Metadata,
+                Metadata.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Store) {

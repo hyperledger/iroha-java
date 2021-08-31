@@ -24,7 +24,7 @@ public data class If(
     public companion object : ScaleReader<If>, ScaleWriter<If> {
         public override fun read(reader: ScaleCodecReader): If = If(
             EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
-            Instruction.read(reader) as Instruction,
+            Instruction.read(reader),
             reader.readOptional(Instruction).orElse(null),
         )
 

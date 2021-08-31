@@ -1,7 +1,24 @@
 package jp.co.soramitsu.iroha2.parse
 
-import jp.co.soramitsu.iroha2.type.*
-import kotlin.text.toInt
+import jp.co.soramitsu.iroha2.type.ArrayType
+import jp.co.soramitsu.iroha2.type.BooleanType
+import jp.co.soramitsu.iroha2.type.CompactType
+import jp.co.soramitsu.iroha2.type.EnumType
+import jp.co.soramitsu.iroha2.type.MapType
+import jp.co.soramitsu.iroha2.type.OptionType
+import jp.co.soramitsu.iroha2.type.SetType
+import jp.co.soramitsu.iroha2.type.StringType
+import jp.co.soramitsu.iroha2.type.StructType
+import jp.co.soramitsu.iroha2.type.TupleStructType
+import jp.co.soramitsu.iroha2.type.Type
+import jp.co.soramitsu.iroha2.type.U128Type
+import jp.co.soramitsu.iroha2.type.U16Type
+import jp.co.soramitsu.iroha2.type.U256Type
+import jp.co.soramitsu.iroha2.type.U32Type
+import jp.co.soramitsu.iroha2.type.U64Type
+import jp.co.soramitsu.iroha2.type.U8Type
+import jp.co.soramitsu.iroha2.type.UIntType
+import jp.co.soramitsu.iroha2.type.VecType
 
 class TypeResolver(private val schemaParser: SchemaParser) {
 
@@ -57,7 +74,7 @@ object MapResolver : Resolver<MapType> {
     }
 }
 
-abstract class WrapperResolver<T : Type>( val wrapperName: String) : Resolver<T> {
+abstract class WrapperResolver<T : Type>(val wrapperName: String) : Resolver<T> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
         if (!name.startsWith("$wrapperName<")) return null
         val innerTypeName = name.removeSurrounding("$wrapperName<", ">")
@@ -66,7 +83,6 @@ abstract class WrapperResolver<T : Type>( val wrapperName: String) : Resolver<T>
     }
 
     abstract fun createWrapper(name: String, innerType: TypeNest): T
-
 }
 
 object OptionResolver : WrapperResolver<OptionType>("Option") {
@@ -96,7 +112,6 @@ object ArrayResolver : Resolver<ArrayType> {
         val groups = REGEX.find(name)?.groupValues ?: return null
         return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
-
 }
 
 object EnumResolver : Resolver<EnumType> {
@@ -182,7 +197,7 @@ data class TypeNest(val name: String, var value: Type?) {
 
     fun requireValue() = value ?: throw IllegalArgumentException("Type is not resolved: $name")
 
-    fun notResolvedTypes() : Set<String> {
+    fun notResolvedTypes(): Set<String> {
         if (resolutionInProgress) {
             return setOf()
         }

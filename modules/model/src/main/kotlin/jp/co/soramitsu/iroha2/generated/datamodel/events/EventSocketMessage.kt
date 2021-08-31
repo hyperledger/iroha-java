@@ -33,8 +33,7 @@ public sealed class EventSocketMessage {
             public const val DISCRIMINANT: Int = 0
 
             public override fun read(reader: ScaleCodecReader): SubscriptionRequest = SubscriptionRequest(
-                jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest,
+                jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest) {
@@ -75,8 +74,7 @@ public sealed class EventSocketMessage {
             public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Event = Event(
-                jp.co.soramitsu.iroha2.generated.datamodel.events.Event.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.Event,
+                jp.co.soramitsu.iroha2.generated.datamodel.events.Event.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Event) {

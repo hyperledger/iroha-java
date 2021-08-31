@@ -19,7 +19,7 @@ public data class SequenceBox(
 ) {
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
         public override fun read(reader: ScaleCodecReader): SequenceBox = SequenceBox(
-            MutableList(reader.readCompactInt()) { Instruction.read(reader) as Instruction },
+            MutableList(reader.readCompactInt()) { Instruction.read(reader) },
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: SequenceBox) {

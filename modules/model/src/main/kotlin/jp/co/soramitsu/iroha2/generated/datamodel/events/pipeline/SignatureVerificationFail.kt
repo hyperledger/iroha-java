@@ -24,7 +24,7 @@ public data class SignatureVerificationFail(
         ScaleWriter<SignatureVerificationFail> {
         public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
             SignatureVerificationFail(
-                Signature.read(reader) as Signature,
+                Signature.read(reader),
                 reader.readString(),
             )
 

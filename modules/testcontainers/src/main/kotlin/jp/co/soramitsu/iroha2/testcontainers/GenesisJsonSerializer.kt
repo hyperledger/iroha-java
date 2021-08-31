@@ -55,9 +55,9 @@ object EnumerationSerializer : JsonSerializer<Any> {
             throw RuntimeException("Expected enum which accept exactly 1 member as tuple")
         }
         val innerProp = memberProperties.first()
-        val innerPropVal = when(val actual = innerProp.call(src)) {
-            is UInt -> actual.toLong()//cannot cast UInt to Number
-            else  -> actual
+        val innerPropVal = when (val actual = innerProp.call(src)) {
+            is UInt -> actual.toLong() // cannot cast UInt to Number
+            else -> actual
         }
         jsonObject.add(src::class.simpleName, context.serialize(innerPropVal, innerProp.returnType.javaType))
         return jsonObject
@@ -91,7 +91,7 @@ object AssetValueTypeSerializer : JsonSerializer<AssetValueType> {
     }
 }
 
-object UIntSerializer : JsonSerializer<UInt>{
+object UIntSerializer : JsonSerializer<UInt> {
     override fun serialize(src: UInt, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return context.serialize(src.toLong())
     }
