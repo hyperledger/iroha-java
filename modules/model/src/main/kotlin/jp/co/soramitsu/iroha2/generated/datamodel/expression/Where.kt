@@ -24,13 +24,10 @@ public data class Where(
     public companion object : ScaleReader<Where>, ScaleWriter<Where> {
         public override fun read(reader: ScaleCodecReader): Where = Where(
             EvaluatesTo.read(reader) as EvaluatesTo<Value>,
-            hashMapWithSize(
-                reader.readCompactInt(), { reader.readString() },
-                {
-                    EvaluatesTo.read(reader) as
-                        EvaluatesTo<Value>
-                }
-            ),
+            hashMapWithSize(reader.readCompactInt(), { reader.readString() }, {
+                EvaluatesTo.read(reader) as
+                    EvaluatesTo<Value>
+            }),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Where) {

@@ -7,11 +7,13 @@ dependencies {
     implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
 }
 
-task codegen(type: JavaExec) {
+task generate(type: JavaExec) {
+    group = 'codegen'
     main = 'jp.co.soramitsu.iroha2.EntryPoint'
     classpath = sourceSets.main.runtimeClasspath
     //folder where to write generated classes
     args "outputPath=../model/src/main/kotlin"
     //schema file expected to be find in classpath
     args "schemaFileName=schema.json"
+    finalizedBy ':model:formatKotlin'
 }

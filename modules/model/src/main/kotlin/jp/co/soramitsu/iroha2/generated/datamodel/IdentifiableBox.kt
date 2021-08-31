@@ -32,8 +32,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 0
 
             public override fun read(reader: ScaleCodecReader): Account = Account(
-                jp.co.soramitsu.iroha2.generated.datamodel.account.Account.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.account.Account,
+                jp.co.soramitsu.iroha2.generated.datamodel.account.Account.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Account) {
@@ -54,8 +53,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): NewAccount = NewAccount(
-                jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount,
+                jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: NewAccount) {
@@ -79,8 +77,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Asset = Asset(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset,
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Asset) {
@@ -101,8 +98,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = AssetDefinition(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition,
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) {
@@ -126,8 +122,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): Domain = Domain(
-                jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain,
+                jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Domain) {
@@ -148,8 +143,7 @@ public sealed class IdentifiableBox {
             public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): Peer = Peer(
-                jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer,
+                jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Peer) {

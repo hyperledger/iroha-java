@@ -81,7 +81,7 @@ open class IrohaContainer(
         logger().debug("Iroha container stopped")
     }
 
-    fun getApiUrl() : URL = URL("http", containerIpAddress, this.getMappedPort(API_PORT), "")
+    fun getApiUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(API_PORT), "")
 
     companion object {
         const val IROHA_ROOT_PUBLIC_KEY =
@@ -102,12 +102,10 @@ open class IrohaContainer(
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
         const val DEFAULT_IMAGE_TAG = "iroha2-dev"
 
-        //todo change image name as soon as official image will be created
+        // todo change image name as soon as official image will be created
         const val IMAGE_NAME = "iroha1/iroha"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val PEER_START_COMMAND = "./iroha_cli --genesis $DEFAULT_GENESIS_FILE_NAME"
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }
 }
-
-

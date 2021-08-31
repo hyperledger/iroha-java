@@ -19,7 +19,7 @@ public data class QueryResult(
 ) {
     public companion object : ScaleReader<QueryResult>, ScaleWriter<QueryResult> {
         public override fun read(reader: ScaleCodecReader): QueryResult = QueryResult(
-            Value.read(reader) as Value,
+            Value.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: QueryResult) {

@@ -21,9 +21,9 @@ public data class Event(
 ) {
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = Event(
-            EntityType.read(reader) as EntityType,
-            Status.read(reader) as Status,
-            Hash.read(reader) as Hash,
+            EntityType.read(reader),
+            Status.read(reader),
+            Hash.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Event) {

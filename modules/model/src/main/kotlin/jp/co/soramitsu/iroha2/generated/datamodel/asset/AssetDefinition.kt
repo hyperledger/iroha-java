@@ -19,8 +19,8 @@ public data class AssetDefinition(
 ) {
     public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
         public override fun read(reader: ScaleCodecReader): AssetDefinition = AssetDefinition(
-            AssetValueType.read(reader) as AssetValueType,
-            DefinitionId.read(reader) as DefinitionId,
+            AssetValueType.read(reader),
+            DefinitionId.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) {

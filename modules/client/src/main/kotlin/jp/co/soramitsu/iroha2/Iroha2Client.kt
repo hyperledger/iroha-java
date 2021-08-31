@@ -8,14 +8,11 @@ import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
 import io.ktor.client.request.post
-import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
-import io.ktor.http.content.ByteArrayContent
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -80,12 +77,10 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
     fun <T> sendQuery(extractor: ResultExtractor<T>, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
         logger.debug("Sending query")
         val signedQuery = query(QueryBuilder.builder())
-        val encoded = signedQuery.encode(VersionedSignedQueryRequest)
 
         val rawBody = runBlocking {
-            val response: HttpResponse = client.value.request("$peerUrl$QUERY_ENDPOINT") {
-                this.method = HttpMethod.Get
-                this.body = ByteArrayContent(encoded)
+            val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
+                this.body = signedQuery.encode(VersionedSignedQueryRequest)
             }
             response.receive<ByteArray>()
         }

@@ -19,8 +19,8 @@ public data class Asset(
 ) {
     public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
         public override fun read(reader: ScaleCodecReader): Asset = Asset(
-            Id.read(reader) as Id,
-            AssetValue.read(reader) as AssetValue,
+            Id.read(reader),
+            AssetValue.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Asset) {

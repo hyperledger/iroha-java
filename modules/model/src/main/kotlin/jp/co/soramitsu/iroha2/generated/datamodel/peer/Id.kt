@@ -22,7 +22,7 @@ public data class Id(
     public companion object : ScaleReader<Id>, ScaleWriter<Id> {
         public override fun read(reader: ScaleCodecReader): Id = Id(
             reader.readString(),
-            PublicKey.read(reader) as PublicKey,
+            PublicKey.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Id) {

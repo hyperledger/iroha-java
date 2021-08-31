@@ -98,7 +98,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): Vec = Vec(
-                MutableList(reader.readCompactInt()) { Value.read(reader) as Value },
+                MutableList(reader.readCompactInt()) { Value.read(reader) },
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Vec) {
@@ -120,7 +120,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): Id = Id(
-                IdBox.read(reader) as IdBox,
+                IdBox.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Id) {
@@ -141,7 +141,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): Identifiable = Identifiable(
-                IdentifiableBox.read(reader) as IdentifiableBox,
+                IdentifiableBox.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Identifiable) {
@@ -162,8 +162,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 6
 
             public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
-                jp.co.soramitsu.iroha2.generated.crypto.PublicKey.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.crypto.PublicKey,
+                jp.co.soramitsu.iroha2.generated.crypto.PublicKey.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: PublicKey) {
@@ -184,8 +183,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 7
 
             public override fun read(reader: ScaleCodecReader): Parameter = Parameter(
-                jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.Parameter,
+                jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Parameter) {
@@ -198,7 +196,7 @@ public sealed class Value {
      * 'SignatureCheckCondition' variant
      */
     public data class SignatureCheckCondition(
-        public val signatureCheckCondition:
+        public val signatureCheckCondition:  
             jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -210,8 +208,7 @@ public sealed class Value {
 
             public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
                 SignatureCheckCondition(
-                    jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.read(reader) as
-                        jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition,
+                    jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.read(reader),
                 )
 
             public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition) {
@@ -227,7 +224,7 @@ public sealed class Value {
      * 'TransactionValue' variant
      */
     public data class TransactionValue(
-        public val transactionValue:
+        public val transactionValue:  
             jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -236,8 +233,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 9
 
             public override fun read(reader: ScaleCodecReader): TransactionValue = TransactionValue(
-                jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue,
+                jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: TransactionValue) {
@@ -253,7 +249,7 @@ public sealed class Value {
      * 'PermissionToken' variant
      */
     public data class PermissionToken(
-        public val permissionToken:
+        public val permissionToken:  
             jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -262,8 +258,7 @@ public sealed class Value {
             public const val DISCRIMINANT: Int = 10
 
             public override fun read(reader: ScaleCodecReader): PermissionToken = PermissionToken(
-                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.read(reader) as
-                    jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken,
+                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) {

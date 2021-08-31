@@ -20,10 +20,10 @@ class SchemaParser {
         if (notResolvedTypes.isNotEmpty()) {
             throw RuntimeException("Some types is not resolved: $notResolvedTypes")
         }
-        return preprocessed.mapValues{ it.value.requireValue() }
+        return preprocessed.mapValues { it.value.requireValue() }
     }
 
-    fun createAndGetNest(name: String, typeValue: Any? = null) : TypeNest {
+    fun createAndGetNest(name: String, typeValue: Any? = null): TypeNest {
         return registry.getOrPut(name) { TypeNest(name, null) }
             .also {
                 if (it.value == null) {

@@ -4,7 +4,23 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asTypeName
-import jp.co.soramitsu.iroha2.type.*
+import jp.co.soramitsu.iroha2.type.ArrayType
+import jp.co.soramitsu.iroha2.type.BooleanType
+import jp.co.soramitsu.iroha2.type.CompactType
+import jp.co.soramitsu.iroha2.type.CompositeType
+import jp.co.soramitsu.iroha2.type.MapType
+import jp.co.soramitsu.iroha2.type.OptionType
+import jp.co.soramitsu.iroha2.type.SetType
+import jp.co.soramitsu.iroha2.type.StringType
+import jp.co.soramitsu.iroha2.type.Type
+import jp.co.soramitsu.iroha2.type.U128Type
+import jp.co.soramitsu.iroha2.type.U16Type
+import jp.co.soramitsu.iroha2.type.U256Type
+import jp.co.soramitsu.iroha2.type.U32Type
+import jp.co.soramitsu.iroha2.type.U64Type
+import jp.co.soramitsu.iroha2.type.U8Type
+import jp.co.soramitsu.iroha2.type.VecType
+import jp.co.soramitsu.iroha2.type.WrapperType
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
@@ -18,16 +34,18 @@ fun resolveKotlinType(type: Type): TypeName {
             if (type.generics.isEmpty()) {
                 clazz
             } else {
-                clazz.parameterizedBy(type.generics.map {
-                    resolveKotlinType(
-                        it.requireValue(),
-                    )
-                })
+                clazz.parameterizedBy(
+                    type.generics.map {
+                        resolveKotlinType(
+                            it.requireValue(),
+                        )
+                    }
+                )
             }
         }
-        //must be before 'WrapperType'
+        // must be before 'WrapperType'
         is OptionType -> resolveKotlinType(type.innerType.requireValue()).copy(nullable = true)
-        //must be before 'WrapperType'
+        // must be before 'WrapperType'
         is ArrayType -> {
             when (type.innerType.requireValue()) {
                 is U8Type -> ByteArray::class.asTypeName()
@@ -41,7 +59,7 @@ fun resolveKotlinType(type: Type): TypeName {
             resolveKotlinType(type.innerType.requireValue())
         }
         is WrapperType -> {
-            //special case for vector of bytes
+            // special case for vector of bytes
             if (type is VecType && type.innerType.requireValue() is U8Type) {
                 return ByteArray::class.asTypeName()
             }
@@ -55,7 +73,7 @@ fun resolveKotlinType(type: Type): TypeName {
                 resolveKotlinType(type.value.requireValue())
             )
         }
-        //only "primitive" types left"
+        // only "primitive" types left"
         else -> lookUpInBuiltInTypes(type)
     }
 }

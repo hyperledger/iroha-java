@@ -19,7 +19,7 @@ public data class EvaluatesTo<T0>(
 ) {
     public companion object : ScaleReader<EvaluatesTo<out Any>>, ScaleWriter<EvaluatesTo<out Any>> {
         public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> = EvaluatesTo(
-            Expression.read(reader) as Expression,
+            Expression.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo<out Any>) {

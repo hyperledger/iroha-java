@@ -1,6 +1,17 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jmailen.gradle:kotlinter-gradle:$kotlinLinterVer"
+    }
+}
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
-    id "org.jlleitschuh.gradle.ktlint" version "$kotlinLinterVer"
+    id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
 }
 
 allprojects {
@@ -16,6 +27,7 @@ allprojects {
 subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: 'maven'
+    apply plugin: "org.jmailen.kotlinter"
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
@@ -35,12 +47,13 @@ subprojects {
         from {
             configurations.runtimeClasspath
             //todo remove it as soon as will be own implementation of scale codec
-            .filter { it.name.contains("polkaj-scale") }
-            .collect {
-                it.isDirectory() ? it : zipTree(it)
-            }
+                    .filter { it.name.contains("polkaj-scale") }
+                    .collect {
+                        it.isDirectory() ? it : zipTree(it)
+                    }
         }
     }
+
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
@@ -54,4 +67,16 @@ subprojects {
             jvmTarget = 11
         }
     }
+
+    kotlinter {
+        ignoreFailures = false
+        indentSize = 4
+        reporters = ['checkstyle', 'plain']
+        experimentalRules = false
+        disabledRules = []
+    }
+}
+
+check {
+    dependsOn "installKotlinterPrePushHook"
 }

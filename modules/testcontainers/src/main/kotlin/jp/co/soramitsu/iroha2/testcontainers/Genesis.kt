@@ -15,5 +15,4 @@ class Genesis(val genesisBlock: RawGenesisBlock) {
     )
 
     fun asJson() = GenesisJsonSerializer.asJson(this)
-
 }
