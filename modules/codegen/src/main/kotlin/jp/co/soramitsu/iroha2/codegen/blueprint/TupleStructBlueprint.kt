@@ -6,7 +6,7 @@ import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import jp.co.soramitsu.iroha2.type.Type
 
-class TupleStructBlueprint(type: TupleStructType) : TypeBasedBlueprint<TupleStructType>(type){
+class TupleStructBlueprint(type: TupleStructType) : TypeBasedBlueprint<TupleStructType>(type) {
     override fun resolveProperties(type: TupleStructType): List<Property> {
         return type.types
             .map { it.requireValue() }

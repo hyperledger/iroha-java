@@ -21,7 +21,7 @@ public data class _VersionedQueryResultV1(
         ScaleWriter<_VersionedQueryResultV1> {
         public override fun read(reader: ScaleCodecReader): _VersionedQueryResultV1 =
             _VersionedQueryResultV1(
-                QueryResult.read(reader) as QueryResult,
+                QueryResult.read(reader),
             )
 
         public override fun write(writer: ScaleCodecWriter, instance: _VersionedQueryResultV1) {

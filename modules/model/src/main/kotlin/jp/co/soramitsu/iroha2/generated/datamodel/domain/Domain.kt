@@ -28,16 +28,10 @@ public data class Domain(
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = Domain(
             reader.readString(),
+            hashMapWithSize(reader.readCompactInt(), { Id.read(reader) }, { Account.read(reader) }),
             hashMapWithSize(
-                reader.readCompactInt(), { Id.read(reader) as Id },
-                {
-                    Account.read(reader) as
-                        Account
-                }
-            ),
-            hashMapWithSize(
-                reader.readCompactInt(), { DefinitionId.read(reader) as DefinitionId },
-                { AssetDefinitionEntry.read(reader) as AssetDefinitionEntry }
+                reader.readCompactInt(), { DefinitionId.read(reader) },
+                { AssetDefinitionEntry.read(reader) }
             ),
         )
 

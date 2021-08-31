@@ -73,13 +73,17 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is CompositeType -> {
             val typeName = resolveKotlinType(type)
             val typeNameWithoutGenerics = withoutGenerics(typeName)
-            CodeBlock.of("%1T.read(reader) as %2T", typeNameWithoutGenerics, typeName)
+            if (type.generics.isEmpty()) {
+                CodeBlock.of("%1T.read(reader)", typeNameWithoutGenerics)
+            } else {
+                CodeBlock.of("%1T.read(reader) as %2T", typeNameWithoutGenerics, typeName)
+            }
         }
         is OptionType -> {
             CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
         }
         is CompactType -> {
-            return when(val innerType = type.innerType.requireValue()) {
+            return when (val innerType = type.innerType.requireValue()) {
                 is U128Type, is U256Type -> CodeBlock.of("reader.read(%M())", COMPACT_BIG_INT_READER)
                 is U64Type -> CodeBlock.of("reader.read(%M()).toLong().toULong()", COMPACT_BIG_INT_READER)
                 is U8Type -> CodeBlock.of("reader.readCompactInt().toUByte()")

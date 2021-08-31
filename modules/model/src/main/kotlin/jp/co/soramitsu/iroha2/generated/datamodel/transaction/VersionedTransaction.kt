@@ -32,7 +32,7 @@ public sealed class VersionedTransaction {
             public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): V1 = V1(
-                _VersionedTransactionV1.read(reader) as _VersionedTransactionV1,
+                _VersionedTransactionV1.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) {

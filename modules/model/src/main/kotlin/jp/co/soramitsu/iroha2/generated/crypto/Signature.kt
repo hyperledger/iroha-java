@@ -20,7 +20,7 @@ public data class Signature(
 ) {
     public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
         public override fun read(reader: ScaleCodecReader): Signature = Signature(
-            PublicKey.read(reader) as PublicKey,
+            PublicKey.read(reader),
             reader.readByteArray(),
         )
 

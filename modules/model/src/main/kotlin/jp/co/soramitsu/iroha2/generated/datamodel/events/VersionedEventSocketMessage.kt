@@ -32,7 +32,7 @@ public sealed class VersionedEventSocketMessage {
             public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): V1 = V1(
-                _VersionedEventSocketMessageV1.read(reader) as _VersionedEventSocketMessageV1,
+                _VersionedEventSocketMessageV1.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) {

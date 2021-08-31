@@ -1,7 +1,3 @@
-plugins {
-    id "org.jlleitschuh.gradle.ktlint"
-}
-
 group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 

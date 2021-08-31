@@ -48,7 +48,7 @@ public sealed class Status {
             public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): Rejected = Rejected(
-                RejectionReason.read(reader) as RejectionReason,
+                RejectionReason.read(reader),
             )
 
             public override fun write(writer: ScaleCodecWriter, instance: Rejected) {

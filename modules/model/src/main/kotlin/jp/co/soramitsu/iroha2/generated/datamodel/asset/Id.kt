@@ -19,9 +19,8 @@ public data class Id(
 ) {
     public companion object : ScaleReader<Id>, ScaleWriter<Id> {
         public override fun read(reader: ScaleCodecReader): Id = Id(
-            DefinitionId.read(reader) as DefinitionId,
-            jp.co.soramitsu.iroha2.generated.datamodel.account.Id.read(reader) as
-                jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
+            DefinitionId.read(reader),
+            jp.co.soramitsu.iroha2.generated.datamodel.account.Id.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Id) {

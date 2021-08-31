@@ -1,6 +1,11 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumVariantBlueprint
 
 object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
@@ -53,8 +58,10 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
     override fun implSuperClasses(blueprint: EnumVariantBlueprint, clazz: TypeSpec.Builder) {
         super.implSuperClasses(blueprint, clazz)
-        clazz.superclass(ClassName(
-            blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className
-        ))
+        clazz.superclass(
+            ClassName(
+                blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className
+            )
+        )
     }
 }

@@ -25,8 +25,8 @@ public data class Payload(
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = Payload(
             reader.read(CompactBigIntReader()),
-            QueryBox.read(reader) as QueryBox,
-            Id.read(reader) as Id,
+            QueryBox.read(reader),
+            Id.read(reader),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Payload) {

@@ -24,13 +24,7 @@ public data class PermissionToken(
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
         public override fun read(reader: ScaleCodecReader): PermissionToken = PermissionToken(
             reader.readString(),
-            hashMapWithSize(
-                reader.readCompactInt(), { reader.readString() },
-                {
-                    Value.read(reader) as
-                        Value
-                }
-            ),
+            hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) {

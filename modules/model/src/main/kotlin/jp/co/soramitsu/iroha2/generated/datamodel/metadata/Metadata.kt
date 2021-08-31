@@ -22,13 +22,7 @@ public data class Metadata(
 ) {
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
         public override fun read(reader: ScaleCodecReader): Metadata = Metadata(
-            hashMapWithSize(
-                reader.readCompactInt(), { reader.readString() },
-                {
-                    Value.read(reader) as
-                        Value
-                }
-            ),
+            hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
         )
 
         public override fun write(writer: ScaleCodecWriter, instance: Metadata) {

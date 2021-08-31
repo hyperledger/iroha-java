@@ -1,14 +1,22 @@
 package jp.co.soramitsu.iroha2.codegen.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
+import com.squareup.kotlinpoet.WildcardTypeName
 import jp.co.soramitsu.iroha2.codegen.blueprint.Blueprint
 import jp.co.soramitsu.iroha2.type.CompositeType
 
 abstract class AbstractGenerator<T : Blueprint<*>> {
-    fun generate(blueprint: T) : TypeSpec = pipelineClass(blueprint)
+    fun generate(blueprint: T): TypeSpec = pipelineClass(blueprint)
 
-    open fun pipelineClass(blueprint: T) : TypeSpec {
+    open fun pipelineClass(blueprint: T): TypeSpec {
         val clazz = TypeSpec.classBuilder(ClassName(blueprint.packageName, blueprint.className))
         implGenerics(blueprint, clazz)
         implSuperClasses(blueprint, clazz)
@@ -115,5 +123,4 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implKDoc(blueprint: T, clazz: TypeSpec.Builder) {
         clazz.addKdoc(blueprint.className)
     }
-
 }

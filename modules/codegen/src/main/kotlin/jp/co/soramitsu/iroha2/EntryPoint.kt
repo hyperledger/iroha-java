@@ -10,10 +10,8 @@ import jp.co.soramitsu.iroha2.parse.SchemaParser
 import java.io.InputStreamReader
 import java.nio.file.Paths
 
-
 const val OUTPUT_PATH_ARG_NAME = "outputPath"
 const val SCHEMA_FILE_ARG_NAME = "schemaFileName"
-
 
 fun main(args: Array<String>) {
     val argsMap = parseArgs(args)
@@ -25,17 +23,17 @@ fun main(args: Array<String>) {
     GeneratorEntryPoint.generate(parseResult, outputPath)
 }
 
-fun readSchema(fileName : String): Schema {
+fun readSchema(fileName: String): Schema {
     val gson = Gson()
     val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
     return JsonReader(InputStreamReader(resource))
-        .use { gson.fromJson(it, Map::class.java)  }
+        .use { gson.fromJson(it, Map::class.java) }
 }
 
 fun parseArgs(args: Array<String>): Map<String, String> {
-   return args.map { it.split("=") }
-       .onEach { if (it.size != 2) throw RuntimeException("Incorrect format: expected format argumentKey=argumentValue") }
-       .associateBy({ it[0]}, { it[1] })
+    return args.map { it.split("=") }
+        .onEach { if (it.size != 2) throw RuntimeException("Incorrect format: expected format argumentKey=argumentValue") }
+        .associateBy({ it[0] }, { it[1] })
 }
 
 fun tryExtractArg(args: Map<String, String>, argName: String): String {
