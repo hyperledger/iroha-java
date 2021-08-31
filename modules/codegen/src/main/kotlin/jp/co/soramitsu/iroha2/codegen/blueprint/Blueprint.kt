@@ -6,7 +6,7 @@ import jp.co.soramitsu.iroha2.type.Type
 /**
  * Basic blueprint for all kind of types
  */
-abstract class      Blueprint<T>(val source: T) {
+abstract class Blueprint<T>(val source: T) {
     abstract val className: String
     abstract val packageName: String
     abstract val properties: List<Property>

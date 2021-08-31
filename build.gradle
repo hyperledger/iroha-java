@@ -34,13 +34,16 @@ subprojects {
 
     dependencies {
         api fileTree(dir: 'libs', include: ['*.jar'])
-        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.5'
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
-        testImplementation group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
     }
 
     test {
         useJUnitPlatform()
+    }
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
 
     jar {
