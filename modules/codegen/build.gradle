@@ -1,0 +1,19 @@
+group 'jp.co.soramitsu'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "com.google.code.gson:gson:$gsonVer"
+    implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
+}
+
+task generate(type: JavaExec) {
+    group = 'codegen'
+    main = 'jp.co.soramitsu.iroha2.EntryPoint'
+    classpath = sourceSets.main.runtimeClasspath
+    //folder where to write generated classes
+    args "outputPath=../model/src/main/kotlin"
+    //schema file expected to be find in classpath
+    args "schemaFileName=schema.json"
+    finalizedBy ':model:formatKotlin'
+}
