@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ false }}  # disable for now due current implementation of iroha2-java outdated
 
     steps:
       - uses: actions/checkout@v2
@@ -23,12 +22,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Setup docker test environment
-        run: ./scripts/setup_docker_test_env.sh
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Cleanup docker test environment
-        run: ./scripts/cleanup_docker_test_env.sh
       - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
