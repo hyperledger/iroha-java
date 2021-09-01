@@ -2,7 +2,7 @@ name: Iroha2-java main branch workflow
 
 on:
   push:
-    branches: [ iroha2-java ]
+    branches: [ iroha2-dev, iroha2-main ]
 jobs:
   build:
     runs-on: ubuntu-latest
