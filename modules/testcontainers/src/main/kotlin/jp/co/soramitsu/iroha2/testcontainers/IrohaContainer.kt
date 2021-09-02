@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
@@ -24,7 +25,7 @@ open class IrohaContainer(
     private val networkToJoin: Network = newNetwork(),
     private val logConsumer: Consumer<OutputFrame>? = Slf4jLogConsumer(getLogger(IrohaContainer::class.java)),
     imageTag: String = DEFAULT_IMAGE_TAG,
-    private val genesis: Genesis = defaultGenesis(),
+    private val genesis: Genesis = Genesis(RawGenesisBlock(mutableListOf())),
     private val shouldCloseNetwork: Boolean = true,
 ) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:$imageTag")) {
 
@@ -102,10 +103,9 @@ open class IrohaContainer(
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
         const val DEFAULT_IMAGE_TAG = "iroha2-dev"
 
-        // todo change image name as soon as official image will be created
         const val IMAGE_NAME = "iroha1/iroha"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
-        const val PEER_START_COMMAND = "./iroha_cli --genesis $DEFAULT_GENESIS_FILE_NAME"
+        const val PEER_START_COMMAND = "./iroha_cli --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }
 }

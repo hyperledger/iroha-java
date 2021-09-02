@@ -13,7 +13,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
-import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
@@ -105,11 +104,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun mintAsset(
         assetId: AssetId,
-        quantity: BigInteger
-    ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
-
-    fun mintAsset(
-        assetId: AssetId,
         quantity: UInt
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
@@ -119,8 +113,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
     ) = this.apply { instructions.value.add(Instructions.registerDomain(domainName, accounts, assetDefinitions)) }
 
-    fun grantPermissionsToKeyValueAsset(assetId: AssetId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantPermissionsToKeyValueAsset(assetId, target)) }
+    fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 
