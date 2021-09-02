@@ -1,12 +1,13 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
+import jp.co.soramitsu.iroha2.engine.defaultGenesis
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.testcontainers.DEFAULT_KEYPAIR
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -30,7 +31,7 @@ class InstructionsTest {
 
     @BeforeEach
     fun init() {
-        irohaContainer = IrohaContainer()
+        irohaContainer = IrohaContainer(genesis = defaultGenesis())
         irohaContainer.start()
         client = Iroha2Client(irohaContainer.getApiUrl())
     }
@@ -48,13 +49,13 @@ class InstructionsTest {
             client.sendTransactionAsync {
                 accountId = ALICE_ACCOUNT_ID
                 registerAccount(newAccountId, mutableListOf())
-                buildSigned(DEFAULT_KEYPAIR)
+                buildSigned(ALICE_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
         client.sendQuery(AccountExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAccountById(newAccountId)
-            buildSigned(DEFAULT_KEYPAIR)
+            buildSigned(ALICE_KEYPAIR)
         }
     }
 
@@ -73,14 +74,14 @@ class InstructionsTest {
                 storeAsset(assetId, pair1.first, pair1.second)
                 storeAsset(assetId, pair2.first, pair2.second)
                 storeAsset(assetId, pair3.first, pair3.second)
-                buildSigned(DEFAULT_KEYPAIR)
+                buildSigned(ALICE_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
 
         val asset = client.sendQuery(AssetExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAssetById(assetId)
-            buildSigned(DEFAULT_KEYPAIR)
+            buildSigned(ALICE_KEYPAIR)
         }
 
         assertEquals(assetId.definitionId.name, asset.id.definitionId.name)
@@ -111,8 +112,8 @@ class InstructionsTest {
                 // register Bob's account
                 registerAccount(bobAccountId, mutableListOf(bobKeypair.public.toIrohaPublicKey()))
                 // grant by Alice to Bob permissions to set key value in Asset.Store
-                grantPermissionsToKeyValueAsset(aliceAssetId, bobAccountId)
-                buildSigned(DEFAULT_KEYPAIR)
+                grantSetKeyValueAsset(aliceAssetId, bobAccountId)
+                buildSigned(ALICE_KEYPAIR)
             }.get(10, TimeUnit.SECONDS)
         }
 
@@ -128,7 +129,7 @@ class InstructionsTest {
         val asset = client.sendQuery(AssetExtractor) {
             accountId = ALICE_ACCOUNT_ID
             findAssetById(aliceAssetId)
-            buildSigned(DEFAULT_KEYPAIR)
+            buildSigned(ALICE_KEYPAIR)
         }
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
@@ -139,5 +140,33 @@ class InstructionsTest {
             }
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
+    }
+
+    @Test
+    fun `mint asset instruction committed`() {
+        val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
+        val assetId = AssetId(assetDefinition, ALICE_ACCOUNT_ID)
+        Assertions.assertDoesNotThrow {
+            client.sendTransactionAsync {
+                account(ALICE_ACCOUNT_ID)
+                registerAsset(assetDefinition, AssetValueType.Quantity())
+                buildSigned(ALICE_KEYPAIR)
+            }.get(10, TimeUnit.SECONDS)
+        }
+
+        Assertions.assertDoesNotThrow {
+            client.sendTransactionAsync {
+                account(ALICE_ACCOUNT_ID)
+                mintAsset(assetId, 5U)
+                buildSigned(ALICE_KEYPAIR)
+            }.get(10, TimeUnit.SECONDS)
+        }
+
+        val result = client.sendQuery(AccountExtractor) {
+            accountId = ALICE_ACCOUNT_ID
+            findAccountById(ALICE_ACCOUNT_ID)
+            buildSigned(ALICE_KEYPAIR)
+        }
+        assertEquals(5U, (result.assets[assetId] ?.value as? AssetValue.Quantity)?.u32)
     }
 }
