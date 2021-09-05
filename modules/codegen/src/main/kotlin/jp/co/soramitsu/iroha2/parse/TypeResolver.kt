@@ -4,6 +4,14 @@ import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
 import jp.co.soramitsu.iroha2.type.EnumType
+import jp.co.soramitsu.iroha2.type.FixedPointType
+import jp.co.soramitsu.iroha2.type.I128Type
+import jp.co.soramitsu.iroha2.type.I16Type
+import jp.co.soramitsu.iroha2.type.I256Type
+import jp.co.soramitsu.iroha2.type.I32Type
+import jp.co.soramitsu.iroha2.type.I64Type
+import jp.co.soramitsu.iroha2.type.I8Type
+import jp.co.soramitsu.iroha2.type.IntType
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
@@ -34,7 +42,9 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         StringResolver,
         CompactResolver,
         UIntResolver,
-        SetResolver
+        IntResolver,
+        SetResolver,
+        FixedPointResolver,
     )
 
     fun resolve(name: String, typeValue: Any?): Type? {
@@ -188,6 +198,31 @@ object UIntResolver : Resolver<UIntType> {
             "u256" -> U256Type
             else -> null
         }
+    }
+}
+
+object IntResolver : Resolver<IntType> {
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): IntType? {
+        return when (name) {
+            "i8" -> I8Type
+            "i16" -> I16Type
+            "i32" -> I32Type
+            "i64" -> I64Type
+            "i128" -> I128Type
+            "i256" -> I256Type
+            else -> null
+        }
+    }
+}
+
+object FixedPointResolver : Resolver<FixedPointType> {
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): FixedPointType? {
+        return if (name.startsWith("FixedPoint<") && typeValue is Map<*, *>) {
+            val members = (typeValue["FixedPoint"] as? Map<String, Any>)!!
+            val base = schemaParser.createAndGetNest(members["base"]!! as String)
+            val decimalPlaces = (members["decimal_places"]!! as Double).toInt()
+            FixedPointType(name, base, decimalPlaces)
+        } else null
     }
 }
 

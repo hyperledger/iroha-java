@@ -53,13 +53,29 @@ public sealed class AssetValueType {
     }
 
     /**
+     * 'Fixed' variant
+     */
+    public class Fixed : AssetValueType() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): Fixed = Fixed()
+
+            public override fun write(writer: ScaleCodecWriter, instance: Fixed) {
+            }
+        }
+    }
+
+    /**
      * 'Store' variant
      */
     public class Store : AssetValueType() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Store>, ScaleWriter<Store> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): Store = Store()
 
@@ -75,7 +91,8 @@ public sealed class AssetValueType {
         ) {
             0 -> Quantity.read(reader)
             1 -> BigQuantity.read(reader)
-            2 -> Store.read(reader)
+            2 -> Fixed.read(reader)
+            3 -> Store.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -84,7 +101,8 @@ public sealed class AssetValueType {
             when (val discriminant = instance.discriminant()) {
                 0 -> Quantity.write(writer, instance as Quantity)
                 1 -> BigQuantity.write(writer, instance as BigQuantity)
-                2 -> Store.write(writer, instance as Store)
+                2 -> Fixed.write(writer, instance as Fixed)
+                3 -> Store.write(writer, instance as Store)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

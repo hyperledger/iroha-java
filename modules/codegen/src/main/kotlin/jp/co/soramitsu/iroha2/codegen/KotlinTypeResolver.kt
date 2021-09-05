@@ -8,6 +8,13 @@ import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
 import jp.co.soramitsu.iroha2.type.CompositeType
+import jp.co.soramitsu.iroha2.type.FixedPointType
+import jp.co.soramitsu.iroha2.type.I128Type
+import jp.co.soramitsu.iroha2.type.I16Type
+import jp.co.soramitsu.iroha2.type.I256Type
+import jp.co.soramitsu.iroha2.type.I32Type
+import jp.co.soramitsu.iroha2.type.I64Type
+import jp.co.soramitsu.iroha2.type.I8Type
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
@@ -27,7 +34,6 @@ import kotlin.reflect.KClass
 fun resolveKotlinType(type: Type): TypeName {
     return when (type) {
         is CompositeType -> {
-
             val propClassName = defineClassName(type.name)
             val propPackageName = definePackageName(propClassName, type)
             val clazz = ClassName(propPackageName, propClassName)
@@ -55,9 +61,7 @@ fun resolveKotlinType(type: Type): TypeName {
                 }
             }
         }
-        is CompactType -> {
-            resolveKotlinType(type.innerType.requireValue())
-        }
+        is CompactType, is FixedPointType -> resolveKotlinType((type as WrapperType).innerType.requireValue())
         is WrapperType -> {
             // special case for vector of bytes
             if (type is VecType && type.innerType.requireValue() is U8Type) {
@@ -101,6 +105,12 @@ val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     U64Type::class to ULong::class.asTypeName(),
     U128Type::class to BigInteger::class.asTypeName(),
     U256Type::class to BigInteger::class.asTypeName(),
+    I8Type::class to Byte::class.asTypeName(),
+    I16Type::class to Short::class.asTypeName(),
+    I32Type::class to Int::class.asTypeName(),
+    I64Type::class to Long::class.asTypeName(),
+    I128Type::class to BigInteger::class.asTypeName(),
+    I256Type::class to BigInteger::class.asTypeName(),
     VecType::class to ClassName("kotlin.collections", "MutableList"),
     SetType::class to ClassName("kotlin.collections", "MutableSet"),
     MapType::class to ClassName("kotlin.collections", "MutableMap"),
