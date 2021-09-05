@@ -20,3 +20,5 @@ data class ArrayType(override val name: String, override val innerType: TypeNest
     WrapperType(name, innerType)
 
 data class CompactType(override val name: String, override val innerType: TypeNest) : WrapperType(name, innerType)
+
+data class FixedPointType(override val name: String, override val innerType: TypeNest, val decimalPlaces: Int) : WrapperType(name, innerType)

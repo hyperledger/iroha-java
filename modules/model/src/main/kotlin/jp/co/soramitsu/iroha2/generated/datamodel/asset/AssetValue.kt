@@ -66,6 +66,27 @@ public sealed class AssetValue {
     }
 
     /**
+     * 'Fixed' variant
+     */
+    public data class Fixed(
+        public val fixed: jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed
+    ) : AssetValue() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): Fixed = Fixed(
+                jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed.read(reader),
+            )
+
+            public override fun write(writer: ScaleCodecWriter, instance: Fixed) {
+                jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed.write(writer, instance.fixed)
+            }
+        }
+    }
+
+    /**
      * 'Store' variant
      */
     public data class Store(
@@ -74,7 +95,7 @@ public sealed class AssetValue {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Store>, ScaleWriter<Store> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): Store = Store(
                 Metadata.read(reader),
@@ -93,7 +114,8 @@ public sealed class AssetValue {
         ) {
             0 -> Quantity.read(reader)
             1 -> BigQuantity.read(reader)
-            2 -> Store.read(reader)
+            2 -> Fixed.read(reader)
+            3 -> Store.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -102,7 +124,8 @@ public sealed class AssetValue {
             when (val discriminant = instance.discriminant()) {
                 0 -> Quantity.write(writer, instance as Quantity)
                 1 -> BigQuantity.write(writer, instance as BigQuantity)
-                2 -> Store.write(writer, instance as Store)
+                2 -> Fixed.write(writer, instance as Fixed)
+                3 -> Store.write(writer, instance as Store)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

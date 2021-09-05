@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
 import jp.co.soramitsu.iroha2.type.CompositeType
+import jp.co.soramitsu.iroha2.type.FixedPointType
+import jp.co.soramitsu.iroha2.type.I64Type
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
@@ -29,8 +31,8 @@ val SCALE_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
 val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
 val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashSetWithSize")
-val U64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeUint64")
-val U64_READER = MemberName("jp.co.soramitsu.iroha2", "readUint64")
+val BIT_64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeBit64")
+val BIT_64_READER = MemberName("jp.co.soramitsu.iroha2", "readBit64")
 val COMPACT_ULONG_WRITER = MemberName("io.emeraldpay.polkaj.scale.writer", "CompactULongWriter")
 val COMPACT_BIG_INT_READER = MemberName("io.emeraldpay.polkaj.scale.reader", "CompactBigIntReader")
 val OPTIONAL = ClassName("java.util", "Optional")
@@ -65,9 +67,10 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is U8Type -> CodeBlock.of("reader.readByte().toUByte()")
         is U16Type -> CodeBlock.of("reader.readUint16().toUShort()")
         is U32Type -> CodeBlock.of("reader.readUint32().toUInt()")
-        is U64Type -> CodeBlock.of("%1M(reader)", U64_READER)
+        is U64Type -> CodeBlock.of("%1M(reader).toULong()", BIT_64_READER)
         is U128Type -> CodeBlock.of("reader.readUint128()")
         is U256Type -> CodeBlock.of("BigInteger(reader.readUint256())")
+        is I64Type -> CodeBlock.of("%1M(reader)", BIT_64_READER)
         is StringType -> CodeBlock.of("reader.readString()")
         is BooleanType -> CodeBlock.of("reader.readBoolean()")
         is CompositeType -> {
@@ -82,6 +85,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is OptionType -> {
             CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
         }
+        is FixedPointType -> resolveScaleReadImpl(type.innerType.requireValue())
         is CompactType -> {
             return when (val innerType = type.innerType.requireValue()) {
                 is U128Type, is U256Type -> CodeBlock.of("reader.read(%M())", COMPACT_BIG_INT_READER)
@@ -130,9 +134,10 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         is U8Type -> CodeBlock.of("writer.writeByte(%L.toByte())", propName)
         is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
         is U32Type -> CodeBlock.of("writer.writeUint32(%L.toInt())", propName)
-        is U64Type -> CodeBlock.of("%1M(writer, %2L.toLong())", U64_WRITER, propName)
+        is U64Type -> CodeBlock.of("%1M(writer, %2L.toLong())", BIT_64_WRITER, propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
         is U256Type -> CodeBlock.of("writer.writeUint256(%L.toByteArray())", propName)
+        is I64Type -> CodeBlock.of("%1M(writer, %2L)", BIT_64_WRITER, propName)
         is StringType -> CodeBlock.of(
             "writer.writeAsList(%L.toByteArray(Charsets.UTF_8))",
             propName
@@ -154,6 +159,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
                 propName
             )
         }
+        is FixedPointType -> resolveScaleWriteImpl(type.innerType.requireValue(), propName)
         is CompactType -> CodeBlock.of("writer.write(%M(), %L.toLong())", COMPACT_ULONG_WRITER, propName)
         else -> throw RuntimeException("Unexpected type: $type")
     }
