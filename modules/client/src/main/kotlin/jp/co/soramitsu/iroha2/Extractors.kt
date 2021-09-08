@@ -16,13 +16,21 @@ object AsIs : ResultExtractor<QueryResult> {
 
 object AssetExtractor : ResultExtractor<Asset> {
     override fun extract(result: QueryResult): Asset {
-        return when (val value = result.value) {
-            is Value.Identifiable -> when (val box = value.identifiableBox) {
-                is IdentifiableBox.Asset -> box.asset
-                else -> throw QueryPayloadExtractionException()
+        return extractAsset(result.value)
+    }
+
+}
+
+object AssetsExtractor : ResultExtractor<List<Asset>> {
+    override fun extract(result: QueryResult): MutableList<Asset> {
+        val assets = mutableListOf<Asset>()
+        when (val value = result.value) {
+            is Value.Vec -> {
+                for (element in value.vec) { assets.add(extractAsset(element)) }
             }
             else -> throw QueryPayloadExtractionException()
         }
+        return assets
     }
 }
 
@@ -37,3 +45,12 @@ object AccountExtractor : ResultExtractor<Account> {
         }
     }
 }
+
+fun extractAsset(value: Value) =
+    when (value) {
+        is Value.Identifiable -> when (val box = value.identifiableBox) {
+            is IdentifiableBox.Asset -> box.asset
+            else -> throw QueryPayloadExtractionException()
+        }
+        else -> throw QueryPayloadExtractionException()
+    }
