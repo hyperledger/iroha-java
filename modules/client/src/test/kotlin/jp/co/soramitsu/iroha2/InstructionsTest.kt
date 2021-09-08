@@ -94,6 +94,14 @@ class InstructionsTest {
             }
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
+
+        // try to find saved assets by domain name
+        val assetsByDomainName = client.sendQuery(AssetsExtractor) {
+            accountId = ALICE_ACCOUNT_ID
+            findAssetsByDomainName(DEFAULT_DOMAIN_NAME)
+            buildSigned(ALICE_KEYPAIR)
+        }
+        assertEquals(asset, assetsByDomainName.first())
     }
 
     @Test
