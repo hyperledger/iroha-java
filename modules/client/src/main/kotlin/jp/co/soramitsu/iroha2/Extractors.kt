@@ -18,7 +18,6 @@ object AssetExtractor : ResultExtractor<Asset> {
     override fun extract(result: QueryResult): Asset {
         return extractAsset(result.value)
     }
-
 }
 
 object AssetsExtractor : ResultExtractor<List<Asset>> {
