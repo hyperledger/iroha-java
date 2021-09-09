@@ -94,7 +94,7 @@ public class Example3 {
 
     public static long getAccountTransactionsExample(IrohaAPI api, String userId, KeyPair keyPair) {
         // build protobuf query, sign it
-        val q = Query.builder(userId,1).getAccountTransactions(userId, 5,null, null, null, null, 1, 3).buildSigned(keyPair);
+        val q = Query.builder(userId,1).getAccountTransactions(userId, 5,null, null, null, null, 2, 2).buildSigned(keyPair);
         // make query and get it results
         val res = api.query(q);
         System.out.println("Query GetAccountTransactions response:");
