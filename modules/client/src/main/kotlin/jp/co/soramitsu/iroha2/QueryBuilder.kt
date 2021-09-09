@@ -65,6 +65,8 @@ class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
 
     fun findAssetById(assetId: AssetId) = this.apply { query = Queries.findAssetById(assetId) }
 
+    fun findAssetsByDomainName(domain: String) = this.apply { query = Queries.findAssetsByDomainName(domain) }
+
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 
     companion object {
