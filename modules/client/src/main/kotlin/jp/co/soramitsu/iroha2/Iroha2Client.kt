@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.*
+import io.ktor.client.features.HttpResponseValidator
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
