@@ -2,6 +2,8 @@ package jp.co.soramitsu.iroha.java;
 
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 
+import com.google.protobuf.Timestamp;
+import com.google.protobuf.TimestampOrBuilder;
 import iroha.protocol.Primitive.AccountDetailRecordId;
 import iroha.protocol.Queries;
 import iroha.protocol.Queries.Field;
@@ -178,11 +180,31 @@ public class QueryBuilder {
   }
 
   public Query getAccountAssetTransactions(
+          String accountId,
+          String assetId,
+          Integer pageSize,
+          String firstHashHex,
+          Ordering ordering
+          ) {
+    if (nonNull(this.validator)) {
+      this.validator.checkAccountId(accountId);
+      this.validator.checkAssetId(assetId);
+      this.validator.checkPageSize(pageSize);
+    }
+
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null);
+  }
+
+  public Query getAccountAssetTransactions(
       String accountId,
       String assetId,
       Integer pageSize,
       String firstHashHex,
-      Ordering ordering
+      Ordering ordering,
+      Timestamp firstTxTime,
+      Timestamp lastTxTime,
+      Integer firstTxHeight,
+      Integer lastTxHeight
   ) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
@@ -191,17 +213,15 @@ public class QueryBuilder {
     }
 
     Query query = newQuery();
-
     query.getProto().setGetAccountAssetTransactions(
         GetAccountAssetTransactions.newBuilder()
             .setAccountId(accountId)
             .setAssetId(assetId)
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex, ordering)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             )
             .build()
     );
-
     return query;
   }
 
@@ -484,14 +504,18 @@ public class QueryBuilder {
   public Query getPendingTransactions(
       Integer pageSize,
       String firstHashHex,
-      Ordering ordering
+      Ordering ordering,
+      Timestamp firstTxTime,
+      Timestamp lastTxTime,
+      Integer firstTxHeight,
+      Integer lastTxHeight
   ) {
     Query query = newQuery();
 
     query.getProto().setGetPendingTransactions(
         GetPendingTransactions.newBuilder()
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex, ordering)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             )
             .build()
     );
@@ -499,7 +523,22 @@ public class QueryBuilder {
     return query;
   }
 
+  public Query getPendingTransactions(
+          Integer pageSize,
+          String firstHashHex,
+          Ordering ordering
+  ) {
+    return getPendingTransactions(pageSize, firstHashHex, ordering, null, null, null, null);
+  }
+
   public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex, Ordering ordering) {
+    if (nonNull(this.validator)) {
+      this.validator.checkAccountId(accountId);
+    }
+    return getAccountTransactions(accountId, pageSize, firstHashHex, ordering, null,null, null, null);
+  }
+
+  public Query getAccountTransactions(String accountId, Integer pageSize, String firstHashHex, Ordering ordering, Timestamp firstTxTime, Timestamp lastTxTime, Integer firstTxHeight, Integer lastTxHeight) {
     if (nonNull(this.validator)) {
       this.validator.checkAccountId(accountId);
     }
@@ -510,7 +549,7 @@ public class QueryBuilder {
         GetAccountTransactions.newBuilder()
             .setAccountId(accountId)
             .setPaginationMeta(
-                getTxPaginationMeta(pageSize, firstHashHex, ordering)
+                getTxPaginationMeta(pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             )
             .build()
     );
@@ -518,7 +557,7 @@ public class QueryBuilder {
     return query;
   }
 
-  private TxPaginationMeta getTxPaginationMeta(Integer pageSize, String firstHashHex, Ordering ordering) {
+  private TxPaginationMeta getTxPaginationMeta(Integer pageSize, String firstHashHex, Ordering ordering, Timestamp firstTxTime, Timestamp lastTxTime, Integer firstTxHeight, Integer lastTxHeight) {
     if (nonNull(this.validator)) {
       this.validator.checkPageSize(pageSize);
       if (firstHashHex != null) {
@@ -534,6 +573,22 @@ public class QueryBuilder {
 
     if (ordering != null) {
       paginationMetaBuilder.setOrdering(ordering.toBuilder());
+    }
+
+    if (firstTxTime != null) {
+      paginationMetaBuilder.setFirstTxTime(firstTxTime);
+    }
+
+    if (lastTxTime != null) {
+      paginationMetaBuilder.setLastTxTime(lastTxTime);
+    }
+
+    if (firstTxHeight != null) {
+      paginationMetaBuilder.setFirstTxHeight(firstTxHeight);
+    }
+
+    if (lastTxHeight != null) {
+      paginationMetaBuilder.setLastTxHeight(lastTxHeight);
     }
 
     return paginationMetaBuilder.build();

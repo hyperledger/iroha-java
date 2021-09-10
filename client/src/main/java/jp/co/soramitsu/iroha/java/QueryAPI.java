@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha.java;
 
+import com.google.protobuf.Timestamp;
 import iroha.protocol.QryResponses.AccountAssetResponse;
 import iroha.protocol.QryResponses.AccountDetailResponse;
 import iroha.protocol.QryResponses.AccountResponse;
@@ -181,20 +182,29 @@ public class QueryAPI {
 
     return res.getBlockResponse();
   }
-
   public TransactionsPageResponse getAccountTransactions(String accountId,
                                                          Integer pageSize,
                                                          String firstHashHex,
-                                                         QueryBuilder.Ordering ordering) {
+                                                         QueryBuilder.Ordering ordering,
+                                                         Timestamp firstTxTime,
+                                                         Timestamp lastTxTime,
+                                                         Integer firstTxHeight,
+                                                         Integer lastTxHeight) {
     val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getAccountTransactions(accountId, pageSize, firstHashHex, ordering)
-        .buildSigned(keyPair);
+            .getAccountTransactions(accountId, pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
+            .buildSigned(keyPair);
 
     val res = api.query(q);
 
     checkErrorResponse(res);
 
     return res.getTransactionsPageResponse();
+  }
+  public TransactionsPageResponse getAccountTransactions(String accountId,
+                                                         Integer pageSize,
+                                                         String firstHashHex,
+                                                         QueryBuilder.Ordering ordering) {
+    return getAccountTransactions(accountId, pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public TransactionsPageResponse getAccountTransactions(String accountId,
@@ -219,9 +229,23 @@ public class QueryAPI {
                                                               String firstHashHex,
                                                               QueryBuilder.Ordering ordering) {
 
+    return getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, null, null, null, null);
+
+  }
+
+  public TransactionsPageResponse getAccountAssetTransactions(String accountId,
+                                                              String assetId,
+                                                              Integer pageSize,
+                                                              String firstHashHex,
+                                                              QueryBuilder.Ordering ordering,
+                                                              Timestamp firstTxTime,
+                                                              Timestamp lastTxTime,
+                                                              Integer firstTxHeight,
+                                                              Integer lastTxHeight) {
+
     val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering)
-        .buildSigned(keyPair);
+            .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
+            .buildSigned(keyPair);
 
     val res = api.query(q);
 
@@ -356,17 +380,29 @@ public class QueryAPI {
   public TransactionsResponse getPendingTransactions(
           Integer pageSize,
           String firstHashHex,
-          QueryBuilder.Ordering ordering
+          QueryBuilder.Ordering ordering,
+          Timestamp firstTxTime,
+          Timestamp lastTxTime,
+          Integer firstTxHeight,
+          Integer lastTxHeight
   ) {
     val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
-        .getPendingTransactions(pageSize, firstHashHex, ordering)
-        .buildSigned(keyPair);
+            .getPendingTransactions(pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
+            .buildSigned(keyPair);
 
     val res = api.query(q);
 
     checkErrorResponse(res);
 
     return res.getTransactionsResponse();
+  }
+
+  public TransactionsResponse getPendingTransactions(
+          Integer pageSize,
+          String firstHashHex,
+          QueryBuilder.Ordering ordering
+  ) {
+    return getPendingTransactions(pageSize, firstHashHex, ordering, null, null, null, null);
   }
 
   public TransactionsResponse getPendingTransactions(
