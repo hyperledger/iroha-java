@@ -153,21 +153,4 @@ object Instructions {
             )
         )
     }
-
-//    private inline fun mintSome(idBox: IdBox, permissionToken: () -> PermissionToken): Instruction {
-//        return Instruction.Grant(
-//            GrantBox(
-//                destinationId = EvaluatesTo(
-//                    Expression.Raw(
-//                        Value.Id(IdBox.AccountId(ADMIN_ACCOUNT.asIrohaAccountId()))
-//                    )
-//                ),
-//                `object` = EvaluatesTo(
-//                    Expression.Raw(
-//                        Value.PermissionToken(permissionToken())
-//                    )
-//                )
-//            )
-//        )
-//    }
 }
