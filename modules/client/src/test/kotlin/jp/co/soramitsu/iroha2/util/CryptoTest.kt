@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.util
 
+import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.hex
@@ -37,7 +38,7 @@ class CryptoTest {
         runBlocking {
             assertEquals(
                 iterations,
-                futureResults.map { it.await().private.encoded }
+                futureResults.map { it.await().private.bytes() }
                     .map { ByteArrayWrapper(it) }
                     .toSet().size
             )
@@ -63,8 +64,8 @@ class CryptoTest {
     @Test
     fun `keypair serialized to hex and deserialized back`() {
         val keyPair = generateKeyPair()
-        val pubKey = keyPair.public.encoded.hex()
-        val privKey = keyPair.private.encoded.hex()
+        val pubKey = keyPair.public.bytes().hex()
+        val privKey = keyPair.private.bytes().hex()
 
         val message = "foo".toByteArray()
         val signature = keyPair.private.sign(message)
