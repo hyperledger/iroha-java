@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.MutableList
 
 /**
@@ -20,15 +21,21 @@ public data class Transaction(
     public val signatures: MutableList<Signature>
 ) {
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-        public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-            Payload.read(reader),
-            MutableList(reader.readCompactInt()) { Signature.read(reader) },
-        )
+        public override fun read(reader: ScaleCodecReader): Transaction = try {
+            Transaction(
+                Payload.read(reader),
+                MutableList(reader.readCompactInt()) { Signature.read(reader) },
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Transaction) {
+        public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
             Payload.write(writer, instance.payload)
             writer.writeCompact(instance.signatures.size)
             instance.signatures.forEach { value -> Signature.write(writer, value) }
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

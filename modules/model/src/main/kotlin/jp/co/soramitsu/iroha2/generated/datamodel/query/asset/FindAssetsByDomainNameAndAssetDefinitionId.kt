@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 
 /**
@@ -25,17 +26,23 @@ public data class FindAssetsByDomainNameAndAssetDefinitionId(
         ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
         public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
-            FindAssetsByDomainNameAndAssetDefinitionId(
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
-                EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
-            )
+            try {
+                FindAssetsByDomainNameAndAssetDefinitionId(
+                    EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                    EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
         public override fun write(
             writer: ScaleCodecWriter,
             instance: FindAssetsByDomainNameAndAssetDefinitionId
-        ) {
+        ) = try {
             EvaluatesTo.write(writer, instance.domainName)
             EvaluatesTo.write(writer, instance.assetDefinitionId)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

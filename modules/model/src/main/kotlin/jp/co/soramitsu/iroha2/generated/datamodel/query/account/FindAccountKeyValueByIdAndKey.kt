@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 
 /**
@@ -24,15 +25,21 @@ public data class FindAccountKeyValueByIdAndKey(
     public companion object :
         ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
-        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
+        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
             FindAccountKeyValueByIdAndKey(
                 EvaluatesTo.read(reader) as EvaluatesTo<Id>,
                 EvaluatesTo.read(reader) as EvaluatesTo<String>,
             )
-
-        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) {
-            EvaluatesTo.write(writer, instance.id)
-            EvaluatesTo.write(writer, instance.key)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) =
+            try {
+                EvaluatesTo.write(writer, instance.id)
+                EvaluatesTo.write(writer, instance.key)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
     }
 }

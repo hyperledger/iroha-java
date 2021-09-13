@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.hashMapWithSize
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.collections.MutableMap
 
@@ -21,16 +22,22 @@ public data class Metadata(
     public val map: MutableMap<String, Value>
 ) {
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
-        public override fun read(reader: ScaleCodecReader): Metadata = Metadata(
-            hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
-        )
+        public override fun read(reader: ScaleCodecReader): Metadata = try {
+            Metadata(
+                hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Metadata) {
+        public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
             writer.writeCompact(instance.map.size)
             instance.map.forEach { (key, value) ->
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

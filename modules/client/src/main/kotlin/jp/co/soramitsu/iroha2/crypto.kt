@@ -7,7 +7,6 @@ import net.i2p.crypto.eddsa.spec.EdDSANamedCurveTable
 import net.i2p.crypto.eddsa.spec.EdDSAParameterSpec
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec
 import net.i2p.crypto.eddsa.spec.EdDSAPublicKeySpec
-import org.bouncycastle.util.encoders.Hex
 import java.security.Key
 import java.security.KeyPair
 import java.security.SecureRandom
@@ -18,27 +17,58 @@ enum class DigestFunction(val hashFunName: String, val index: Int) {
     Ed25519("ed25519", 0xed)
 }
 
-// todo throw ex
+/**
+ * Generate Ed25519 keypair
+ *
+ * @throws CryptoException
+ */
 fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
-    val seed = ByteArray(spec.curve.field.getb() / 8)
-    SecureRandom().nextBytes(seed)
+    return try {
+        val seed = ByteArray(spec.curve.field.getb() / 8)
+        SecureRandom().nextBytes(seed)
 
-    val privKey = EdDSAPrivateKeySpec(seed, spec)
-    val pubKey = EdDSAPublicKeySpec(privKey.a, spec)
-    return KeyPair(
-        EdDSAPublicKey(pubKey),
-        EdDSAPrivateKey(privKey)
-    )
+        val privKey = EdDSAPrivateKeySpec(seed, spec)
+        val pubKey = EdDSAPublicKeySpec(privKey.a, spec)
+        KeyPair(
+            EdDSAPublicKey(pubKey),
+            EdDSAPrivateKey(privKey)
+        )
+    } catch (ex: Exception) {
+        throw CryptoException("Cannot generate key pair", ex)
+    }
 }
 
+/**
+ * Creates ED25519 keypair key from hex of the public and private key
+ *
+ * @throws CryptoException if keypair cannot be created
+ */
 fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     KeyPair(publicKeyFromHex(publicKeyHex, spec), privateKeyFromHex(privateKeyHex, spec))
 
+/**
+ * Creates ED25519 private key from hex
+ *
+ * @throws CryptoException if key cannot be created from hex
+ */
 fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
-    EdDSAPrivateKey(EdDSAPrivateKeySpec(Hex.decodeStrict(privateKeyHex), spec))
+    try {
+        EdDSAPrivateKey(EdDSAPrivateKeySpec(privateKeyHex.hex(), spec))
+    } catch (ex: Exception) {
+        throw CryptoException("Cannot create private key from hex `$privateKeyHex`", ex)
+    }
 
+/**
+ * Creates ED25519 public key from hex
+ *
+ * @throws CryptoException if key cannot be created from hex
+ */
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
-    EdDSAPublicKey(EdDSAPublicKeySpec(Hex.decodeStrict(publicKeyHex), spec))
+    try {
+        EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.hex(), spec))
+    } catch (ex: Exception) {
+        throw CryptoException("Cannot create public key from hex `$publicKeyHex`", ex)
+    }
 
 /**
  * Returns encoded representation of the key that may be different from `java.security.Key.getEncoded()`

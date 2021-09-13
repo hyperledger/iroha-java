@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 import java.util.Optional
 import kotlin.Boolean
 
@@ -22,16 +23,22 @@ public data class If(
     public val otherwise: Instruction?
 ) {
     public companion object : ScaleReader<If>, ScaleWriter<If> {
-        public override fun read(reader: ScaleCodecReader): If = If(
-            EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
-            Instruction.read(reader),
-            reader.readOptional(Instruction).orElse(null),
-        )
+        public override fun read(reader: ScaleCodecReader): If = try {
+            If(
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
+                Instruction.read(reader),
+                reader.readOptional(Instruction).orElse(null),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: If) {
+        public override fun write(writer: ScaleCodecWriter, instance: If) = try {
             EvaluatesTo.write(writer, instance.condition)
             Instruction.write(writer, instance.then)
             writer.writeOptional(Instruction, Optional.ofNullable(instance.otherwise))
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

@@ -39,9 +39,17 @@ fun <T> T.encode(writer: ScaleWriter<T>): ByteArray {
 // todo get rid of providing `reader`
 fun <T> ByteArray.decode(reader: ScaleReader<T>): T = ScaleCodecReader(this).read(reader)
 
-fun ByteArray.hex(): String = Hex.toHexString(this)
+fun ByteArray.hex(): String = try {
+    Hex.toHexString(this)
+} catch (ex: Exception) {
+    throw HexCodecException("Cannot encode to hex string", ex)
+}
 
-fun String.hex(): ByteArray = Hex.decode(this)
+fun String.hex(): ByteArray = try {
+    Hex.decode(this)
+} catch (ex: Exception) {
+    throw HexCodecException("Cannot decode from hex string `$this`", ex)
+}
 
 fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.generated.crypto.PublicKey {
     return jp.co.soramitsu.iroha2.generated.crypto.PublicKey(DigestFunction.Ed25519.hashFunName, this.bytes())
@@ -52,11 +60,13 @@ fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.generated.crypto.Public
  *
  * Note: the message must not be prehashed
  */
-fun PrivateKey.sign(message: ByteArray): ByteArray {
+fun PrivateKey.sign(message: ByteArray): ByteArray = try {
     val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
     sgr.initSign(this)
     sgr.update(message.hash())
-    return sgr.sign()
+    sgr.sign()
+} catch (ex: Exception) {
+    throw CryptoException("Cannot sign message", ex)
 }
 
 /**
@@ -64,11 +74,13 @@ fun PrivateKey.sign(message: ByteArray): ByteArray {
  *
  * Note: the message must not be prehashed
  */
-fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean {
+fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean = try {
     val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
     sgr.initVerify(this)
     sgr.update(message.hash())
-    return sgr.verify(signature)
+    sgr.verify(signature)
+} catch (ex: Exception) {
+    throw CryptoException("Cannot verify message", ex)
 }
 
 fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)

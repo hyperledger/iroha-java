@@ -68,3 +68,10 @@ fun readBit64(reader: ScaleCodecReader): Long {
     result += reader.readUByte().toLong() shl 56
     return result
 }
+
+fun wrapException(ex: Exception): Exception {
+    return when (ex) {
+        is ScaleCodecException -> ex
+        else -> ScaleCodecException(cause = ex)
+    }
+}

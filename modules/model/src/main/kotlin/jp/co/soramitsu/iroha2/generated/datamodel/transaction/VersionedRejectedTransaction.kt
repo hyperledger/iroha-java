@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -31,12 +32,18 @@ public sealed class VersionedRejectedTransaction {
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): V1 = V1(
-                _VersionedRejectedTransactionV1.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): V1 = try {
+                V1(
+                    _VersionedRejectedTransactionV1.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: V1) {
+            public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
                 _VersionedRejectedTransactionV1.write(writer, instance._VersionedRejectedTransactionV1)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

@@ -135,11 +135,9 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
                                         break
                                     }
                                     is Status.Rejected -> {
-                                        logger.error(
-                                            "Transaction {} was rejected by reason: `{}`",
-                                            hexHash, getRejectionReason(status.rejectionReason)
-                                        )
-                                        result.completeExceptionally(RuntimeException("Transaction rejected"))
+                                        val rejectionReason = getRejectionReason(status.rejectionReason)
+                                        logger.error("Transaction {} was rejected by reason: `{}`", hexHash, rejectionReason)
+                                        result.completeExceptionally(TransactionRejectedException("Transaction rejected with reason '$rejectionReason'"))
                                         ack(this)
                                         break
                                     }
@@ -150,7 +148,11 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
                                 }
                             }
                         }
-                        else -> result.completeExceptionally(RuntimeException("Expected message with type ${Event.Pipeline::class.qualifiedName} but was ${event::class.qualifiedName}"))
+                        else -> result.completeExceptionally(
+                            WebSocketProtocolException(
+                                "Expected message with type ${Event.Pipeline::class.qualifiedName}, but was ${event::class.qualifiedName}"
+                            )
+                        )
                     }
                     logger.debug("WebSocket is closing")
                     this.close()
@@ -204,12 +206,18 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
                     is VersionedEventSocketMessage.V1 -> {
                         val actualMessage = versionedMessage._VersionedEventSocketMessageV1.eventSocketMessage
                         actualMessage as? T
-                            ?: throw RuntimeException("Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}")
+                            ?: throw WebSocketProtocolException(
+                                "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
+                            )
                     }
-                    else -> throw RuntimeException("Expected `${VersionedEventSocketMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`")
+                    else -> throw WebSocketProtocolException(
+                        "Expected `${VersionedEventSocketMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
+                    )
                 }
             }
-            else -> throw RuntimeException("Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`")
+            else -> throw WebSocketProtocolException(
+                "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`"
+            )
         }
     }
 

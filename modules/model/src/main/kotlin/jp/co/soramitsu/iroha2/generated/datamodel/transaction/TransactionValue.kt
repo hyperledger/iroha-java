@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -31,12 +32,18 @@ public sealed class TransactionValue {
         public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-                VersionedTransaction.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Transaction = try {
+                Transaction(
+                    VersionedTransaction.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transaction) {
+            public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
                 VersionedTransaction.write(writer, instance.versionedTransaction)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -52,12 +59,18 @@ public sealed class TransactionValue {
         public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): RejectedTransaction = RejectedTransaction(
-                VersionedRejectedTransaction.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): RejectedTransaction = try {
+                RejectedTransaction(
+                    VersionedRejectedTransaction.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) {
+            public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) = try {
                 VersionedRejectedTransaction.write(writer, instance.versionedRejectedTransaction)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

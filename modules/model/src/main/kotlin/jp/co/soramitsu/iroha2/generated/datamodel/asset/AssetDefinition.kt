@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * AssetDefinition
@@ -20,16 +21,22 @@ public data class AssetDefinition(
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-        public override fun read(reader: ScaleCodecReader): AssetDefinition = AssetDefinition(
-            AssetValueType.read(reader),
-            DefinitionId.read(reader),
-            Metadata.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
+            AssetDefinition(
+                AssetValueType.read(reader),
+                DefinitionId.read(reader),
+                Metadata.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) {
+        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
             AssetValueType.write(writer, instance.valueType)
             DefinitionId.write(writer, instance.id)
             Metadata.write(writer, instance.metadata)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

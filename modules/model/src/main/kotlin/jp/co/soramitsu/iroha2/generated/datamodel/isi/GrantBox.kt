@@ -10,6 +10,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * GrantBox
@@ -21,14 +22,20 @@ public data class GrantBox(
     public val destinationId: EvaluatesTo<IdBox>
 ) {
     public companion object : ScaleReader<GrantBox>, ScaleWriter<GrantBox> {
-        public override fun read(reader: ScaleCodecReader): GrantBox = GrantBox(
-            EvaluatesTo.read(reader) as EvaluatesTo<Value>,
-            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-        )
+        public override fun read(reader: ScaleCodecReader): GrantBox = try {
+            GrantBox(
+                EvaluatesTo.read(reader) as EvaluatesTo<Value>,
+                EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: GrantBox) {
+        public override fun write(writer: ScaleCodecWriter, instance: GrantBox) = try {
             EvaluatesTo.write(writer, instance.`object`)
             EvaluatesTo.write(writer, instance.destinationId)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

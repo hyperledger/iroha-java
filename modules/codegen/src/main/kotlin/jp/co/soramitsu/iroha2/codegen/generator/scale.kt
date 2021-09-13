@@ -36,6 +36,7 @@ val BIT_64_READER = MemberName("jp.co.soramitsu.iroha2", "readBit64")
 val COMPACT_ULONG_WRITER = MemberName("io.emeraldpay.polkaj.scale.writer", "CompactULongWriter")
 val COMPACT_BIG_INT_READER = MemberName("io.emeraldpay.polkaj.scale.reader", "CompactBigIntReader")
 val OPTIONAL = ClassName("java.util", "Optional")
+val SCALE_CODEC_EX_WRAPPER = ClassName("jp.co.soramitsu.iroha2", "wrapException")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {

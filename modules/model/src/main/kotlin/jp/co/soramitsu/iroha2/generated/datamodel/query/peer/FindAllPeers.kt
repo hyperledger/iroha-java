@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindAllPeers
@@ -15,9 +16,15 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  */
 public class FindAllPeers {
     public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
-        public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers()
+        public override fun read(reader: ScaleCodecReader): FindAllPeers = try {
+            FindAllPeers()
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers) {
+        public override fun write(writer: ScaleCodecWriter, instance: FindAllPeers) = try {
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

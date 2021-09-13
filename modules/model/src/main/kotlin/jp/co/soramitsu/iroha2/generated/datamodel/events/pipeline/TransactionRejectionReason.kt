@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -31,12 +32,18 @@ public sealed class TransactionRejectionReason {
         public companion object : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): NotPermitted = NotPermitted(
-                NotPermittedFail.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): NotPermitted = try {
+                NotPermitted(
+                    NotPermittedFail.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: NotPermitted) {
+            public override fun write(writer: ScaleCodecWriter, instance: NotPermitted) = try {
                 NotPermittedFail.write(writer, instance.notPermittedFail)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -54,17 +61,20 @@ public sealed class TransactionRejectionReason {
             ScaleWriter<UnsatisfiedSignatureCondition> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition =
+            public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition = try {
                 UnsatisfiedSignatureCondition(
                     UnsatisfiedSignatureConditionFail.read(reader),
                 )
-
-            public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition) {
-                UnsatisfiedSignatureConditionFail.write(
-                    writer,
-                    instance.unsatisfiedSignatureConditionFail
-                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
+
+            public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition) =
+                try {
+                    UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureConditionFail)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
@@ -79,13 +89,18 @@ public sealed class TransactionRejectionReason {
         public companion object : ScaleReader<InstructionExecution>, ScaleWriter<InstructionExecution> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): InstructionExecution =
+            public override fun read(reader: ScaleCodecReader): InstructionExecution = try {
                 InstructionExecution(
                     InstructionExecutionFail.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution) {
+            public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution) = try {
                 InstructionExecutionFail.write(writer, instance.instructionExecutionFail)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -101,13 +116,18 @@ public sealed class TransactionRejectionReason {
         public companion object : ScaleReader<SignatureVerification>, ScaleWriter<SignatureVerification> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): SignatureVerification =
+            public override fun read(reader: ScaleCodecReader): SignatureVerification = try {
                 SignatureVerification(
                     SignatureVerificationFail.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification) {
+            public override fun write(writer: ScaleCodecWriter, instance: SignatureVerification) = try {
                 SignatureVerificationFail.write(writer, instance.signatureVerificationFail)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -123,13 +143,18 @@ public sealed class TransactionRejectionReason {
             ScaleWriter<UnexpectedGenesisAccountSignature> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature =
+            public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature = try {
                 UnexpectedGenesisAccountSignature()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
             public override fun write(
                 writer: ScaleCodecWriter,
                 instance: UnexpectedGenesisAccountSignature
-            ) {
+            ) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
