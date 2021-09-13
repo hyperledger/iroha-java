@@ -116,6 +116,9 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
 
+    fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantMintUserAssetsDefinition(assetDefinitionId, target)) }
+
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 
     companion object {

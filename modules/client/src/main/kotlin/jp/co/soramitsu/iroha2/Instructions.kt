@@ -98,6 +98,21 @@ object Instructions {
         }
     }
 
+    fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+        return mintSome(IdBox.AccountId(target)) {
+            PermissionToken(
+                name = CAN_MINT_USER_ASSETS_DEFINITION,
+                params = mutableMapOf(
+                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
+                        IdBox.AssetDefinitionId(
+                            assetDefinitionId
+                        )
+                    )
+                )
+            )
+        }
+    }
+
     fun registerDomain(
         domainName: String,
         accounts: MutableMap<AccountId, Account> = mutableMapOf(),
