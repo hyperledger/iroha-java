@@ -44,7 +44,7 @@ fun ByteArray.hex(): String = Hex.toHexString(this)
 fun String.hex(): ByteArray = Hex.decode(this)
 
 fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.generated.crypto.PublicKey {
-    return jp.co.soramitsu.iroha2.generated.crypto.PublicKey(DigestFunction.Ed25519.hashFunName, this.encoded)
+    return jp.co.soramitsu.iroha2.generated.crypto.PublicKey(DigestFunction.Ed25519.hashFunName, this.bytes())
 }
 
 /**
