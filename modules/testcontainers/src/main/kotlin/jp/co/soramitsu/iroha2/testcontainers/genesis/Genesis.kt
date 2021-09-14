@@ -1,11 +1,11 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testcontainers.genesis
 
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
-class Genesis(val genesisBlock: RawGenesisBlock) {
+open class Genesis(val genesisBlock: RawGenesisBlock) {
 
     fun writeToFile(path: Path) = Files.write(
         path,

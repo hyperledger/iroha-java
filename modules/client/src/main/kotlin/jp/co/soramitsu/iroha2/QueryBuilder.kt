@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
@@ -66,6 +67,8 @@ class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
     fun findAssetById(assetId: AssetId) = this.apply { query = Queries.findAssetById(assetId) }
 
     fun findAssetsByDomainName(domain: String) = this.apply { query = Queries.findAssetsByDomainName(domain) }
+
+    fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = this.apply { query = Queries.findAssetsByAssetDefinitionId(assetDefinition) }
 
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 

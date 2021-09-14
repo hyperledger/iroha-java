@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testcontainers.genesis
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder

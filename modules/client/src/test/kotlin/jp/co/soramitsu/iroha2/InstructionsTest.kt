@@ -3,17 +3,18 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
-import jp.co.soramitsu.iroha2.engine.defaultGenesis
+import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.engine.rawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
-import org.junit.jupiter.api.AfterEach
+import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
@@ -22,27 +23,16 @@ import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
+// todo with various params
 @Execution(ExecutionMode.CONCURRENT)
+@ExtendWith(IrohaRunnerExtension::class)
 @Timeout(20)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client
-    lateinit var irohaContainer: IrohaContainer
-
-    @BeforeEach
-    fun init() {
-        irohaContainer = IrohaContainer(genesis = defaultGenesis())
-        irohaContainer.start()
-        client = Iroha2Client(irohaContainer.getApiUrl())
-    }
-
-    @AfterEach
-    fun tearDown() {
-        irohaContainer.stop()
-        client.close()
-    }
 
     @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register account instruction committed`() {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         Assertions.assertDoesNotThrow {
@@ -60,6 +50,25 @@ class InstructionsTest {
     }
 
     @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `register asset instruction committed`() {
+        val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
+        Assertions.assertDoesNotThrow {
+            client.sendTransaction {
+                accountId = ALICE_ACCOUNT_ID
+                registerAsset(assetDefinition, AssetValueType.BigQuantity())
+                buildSigned(ALICE_KEYPAIR)
+            }.get(10, TimeUnit.SECONDS)
+        }
+        client.sendQuery(AssetExtractor) {
+            accountId = ALICE_ACCOUNT_ID
+            findAssetsByAssetDefinitionId(assetDefinition)
+            buildSigned(ALICE_KEYPAIR)
+        }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `store asset instruction committed`() {
         val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val assetId = AssetId(assetDefinition, ALICE_ACCOUNT_ID)
@@ -105,6 +114,7 @@ class InstructionsTest {
     }
 
     @Test
+    @WithIroha(DefaultGenesis::class)
     fun `grant access to asset key-value committed`() {
         val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val aliceAssetId = AssetId(assetDefinition, ALICE_ACCOUNT_ID)
@@ -151,6 +161,7 @@ class InstructionsTest {
     }
 
     @Test
+    @WithIroha(DefaultGenesis::class)
     fun `mint asset instruction committed`() {
         val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val assetId = AssetId(assetDefinition, ALICE_ACCOUNT_ID)
@@ -178,3 +189,5 @@ class InstructionsTest {
         assertEquals(5U, (result.assets[assetId] ?.value as? AssetValue.Quantity)?.u32)
     }
 }
+
+class DefaultGenesis : Genesis(rawGenesisBlock())

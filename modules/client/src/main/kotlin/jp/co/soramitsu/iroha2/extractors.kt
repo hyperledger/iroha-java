@@ -20,6 +20,7 @@ object AssetExtractor : ResultExtractor<Asset> {
     }
 }
 
+// todo give proper description for the errors
 object AssetsExtractor : ResultExtractor<List<Asset>> {
     override fun extract(result: QueryResult): MutableList<Asset> {
         val assets = mutableListOf<Asset>()
