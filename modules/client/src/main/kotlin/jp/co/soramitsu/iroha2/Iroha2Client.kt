@@ -30,7 +30,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRej
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
@@ -38,14 +39,20 @@ import java.net.URL
 import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
-class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseable {
+class Iroha2Client(
+    var peerUrl: URL,
+    val log: Boolean = false,
+    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     private val client = lazy {
         HttpClient(CIO) {
             expectSuccess = true
-            if (log) { install(Logging) }
+            if (log) {
+                install(Logging)
+            }
             install(WebSockets)
             HttpResponseValidator {
                 handleResponseException { exception ->
@@ -55,7 +62,14 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
         }
     }
 
-    fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
+    /**
+     * Sends transaction to Iroha peer
+     *
+     * The method only sends transaction to peer and do not await it final committing status. It means when peer
+     * response with 2xx status code the peer only accepted transaction and the transaction passed stateless
+     * validation. Further state of the transaction is not tracked.
+     */
+    fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.hex())
@@ -68,10 +82,13 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
         return hash
     }
 
-    fun sendTransactionAsync(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
+    /**
+     * Sends transaction to Iroha peer and await until it will be committed or rejected
+     */
+    fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
         val signedTransaction = transaction(TransactionBuilder())
         return subscribeToTransactionStatus(signedTransaction.hash())
-            .also { sendTransaction { signedTransaction } }
+            .also { fireAndForget { signedTransaction } }
     }
 
     fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
@@ -111,8 +128,7 @@ class Iroha2Client(private val peerUrl: URL, log: Boolean = false) : AutoCloseab
         val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
-        // todo use local scope instead
-        GlobalScope.launch {
+        scope.launch {
             client.value.webSocket(
                 host = peerUrl.host,
                 port = peerUrl.port,

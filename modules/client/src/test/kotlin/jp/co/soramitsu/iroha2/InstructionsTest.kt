@@ -46,7 +46,7 @@ class InstructionsTest {
     fun `register account instruction committed`() {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
                 registerAccount(newAccountId, mutableListOf())
                 buildSigned(ALICE_KEYPAIR)
@@ -68,7 +68,7 @@ class InstructionsTest {
         val pair3 = "key3" to 12345.asValue()
 
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 account(ALICE_ACCOUNT_ID)
                 registerAsset(assetDefinition, AssetValueType.Store())
                 storeAsset(assetId, pair1.first, pair1.second)
@@ -113,7 +113,7 @@ class InstructionsTest {
 
         // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 account(ALICE_ACCOUNT_ID)
                 // register asset with type store
                 registerAsset(assetDefinition, AssetValueType.Store())
@@ -127,7 +127,7 @@ class InstructionsTest {
 
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 account(bobAccountId)
                 storeAsset(aliceAssetId, "foo", "bar".asValue())
                 buildSigned(bobKeypair)
@@ -155,7 +155,7 @@ class InstructionsTest {
         val assetDefinition = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val assetId = AssetId(assetDefinition, ALICE_ACCOUNT_ID)
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 account(ALICE_ACCOUNT_ID)
                 registerAsset(assetDefinition, AssetValueType.Quantity())
                 buildSigned(ALICE_KEYPAIR)
@@ -163,7 +163,7 @@ class InstructionsTest {
         }
 
         Assertions.assertDoesNotThrow {
-            client.sendTransactionAsync {
+            client.sendTransaction {
                 account(ALICE_ACCOUNT_ID)
                 mintAsset(assetId, 5U)
                 buildSigned(ALICE_KEYPAIR)
