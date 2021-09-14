@@ -23,7 +23,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
-@Timeout(10)
+@Timeout(20)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client
