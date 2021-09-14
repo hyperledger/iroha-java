@@ -44,11 +44,12 @@ object Instructions {
 
     fun registerAsset(
         id: DefinitionId,
-        assetValueType: AssetValueType
+        assetValueType: AssetValueType,
+        metadata: Metadata = Metadata(mutableMapOf())
     ): Instruction {
         return registerSome {
             IdentifiableBox.AssetDefinition(
-                AssetDefinition(assetValueType, id)
+                AssetDefinition(assetValueType, id, metadata)
             )
         }
     }

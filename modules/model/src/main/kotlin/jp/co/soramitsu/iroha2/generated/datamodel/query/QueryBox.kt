@@ -420,6 +420,37 @@ public sealed class QueryBox {
     }
 
     /**
+     * 'FindAssetDefinitionKeyValueByIdAndKey' variant
+     */
+    public data class FindAssetDefinitionKeyValueByIdAndKey(
+        public val findAssetDefinitionKeyValueByIdAndKey:
+            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey
+    ) : QueryBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<FindAssetDefinitionKeyValueByIdAndKey>,
+            ScaleWriter<FindAssetDefinitionKeyValueByIdAndKey> {
+            public const val DISCRIMINANT: Int = 15
+
+            public override fun read(reader: ScaleCodecReader): FindAssetDefinitionKeyValueByIdAndKey =
+                FindAssetDefinitionKeyValueByIdAndKey(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey.read(reader),
+                )
+
+            public override fun write(
+                writer: ScaleCodecWriter,
+                instance: FindAssetDefinitionKeyValueByIdAndKey
+            ) {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey.write(
+                    writer,
+                    instance.findAssetDefinitionKeyValueByIdAndKey
+                )
+            }
+        }
+    }
+
+    /**
      * 'FindAllDomains' variant
      */
     public data class FindAllDomains(
@@ -429,7 +460,7 @@ public sealed class QueryBox {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-            public const val DISCRIMINANT: Int = 15
+            public const val DISCRIMINANT: Int = 16
 
             public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains(
                 jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains.read(reader),
@@ -454,7 +485,7 @@ public sealed class QueryBox {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
-            public const val DISCRIMINANT: Int = 16
+            public const val DISCRIMINANT: Int = 17
 
             public override fun read(reader: ScaleCodecReader): FindDomainByName = FindDomainByName(
                 jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName.read(reader),
@@ -478,7 +509,7 @@ public sealed class QueryBox {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {
-            public const val DISCRIMINANT: Int = 17
+            public const val DISCRIMINANT: Int = 18
 
             public override fun read(reader: ScaleCodecReader): FindAllPeers = FindAllPeers(
                 jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers.read(reader),
@@ -505,7 +536,7 @@ public sealed class QueryBox {
         public companion object :
             ScaleReader<FindTransactionsByAccountId>,
             ScaleWriter<FindTransactionsByAccountId> {
-            public const val DISCRIMINANT: Int = 18
+            public const val DISCRIMINANT: Int = 19
 
             public override fun read(reader: ScaleCodecReader): FindTransactionsByAccountId =
                 FindTransactionsByAccountId(
@@ -533,7 +564,7 @@ public sealed class QueryBox {
         public companion object :
             ScaleReader<FindPermissionTokensByAccountId>,
             ScaleWriter<FindPermissionTokensByAccountId> {
-            public const val DISCRIMINANT: Int = 19
+            public const val DISCRIMINANT: Int = 20
 
             public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
                 FindPermissionTokensByAccountId(
@@ -572,11 +603,12 @@ public sealed class QueryBox {
             12 -> FindAssetsByDomainNameAndAssetDefinitionId.read(reader)
             13 -> FindAssetQuantityById.read(reader)
             14 -> FindAssetKeyValueByIdAndKey.read(reader)
-            15 -> FindAllDomains.read(reader)
-            16 -> FindDomainByName.read(reader)
-            17 -> FindAllPeers.read(reader)
-            18 -> FindTransactionsByAccountId.read(reader)
-            19 -> FindPermissionTokensByAccountId.read(reader)
+            15 -> FindAssetDefinitionKeyValueByIdAndKey.read(reader)
+            16 -> FindAllDomains.read(reader)
+            17 -> FindDomainByName.read(reader)
+            18 -> FindAllPeers.read(reader)
+            19 -> FindTransactionsByAccountId.read(reader)
+            20 -> FindPermissionTokensByAccountId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -602,11 +634,16 @@ public sealed class QueryBox {
                 )
                 13 -> FindAssetQuantityById.write(writer, instance as FindAssetQuantityById)
                 14 -> FindAssetKeyValueByIdAndKey.write(writer, instance as FindAssetKeyValueByIdAndKey)
-                15 -> FindAllDomains.write(writer, instance as FindAllDomains)
-                16 -> FindDomainByName.write(writer, instance as FindDomainByName)
-                17 -> FindAllPeers.write(writer, instance as FindAllPeers)
-                18 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
-                19 -> FindPermissionTokensByAccountId.write(
+                15 -> FindAssetDefinitionKeyValueByIdAndKey.write(
+                    writer,
+                    instance as
+                        FindAssetDefinitionKeyValueByIdAndKey
+                )
+                16 -> FindAllDomains.write(writer, instance as FindAllDomains)
+                17 -> FindDomainByName.write(writer, instance as FindDomainByName)
+                18 -> FindAllPeers.write(writer, instance as FindAllPeers)
+                19 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
+                20 -> FindPermissionTokensByAccountId.write(
                     writer,
                     instance as
                         FindPermissionTokensByAccountId
