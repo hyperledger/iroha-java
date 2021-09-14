@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * Peer
@@ -17,12 +18,18 @@ public data class Peer(
     public val id: Id
 ) {
     public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
-        public override fun read(reader: ScaleCodecReader): Peer = Peer(
-            Id.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): Peer = try {
+            Peer(
+                Id.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Peer) {
+        public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
             Id.write(writer, instance.id)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.MutableList
 
 /**
@@ -18,13 +19,19 @@ public data class RawGenesisBlock(
     public val transactions: MutableList<GenesisTransaction>
 ) {
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
-        public override fun read(reader: ScaleCodecReader): RawGenesisBlock = RawGenesisBlock(
-            MutableList(reader.readCompactInt()) { GenesisTransaction.read(reader) },
-        )
+        public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
+            RawGenesisBlock(
+                MutableList(reader.readCompactInt()) { GenesisTransaction.read(reader) },
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) {
+        public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) = try {
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value -> GenesisTransaction.write(writer, value) }
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

@@ -72,21 +72,38 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     }
 
     open fun scaleReaderCode(blueprint: T): CodeBlock {
-        var result = CodeBlock.builder().add("return ${blueprint.className}(\n").indent()
+        var result = CodeBlock.builder()
+            .add("return try {\n")
+            .indent()
+        result.add("${blueprint.className}(\n").indent()
         val codeBlocks = blueprint.properties.map { resolveScaleReadImpl(it.original) }.toList()
         for (cb in codeBlocks) {
             result = result.add(cb).add(",\n")
         }
-        return result.unindent().add(")").build()
+        return result
+            .unindent()
+            .add(")\n")
+            .unindent()
+            .add("} catch (ex: Exception) {\n").indent()
+            .add("throw %T(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
+            .add("}")
+            .build()
     }
 
     open fun scaleWriterCode(blueprint: T): CodeBlock {
-        var result = CodeBlock.builder().indent()
+        var result = CodeBlock.builder()
+            .add("return try {\n")
+            .indent()
         val codeBlocks = blueprint.properties.map { resolveScaleWriteImpl(it.original, CodeBlock.of("instance.%N", it.name)) }
         for (cb in codeBlocks) {
             result = result.add(cb).add("\n")
         }
-        return result.unindent().build()
+        return result
+            .unindent()
+            .add("} catch (ex: Exception) {\n").indent()
+            .add("throw %T(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
+            .add("}")
+            .build()
     }
 
     open fun implFunctions(blueprint: T, clazz: TypeSpec.Builder) = Unit

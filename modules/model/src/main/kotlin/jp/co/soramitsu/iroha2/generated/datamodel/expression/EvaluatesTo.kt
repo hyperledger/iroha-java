@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 
 /**
@@ -18,12 +19,18 @@ public data class EvaluatesTo<T0>(
     public val expression: Expression
 ) {
     public companion object : ScaleReader<EvaluatesTo<out Any>>, ScaleWriter<EvaluatesTo<out Any>> {
-        public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> = EvaluatesTo(
-            Expression.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> = try {
+            EvaluatesTo(
+                Expression.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo<out Any>) {
+        public override fun write(writer: ScaleCodecWriter, instance: EvaluatesTo<out Any>) = try {
             Expression.write(writer, instance.expression)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

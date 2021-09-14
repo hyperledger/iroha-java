@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
 
 /**
@@ -19,14 +20,20 @@ public data class Signature(
     public val signature: ByteArray
 ) {
     public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
-        public override fun read(reader: ScaleCodecReader): Signature = Signature(
-            PublicKey.read(reader),
-            reader.readByteArray(),
-        )
+        public override fun read(reader: ScaleCodecReader): Signature = try {
+            Signature(
+                PublicKey.read(reader),
+                reader.readByteArray(),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Signature) {
+        public override fun write(writer: ScaleCodecWriter, instance: Signature) = try {
             PublicKey.write(writer, instance.publicKey)
             writer.writeAsList(instance.signature)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

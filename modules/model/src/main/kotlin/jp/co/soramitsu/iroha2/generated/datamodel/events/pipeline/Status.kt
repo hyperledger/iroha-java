@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -29,9 +30,15 @@ public sealed class Status {
         public companion object : ScaleReader<Validating>, ScaleWriter<Validating> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Validating = Validating()
+            public override fun read(reader: ScaleCodecReader): Validating = try {
+                Validating()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Validating) {
+            public override fun write(writer: ScaleCodecWriter, instance: Validating) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -47,12 +54,18 @@ public sealed class Status {
         public companion object : ScaleReader<Rejected>, ScaleWriter<Rejected> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Rejected = Rejected(
-                RejectionReason.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Rejected = try {
+                Rejected(
+                    RejectionReason.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Rejected) {
+            public override fun write(writer: ScaleCodecWriter, instance: Rejected) = try {
                 RejectionReason.write(writer, instance.rejectionReason)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -66,9 +79,15 @@ public sealed class Status {
         public companion object : ScaleReader<Committed>, ScaleWriter<Committed> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Committed = Committed()
+            public override fun read(reader: ScaleCodecReader): Committed = try {
+                Committed()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Committed) {
+            public override fun write(writer: ScaleCodecWriter, instance: Committed) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

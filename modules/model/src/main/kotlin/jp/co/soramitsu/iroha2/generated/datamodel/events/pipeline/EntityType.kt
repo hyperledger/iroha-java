@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -29,9 +30,15 @@ public sealed class EntityType {
         public companion object : ScaleReader<Block>, ScaleWriter<Block> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Block = Block()
+            public override fun read(reader: ScaleCodecReader): Block = try {
+                Block()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Block) {
+            public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -45,9 +52,15 @@ public sealed class EntityType {
         public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Transaction = Transaction()
+            public override fun read(reader: ScaleCodecReader): Transaction = try {
+                Transaction()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transaction) {
+            public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

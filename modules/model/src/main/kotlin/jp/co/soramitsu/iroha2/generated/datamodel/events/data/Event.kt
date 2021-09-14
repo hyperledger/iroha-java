@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * Event
@@ -15,9 +16,15 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  */
 public class Event {
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
-        public override fun read(reader: ScaleCodecReader): Event = Event()
+        public override fun read(reader: ScaleCodecReader): Event = try {
+            Event()
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Event) {
+        public override fun write(writer: ScaleCodecWriter, instance: Event) = try {
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

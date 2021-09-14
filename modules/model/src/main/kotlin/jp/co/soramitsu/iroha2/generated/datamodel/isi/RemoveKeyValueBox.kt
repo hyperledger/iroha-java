@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 
 /**
@@ -21,14 +22,20 @@ public data class RemoveKeyValueBox(
     public val key: EvaluatesTo<String>
 ) {
     public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
-        public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = RemoveKeyValueBox(
-            EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-            EvaluatesTo.read(reader) as EvaluatesTo<String>,
-        )
+        public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = try {
+            RemoveKeyValueBox(
+                EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
+                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox) {
+        public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox) = try {
             EvaluatesTo.write(writer, instance.objectId)
             EvaluatesTo.write(writer, instance.key)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

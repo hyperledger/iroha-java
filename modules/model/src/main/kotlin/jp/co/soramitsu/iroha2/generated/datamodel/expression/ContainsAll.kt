@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.MutableList
 
 /**
@@ -20,14 +21,20 @@ public data class ContainsAll(
     public val elements: EvaluatesTo<MutableList<Value>>
 ) {
     public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
-        public override fun read(reader: ScaleCodecReader): ContainsAll = ContainsAll(
-            EvaluatesTo.read(reader) as EvaluatesTo<MutableList<Value>>,
-            EvaluatesTo.read(reader) as EvaluatesTo<MutableList<Value>>,
-        )
+        public override fun read(reader: ScaleCodecReader): ContainsAll = try {
+            ContainsAll(
+                EvaluatesTo.read(reader) as EvaluatesTo<MutableList<Value>>,
+                EvaluatesTo.read(reader) as EvaluatesTo<MutableList<Value>>,
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) {
+        public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) = try {
             EvaluatesTo.write(writer, instance.collection)
             EvaluatesTo.write(writer, instance.elements)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

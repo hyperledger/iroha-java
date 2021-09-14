@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.hashSetWithSize
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.MutableList
 import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
@@ -31,19 +32,24 @@ public data class Account(
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
-        public override fun read(reader: ScaleCodecReader): Account = Account(
-            Id.read(reader),
-            hashMapWithSize(
-                reader.readCompactInt(),
-                { jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) }, { Asset.read(reader) }
-            ),
-            MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
-            hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) },
-            SignatureCheckCondition.read(reader),
-            Metadata.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): Account = try {
+            Account(
+                Id.read(reader),
+                hashMapWithSize(
+                    reader.readCompactInt(),
+                    { jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) },
+                    { Asset.read(reader) }
+                ),
+                MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
+                hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) },
+                SignatureCheckCondition.read(reader),
+                Metadata.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Account) {
+        public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
             instance.assets.forEach { (key, value) ->
@@ -56,6 +62,8 @@ public data class Account(
             instance.permissionTokens.forEach { value -> PermissionToken.write(writer, value) }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

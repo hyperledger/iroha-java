@@ -8,6 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 
 /**
@@ -22,15 +23,20 @@ public data class SignatureVerificationFail(
     public companion object :
         ScaleReader<SignatureVerificationFail>,
         ScaleWriter<SignatureVerificationFail> {
-        public override fun read(reader: ScaleCodecReader): SignatureVerificationFail =
+        public override fun read(reader: ScaleCodecReader): SignatureVerificationFail = try {
             SignatureVerificationFail(
                 Signature.read(reader),
                 reader.readString(),
             )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail) {
+        public override fun write(writer: ScaleCodecWriter, instance: SignatureVerificationFail) = try {
             Signature.write(writer, instance.signature)
             writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

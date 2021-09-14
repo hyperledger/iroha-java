@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
 
@@ -34,12 +35,18 @@ public sealed class IdBox {
         public companion object : ScaleReader<AccountId>, ScaleWriter<AccountId> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): AccountId = AccountId(
-                Id.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): AccountId = try {
+                AccountId(
+                    Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AccountId) {
+            public override fun write(writer: ScaleCodecWriter, instance: AccountId) = try {
                 Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -55,12 +62,18 @@ public sealed class IdBox {
         public companion object : ScaleReader<AssetId>, ScaleWriter<AssetId> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): AssetId = AssetId(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): AssetId = try {
+                AssetId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AssetId) {
+            public override fun write(writer: ScaleCodecWriter, instance: AssetId) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -76,12 +89,18 @@ public sealed class IdBox {
         public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): AssetDefinitionId = AssetDefinitionId(
-                DefinitionId.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): AssetDefinitionId = try {
+                AssetDefinitionId(
+                    DefinitionId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId) {
+            public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId) = try {
                 DefinitionId.write(writer, instance.definitionId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -97,12 +116,18 @@ public sealed class IdBox {
         public companion object : ScaleReader<DomainName>, ScaleWriter<DomainName> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): DomainName = DomainName(
-                reader.readString(),
-            )
+            public override fun read(reader: ScaleCodecReader): DomainName = try {
+                DomainName(
+                    reader.readString(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: DomainName) {
+            public override fun write(writer: ScaleCodecWriter, instance: DomainName) = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -118,12 +143,18 @@ public sealed class IdBox {
         public companion object : ScaleReader<PeerId>, ScaleWriter<PeerId> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): PeerId = PeerId(
-                jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): PeerId = try {
+                PeerId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: PeerId) {
+            public override fun write(writer: ScaleCodecWriter, instance: PeerId) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -137,9 +168,15 @@ public sealed class IdBox {
         public companion object : ScaleReader<WorldId>, ScaleWriter<WorldId> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): WorldId = WorldId()
+            public override fun read(reader: ScaleCodecReader): WorldId = try {
+                WorldId()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: WorldId) {
+            public override fun write(writer: ScaleCodecWriter, instance: WorldId) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

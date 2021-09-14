@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -31,10 +32,15 @@ public sealed class BlockRejectionReason {
             ScaleWriter<ConsensusBlockRejection> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection =
+            public override fun read(reader: ScaleCodecReader): ConsensusBlockRejection = try {
                 ConsensusBlockRejection()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ConsensusBlockRejection) {
+            public override fun write(writer: ScaleCodecWriter, instance: ConsensusBlockRejection) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

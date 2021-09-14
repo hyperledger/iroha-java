@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindAllDomains
@@ -15,9 +16,15 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  */
 public class FindAllDomains {
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-        public override fun read(reader: ScaleCodecReader): FindAllDomains = FindAllDomains()
+        public override fun read(reader: ScaleCodecReader): FindAllDomains = try {
+            FindAllDomains()
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains) {
+        public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains) = try {
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

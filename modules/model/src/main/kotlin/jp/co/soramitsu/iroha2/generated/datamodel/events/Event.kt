@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -31,15 +32,21 @@ public sealed class Event {
         public companion object : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Pipeline = Pipeline(
-                jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Pipeline = try {
+                Pipeline(
+                    jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Pipeline) {
+            public override fun write(writer: ScaleCodecWriter, instance: Pipeline) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.write(
                     writer,
                     instance.event
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -55,15 +62,18 @@ public sealed class Event {
         public companion object : ScaleReader<Data>, ScaleWriter<Data> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Data = Data(
-                jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.read(reader),
-            )
-
-            public override fun write(writer: ScaleCodecWriter, instance: Data) {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.write(
-                    writer,
-                    instance.event
+            public override fun read(reader: ScaleCodecReader): Data = try {
+                Data(
+                    jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Data) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Event.write(writer, instance.event)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

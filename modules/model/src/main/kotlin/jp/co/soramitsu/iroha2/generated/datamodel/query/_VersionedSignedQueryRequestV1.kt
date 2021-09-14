@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * _VersionedSignedQueryRequestV1
@@ -19,13 +20,19 @@ public data class _VersionedSignedQueryRequestV1(
     public companion object :
         ScaleReader<_VersionedSignedQueryRequestV1>,
         ScaleWriter<_VersionedSignedQueryRequestV1> {
-        public override fun read(reader: ScaleCodecReader): _VersionedSignedQueryRequestV1 =
+        public override fun read(reader: ScaleCodecReader): _VersionedSignedQueryRequestV1 = try {
             _VersionedSignedQueryRequestV1(
                 SignedQueryRequest.read(reader),
             )
-
-        public override fun write(writer: ScaleCodecWriter, instance: _VersionedSignedQueryRequestV1) {
-            SignedQueryRequest.write(writer, instance.signedQueryRequest)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
+
+        public override fun write(writer: ScaleCodecWriter, instance: _VersionedSignedQueryRequestV1) =
+            try {
+                SignedQueryRequest.write(writer, instance.signedQueryRequest)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
     }
 }

@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * Pair
@@ -18,14 +19,20 @@ public data class Pair(
     public val rightInstruction: Instruction
 ) {
     public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
-        public override fun read(reader: ScaleCodecReader): Pair = Pair(
-            Instruction.read(reader),
-            Instruction.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): Pair = try {
+            Pair(
+                Instruction.read(reader),
+                Instruction.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Pair) {
+        public override fun write(writer: ScaleCodecWriter, instance: Pair) = try {
             Instruction.write(writer, instance.leftInstruction)
             Instruction.write(writer, instance.rightInstruction)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

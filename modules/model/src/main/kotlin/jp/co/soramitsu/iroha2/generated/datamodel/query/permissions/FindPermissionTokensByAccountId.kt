@@ -9,6 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindPermissionTokensByAccountId
@@ -22,13 +23,19 @@ public data class FindPermissionTokensByAccountId(
     public companion object :
         ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
-        public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId =
+        public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
             FindPermissionTokensByAccountId(
                 EvaluatesTo.read(reader) as EvaluatesTo<Id>,
             )
-
-        public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId) {
-            EvaluatesTo.write(writer, instance.id)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId) =
+            try {
+                EvaluatesTo.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
     }
 }

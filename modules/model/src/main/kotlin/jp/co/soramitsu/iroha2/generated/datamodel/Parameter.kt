@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
 import kotlin.UInt
@@ -35,13 +36,18 @@ public sealed class Parameter {
             ScaleWriter<MaximumFaultyPeersAmount> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount =
+            public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount = try {
                 MaximumFaultyPeersAmount(
                     reader.readUint32().toUInt(),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount) {
+            public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount) = try {
                 writer.writeUint32(instance.u32.toInt())
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -57,12 +63,18 @@ public sealed class Parameter {
         public companion object : ScaleReader<BlockTime>, ScaleWriter<BlockTime> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): BlockTime = BlockTime(
-                reader.readUint128(),
-            )
+            public override fun read(reader: ScaleCodecReader): BlockTime = try {
+                BlockTime(
+                    reader.readUint128(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: BlockTime) {
+            public override fun write(writer: ScaleCodecWriter, instance: BlockTime) = try {
                 writer.writeUint128(instance.u128)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -78,12 +90,18 @@ public sealed class Parameter {
         public companion object : ScaleReader<CommitTime>, ScaleWriter<CommitTime> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): CommitTime = CommitTime(
-                reader.readUint128(),
-            )
+            public override fun read(reader: ScaleCodecReader): CommitTime = try {
+                CommitTime(
+                    reader.readUint128(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: CommitTime) {
+            public override fun write(writer: ScaleCodecWriter, instance: CommitTime) = try {
                 writer.writeUint128(instance.u128)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -101,13 +119,18 @@ public sealed class Parameter {
             ScaleWriter<TransactionReceiptTime> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): TransactionReceiptTime =
+            public override fun read(reader: ScaleCodecReader): TransactionReceiptTime = try {
                 TransactionReceiptTime(
                     reader.readUint128(),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime) {
+            public override fun write(writer: ScaleCodecWriter, instance: TransactionReceiptTime) = try {
                 writer.writeUint128(instance.u128)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
