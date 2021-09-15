@@ -70,6 +70,8 @@ class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
 
     fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = this.apply { query = Queries.findAssetsByAssetDefinitionId(assetDefinition) }
 
+    fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = this.apply { query = Queries.findAllAssetsDefinitions(assetDefinition) }
+
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 
     companion object {

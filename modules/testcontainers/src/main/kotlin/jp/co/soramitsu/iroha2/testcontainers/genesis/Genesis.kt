@@ -5,7 +5,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
-open class Genesis(val genesisBlock: RawGenesisBlock) {
+open class Genesis(open val genesisBlock: RawGenesisBlock) {
 
     fun writeToFile(path: Path) = Files.write(
         path,

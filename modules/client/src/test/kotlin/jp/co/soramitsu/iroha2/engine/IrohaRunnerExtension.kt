@@ -36,10 +36,10 @@ class IrohaRunnerExtension : InvocationInterceptor {
             .declaredAnnotations.filterIsInstance<WithIroha>()
             .firstOrNull()
             ?.let {
-                val genesis = it.value.createInstance()
+                val genesis = it.genesis.createInstance()
                 val container = IrohaContainer(genesis = genesis)
                 container.start()
-                val irohaClient = Iroha2Client(container.getApiUrl())
+                val irohaClient = Iroha2Client(container.getApiUrl(), log = true)
                 val testClassInstance = invocationContext.target.get()
                 val declaredProperties = testClassInstance::class.declaredMemberProperties
                 setPropertyValue(declaredProperties, testClassInstance, container)

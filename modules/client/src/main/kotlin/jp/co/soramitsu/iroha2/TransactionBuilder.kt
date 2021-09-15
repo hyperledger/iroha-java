@@ -119,6 +119,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantMintUserAssetsDefinition(assetDefinitionId, target)) }
 
+    fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
+
+    fun burnAsset(assetId: AssetId, value: UInt) = this.apply { instructions.value.add(Instructions.burnAsset(assetId, value)) }
+
+    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply { instructions.value.add(Instructions.burnPublicKey(accountId, pubKey)) }
+
+    fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
+
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 
     companion object {

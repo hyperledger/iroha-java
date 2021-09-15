@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
@@ -68,6 +69,12 @@ object Queries {
                     )
                 )
             )
+        )
+    }
+
+    fun findAllAssetsDefinitions(assetDefinition: DefinitionId): QueryBox.FindAllAssetsDefinitions {
+        return QueryBox.FindAllAssetsDefinitions(
+            FindAllAssetsDefinitions()
         )
     }
 }

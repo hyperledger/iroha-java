@@ -26,6 +26,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 const val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN = "can_set_key_value_in_user_assets"
 const val CAN_MINT_USER_ASSETS_DEFINITION = "can_mint_user_asset_definitions"
+const val CAN_BURN_ASSET_WITH_DEFINITION = "can_burn_asset_with_definition"
 const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
 const val ASSET_DEFINITION_PARAM_NAME = "asset_definition_id"
 
@@ -146,6 +147,21 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_MINT_USER_ASSETS_DEFINITION,
+                params = mutableMapOf(
+                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
+                        IdBox.AssetDefinitionId(
+                            assetDefinitionId
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+        return grantSome(IdBox.AccountId(target)) {
+            PermissionToken(
+                name = CAN_BURN_ASSET_WITH_DEFINITION,
                 params = mutableMapOf(
                     ASSET_DEFINITION_PARAM_NAME to Value.Id(
                         IdBox.AssetDefinitionId(
