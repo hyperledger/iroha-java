@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testcontainers.genesis
 
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction

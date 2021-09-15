@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
 import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.Network
