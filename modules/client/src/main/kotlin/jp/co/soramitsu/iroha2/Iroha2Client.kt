@@ -41,11 +41,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as
 
 class Iroha2Client(
     var peerUrl: URL,
-    val log: Boolean = false,
-    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    val log: Boolean = false
 ) : AutoCloseable {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val client = lazy {
         HttpClient(CIO) {
