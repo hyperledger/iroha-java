@@ -4,7 +4,7 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     //kotlin support
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
 
     //scale codec
@@ -25,5 +25,5 @@ dependencies {
     api project(":model")
 
     testImplementation project(":testcontainers")
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
 }
