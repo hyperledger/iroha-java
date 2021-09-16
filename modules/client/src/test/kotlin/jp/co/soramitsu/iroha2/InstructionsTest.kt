@@ -28,7 +28,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(20)
+@Timeout(30)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client
