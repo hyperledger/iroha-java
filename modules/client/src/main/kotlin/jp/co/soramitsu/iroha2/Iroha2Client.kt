@@ -34,21 +34,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
-class Iroha2Client(
-    var peerUrl: URL,
-    val log: Boolean = false
+open class Iroha2Client(
+    open var peerUrl: URL,
+    open val log: Boolean = false
 ) : AutoCloseable {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    open val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+    open val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val client = lazy {
+    open val client = lazy {
         HttpClient(CIO) {
             expectSuccess = true
             if (log) {
