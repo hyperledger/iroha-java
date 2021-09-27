@@ -34,14 +34,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withTimeout
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
@@ -90,25 +90,24 @@ open class Iroha2Client(
 
     /**
      * Sends transaction to Iroha peer and wait until it will be committed or rejected.
-     *
-     * Continuation object to resume fireAndForget in case when it's
-     * called after subscribeToTransactionStatus. We have to make sure
-     * that first we subscribed to transaction status and only after we
-     * can send transaction. It's necessary to restrict race during
-     * subscribing/sending transaction that occurs due to async
-     * subscribing process.
      */
     suspend fun sendTransaction(
         transaction: TransactionBuilder.() -> VersionedTransaction
     ): CompletableFuture<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
 
-        lateinit var continuation: Continuation<Unit>
+        val lock = Mutex(locked = true)
         subscribeToTransactionStatus(signedTransaction.hash()) {
-            continuation.resume(Unit)
+            lock.unlock()
         }.also {
-            suspendCoroutine<Unit> { continuation = it }
-            fireAndForget { signedTransaction }
+            try {
+                withTimeout(30000) {
+                    lock.lock() // waiting for unlock
+                    fireAndForget { signedTransaction }
+                }
+            } catch (e: TimeoutCancellationException) {
+                logger.debug("Transaction wasn't sent due of subscription timeout")
+            }
         }
     }
 
