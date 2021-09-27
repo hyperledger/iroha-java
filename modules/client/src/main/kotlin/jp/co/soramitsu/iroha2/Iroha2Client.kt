@@ -14,6 +14,8 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
+import java.net.URL
+import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -32,16 +34,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.suspendCancellableCoroutine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
-import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
@@ -69,22 +69,6 @@ open class Iroha2Client(
     }
 
     /**
-     * Used in sendTransaction.
-     *
-     * Continuation object to resume fireAndForget in case when it's
-     * called after subscribeToTransactionStatus. We have to make sure
-     * that first we subscribed to transaction status and only after we
-     * can send transaction. It's necessary to restrict race during
-     * subscribing/sending transaction that occurs due to async
-     * subscribing process
-     *
-     * @see sendTransaction
-     * @see subscribeToTransactionStatus
-     * @see fireAndForget
-     */
-    private var sendTransactionContinuation: Continuation<Unit>? = null
-
-    /**
      * Sends transaction to Iroha peer
      *
      * The method only sends transaction to peer and do not await it final committing status. It means when peer
@@ -105,15 +89,25 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends transaction to Iroha peer and wait until it will be committed or rejected
+     * Sends transaction to Iroha peer and wait until it will be committed or rejected.
+     *
+     * Continuation object to resume fireAndForget in case when it's
+     * called after subscribeToTransactionStatus. We have to make sure
+     * that first we subscribed to transaction status and only after we
+     * can send transaction. It's necessary to restrict race during
+     * subscribing/sending transaction that occurs due to async
+     * subscribing process.
      */
     suspend fun sendTransaction(
         transaction: TransactionBuilder.() -> VersionedTransaction
     ): CompletableFuture<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
 
-        subscribeToTransactionStatus(signedTransaction.hash()).also {
-            suspendCancellableCoroutine<Unit> { c -> sendTransactionContinuation = c }
+        lateinit var continuation: Continuation<Unit>
+        subscribeToTransactionStatus(signedTransaction.hash()) {
+            continuation.resume(Unit)
+        }.also {
+            suspendCoroutine<Unit> { continuation = it }
             fireAndForget { signedTransaction }
         }
     }
@@ -138,7 +132,16 @@ open class Iroha2Client(
         return rawBody.decode(QueryResult).let(extractor::extract)
     }
 
-    fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
+    fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
+
+    /**
+     * @param hash - Signed transaction hash
+     * @param afterSubscription - Expression that is invoked after subscription
+     */
+    private fun subscribeToTransactionStatus(
+        hash: ByteArray,
+        afterSubscription: (() -> Unit)? = null
+    ): CompletableFuture<ByteArray> {
         val hexHash = hash.hex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
         val subscriptionRequest = VersionedEventSocketMessage.V1(
@@ -165,8 +168,7 @@ open class Iroha2Client(
 
                 send(payload)
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
-                sendTransactionContinuation?.resume(Unit)
-                sendTransactionContinuation = null
+                afterSubscription?.invoke()
 
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
@@ -183,7 +185,11 @@ open class Iroha2Client(
                                     }
                                     is Status.Rejected -> {
                                         val rejectionReason = getRejectionReason(status.rejectionReason)
-                                        logger.error("Transaction {} was rejected by reason: `{}`", hexHash, rejectionReason)
+                                        logger.error(
+                                            "Transaction {} was rejected by reason: `{}`",
+                                            hexHash,
+                                            rejectionReason
+                                        )
                                         result.completeExceptionally(TransactionRejectedException("Transaction rejected with reason '$rejectionReason'"))
                                         ack(this)
                                         break
