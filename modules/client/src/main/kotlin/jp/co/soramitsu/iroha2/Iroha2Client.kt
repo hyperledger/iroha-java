@@ -34,10 +34,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
@@ -65,6 +69,22 @@ open class Iroha2Client(
     }
 
     /**
+     * Used in sendTransaction.
+     *
+     * Continuation object to resume fireAndForget in case when it's
+     * called after subscribeToTransactionStatus. We have to make sure
+     * that first we subscribed to transaction status and only after we
+     * can send transaction. It's necessary to restrict race during
+     * subscribing/sending transaction that occurs due to async
+     * subscribing process
+     *
+     * @see sendTransaction
+     * @see subscribeToTransactionStatus
+     * @see fireAndForget
+     */
+    private var sendTransactionContinuation: Continuation<Unit>? = null
+
+    /**
      * Sends transaction to Iroha peer
      *
      * The method only sends transaction to peer and do not await it final committing status. It means when peer
@@ -85,12 +105,17 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends transaction to Iroha peer and await until it will be committed or rejected
+     * Sends transaction to Iroha peer and wait until it will be committed or rejected
      */
-    fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
+    suspend fun sendTransaction(
+        transaction: TransactionBuilder.() -> VersionedTransaction
+    ): CompletableFuture<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
-        return subscribeToTransactionStatus(signedTransaction.hash())
-            .also { fireAndForget { signedTransaction } }
+
+        subscribeToTransactionStatus(signedTransaction.hash()).also {
+            suspendCancellableCoroutine<Unit> { c -> sendTransactionContinuation = c }
+            fireAndForget { signedTransaction }
+        }
     }
 
     fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
@@ -137,8 +162,12 @@ open class Iroha2Client(
                 path = WS_ENDPOINT
             ) {
                 logger.debug("WebSocket opened")
+
                 send(payload)
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                sendTransactionContinuation?.resume(Unit)
+                sendTransactionContinuation = null
+
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
                     when (val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
