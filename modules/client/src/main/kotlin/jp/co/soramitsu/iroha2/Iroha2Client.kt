@@ -32,8 +32,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -85,12 +87,20 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends transaction to Iroha peer and await until it will be committed or rejected
+     * Sends transaction to Iroha peer and wait until it will be committed or rejected.
      */
-    fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
+    suspend fun sendTransaction(
+        transaction: TransactionBuilder.() -> VersionedTransaction
+    ): CompletableFuture<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
-        return subscribeToTransactionStatus(signedTransaction.hash())
-            .also { fireAndForget { signedTransaction } }
+
+        val lock = Mutex(locked = true)
+        subscribeToTransactionStatus(signedTransaction.hash()) {
+            lock.unlock()
+        }.also {
+            lock.lock() // waiting for unlock
+            fireAndForget { signedTransaction }
+        }
     }
 
     fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
@@ -113,7 +123,16 @@ open class Iroha2Client(
         return rawBody.decode(QueryResult).let(extractor::extract)
     }
 
-    fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
+    fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
+
+    /**
+     * @param hash - Signed transaction hash
+     * @param afterSubscription - Expression that is invoked after subscription
+     */
+    private fun subscribeToTransactionStatus(
+        hash: ByteArray,
+        afterSubscription: (() -> Unit)? = null
+    ): CompletableFuture<ByteArray> {
         val hexHash = hash.hex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
         val subscriptionRequest = VersionedEventSocketMessage.V1(
@@ -137,8 +156,11 @@ open class Iroha2Client(
                 path = WS_ENDPOINT
             ) {
                 logger.debug("WebSocket opened")
+
                 send(payload)
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                afterSubscription?.invoke()
+
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
                     when (val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
@@ -154,7 +176,11 @@ open class Iroha2Client(
                                     }
                                     is Status.Rejected -> {
                                         val rejectionReason = getRejectionReason(status.rejectionReason)
-                                        logger.error("Transaction {} was rejected by reason: `{}`", hexHash, rejectionReason)
+                                        logger.error(
+                                            "Transaction {} was rejected by reason: `{}`",
+                                            hexHash,
+                                            rejectionReason
+                                        )
                                         result.completeExceptionally(TransactionRejectedException("Transaction rejected with reason '$rejectionReason'"))
                                         ack(this)
                                         break
