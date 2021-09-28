@@ -14,8 +14,6 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
-import java.net.URL
-import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -34,14 +32,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.withTimeout
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.net.URL
+import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
@@ -100,14 +98,8 @@ open class Iroha2Client(
         subscribeToTransactionStatus(signedTransaction.hash()) {
             lock.unlock()
         }.also {
-            try {
-                withTimeout(30000) {
-                    lock.lock() // waiting for unlock
-                    fireAndForget { signedTransaction }
-                }
-            } catch (e: TimeoutCancellationException) {
-                logger.debug("Transaction wasn't sent due of subscription timeout")
-            }
+            lock.lock() // waiting for unlock
+            fireAndForget { signedTransaction }
         }
     }
 
@@ -167,6 +159,8 @@ open class Iroha2Client(
 
                 send(payload)
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                // call some callback after subscription was accepted
+                // it can be releasing the mutex to allow sending transaction to peer
                 afterSubscription?.invoke()
 
                 logger.debug("Subscription was accepted by peer")
