@@ -198,10 +198,10 @@ open class Iroha2Client(
                             )
                         )
                     }
-                    logger.debug("WebSocket is closing")
-                    this.close()
-                    logger.debug("WebSocket closed")
                 }
+                logger.debug("WebSocket is closing")
+                this.close()
+                logger.debug("WebSocket closed")
             }
         }
         return result
