@@ -4,6 +4,7 @@ import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
+import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
@@ -70,7 +71,7 @@ class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
 
     fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = this.apply { query = Queries.findAssetsByAssetDefinitionId(assetDefinition) }
 
-    fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = this.apply { query = Queries.findAllAssetsDefinitions(assetDefinition) }
+    fun findAllAssetsDefinitions() = this.apply { query = Queries.findAllAssetsDefinitions() }
 
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 

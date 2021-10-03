@@ -69,7 +69,7 @@ class InstructionsTest {
 
         val assetDefinitions = client.sendQuery(AssetDefinitionsExtractor) {
             accountId = ALICE_ACCOUNT_ID
-            findAllAssetsDefinitions(DEFAULT_ASSET_DEFINITION_ID)
+            findAllAssetsDefinitions()
             buildSigned(ALICE_KEYPAIR)
         }
         assertFalse { assetDefinitions.isEmpty() }
