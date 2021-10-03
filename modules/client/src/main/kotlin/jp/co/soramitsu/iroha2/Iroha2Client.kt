@@ -34,7 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -73,16 +72,14 @@ open class Iroha2Client(
      * response with 2xx status code the peer only accepted transaction and the transaction passed stateless
      * validation. Further state of the transaction is not tracked.
      */
-    fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
+    suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.hex())
-        runBlocking {
-            val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
-                body = signedTransaction.encode(VersionedTransaction)
-            }
-            response.receive<Unit>()
+        val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
+            body = signedTransaction.encode(VersionedTransaction)
         }
+        response.receive<Unit>()
         return hash
     }
 
@@ -103,24 +100,16 @@ open class Iroha2Client(
         }
     }
 
-    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
-
     /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
      */
-    fun <T> sendQuery(extractor: ResultExtractor<T>, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
+    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
-        val signedQuery = query(QueryBuilder.builder())
-
-        val rawBody = runBlocking {
-            val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
-                this.body = signedQuery.encode(VersionedSignedQueryRequest)
-            }
-            response.receive<ByteArray>()
+        val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
+            this.body = queryAndExtractor.query.encode(VersionedSignedQueryRequest)
         }
-        logger.debug("Received binary query: {}", rawBody.hex())
-        return rawBody.decode(QueryResult).let(extractor::extract)
+        return response.receive<ByteArray>().decode(QueryResult).let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
