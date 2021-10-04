@@ -6,7 +6,6 @@ import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
+import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -34,7 +34,7 @@ class InstructionsTest {
     lateinit var client: Iroha2Client
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `register account instruction committed`() {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         Assertions.assertDoesNotThrow {
@@ -52,7 +52,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `register asset instruction committed`() {
         Assertions.assertDoesNotThrow {
             client.sendTransaction {
@@ -72,7 +72,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `store asset instruction committed`() {
         val pair1 = "key1" to "bar".asValue()
         val pair2 = "key2" to true.asValue()
@@ -116,7 +116,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `grant access to asset key-value committed`() {
         val aliceAssetId = DEFAULT_ASSET_ID
         val bobAccountId = AccountId("bob", DEFAULT_DOMAIN_NAME)
@@ -162,7 +162,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `mint asset instruction committed`() {
         // currently Iroha2 does not support registering an asset and minting the asset in the same transaction,
         // so below 2 separate transaction created
@@ -219,7 +219,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `burn public key instruction committed`() {
         val alicePubKey = ALICE_KEYPAIR.public.toIrohaPublicKey()
         // check public key before burn it
@@ -247,5 +247,39 @@ class InstructionsTest {
                 buildSigned(ALICE_KEYPAIR)
             }
         }
+    }
+
+    @Test
+    @WithIroha
+    fun `find all accounts`() {
+        val newAccountName = "foo"
+        Assertions.assertDoesNotThrow {
+            client.sendTransaction {
+                accountId = ALICE_ACCOUNT_ID
+                registerAccount(
+                    AccountId(newAccountName, DEFAULT_DOMAIN_NAME),
+                    mutableListOf()
+                )
+                buildSigned(ALICE_KEYPAIR)
+            }.get(10, TimeUnit.SECONDS)
+        }
+        val accounts = client.sendQuery(AccountsExtractor) {
+            accountId = ALICE_ACCOUNT_ID
+            findAllAccounts()
+            buildSigned(ALICE_KEYPAIR)
+        }
+        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
+        assert(accounts.any { it.id.name == newAccountName })
+    }
+
+    @Test
+    @WithIroha
+    fun `find accounts by name`() {
+        val accounts = client.sendQuery(AccountsExtractor) {
+            accountId = ALICE_ACCOUNT_ID
+            findAccountsByName(ALICE_ACCOUNT_NAME)
+            buildSigned(ALICE_KEYPAIR)
+        }
+        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
     }
 }

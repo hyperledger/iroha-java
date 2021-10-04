@@ -62,7 +62,13 @@ class QueryBuilder(builder: QueryBuilder.() -> Unit = {}) {
         )
     }
 
+    fun findAllAccounts() = this.apply { query = Queries.findAllAccounts() }
+
     fun findAccountById(accountId: AccountId) = this.apply { query = Queries.findAccountById(accountId) }
+
+    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) = this.apply { query = Queries.findAccountKeyValueByIdAndKey(accountId, key) }
+
+    fun findAccountsByName(name: String) = this.apply { query = Queries.findAccountsByName(name) }
 
     fun findAssetById(assetId: AssetId) = this.apply { query = Queries.findAssetById(assetId) }
 
