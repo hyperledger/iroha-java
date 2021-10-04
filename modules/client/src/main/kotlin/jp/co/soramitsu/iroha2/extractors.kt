@@ -33,6 +33,12 @@ object AccountExtractor : ResultExtractor<Account> {
     }
 }
 
+object AccountsExtractor : ResultExtractor<List<Account>> {
+    override fun extract(result: QueryResult): List<Account> {
+        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Account::account) }
+    }
+}
+
 object AssetsExtractor : ResultExtractor<List<Asset>> {
     override fun extract(result: QueryResult): List<Asset> {
         return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Asset::asset) }
@@ -42,6 +48,12 @@ object AssetsExtractor : ResultExtractor<List<Asset>> {
 object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
     override fun extract(result: QueryResult): List<AssetDefinition> {
         return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition) }
+    }
+}
+
+object ValueExtractor : ResultExtractor<Value> {
+    override fun extract(result: QueryResult): Value {
+        return result.value
     }
 }
 
