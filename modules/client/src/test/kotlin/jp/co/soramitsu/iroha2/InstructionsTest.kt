@@ -6,7 +6,6 @@ import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -35,7 +34,7 @@ class InstructionsTest {
     lateinit var client: Iroha2Client
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         client.sendTransaction {
@@ -54,7 +53,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `register asset instruction committed`(): Unit = runBlocking {
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -76,7 +75,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `store asset instruction committed`(): Unit = runBlocking {
         val pair1 = "key1" to "bar".asValue()
         val pair2 = "key2" to true.asValue()
@@ -121,7 +120,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
         val bobAccountId = AccountId("bob", DEFAULT_DOMAIN_NAME)
@@ -170,7 +169,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `mint asset instruction committed`(): Unit = runBlocking {
         // currently Iroha2 does not support registering an asset and minting the asset in the same transaction,
         // so below 2 separate transaction created
@@ -227,7 +226,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha
     fun `burn public key instruction committed`(): Unit = runBlocking {
         val alicePubKey = ALICE_KEYPAIR.public.toIrohaPublicKey()
         // check public key before burn it

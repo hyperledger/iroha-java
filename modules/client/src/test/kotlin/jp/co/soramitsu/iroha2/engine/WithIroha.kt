@@ -10,4 +10,4 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Test
 @Inherited
-annotation class WithIroha(val genesis: KClass<out Genesis>)
+annotation class WithIroha(val genesis: KClass<out Genesis> = DefaultGenesis::class)

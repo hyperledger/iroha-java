@@ -71,7 +71,11 @@ object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>> {
 
 object MetadataSerializer : JsonSerializer<Metadata> {
     override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
-        return context.serialize(src.map)
+        val jsonObject = JsonObject()
+        src.map.forEach { (key, value) ->
+            jsonObject.add(key, EnumerationSerializer.serialize(value, null, context))
+        }
+        return jsonObject
     }
 }
 
