@@ -72,8 +72,6 @@ object Queries {
         )
     }
 
-//    fun findAccountsByDomainName
-
     fun findAssetById(assetId: AssetId): QueryBox.FindAssetById {
         return QueryBox.FindAssetById(
             FindAssetById(
