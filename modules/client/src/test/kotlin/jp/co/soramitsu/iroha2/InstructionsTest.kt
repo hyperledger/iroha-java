@@ -47,11 +47,10 @@ class InstructionsTest {
                 it.get(10, TimeUnit.SECONDS)
             }
         }
-        client.sendQuery(AccountExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountById(newAccountId)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val query = QueryBuilder.findAccountById(newAccountId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        client.sendQuery(query)
     }
 
     @Test
@@ -67,11 +66,10 @@ class InstructionsTest {
             }
         }
 
-        val assetDefinitions = client.sendQuery(AssetDefinitionsExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAllAssetsDefinitions(DEFAULT_ASSET_DEFINITION_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val query = QueryBuilder.findAllAssetsDefinitions()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val assetDefinitions = client.sendQuery(query)
         assertFalse { assetDefinitions.isEmpty() }
         assetDefinitions.find { it.id == DEFAULT_ASSET_DEFINITION_ID }
             ?: fail("Expected query response contains assetDefinition $DEFAULT_ASSET_DEFINITION_ID, but it is not. Response was $assetDefinitions")
@@ -97,11 +95,10 @@ class InstructionsTest {
             }
         }
 
-        val asset = client.sendQuery(AssetExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAssetById(DEFAULT_ASSET_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val findAssetByIdQry = QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val asset = client.sendQuery(findAssetByIdQry)
 
         assertEquals(DEFAULT_ASSET_ID.definitionId.name, asset.id.definitionId.name)
         assertEquals(DEFAULT_ASSET_ID.definitionId.domainName, asset.id.definitionId.domainName)
@@ -115,11 +112,11 @@ class InstructionsTest {
         }
 
         // try to find saved assets by domain name
-        val assetsByDomainName = client.sendQuery(AssetsExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAssetsByDomainName(DEFAULT_DOMAIN_NAME)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val findAssetsByDomainNameQry = QueryBuilder.findAssetsByDomainName(DEFAULT_DOMAIN_NAME)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val assetsByDomainName = client.sendQuery(findAssetsByDomainNameQry)
+        assertEquals(1, assetsByDomainName.size)
         assertEquals(asset, assetsByDomainName.first())
     }
 
@@ -157,11 +154,10 @@ class InstructionsTest {
             }
         }
 
-        val asset = client.sendQuery(AssetExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAssetById(aliceAssetId)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val query = QueryBuilder.findAssetById(aliceAssetId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val asset = client.sendQuery(query)
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
         assertEquals(aliceAssetId.definitionId.domainName, asset.id.definitionId.domainName)
@@ -198,11 +194,10 @@ class InstructionsTest {
             }
         }
 
-        val result = client.sendQuery(AccountExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountById(ALICE_ACCOUNT_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val result = client.sendQuery(query)
         assertEquals(5U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
     }
 
@@ -210,11 +205,10 @@ class InstructionsTest {
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `burn asset instruction committed`(): Unit = runBlocking {
         // check balance before burn
-        var result = client.sendQuery(AccountExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountById(ALICE_ACCOUNT_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        var result = client.sendQuery(query)
         assertEquals(100U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
 
         client.sendTransaction {
@@ -228,11 +222,7 @@ class InstructionsTest {
         }
 
         // check balance after burn
-        result = client.sendQuery(AccountExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountById(ALICE_ACCOUNT_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }
+        result = client.sendQuery(query)
         assertEquals(50U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
     }
 
@@ -241,11 +231,10 @@ class InstructionsTest {
     fun `burn public key instruction committed`(): Unit = runBlocking {
         val alicePubKey = ALICE_KEYPAIR.public.toIrohaPublicKey()
         // check public key before burn it
-        val signatories = client.sendQuery(AccountExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountById(ALICE_ACCOUNT_ID)
-            buildSigned(ALICE_KEYPAIR)
-        }.signatories
+        val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val signatories = client.sendQuery(query).signatories
         assertEquals(1, signatories.size)
         assertContentEquals(alicePubKey.payload, signatories.first().payload)
 
@@ -261,11 +250,7 @@ class InstructionsTest {
 
         // if keys was burned, then peer should return an error due cannot verify signature
         assertFails {
-            client.sendQuery(AccountExtractor) {
-                accountId = ALICE_ACCOUNT_ID
-                findAccountById(ALICE_ACCOUNT_ID)
-                buildSigned(ALICE_KEYPAIR)
-            }
+            client.sendQuery(query)
         }
     }
 }
