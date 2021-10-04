@@ -253,37 +253,4 @@ class InstructionsTest {
             client.sendQuery(query)
         }
     }
-
-    @Test
-    @WithIroha
-    fun `find all accounts`(): Unit = runBlocking {
-        val newAccountName = "foo"
-        client.sendTransaction {
-            account(ALICE_ACCOUNT_ID)
-            registerAccount(
-                AccountId(newAccountName, DEFAULT_DOMAIN_NAME),
-                mutableListOf()
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.get(10, TimeUnit.SECONDS)
-
-        val query = QueryBuilder.findAllAccounts()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val accounts = client.sendQuery(query)
-
-        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
-        assert(accounts.any { it.id.name == newAccountName })
-    }
-
-    @Test
-    @WithIroha
-    fun `find accounts by name`(): Unit = runBlocking {
-        val query = QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val accounts = client.sendQuery(query)
-
-        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
-    }
 }
