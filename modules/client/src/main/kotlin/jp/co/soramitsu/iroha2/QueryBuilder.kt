@@ -56,6 +56,21 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 
     companion object {
+        fun findAllAccounts() = QueryBuilder(
+            Queries.findAllAccounts(),
+            AccountsExtractor
+        )
+
+        fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) = QueryBuilder(
+            Queries.findAccountKeyValueByIdAndKey(accountId, key),
+            ValueExtractor
+        )
+
+        fun findAccountsByName(name: String) = QueryBuilder(
+            Queries.findAccountsByName(name),
+            AccountsExtractor
+        )
+
         fun findAllAssetsDefinitions() = QueryBuilder(
             Queries.findAllAssetsDefinitions(),
             AssetDefinitionsExtractor

@@ -256,35 +256,34 @@ class InstructionsTest {
 
     @Test
     @WithIroha
-    fun `find all accounts`() {
+    fun `find all accounts`(): Unit = runBlocking {
         val newAccountName = "foo"
-        Assertions.assertDoesNotThrow {
-            client.sendTransaction {
-                accountId = ALICE_ACCOUNT_ID
-                registerAccount(
-                    AccountId(newAccountName, DEFAULT_DOMAIN_NAME),
-                    mutableListOf()
-                )
-                buildSigned(ALICE_KEYPAIR)
-            }.get(10, TimeUnit.SECONDS)
-        }
-        val accounts = client.sendQuery(AccountsExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAllAccounts()
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAccount(
+                AccountId(newAccountName, DEFAULT_DOMAIN_NAME),
+                mutableListOf()
+            )
             buildSigned(ALICE_KEYPAIR)
-        }
+        }.get(10, TimeUnit.SECONDS)
+
+        val query = QueryBuilder.findAllAccounts()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val accounts = client.sendQuery(query)
+
         assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
         assert(accounts.any { it.id.name == newAccountName })
     }
 
     @Test
     @WithIroha
-    fun `find accounts by name`() {
-        val accounts = client.sendQuery(AccountsExtractor) {
-            accountId = ALICE_ACCOUNT_ID
-            findAccountsByName(ALICE_ACCOUNT_NAME)
-            buildSigned(ALICE_KEYPAIR)
-        }
+    fun `find accounts by name`(): Unit = runBlocking {
+        val query = QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val accounts = client.sendQuery(query)
+
         assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
     }
 }
