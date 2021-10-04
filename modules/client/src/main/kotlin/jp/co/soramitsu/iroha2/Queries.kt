@@ -75,6 +75,37 @@ object Queries {
         )
     }
 
+    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String): QueryBox.FindAccountKeyValueByIdAndKey {
+        return QueryBox.FindAccountKeyValueByIdAndKey(
+            FindAccountKeyValueByIdAndKey(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AccountId(accountId)
+                        )
+                    )
+                ),
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(key)
+                    )
+                )
+            )
+        )
+    }
+
+    fun findAccountsByName(name: String): QueryBox.FindAccountsByName {
+        return QueryBox.FindAccountsByName(
+            FindAccountsByName(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(name)
+                    )
+                )
+            )
+        )
+    }
+
     fun findAccountsByDomainName(domain: String): QueryBox.FindAccountsByDomainName {
         return QueryBox.FindAccountsByDomainName(
             FindAccountsByDomainName(

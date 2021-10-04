@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.engine
 import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
@@ -34,6 +35,25 @@ open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
             )
         )
     }
+}
+
+open class NewAccountWithMetadata : DefaultGenesis() {
+    companion object {
+        const val ACCOUNT_NAME = "foo"
+        const val KEY = "key"
+
+        val VALUE = "value".asValue()
+        val ACCOUNT_ID = Id(ACCOUNT_NAME, DEFAULT_DOMAIN_NAME)
+        val KEYPAIR = generateKeyPair()
+    }
+
+    override val genesisBlock = super.genesisBlock.plus(
+        Instructions.registerAccount(
+            id = ACCOUNT_ID,
+            signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
+            metadata = Metadata(mutableMapOf(KEY to VALUE))
+        )
+    )
 }
 
 open class FewAssets : DefaultGenesis() {
