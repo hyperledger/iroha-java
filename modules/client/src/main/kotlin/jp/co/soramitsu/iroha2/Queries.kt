@@ -114,7 +114,7 @@ object Queries {
         )
     }
 
-    fun findAllAssetsDefinitions(assetDefinition: DefinitionId): QueryBox.FindAllAssetsDefinitions {
+    fun findAllAssetsDefinitions(): QueryBox.FindAllAssetsDefinitions {
         return QueryBox.FindAllAssetsDefinitions(
             FindAllAssetsDefinitions()
         )

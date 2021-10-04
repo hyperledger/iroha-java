@@ -32,8 +32,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -71,49 +72,56 @@ open class Iroha2Client(
      * response with 2xx status code the peer only accepted transaction and the transaction passed stateless
      * validation. Further state of the transaction is not tracked.
      */
-    fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
+    suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.hex())
-        runBlocking {
-            val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
-                body = signedTransaction.encode(VersionedTransaction)
-            }
-            response.receive<Unit>()
+        val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
+            body = signedTransaction.encode(VersionedTransaction)
         }
+        response.receive<Unit>()
         return hash
     }
 
     /**
-     * Sends transaction to Iroha peer and await until it will be committed or rejected
+     * Sends transaction to Iroha peer and wait until it will be committed or rejected.
      */
-    fun sendTransaction(transaction: TransactionBuilder.() -> VersionedTransaction): CompletableFuture<ByteArray> {
+    suspend fun sendTransaction(
+        transaction: TransactionBuilder.() -> VersionedTransaction
+    ): CompletableFuture<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
-        return subscribeToTransactionStatus(signedTransaction.hash())
-            .also { fireAndForget { signedTransaction } }
-    }
 
-    fun sendQuery(query: QueryBuilder.() -> VersionedSignedQueryRequest): QueryResult = sendQuery(AsIs, query)
+        val lock = Mutex(locked = true)
+        subscribeToTransactionStatus(signedTransaction.hash()) {
+            lock.unlock()
+        }.also {
+            lock.lock() // waiting for unlock
+            fireAndForget { signedTransaction }
+        }
+    }
 
     /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
      */
-    fun <T> sendQuery(extractor: ResultExtractor<T>, query: QueryBuilder.() -> VersionedSignedQueryRequest): T {
+    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
-        val signedQuery = query(QueryBuilder.builder())
-
-        val rawBody = runBlocking {
-            val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
-                this.body = signedQuery.encode(VersionedSignedQueryRequest)
-            }
-            response.receive<ByteArray>()
+        val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
+            this.body = queryAndExtractor.query.encode(VersionedSignedQueryRequest)
         }
-        logger.debug("Received binary query: {}", rawBody.hex())
-        return rawBody.decode(QueryResult).let(extractor::extract)
+        return response.receive<ByteArray>().decode(QueryResult).let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
-    fun subscribeToTransactionStatus(hash: ByteArray): CompletableFuture<ByteArray> {
+    fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
+
+    /**
+     * @param hash - Signed transaction hash
+     * @param afterSubscription - Expression that is invoked after subscription
+     */
+    private fun subscribeToTransactionStatus(
+        hash: ByteArray,
+        afterSubscription: (() -> Unit)? = null
+    ): CompletableFuture<ByteArray> {
         val hexHash = hash.hex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
         val subscriptionRequest = VersionedEventSocketMessage.V1(
@@ -137,8 +145,11 @@ open class Iroha2Client(
                 path = WS_ENDPOINT
             ) {
                 logger.debug("WebSocket opened")
+
                 send(payload)
                 tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                afterSubscription?.invoke()
+
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
                     when (val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
@@ -154,7 +165,11 @@ open class Iroha2Client(
                                     }
                                     is Status.Rejected -> {
                                         val rejectionReason = getRejectionReason(status.rejectionReason)
-                                        logger.error("Transaction {} was rejected by reason: `{}`", hexHash, rejectionReason)
+                                        logger.error(
+                                            "Transaction {} was rejected by reason: `{}`",
+                                            hexHash,
+                                            rejectionReason
+                                        )
                                         result.completeExceptionally(TransactionRejectedException("Transaction rejected with reason '$rejectionReason'"))
                                         ack(this)
                                         break
@@ -172,10 +187,10 @@ open class Iroha2Client(
                             )
                         )
                     }
-                    logger.debug("WebSocket is closing")
-                    this.close()
-                    logger.debug("WebSocket closed")
                 }
+                logger.debug("WebSocket is closing")
+                this.close()
+                logger.debug("WebSocket closed")
             }
         }
         return result
