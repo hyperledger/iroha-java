@@ -36,17 +36,17 @@ open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
     }
 }
 
-open class FewAssets : DefaultGenesis() {
+open class MultipleAssets : DefaultGenesis() {
     companion object {
-        val DEFINITION_ID1 = DefinitionId("name1", DEFAULT_DOMAIN_NAME)
-        val DEFINITION_ID2 = DefinitionId("name2", DEFAULT_DOMAIN_NAME)
+        val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
+        val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
     }
 
     override val genesisBlock = super.genesisBlock.plus(
-        Instructions.registerAsset(DEFINITION_ID1, AssetValueType.Quantity()),
-        Instructions.mintAsset(AssetId(DEFINITION_ID1, ALICE_ACCOUNT_ID), 1U),
-        Instructions.registerAsset(DEFINITION_ID2, AssetValueType.Quantity()),
-        Instructions.mintAsset(AssetId(DEFINITION_ID2, ALICE_ACCOUNT_ID), 1U)
+        Instructions.registerAsset(XOR_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.mintAsset(AssetId(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID), 1U),
+        Instructions.registerAsset(VAL_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.mintAsset(AssetId(VAL_DEFINITION_ID, ALICE_ACCOUNT_ID), 1U)
     )
 }
 

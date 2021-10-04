@@ -4,8 +4,8 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
-import jp.co.soramitsu.iroha2.engine.FewAssets
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.MultipleAssets
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import kotlinx.coroutines.runBlocking
@@ -80,7 +80,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha(FewAssets::class)
+    @WithIroha(MultipleAssets::class)
     fun `find all assets`(): Unit = runBlocking {
         QueryBuilder.findAllAssets()
             .account(ALICE_ACCOUNT_ID)
@@ -88,21 +88,21 @@ class QueriesTest {
             .let { query ->
                 client.sendQuery(query)
             }.also { assets ->
-                assert(assets.any { it.id.definitionId == FewAssets.DEFINITION_ID1 })
-                assert(assets.any { it.id.definitionId == FewAssets.DEFINITION_ID2 })
+                assert(assets.any { it.id.definitionId == MultipleAssets.XOR_DEFINITION_ID })
+                assert(assets.any { it.id.definitionId == MultipleAssets.VAL_DEFINITION_ID })
             }
     }
 
     @Test
-    @WithIroha(FewAssets::class)
+    @WithIroha(MultipleAssets::class)
     fun `find assets by name`(): Unit = runBlocking {
-        QueryBuilder.findAssetsByName(FewAssets.DEFINITION_ID1.name)
+        QueryBuilder.findAssetsByName(MultipleAssets.XOR_DEFINITION_ID.name)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
             }.also { assets ->
-                assert(assets.all { it.id.definitionId.name == FewAssets.DEFINITION_ID1.name })
+                assert(assets.all { it.id.definitionId.name == MultipleAssets.XOR_DEFINITION_ID.name })
             }
     }
 }
