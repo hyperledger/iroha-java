@@ -14,6 +14,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
@@ -164,21 +166,21 @@ object Queries {
     }
 
     fun findAssetsByDomainNameAndAssetDefinitionId(
-        domainName: String,
+        domain: String,
         assetDefinition: DefinitionId
     ): QueryBox.FindAssetsByDomainNameAndAssetDefinitionId {
         return QueryBox.FindAssetsByDomainNameAndAssetDefinitionId(
             FindAssetsByDomainNameAndAssetDefinitionId(
                 EvaluatesTo(
                     Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetDefinitionId(assetDefinition)
-                        )
+                        Value.String(domain)
                     )
                 ),
                 EvaluatesTo(
                     Expression.Raw(
-                        Value.String(domainName)
+                        Value.Id(
+                            IdBox.AssetDefinitionId(assetDefinition)
+                        )
                     )
                 )
             )
@@ -188,6 +190,39 @@ object Queries {
     fun findAllAssetsDefinitions(): QueryBox.FindAllAssetsDefinitions {
         return QueryBox.FindAllAssetsDefinitions(
             FindAllAssetsDefinitions()
+        )
+    }
+
+    fun findAssetQuantityById(assetId: AssetId): QueryBox.FindAssetQuantityById {
+        return QueryBox.FindAssetQuantityById(
+            FindAssetQuantityById(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AssetId(assetId)
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String): QueryBox.FindAssetKeyValueByIdAndKey {
+        return QueryBox.FindAssetKeyValueByIdAndKey(
+            FindAssetKeyValueByIdAndKey(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AssetId(assetId)
+                        )
+                    )
+                ),
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(key)
+                    )
+                )
+            )
         )
     }
 }

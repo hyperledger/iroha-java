@@ -1,5 +1,8 @@
 package jp.co.soramitsu.iroha2
 
+import java.math.BigInteger
+import java.security.KeyPair
+import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
@@ -7,10 +10,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
-import java.math.BigInteger
-import java.security.KeyPair
-import java.time.Instant
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -123,6 +122,24 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
                 Queries.findAssetsByAssetDefinitionId(assetDefinition),
                 AssetDefinitionsExtractor
             )
+
+        fun findAssetsByDomainNameAndAssetDefinitionId(
+            domain: String,
+            assetDefinition: DefinitionId
+        ) = QueryBuilder(
+            Queries.findAssetsByDomainNameAndAssetDefinitionId(domain, assetDefinition),
+            AssetsExtractor
+        )
+
+        fun findAssetQuantityById(assetId: AssetId) = QueryBuilder(
+            Queries.findAssetQuantityById(assetId),
+            U32Extractor
+        )
+
+        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) = QueryBuilder(
+            Queries.findAssetKeyValueByIdAndKey(assetId, key),
+            ValueExtractor
+        )
     }
 }
 

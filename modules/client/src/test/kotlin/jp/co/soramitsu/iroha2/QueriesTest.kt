@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.MultipleAssets
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
@@ -116,6 +117,53 @@ class QueriesTest {
                 client.sendQuery(query)
             }.also { assets ->
                 assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
+            }
+    }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find assets by domain name and asset definition id`(): Unit = runBlocking {
+        QueryBuilder.findAssetsByDomainNameAndAssetDefinitionId(
+            DEFAULT_DOMAIN_NAME,
+            MultipleAssets.XOR_DEFINITION_ID
+        )
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { assets ->
+                assert(assets.all { it.id.definitionId == MultipleAssets.XOR_DEFINITION_ID })
+                assert(assets.all { it.id.accountId.domainName == DEFAULT_DOMAIN_NAME })
+            }
+    }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find asset quantity by id`(): Unit = runBlocking {
+        val assetId = Id(MultipleAssets.XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
+        QueryBuilder.findAssetQuantityById(assetId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { quantity ->
+                assert(quantity == MultipleAssets.XOR_QUANTITY)
+            }
+    }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find asset key value by id and key`(): Unit = runBlocking {
+        QueryBuilder.findAssetKeyValueByIdAndKey(
+            MultipleAssets.FOO_ASSET_ID,
+            MultipleAssets.FOO_ASSET_KEY
+        )
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { value ->
+                assert(value == MultipleAssets.FOO_ASSET_VALUE)
             }
     }
 }
