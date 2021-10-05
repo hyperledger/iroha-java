@@ -5,6 +5,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
+import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 
 interface ResultExtractor<T> {
@@ -48,6 +50,24 @@ object AssetsExtractor : ResultExtractor<List<Asset>> {
 object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
     override fun extract(result: QueryResult): List<AssetDefinition> {
         return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition) }
+    }
+}
+
+object DomainExtractor : ResultExtractor<Domain> {
+    override fun extract(result: QueryResult): Domain {
+        return extractIdentifiable(result.value, IdentifiableBox.Domain::domain)
+    }
+}
+
+object DomainsExtractor : ResultExtractor<List<Domain>> {
+    override fun extract(result: QueryResult): List<Domain> {
+        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Domain::domain) }
+    }
+}
+
+object PeersExtractor : ResultExtractor<List<Peer>> {
+    override fun extract(result: QueryResult): List<Peer> {
+        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Peer::peer) }
     }
 }
 

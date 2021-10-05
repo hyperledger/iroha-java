@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.MultipleAssets
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
+import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import kotlinx.coroutines.runBlocking
@@ -157,15 +158,71 @@ class QueriesTest {
     @WithIroha(MultipleAssets::class)
     fun `find asset key value by id and key`(): Unit = runBlocking {
         QueryBuilder.findAssetKeyValueByIdAndKey(
-            MultipleAssets.FOO_ASSET_ID,
-            MultipleAssets.FOO_ASSET_KEY
+            MultipleAssets.STORE_ASSET_ID,
+            MultipleAssets.STORE_ASSET_KEY
         )
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
             }.also { value ->
-                assert(value == MultipleAssets.FOO_ASSET_VALUE)
+                assert(value == MultipleAssets.STORE_ASSET_VALUE)
+            }
+    }
+
+//    @Test
+//    @WithIroha(MultipleAssets::class)
+//    fun `find asset definition key value by id and key`(): Unit = runBlocking {
+//        QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(
+//            MultipleAssets.STORE_DEFINITION_ID,
+//            MultipleAssets.STORE_ASSET_KEY
+//        )
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query ->
+//                client.sendQuery(query)
+//            }.also {
+//                assert(true)
+//            }
+//    }
+
+    @Test
+    @WithIroha(NewDomain::class)
+    fun `find all domains`(): Unit = runBlocking {
+        QueryBuilder.findAllDomains()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { domains ->
+                assert(domains.any { it.name == DEFAULT_DOMAIN_NAME })
+                assert(domains.any { it.name == NewDomain.DOMAIN_NAME })
+            }
+    }
+
+    @Test
+    @WithIroha
+    fun `find domain by name`(): Unit = runBlocking {
+        QueryBuilder.findDomainByName(DEFAULT_DOMAIN_NAME)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { domain ->
+                assert(domain.name == DEFAULT_DOMAIN_NAME)
+            }
+    }
+
+    @Test
+    @WithIroha
+    fun `find all peers`(): Unit = runBlocking {
+        QueryBuilder.findAllPeers()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { peers ->
+                assert(peers.isNotEmpty())
             }
     }
 }

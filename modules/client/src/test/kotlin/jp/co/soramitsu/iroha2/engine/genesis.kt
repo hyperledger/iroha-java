@@ -43,10 +43,10 @@ open class MultipleAssets : DefaultGenesis() {
         val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
 
-        const val FOO_ASSET_KEY = "key"
-        val FOO_ASSET_VALUE = "value".asValue()
-        val FOO_DEFINITION_ID = DefinitionId("foo", DEFAULT_DOMAIN_NAME)
-        val FOO_ASSET_ID = AssetId(FOO_DEFINITION_ID, ALICE_ACCOUNT_ID)
+        const val STORE_ASSET_KEY = "key"
+        val STORE_ASSET_VALUE = "value".asValue()
+        val STORE_DEFINITION_ID = DefinitionId("foo", DEFAULT_DOMAIN_NAME)
+        val STORE_ASSET_ID = AssetId(STORE_DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 
     override val genesisBlock = super.genesisBlock.plus(
@@ -56,8 +56,8 @@ open class MultipleAssets : DefaultGenesis() {
         Instructions.registerAsset(VAL_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(VAL_DEFINITION_ID, ALICE_ACCOUNT_ID), VAL_QUANTITY),
 
-        Instructions.registerAsset(FOO_DEFINITION_ID, AssetValueType.Store()),
-        Instructions.storeAsset(FOO_ASSET_ID, FOO_ASSET_KEY, FOO_ASSET_VALUE)
+        Instructions.registerAsset(STORE_DEFINITION_ID, AssetValueType.Store()),
+        Instructions.storeAsset(STORE_ASSET_ID, STORE_ASSET_KEY, STORE_ASSET_VALUE)
     )
 }
 
@@ -77,6 +77,16 @@ open class NewAccountWithMetadata : DefaultGenesis() {
             signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
             metadata = Metadata(mutableMapOf(KEY to VALUE))
         )
+    )
+}
+
+open class NewDomain : DefaultGenesis() {
+    companion object {
+        const val DOMAIN_NAME = "foo_domain"
+    }
+
+    override val genesisBlock: RawGenesisBlock = super.genesisBlock.plus(
+        Instructions.registerDomain(DOMAIN_NAME, mutableMapOf(), mutableMapOf())
     )
 }
 
