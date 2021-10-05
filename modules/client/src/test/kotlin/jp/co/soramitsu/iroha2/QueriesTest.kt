@@ -117,6 +117,8 @@ class QueriesTest {
                 client.sendQuery(query)
             }.also { assets ->
                 assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
+                assert(assets.any { it.id.definitionId == MultipleAssets.XOR_DEFINITION_ID })
+                assert(assets.any { it.id.definitionId == MultipleAssets.VAL_DEFINITION_ID })
             }
     }
 

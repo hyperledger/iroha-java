@@ -54,7 +54,7 @@ object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
 object U32Extractor : ResultExtractor<UInt> {
     override fun extract(result: QueryResult): UInt {
         return when (val value = result.value) {
-            is Value.U32 -> value.cast<Value.U32>().u32
+            is Value.U32 -> value.u32
             else -> throw QueryPayloadExtractionException(
                 "Expected `${Value.U32::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
             )
