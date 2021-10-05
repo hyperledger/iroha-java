@@ -71,9 +71,24 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AccountsExtractor
         )
 
+        fun findAccountsByDomainName(domain: String) = QueryBuilder(
+            Queries.findAccountsByDomainName(domain),
+            AccountsExtractor
+        )
+
+        fun findAllAssets() = QueryBuilder(
+            Queries.findAllAssets(),
+            AssetsExtractor
+        )
+
         fun findAllAssetsDefinitions() = QueryBuilder(
             Queries.findAllAssetsDefinitions(),
             AssetDefinitionsExtractor
+        )
+
+        fun findAssetsByName(name: String) = QueryBuilder(
+            Queries.findAssetsByName(name),
+            AssetsExtractor
         )
 
         fun findAccountById(accountId: AccountId) = QueryBuilder(

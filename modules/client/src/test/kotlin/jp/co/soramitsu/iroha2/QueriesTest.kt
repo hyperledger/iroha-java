@@ -3,7 +3,9 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.MultipleAssets
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import kotlinx.coroutines.runBlocking
@@ -24,24 +26,28 @@ class QueriesTest {
     @Test
     @WithIroha(NewAccountWithMetadata::class)
     fun `find all accounts`(): Unit = runBlocking {
-        val query = QueryBuilder.findAllAccounts()
+        QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-        val accounts = client.sendQuery(query)
-
-        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
-        assert(accounts.any { it.id.name == NewAccountWithMetadata.ACCOUNT_NAME })
+            .let { query ->
+                client.sendQuery(query)
+            }.also { accounts ->
+                assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
+                assert(accounts.any { it.id.name == NewAccountWithMetadata.ACCOUNT_NAME })
+            }
     }
 
     @Test
     @WithIroha
     fun `find accounts by name`(): Unit = runBlocking {
-        val query = QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
+        QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-        val accounts = client.sendQuery(query)
-
-        assert(accounts.any { it.id.name == ALICE_ACCOUNT_NAME })
+            .let { query ->
+                client.sendQuery(query)
+            }.also { accounts ->
+                assert(accounts.all { it.id.name == ALICE_ACCOUNT_NAME })
+            }
     }
 
     @Test
@@ -52,10 +58,51 @@ class QueriesTest {
             NewAccountWithMetadata.KEY
         )
             .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR).let { query ->
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
                 client.sendQuery(query)
             }.also {
                 assertEquals(NewAccountWithMetadata.VALUE, it)
+            }
+    }
+
+    @Test
+    @WithIroha
+    fun `find accounts by domain name`(): Unit = runBlocking {
+        QueryBuilder.findAccountsByDomainName(DEFAULT_DOMAIN_NAME)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { accounts ->
+                assert(accounts.all { it.id.domainName == DEFAULT_DOMAIN_NAME })
+            }
+    }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find all assets`(): Unit = runBlocking {
+        QueryBuilder.findAllAssets()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { assets ->
+                assert(assets.any { it.id.definitionId == MultipleAssets.XOR_DEFINITION_ID })
+                assert(assets.any { it.id.definitionId == MultipleAssets.VAL_DEFINITION_ID })
+            }
+    }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find assets by name`(): Unit = runBlocking {
+        QueryBuilder.findAssetsByName(MultipleAssets.XOR_DEFINITION_ID.name)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { assets ->
+                assert(assets.all { it.id.definitionId.name == MultipleAssets.XOR_DEFINITION_ID.name })
             }
     }
 }

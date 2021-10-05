@@ -8,12 +8,15 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -72,6 +75,24 @@ object Queries {
         )
     }
 
+    fun findAccountsByDomainName(domain: String): QueryBox.FindAccountsByDomainName {
+        return QueryBox.FindAccountsByDomainName(
+            FindAccountsByDomainName(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(domain)
+                    )
+                )
+            )
+        )
+    }
+
+    fun findAllAssets(): QueryBox.FindAllAssets {
+        return QueryBox.FindAllAssets(
+            FindAllAssets()
+        )
+    }
+
     fun findAssetById(assetId: AssetId): QueryBox.FindAssetById {
         return QueryBox.FindAssetById(
             FindAssetById(
@@ -94,6 +115,18 @@ object Queries {
                 EvaluatesTo(
                     Expression.Raw(
                         Value.String(domain)
+                    )
+                )
+            )
+        )
+    }
+
+    fun findAssetsByName(name: String): QueryBox.FindAssetsByName {
+        return QueryBox.FindAssetsByName(
+            FindAssetsByName(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(name)
                     )
                 )
             )
