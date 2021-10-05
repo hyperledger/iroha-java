@@ -91,6 +91,11 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AssetsExtractor
         )
 
+        fun findAssetsByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findAssetsByAccountId(accountId),
+            AssetsExtractor
+        )
+
         fun findAccountById(accountId: AccountId) = QueryBuilder(
             Queries.findAccountById(accountId),
             AccountExtractor
@@ -117,6 +122,24 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
                 Queries.findAssetsByAssetDefinitionId(assetDefinition),
                 AssetDefinitionsExtractor
             )
+
+        fun findAssetsByDomainNameAndAssetDefinitionId(
+            domain: String,
+            assetDefinition: DefinitionId
+        ) = QueryBuilder(
+            Queries.findAssetsByDomainNameAndAssetDefinitionId(domain, assetDefinition),
+            AssetsExtractor
+        )
+
+        fun findAssetQuantityById(assetId: AssetId) = QueryBuilder(
+            Queries.findAssetQuantityById(assetId),
+            U32Extractor
+        )
+
+        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) = QueryBuilder(
+            Queries.findAssetKeyValueByIdAndKey(assetId, key),
+            ValueExtractor
+        )
     }
 }
 
