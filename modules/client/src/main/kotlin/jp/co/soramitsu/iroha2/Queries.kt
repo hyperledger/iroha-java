@@ -14,8 +14,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -133,12 +135,50 @@ object Queries {
         )
     }
 
+    fun findAssetsByAccountId(accountId: AccountId): QueryBox.FindAssetsByAccountId {
+        return QueryBox.FindAssetsByAccountId(
+            FindAssetsByAccountId(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AccountId(accountId)
+                        )
+                    )
+                )
+            )
+        )
+    }
+
     fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
         return QueryBox.FindAssetsByAssetDefinitionId(
             FindAssetsByAssetDefinitionId(
                 EvaluatesTo(
                     Expression.Raw(
-                        Value.Id(IdBox.AssetDefinitionId(assetDefinition))
+                        Value.Id(
+                            IdBox.AssetDefinitionId(assetDefinition)
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    fun findAssetsByDomainNameAndAssetDefinitionId(
+        domainName: String,
+        assetDefinition: DefinitionId
+    ): QueryBox.FindAssetsByDomainNameAndAssetDefinitionId {
+        return QueryBox.FindAssetsByDomainNameAndAssetDefinitionId(
+            FindAssetsByDomainNameAndAssetDefinitionId(
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(
+                            IdBox.AssetDefinitionId(assetDefinition)
+                        )
+                    )
+                ),
+                EvaluatesTo(
+                    Expression.Raw(
+                        Value.String(domainName)
                     )
                 )
             )

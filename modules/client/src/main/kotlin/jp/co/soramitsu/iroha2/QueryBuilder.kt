@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryReq
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -88,6 +89,11 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
         fun findAssetsByName(name: String) = QueryBuilder(
             Queries.findAssetsByName(name),
+            AssetsExtractor
+        )
+
+        fun findAssetsByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findAssetsByAccountId(accountId),
             AssetsExtractor
         )
 

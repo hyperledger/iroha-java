@@ -105,4 +105,17 @@ class QueriesTest {
                 assert(assets.all { it.id.definitionId.name == MultipleAssets.XOR_DEFINITION_ID.name })
             }
     }
+
+    @Test
+    @WithIroha(MultipleAssets::class)
+    fun `find assets by account id`(): Unit = runBlocking {
+        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { assets ->
+                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
+            }
+    }
 }
