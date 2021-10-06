@@ -264,7 +264,7 @@ class QueriesTest {
                         .payload
                         .accountId == ALICE_ACCOUNT_ID
                 }.also {
-                    assert(true)
+                    assert(it)
                 }
             }
     }
