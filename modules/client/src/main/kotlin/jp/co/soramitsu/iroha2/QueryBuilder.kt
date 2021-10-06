@@ -140,6 +140,30 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             Queries.findAssetKeyValueByIdAndKey(assetId, key),
             ValueExtractor
         )
+
+        fun findAssetDefinitionKeyValueByIdAndKey(
+            assetDefinition: DefinitionId,
+            key: String
+        ) = QueryBuilder(
+            Queries.findAssetDefinitionKeyValueByIdAndKey(assetDefinition, key),
+            ValueExtractor
+        )
+
+        fun findAllDomains() = QueryBuilder(Queries.findAllDomains(), DomainsExtractor)
+
+        fun findDomainByName(name: String) = QueryBuilder(Queries.findDomainByName(name), DomainExtractor)
+
+        fun findAllPeers() = QueryBuilder(Queries.findAllPeers(), PeersExtractor)
+
+        fun findTransactionsByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findTransactionsByAccountId(accountId),
+            TransactionValuesExtractor
+        )
+
+        fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findPermissionTokensByAccountId(accountId),
+            PermissionTokensExtractor
+        )
     }
 }
 

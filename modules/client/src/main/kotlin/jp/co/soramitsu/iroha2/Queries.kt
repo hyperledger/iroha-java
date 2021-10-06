@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
@@ -21,147 +22,66 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetD
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
+import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
+import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 object Queries {
 
     fun findAllAccounts(): QueryBox.FindAllAccounts {
-        return QueryBox.FindAllAccounts(
-            FindAllAccounts()
-        )
+        return QueryBox.FindAllAccounts(FindAllAccounts())
     }
 
     fun findAccountById(accountId: AccountId): QueryBox.FindAccountById {
-        return QueryBox.FindAccountById(
-            FindAccountById(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AccountId(
-                                accountId
-                            )
-                        )
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAccountById(FindAccountById(accountId.evaluatesTo()))
     }
 
     fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String): QueryBox.FindAccountKeyValueByIdAndKey {
         return QueryBox.FindAccountKeyValueByIdAndKey(
             FindAccountKeyValueByIdAndKey(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AccountId(accountId)
-                        )
-                    )
-                ),
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(key)
-                    )
-                )
+                accountId.evaluatesTo(),
+                key.evaluatesTo()
             )
         )
     }
 
     fun findAccountsByName(name: String): QueryBox.FindAccountsByName {
-        return QueryBox.FindAccountsByName(
-            FindAccountsByName(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(name)
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAccountsByName(FindAccountsByName(name.evaluatesTo()))
     }
 
     fun findAccountsByDomainName(domain: String): QueryBox.FindAccountsByDomainName {
         return QueryBox.FindAccountsByDomainName(
-            FindAccountsByDomainName(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(domain)
-                    )
-                )
-            )
+            FindAccountsByDomainName(domain.evaluatesTo())
         )
     }
 
     fun findAllAssets(): QueryBox.FindAllAssets {
-        return QueryBox.FindAllAssets(
-            FindAllAssets()
-        )
+        return QueryBox.FindAllAssets(FindAllAssets())
     }
 
     fun findAssetById(assetId: AssetId): QueryBox.FindAssetById {
-        return QueryBox.FindAssetById(
-            FindAssetById(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetId(
-                                assetId
-                            )
-                        )
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAssetById(FindAssetById(assetId.evaluatesTo()))
     }
 
     fun findAssetsByDomainName(domain: String): QueryBox.FindAssetsByDomainName {
-        return QueryBox.FindAssetsByDomainName(
-            FindAssetsByDomainName(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(domain)
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAssetsByDomainName(FindAssetsByDomainName(domain.evaluatesTo()))
     }
 
     fun findAssetsByName(name: String): QueryBox.FindAssetsByName {
-        return QueryBox.FindAssetsByName(
-            FindAssetsByName(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(name)
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAssetsByName(FindAssetsByName(name.evaluatesTo()))
     }
 
     fun findAssetsByAccountId(accountId: AccountId): QueryBox.FindAssetsByAccountId {
-        return QueryBox.FindAssetsByAccountId(
-            FindAssetsByAccountId(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AccountId(accountId)
-                        )
-                    )
-                )
-            )
-        )
+        return QueryBox.FindAssetsByAccountId(FindAssetsByAccountId(accountId.evaluatesTo()))
     }
 
     fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
         return QueryBox.FindAssetsByAssetDefinitionId(
-            FindAssetsByAssetDefinitionId(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetDefinitionId(assetDefinition)
-                        )
-                    )
-                )
-            )
+            FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
         )
     }
 
@@ -171,18 +91,8 @@ object Queries {
     ): QueryBox.FindAssetsByDomainNameAndAssetDefinitionId {
         return QueryBox.FindAssetsByDomainNameAndAssetDefinitionId(
             FindAssetsByDomainNameAndAssetDefinitionId(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(domain)
-                    )
-                ),
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetDefinitionId(assetDefinition)
-                        )
-                    )
-                )
+                domain.evaluatesTo(),
+                assetDefinition.evaluatesTo()
             )
         )
     }
@@ -195,34 +105,64 @@ object Queries {
 
     fun findAssetQuantityById(assetId: AssetId): QueryBox.FindAssetQuantityById {
         return QueryBox.FindAssetQuantityById(
-            FindAssetQuantityById(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetId(assetId)
-                        )
-                    )
-                )
-            )
+            FindAssetQuantityById(assetId.evaluatesTo())
         )
     }
 
     fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String): QueryBox.FindAssetKeyValueByIdAndKey {
         return QueryBox.FindAssetKeyValueByIdAndKey(
             FindAssetKeyValueByIdAndKey(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetId(assetId)
-                        )
-                    )
-                ),
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.String(key)
-                    )
-                )
+                assetId.evaluatesTo(),
+                key.evaluatesTo()
             )
         )
+    }
+
+    fun findAssetDefinitionKeyValueByIdAndKey(
+        assetDefinition: DefinitionId,
+        key: String
+    ): QueryBox.FindAssetDefinitionKeyValueByIdAndKey {
+        return QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
+            FindAssetDefinitionKeyValueByIdAndKey(
+                assetDefinition.evaluatesTo(),
+                key.evaluatesTo()
+            )
+        )
+    }
+
+    fun findAllDomains(): QueryBox.FindAllDomains {
+        return QueryBox.FindAllDomains(FindAllDomains())
+    }
+
+    fun findDomainByName(name: String): QueryBox.FindDomainByName {
+        return QueryBox.FindDomainByName(FindDomainByName(name.evaluatesTo()))
+    }
+
+    fun findAllPeers(): QueryBox.FindAllPeers {
+        return QueryBox.FindAllPeers(FindAllPeers())
+    }
+
+    fun findTransactionsByAccountId(accountId: AccountId): QueryBox.FindTransactionsByAccountId {
+        return QueryBox.FindTransactionsByAccountId(
+            FindTransactionsByAccountId(accountId.evaluatesTo())
+        )
+    }
+
+    fun findPermissionTokensByAccountId(accountId: AccountId): QueryBox.FindPermissionTokensByAccountId {
+        return QueryBox.FindPermissionTokensByAccountId(
+            FindPermissionTokensByAccountId(accountId.evaluatesTo())
+        )
+    }
+
+    private inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
+        return when (this) {
+            is String -> Value.String(this)
+            is AssetId -> Value.Id(IdBox.AssetId(this))
+            is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+            is AccountId -> Value.Id(IdBox.AccountId(this))
+            else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
+        }.let { value ->
+            EvaluatesTo(Expression.Raw(value))
+        }
     }
 }
