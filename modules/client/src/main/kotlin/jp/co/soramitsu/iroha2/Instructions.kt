@@ -19,6 +19,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -205,6 +206,22 @@ object Instructions {
     private fun burnSome(value: Value, idBox: IdBox): Instruction.Burn {
         return Instruction.Burn(
             BurnBox(
+                `object` = EvaluatesTo(
+                    Expression.Raw(value)
+                ),
+                destinationId = EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(idBox)
+                    )
+                )
+            )
+        )
+    }
+
+    private fun transferSome(sourceId: IdBox , value: Value, idBox: IdBox): Instruction.Transfer {
+        return Instruction.Transfer(
+            TransferBox(
+                sourceId = EvaluatesTo(Expression.Raw(Value.Id(sourceId))),
                 `object` = EvaluatesTo(
                     Expression.Raw(value)
                 ),
