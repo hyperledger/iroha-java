@@ -155,7 +155,15 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
         fun findAllPeers() = QueryBuilder(Queries.findAllPeers(), PeersExtractor)
 
-//        fun findTransactionsByAccountId() = QueryBuilder(Queries.findTransactionsByAccountId())
+        fun findTransactionsByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findTransactionsByAccountId(accountId),
+            TransactionValuesExtractor
+        )
+
+        fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findPermissionTokensByAccountId(accountId),
+            PermissionTokensExtractor
+        )
     }
 }
 

@@ -7,7 +7,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 
 interface ResultExtractor<T> {
     fun extract(result: QueryResult): T
@@ -71,14 +73,21 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
     }
 }
 
+object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
+    override fun extract(result: QueryResult): List<PermissionToken> {
+        return extractVec(result.value) { extractValue(it, Value.PermissionToken::permissionToken) }
+    }
+}
+
+object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
+    override fun extract(result: QueryResult): List<TransactionValue> {
+        return extractVec(result.value) { extractValue(it, Value.TransactionValue::transactionValue) }
+    }
+}
+
 object U32Extractor : ResultExtractor<UInt> {
     override fun extract(result: QueryResult): UInt {
-        return when (val value = result.value) {
-            is Value.U32 -> value.u32
-            else -> throw QueryPayloadExtractionException(
-                "Expected `${Value.U32::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
-            )
-        }
+        return extractValue(result.value, Value.U32::u32)
     }
 }
 
@@ -88,7 +97,7 @@ object ValueExtractor : ResultExtractor<Value> {
     }
 }
 
-inline fun <reified I : Value, reified R> extractIdentifiable(value: Value, downstream: (I) -> R): R {
+inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: (I) -> R): R {
     return when (value) {
         is Value.Identifiable -> when (val box = value.identifiableBox) {
             is I -> downstream(box)
@@ -106,5 +115,14 @@ inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<
             }
         }
         else -> throw QueryPayloadExtractionException("Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`")
+    }
+}
+
+inline fun <reified V : Value, R> extractValue(value: Value, downstream: (V) -> R): R {
+    return when (value) {
+        is V -> downstream(value)
+        else -> throw QueryPayloadExtractionException(
+            "Expected `${V::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+        )
     }
 }

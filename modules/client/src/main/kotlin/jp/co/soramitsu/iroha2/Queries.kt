@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.Queries.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -26,6 +25,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
+import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -145,6 +145,12 @@ object Queries {
     fun findTransactionsByAccountId(accountId: AccountId): QueryBox.FindTransactionsByAccountId {
         return QueryBox.FindTransactionsByAccountId(
             FindTransactionsByAccountId(accountId.evaluatesTo())
+        )
+    }
+
+    fun findPermissionTokensByAccountId(accountId: AccountId): QueryBox.FindPermissionTokensByAccountId {
+        return QueryBox.FindPermissionTokensByAccountId(
+            FindPermissionTokensByAccountId(accountId.evaluatesTo())
         )
     }
 
