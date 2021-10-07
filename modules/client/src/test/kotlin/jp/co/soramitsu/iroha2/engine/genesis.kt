@@ -23,7 +23,7 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  * Default genesis plus Alice has 100 XOR and permission to burn
  */
 open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
-    override val genesisBlock: RawGenesisBlock = super.genesisBlock.apply {
+    override val genesisBlock = super.genesisBlock.apply {
         val transaction =
             this.transactions.firstOrNull() ?: GenesisTransaction(mutableListOf()).also { this.transactions.add(it) }
         transaction.isi.addAll(
@@ -34,6 +34,18 @@ open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
             )
         )
     }
+}
+
+open class AliceAndBobEachHave100Xor : DefaultGenesis() {
+    companion object {
+        val BOB_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
+    }
+
+    override val genesisBlock = super.genesisBlock.plus(
+        Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
+        Instructions.mintAsset(BOB_ASSET_ID, 100U)
+    )
 }
 
 open class StoreAssetWithMetadata : DefaultGenesis() {
@@ -110,6 +122,10 @@ fun rawGenesisBlock(): RawGenesisBlock {
                         ALICE_ACCOUNT_ID,
                         mutableListOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
                     ),
+                    Instructions.registerAccount(
+                        BOB_ACCOUNT_ID,
+                        mutableListOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
+                    )
                 )
             )
         )
