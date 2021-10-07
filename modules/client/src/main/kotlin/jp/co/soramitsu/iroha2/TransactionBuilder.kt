@@ -136,12 +136,16 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
-    fun doIf(condition: Boolean, then: Instruction, otherwise: Instruction) = this.apply {
-        instructions.value.add(Instructions.doIf(condition, then, otherwise))
+    fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction) = this.apply {
+        instructions.value.add(Instructions.`if`(condition, then, otherwise))
     }
 
     fun pair(left: Instruction, right: Instruction) = this.apply {
         instructions.value.add(Instructions.pair(left, right))
+    }
+
+    fun sequence(vararg instructions: Instruction) = this.apply {
+        this.instructions.value.add(Instructions.sequence(instructions.toMutableList()))
     }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()

@@ -14,7 +14,7 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -259,17 +259,8 @@ class InstructionsTest {
         val aliceAssetId = DEFAULT_ASSET_ID
         val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
 
-        val aliceQuery = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val bobQuery = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
-            .account(BOB_ACCOUNT_ID)
-            .buildSigned(BOB_KEYPAIR)
-
-        val aliceBefore = client.sendQuery(aliceQuery)
-        assertEquals(100U, (aliceBefore.assets[aliceAssetId]?.value as? AssetValue.Quantity)?.u32)
-        val bobBefore = client.sendQuery(bobQuery)
-        assertEquals(100U, (bobBefore.assets[bobAssetId]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(100U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(100U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -282,31 +273,22 @@ class InstructionsTest {
         }
 
         // check balance after transfer
-        val aliceAfter = client.sendQuery(aliceQuery)
-        assertEquals(60U, (aliceAfter.assets[aliceAssetId]?.value as? AssetValue.Quantity)?.u32)
-        val bobAfter = client.sendQuery(bobQuery)
-        assertEquals(140U, (bobAfter.assets[bobAssetId]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(60U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(140U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
     }
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
         val toBurn = 80U
-        val aliceQuery = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-
-        val initAliceAmount =
-            (client.sendQuery(aliceQuery).assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32 ?: 0U
+        val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
-        val aliceAmountAfterBurn =
-            (client.sendQuery(aliceQuery).assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32 ?: 0U
+        val aliceAmountAfterBurn = getAccountAmount()
         assert(aliceAmountAfterBurn == initAliceAmount - toBurn)
 
         sendTransactionToBurnIfCondition(aliceAmountAfterBurn >= toBurn, DEFAULT_ASSET_ID, toBurn)
-        val finalAliceAmount =
-            (client.sendQuery(aliceQuery).assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32 ?: 0U
+        val finalAliceAmount = getAccountAmount()
         assert(finalAliceAmount == aliceAmountAfterBurn)
     }
 
@@ -326,22 +308,44 @@ class InstructionsTest {
             }
         }
 
-        QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+        assert(getAccountAmount() == 70U)
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `instruction sequence committed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            sequence(
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 30U),
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        assert(getAccountAmount() == 40U)
+    }
+
+    private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): UInt {
+        return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
-                client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value
+                client.sendQuery(query).assets[assetId ?: DEFAULT_ASSET_ID]?.value
             }.let { value ->
-                (value as? AssetValue.Quantity)?.u32
-            }.also { aliceAmount ->
-                assert(aliceAmount == 70U)
+                (value as? AssetValue.Quantity)?.u32 ?: 0U
             }
     }
 
-    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: Id, toBurn: UInt) {
+    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: UInt) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            doIf(
+            `if`(
                 condition = condition,
                 then = Instructions.burnAsset(assetId, toBurn),
                 otherwise = Instructions.burnAsset(assetId, 0U)
