@@ -310,6 +310,34 @@ class InstructionsTest {
         assert(finalAliceAmount == aliceAmountAfterBurn)
     }
 
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `pair instruction committed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            pair(
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U)
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value
+            }.let { value ->
+                (value as? AssetValue.Quantity)?.u32
+            }.also { aliceAmount ->
+                assert(aliceAmount == 70U)
+            }
+    }
+
     private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: Id, toBurn: UInt) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)

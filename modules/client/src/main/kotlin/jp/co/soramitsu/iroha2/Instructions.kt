@@ -18,6 +18,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.If
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
@@ -186,6 +187,12 @@ object Instructions {
     fun doIf(condition: Boolean, then: Instruction, otherwise: Instruction): Instruction {
         return Instruction.If(
             If(EvaluatesTo(Expression.Raw(Value.Bool(condition))), then, otherwise)
+        )
+    }
+
+    fun pair(left: Instruction, right: Instruction): Instruction {
+        return Instruction.Pair(
+            Pair(left, right)
         )
     }
 

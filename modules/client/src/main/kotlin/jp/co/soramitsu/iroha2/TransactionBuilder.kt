@@ -140,6 +140,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.doIf(condition, then, otherwise))
     }
 
+    fun pair(left: Instruction, right: Instruction) = this.apply {
+        instructions.value.add(Instructions.pair(left, right))
+    }
+
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 
     companion object {
