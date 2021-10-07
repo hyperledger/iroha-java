@@ -1,5 +1,8 @@
 package jp.co.soramitsu.iroha2
 
+import java.security.KeyPair
+import java.time.Duration
+import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -13,9 +16,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
-import java.security.KeyPair
-import java.time.Duration
-import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -122,11 +122,23 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
 
-    fun burnAsset(assetId: AssetId, value: UInt) = this.apply { instructions.value.add(Instructions.burnAsset(assetId, value)) }
+    fun burnAsset(assetId: AssetId, value: UInt) = this.apply {
+        instructions.value.add(Instructions.burnAsset(assetId, value))
+    }
 
-    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply { instructions.value.add(Instructions.burnPublicKey(accountId, pubKey)) }
+    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
+        instructions.value.add(Instructions.burnPublicKey(accountId, pubKey))
+    }
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
+
+    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId) = this.apply {
+        instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
+    }
+
+    fun doIf(condition: Boolean, then: Instruction, otherwise: Instruction) = this.apply {
+        instructions.value.add(Instructions.doIf(condition, then, otherwise))
+    }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 

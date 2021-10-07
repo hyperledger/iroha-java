@@ -15,6 +15,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.If
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
@@ -174,6 +175,20 @@ object Instructions {
         }
     }
 
+    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId): Instruction {
+        return transferSome(
+            IdBox.AssetId(sourceId),
+            Value.U32(value),
+            IdBox.AssetId(destinationId)
+        )
+    }
+
+    fun doIf(condition: Boolean, then: Instruction, otherwise: Instruction): Instruction {
+        return Instruction.If(
+            If(EvaluatesTo(Expression.Raw(Value.Bool(condition))), then, otherwise)
+        )
+    }
+
     private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {
         return Instruction.Register(
             RegisterBox(
@@ -218,7 +233,7 @@ object Instructions {
         )
     }
 
-    private fun transferSome(sourceId: IdBox , value: Value, idBox: IdBox): Instruction.Transfer {
+    private fun transferSome(sourceId: IdBox, value: Value, destinationId: IdBox): Instruction.Transfer {
         return Instruction.Transfer(
             TransferBox(
                 sourceId = EvaluatesTo(Expression.Raw(Value.Id(sourceId))),
@@ -227,7 +242,7 @@ object Instructions {
                 ),
                 destinationId = EvaluatesTo(
                     Expression.Raw(
-                        Value.Id(idBox)
+                        Value.Id(destinationId)
                     )
                 )
             )
