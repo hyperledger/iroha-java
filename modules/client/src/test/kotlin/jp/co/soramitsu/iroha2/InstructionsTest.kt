@@ -290,7 +290,7 @@ class InstructionsTest {
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    fun `do if`(): Unit = runBlocking {
+    fun `burn if condition otherwise not burn`(): Unit = runBlocking {
         val toBurn = 80U
         val aliceQuery = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
