@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import java.util.concurrent.TimeUnit
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
@@ -23,6 +22,7 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
