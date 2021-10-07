@@ -14,7 +14,6 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -29,6 +28,7 @@ import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
