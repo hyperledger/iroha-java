@@ -2,7 +2,10 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.engine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
@@ -25,6 +28,7 @@ import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
@@ -123,18 +127,14 @@ class InstructionsTest {
     @WithIroha
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
-        val bobAccountId = AccountId("bob", DEFAULT_DOMAIN_NAME)
-        val bobKeypair = generateKeyPair()
 
         // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             // register asset with type store
             registerAsset(aliceAssetId.definitionId, AssetValueType.Store())
-            // register Bob's account
-            registerAccount(bobAccountId, mutableListOf(bobKeypair.public.toIrohaPublicKey()))
             // grant by Alice to Bob permissions to set key value in Asset.Store
-            grantSetKeyValueAsset(aliceAssetId, bobAccountId)
+            grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -144,9 +144,9 @@ class InstructionsTest {
 
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         client.sendTransaction {
-            account(bobAccountId)
+            account(BOB_ACCOUNT_ID)
             storeAsset(aliceAssetId, "foo", "bar".asValue())
-            buildSigned(bobKeypair)
+            buildSigned(BOB_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
                 it.get(10, TimeUnit.SECONDS)
@@ -197,7 +197,7 @@ class InstructionsTest {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val result = client.sendQuery(query)
-        assertEquals(5U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(5U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
     }
 
     @Test
@@ -208,7 +208,7 @@ class InstructionsTest {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         var result = client.sendQuery(query)
-        assertEquals(100U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(100U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -222,7 +222,7 @@ class InstructionsTest {
 
         // check balance after burn
         result = client.sendQuery(query)
-        assertEquals(50U, (result.assets[DEFAULT_ASSET_ID] ?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(50U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
     }
 
     @Test
@@ -250,6 +250,111 @@ class InstructionsTest {
         // if keys was burned, then peer should return an error due cannot verify signature
         assertFails {
             client.sendQuery(query)
+        }
+    }
+
+    @Test
+    @WithIroha(AliceAndBobEachHave100Xor::class)
+    fun `transfer asset instruction committed`(): Unit = runBlocking {
+        val aliceAssetId = DEFAULT_ASSET_ID
+        val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
+
+        assertEquals(100U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(100U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            transferAsset(aliceAssetId, 40U, bobAssetId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // check balance after transfer
+        assertEquals(60U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(140U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `burn if condition otherwise not burn`(): Unit = runBlocking {
+        val toBurn = 80U
+        val initAliceAmount = getAccountAmount()
+
+        sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
+        val aliceAmountAfterBurn = getAccountAmount()
+        assert(aliceAmountAfterBurn == initAliceAmount - toBurn)
+
+        sendTransactionToBurnIfCondition(aliceAmountAfterBurn >= toBurn, DEFAULT_ASSET_ID, toBurn)
+        val finalAliceAmount = getAccountAmount()
+        assert(finalAliceAmount == aliceAmountAfterBurn)
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `pair instruction committed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            pair(
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U)
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        assert(getAccountAmount() == 70U)
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `instruction sequence committed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            sequence(
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 30U),
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        assert(getAccountAmount() == 40U)
+    }
+
+    private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): UInt {
+        return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query).assets[assetId ?: DEFAULT_ASSET_ID]?.value
+            }.let { value ->
+                (value as? AssetValue.Quantity)?.u32 ?: 0U
+            }
+    }
+
+    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: UInt) {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            `if`(
+                condition = condition,
+                then = Instructions.burnAsset(assetId, toBurn),
+                otherwise = Instructions.burnAsset(assetId, 0U)
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
         }
     }
 }

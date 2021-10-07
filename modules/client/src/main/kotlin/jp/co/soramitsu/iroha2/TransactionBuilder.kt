@@ -122,11 +122,31 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
 
-    fun burnAsset(assetId: AssetId, value: UInt) = this.apply { instructions.value.add(Instructions.burnAsset(assetId, value)) }
+    fun burnAsset(assetId: AssetId, value: UInt) = this.apply {
+        instructions.value.add(Instructions.burnAsset(assetId, value))
+    }
 
-    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply { instructions.value.add(Instructions.burnPublicKey(accountId, pubKey)) }
+    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
+        instructions.value.add(Instructions.burnPublicKey(accountId, pubKey))
+    }
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
+
+    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId) = this.apply {
+        instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
+    }
+
+    fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction) = this.apply {
+        instructions.value.add(Instructions.`if`(condition, then, otherwise))
+    }
+
+    fun pair(left: Instruction, right: Instruction) = this.apply {
+        instructions.value.add(Instructions.pair(left, right))
+    }
+
+    fun sequence(vararg instructions: Instruction) = this.apply {
+        this.instructions.value.add(Instructions.sequence(instructions.toMutableList()))
+    }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
 

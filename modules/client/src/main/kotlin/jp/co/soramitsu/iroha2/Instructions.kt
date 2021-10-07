@@ -15,10 +15,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.If
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.SequenceBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -171,6 +175,40 @@ object Instructions {
                 )
             )
         }
+    }
+
+    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId): Instruction {
+        return Instruction.Transfer(
+            TransferBox(
+                sourceId = EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(IdBox.AssetId(sourceId))
+                    )
+                ),
+                `object` = EvaluatesTo(
+                    Expression.Raw(Value.U32(value))
+                ),
+                destinationId = EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(IdBox.AssetId(destinationId))
+                    )
+                )
+            )
+        )
+    }
+
+    fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction): Instruction {
+        return Instruction.If(
+            If(EvaluatesTo(Expression.Raw(Value.Bool(condition))), then, otherwise)
+        )
+    }
+
+    fun pair(left: Instruction, right: Instruction): Instruction {
+        return Instruction.Pair(Pair(left, right))
+    }
+
+    fun sequence(instructions: MutableList<Instruction>): Instruction {
+        return Instruction.Sequence(SequenceBox(instructions))
     }
 
     private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {
