@@ -135,7 +135,6 @@ open class Iroha2Client(
                 )
             )
         )
-        "".fromHex()
         val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
