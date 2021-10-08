@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import java.util.concurrent.ExecutionException
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
@@ -13,6 +12,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import kotlinx.coroutines.runBlocking
@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails

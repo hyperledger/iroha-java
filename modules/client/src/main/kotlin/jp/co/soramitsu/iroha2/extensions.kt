@@ -5,7 +5,11 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import net.i2p.crypto.eddsa.EdDSAEngine
@@ -16,12 +20,8 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 fun String.asValue() = Value.String(this)
 
