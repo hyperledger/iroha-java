@@ -16,6 +16,12 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 
 fun String.asValue() = Value.String(this)
 
@@ -116,4 +122,19 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
 inline fun <reified B> Any.cast(): B {
     return this as? B
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
+}
+
+inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
+    return when (this) {
+        is String -> Value.String(this)
+        is Boolean -> Value.Bool(this)
+        is AssetId -> Value.Id(IdBox.AssetId(this))
+        is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+        is AccountId -> Value.Id(IdBox.AccountId(this))
+        is IdBox -> Value.Id(this)
+        is Value -> this
+        else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
+    }.let { value ->
+        EvaluatesTo(Expression.Raw(value))
+    }
 }

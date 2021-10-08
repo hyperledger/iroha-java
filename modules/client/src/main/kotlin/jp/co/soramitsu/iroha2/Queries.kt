@@ -153,16 +153,4 @@ object Queries {
             FindPermissionTokensByAccountId(accountId.evaluatesTo())
         )
     }
-
-    private inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
-        return when (this) {
-            is String -> Value.String(this)
-            is AssetId -> Value.Id(IdBox.AssetId(this))
-            is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
-            is AccountId -> Value.Id(IdBox.AccountId(this))
-            else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
-        }.let { value ->
-            EvaluatesTo(Expression.Raw(value))
-        }
-    }
 }

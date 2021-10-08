@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import java.util.concurrent.ExecutionException
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -331,6 +333,54 @@ class InstructionsTest {
         assert(getAccountAmount() == 40U)
     }
 
+    @Test
+    @WithIroha
+    fun `instruction failed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            fail("FAIL MESSAGE")
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertThrows(ExecutionException::class.java) {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+    }
+
+    @Test
+    @WithIroha
+    fun `remove asset instruction committed`(): Unit = runBlocking {
+        val assetKey = "key"
+        val assetValue = "value".asValue()
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
+            storeAsset(DEFAULT_ASSET_ID, assetKey, assetValue)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        val assetBefore = getDefaultAsset()
+        assertEquals(assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey], assetValue)
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            removeAsset(DEFAULT_ASSET_ID, assetKey)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        val assetAfter = getDefaultAsset()
+        assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
+    }
+
     private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): UInt {
         return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -356,5 +406,14 @@ class InstructionsTest {
                 it.get(10, TimeUnit.SECONDS)
             }
         }
+    }
+
+    private suspend fun getDefaultAsset(): Asset {
+        return QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }
     }
 }
