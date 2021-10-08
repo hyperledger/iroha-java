@@ -88,7 +88,7 @@ object Instructions {
         }
     }
 
-    fun storeAsset(
+    fun setKeyValue(
         assetId: AssetId,
         key: String,
         value: Value
@@ -102,7 +102,7 @@ object Instructions {
         )
     }
 
-    fun removeAsset(assetId: AssetId, key: String): Instruction.RemoveKeyValue {
+    fun removeKeyValue(assetId: AssetId, key: String): Instruction.RemoveKeyValue {
         return Instruction.RemoveKeyValue(
             RemoveKeyValueBox(
                 objectId = IdBox.AssetId(assetId).evaluatesTo(),

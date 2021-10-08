@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
@@ -90,9 +91,9 @@ class InstructionsTest {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
-            storeAsset(DEFAULT_ASSET_ID, pair1.first, pair1.second)
-            storeAsset(DEFAULT_ASSET_ID, pair2.first, pair2.second)
-            storeAsset(DEFAULT_ASSET_ID, pair3.first, pair3.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair1.first, pair1.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -147,7 +148,7 @@ class InstructionsTest {
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
-            storeAsset(aliceAssetId, "foo", "bar".asValue())
+            setKeyValue(aliceAssetId, "foo", "bar".asValue())
             buildSigned(BOB_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -348,15 +349,20 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(StoreAssetWithMetadata::class)
     fun `remove asset instruction committed`(): Unit = runBlocking {
-        val assetKey = "key"
-        val assetValue = "value".asValue()
+        val assetId = StoreAssetWithMetadata.ASSET_ID
+        val assetKey = StoreAssetWithMetadata.ASSET_KEY
+
+        val assetBefore = getAsset(assetId)
+        assertEquals(
+            StoreAssetWithMetadata.ASSET_VALUE,
+            assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
+        )
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
-            storeAsset(DEFAULT_ASSET_ID, assetKey, assetValue)
+            removeKeyValue(assetId, assetKey)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -364,20 +370,7 @@ class InstructionsTest {
             }
         }
 
-        val assetBefore = getDefaultAsset()
-        assertEquals(assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey], assetValue)
-
-        client.sendTransaction {
-            account(ALICE_ACCOUNT_ID)
-            removeAsset(DEFAULT_ASSET_ID, assetKey)
-            buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
-        }
-
-        val assetAfter = getDefaultAsset()
+        val assetAfter = getAsset(assetId)
         assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
     }
 
@@ -408,8 +401,8 @@ class InstructionsTest {
         }
     }
 
-    private suspend fun getDefaultAsset(): Asset {
-        return QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
+    private suspend fun getAsset(assetId: AssetId? = null): Asset {
+        return QueryBuilder.findAssetById(assetId ?: DEFAULT_ASSET_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
