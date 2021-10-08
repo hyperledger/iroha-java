@@ -1,10 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
@@ -152,17 +148,5 @@ object Queries {
         return QueryBox.FindPermissionTokensByAccountId(
             FindPermissionTokensByAccountId(accountId.evaluatesTo())
         )
-    }
-
-    private inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
-        return when (this) {
-            is String -> Value.String(this)
-            is AssetId -> Value.Id(IdBox.AssetId(this))
-            is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
-            is AccountId -> Value.Id(IdBox.AccountId(this))
-            else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
-        }.let { value ->
-            EvaluatesTo(Expression.Raw(value))
-        }
     }
 }

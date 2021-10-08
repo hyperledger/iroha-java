@@ -53,7 +53,7 @@ fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParam
  */
 fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     try {
-        EdDSAPrivateKey(EdDSAPrivateKeySpec(privateKeyHex.hex(), spec))
+        EdDSAPrivateKey(EdDSAPrivateKeySpec(privateKeyHex.fromHex(), spec))
     } catch (ex: Exception) {
         throw CryptoException("Cannot create private key from hex `$privateKeyHex`", ex)
     }
@@ -65,7 +65,7 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
  */
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     try {
-        EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.hex(), spec))
+        EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.fromHex(), spec))
     } catch (ex: Exception) {
         throw CryptoException("Cannot create public key from hex `$publicKeyHex`", ex)
     }

@@ -5,7 +5,11 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import net.i2p.crypto.eddsa.EdDSAEngine
@@ -16,6 +20,8 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 fun String.asValue() = Value.String(this)
 
@@ -39,13 +45,13 @@ fun <T> T.encode(writer: ScaleWriter<T>): ByteArray {
 // todo get rid of providing `reader`
 fun <T> ByteArray.decode(reader: ScaleReader<T>): T = ScaleCodecReader(this).read(reader)
 
-fun ByteArray.hex(): String = try {
+fun ByteArray.toHex(): String = try {
     Hex.toHexString(this)
 } catch (ex: Exception) {
     throw HexCodecException("Cannot encode to hex string", ex)
 }
 
-fun String.hex(): ByteArray = try {
+fun String.fromHex(): ByteArray = try {
     Hex.decode(this)
 } catch (ex: Exception) {
     throw HexCodecException("Cannot decode from hex string `$this`", ex)
@@ -116,4 +122,19 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
 inline fun <reified B> Any.cast(): B {
     return this as? B
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
+}
+
+inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
+    return when (this) {
+        is String -> Value.String(this)
+        is Boolean -> Value.Bool(this)
+        is AssetId -> Value.Id(IdBox.AssetId(this))
+        is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+        is AccountId -> Value.Id(IdBox.AccountId(this))
+        is IdBox -> Value.Id(this)
+        is Value -> this
+        else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
+    }.let { value ->
+        EvaluatesTo(Expression.Raw(value))
+    }
 }

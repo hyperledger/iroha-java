@@ -14,12 +14,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.If
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.RemoveKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SequenceBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
@@ -43,7 +45,7 @@ const val ASSET_DEFINITION_PARAM_NAME = "asset_definition_id"
 // mint
 // pair
 // register
-// removeKeyValue
+// remove key value
 // sequence
 // set key value
 // transfer
@@ -86,16 +88,25 @@ object Instructions {
         }
     }
 
-    fun storeAsset(
+    fun setKeyValue(
         assetId: AssetId,
         key: String,
         value: Value
     ): Instruction.SetKeyValue {
         return Instruction.SetKeyValue(
             SetKeyValueBox(
-                objectId = EvaluatesTo(Expression.Raw(Value.Id(IdBox.AssetId(assetId)))),
-                key = EvaluatesTo(Expression.Raw(key.asValue())),
-                value = EvaluatesTo(Expression.Raw(value))
+                objectId = IdBox.AssetId(assetId).evaluatesTo(),
+                key = key.evaluatesTo(),
+                value = value.evaluatesTo()
+            )
+        )
+    }
+
+    fun removeKeyValue(assetId: AssetId, key: String): Instruction.RemoveKeyValue {
+        return Instruction.RemoveKeyValue(
+            RemoveKeyValueBox(
+                objectId = IdBox.AssetId(assetId).evaluatesTo(),
+                key = key.evaluatesTo()
             )
         )
     }
@@ -106,18 +117,8 @@ object Instructions {
     ): Instruction.Mint {
         return Instruction.Mint(
             MintBox(
-                `object` = EvaluatesTo(
-                    Expression.Raw(
-                        Value.U32(quantity)
-                    )
-                ),
-                destinationId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(
-                            IdBox.AssetId(assetId)
-                        )
-                    )
-                )
+                `object` = Value.U32(quantity).evaluatesTo(),
+                destinationId = IdBox.AssetId(assetId).evaluatesTo()
             )
         )
     }
@@ -180,26 +181,16 @@ object Instructions {
     fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId): Instruction {
         return Instruction.Transfer(
             TransferBox(
-                sourceId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(IdBox.AssetId(sourceId))
-                    )
-                ),
-                `object` = EvaluatesTo(
-                    Expression.Raw(Value.U32(value))
-                ),
-                destinationId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(IdBox.AssetId(destinationId))
-                    )
-                )
+                sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
+                `object` = Value.U32(value).evaluatesTo(),
+                destinationId = IdBox.AssetId(destinationId).evaluatesTo()
             )
         )
     }
 
     fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction): Instruction {
         return Instruction.If(
-            If(EvaluatesTo(Expression.Raw(Value.Bool(condition))), then, otherwise)
+            If(condition.evaluatesTo(), then, otherwise)
         )
     }
 
@@ -209,6 +200,10 @@ object Instructions {
 
     fun sequence(instructions: MutableList<Instruction>): Instruction {
         return Instruction.Sequence(SequenceBox(instructions))
+    }
+
+    fun fail(message: String): Instruction {
+        return Instruction.Fail(FailBox(message))
     }
 
     private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {

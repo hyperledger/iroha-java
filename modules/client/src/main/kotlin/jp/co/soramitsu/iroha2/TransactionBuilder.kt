@@ -96,11 +96,16 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetValueType: AssetValueType
     ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValueType)) }
 
-    fun storeAsset(
+    fun setKeyValue(
         assetId: AssetId,
         key: String,
         value: Value
-    ) = this.apply { instructions.value.add(Instructions.storeAsset(assetId, key, value)) }
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
+
+    fun removeKeyValue(
+        assetId: AssetId,
+        key: String,
+    ) = this.apply { instructions.value.add(Instructions.removeKeyValue(assetId, key)) }
 
     fun mintAsset(
         assetId: AssetId,
@@ -146,6 +151,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun sequence(vararg instructions: Instruction) = this.apply {
         this.instructions.value.add(Instructions.sequence(instructions.toMutableList()))
+    }
+
+    fun fail(message: String) = this.apply {
+        this.instructions.value.add(Instructions.fail(message))
     }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toULong()

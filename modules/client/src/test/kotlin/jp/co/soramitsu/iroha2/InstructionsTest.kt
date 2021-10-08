@@ -10,8 +10,10 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import kotlinx.coroutines.runBlocking
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -88,9 +91,9 @@ class InstructionsTest {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
-            storeAsset(DEFAULT_ASSET_ID, pair1.first, pair1.second)
-            storeAsset(DEFAULT_ASSET_ID, pair2.first, pair2.second)
-            storeAsset(DEFAULT_ASSET_ID, pair3.first, pair3.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair1.first, pair1.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -145,7 +148,7 @@ class InstructionsTest {
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
-            storeAsset(aliceAssetId, "foo", "bar".asValue())
+            setKeyValue(aliceAssetId, "foo", "bar".asValue())
             buildSigned(BOB_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -331,6 +334,46 @@ class InstructionsTest {
         assert(getAccountAmount() == 40U)
     }
 
+    @Test
+    @WithIroha
+    fun `instruction failed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            fail("FAIL MESSAGE")
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertThrows(ExecutionException::class.java) {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+    }
+
+    @Test
+    @WithIroha(StoreAssetWithMetadata::class)
+    fun `remove asset instruction committed`(): Unit = runBlocking {
+        val assetId = StoreAssetWithMetadata.ASSET_ID
+        val assetKey = StoreAssetWithMetadata.ASSET_KEY
+
+        val assetBefore = getAsset(assetId)
+        assertEquals(
+            StoreAssetWithMetadata.ASSET_VALUE,
+            assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
+        )
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            removeKeyValue(assetId, assetKey)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        val assetAfter = getAsset(assetId)
+        assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
+    }
+
     private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): UInt {
         return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -356,5 +399,14 @@ class InstructionsTest {
                 it.get(10, TimeUnit.SECONDS)
             }
         }
+    }
+
+    private suspend fun getAsset(assetId: AssetId? = null): Asset {
+        return QueryBuilder.findAssetById(assetId ?: DEFAULT_ASSET_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }
     }
 }

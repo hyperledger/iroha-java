@@ -62,7 +62,7 @@ open class StoreAssetWithMetadata : DefaultGenesis() {
             AssetValueType.Store(),
             Metadata(mutableMapOf(ASSET_KEY to ASSET_VALUE))
         ),
-        Instructions.storeAsset(ASSET_ID, ASSET_KEY, ASSET_VALUE)
+        Instructions.setKeyValue(ASSET_ID, ASSET_KEY, ASSET_VALUE)
     )
 }
 
