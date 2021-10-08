@@ -75,7 +75,7 @@ open class Iroha2Client(
     suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
-        logger.debug("Sending transaction with hash {}", hash.hex())
+        logger.debug("Sending transaction with hash {}", hash.toHex())
         val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
             body = signedTransaction.encode(VersionedTransaction)
         }
@@ -122,7 +122,7 @@ open class Iroha2Client(
         hash: ByteArray,
         afterSubscription: (() -> Unit)? = null
     ): CompletableFuture<ByteArray> {
-        val hexHash = hash.hex()
+        val hexHash = hash.toHex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
         val subscriptionRequest = VersionedEventSocketMessage.V1(
             _VersionedEventSocketMessageV1(

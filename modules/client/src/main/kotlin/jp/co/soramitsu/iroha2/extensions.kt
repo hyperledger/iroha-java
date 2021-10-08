@@ -45,13 +45,13 @@ fun <T> T.encode(writer: ScaleWriter<T>): ByteArray {
 // todo get rid of providing `reader`
 fun <T> ByteArray.decode(reader: ScaleReader<T>): T = ScaleCodecReader(this).read(reader)
 
-fun ByteArray.hex(): String = try {
+fun ByteArray.toHex(): String = try {
     Hex.toHexString(this)
 } catch (ex: Exception) {
     throw HexCodecException("Cannot encode to hex string", ex)
 }
 
-fun String.hex(): ByteArray = try {
+fun String.fromHex(): ByteArray = try {
     Hex.decode(this)
 } catch (ex: Exception) {
     throw HexCodecException("Cannot decode from hex string `$this`", ex)
