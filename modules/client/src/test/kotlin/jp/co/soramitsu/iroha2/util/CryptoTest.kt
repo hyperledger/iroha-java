@@ -3,7 +3,8 @@ package jp.co.soramitsu.iroha2.util
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.hash
-import jp.co.soramitsu.iroha2.hex
+import jp.co.soramitsu.iroha2.toHex
+import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.verify
@@ -59,14 +60,14 @@ class CryptoTest {
     fun `hash function returns expected result`() {
         val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2"
         val input = "6920616d2064617461"
-        assertEquals(expected, Hex.toHexString(input.hex().hash()))
+        assertEquals(expected, Hex.toHexString(input.fromHex().hash()))
     }
 
     @Test
     fun `keypair serialized to hex and deserialized back`() {
         val keyPair = generateKeyPair()
-        val pubKey = keyPair.public.bytes().hex()
-        val privKey = keyPair.private.bytes().hex()
+        val pubKey = keyPair.public.bytes().toHex()
+        val privKey = keyPair.private.bytes().toHex()
 
         val message = "foo".toByteArray()
         val signature = keyPair.private.sign(message)
