@@ -60,7 +60,6 @@ subprojects {
     }
 
     artifacts {
-        archives jar
         archives shadowJar
     }
 
