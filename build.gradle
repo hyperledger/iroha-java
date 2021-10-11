@@ -65,14 +65,13 @@ subprojects {
         archives shadowJar
     }
 
-//    publishing {
-//        publications {
-//            mavenJava(MavenPublication) {
-//                artifact jar
-//                artifact shadowJar
-//            }
-//        }
-//    }
+    publishing {
+        publications {
+            shadow(MavenPublication) { publication ->
+                project.shadow.component(publication)
+            }
+        }
+    }
 
     compileKotlin {
         kotlinOptions {
