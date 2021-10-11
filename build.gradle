@@ -10,8 +10,9 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 allprojects {
@@ -25,9 +26,10 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven'
-    apply plugin: "org.jmailen.kotlinter"
+    apply plugin: 'org.jmailen.kotlinter'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
@@ -49,12 +51,13 @@ subprojects {
     jar {
         from {
             configurations.runtimeClasspath
-            //todo remove it as soon as will be own implementation of scale codec
+            // todo remove it as soon as will be own implementation of scale codec
                     .filter { it.name.contains("polkaj-scale") }
                     .collect {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
+        dependsOn(shadowJar)
     }
 
     compileKotlin {
