@@ -58,7 +58,6 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
-        classifier = "test"
     }
 
     artifacts {
