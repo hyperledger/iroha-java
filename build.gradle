@@ -57,6 +57,12 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
+        manifest.attributes('Multi-Release': 'true')
+    }
+
+    shadowJar {
+        zip64 = true
+        manifest.attributes('Multi-Release': 'true')
     }
 
     artifacts {
