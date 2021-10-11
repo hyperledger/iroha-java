@@ -58,6 +58,7 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
+        classifier = "test"
     }
 
     artifacts {
@@ -65,14 +66,14 @@ subprojects {
         archives shadowJar
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact jar
-                artifact shadowJar
-            }
-        }
-    }
+//    publishing {
+//        publications {
+//            mavenJava(MavenPublication) {
+//                artifact jar
+//                artifact shadowJar
+//            }
+//        }
+//    }
 
     compileKotlin {
         kotlinOptions {
