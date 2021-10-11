@@ -28,6 +28,7 @@ allprojects {
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
     apply plugin: 'com.github.johnrengelman.shadow'
 
@@ -57,16 +58,20 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
-        manifest.attributes('Multi-Release': 'true')
-    }
-
-    shadowJar {
-        zip64 = true
-        manifest.attributes('Multi-Release': 'true')
     }
 
     artifacts {
+        archives jar
         archives shadowJar
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact jar
+                artifact shadowJar
+            }
+        }
     }
 
     compileKotlin {
