@@ -57,7 +57,11 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
-        dependsOn(shadowJar)
+    }
+
+    artifacts {
+        archives jar
+        archives shadowJar
     }
 
     compileKotlin {
