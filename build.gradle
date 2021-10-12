@@ -28,6 +28,7 @@ allprojects {
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven'
+    apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
     apply plugin: 'com.github.johnrengelman.shadow'
@@ -50,12 +51,13 @@ subprojects {
     }
 
     shadowJar {
-        classifier = null
-        zip64 = true
         from sourceSets.main.allSource
     }
 
-    assemble.dependsOn(shadowJar)
+    jar {
+        enabled = false
+        dependsOn(shadowJar { classifier = null })
+    }
 
     artifacts {
         archives shadowJar
