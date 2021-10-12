@@ -49,19 +49,18 @@ subprojects {
         withSourcesJar()
     }
 
-//    jar {
-//        from {
-//            configurations.runtimeClasspath
-//            // todo remove it as soon as will be own implementation of scale codec
-//                    .filter { it.name.contains("polkaj-scale") }
-//                    .collect {
-//                        it.isDirectory() ? it : zipTree(it)
-//                    }
-//        }
-//    }
+    jar {
+        from {
+            configurations.runtimeClasspath
+            // todo remove it as soon as will be own implementation of scale codec
+                    .filter { it.name.contains("polkaj-scale") }
+                    .collect {
+                        it.isDirectory() ? it : zipTree(it)
+                    }
+        }
+    }
 
     shadowJar {
-        classifier = null
         from sourceSets.main.allSource
     }
 
