@@ -52,7 +52,7 @@ subprojects {
 
     shadowJar {
         archiveClassifier.set(null)
-        from sourceSets.main.allSource
+//        from sourceSets.main.allSource
     }
 
     artifacts {
