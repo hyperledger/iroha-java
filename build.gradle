@@ -51,9 +51,7 @@ subprojects {
     }
 
     shadowJar {
-        mergeServiceFiles()
-
-        classifier = null
+        archiveClassifier.set(null)
         from sourceSets.main.allSource
     }
 
