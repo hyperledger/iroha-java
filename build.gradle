@@ -31,7 +31,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
-//    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
@@ -50,23 +50,14 @@ subprojects {
         withSourcesJar()
     }
 
-    jar {
-        from {
-            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-        }
+    shadowJar {
+        classifier = null
+        from sourceSets.main.allSource
     }
 
-//    shadowJar {
-//        classifier = null
-//        from sourceSets.main.allSource
-//    }
-//
-//    assemble.dependsOn(shadowJar)
-
-//    artifacts {
-//        archives shadowJar
-//    }
+    artifacts {
+        archives shadowJar
+    }
 
     compileKotlin {
         kotlinOptions {
