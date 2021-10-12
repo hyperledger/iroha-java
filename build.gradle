@@ -60,6 +60,8 @@ subprojects {
         }
     }
 
+    shadowJar.finalizedBy sourcesJar
+
     artifacts {
         archives jar
         archives shadowJar
