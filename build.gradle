@@ -59,7 +59,11 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
-        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
     }
 
     compileKotlin {
