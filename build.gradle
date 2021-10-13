@@ -10,7 +10,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
 }
 
@@ -25,9 +25,9 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven'
-    apply plugin: "org.jmailen.kotlinter"
+    apply plugin: 'org.jmailen.kotlinter'
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
@@ -55,6 +55,11 @@ subprojects {
                         it.isDirectory() ? it : zipTree(it)
                     }
         }
+    }
+
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
     }
 
     compileKotlin {
