@@ -1,23 +1,23 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
+import org.testcontainers.images.PullPolicy
+import org.testcontainers.utility.DockerImageName
+import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
-import org.testcontainers.images.PullPolicy
-import org.testcontainers.utility.DockerImageName
-import org.testcontainers.utility.MountableFile.forHostPath
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
 open class IrohaContainer(
     imageTag: String = DEFAULT_IMAGE_TAG,
     config: IrohaConfig.() -> Unit = {}
-) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:${imageTag}")) {
+) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:$imageTag")) {
 
     private val config = IrohaConfig().apply(config)
 
