@@ -12,7 +12,6 @@ buildscript {
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 allprojects {
@@ -28,10 +27,7 @@ allprojects {
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven'
-    apply plugin: 'java'
-    apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
-//    apply plugin: 'com.github.johnrengelman.shadow'
 
     group = 'jp.co.soramitsu.iroha-java'
     version = '0.0.1-SNAPSHOT'
