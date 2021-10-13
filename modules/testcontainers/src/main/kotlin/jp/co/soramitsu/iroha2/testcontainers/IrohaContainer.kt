@@ -106,7 +106,7 @@ open class IrohaContainer(
 
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
-        const val PEER_START_COMMAND = "./iroha_cli --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"
+        const val PEER_START_COMMAND = "./iroha --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }
 }
