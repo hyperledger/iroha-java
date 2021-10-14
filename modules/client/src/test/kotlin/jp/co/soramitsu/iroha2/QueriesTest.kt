@@ -20,6 +20,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
@@ -271,6 +272,7 @@ class QueriesTest {
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @Disabled("Temporarily")
     fun `find permission tokens by account id`(): Unit = runBlocking {
         QueryBuilder.findPermissionTokensByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
