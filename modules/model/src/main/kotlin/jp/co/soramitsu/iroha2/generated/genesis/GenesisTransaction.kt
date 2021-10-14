@@ -9,7 +9,7 @@ import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * GenesisTransaction
@@ -17,7 +17,7 @@ import kotlin.collections.MutableList
  * Generated from 'iroha::genesis::GenesisTransaction' regular structure
  */
 public data class GenesisTransaction(
-    public val isi: MutableList<Instruction>
+    public val isi: List<Instruction>
 ) {
     public companion object : ScaleReader<GenesisTransaction>, ScaleWriter<GenesisTransaction> {
         public override fun read(reader: ScaleCodecReader): GenesisTransaction = try {

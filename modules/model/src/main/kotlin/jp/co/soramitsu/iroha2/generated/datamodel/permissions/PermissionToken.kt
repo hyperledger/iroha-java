@@ -11,7 +11,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
-import kotlin.collections.MutableMap
+import kotlin.collections.Map
 
 /**
  * PermissionToken
@@ -20,7 +20,7 @@ import kotlin.collections.MutableMap
  */
 public data class PermissionToken(
     public val name: String,
-    public val params: MutableMap<String, Value>
+    public val params: Map<String, Value>
 ) {
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
         public override fun read(reader: ScaleCodecReader): PermissionToken = try {

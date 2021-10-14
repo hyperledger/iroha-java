@@ -8,10 +8,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.UInt
-import kotlin.collections.MutableList
 
 /**
  * Value
@@ -71,7 +67,11 @@ public sealed class Value {
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Bool) = try {
-                if (instance.bool) { writer.directWrite(1) } else { writer.directWrite(0) }
+                if (instance.bool) {
+                    writer.directWrite(1)
+                } else {
+                    writer.directWrite(0)
+                }
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -136,7 +136,7 @@ public sealed class Value {
      * 'Vec' variant
      */
     public data class Vec(
-        public val vec: MutableList<Value>
+        public val vec: List<Value>
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 

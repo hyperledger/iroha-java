@@ -11,7 +11,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
@@ -104,19 +106,36 @@ fun VersionedTransaction.hash() = when (this) {
 }
 
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
-    when (this) {
-        is VersionedTransaction.V1 -> {
-            val encodedPayload = _VersionedTransactionV1.transaction.payload.encode(Payload)
-            val signatures = keypairs.map {
-                Signature(
-                    it.public.toIrohaPublicKey(),
-                    it.private.sign(encodedPayload)
-                )
-            }.toSet()
-            _VersionedTransactionV1.transaction.signatures.addAll(signatures)
-        }
+    return when (this) {
+        is VersionedTransaction.V1 ->
+            _VersionedTransactionV1
+                .transaction.payload
+                .encode(Payload)
+                .let { encodedPayload ->
+                    keypairs.map {
+                        Signature(
+                            it.public.toIrohaPublicKey(),
+                            it.private.sign(encodedPayload)
+                        )
+                    }
+                }.toSet().let { signatures ->
+                    this.plusSignatures(signatures)
+                }
     }
-    return this
+}
+
+fun VersionedTransaction.plusSignatures(signatures: Iterable<Signature>): VersionedTransaction.V1 {
+    return when (this) {
+        is VersionedTransaction.V1 ->
+            VersionedTransaction.V1(
+                _VersionedTransactionV1(
+                    Transaction(
+                        _VersionedTransactionV1.transaction.payload,
+                        _VersionedTransactionV1.transaction.signatures.plus(signatures)
+                    )
+                )
+            )
+    }
 }
 
 inline fun <reified B> Any.cast(): B {

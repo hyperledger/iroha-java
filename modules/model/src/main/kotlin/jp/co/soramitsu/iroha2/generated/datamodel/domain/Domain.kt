@@ -14,7 +14,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
-import kotlin.collections.MutableMap
+import kotlin.collections.Map
 
 /**
  * Domain
@@ -23,8 +23,8 @@ import kotlin.collections.MutableMap
  */
 public data class Domain(
     public val name: String,
-    public val accounts: MutableMap<Id, Account>,
-    public val assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry>
+    public val accounts: Map<Id, Account>,
+    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = try {

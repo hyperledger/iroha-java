@@ -10,7 +10,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * NewAccount
@@ -19,7 +19,7 @@ import kotlin.collections.MutableList
  */
 public data class NewAccount(
     public val id: Id,
-    public val signatories: MutableList<PublicKey>,
+    public val signatories: List<PublicKey>,
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {

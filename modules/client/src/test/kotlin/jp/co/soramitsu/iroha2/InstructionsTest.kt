@@ -43,6 +43,7 @@ class InstructionsTest {
     @Test
     @WithIroha
     fun `register account instruction committed`(): Unit = runBlocking {
+
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID

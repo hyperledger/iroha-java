@@ -23,17 +23,11 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  * Default genesis plus Alice has 100 XOR and permission to burn
  */
 open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
-    override val genesisBlock = super.genesisBlock.apply {
-        val transaction =
-            this.transactions.firstOrNull() ?: GenesisTransaction(mutableListOf()).also { this.transactions.add(it) }
-        transaction.isi.addAll(
-            listOf(
-                Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
-                Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
-                Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
-            )
-        )
-    }
+    override val genesisBlock = updatedGenesisBlock(
+        Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
+        Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
+    )
 }
 
 open class AliceAndBobEachHave100Xor : DefaultGenesis() {
@@ -41,7 +35,7 @@ open class AliceAndBobEachHave100Xor : DefaultGenesis() {
         val BOB_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
     }
 
-    override val genesisBlock = super.genesisBlock.plus(
+    override val genesisBlock = updatedGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
         Instructions.mintAsset(BOB_ASSET_ID, 100U)
@@ -56,7 +50,7 @@ open class StoreAssetWithMetadata : DefaultGenesis() {
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 
-    override val genesisBlock = super.genesisBlock.plus(
+    override val genesisBlock = updatedGenesisBlock(
         Instructions.registerAsset(
             DEFINITION_ID,
             AssetValueType.Store(),
@@ -74,7 +68,7 @@ open class XorAndValAssets : DefaultGenesis() {
         val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
     }
 
-    override val genesisBlock = super.genesisBlock.plus(
+    override val genesisBlock = updatedGenesisBlock(
         Instructions.registerAsset(XOR_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID), XOR_QUANTITY),
 
@@ -93,7 +87,7 @@ open class NewAccountWithMetadata : DefaultGenesis() {
         val KEYPAIR = generateKeyPair()
     }
 
-    override val genesisBlock = super.genesisBlock.plus(
+    override val genesisBlock = updatedGenesisBlock(
         Instructions.registerAccount(
             id = ACCOUNT_ID,
             signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
@@ -107,12 +101,12 @@ open class NewDomain : DefaultGenesis() {
         const val DOMAIN_NAME = "foo_domain"
     }
 
-    override val genesisBlock: RawGenesisBlock = super.genesisBlock.plus(
+    override val genesisBlock: RawGenesisBlock = updatedGenesisBlock(
         Instructions.registerDomain(DOMAIN_NAME, mutableMapOf(), mutableMapOf())
     )
 }
 
-fun rawGenesisBlock(): RawGenesisBlock {
+fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
     return RawGenesisBlock(
         mutableListOf(
             GenesisTransaction(
@@ -125,19 +119,14 @@ fun rawGenesisBlock(): RawGenesisBlock {
                     Instructions.registerAccount(
                         BOB_ACCOUNT_ID,
                         mutableListOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
-                    )
+                    ),
+                    *instructions
                 )
             )
         )
     )
 }
 
-fun RawGenesisBlock.plus(vararg instructions: Instruction): RawGenesisBlock {
-    // get or create genesis transaction
-    val genesisTransaction = when (transactions.isEmpty()) {
-        true -> GenesisTransaction(mutableListOf()).apply { transactions.add(this) }
-        false -> transactions.first()
-    }
-    genesisTransaction.isi.addAll(instructions)
-    return this
+fun updatedGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
+    return rawGenesisBlock(*instructions)
 }

@@ -8,7 +8,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Int
 
 /**
  * QueryBox
@@ -420,7 +419,9 @@ public sealed class QueryBox {
             public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
                 try {
                     FindAssetsByDomainNameAndAssetDefinitionId(
-                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.read(reader),
+                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.read(
+                            reader
+                        ),
                     )
                 } catch (ex: Exception) {
                     throw wrapException(ex)
@@ -522,7 +523,9 @@ public sealed class QueryBox {
             public override fun read(reader: ScaleCodecReader): FindAssetDefinitionKeyValueByIdAndKey =
                 try {
                     FindAssetDefinitionKeyValueByIdAndKey(
-                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey.read(reader),
+                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey.read(
+                            reader
+                        ),
                     )
                 } catch (ex: Exception) {
                     throw wrapException(ex)
@@ -684,7 +687,9 @@ public sealed class QueryBox {
 
             public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
                 FindPermissionTokensByAccountId(
-                    jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId.read(reader),
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId.read(
+                        reader
+                    ),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
