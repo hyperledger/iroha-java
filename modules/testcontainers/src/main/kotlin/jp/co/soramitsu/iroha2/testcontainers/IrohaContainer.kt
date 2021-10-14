@@ -14,17 +14,15 @@ import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
-open class IrohaContainer(
-    imageTag: String = DEFAULT_IMAGE_TAG,
-    config: IrohaConfig.() -> Unit = {}
-) : GenericContainer<IrohaContainer>(DockerImageName.parse("$IMAGE_NAME:$imageTag")) {
+open class IrohaContainer : GenericContainer<IrohaContainer> {
 
-    private val config = IrohaConfig().apply(config)
+    constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
 
-    private val genesisFileLocation: Lazy<Path> = lazy { createTempFile("genesis-", randomUUID().toString()) }
-
-    init {
-        this.withNetwork(this.config.networkToJoin)
+    constructor(config: IrohaConfig) : super(
+        DockerImageName.parse("$IMAGE_NAME:${config.imageTag}")
+    ) {
+        this.config = config
+        this.withNetwork(config.networkToJoin)
             .withEnv(ENV_SUMERAGI_MAX_FAULTY_PEERS.first, ENV_SUMERAGI_MAX_FAULTY_PEERS.second)
             .withEnv(ENV_TORII_P2P_URL.first, ENV_TORII_P2P_URL.second)
             .withEnv(ENV_TORII_API_URL.first, ENV_TORII_API_URL.second)
@@ -32,12 +30,12 @@ open class IrohaContainer(
             .withEnv(ENV_IROHA_ROOT_PUBLIC_KEY.first, ENV_IROHA_ROOT_PUBLIC_KEY.second)
             .withEnv(ENV_IROHA_PRIVATE_KEY.first, ENV_IROHA_PRIVATE_KEY.second)
             .withEnv(ENV_SUMERAGI_TRUSTED_PEERS.first, ENV_SUMERAGI_TRUSTED_PEERS.second)
-            .withEnv("MAX_LOG_LEVEL", this.config.maxLogLevel.name)
+            .withEnv(ENV_MAX_LOG_LEVEL, config.maxLogLevel.name)
             .withExposedPorts(API_PORT, P2P_PORT)
             .withNetworkAliases(NETWORK_ALIAS)
-            .withLogConsumer(this.config.logConsumer)
+            .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
-                forHostPath(this.config.genesis.writeToFile(genesisFileLocation.value)),
+                forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
                 DEFAULT_GENESIS_FILE_NAME
             )
             .withCommand(PEER_START_COMMAND)
@@ -49,6 +47,12 @@ open class IrohaContainer(
                     .forPath(HEALTHCHECK)
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
             )
+    }
+
+    private val config: IrohaConfig
+
+    private val genesisFileLocation: Lazy<Path> = lazy {
+        createTempFile("genesis-", randomUUID().toString())
     }
 
     override fun start() {
@@ -95,6 +99,7 @@ open class IrohaContainer(
             "IROHA_PRIVATE_KEY" to """{"digest_function": "ed25519", "payload": "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"}"""
         val ENV_SUMERAGI_TRUSTED_PEERS =
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
+        val ENV_MAX_LOG_LEVEL = "MAX_LOG_LEVEL"
 
         const val DEFAULT_IMAGE_TAG = "dev"
         const val IMAGE_NAME = "hyperledger/iroha2"
