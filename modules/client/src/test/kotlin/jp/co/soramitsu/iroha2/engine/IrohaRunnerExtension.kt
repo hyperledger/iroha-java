@@ -36,8 +36,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
             .declaredAnnotations.filterIsInstance<WithIroha>()
             .firstOrNull()
             ?.let {
-                val genesis = it.genesis.createInstance()
-                val container = IrohaContainer(genesis = genesis)
+                val container = IrohaContainer { genesis = it.genesis.createInstance() }
                 container.start()
                 val irohaClient = Iroha2Client(container.getApiUrl(), log = true)
                 val testClassInstance = invocationContext.target.get()
