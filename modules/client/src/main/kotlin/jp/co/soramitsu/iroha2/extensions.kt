@@ -107,26 +107,15 @@ fun VersionedTransaction.hash() = when (this) {
 
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
-        is VersionedTransaction.V1 ->
-            _VersionedTransactionV1
-                .transaction.payload
-                .encode(Payload)
-                .let { encodedPayload ->
-                    keypairs.map {
-                        Signature(
-                            it.public.toIrohaPublicKey(),
-                            it.private.sign(encodedPayload)
-                        )
-                    }
-                }.toSet().let { signatures ->
-                    this.plusSignatures(signatures)
-                }
-    }
-}
+        is VersionedTransaction.V1 -> {
+            val encodedPayload = _VersionedTransactionV1.transaction.payload.encode(Payload)
+            val signatures = keypairs.map {
+                Signature(
+                    it.public.toIrohaPublicKey(),
+                    it.private.sign(encodedPayload)
+                )
+            }.toSet()
 
-fun VersionedTransaction.plusSignatures(signatures: Iterable<Signature>): VersionedTransaction.V1 {
-    return when (this) {
-        is VersionedTransaction.V1 ->
             VersionedTransaction.V1(
                 _VersionedTransactionV1(
                     Transaction(
@@ -135,6 +124,7 @@ fun VersionedTransaction.plusSignatures(signatures: Iterable<Signature>): Versio
                     )
                 )
             )
+        }
     }
 }
 
