@@ -38,7 +38,7 @@ public data class Where(
         public override fun write(writer: ScaleCodecWriter, instance: Where) = try {
             EvaluatesTo.write(writer, instance.expression)
             writer.writeCompact(instance.values.size)
-            instance.values.forEach { (key, value) ->
+            instance.values.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 EvaluatesTo.write(writer, value)
             }

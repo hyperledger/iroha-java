@@ -52,7 +52,7 @@ public data class Account(
         public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
-            instance.assets.forEach { (key, value) ->
+            instance.assets.forEach { (key, value) ->  
                 jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, key)
                 Asset.write(writer, value)
             }

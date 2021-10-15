@@ -32,7 +32,7 @@ public data class Metadata(
 
         public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
             writer.writeCompact(instance.map.size)
-            instance.map.forEach { (key, value) ->
+            instance.map.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }

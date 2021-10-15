@@ -35,7 +35,7 @@ public data class PermissionToken(
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
             writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
             writer.writeCompact(instance.params.size)
-            instance.params.forEach { (key, value) ->
+            instance.params.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }

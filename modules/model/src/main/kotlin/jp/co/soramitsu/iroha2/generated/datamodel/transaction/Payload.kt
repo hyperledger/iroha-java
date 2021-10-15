@@ -51,7 +51,7 @@ public data class Payload(
             writeBit64(writer, instance.creationTime.toLong())
             writeBit64(writer, instance.timeToLiveMs.toLong())
             writer.writeCompact(instance.metadata.size)
-            instance.metadata.forEach { (key, value) ->
+            instance.metadata.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }
