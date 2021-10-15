@@ -73,7 +73,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 it.public.toIrohaPublicKey(),
                 it.private.sign(encodedPayload)
             )
-        }.toList()
+        }.toMutableList()
 
         return VersionedTransaction.V1(
             _VersionedTransactionV1(
