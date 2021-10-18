@@ -61,11 +61,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             val genesisAsJson = config.genesis.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
         }
-        try {
-            super.start()
-        } catch (t: Throwable) {
-            print(t)
-        }
+        super.start()
         logger().debug("Iroha container started")
     }
 

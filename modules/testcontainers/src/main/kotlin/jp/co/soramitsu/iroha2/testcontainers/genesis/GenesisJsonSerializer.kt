@@ -69,16 +69,6 @@ object GenericSerializer : JsonSerializer<Any> {
     }
 }
 
-object MetadataSerializer : JsonSerializer<Metadata> {
-    override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
-        val jsonObject = JsonObject()
-        src.map.forEach { (key, value) ->
-            jsonObject.add(key, GenericSerializer.serialize(value, null, context))
-        }
-        return jsonObject
-    }
-}
-
 object PublicKeySerializer : JsonSerializer<PublicKey> {
     override fun serialize(src: PublicKey, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val res = ByteArrayOutputStream()
