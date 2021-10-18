@@ -16,8 +16,8 @@ import jp.co.soramitsu.iroha2.wrapException
 import jp.co.soramitsu.iroha2.writeBit64
 import kotlin.String
 import kotlin.ULong
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
+import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
  * Payload
@@ -26,10 +26,10 @@ import kotlin.collections.MutableMap
  */
 public data class Payload(
     public val accountId: Id,
-    public val instructions: MutableList<Instruction>,
+    public val instructions: List<Instruction>,
     public val creationTime: ULong,
     public val timeToLiveMs: ULong,
-    public val metadata: MutableMap<String, Value>
+    public val metadata: Map<String, Value>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = try {
@@ -51,7 +51,7 @@ public data class Payload(
             writeBit64(writer, instance.creationTime.toLong())
             writeBit64(writer, instance.timeToLiveMs.toLong())
             writer.writeCompact(instance.metadata.size)
-            instance.metadata.forEach { (key, value) ->
+            instance.metadata.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }

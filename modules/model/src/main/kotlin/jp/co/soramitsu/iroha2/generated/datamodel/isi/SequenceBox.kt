@@ -8,7 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * SequenceBox
@@ -16,7 +16,7 @@ import kotlin.collections.MutableList
  * Generated from 'iroha_data_model::isi::SequenceBox' regular structure
  */
 public data class SequenceBox(
-    public val instructions: MutableList<Instruction>
+    public val instructions: List<Instruction>
 ) {
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
         public override fun read(reader: ScaleCodecReader): SequenceBox = try {

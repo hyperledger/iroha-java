@@ -10,7 +10,7 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * RejectedTransaction
@@ -19,7 +19,7 @@ import kotlin.collections.MutableList
  */
 public data class RejectedTransaction(
     public val payload: Payload,
-    public val signatures: MutableList<Signature>,
+    public val signatures: List<Signature>,
     public val rejectionReason: TransactionRejectionReason
 ) {
     public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
