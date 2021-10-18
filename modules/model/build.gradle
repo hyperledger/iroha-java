@@ -3,5 +3,6 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     //scale codec
+    api project(":common")
     api ":polkaj-scale:$polkajScaleVer"
 }

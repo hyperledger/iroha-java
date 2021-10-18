@@ -2,6 +2,7 @@ group 'jp.co.soramitsu'
 version '1.0-SNAPSHOT'
 
 dependencies {
+    api project(":common")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "com.google.code.gson:gson:$gsonVer"
     implementation "com.squareup:kotlinpoet:$kotlinPoetVer"

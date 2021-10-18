@@ -63,5 +63,6 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
                 blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className
             )
         )
+//        clazz.addSuperinterface(Enumeration2::class)
     }
 }
