@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
@@ -18,7 +19,7 @@ import kotlin.UInt
  *
  * Generated from 'iroha_data_model::asset::AssetValue' enum
  */
-public sealed class AssetValue {
+public sealed class AssetValue : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */

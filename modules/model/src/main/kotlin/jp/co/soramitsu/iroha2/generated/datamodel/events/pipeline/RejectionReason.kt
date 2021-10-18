@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -15,7 +16,7 @@ import kotlin.Int
  *
  * Generated from 'iroha_data_model::events::pipeline::RejectionReason' enum
  */
-public sealed class RejectionReason {
+public sealed class RejectionReason : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
