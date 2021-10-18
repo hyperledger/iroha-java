@@ -7,7 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.GsonSerializable
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.wrapException
@@ -18,7 +18,7 @@ import kotlin.Int
  *
  * Generated from 'iroha_data_model::expression::Expression' enum
  */
-public sealed class Expression : GsonSerializable {
+public sealed class Expression : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */

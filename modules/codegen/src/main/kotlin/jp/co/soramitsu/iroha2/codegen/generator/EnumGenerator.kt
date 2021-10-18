@@ -4,12 +4,10 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
-import jp.co.soramitsu.iroha2.GsonSerializable
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumBlueprint
 
 object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
-
-    private val manuallySerializableTypes = listOf("IdentifiableBox", "IdBox", "Value", "Expression", "Instruction")
 
     override fun implKDoc(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         super.implKDoc(blueprint, clazz)
@@ -64,8 +62,6 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
     @OptIn(ExperimentalUnsignedTypes::class)
     override fun implSuperClasses(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         super.implSuperClasses(blueprint, clazz)
-        if (blueprint.className in manuallySerializableTypes) {
-            clazz.addSuperinterface(GsonSerializable::class)
-        }
+        clazz.addSuperinterface(ModelEnum::class)
     }
 }

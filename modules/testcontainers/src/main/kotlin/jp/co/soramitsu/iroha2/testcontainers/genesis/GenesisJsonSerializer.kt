@@ -9,9 +9,8 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.GsonSerializable
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.toHex
@@ -26,8 +25,9 @@ object GenesisJsonSerializer {
         GsonBuilder()
             .setPrettyPrinting()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeHierarchyAdapter(GsonSerializable::class.java, GenericSerializer)
-            .registerTypeAdapter(AssetValueType::class.java, PrimitiveSerializer)
+            .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
+            .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
+            .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
             .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
             .registerTypeAdapter(UInt::class.java, UIntSerializer)
             .create()
@@ -38,25 +38,15 @@ object GenesisJsonSerializer {
     }
 }
 
-object GenericSerializer : JsonSerializer<Any> {
-    override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
-        return when (src) {
-            is EvaluatesTo<*> -> serialize(src.expression, null, context)
-            is Metadata -> JsonObject().also { serialized ->
-                src.map.forEach { (key, value) ->
-                    serialized.add(key, serialize(value, null, context))
-                }
-            }
-            else -> default(src, context)
-        }
-    }
-
+object EnumerationSerializer : JsonSerializer<Any> {
     @OptIn(ExperimentalStdlibApi::class)
-    private fun default(src: Any, context: JsonSerializationContext): JsonElement {
+    override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
         val serialized = JsonObject()
 
         val memberProperties = src::class.memberProperties
-        if (memberProperties.size != 1) {
+        if (memberProperties.isEmpty()) {
+            return JsonPrimitive(src::class.java.simpleName)
+        } else if (memberProperties.size != 1) {
             throw RuntimeException("Expected enum which accept exactly 1 member as tuple")
         }
         val innerProp = memberProperties.first()
@@ -69,6 +59,21 @@ object GenericSerializer : JsonSerializer<Any> {
     }
 }
 
+object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>> {
+    override fun serialize(src: EvaluatesTo<*>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement =
+        EnumerationSerializer.serialize(src.expression, null, context)
+}
+
+object MetadataSerializer : JsonSerializer<Metadata> {
+    override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
+        val jsonObject = JsonObject()
+        src.map.forEach { (key, value) ->
+            jsonObject.add(key, EnumerationSerializer.serialize(value, null, context))
+        }
+        return jsonObject
+    }
+}
+
 object PublicKeySerializer : JsonSerializer<PublicKey> {
     override fun serialize(src: PublicKey, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val res = ByteArrayOutputStream()
@@ -76,12 +81,6 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
         Multihash.putUvarint(res, src.payload.size.toLong())
         res.write(src.payload)
         return context.serialize(res.toByteArray().toHex())
-    }
-}
-
-object PrimitiveSerializer : JsonSerializer<AssetValueType> {
-    override fun serialize(src: AssetValueType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-        return JsonPrimitive(src::class.java.simpleName)
     }
 }
 

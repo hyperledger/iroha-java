@@ -7,7 +7,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
@@ -21,7 +20,7 @@ import kotlin.collections.Map
  */
 public data class Metadata(
     public val map: Map<String, Value>
-) : GsonSerializable {
+) {
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
         public override fun read(reader: ScaleCodecReader): Metadata = try {
             Metadata(
@@ -33,7 +32,7 @@ public data class Metadata(
 
         public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
             writer.writeCompact(instance.map.size)
-            instance.map.forEach { (key, value) ->
+            instance.map.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 Value.write(writer, value)
             }

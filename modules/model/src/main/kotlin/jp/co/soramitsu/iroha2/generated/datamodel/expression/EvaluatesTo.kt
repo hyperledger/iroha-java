@@ -7,7 +7,6 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 
@@ -18,7 +17,7 @@ import kotlin.Any
  */
 public data class EvaluatesTo<T0>(
     public val expression: Expression
-) : GsonSerializable {
+) {
     public companion object : ScaleReader<EvaluatesTo<out Any>>, ScaleWriter<EvaluatesTo<out Any>> {
         public override fun read(reader: ScaleCodecReader): EvaluatesTo<out Any> = try {
             EvaluatesTo(
