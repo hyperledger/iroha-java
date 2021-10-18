@@ -7,6 +7,5 @@ kotlinter {
 
 dependencies {
     //scale codec
-    api project(":common")
     api ":polkaj-scale:$polkajScaleVer"
 }

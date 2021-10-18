@@ -11,6 +11,3 @@ project(':testcontainers').projectDir = 'modules/testcontainers' as File
 
 include 'model'
 project(':model').projectDir = 'modules/model' as File
-
-include 'common'
-project(':common').projectDir = 'modules/common' as File
