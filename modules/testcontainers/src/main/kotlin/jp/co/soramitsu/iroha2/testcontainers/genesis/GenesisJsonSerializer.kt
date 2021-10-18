@@ -8,8 +8,6 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
-import java.io.ByteArrayOutputStream
-import java.lang.reflect.Type
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
@@ -17,6 +15,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.toHex
+import java.io.ByteArrayOutputStream
+import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
