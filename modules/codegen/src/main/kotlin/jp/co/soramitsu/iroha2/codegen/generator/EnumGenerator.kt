@@ -4,9 +4,11 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
+import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumBlueprint
 
 object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
+
     override fun implKDoc(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         super.implKDoc(blueprint, clazz)
         clazz.addKdoc("\n\nGenerated from '${blueprint.source.name}' enum")
@@ -55,5 +57,11 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
         codeBlock.add(whenFlow)
         codeBlock.add("\n\telse -> throw RuntimeException(\"Unresolved discriminant of the enum variant: \$discriminant\")")
         return codeBlock.add("}").build()
+    }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    override fun implSuperClasses(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
+        super.implSuperClasses(blueprint, clazz)
+        clazz.addSuperinterface(ModelEnum::class)
     }
 }
