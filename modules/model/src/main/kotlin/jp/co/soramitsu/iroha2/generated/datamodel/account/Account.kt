@@ -14,9 +14,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.hashSetWithSize
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
-import kotlin.collections.MutableMap
-import kotlin.collections.MutableSet
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.Set
 
 /**
  * Account
@@ -25,9 +25,9 @@ import kotlin.collections.MutableSet
  */
 public data class Account(
     public val id: Id,
-    public val assets: MutableMap<jp.co.soramitsu.iroha2.generated.datamodel.asset.Id, Asset>,
-    public val signatories: MutableList<PublicKey>,
-    public val permissionTokens: MutableSet<PermissionToken>,
+    public val assets: Map<jp.co.soramitsu.iroha2.generated.datamodel.asset.Id, Asset>,
+    public val signatories: List<PublicKey>,
+    public val permissionTokens: Set<PermissionToken>,
     public val signatureCheckCondition: SignatureCheckCondition,
     public val metadata: Metadata
 ) {
@@ -52,7 +52,7 @@ public data class Account(
         public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
-            instance.assets.forEach { (key, value) ->
+            instance.assets.forEach { (key, value) ->  
                 jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, key)
                 Asset.write(writer, value)
             }

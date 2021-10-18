@@ -8,7 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * RawGenesisBlock
@@ -16,7 +16,7 @@ import kotlin.collections.MutableList
  * Generated from 'iroha::genesis::RawGenesisBlock' regular structure
  */
 public data class RawGenesisBlock(
-    public val transactions: MutableList<GenesisTransaction>
+    public val transactions: List<GenesisTransaction>
 ) {
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
         public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {

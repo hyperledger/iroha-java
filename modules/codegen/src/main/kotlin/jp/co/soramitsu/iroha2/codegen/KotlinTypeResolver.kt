@@ -111,8 +111,8 @@ val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     I64Type::class to Long::class.asTypeName(),
     I128Type::class to BigInteger::class.asTypeName(),
     I256Type::class to BigInteger::class.asTypeName(),
-    VecType::class to ClassName("kotlin.collections", "MutableList"),
-    SetType::class to ClassName("kotlin.collections", "MutableSet"),
-    MapType::class to ClassName("kotlin.collections", "MutableMap"),
+    VecType::class to List::class.asTypeName(),
+    SetType::class to Set::class.asTypeName(),
+    MapType::class to Map::class.asTypeName(),
     ArrayType::class to Array::class.asTypeName()
 )

@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.UInt
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * Value
@@ -137,7 +137,7 @@ public sealed class Value : GsonSerializable {
      * 'Vec' variant
      */
     public data class Vec(
-        public val vec: MutableList<Value>
+        public val vec: List<Value>
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 

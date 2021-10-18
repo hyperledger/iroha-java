@@ -22,41 +22,28 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
 /**
  * Default genesis plus Alice has 100 XOR and permission to burn
  */
-open class AliceHas100XorAndPermissionToBurn : DefaultGenesis() {
-    override val genesisBlock = super.genesisBlock.apply {
-        val transaction =
-            this.transactions.firstOrNull() ?: GenesisTransaction(mutableListOf()).also { this.transactions.add(it) }
-        transaction.isi.addAll(
-            listOf(
-                Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
-                Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
-                Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
-            )
-        )
-    }
-}
+open class AliceHas100XorAndPermissionToBurn : Genesis(
+    rawGenesisBlock(
+        Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
+        Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
+    )
+)
 
-open class AliceAndBobEachHave100Xor : DefaultGenesis() {
-    companion object {
-        val BOB_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
-    }
-
-    override val genesisBlock = super.genesisBlock.plus(
+open class AliceAndBobEachHave100Xor : Genesis(
+    rawGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
         Instructions.mintAsset(BOB_ASSET_ID, 100U)
     )
+) {
+    companion object {
+        val BOB_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
+    }
 }
 
-open class StoreAssetWithMetadata : DefaultGenesis() {
-    companion object {
-        const val ASSET_KEY = "key"
-        val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = DefinitionId("foo", DEFAULT_DOMAIN_NAME)
-        val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
-    }
-
-    override val genesisBlock = super.genesisBlock.plus(
+open class StoreAssetWithMetadata : Genesis(
+    rawGenesisBlock(
         Instructions.registerAsset(
             DEFINITION_ID,
             AssetValueType.Store(),
@@ -64,26 +51,41 @@ open class StoreAssetWithMetadata : DefaultGenesis() {
         ),
         Instructions.setKeyValue(ASSET_ID, ASSET_KEY, ASSET_VALUE)
     )
+) {
+    companion object {
+        const val ASSET_KEY = "key"
+        val ASSET_VALUE = "value".asValue()
+        val DEFINITION_ID = DefinitionId("foo", DEFAULT_DOMAIN_NAME)
+        val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
+    }
 }
 
-open class XorAndValAssets : DefaultGenesis() {
-    companion object {
-        const val XOR_QUANTITY = 1U
-        const val VAL_QUANTITY = 1U
-        val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
-        val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
-    }
-
-    override val genesisBlock = super.genesisBlock.plus(
+open class XorAndValAssets : Genesis(
+    rawGenesisBlock(
         Instructions.registerAsset(XOR_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID), XOR_QUANTITY),
 
         Instructions.registerAsset(VAL_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(VAL_DEFINITION_ID, ALICE_ACCOUNT_ID), VAL_QUANTITY)
     )
+) {
+    companion object {
+        const val XOR_QUANTITY = 1U
+        const val VAL_QUANTITY = 1U
+        val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
+        val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
+    }
 }
 
-open class NewAccountWithMetadata : DefaultGenesis() {
+open class NewAccountWithMetadata : Genesis(
+    rawGenesisBlock(
+        Instructions.registerAccount(
+            id = ACCOUNT_ID,
+            signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
+            metadata = Metadata(mutableMapOf(KEY to VALUE))
+        )
+    )
+) {
     companion object {
         const val ACCOUNT_NAME = "foo"
         const val KEY = "key"
@@ -92,27 +94,19 @@ open class NewAccountWithMetadata : DefaultGenesis() {
         val ACCOUNT_ID = AccountId(ACCOUNT_NAME, DEFAULT_DOMAIN_NAME)
         val KEYPAIR = generateKeyPair()
     }
-
-    override val genesisBlock = super.genesisBlock.plus(
-        Instructions.registerAccount(
-            id = ACCOUNT_ID,
-            signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
-            metadata = Metadata(mutableMapOf(KEY to VALUE))
-        )
-    )
 }
 
-open class NewDomain : DefaultGenesis() {
+open class NewDomain : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(DOMAIN_NAME, mutableMapOf(), mutableMapOf())
+    )
+) {
     companion object {
         const val DOMAIN_NAME = "foo_domain"
     }
-
-    override val genesisBlock: RawGenesisBlock = super.genesisBlock.plus(
-        Instructions.registerDomain(DOMAIN_NAME, mutableMapOf(), mutableMapOf())
-    )
 }
 
-fun rawGenesisBlock(): RawGenesisBlock {
+fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
     return RawGenesisBlock(
         mutableListOf(
             GenesisTransaction(
@@ -125,19 +119,10 @@ fun rawGenesisBlock(): RawGenesisBlock {
                     Instructions.registerAccount(
                         BOB_ACCOUNT_ID,
                         mutableListOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
-                    )
+                    ),
+                    *instructions
                 )
             )
         )
     )
-}
-
-fun RawGenesisBlock.plus(vararg instructions: Instruction): RawGenesisBlock {
-    // get or create genesis transaction
-    val genesisTransaction = when (transactions.isEmpty()) {
-        true -> GenesisTransaction(mutableListOf()).apply { transactions.add(this) }
-        false -> transactions.first()
-    }
-    genesisTransaction.isi.addAll(instructions)
-    return this
 }
