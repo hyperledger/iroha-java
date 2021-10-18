@@ -11,7 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.UInt
-import kotlin.collections.MutableList
+import kotlin.collections.List
 
 /**
  * Value
@@ -136,7 +136,7 @@ public sealed class Value {
      * 'Vec' variant
      */
     public data class Vec(
-        public val vec: MutableList<Value>
+        public val vec: List<Value>
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -272,7 +272,7 @@ public sealed class Value {
      * 'SignatureCheckCondition' variant
      */
     public data class SignatureCheckCondition(
-        public val signatureCheckCondition:
+        public val signatureCheckCondition:  
             jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -305,7 +305,7 @@ public sealed class Value {
      * 'TransactionValue' variant
      */
     public data class TransactionValue(
-        public val transactionValue:
+        public val transactionValue:  
             jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -336,7 +336,7 @@ public sealed class Value {
      * 'PermissionToken' variant
      */
     public data class PermissionToken(
-        public val permissionToken:
+        public val permissionToken:  
             jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
