@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
 import kotlin.Int
@@ -18,7 +19,7 @@ import kotlin.collections.MutableList
  *
  * Generated from 'iroha_data_model::Value' enum
  */
-public sealed class Value {
+public sealed class Value : GsonSerializable {
     /**
      * @return Discriminator of variant in enum
      */
@@ -272,7 +273,7 @@ public sealed class Value {
      * 'SignatureCheckCondition' variant
      */
     public data class SignatureCheckCondition(
-        public val signatureCheckCondition:
+        public val signatureCheckCondition:  
             jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -305,7 +306,7 @@ public sealed class Value {
      * 'TransactionValue' variant
      */
     public data class TransactionValue(
-        public val transactionValue:
+        public val transactionValue:  
             jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -336,7 +337,7 @@ public sealed class Value {
      * 'PermissionToken' variant
      */
     public data class PermissionToken(
-        public val permissionToken:
+        public val permissionToken:  
             jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT

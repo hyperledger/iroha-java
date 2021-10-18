@@ -8,19 +8,15 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
+import java.io.ByteArrayOutputStream
+import java.lang.reflect.Type
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
+import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.toHex
-import java.io.ByteArrayOutputStream
-import java.lang.reflect.Type
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
@@ -30,26 +26,35 @@ object GenesisJsonSerializer {
         GsonBuilder()
             .setPrettyPrinting()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(Instruction::class.java, EnumerationSerializer)
-            .registerTypeAdapter(Expression::class.java, EnumerationSerializer)
-            .registerTypeAdapter(IdentifiableBox::class.java, EnumerationSerializer)
-            .registerTypeAdapter(Value::class.java, EnumerationSerializer)
-            .registerTypeAdapter(IdBox::class.java, EnumerationSerializer)
-            .registerTypeAdapter(AssetValueType::class.java, AssetValueTypeSerializer)  // y
-            .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)  // try
-            .registerTypeAdapter(Metadata::class.java, MetadataSerializer)  // try
-            .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)  // n
-            .registerTypeAdapter(UInt::class.java, UIntSerializer)  // n
+            .registerTypeHierarchyAdapter(GsonSerializable::class.java, GenericSerializer)
+            .registerTypeAdapter(AssetValueType::class.java, PrimitiveSerializer)
+            .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
+            .registerTypeAdapter(UInt::class.java, UIntSerializer)
             .create()
     }
 
-    fun asJson(genesis: Genesis) = gson.value.toJson(genesis.genesisBlock)
+    fun asJson(genesis: Genesis): String {
+        return gson.value.toJson(genesis.genesisBlock)
+    }
 }
 
-object EnumerationSerializer : JsonSerializer<Any> {
-    @OptIn(ExperimentalStdlibApi::class)
+object GenericSerializer : JsonSerializer<Any> {
     override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
-        val jsonObject = JsonObject()
+        return when (src) {
+            is EvaluatesTo<*> -> serialize(src.expression, null, context)
+            is Metadata -> JsonObject().also { serialized ->
+                src.map.forEach { (key, value) ->
+                    serialized.add(key, serialize(value, null, context))
+                }
+            }
+            else -> default(src, context)
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun default(src: Any, context: JsonSerializationContext): JsonElement {
+        val serialized = JsonObject()
+
         val memberProperties = src::class.memberProperties
         if (memberProperties.size != 1) {
             throw RuntimeException("Expected enum which accept exactly 1 member as tuple")
@@ -59,21 +64,16 @@ object EnumerationSerializer : JsonSerializer<Any> {
             is UInt -> actual.toLong() // cannot cast UInt to Number
             else -> actual
         }
-        jsonObject.add(src::class.simpleName, context.serialize(innerPropVal, innerProp.returnType.javaType))
-        return jsonObject
+        serialized.add(src::class.simpleName, context.serialize(innerPropVal, innerProp.returnType.javaType))
+        return serialized
     }
-}
-
-object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>> {
-    override fun serialize(src: EvaluatesTo<*>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement =
-        EnumerationSerializer.serialize(src.expression, null, context)
 }
 
 object MetadataSerializer : JsonSerializer<Metadata> {
     override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
         val jsonObject = JsonObject()
         src.map.forEach { (key, value) ->
-            jsonObject.add(key, EnumerationSerializer.serialize(value, null, context))
+            jsonObject.add(key, GenericSerializer.serialize(value, null, context))
         }
         return jsonObject
     }
@@ -89,7 +89,7 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
     }
 }
 
-object AssetValueTypeSerializer : JsonSerializer<AssetValueType> {
+object PrimitiveSerializer : JsonSerializer<AssetValueType> {
     override fun serialize(src: AssetValueType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return JsonPrimitive(src::class.java.simpleName)
     }

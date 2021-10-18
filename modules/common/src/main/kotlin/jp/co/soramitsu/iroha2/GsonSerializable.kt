@@ -1,3 +1,3 @@
 package jp.co.soramitsu.iroha2
 
-interface Enumeration2
+interface GsonSerializable

@@ -7,6 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.GsonSerializable
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.wrapException
@@ -18,7 +19,7 @@ import kotlin.String
  *
  * Generated from 'iroha_data_model::IdBox' enum
  */
-public sealed class IdBox {
+public sealed class IdBox : GsonSerializable {
     /**
      * @return Discriminator of variant in enum
      */
