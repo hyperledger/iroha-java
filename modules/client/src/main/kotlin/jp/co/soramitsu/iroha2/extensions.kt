@@ -4,6 +4,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -141,6 +142,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is IdBox -> Value.Id(this)
+        is Hash -> Value.Hash(this)
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->

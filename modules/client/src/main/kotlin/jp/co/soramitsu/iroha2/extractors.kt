@@ -85,6 +85,12 @@ object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
     }
 }
 
+object TransactionValueExtractor : ResultExtractor<TransactionValue> {
+    override fun extract(result: QueryResult): TransactionValue {
+        return extractValue(result.value, Value.TransactionValue::transactionValue)
+    }
+}
+
 object U32Extractor : ResultExtractor<UInt> {
     override fun extract(result: QueryResult): UInt {
         return extractValue(result.value, Value.U32::u32)

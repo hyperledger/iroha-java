@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
@@ -163,6 +164,11 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findPermissionTokensByAccountId(accountId),
             PermissionTokensExtractor
+        )
+
+        fun findTransactionByHash(hash: Hash) = QueryBuilder(
+            Queries.findTransactionByHash(hash),
+            TransactionValueExtractor
         )
     }
 }
