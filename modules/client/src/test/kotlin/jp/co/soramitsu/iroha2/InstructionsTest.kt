@@ -46,7 +46,7 @@ class InstructionsTest {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerAccount(newAccountId, mutableListOf())
+            registerAccount(newAccountId, listOf())
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {

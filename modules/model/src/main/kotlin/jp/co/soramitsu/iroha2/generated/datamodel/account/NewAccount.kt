@@ -26,7 +26,7 @@ public data class NewAccount(
         public override fun read(reader: ScaleCodecReader): NewAccount = try {
             NewAccount(
                 Id.read(reader),
-                MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
+                List(reader.readCompactInt()) { PublicKey.read(reader) },
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {

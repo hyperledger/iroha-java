@@ -670,6 +670,37 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
+     * 'FindTransactionByHash' variant
+     */
+    public data class FindTransactionByHash(
+        public val findTransactionByHash:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
+    ) : QueryBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<FindTransactionByHash>, ScaleWriter<FindTransactionByHash> {
+            public const val DISCRIMINANT: Int = 20
+
+            public override fun read(reader: ScaleCodecReader): FindTransactionByHash = try {
+                FindTransactionByHash(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: FindTransactionByHash) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash.write(
+                    writer,
+                    instance.findTransactionByHash
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'FindPermissionTokensByAccountId' variant
      */
     public data class FindPermissionTokensByAccountId(
@@ -681,7 +712,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<FindPermissionTokensByAccountId>,
             ScaleWriter<FindPermissionTokensByAccountId> {
-            public const val DISCRIMINANT: Int = 20
+            public const val DISCRIMINANT: Int = 21
 
             public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
                 FindPermissionTokensByAccountId(
@@ -728,7 +759,8 @@ public sealed class QueryBox : ModelEnum {
             17 -> FindDomainByName.read(reader)
             18 -> FindAllPeers.read(reader)
             19 -> FindTransactionsByAccountId.read(reader)
-            20 -> FindPermissionTokensByAccountId.read(reader)
+            20 -> FindTransactionByHash.read(reader)
+            21 -> FindPermissionTokensByAccountId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -763,7 +795,8 @@ public sealed class QueryBox : ModelEnum {
                 17 -> FindDomainByName.write(writer, instance as FindDomainByName)
                 18 -> FindAllPeers.write(writer, instance as FindAllPeers)
                 19 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
-                20 -> FindPermissionTokensByAccountId.write(
+                20 -> FindTransactionByHash.write(writer, instance as FindTransactionByHash)
+                21 -> FindPermissionTokensByAccountId.write(
                     writer,
                     instance as
                         FindPermissionTokensByAccountId

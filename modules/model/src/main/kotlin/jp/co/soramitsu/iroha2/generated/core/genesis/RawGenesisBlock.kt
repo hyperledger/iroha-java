@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.genesis
+package jp.co.soramitsu.iroha2.generated.core.genesis
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
@@ -13,7 +13,7 @@ import kotlin.collections.List
 /**
  * RawGenesisBlock
  *
- * Generated from 'iroha::genesis::RawGenesisBlock' regular structure
+ * Generated from 'iroha_core::genesis::RawGenesisBlock' regular structure
  */
 public data class RawGenesisBlock(
     public val transactions: List<GenesisTransaction>
@@ -21,7 +21,7 @@ public data class RawGenesisBlock(
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
         public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
             RawGenesisBlock(
-                MutableList(reader.readCompactInt()) { GenesisTransaction.read(reader) },
+                List(reader.readCompactInt()) { GenesisTransaction.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

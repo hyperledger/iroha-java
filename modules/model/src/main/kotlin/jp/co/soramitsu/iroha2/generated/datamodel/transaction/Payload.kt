@@ -35,7 +35,7 @@ public data class Payload(
         public override fun read(reader: ScaleCodecReader): Payload = try {
             Payload(
                 Id.read(reader),
-                MutableList(reader.readCompactInt()) { Instruction.read(reader) },
+                List(reader.readCompactInt()) { Instruction.read(reader) },
                 readBit64(reader).toULong(),
                 readBit64(reader).toULong(),
                 hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
