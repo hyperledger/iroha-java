@@ -170,6 +170,10 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             Queries.findTransactionByHash(hash),
             TransactionValueExtractor
         )
+
+        fun findTransactionByHash(hashBytes: ByteArray) = findTransactionByHash(Hash(hashBytes))
+
+        fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
     }
 }
 

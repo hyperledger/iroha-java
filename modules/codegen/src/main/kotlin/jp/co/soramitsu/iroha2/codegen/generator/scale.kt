@@ -45,7 +45,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             when (type.innerType.requireValue()) {
                 is U8Type -> CodeBlock.of("reader.readByteArray()")
                 else -> CodeBlock.of(
-                    "MutableList(reader.readCompactInt()) {%L}",
+                    "List(reader.readCompactInt()) {%L}",
                     resolveScaleReadImpl(type.innerType.requireValue())
                 )
             }

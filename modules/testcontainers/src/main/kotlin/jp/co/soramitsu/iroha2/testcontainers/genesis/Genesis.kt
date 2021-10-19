@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.testcontainers.genesis
 
-import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption

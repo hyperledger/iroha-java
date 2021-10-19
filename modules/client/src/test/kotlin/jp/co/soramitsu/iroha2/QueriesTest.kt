@@ -12,11 +12,9 @@ import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
-import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
@@ -28,7 +26,6 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils.randomAlphabetic
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
@@ -252,6 +249,7 @@ class QueriesTest {
                 it.get(10, TimeUnit.SECONDS)
             }
         }
+
         QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -297,21 +295,17 @@ class QueriesTest {
     @WithIroha
     @Disabled
     fun `find transaction by hash`(): Unit = runBlocking {
-        val versionedTransaction = TransactionBuilder()
-            .account(ALICE_ACCOUNT_ID)
-            .registerAsset(DefinitionId(randomAlphabetic(10), DEFAULT_DOMAIN_NAME), AssetValueType.Quantity())
-            .buildSigned(ALICE_KEYPAIR)
-        val hash = versionedTransaction.hash()
-
-        client.sendTransaction {
-            versionedTransaction
+        val hash = client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
                 it.get(10, TimeUnit.SECONDS)
             }
-        }
+        }.get()
 
-        QueryBuilder.findTransactionByHash(Hash(hash))
+        QueryBuilder.findTransactionByHash(hash)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }

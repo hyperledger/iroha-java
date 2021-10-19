@@ -54,8 +54,8 @@ object Instructions {
 
     fun registerAccount(
         id: AccountId,
-        signatories: MutableList<PublicKey>,
-        metadata: Metadata = Metadata(mutableMapOf())
+        signatories: List<PublicKey>,
+        metadata: Metadata = Metadata(mapOf())
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.NewAccount(
@@ -67,7 +67,7 @@ object Instructions {
     fun registerAsset(
         id: DefinitionId,
         assetValueType: AssetValueType,
-        metadata: Metadata = Metadata(mutableMapOf())
+        metadata: Metadata = Metadata(mapOf())
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.AssetDefinition(
@@ -78,8 +78,8 @@ object Instructions {
 
     fun registerDomain(
         domainName: String,
-        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
-        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
+        accounts: Map<AccountId, Account> = mapOf(),
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
@@ -143,7 +143,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN,
-                params = mutableMapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
+                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
             )
         }
     }
@@ -152,7 +152,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_MINT_USER_ASSETS_DEFINITION,
-                params = mutableMapOf(
+                params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to Value.Id(
                         IdBox.AssetDefinitionId(
                             assetDefinitionId
@@ -167,7 +167,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_BURN_ASSET_WITH_DEFINITION,
-                params = mutableMapOf(
+                params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to Value.Id(
                         IdBox.AssetDefinitionId(
                             assetDefinitionId
@@ -198,7 +198,7 @@ object Instructions {
         return Instruction.Pair(Pair(left, right))
     }
 
-    fun sequence(instructions: MutableList<Instruction>): Instruction {
+    fun sequence(instructions: List<Instruction>): Instruction {
         return Instruction.Sequence(SequenceBox(instructions))
     }
 

@@ -40,7 +40,7 @@ public data class Account(
                     { jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) },
                     { Asset.read(reader) }
                 ),
-                MutableList(reader.readCompactInt()) { PublicKey.read(reader) },
+                List(reader.readCompactInt()) { PublicKey.read(reader) },
                 hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),

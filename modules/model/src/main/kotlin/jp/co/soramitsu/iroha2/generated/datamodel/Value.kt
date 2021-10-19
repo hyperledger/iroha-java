@@ -146,7 +146,7 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Vec = try {
                 Vec(
-                    MutableList(reader.readCompactInt()) { Value.read(reader) },
+                    List(reader.readCompactInt()) { Value.read(reader) },
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
