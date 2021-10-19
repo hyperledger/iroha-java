@@ -146,7 +146,7 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Vec = try {
                 Vec(
-                    MutableList(reader.readCompactInt()) { Value.read(reader) },
+                    List(reader.readCompactInt()) { Value.read(reader) },
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -364,6 +364,33 @@ public sealed class Value : ModelEnum {
         }
     }
 
+    /**
+     * 'Hash' variant
+     */
+    public data class Hash(
+        public val hash: jp.co.soramitsu.iroha2.generated.crypto.Hash
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
+            public const val DISCRIMINANT: Int = 12
+
+            public override fun read(reader: ScaleCodecReader): Hash = try {
+                Hash(
+                    jp.co.soramitsu.iroha2.generated.crypto.Hash.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Hash) = try {
+                jp.co.soramitsu.iroha2.generated.crypto.Hash.write(writer, instance.hash)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Value>, ScaleWriter<Value> {
         public override fun read(reader: ScaleCodecReader): Value = when (
             val discriminant =
@@ -381,6 +408,7 @@ public sealed class Value : ModelEnum {
             9 -> SignatureCheckCondition.read(reader)
             10 -> TransactionValue.read(reader)
             11 -> PermissionToken.read(reader)
+            12 -> Hash.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -399,6 +427,7 @@ public sealed class Value : ModelEnum {
                 9 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
                 10 -> TransactionValue.write(writer, instance as TransactionValue)
                 11 -> PermissionToken.write(writer, instance as PermissionToken)
+                12 -> Hash.write(writer, instance as Hash)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

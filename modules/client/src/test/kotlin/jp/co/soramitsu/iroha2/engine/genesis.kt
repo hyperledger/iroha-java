@@ -3,12 +3,12 @@ package jp.co.soramitsu.iroha2.engine
 import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
+import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -47,7 +47,7 @@ open class StoreAssetWithMetadata : Genesis(
         Instructions.registerAsset(
             DEFINITION_ID,
             AssetValueType.Store(),
-            Metadata(mutableMapOf(ASSET_KEY to ASSET_VALUE))
+            Metadata(mapOf(ASSET_KEY to ASSET_VALUE))
         ),
         Instructions.setKeyValue(ASSET_ID, ASSET_KEY, ASSET_VALUE)
     )
@@ -81,8 +81,8 @@ open class NewAccountWithMetadata : Genesis(
     rawGenesisBlock(
         Instructions.registerAccount(
             id = ACCOUNT_ID,
-            signatories = mutableListOf(KEYPAIR.public.toIrohaPublicKey()),
-            metadata = Metadata(mutableMapOf(KEY to VALUE))
+            signatories = listOf(KEYPAIR.public.toIrohaPublicKey()),
+            metadata = Metadata(mapOf(KEY to VALUE))
         )
     )
 ) {
@@ -98,7 +98,7 @@ open class NewAccountWithMetadata : Genesis(
 
 open class NewDomain : Genesis(
     rawGenesisBlock(
-        Instructions.registerDomain(DOMAIN_NAME, mutableMapOf(), mutableMapOf())
+        Instructions.registerDomain(DOMAIN_NAME, mapOf(), mapOf())
     )
 ) {
     companion object {
@@ -108,17 +108,17 @@ open class NewDomain : Genesis(
 
 fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
     return RawGenesisBlock(
-        mutableListOf(
+        listOf(
             GenesisTransaction(
-                mutableListOf(
-                    Instructions.registerDomain(DEFAULT_DOMAIN_NAME, mutableMapOf(), mutableMapOf()),
+                listOf(
+                    Instructions.registerDomain(DEFAULT_DOMAIN_NAME, mapOf(), mapOf()),
                     Instructions.registerAccount(
                         ALICE_ACCOUNT_ID,
-                        mutableListOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
+                        listOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
                     ),
                     Instructions.registerAccount(
                         BOB_ACCOUNT_ID,
-                        mutableListOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
+                        listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
                     ),
                     *instructions
                 )

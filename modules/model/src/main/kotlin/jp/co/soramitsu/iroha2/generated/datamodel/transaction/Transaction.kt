@@ -8,8 +8,9 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.hashSetWithSize
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.List
+import kotlin.collections.Set
 
 /**
  * Transaction
@@ -18,13 +19,13 @@ import kotlin.collections.List
  */
 public data class Transaction(
     public val payload: Payload,
-    public val signatures: List<Signature>
+    public val signatures: Set<Signature>
 ) {
     public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
         public override fun read(reader: ScaleCodecReader): Transaction = try {
             Transaction(
                 Payload.read(reader),
-                MutableList(reader.readCompactInt()) { Signature.read(reader) },
+                hashSetWithSize(reader.readCompactInt()) { Signature.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

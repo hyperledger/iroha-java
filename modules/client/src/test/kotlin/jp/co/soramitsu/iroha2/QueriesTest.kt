@@ -255,7 +255,7 @@ class QueriesTest {
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
-            }.also { txValues ->
+            }.let { txValues ->
                 txValues.all { value ->
                     value.cast<TransactionValue.Transaction>()
                         .versionedTransaction
@@ -264,31 +264,53 @@ class QueriesTest {
                         .transaction
                         .payload
                         .accountId == ALICE_ACCOUNT_ID
-                }.also {
-                    assert(it)
                 }
+            }.also {
+                assert(it)
             }
     }
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    @Disabled("Temporarily")
     fun `find permission tokens by account id`(): Unit = runBlocking {
         QueryBuilder.findPermissionTokensByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
-            }.also { tokens ->
+            }.let { tokens ->
                 tokens.any {
                     it.params[ASSET_DEFINITION_PARAM_NAME]
                         ?.cast<Value.Id>()
                         ?.idBox
                         ?.cast<IdBox.AssetDefinitionId>()
                         ?.definitionId == DEFAULT_ASSET_DEFINITION_ID
-                }.also {
-                    assert(it)
                 }
+            }.also {
+                assert(it)
             }
+    }
+
+    @Test
+    @WithIroha
+    @Disabled
+    fun `find transaction by hash`(): Unit = runBlocking {
+        val hash = client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }.get()
+
+        QueryBuilder.findTransactionByHash(hash)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .cast<TransactionValue.Transaction>().versionedTransaction
+            .hash()
+            .also { assertEquals(hash, it) }
     }
 }

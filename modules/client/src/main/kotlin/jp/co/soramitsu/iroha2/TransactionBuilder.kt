@@ -73,7 +73,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 it.public.toIrohaPublicKey(),
                 it.private.sign(encodedPayload)
             )
-        }.toMutableList()
+        }.toSet()
 
         return VersionedTransaction.V1(
             _VersionedTransactionV1(
@@ -87,8 +87,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerAccount(
         id: AccountId,
-        signatories: MutableList<PublicKey>,
-        metadata: Metadata = Metadata(mutableMapOf())
+        signatories: List<PublicKey>,
+        metadata: Metadata = Metadata(mapOf())
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
     fun registerAsset(
@@ -114,8 +114,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerDomain(
         domainName: String,
-        accounts: MutableMap<AccountId, Account> = mutableMapOf(),
-        assetDefinitions: MutableMap<DefinitionId, AssetDefinitionEntry> = mutableMapOf()
+        accounts: Map<AccountId, Account> = mapOf(),
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
     ) = this.apply { instructions.value.add(Instructions.registerDomain(domainName, accounts, assetDefinitions)) }
 
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
@@ -150,7 +150,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     }
 
     fun sequence(vararg instructions: Instruction) = this.apply {
-        this.instructions.value.add(Instructions.sequence(instructions.toMutableList()))
+        this.instructions.value.add(Instructions.sequence(instructions.toList()))
     }
 
     fun fail(message: String) = this.apply {

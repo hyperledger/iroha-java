@@ -21,7 +21,7 @@ public data class SequenceBox(
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
         public override fun read(reader: ScaleCodecReader): SequenceBox = try {
             SequenceBox(
-                MutableList(reader.readCompactInt()) { Instruction.read(reader) },
+                List(reader.readCompactInt()) { Instruction.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
