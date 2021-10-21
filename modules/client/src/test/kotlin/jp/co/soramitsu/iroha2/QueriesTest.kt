@@ -313,4 +313,18 @@ class QueriesTest {
             .hash()
             .also { assertEquals(hash, it) }
     }
+
+    @Test
+    @WithIroha
+    fun health(): Unit = runBlocking {
+        val status = client.health()
+        assert(status == 200)
+    }
+
+    @Test
+    @WithIroha
+    fun configure(): Unit = runBlocking {
+        val configuration = client.configuration()
+        assert(configuration["GENESIS"] != null)
+    }
 }

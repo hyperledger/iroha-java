@@ -4,16 +4,20 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.HttpResponseValidator
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
+import io.ktor.http.contentType
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -57,12 +61,36 @@ open class Iroha2Client(
                 install(Logging)
             }
             install(WebSockets)
+            install(JsonFeature)
             HttpResponseValidator {
                 handleResponseException { exception ->
                     throw IrohaClientException(cause = exception)
                 }
             }
         }
+    }
+
+    /**
+     * Returns current status of peer
+     */
+    suspend fun health(): Int {
+        return client.value
+            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
+            .status.value
+    }
+
+    /**
+     * TODO
+     */
+    suspend fun configuration(
+        fieldName: ConfigurationFieldType = ConfigurationFieldType.VALUE,
+        fieldValue: Collection<String>? = null
+    ): Map<String, Any?> {
+        val response: HttpResponse = client.value.get("$peerUrl$CONFIGURATION_ENDPOINT") {
+            contentType(ContentType.Application.Json)
+            body = mapOf(fieldName.fieldName to fieldValue)
+        }
+        return response.receive()
     }
 
     /**
@@ -258,7 +286,14 @@ open class Iroha2Client(
         const val INSTRUCTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
+        const val CONFIGURATION_ENDPOINT = "/configuration"
+        const val HEALTH_ENDPOINT = "/health"
     }
 
     override fun close() = client.value.close()
+}
+
+enum class ConfigurationFieldType(val fieldName: String) {
+    VALUE("Value"),
+    DOCS("Docs");
 }

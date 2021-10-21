@@ -6,6 +6,7 @@ dependencies {
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
+    implementation "io.ktor:ktor-client-jackson:$ktorVer"
 
     //scale codec
     api ":polkaj-scale:$polkajScaleVer"
