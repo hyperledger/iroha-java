@@ -31,6 +31,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv(ENV_IROHA_PRIVATE_KEY.first, ENV_IROHA_PRIVATE_KEY.second)
             .withEnv(ENV_SUMERAGI_TRUSTED_PEERS.first, ENV_SUMERAGI_TRUSTED_PEERS.second)
             .withEnv(ENV_MAX_LOG_LEVEL, config.maxLogLevel.name)
+            .withEnv("RUST_BACKTRACE", "1")
             .withExposedPorts(API_PORT, P2P_PORT)
             .withNetworkAliases(NETWORK_ALIAS)
             .withLogConsumer(config.logConsumer)
@@ -61,7 +62,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             val genesisAsJson = config.genesis.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
         }
-        super.start()
+        runCatching {
+            super.start()
+        }.onFailure {
+            throw it
+        }
         logger().debug("Iroha container started")
     }
 
