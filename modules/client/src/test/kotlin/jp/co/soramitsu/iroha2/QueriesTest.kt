@@ -324,7 +324,10 @@ class QueriesTest {
     @Test
     @WithIroha
     fun configure(): Unit = runBlocking {
-        val configuration = client.configuration()
+        val configuration = client.configuration(
+            ConfigurationFieldType.DOCS,
+            listOf("torii")
+        )
         assert(configuration["GENESIS"] != null)
     }
 }
