@@ -14,7 +14,7 @@ import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
-import jp.co.soramitsu.iroha2.generated.crypto.Hash
+import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage

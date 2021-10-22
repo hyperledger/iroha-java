@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.crypto
+package jp.co.soramitsu.iroha2.generated.crypto.hash
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
@@ -13,7 +13,7 @@ import kotlin.ByteArray
 /**
  * Hash
  *
- * Generated from 'iroha_crypto::Hash' tuple structure
+ * Generated from 'iroha_crypto::hash::Hash' tuple structure
  */
 public data class Hash(
     public val array: ByteArray

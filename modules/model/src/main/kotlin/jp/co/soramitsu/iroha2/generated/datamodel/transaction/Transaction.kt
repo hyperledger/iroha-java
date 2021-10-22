@@ -7,7 +7,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.hashSetWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.Set
