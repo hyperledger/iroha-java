@@ -67,11 +67,12 @@ object Instructions {
     fun registerAsset(
         id: DefinitionId,
         assetValueType: AssetValueType,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
+        mintable: Boolean = true
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.AssetDefinition(
-                AssetDefinition(assetValueType, id, metadata)
+                AssetDefinition(assetValueType, id, metadata, mintable)
             )
         }
     }

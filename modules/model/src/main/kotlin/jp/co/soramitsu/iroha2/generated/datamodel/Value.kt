@@ -368,7 +368,7 @@ public sealed class Value : ModelEnum {
      * 'Hash' variant
      */
     public data class Hash(
-        public val hash: jp.co.soramitsu.iroha2.generated.crypto.Hash
+        public val hash: jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -377,14 +377,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Hash = try {
                 Hash(
-                    jp.co.soramitsu.iroha2.generated.crypto.Hash.read(reader),
+                    jp.co.soramitsu.iroha2.generated.crypto.hash.Hash.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Hash) = try {
-                jp.co.soramitsu.iroha2.generated.crypto.Hash.write(writer, instance.hash)
+                jp.co.soramitsu.iroha2.generated.crypto.hash.Hash.write(writer, instance.hash)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

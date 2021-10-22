@@ -8,6 +8,8 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureVerificationFail
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -110,7 +112,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'SignatureVerification' variant
      */
     public data class SignatureVerification(
-        public val signatureVerificationFail: SignatureVerificationFail
+        public val signatureVerificationFail: SignatureVerificationFail<Payload>
     ) : TransactionRejectionReason() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -119,7 +121,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): SignatureVerification = try {
                 SignatureVerification(
-                    SignatureVerificationFail.read(reader),
+                    SignatureVerificationFail.read(reader) as SignatureVerificationFail<Payload>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
