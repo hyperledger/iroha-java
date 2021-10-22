@@ -1,19 +1,20 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.crypto
+package jp.co.soramitsu.iroha2.generated.crypto.signature
 
 import io.emeraldpay.polkaj.scale.ScaleCodecReader
 import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
 
 /**
  * Signature
  *
- * Generated from 'iroha_crypto::Signature' regular structure
+ * Generated from 'iroha_crypto::signature::Signature' regular structure
  */
 public data class Signature(
     public val publicKey: PublicKey,
