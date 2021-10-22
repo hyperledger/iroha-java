@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.crypto.Hash
-import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
+import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox

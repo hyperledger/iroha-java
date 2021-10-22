@@ -20,13 +20,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -293,7 +293,6 @@ class QueriesTest {
 
     @Test
     @WithIroha
-    @Disabled
     fun `find transaction by hash`(): Unit = runBlocking {
         val hash = client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -311,6 +310,6 @@ class QueriesTest {
             .let { query -> client.sendQuery(query) }
             .cast<TransactionValue.Transaction>().versionedTransaction
             .hash()
-            .also { assertEquals(hash, it) }
+            .also { assertContentEquals(hash, it) }
     }
 }
