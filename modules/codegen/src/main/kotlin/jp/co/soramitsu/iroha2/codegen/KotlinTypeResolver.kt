@@ -77,7 +77,7 @@ fun resolveKotlinType(type: Type): TypeName {
                 resolveKotlinType(type.value.requireValue())
             )
         }
-        // only "primitive" types left"
+        // only "primitive" types left
         else -> lookUpInBuiltInTypes(type)
     }
 }
@@ -99,10 +99,10 @@ fun defineClassName(typeName: String) = typeName.substringBefore('<')
 val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     StringType::class to String::class.asTypeName(),
     BooleanType::class to Boolean::class.asTypeName(),
-    U8Type::class to UByte::class.asTypeName(),
-    U16Type::class to UShort::class.asTypeName(),
-    U32Type::class to UInt::class.asTypeName(),
-    U64Type::class to ULong::class.asTypeName(),
+    U8Type::class to Short::class.asTypeName(),
+    U16Type::class to Int::class.asTypeName(),
+    U32Type::class to Long::class.asTypeName(),
+    U64Type::class to BigInteger::class.asTypeName(),
     U128Type::class to BigInteger::class.asTypeName(),
     U256Type::class to BigInteger::class.asTypeName(),
     I8Type::class to Byte::class.asTypeName(),

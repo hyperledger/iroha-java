@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
+import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
@@ -23,8 +24,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     var accountId: AccountId?
     val instructions: Lazy<ArrayList<Instruction>>
-    var creationTimeMillis: ULong?
-    var timeToLiveMillis: ULong?
+    var creationTimeMillis: BigInteger?
+    var timeToLiveMillis: BigInteger?
     var metadata: Lazy<HashMap<String, Value>>
 
     init {
@@ -46,17 +47,17 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun instruction(instruction: Instruction) = this.apply { this.instructions.value.add(instruction) }
 
-    fun creationTime(creationTimeMillis: ULong) = this.apply { this.creationTimeMillis = creationTimeMillis }
+    fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
     fun creationTime(creationTime: Instant) = this.apply { this.creationTime(creationTime.toEpochMilli()) }
 
-    fun creationTime(creationTimeMillis: Long) = this.apply { this.creationTime(creationTimeMillis.toULong()) }
+    fun creationTime(creationTimeMillis: Long) = this.apply { this.creationTime(creationTimeMillis.toBigInteger()) }
 
-    fun timeToLive(ttlMillis: ULong) = this.apply { this.timeToLiveMillis = ttlMillis }
+    fun timeToLive(ttlMillis: BigInteger) = this.apply { this.timeToLiveMillis = ttlMillis }
 
     fun timeToLive(ttl: Duration) = this.apply { this.timeToLive(ttl.toMillis()) }
 
-    fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toULong()) }
+    fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toBigInteger()) }
 
     fun buildSigned(vararg keyPairs: KeyPair): VersionedTransaction {
         val payload = Payload(
@@ -109,7 +110,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun mintAsset(
         assetId: AssetId,
-        quantity: UInt
+        quantity: Long
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
     fun registerDomain(
@@ -127,7 +128,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
 
-    fun burnAsset(assetId: AssetId, value: UInt) = this.apply {
+    fun burnAsset(assetId: AssetId, value: Long) = this.apply {
         instructions.value.add(Instructions.burnAsset(assetId, value))
     }
 
@@ -137,7 +138,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
-    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId) = this.apply {
+    fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId) = this.apply {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
@@ -157,11 +158,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         this.instructions.value.add(Instructions.fail(message))
     }
 
-    private fun fallbackCreationTime() = System.currentTimeMillis().toULong()
+    private fun fallbackCreationTime() = System.currentTimeMillis().toBigInteger()
 
     companion object {
         fun builder() = TransactionBuilder()
 
-        val DURATION_OF_24_HOURS_IN_MILLIS = Duration.ofHours(24).toMillis().toULong()
+        val DURATION_OF_24_HOURS_IN_MILLIS = Duration.ofHours(24).toMillis().toBigInteger()
     }
 }

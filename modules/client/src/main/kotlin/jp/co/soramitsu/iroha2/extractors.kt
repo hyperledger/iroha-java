@@ -91,8 +91,8 @@ object TransactionValueExtractor : ResultExtractor<TransactionValue> {
     }
 }
 
-object U32Extractor : ResultExtractor<UInt> {
-    override fun extract(result: QueryResult): UInt {
+object U32Extractor : ResultExtractor<Long> {
+    override fun extract(result: QueryResult): Long {
         return extractValue(result.value, Value.U32::u32)
     }
 }

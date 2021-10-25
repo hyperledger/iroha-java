@@ -25,7 +25,7 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
 open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
-        Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
+        Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
     )
 )
@@ -33,8 +33,8 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
 open class AliceAndBobEachHave100Xor : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
-        Instructions.mintAsset(DEFAULT_ASSET_ID, 100U),
-        Instructions.mintAsset(BOB_ASSET_ID, 100U)
+        Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
+        Instructions.mintAsset(BOB_ASSET_ID, 100)
     )
 ) {
     companion object {
@@ -70,8 +70,8 @@ open class XorAndValAssets : Genesis(
     )
 ) {
     companion object {
-        const val XOR_QUANTITY = 1U
-        const val VAL_QUANTITY = 1U
+        const val XOR_QUANTITY = 1L
+        const val VAL_QUANTITY = 1L
         val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
         val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
     }

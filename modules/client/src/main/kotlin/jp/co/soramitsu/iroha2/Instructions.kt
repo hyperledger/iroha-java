@@ -114,7 +114,7 @@ object Instructions {
 
     fun mintAsset(
         assetId: AssetId,
-        quantity: UInt
+        quantity: Long
     ): Instruction.Mint {
         return Instruction.Mint(
             MintBox(
@@ -124,7 +124,7 @@ object Instructions {
         )
     }
 
-    fun burnAsset(assetId: AssetId, value: UInt): Instruction {
+    fun burnAsset(assetId: AssetId, value: Long): Instruction {
         return burnSome(
             Value.U32(value),
             IdBox.AssetId(assetId)
@@ -179,7 +179,7 @@ object Instructions {
         }
     }
 
-    fun transferAsset(sourceId: AssetId, value: UInt, destinationId: AssetId): Instruction {
+    fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId): Instruction {
         return Instruction.Transfer(
             TransferBox(
                 sourceId = IdBox.AssetId(sourceId).evaluatesTo(),

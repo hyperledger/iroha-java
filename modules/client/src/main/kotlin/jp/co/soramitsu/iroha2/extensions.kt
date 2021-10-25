@@ -28,9 +28,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 fun String.asValue() = Value.String(this)
 
-fun Int.asValue() = this.toUInt().asValue()
+fun Int.asValue() = this.toLong().asValue()
 
-fun UInt.asValue() = Value.U32(this)
+fun Long.asValue() = Value.U32(this)
 
 fun Boolean.asValue() = Value.Bool(this)
 

@@ -37,9 +37,11 @@ fun mapCapacity(expectedSize: Int): Int {
     }
 }
 
-fun writeBit64(writer: ScaleCodecWriter, value: Long) {
-    require(value >= 0) { "Negative values are not supported: $value" }
-    val array = BigInteger.valueOf(value).toByteArray()
+fun writeBit64(writer: ScaleCodecWriter, value: Long) = writeBit64(writer, value.toBigInteger())
+
+fun writeBit64(writer: ScaleCodecWriter, value: BigInteger) {
+    require(value >= BigInteger.ZERO) { "Negative values are not supported: $value" }
+    val array = value.toByteArray()
     var pos = 0
     if (array[0].toInt() == 0) {
         ++pos
