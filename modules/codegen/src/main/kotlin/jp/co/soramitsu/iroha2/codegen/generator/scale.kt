@@ -65,10 +65,10 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
                 resolveScaleReadImpl(type.value.requireValue())
             )
         }
-        is U8Type -> CodeBlock.of("reader.readByte().toUByte()")
-        is U16Type -> CodeBlock.of("reader.readUint16().toUShort()")
-        is U32Type -> CodeBlock.of("reader.readUint32().toUInt()")
-        is U64Type -> CodeBlock.of("%1M(reader).toULong()", BIT_64_READER)
+        is U8Type -> CodeBlock.of("reader.readByte()")
+        is U16Type -> CodeBlock.of("reader.readUint16()")
+        is U32Type -> CodeBlock.of("reader.readUint32()")
+        is U64Type -> CodeBlock.of("%1M(reader).toBigInteger()", BIT_64_READER)
         is U128Type -> CodeBlock.of("reader.readUint128()")
         is U256Type -> CodeBlock.of("BigInteger(reader.readUint256())")
         is I64Type -> CodeBlock.of("%1M(reader)", BIT_64_READER)
@@ -89,11 +89,11 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is FixedPointType -> resolveScaleReadImpl(type.innerType.requireValue())
         is CompactType -> {
             return when (val innerType = type.innerType.requireValue()) {
+                is U8Type -> CodeBlock.of("reader.readCompactInt().toShort()")
+                is U16Type -> CodeBlock.of("reader.readCompactInt().toInt()")
+                is U32Type -> CodeBlock.of("reader.readCompactInt().toLong()")
+                is U64Type -> CodeBlock.of("reader.read(%M()).toBigInteger()", COMPACT_BIG_INT_READER)
                 is U128Type, is U256Type -> CodeBlock.of("reader.read(%M())", COMPACT_BIG_INT_READER)
-                is U64Type -> CodeBlock.of("reader.read(%M()).toLong().toULong()", COMPACT_BIG_INT_READER)
-                is U8Type -> CodeBlock.of("reader.readCompactInt().toUByte()")
-                is U16Type -> CodeBlock.of("reader.readCompactInt().toUShort()")
-                is U32Type -> CodeBlock.of("reader.readCompactInt().toUInt()")
                 else -> throw RuntimeException("Compact type implementation unresolved: $innerType")
             }
         }
@@ -134,8 +134,8 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         }
         is U8Type -> CodeBlock.of("writer.writeByte(%L.toByte())", propName)
         is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
-        is U32Type -> CodeBlock.of("writer.writeUint32(%L.toInt())", propName)
-        is U64Type -> CodeBlock.of("%1M(writer, %2L.toLong())", BIT_64_WRITER, propName)
+        is U32Type -> CodeBlock.of("writer.writeUint32(%L)", propName)
+        is U64Type -> CodeBlock.of("%1M(writer, %2L)", BIT_64_WRITER, propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
         is U256Type -> CodeBlock.of("writer.writeUint256(%L.toByteArray())", propName)
         is I64Type -> CodeBlock.of("%1M(writer, %2L)", BIT_64_WRITER, propName)

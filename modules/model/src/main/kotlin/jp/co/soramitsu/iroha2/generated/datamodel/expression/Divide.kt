@@ -8,7 +8,7 @@ import io.emeraldpay.polkaj.scale.ScaleCodecWriter
 import io.emeraldpay.polkaj.scale.ScaleReader
 import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.UInt
+import kotlin.Long
 
 /**
  * Divide
@@ -16,14 +16,14 @@ import kotlin.UInt
  * Generated from 'iroha_data_model::expression::Divide' regular structure
  */
 public data class Divide(
-    public val left: EvaluatesTo<UInt>,
-    public val right: EvaluatesTo<UInt>
+    public val left: EvaluatesTo<Long>,
+    public val right: EvaluatesTo<Long>
 ) {
     public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
         public override fun read(reader: ScaleCodecReader): Divide = try {
             Divide(
-                EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
-                EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

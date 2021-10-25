@@ -11,7 +11,7 @@ import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
 import kotlin.Int
-import kotlin.UInt
+import kotlin.Long
 import kotlin.collections.List
 
 /**
@@ -29,7 +29,7 @@ public sealed class Value : ModelEnum {
      * 'U32' variant
      */
     public data class U32(
-        public val u32: UInt
+        public val u32: Long
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -38,14 +38,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): U32 = try {
                 U32(
-                    reader.readUint32().toUInt(),
+                    reader.readUint32(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: U32) = try {
-                writer.writeUint32(instance.u32.toInt())
+                writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

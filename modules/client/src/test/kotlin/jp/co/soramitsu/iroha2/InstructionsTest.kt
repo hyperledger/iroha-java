@@ -188,7 +188,7 @@ class InstructionsTest {
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            mintAsset(DEFAULT_ASSET_ID, 5U)
+            mintAsset(DEFAULT_ASSET_ID, 5)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -200,7 +200,7 @@ class InstructionsTest {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val result = client.sendQuery(query)
-        assertEquals(5U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(5, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
     }
 
     @Test
@@ -211,11 +211,11 @@ class InstructionsTest {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         var result = client.sendQuery(query)
-        assertEquals(100U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(100, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            burnAsset(DEFAULT_ASSET_ID, 50U)
+            burnAsset(DEFAULT_ASSET_ID, 50)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -225,7 +225,7 @@ class InstructionsTest {
 
         // check balance after burn
         result = client.sendQuery(query)
-        assertEquals(50U, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(50, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
     }
 
     @Test
@@ -262,12 +262,12 @@ class InstructionsTest {
         val aliceAssetId = DEFAULT_ASSET_ID
         val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
 
-        assertEquals(100U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
-        assertEquals(100U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
+        assertEquals(100, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(100, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            transferAsset(aliceAssetId, 40U, bobAssetId)
+            transferAsset(aliceAssetId, 40, bobAssetId)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -276,14 +276,14 @@ class InstructionsTest {
         }
 
         // check balance after transfer
-        assertEquals(60U, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
-        assertEquals(140U, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
+        assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(140, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
     }
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
-        val toBurn = 80U
+        val toBurn = 80L
         val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
@@ -301,8 +301,8 @@ class InstructionsTest {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             pair(
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U)
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20)
             )
             buildSigned(ALICE_KEYPAIR)
         }.also {
@@ -311,7 +311,7 @@ class InstructionsTest {
             }
         }
 
-        assert(getAccountAmount() == 70U)
+        assert(getAccountAmount() == 70L)
     }
 
     @Test
@@ -320,9 +320,9 @@ class InstructionsTest {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             sequence(
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 10U),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 20U),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 30U),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 10),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 20),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 30),
             )
             buildSigned(ALICE_KEYPAIR)
         }.also {
@@ -331,7 +331,7 @@ class InstructionsTest {
             }
         }
 
-        assert(getAccountAmount() == 40U)
+        assert(getAccountAmount() == 40L)
     }
 
     @Test
@@ -374,24 +374,24 @@ class InstructionsTest {
         assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
     }
 
-    private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): UInt {
+    private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): Long {
         return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query).assets[assetId ?: DEFAULT_ASSET_ID]?.value
             }.let { value ->
-                (value as? AssetValue.Quantity)?.u32 ?: 0U
+                (value as? AssetValue.Quantity)?.u32 ?: 0
             }
     }
 
-    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: UInt) {
+    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Long) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             `if`(
                 condition = condition,
                 then = Instructions.burnAsset(assetId, toBurn),
-                otherwise = Instructions.burnAsset(assetId, 0U)
+                otherwise = Instructions.burnAsset(assetId, 0)
             )
             buildSigned(ALICE_KEYPAIR)
         }.also {
