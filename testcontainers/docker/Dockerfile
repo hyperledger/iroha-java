@@ -1,5 +1,4 @@
-#this corresponds to iroha 1.3.0.rc1
-FROM ghcr.io/hyperledger/iroha:df8b9258ff546ebf7dcdbe6ca2f52ac82f94922138649fe9fc875558b0c3e715-debug
+FROM ghcr.io/hyperledger/iroha:1.3.0-rc.1
 WORKDIR /opt/iroha_data
 ENTRYPOINT [""]
 COPY run-iroha.sh wait-for-it.sh /
