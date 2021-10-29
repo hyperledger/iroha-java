@@ -15,12 +15,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 /**
- * Default genesis where just one domain and one user Alice in it
+ * Default genesis where just one domain and Alice with Bob in it
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
 /**
- * Default genesis plus Alice has 100 XOR and permission to burn
+ * Gives to Alice has 100 XOR and permission to burn
  */
 open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
@@ -30,6 +30,9 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
     )
 )
 
+/**
+ * Mints 100 XOR for Alice and Bob
+ */
 open class AliceAndBobEachHave100Xor : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
@@ -42,6 +45,9 @@ open class AliceAndBobEachHave100Xor : Genesis(
     }
 }
 
+/**
+ * Creates Store asset with metadata
+ */
 open class StoreAssetWithMetadata : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(
@@ -60,6 +66,9 @@ open class StoreAssetWithMetadata : Genesis(
     }
 }
 
+/**
+ * Creates XOR and VAL assets with 1 token for each and metadata
+ */
 open class XorAndValAssets : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(XOR_DEFINITION_ID, AssetValueType.Quantity()),
@@ -77,6 +86,9 @@ open class XorAndValAssets : Genesis(
     }
 }
 
+/**
+ * Creates new account with metadata
+ */
 open class NewAccountWithMetadata : Genesis(
     rawGenesisBlock(
         Instructions.registerAccount(
@@ -96,6 +108,9 @@ open class NewAccountWithMetadata : Genesis(
     }
 }
 
+/**
+ * Creates new domain
+ */
 open class NewDomain : Genesis(
     rawGenesisBlock(
         Instructions.registerDomain(DOMAIN_NAME, mapOf(), mapOf())
@@ -106,6 +121,9 @@ open class NewDomain : Genesis(
     }
 }
 
+/**
+ * Returns RawGenesisBlock with instructions to init genesis block
+ */
 fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
     return RawGenesisBlock(
         listOf(

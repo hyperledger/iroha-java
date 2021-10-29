@@ -106,6 +106,9 @@ fun VersionedTransaction.hash() = when (this) {
     is VersionedTransaction.V1 -> this.hash()
 }
 
+/**
+ * Append signatures to transaction. Maintains only VersionedTransaction.V1
+ */
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
         is VersionedTransaction.V1 -> {
@@ -134,6 +137,9 @@ inline fun <reified B> Any.cast(): B {
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
 }
 
+/**
+ * Wrap object in EvaluatesTo
+ */
 inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
     return when (this) {
         is String -> Value.String(this)

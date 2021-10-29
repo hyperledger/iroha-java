@@ -36,22 +36,28 @@ const val CAN_BURN_ASSET_WITH_DEFINITION = "can_burn_asset_with_definition"
 const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
 const val ASSET_DEFINITION_PARAM_NAME = "asset_definition_id"
 
-// additional support for fixed types
-// register peer
-// burn
-// fail
-// grant
-// if
-// mint
-// pair
-// register
-// remove key value
-// sequence
-// set key value
-// transfer
-// unregister
+/**
+ * Types:
+ *  - additional support for fixed types
+ *  - register peer
+ *  - burn
+ *  - fail
+ *  - grant
+ *  - if
+ *  - mint
+ *  - pair
+ *  - register
+ *  - remove key value
+ *  - sequence
+ *  - set key value
+ *  - transfer
+ *  - unregister
+ */
 object Instructions {
 
+    /**
+     * Instruction for account registration
+     */
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
@@ -64,6 +70,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction for asset registration
+     */
     fun registerAsset(
         id: DefinitionId,
         assetValueType: AssetValueType,
@@ -77,6 +86,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction for domain registration
+     */
     fun registerDomain(
         domainName: String,
         accounts: Map<AccountId, Account> = mapOf(),
@@ -89,6 +101,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction to set key value at the object
+     */
     fun setKeyValue(
         assetId: AssetId,
         key: String,
@@ -103,6 +118,9 @@ object Instructions {
         )
     }
 
+    /**
+     * Instruction to remove key value at the object
+     */
     fun removeKeyValue(assetId: AssetId, key: String): Instruction.RemoveKeyValue {
         return Instruction.RemoveKeyValue(
             RemoveKeyValueBox(
@@ -112,6 +130,9 @@ object Instructions {
         )
     }
 
+    /**
+     * Instruction for mint of an asset
+     */
     fun mintAsset(
         assetId: AssetId,
         quantity: Long
@@ -124,6 +145,9 @@ object Instructions {
         )
     }
 
+    /**
+     * Instruction for burn of an asset
+     */
     fun burnAsset(assetId: AssetId, value: Long): Instruction {
         return burnSome(
             Value.U32(value),
@@ -131,6 +155,9 @@ object Instructions {
         )
     }
 
+    /**
+     * Instruction for burn of a public key
+     */
     fun burnPublicKey(accountId: AccountId, pubKey: PublicKey): Instruction {
         return burnSome(
             Value.PublicKey(pubKey),
@@ -140,6 +167,9 @@ object Instructions {
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
+    /**
+     * Instruction for granting `can_set_key_value_in_user_assets` permission to an account
+     */
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
@@ -149,6 +179,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction for granting `can_mint_user_asset_definitions` permission to an account
+     */
     fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
@@ -164,6 +197,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction for granting `can_burn_asset_with_definition` permission to an account
+     */
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
@@ -179,6 +215,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Instruction for a transfer of an asset from the identifiable source
+     */
     fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId): Instruction {
         return Instruction.Transfer(
             TransferBox(
@@ -195,14 +234,23 @@ object Instructions {
         )
     }
 
+    /**
+     * Instruction that includes two instructions
+     */
     fun pair(left: Instruction, right: Instruction): Instruction {
         return Instruction.Pair(Pair(left, right))
     }
 
+    /**
+     * Instruction that includes few instructions
+     */
     fun sequence(instructions: List<Instruction>): Instruction {
         return Instruction.Sequence(SequenceBox(instructions))
     }
 
+    /**
+     * Instruction to fail a transaction
+     */
     fun fail(message: String): Instruction {
         return Instruction.Fail(FailBox(message))
     }

@@ -11,6 +11,9 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 
+/**
+ * Starts Iroha2 docker containers
+ */
 class IrohaRunnerExtension : InvocationInterceptor {
 
     override fun interceptTestMethod(
