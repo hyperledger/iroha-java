@@ -36,23 +36,6 @@ const val CAN_BURN_ASSET_WITH_DEFINITION = "can_burn_asset_with_definition"
 const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
 const val ASSET_DEFINITION_PARAM_NAME = "asset_definition_id"
 
-/**
- * Types:
- *  - additional support for fixed types
- *  - register peer
- *  - burn
- *  - fail
- *  - grant
- *  - if
- *  - mint
- *  - pair
- *  - register
- *  - remove key value
- *  - sequence
- *  - set key value
- *  - transfer
- *  - unregister
- */
 object Instructions {
 
     /**
@@ -168,7 +151,7 @@ object Instructions {
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     /**
-     * Instruction for granting `can_set_key_value_in_user_assets` permission to an account
+     * Instruction for granting [CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN] permission to an account
      */
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -180,7 +163,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting `can_mint_user_asset_definitions` permission to an account
+     * Instruction for granting [CAN_MINT_USER_ASSETS_DEFINITION] permission to an account
      */
     fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -198,7 +181,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting `can_burn_asset_with_definition` permission to an account
+     * Instruction for granting [CAN_BURN_ASSET_WITH_DEFINITION] permission to an account
      */
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
