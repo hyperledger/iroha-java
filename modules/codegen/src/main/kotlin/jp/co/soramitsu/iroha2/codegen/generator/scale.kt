@@ -25,16 +25,16 @@ import jp.co.soramitsu.iroha2.type.U64Type
 import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.VecType
 
-val SCALE_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleReader")
-val SCALE_CODEC_READER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecReader")
-val SCALE_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleWriter")
-val SCALE_CODEC_WRITER = ClassName("io.emeraldpay.polkaj.scale", "ScaleCodecWriter")
+val SCALE_READER = ClassName("jp.co.soramitsu.iroha2.codec", "ScaleReader")
+val SCALE_CODEC_READER = ClassName("jp.co.soramitsu.iroha2.codec", "ScaleCodecReader")
+val SCALE_WRITER = ClassName("jp.co.soramitsu.iroha2.codec", "ScaleWriter")
+val SCALE_CODEC_WRITER = ClassName("jp.co.soramitsu.iroha2.codec", "ScaleCodecWriter")
 val HASH_MAP_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashMapWithSize")
 val HASH_SET_CREATER = MemberName("jp.co.soramitsu.iroha2", "hashSetWithSize")
 val BIT_64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeBit64")
 val BIT_64_READER = MemberName("jp.co.soramitsu.iroha2", "readBit64")
-val COMPACT_ULONG_WRITER = MemberName("io.emeraldpay.polkaj.scale.writer", "CompactULongWriter")
-val COMPACT_BIG_INT_READER = MemberName("io.emeraldpay.polkaj.scale.reader", "CompactBigIntReader")
+val COMPACT_ULONG_WRITER = MemberName("jp.co.soramitsu.iroha2.codec.writer", "CompactULongWriter")
+val COMPACT_BIG_INT_READER = MemberName("jp.co.soramitsu.iroha2.codec.reader", "CompactBigIntReader")
 val OPTIONAL = ClassName("java.util", "Optional")
 val SCALE_CODEC_EX_WRAPPER = ClassName("jp.co.soramitsu.iroha2", "wrapException")
 

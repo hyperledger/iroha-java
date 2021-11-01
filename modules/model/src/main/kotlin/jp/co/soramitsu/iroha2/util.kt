@@ -1,8 +1,8 @@
 package jp.co.soramitsu.iroha2
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.reader.UInt128Reader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.reader.UInt128Reader
 import java.math.BigInteger
 
 // Copied from Google Guava library(com.google.common.collect.Maps)

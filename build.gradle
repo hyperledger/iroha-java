@@ -18,9 +18,6 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        flatDir {
-            dirs "${project.rootDir}/libs"
-        }
     }
 }
 
@@ -33,7 +30,6 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
 
     dependencies {
-        api fileTree(dir: 'libs', include: ['*.jar'])
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     }
 
@@ -49,8 +45,6 @@ subprojects {
     jar {
         from {
             configurations.runtimeClasspath
-            //todo remove it as soon as will be own implementation of scale codec
-                    .filter { it.name.contains("polkaj-scale") }
                     .collect {
                         it.isDirectory() ? it : zipTree(it)
                     }

@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.codec.encode
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
