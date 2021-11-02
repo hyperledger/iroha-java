@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.wrapException
-import java.util.Optional
 
 /**
  * EventFilter
@@ -23,16 +22,16 @@ public data class EventFilter(
     public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
         public override fun read(reader: ScaleCodecReader): EventFilter = try {
             EventFilter(
-                reader.readOptional(EntityType).orElse(null),
-                reader.readOptional(Hash).orElse(null),
+                reader.readNullable(EntityType),
+                reader.readNullable(Hash),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: EventFilter) = try {
-            writer.writeOptional(EntityType, Optional.ofNullable(instance.entity))
-            writer.writeOptional(Hash, Optional.ofNullable(instance.hash))
+            writer.writeNullable(EntityType, instance.entity)
+            writer.writeNullable(Hash, instance.hash)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

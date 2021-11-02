@@ -1,10 +1,10 @@
 package jp.co.soramitsu.iroha2.codec.reader
 
-import java.math.BigInteger
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
+import java.math.BigInteger
 
-class UInt64Reader : ScaleReader<BigInteger?> {
+class UInt64Reader : ScaleReader<BigInteger> {
     override fun read(rdr: ScaleCodecReader): BigInteger {
         var result = BigInteger.ZERO
         result = result.add(BigInteger.valueOf(rdr.readUByte().toLong()))

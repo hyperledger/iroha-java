@@ -1,14 +1,12 @@
 package jp.co.soramitsu.iroha2.codec.writer
 
-import java.io.IOException
-import java.math.BigInteger
 import jp.co.soramitsu.iroha2.codec.CompactMode
 import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.forNumber
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import java.math.BigInteger
 
-class CompactBigIntWriter : ScaleWriter<BigInteger?> {
-    @Throws(IOException::class)
+class CompactBigIntWriter : ScaleWriter<BigInteger> {
     override fun write(wrt: ScaleCodecWriter, value: BigInteger) {
         val mode = forNumber(value)
         val data = value.toByteArray()
@@ -21,7 +19,7 @@ class CompactBigIntWriter : ScaleWriter<BigInteger?> {
         }
 
         // skip the first byte if it's 0
-        if (data[0] == 0x00) {
+        if (data[0] == 0.toByte()) {
             length--
             limit++
         }

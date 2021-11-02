@@ -15,7 +15,3 @@ fun <T> T.encode(writer: ScaleWriter<T>): ByteArray {
             buffer.toByteArray()
         }
 }
-
-// TODO: regenerate models
-// TODO: all in kotlin
-// TODO: use when

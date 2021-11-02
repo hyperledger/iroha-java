@@ -11,7 +11,6 @@ import jp.co.soramitsu.iroha2.codec.reader.UInt128Reader
 import jp.co.soramitsu.iroha2.codec.reader.UInt16Reader
 import jp.co.soramitsu.iroha2.codec.reader.UInt32Reader
 import java.math.BigInteger
-import java.util.Optional
 
 /**
  * SCALE codec reader
@@ -57,18 +56,22 @@ class ScaleCodecReader(private val source: ByteArray) {
         return source[pos++]
     }
 
-    /**
-     * Read complex value from the reader
-     *
-     * @param scaleReader reader implementation
-     * @param <T>         resulting type
-     * @return read value
-     </T> */
     fun <T> read(scaleReader: ScaleReader<T>?): T {
+        // TODO: try scaleReader param non nullable (?)
         if (scaleReader == null) {
             throw NullPointerException("ItemReader cannot be null")
         }
         return scaleReader.read(this)
+    }
+
+    fun <T> readNullable(scaleReader: ScaleReader<T>?): T? {
+        if (scaleReader is BoolReader || scaleReader is BoolOptionalReader) {
+            return BOOL_OPTIONAL.read(this) as T?
+        }
+        return when (readBoolean()) {
+            true -> read(scaleReader)
+            else -> null
+        }
     }
 
     fun readUByte(): Int {
@@ -95,24 +98,22 @@ class ScaleCodecReader(private val source: ByteArray) {
         return BOOL.read(this)
     }
 
-    /**
-     * Read optional value from the reader
-     *
-     * @param scaleReader reader implementation
-     * @param <T>         resulting type
-     * @return optional read value
-     </T> */
-    fun <T> readOptional(scaleReader: ScaleReader<T>?): Optional<T> {
-        if (scaleReader is BoolReader || scaleReader is BoolOptionalReader) {
-            return BOOL_OPTIONAL.read(this) as Optional<T>
-        }
-        val some = readBoolean()
-        return if (some) {
-            Optional.of(read(scaleReader))
-        } else {
-            Optional.empty()
-        }
-    }
+//    /**
+//     * Read optional value from the reader
+//     *
+//     * @param scaleReader reader implementation
+//     * @param <T>         resulting type
+//     * @return optional read value
+//     </T> */
+//    fun <T> readOptional(scaleReader: ScaleReader<T>): T? {
+//        if (scaleReader is BoolReader || scaleReader is BoolOptionalReader) {
+//            return BOOL_OPTIONAL.read(this) as T?
+//        }
+//        return when (readBoolean()) {
+//            true -> read(scaleReader)
+//            else -> null
+//        }
+//    }
 
     fun readUint256(): ByteArray {
         return readByteArray(32)

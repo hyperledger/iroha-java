@@ -111,7 +111,9 @@ open class Iroha2Client(
         val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
             this.body = queryAndExtractor.query.encode(VersionedSignedQueryRequest)
         }
-        return response.receive<ByteArray>().decode(QueryResult).let { queryAndExtractor.resultExtractor.extract(it) }
+        return response.receive<ByteArray>()
+            .decode(QueryResult)
+            .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)

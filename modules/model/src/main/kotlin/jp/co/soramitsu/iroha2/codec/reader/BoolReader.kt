@@ -3,15 +3,13 @@ package jp.co.soramitsu.iroha2.codec.reader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 
-class BoolReader : ScaleReader<Boolean?> {
+class BoolReader : ScaleReader<Boolean> {
     override fun read(rdr: ScaleCodecReader): Boolean {
-        val b = rdr.readByte()
-        if (b.toInt() == 0) {
-            return false
+        // TODO: через байты
+        return when (val b = rdr.readCompactInt()) {
+            0 -> false
+            1 -> true
+            else -> throw IllegalStateException("Not a boolean option: $b")
         }
-        if (b.toInt() == 1) {
-            return true
-        }
-        throw IllegalStateException("Not a boolean value: $b")
     }
 }

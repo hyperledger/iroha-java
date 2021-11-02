@@ -11,7 +11,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
  * @param <T> type of Enum
  * @see UnionReader
 </T> */
-class EnumReader<T : Enum<*>?>(values: Array<T>?) : ScaleReader<T> {
+class EnumReader<T : Enum<*>?>(values: Array<T>) : ScaleReader<T> {
     private val values: Array<T>
     override fun read(rdr: ScaleCodecReader): T {
         val id = rdr.readUByte()
@@ -30,10 +30,7 @@ class EnumReader<T : Enum<*>?>(values: Array<T>?) : ScaleReader<T> {
      * @param values list of enum values
      */
     init {
-        if (values == null) {
-            throw NullPointerException("List of enums is null")
-        }
-        require(values.size != 0) { "List of enums is empty" }
+        require(values.isNotEmpty()) { "List of enums is empty" }
         this.values = values
     }
 }

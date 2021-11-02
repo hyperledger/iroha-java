@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2.codec.reader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 
-class UInt32Reader : ScaleReader<Long?> {
+class UInt32Reader : ScaleReader<Long> {
     override fun read(rdr: ScaleCodecReader): Long {
         var result: Long = 0
         result += rdr.readUByte().toLong()

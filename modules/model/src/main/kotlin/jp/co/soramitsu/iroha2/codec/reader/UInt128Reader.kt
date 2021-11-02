@@ -1,10 +1,10 @@
 package jp.co.soramitsu.iroha2.codec.reader
 
-import java.math.BigInteger
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
+import java.math.BigInteger
 
-class UInt128Reader : ScaleReader<BigInteger?> {
+class UInt128Reader : ScaleReader<BigInteger> {
     override fun read(rdr: ScaleCodecReader): BigInteger {
         val value = rdr.readByteArray(SIZE_BYTES)
         reverse(value)

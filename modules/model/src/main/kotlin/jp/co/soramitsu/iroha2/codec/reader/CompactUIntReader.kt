@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.byValue
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 
-class CompactUIntReader : ScaleReader<Int?> {
+class CompactUIntReader : ScaleReader<Int> {
     /**
      * @param rdr reader with the encoded data
      * @return integer value
@@ -18,8 +18,10 @@ class CompactUIntReader : ScaleReader<Int?> {
             return i shr 2
         }
         if (mode === CompactMode.TWO) {
-            return ((i shr 2)
-                + (rdr.readUByte() shl 6))
+            return (
+                (i shr 2) +
+                    (rdr.readUByte() shl 6)
+                )
         }
         if (mode === CompactMode.FOUR) {
             return (i shr 2) +

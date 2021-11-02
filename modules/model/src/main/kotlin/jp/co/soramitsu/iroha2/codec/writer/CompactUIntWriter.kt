@@ -1,13 +1,11 @@
 package jp.co.soramitsu.iroha2.codec.writer
 
-import java.io.IOException
 import jp.co.soramitsu.iroha2.codec.CompactMode
 import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.forNumber
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 
-class CompactUIntWriter : ScaleWriter<Int?> {
-    @Throws(IOException::class)
+class CompactUIntWriter : ScaleWriter<Int> {
     override fun write(wrt: ScaleCodecWriter, value: Int) {
         val mode = forNumber(value)
         var compact: Int

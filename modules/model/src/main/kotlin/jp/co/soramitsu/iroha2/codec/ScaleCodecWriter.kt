@@ -62,6 +62,19 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         writer.write(this, value)
     }
 
+    fun <T> writeNullable(writer: ScaleWriter<T>, value: T?) {
+        if (writer is BoolOptionalWriter || writer is BoolWriter) {
+            BOOL_OPT.write(this, value as Boolean?)
+        } else {
+            if (value == null) {
+                BOOL.write(this, false)
+            } else {
+                BOOL.write(this, true)
+                writer.write(this, value)
+            }
+        }
+    }
+
     fun writeByte(value: Int) {
         directWrite(value)
     }
@@ -82,7 +95,7 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         ULONG32.write(this, value)
     }
 
-    fun writeUint128(value: BigInteger?) {
+    fun writeUint128(value: BigInteger) {
         UINT128.write(this, value)
     }
 
@@ -90,18 +103,18 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         COMPACT_UINT.write(this, value)
     }
 
-    fun <T> writeOptional(writer: ScaleWriter<T>, value: T?) {
-        if (writer is BoolOptionalWriter || writer is BoolWriter) {
-            BOOL_OPT.write(this, value as Boolean?)
-        } else {
-            if (value == null) {
-                BOOL.write(this, false)
-            } else {
-                BOOL.write(this, true)
-                writer.write(this, value)
-            }
-        }
-    }
+//    fun <T> writeOptional(writer: ScaleWriter<T>, value: T?) {
+//        if (writer is BoolOptionalWriter || writer is BoolWriter) {
+//            BOOL_OPT.write(this, value as Boolean?)
+//        } else {
+//            if (value == null) {
+//                BOOL.write(this, false)
+//            } else {
+//                BOOL.write(this, true)
+//                writer.write(this, value)
+//            }
+//        }
+//    }
 
     companion object {
         val COMPACT_UINT = CompactUIntWriter()

@@ -35,7 +35,6 @@ val BIT_64_WRITER = MemberName("jp.co.soramitsu.iroha2", "writeBit64")
 val BIT_64_READER = MemberName("jp.co.soramitsu.iroha2", "readBit64")
 val COMPACT_ULONG_WRITER = MemberName("jp.co.soramitsu.iroha2.codec.writer", "CompactULongWriter")
 val COMPACT_BIG_INT_READER = MemberName("jp.co.soramitsu.iroha2.codec.reader", "CompactBigIntReader")
-val OPTIONAL = ClassName("java.util", "Optional")
 val SCALE_CODEC_EX_WRAPPER = ClassName("jp.co.soramitsu.iroha2", "wrapException")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
@@ -84,7 +83,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             }
         }
         is OptionType -> {
-            CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
+            CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
         }
         is FixedPointType -> resolveScaleReadImpl(type.innerType.requireValue())
         is CompactType -> {
@@ -154,9 +153,8 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         )
         is OptionType -> {
             CodeBlock.of(
-                "writer.writeOptional(%1T, %2T.ofNullable(%3L))",
+                "writer.writeNullable(%1T, %2L)",
                 withoutGenerics(resolveKotlinType(type)),
-                OPTIONAL,
                 propName
             )
         }
