@@ -31,7 +31,7 @@ import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(30)
+@Timeout(3000)
 class QueriesTest {
 
     lateinit var client: Iroha2Client

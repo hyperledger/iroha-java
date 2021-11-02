@@ -5,8 +5,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 
 class BoolReader : ScaleReader<Boolean> {
     override fun read(rdr: ScaleCodecReader): Boolean {
-        // TODO: через байты
-        return when (val b = rdr.readCompactInt()) {
+        return when (val b = rdr.readByte().toInt()) {
             0 -> false
             1 -> true
             else -> throw IllegalStateException("Not a boolean option: $b")
