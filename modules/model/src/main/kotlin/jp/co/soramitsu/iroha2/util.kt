@@ -37,8 +37,6 @@ fun mapCapacity(expectedSize: Int): Int {
     }
 }
 
-fun writeBit64(writer: ScaleCodecWriter, value: Long) = writeBit64(writer, value.toBigInteger())
-
 fun writeBit64(writer: ScaleCodecWriter, value: BigInteger) {
     require(value >= BigInteger.ZERO) { "Negative values are not supported: $value" }
     val array = value.toByteArray()
@@ -58,7 +56,7 @@ fun writeBit64(writer: ScaleCodecWriter, value: BigInteger) {
     }
 }
 
-fun readBit64(reader: ScaleCodecReader): Long {
+fun readBit64(reader: ScaleCodecReader): BigInteger {
     var result = 0L
     result += reader.readUByte().toLong()
     result += reader.readUByte().toLong() shl 8
@@ -68,7 +66,7 @@ fun readBit64(reader: ScaleCodecReader): Long {
     result += reader.readUByte().toLong() shl 40
     result += reader.readUByte().toLong() shl 48
     result += reader.readUByte().toLong() shl 56
-    return result
+    return BigInteger.valueOf(result)
 }
 
 fun wrapException(ex: Exception): Exception {

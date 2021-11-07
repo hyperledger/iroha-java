@@ -36,8 +36,8 @@ public data class Payload(
             Payload(
                 Id.read(reader),
                 List(reader.readCompactInt()) { Instruction.read(reader) },
-                readBit64(reader).toBigInteger(),
-                readBit64(reader).toBigInteger(),
+                readBit64(reader),
+                readBit64(reader),
                 hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
