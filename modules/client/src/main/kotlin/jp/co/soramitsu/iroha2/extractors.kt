@@ -11,6 +11,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 
+/**
+ * Extractors are used by **[QueryBuilder]** to extract data from query result
+ */
 interface ResultExtractor<T> {
     fun extract(result: QueryResult): T
 }
@@ -103,6 +106,11 @@ object ValueExtractor : ResultExtractor<Value> {
     }
 }
 
+/**
+ * Extracts one of **[IdentifiableBox]** objects from value
+ *
+ * @param downstream Type to extract
+ */
 inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: (I) -> R): R {
     return when (value) {
         is Value.Identifiable -> when (val box = value.identifiableBox) {
@@ -113,6 +121,11 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
     }
 }
 
+/**
+ * Extracts collection from Value.Vec
+ *
+ * @param downstream Type to extract
+ */
 inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<R> {
     when (value) {
         is Value.Vec -> {
@@ -124,6 +137,11 @@ inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<
     }
 }
 
+/**
+ * Extracts value
+ *
+ * @param downstream Type to extract
+ */
 inline fun <reified V : Value, R> extractValue(value: Value, downstream: (V) -> R): R {
     return when (value) {
         is V -> downstream(value)
