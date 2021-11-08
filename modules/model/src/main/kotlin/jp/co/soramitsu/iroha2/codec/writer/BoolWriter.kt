@@ -12,7 +12,7 @@ class BoolWriter : ScaleWriter<Boolean> {
     }
 }
 
-class BoolOptionalWriter : ScaleWriter<Boolean?> {
+class BoolNullableWriter : ScaleWriter<Boolean?> {
     override fun write(wrt: ScaleCodecWriter, value: Boolean?) {
         when (value) {
             null -> wrt.directWrite(0)

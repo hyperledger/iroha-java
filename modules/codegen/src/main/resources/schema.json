@@ -50,12 +50,18 @@
   "Option<iroha_data_model::isi::Instruction>": {
     "Option": "iroha_data_model::isi::Instruction"
   },
+  "Option<u32>": {
+    "Option": "u32"
+  },
   "String": "String",
   "Vec<iroha_core::genesis::GenesisTransaction>": {
     "Vec": "iroha_core::genesis::GenesisTransaction"
   },
   "Vec<iroha_crypto::PublicKey>": {
     "Vec": "iroha_crypto::PublicKey"
+  },
+  "Vec<iroha_crypto::signature::Signature>": {
+    "Vec": "iroha_crypto::signature::Signature"
   },
   "Vec<iroha_data_model::Value>": {
     "Vec": "iroha_data_model::Value"
@@ -65,9 +71,6 @@
   },
   "Vec<iroha_data_model::permissions::PermissionToken>": {
     "Vec": "iroha_data_model::permissions::PermissionToken"
-  },
-  "Vec<iroha_crypto::signature::Signature>": {
-    "Vec": "iroha_crypto::signature::Signature"
   },
   "Vec<u8>": {
     "Vec": "u8"
@@ -548,6 +551,10 @@
         {
           "name": "asset_definitions",
           "ty": "BTreeMap<iroha_data_model::asset::DefinitionId, iroha_data_model::asset::AssetDefinitionEntry>"
+        },
+        {
+          "name": "metadata",
+          "ty": "iroha_data_model::metadata::Metadata"
         }
       ]
     }
@@ -1677,23 +1684,28 @@
           "ty": "iroha_data_model::query::domain::FindDomainByName"
         },
         {
-          "name": "FindAllPeers",
+          "name": "FindDomainKeyValueByIdAndKey",
           "discriminant": 18,
+          "ty": "iroha_data_model::query::domain::FindDomainKeyValueByIdAndKey"
+        },
+        {
+          "name": "FindAllPeers",
+          "discriminant": 19,
           "ty": "iroha_data_model::query::peer::FindAllPeers"
         },
         {
           "name": "FindTransactionsByAccountId",
-          "discriminant": 19,
+          "discriminant": 20,
           "ty": "iroha_data_model::query::transaction::FindTransactionsByAccountId"
         },
         {
           "name": "FindTransactionByHash",
-          "discriminant": 20,
+          "discriminant": 21,
           "ty": "iroha_data_model::query::transaction::FindTransactionByHash"
         },
         {
           "name": "FindPermissionTokensByAccountId",
-          "discriminant": 21,
+          "discriminant": 22,
           "ty": "iroha_data_model::query::permissions::FindPermissionTokensByAccountId"
         }
       ]
@@ -1932,6 +1944,20 @@
       ]
     }
   },
+  "iroha_data_model::query::domain::FindDomainKeyValueByIdAndKey": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "name",
+          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::string::String>"
+        },
+        {
+          "name": "key",
+          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::string::String>"
+        }
+      ]
+    }
+  },
   "iroha_data_model::query::peer::FindAllPeers": {
     "Struct": {
       "declarations": []
@@ -1985,6 +2011,10 @@
         {
           "name": "time_to_live_ms",
           "ty": "u64"
+        },
+        {
+          "name": "nonce",
+          "ty": "Option<u32>"
         },
         {
           "name": "metadata",

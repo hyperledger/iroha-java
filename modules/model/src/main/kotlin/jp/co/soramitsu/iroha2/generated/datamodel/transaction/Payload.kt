@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Long
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -26,6 +27,7 @@ public data class Payload(
     public val instructions: List<Instruction>,
     public val creationTime: BigInteger,
     public val timeToLiveMs: BigInteger,
+    public val nonce: Long?,
     public val metadata: Map<String, Value>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
@@ -35,6 +37,7 @@ public data class Payload(
                 reader.readVec(reader.readCompactInt()) { Instruction.read(reader) },
                 reader.readUint64(),
                 reader.readUint64(),
+                reader.readNullable(Long),
                 reader.readMap(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
@@ -47,6 +50,7 @@ public data class Payload(
             instance.instructions.forEach { value -> Instruction.write(writer, value) }
             writer.writeUint64(instance.creationTime)
             writer.writeUint64(instance.timeToLiveMs)
+            writer.writeNullable(Long, instance.nonce)
             writer.writeCompact(instance.metadata.size)
             instance.metadata.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))

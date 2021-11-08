@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.codec
 
 import jp.co.soramitsu.iroha2.MAX_POWER_OF_TWO
-import jp.co.soramitsu.iroha2.codec.reader.BoolOptionalReader
+import jp.co.soramitsu.iroha2.codec.reader.BoolNullableReader
 import jp.co.soramitsu.iroha2.codec.reader.BoolReader
 import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
 import jp.co.soramitsu.iroha2.codec.reader.CompactUIntReader
@@ -67,9 +67,16 @@ class ScaleCodecReader(private val source: ByteArray) {
         return scaleReader.read(this)
     }
 
-    fun <T> readNullable(scaleReader: ScaleReader<T>?): T? {
-        if (scaleReader is BoolReader || scaleReader is BoolOptionalReader) {
-            return BOOL_OPTIONAL.read(this) as T?
+    fun readNullable(_long: Long.Companion): Long? {
+        return when (readBoolean()) {
+            true -> readUint32()
+            else -> null
+        }
+    }
+
+    fun <T> readNullable(scaleReader: ScaleReader<T>): T? {
+        if (scaleReader is BoolReader || scaleReader is BoolNullableReader) {
+            return BOOL_NULLABLE.read(this) as T?
         }
         return when (readBoolean()) {
             true -> read(scaleReader)
@@ -189,7 +196,7 @@ class ScaleCodecReader(private val source: ByteArray) {
         val COMPACT_UINT = CompactUIntReader()
         val COMPACT_BIGINT = CompactBigIntReader()
         val BOOL = BoolReader()
-        val BOOL_OPTIONAL = BoolOptionalReader()
+        val BOOL_NULLABLE = BoolNullableReader()
         val STRING = StringReader()
     }
 }

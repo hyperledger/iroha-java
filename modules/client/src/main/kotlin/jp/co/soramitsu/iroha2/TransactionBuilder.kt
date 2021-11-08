@@ -26,6 +26,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     val instructions: Lazy<ArrayList<Instruction>>
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
+    var nonce: Long?
     var metadata: Lazy<HashMap<String, Value>>
 
     init {
@@ -33,6 +34,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions = lazy { ArrayList() }
         creationTimeMillis = null
         timeToLiveMillis = null
+        nonce = null
         metadata = lazy { HashMap() }
         builder(this)
     }
@@ -65,6 +67,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             instructions.value,
             creationTimeMillis ?: fallbackCreationTime(),
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
+            nonce,
             metadata.value
         )
         val encodedPayload = Payload.encode(payload)

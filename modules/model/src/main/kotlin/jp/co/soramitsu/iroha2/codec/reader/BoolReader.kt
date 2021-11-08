@@ -13,7 +13,7 @@ class BoolReader : ScaleReader<Boolean> {
     }
 }
 
-class BoolOptionalReader : ScaleReader<Boolean?> {
+class BoolNullableReader : ScaleReader<Boolean?> {
     override fun read(rdr: ScaleCodecReader): Boolean? {
         return when (val b = rdr.readByte().toInt()) {
             0 -> null

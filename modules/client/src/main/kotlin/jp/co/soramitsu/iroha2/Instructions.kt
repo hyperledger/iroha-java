@@ -29,6 +29,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata as IrohaMetadata
 
 const val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN = "can_set_key_value_in_user_assets"
 const val CAN_MINT_USER_ASSETS_DEFINITION = "can_mint_user_asset_definitions"
@@ -75,11 +76,17 @@ object Instructions {
     fun registerDomain(
         domainName: String,
         accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
+        metadata: Map<String, Value> = mapOf()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
-                Domain(domainName, accounts, assetDefinitions)
+                Domain(
+                    domainName,
+                    accounts,
+                    assetDefinitions,
+                    IrohaMetadata(metadata)
+                )
             )
         }
     }

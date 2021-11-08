@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.codec
 
-import jp.co.soramitsu.iroha2.codec.writer.BoolOptionalWriter
+import jp.co.soramitsu.iroha2.codec.writer.BoolNullableWriter
 import jp.co.soramitsu.iroha2.codec.writer.BoolWriter
 import jp.co.soramitsu.iroha2.codec.writer.CompactBigIntWriter
 import jp.co.soramitsu.iroha2.codec.writer.CompactUIntWriter
@@ -63,9 +63,19 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         writer.write(this, value)
     }
 
+    fun writeNullable(_long: Long.Companion, value: Long?) {
+        when (value) {
+            null -> BOOL.write(this, false)
+            else -> {
+                BOOL.write(this, true)
+                writeUint32(value)
+            }
+        }
+    }
+
     fun <T> writeNullable(writer: ScaleWriter<T>, value: T?) {
         when (writer) {
-            is BoolWriter, is BoolOptionalWriter -> BOOL_OPT.write(this, value as Boolean?)
+            is BoolWriter, is BoolNullableWriter -> BOOL_NULLABLE.write(this, value as Boolean?)
             else -> when (value) {
                 null -> BOOL.write(this, false)
                 else -> {
@@ -137,6 +147,6 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         val INT128 = IntWriter(128)
         val INT256 = IntWriter(256)
         val BOOL = BoolWriter()
-        val BOOL_OPT = BoolOptionalWriter()
+        val BOOL_NULLABLE = BoolNullableWriter()
     }
 }
