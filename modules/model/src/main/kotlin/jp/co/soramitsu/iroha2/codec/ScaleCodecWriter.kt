@@ -1,9 +1,5 @@
 package jp.co.soramitsu.iroha2.codec
 
-import java.io.Closeable
-import java.io.IOException
-import java.io.OutputStream
-import java.math.BigInteger
 import jp.co.soramitsu.iroha2.codec.writer.BoolOptionalWriter
 import jp.co.soramitsu.iroha2.codec.writer.BoolWriter
 import jp.co.soramitsu.iroha2.codec.writer.CompactBigIntWriter
@@ -14,6 +10,10 @@ import jp.co.soramitsu.iroha2.codec.writer.IntWriter
 import jp.co.soramitsu.iroha2.codec.writer.UInt16Writer
 import jp.co.soramitsu.iroha2.codec.writer.UInt32Writer
 import jp.co.soramitsu.iroha2.codec.writer.UIntWriter
+import java.io.Closeable
+import java.io.IOException
+import java.io.OutputStream
+import java.math.BigInteger
 
 class ScaleCodecWriter(private val out: OutputStream) : Closeable {
 
