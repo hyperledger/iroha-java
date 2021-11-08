@@ -5,8 +5,14 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
+/**
+ * Init block
+ */
 open class Genesis(open val genesisBlock: RawGenesisBlock) {
 
+    /**
+     * Writes to genesis file
+     */
     fun writeToFile(path: Path) = Files.write(
         path,
         asJson().toByteArray(Charsets.UTF_8),
@@ -14,5 +20,8 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
         StandardOpenOption.CREATE
     )
 
+    /**
+     * Represents genesis as JSON
+     */
     fun asJson() = GenesisJsonSerializer.asJson(this)
 }

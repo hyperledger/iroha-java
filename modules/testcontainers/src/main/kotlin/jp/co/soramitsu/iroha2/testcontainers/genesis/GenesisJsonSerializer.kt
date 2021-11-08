@@ -20,7 +20,6 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
 object GenesisJsonSerializer {
-
     private val gson = lazy {
         GsonBuilder()
             .setPrettyPrinting()
@@ -38,6 +37,9 @@ object GenesisJsonSerializer {
     }
 }
 
+/**
+ * Custom serializer of Iroha2 enumeration types
+ */
 object EnumerationSerializer : JsonSerializer<Any> {
     @OptIn(ExperimentalStdlibApi::class)
     override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
@@ -59,11 +61,17 @@ object EnumerationSerializer : JsonSerializer<Any> {
     }
 }
 
+/**
+ * Custom serializer of **[EvaluatesTo]**
+ */
 object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>> {
     override fun serialize(src: EvaluatesTo<*>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement =
         EnumerationSerializer.serialize(src.expression, null, context)
 }
 
+/**
+ * Custom serializer of **[Metadata]**
+ */
 object MetadataSerializer : JsonSerializer<Metadata> {
     override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
         val jsonObject = JsonObject()
@@ -74,6 +82,9 @@ object MetadataSerializer : JsonSerializer<Metadata> {
     }
 }
 
+/**
+ * Custom serializer of **[PublicKey]**
+ */
 object PublicKeySerializer : JsonSerializer<PublicKey> {
     override fun serialize(src: PublicKey, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val res = ByteArrayOutputStream()
@@ -84,6 +95,9 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
     }
 }
 
+/**
+ * Custom serializer of **[UInt]**
+ */
 object UIntSerializer : JsonSerializer<UInt> {
     override fun serialize(src: UInt, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return context.serialize(src.toLong())
