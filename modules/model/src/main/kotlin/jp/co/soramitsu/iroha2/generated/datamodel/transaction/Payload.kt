@@ -15,6 +15,8 @@ import jp.co.soramitsu.iroha2.readBit64
 import jp.co.soramitsu.iroha2.wrapException
 import jp.co.soramitsu.iroha2.writeBit64
 import java.math.BigInteger
+import java.util.Optional
+import kotlin.Long
 import kotlin.String
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -29,6 +31,7 @@ public data class Payload(
     public val instructions: List<Instruction>,
     public val creationTime: BigInteger,
     public val timeToLiveMs: BigInteger,
+    public val nonce: Long?,
     public val metadata: Map<String, Value>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
@@ -38,6 +41,7 @@ public data class Payload(
                 List(reader.readCompactInt()) { Instruction.read(reader) },
                 readBit64(reader).toBigInteger(),
                 readBit64(reader).toBigInteger(),
+                reader.readOptional(Long).orElse(null),
                 hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
@@ -50,6 +54,7 @@ public data class Payload(
             instance.instructions.forEach { value -> Instruction.write(writer, value) }
             writeBit64(writer, instance.creationTime)
             writeBit64(writer, instance.timeToLiveMs)
+            writer.writeOptional(Long, Optional.ofNullable(instance.nonce))
             writer.writeCompact(instance.metadata.size)
             instance.metadata.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
