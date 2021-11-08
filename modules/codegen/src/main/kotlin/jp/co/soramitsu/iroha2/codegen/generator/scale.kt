@@ -94,6 +94,9 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             }
         }
         is OptionType -> {
+            when(type.innerType.requireValue()) {
+                is U32Type, U16Type -> CodeBlock.of("reader.readNullable()")
+            }
             CodeBlock.of("reader.readOptional(%T).orElse(null)", withoutGenerics(resolveKotlinType(type)))
         }
         is FixedPointType -> when(type.innerType.requireValue()) {

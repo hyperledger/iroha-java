@@ -27,3 +27,7 @@ dependencies {
     testImplementation project(":testcontainers")
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
 }
+
+test {
+    useJUnitPlatform()
+}
