@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
@@ -24,7 +25,8 @@ import kotlin.collections.Map
 public data class Domain(
     public val name: String,
     public val accounts: Map<Id, Account>,
-    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
+    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = try {
@@ -35,6 +37,7 @@ public data class Domain(
                     reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -52,6 +55,7 @@ public data class Domain(
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
