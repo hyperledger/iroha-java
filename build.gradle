@@ -42,15 +42,6 @@ subprojects {
         withSourcesJar()
     }
 
-//    jar {
-//        from {
-//            configurations.runtimeClasspath
-//                    .collect {
-//                        it.isDirectory() ? it : zipTree(it)
-//                    }
-//        }
-//    }
-
     artifacts {
         archives javadocJar
         archives sourcesJar
