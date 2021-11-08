@@ -12,4 +12,6 @@ interface ScaleReader<T> {
      * @return read value
      */
     fun read(rdr: ScaleCodecReader): T
+
+    fun decode(data: ByteArray) = ScaleCodecReader(data).read(this)
 }

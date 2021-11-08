@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
-import jp.co.soramitsu.iroha2.codec.reader.UInt128Reader
 import java.math.BigInteger
 
 // Copied from Google Guava library(com.google.common.collect.Maps)
@@ -49,11 +48,11 @@ fun writeBit64(writer: ScaleCodecWriter, value: BigInteger) {
 
     val len = array.size - pos
     if (len > 8) {
-        throw IllegalArgumentException("Value is to big for 64 bits. Has: " + len * 8 + " bits")
+        throw IllegalArgumentException("Value is too big for 64 bits. Has: " + len * 8 + " bits")
     } else {
         val encoded = ByteArray(8)
         System.arraycopy(array, pos, encoded, encoded.size - len, len)
-        UInt128Reader.reverse(encoded)
+        reverse(encoded)
         writer.directWrite(encoded, 0, 8)
     }
 }
@@ -75,5 +74,14 @@ fun wrapException(ex: Exception): Exception {
     return when (ex) {
         is ScaleCodecException -> ex
         else -> ScaleCodecException(cause = ex)
+    }
+}
+
+fun reverse(value: ByteArray) {
+    for (i in 0 until value.size / 2) {
+        val other = value.size - i - 1
+        val tmp = value[other]
+        value[other] = value[i]
+        value[i] = tmp
     }
 }

@@ -374,12 +374,15 @@ class InstructionsTest {
         assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
     }
 
-    private suspend fun getAccountAmount(accountId: AccountId? = null, assetId: AssetId? = null): Long {
-        return QueryBuilder.findAccountById(accountId ?: ALICE_ACCOUNT_ID)
+    private suspend fun getAccountAmount(
+        accountId: AccountId = ALICE_ACCOUNT_ID,
+        assetId: AssetId = DEFAULT_ASSET_ID
+    ): Long {
+        return QueryBuilder.findAccountById(accountId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
-                client.sendQuery(query).assets[assetId ?: DEFAULT_ASSET_ID]?.value
+                client.sendQuery(query).assets[assetId]?.value
             }.let { value ->
                 (value as? AssetValue.Quantity)?.u32 ?: 0
             }

@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.codec.encode
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -37,8 +36,7 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             query,
             checkNotNull(accountId) { "Account Id of the sender is mandatory" }
         )
-
-        val encodedPayload = payload.encode(Payload)
+        val encodedPayload = Payload.encode(payload)
         val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
             keyPair.private.sign(encodedPayload)

@@ -11,8 +11,6 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-import jp.co.soramitsu.iroha2.hashMapWithSize
-import jp.co.soramitsu.iroha2.hashSetWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -35,13 +33,13 @@ public data class Account(
         public override fun read(reader: ScaleCodecReader): Account = try {
             Account(
                 Id.read(reader),
-                hashMapWithSize(
+                reader.readMap(
                     reader.readCompactInt(),
                     { jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.read(reader) },
                     { Asset.read(reader) }
                 ),
-                List(reader.readCompactInt()) { PublicKey.read(reader) },
-                hashSetWithSize(reader.readCompactInt()) { PermissionToken.read(reader) },
+                reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
+                reader.readSet(reader.readCompactInt()) { PermissionToken.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),
             )

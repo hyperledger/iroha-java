@@ -16,12 +16,10 @@ class CompactUIntWriter : ScaleWriter<Int> {
             bytes = 4
         } else {
             compact = (value shl 2) + mode.value
-            bytes = if (mode === CompactMode.SINGLE) {
-                1
-            } else if (mode === CompactMode.TWO) {
-                2
-            } else {
-                4
+            bytes = when (mode) {
+                CompactMode.SINGLE -> 1
+                CompactMode.TWO -> 2
+                else -> 4
             }
         }
         while (bytes > 0) {

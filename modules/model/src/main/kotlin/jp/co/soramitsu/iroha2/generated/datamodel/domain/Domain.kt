@@ -11,7 +11,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.collections.Map
@@ -30,8 +29,8 @@ public data class Domain(
         public override fun read(reader: ScaleCodecReader): Domain = try {
             Domain(
                 reader.readString(),
-                hashMapWithSize(reader.readCompactInt(), { Id.read(reader) }, { Account.read(reader) }),
-                hashMapWithSize(
+                reader.readMap(reader.readCompactInt(), { Id.read(reader) }, { Account.read(reader) }),
+                reader.readMap(
                     reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),

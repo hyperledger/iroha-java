@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
-import jp.co.soramitsu.iroha2.hashSetWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.Set
 
@@ -25,7 +24,7 @@ public data class Transaction(
         public override fun read(reader: ScaleCodecReader): Transaction = try {
             Transaction(
                 Payload.read(reader),
-                hashSetWithSize(reader.readCompactInt()) { Signature.read(reader) },
+                reader.readSet(reader.readCompactInt()) { Signature.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

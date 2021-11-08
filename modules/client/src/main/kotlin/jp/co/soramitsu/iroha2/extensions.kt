@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.codec.encode
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
@@ -80,7 +79,7 @@ fun VersionedTransaction.V1.hash(): ByteArray {
     return this._VersionedTransactionV1
         .transaction
         .payload
-        .encode(Payload)
+        .let { Payload.encode(it) }
         .hash()
 }
 
@@ -91,7 +90,10 @@ fun VersionedTransaction.hash() = when (this) {
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
         is VersionedTransaction.V1 -> {
-            val encodedPayload = _VersionedTransactionV1.transaction.payload.encode(Payload)
+            val encodedPayload = _VersionedTransactionV1
+                .transaction
+                .payload
+                .let { Payload.encode(it) }
             val signatures = keypairs.map {
                 Signature(
                     it.public.toIrohaPublicKey(),

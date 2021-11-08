@@ -21,7 +21,7 @@ public data class RawGenesisBlock(
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
         public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
             RawGenesisBlock(
-                List(reader.readCompactInt()) { GenesisTransaction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { GenesisTransaction.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

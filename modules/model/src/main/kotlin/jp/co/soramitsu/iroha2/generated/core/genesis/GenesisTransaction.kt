@@ -22,7 +22,7 @@ public data class GenesisTransaction(
     public companion object : ScaleReader<GenesisTransaction>, ScaleWriter<GenesisTransaction> {
         public override fun read(reader: ScaleCodecReader): GenesisTransaction = try {
             GenesisTransaction(
-                List(reader.readCompactInt()) { Instruction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { Instruction.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

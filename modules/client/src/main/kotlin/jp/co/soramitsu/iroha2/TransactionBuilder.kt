@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.codec.encode
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -68,7 +67,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
             metadata.value
         )
-        val encodedPayload = payload.encode(Payload)
+        val encodedPayload = Payload.encode(payload)
 
         val signatures = keyPairs.map {
             Signature(
