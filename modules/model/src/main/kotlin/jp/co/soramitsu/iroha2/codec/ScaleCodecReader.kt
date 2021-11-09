@@ -84,6 +84,20 @@ class ScaleCodecReader(private val source: ByteArray) {
         }
     }
 
+    inline fun <reified T : Number> readNullable(): T? {
+        return when (T::class) {
+            Long::class -> when (readBoolean()) {
+                true -> readUint32()
+                else -> null
+            } as T?
+            Int::class -> when (readBoolean()) {
+                true -> readUint16()
+                else -> null
+            } as T?
+            else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
+        }
+    }
+
     fun readUByte(): Int {
         return UBYTE.read(this)
     }

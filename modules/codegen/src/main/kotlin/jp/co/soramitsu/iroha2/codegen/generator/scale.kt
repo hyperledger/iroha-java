@@ -82,7 +82,10 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             }
         }
         is OptionType -> {
-            CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
+            when (type.name) {
+                "Option<u32>", "Option<u16>" -> CodeBlock.of("reader.readNullable()")
+                else -> CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
+            }
         }
         is FixedPointType -> resolveScaleReadImpl(type.innerType.requireValue())
         is CompactType -> {
@@ -154,11 +157,17 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             propName
         )
         is OptionType -> {
-            CodeBlock.of(
-                "writer.writeNullable(%1T, %2L)",
-                withoutGenerics(resolveKotlinType(type)),
-                propName
-            )
+            when (type.name) {
+                "Option<u32>", "Option<u16>" -> CodeBlock.of(
+                    "writer.writeNullable(%L)",
+                    propName
+                )
+                else -> CodeBlock.of(
+                    "writer.writeNullable(%1T, %2L)",
+                    withoutGenerics(resolveKotlinType(type)),
+                    propName
+                )
+            }
         }
         is FixedPointType -> resolveScaleWriteImpl(type.innerType.requireValue(), propName)
         is CompactType -> CodeBlock.of("writer.write(%M(), %L.toLong())", COMPACT_ULONG_WRITER, propName)

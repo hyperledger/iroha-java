@@ -37,7 +37,7 @@ public data class Payload(
                 reader.readVec(reader.readCompactInt()) { Instruction.read(reader) },
                 reader.readUint64(),
                 reader.readUint64(),
-                reader.readNullable(Long),
+                reader.readNullable(),
                 reader.readMap(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
@@ -50,7 +50,7 @@ public data class Payload(
             instance.instructions.forEach { value -> Instruction.write(writer, value) }
             writer.writeUint64(instance.creationTime)
             writer.writeUint64(instance.timeToLiveMs)
-            writer.writeNullable(Long, instance.nonce)
+            writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
             instance.metadata.forEach { (key, value) ->  
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))

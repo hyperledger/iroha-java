@@ -63,13 +63,17 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         writer.write(this, value)
     }
 
-    fun writeNullable(_long: Long.Companion, value: Long?) {
+    inline fun <reified T : Number> writeNullable(value: T?) {
         when (value) {
-            null -> BOOL.write(this, false)
-            else -> {
+            is Long -> {
                 BOOL.write(this, true)
                 writeUint32(value)
             }
+            is Int -> {
+                BOOL.write(this, true)
+                writeUint16(value)
+            }
+            null -> BOOL.write(this, false)
         }
     }
 
