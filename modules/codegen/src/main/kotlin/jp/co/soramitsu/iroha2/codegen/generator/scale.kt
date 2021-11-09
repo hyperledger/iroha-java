@@ -82,8 +82,8 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             }
         }
         is OptionType -> {
-            when (type.name) {
-                "Option<u32>", "Option<u16>" -> CodeBlock.of("reader.readNullable()")
+            when (type.innerType.requireValue()) {
+                is U32Type, U16Type -> CodeBlock.of("reader.readNullable()")
                 else -> CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
             }
         }
@@ -157,8 +157,8 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             propName
         )
         is OptionType -> {
-            when (type.name) {
-                "Option<u32>", "Option<u16>" -> CodeBlock.of(
+            when (type.innerType.requireValue()) {
+                is U32Type, U16Type -> CodeBlock.of(
                     "writer.writeNullable(%L)",
                     propName
                 )

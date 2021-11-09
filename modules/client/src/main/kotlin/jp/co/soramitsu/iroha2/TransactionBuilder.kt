@@ -17,6 +17,8 @@ import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
+import kotlin.random.Random
+import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -34,7 +36,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions = lazy { ArrayList() }
         creationTimeMillis = null
         timeToLiveMillis = null
-        nonce = null
+        nonce = Random.nextLong(0..4_294_967_295) // UInt32 max value
         metadata = lazy { HashMap() }
         builder(this)
     }
