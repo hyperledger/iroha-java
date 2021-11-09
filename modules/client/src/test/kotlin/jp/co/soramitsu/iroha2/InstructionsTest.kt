@@ -406,7 +406,7 @@ class InstructionsTest {
                 .remainder(counter, MathContext.DECIMAL64)
                 .setScale(random.nextInt(DEFAULT_SCALE), RoundingMode.DOWN)
         }
-        val mintAsset : (BigDecimal) -> Unit = {
+        val mintAsset: (BigDecimal) -> Unit = {
             runBlocking {
                 client.sendTransaction {
                     account(ALICE_ACCOUNT_ID)
@@ -417,10 +417,10 @@ class InstructionsTest {
                         it.get(10, TimeUnit.SECONDS)
                     }
                 }
-                counter +=it
+                counter += it
             }
         }
-        val burnAsset : (BigDecimal) -> Unit = {
+        val burnAsset: (BigDecimal) -> Unit = {
             runBlocking {
                 client.sendTransaction {
                     account(ALICE_ACCOUNT_ID)
@@ -431,7 +431,7 @@ class InstructionsTest {
                         it.get(10, TimeUnit.SECONDS)
                     }
                 }
-                counter -=it
+                counter -= it
             }
         }
         val assertBalance: (BigDecimal) -> BigDecimal = { expectedBalance ->

@@ -311,7 +311,7 @@ object Instructions {
         )
     }
 
-    private fun mintSome(value: Value, assetId: AssetId) : Instruction.Mint {
+    private fun mintSome(value: Value, assetId: AssetId): Instruction.Mint {
         return Instruction.Mint(
             MintBox(
                 `object` = value.evaluatesTo(),

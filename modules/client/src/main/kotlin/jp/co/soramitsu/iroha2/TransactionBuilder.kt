@@ -121,7 +121,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun mintAsset(
         assetId: AssetId,
-        quantity:BigDecimal
+        quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
     fun registerDomain(

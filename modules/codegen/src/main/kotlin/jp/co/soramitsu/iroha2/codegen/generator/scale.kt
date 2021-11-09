@@ -91,7 +91,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
                 else -> CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
             }
         }
-        is FixedPointType -> when(type.innerType.requireValue()) {
+        is FixedPointType -> when (type.innerType.requireValue()) {
             is I64Type -> CodeBlock.builder()
                 .add(resolveScaleReadImpl(type.innerType.requireValue()))
                 .add(".toBigInteger().%M()", FROM_FIXED_POINT)
@@ -180,11 +180,10 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             }
         }
         is FixedPointType -> {
-            when(type.innerType.requireValue()) {
+            when (type.innerType.requireValue()) {
                 is I64Type -> CodeBlock.of("writer.writeInt64(%1L.%2M().toLong())", propName, TO_FIXED_POINT)
                 else -> throw RuntimeException("Fixed point with base type $type not implemented")
             }
-
         }
         is CompactType -> CodeBlock.of("writer.write(%T(), %L.toLong())", COMPACT_ULONG_WRITER, propName)
         else -> throw RuntimeException("Unexpected type: $type")

@@ -58,7 +58,7 @@ class FixnumTest {
             .forEachIndexed { iteration, expected ->
                 val actual = expected.toFixedPoint(scale).fromFixedPoint(scale)
                 assertTrue("Iteration $iteration failed: expected value `$expected`, but was `$actual`") {
-                    expected.compareTo( actual ) == 0
+                    expected.compareTo(actual) == 0
                 }
             }
     }
