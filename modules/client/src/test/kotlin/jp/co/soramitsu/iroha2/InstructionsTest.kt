@@ -406,47 +406,41 @@ class InstructionsTest {
                 .remainder(counter, MathContext.DECIMAL64)
                 .setScale(random.nextInt(DEFAULT_SCALE), RoundingMode.DOWN)
         }
-        val mintAsset: (BigDecimal) -> Unit = {
-            runBlocking {
-                client.sendTransaction {
-                    account(ALICE_ACCOUNT_ID)
-                    mintAsset(DEFAULT_ASSET_ID, it)
-                    buildSigned(ALICE_KEYPAIR)
-                }.also {
-                    Assertions.assertDoesNotThrow {
-                        it.get(10, TimeUnit.SECONDS)
+        val mintAsset: suspend (BigDecimal) -> Unit = {
+            client.sendTransaction {
+                account(ALICE_ACCOUNT_ID)
+                mintAsset(DEFAULT_ASSET_ID, it)
+                buildSigned(ALICE_KEYPAIR)
+            }.also {
+                Assertions.assertDoesNotThrow {
+                    it.get(10, TimeUnit.SECONDS)
+                }
+            }
+            counter += it
+        }
+        val burnAsset: suspend (BigDecimal) -> Unit = {
+            client.sendTransaction {
+                account(ALICE_ACCOUNT_ID)
+                burnAsset(DEFAULT_ASSET_ID, it)
+                buildSigned(ALICE_KEYPAIR)
+            }.also {
+                Assertions.assertDoesNotThrow {
+                    it.get(10, TimeUnit.SECONDS)
+                }
+            }
+            counter -= it
+        }
+        val assertBalance: suspend (BigDecimal) -> Unit = { expectedBalance ->
+            QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value }
+                .let { value -> (value as? AssetValue.Fixed)?.fixed?.fixedPoint ?: BigDecimal.ZERO }
+                .also { actualBalance ->
+                    assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
+                        expectedBalance.compareTo(actualBalance) == 0
                     }
                 }
-                counter += it
-            }
-        }
-        val burnAsset: (BigDecimal) -> Unit = {
-            runBlocking {
-                client.sendTransaction {
-                    account(ALICE_ACCOUNT_ID)
-                    burnAsset(DEFAULT_ASSET_ID, it)
-                    buildSigned(ALICE_KEYPAIR)
-                }.also {
-                    Assertions.assertDoesNotThrow {
-                        it.get(10, TimeUnit.SECONDS)
-                    }
-                }
-                counter -= it
-            }
-        }
-        val assertBalance: (BigDecimal) -> BigDecimal = { expectedBalance ->
-            runBlocking {
-                QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-                    .account(ALICE_ACCOUNT_ID)
-                    .buildSigned(ALICE_KEYPAIR)
-                    .let { query -> client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value }
-                    .let { value -> (value as? AssetValue.Fixed)?.fixed?.fixedPoint ?: BigDecimal.ZERO }
-                    .also { actualBalance ->
-                        assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
-                            expectedBalance.compareTo(actualBalance) == 0
-                        }
-                    }
-            }
         }
         assertBalance(counter)
         mintAsset(BigDecimal.TEN)
