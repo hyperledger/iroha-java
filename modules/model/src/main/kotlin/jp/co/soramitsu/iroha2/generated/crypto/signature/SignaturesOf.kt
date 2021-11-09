@@ -3,12 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.crypto.signature
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.collections.Map
@@ -25,10 +24,7 @@ public data class SignaturesOf<T0>(
     public companion object : ScaleReader<SignaturesOf<out Any>>, ScaleWriter<SignaturesOf<out Any>> {
         public override fun read(reader: ScaleCodecReader): SignaturesOf<out Any> = try {
             SignaturesOf(
-                hashMapWithSize(
-                    reader.readCompactInt(), { PublicKey.read(reader) },
-                    { Signature.read(reader) }
-                ),
+                reader.readMap(reader.readCompactInt(), { PublicKey.read(reader) }, { Signature.read(reader) }),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

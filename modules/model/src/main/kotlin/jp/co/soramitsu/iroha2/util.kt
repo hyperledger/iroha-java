@@ -1,8 +1,7 @@
 package jp.co.soramitsu.iroha2
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.reader.UInt128Reader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import java.math.BigInteger
 
 // Copied from Google Guava library(com.google.common.collect.Maps)
@@ -11,6 +10,8 @@ import java.math.BigInteger
  * The largest power of two that can be represented as an `int`.
  */
 const val MAX_POWER_OF_TWO = 1 shl Integer.SIZE - 2
+
+const val U32_MAX_VALUE = (2L shl 31) - 1
 
 inline fun <T> hashSetWithSize(size: Int, supplier: () -> T): MutableSet<T> {
     val set = HashSet<T>(mapCapacity(size))
@@ -49,11 +50,11 @@ fun writeBit64(writer: ScaleCodecWriter, value: BigInteger) {
 
     val len = array.size - pos
     if (len > 8) {
-        throw IllegalArgumentException("Value is to big for 64 bits. Has: " + len * 8 + " bits")
+        throw IllegalArgumentException("Value is too big for 64 bits. Has: " + len * 8 + " bits")
     } else {
         val encoded = ByteArray(8)
         System.arraycopy(array, pos, encoded, encoded.size - len, len)
-        UInt128Reader.reverse(encoded)
+        reverse(encoded)
         writer.directWrite(encoded, 0, 8)
     }
 }
@@ -75,5 +76,14 @@ fun wrapException(ex: Exception): Exception {
     return when (ex) {
         is ScaleCodecException -> ex
         else -> ScaleCodecException(cause = ex)
+    }
+}
+
+fun reverse(value: ByteArray) {
+    for (i in 0 until value.size / 2) {
+        val other = value.size - i - 1
+        val tmp = value[other]
+        value[other] = value[i]
+        value[i] = tmp
     }
 }

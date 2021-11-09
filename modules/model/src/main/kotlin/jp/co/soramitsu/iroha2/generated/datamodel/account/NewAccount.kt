@@ -3,10 +3,10 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.account
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
@@ -26,7 +26,7 @@ public data class NewAccount(
         public override fun read(reader: ScaleCodecReader): NewAccount = try {
             NewAccount(
                 Id.read(reader),
-                List(reader.readCompactInt()) { PublicKey.read(reader) },
+                reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {

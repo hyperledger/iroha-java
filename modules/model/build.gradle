@@ -4,8 +4,3 @@ version '1.0-SNAPSHOT'
 kotlinter {
     disabledRules = ['no-trailing-spaces']
 }
-
-dependencies {
-    //scale codec
-    api ":polkaj-scale:$polkajScaleVer"
-}

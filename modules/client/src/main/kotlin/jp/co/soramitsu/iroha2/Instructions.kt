@@ -75,11 +75,17 @@ object Instructions {
     fun registerDomain(
         domainName: String,
         accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
+        metadata: Map<String, Value> = mapOf()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
-                Domain(domainName, accounts, assetDefinitions)
+                Domain(
+                    domainName,
+                    accounts,
+                    assetDefinitions,
+                    Metadata(metadata)
+                )
             )
         }
     }

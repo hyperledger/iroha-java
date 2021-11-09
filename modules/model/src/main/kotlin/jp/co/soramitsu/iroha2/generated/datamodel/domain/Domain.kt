@@ -3,15 +3,15 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.domain
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.hashMapWithSize
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.collections.Map
@@ -24,17 +24,19 @@ import kotlin.collections.Map
 public data class Domain(
     public val name: String,
     public val accounts: Map<Id, Account>,
-    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>
+    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = try {
             Domain(
                 reader.readString(),
-                hashMapWithSize(reader.readCompactInt(), { Id.read(reader) }, { Account.read(reader) }),
-                hashMapWithSize(
+                reader.readMap(reader.readCompactInt(), { Id.read(reader) }, { Account.read(reader) }),
+                reader.readMap(
                     reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -52,6 +54,7 @@ public data class Domain(
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

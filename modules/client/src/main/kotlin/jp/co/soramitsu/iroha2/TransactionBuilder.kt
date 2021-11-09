@@ -17,6 +17,8 @@ import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
+import kotlin.random.Random
+import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -26,6 +28,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     val instructions: Lazy<ArrayList<Instruction>>
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
+    var nonce: Long?
     var metadata: Lazy<HashMap<String, Value>>
 
     init {
@@ -33,6 +36,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions = lazy { ArrayList() }
         creationTimeMillis = null
         timeToLiveMillis = null
+        nonce = Random.nextLong(0..U32_MAX_VALUE) // UInt32 max value
         metadata = lazy { HashMap() }
         builder(this)
     }
@@ -65,9 +69,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             instructions.value,
             creationTimeMillis ?: fallbackCreationTime(),
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
+            nonce,
             metadata.value
         )
-        val encodedPayload = payload.encode(Payload)
+        val encodedPayload = Payload.encode(payload)
 
         val signatures = keyPairs.map {
             Signature(
