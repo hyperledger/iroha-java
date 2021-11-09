@@ -85,7 +85,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             .add(")\n")
             .unindent()
             .add("} catch (ex: Exception) {\n").indent()
-            .add("throw %T(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
+            .add("throw %M(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
             .add("}")
             .build()
     }
@@ -101,7 +101,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         return result
             .unindent()
             .add("} catch (ex: Exception) {\n").indent()
-            .add("throw %T(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
+            .add("throw %M(ex)\n", SCALE_CODEC_EX_WRAPPER).unindent()
             .add("}")
             .build()
     }

@@ -13,8 +13,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 </T> */
 class EnumReader<T : Enum<*>?>(values: Array<T>) : ScaleReader<T> {
     private val values: Array<T>
-    override fun read(rdr: ScaleCodecReader): T {
-        val id = rdr.readUByte()
+    override fun read(reader: ScaleCodecReader): T {
+        val id = reader.readUByte()
         for (t in values) {
             if (t!!.ordinal == id) {
                 return t

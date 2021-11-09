@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 
 class UnsupportedReader<T> @JvmOverloads constructor(private val message: String = "Reading an unsupported value") :
     ScaleReader<T> {
-    override fun read(rdr: ScaleCodecReader): T {
+    override fun read(reader: ScaleCodecReader): T {
         throw IllegalStateException(message)
     }
 }

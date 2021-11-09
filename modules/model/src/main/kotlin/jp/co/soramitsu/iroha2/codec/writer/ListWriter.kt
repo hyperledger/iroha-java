@@ -4,10 +4,10 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 
 class ListWriter<T>(private val scaleWriter: ScaleWriter<T>) : ScaleWriter<List<T>> {
-    override fun write(wrt: ScaleCodecWriter, value: List<T>) {
-        wrt.writeCompact(value.size)
-        for (item in value) {
-            scaleWriter.write(wrt, item)
+    override fun write(writer: ScaleCodecWriter, instance: List<T>) {
+        writer.writeCompact(instance.size)
+        for (item in instance) {
+            scaleWriter.write(writer, item)
         }
     }
 }

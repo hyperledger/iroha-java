@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
+import jp.co.soramitsu.iroha2.codec.writer.CompactULongWriter
 import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
@@ -37,9 +39,11 @@ val SCALE_READER = ScaleReader::class.asClassName()
 val SCALE_CODEC_READER = ScaleCodecReader::class.asClassName()
 val SCALE_WRITER = ScaleWriter::class.asClassName()
 val SCALE_CODEC_WRITER = ScaleCodecWriter::class.asClassName()
-val COMPACT_ULONG_WRITER = MemberName("jp.co.soramitsu.iroha2.codec.writer", "CompactULongWriter")
-val COMPACT_BIG_INT_READER = MemberName("jp.co.soramitsu.iroha2.codec.reader", "CompactBigIntReader")
-val SCALE_CODEC_EX_WRAPPER = ClassName("jp.co.soramitsu.iroha2", "wrapException")
+val COMPACT_ULONG_WRITER = CompactULongWriter::class.asClassName()
+val COMPACT_BIG_INT_READER = CompactBigIntReader::class.asClassName()
+val SCALE_CODEC_EX_WRAPPER = MemberName("jp.co.soramitsu.iroha2", "wrapException")
+val TO_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "toFixedPoint")
+val FROM_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "fromFixedPoint")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
@@ -87,14 +91,20 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
                 else -> CodeBlock.of("reader.readNullable(%T)", withoutGenerics(resolveKotlinType(type)))
             }
         }
-        is FixedPointType -> resolveScaleReadImpl(type.innerType.requireValue())
+        is FixedPointType -> when (type.innerType.requireValue()) {
+            is I64Type -> CodeBlock.builder()
+                .add(resolveScaleReadImpl(type.innerType.requireValue()))
+                .add(".toBigInteger().%M()", FROM_FIXED_POINT)
+                .build()
+            else -> throw RuntimeException("Fixed point with base type $type not implemented")
+        }
         is CompactType -> {
             return when (val innerType = type.innerType.requireValue()) {
                 is U8Type -> CodeBlock.of("reader.readCompactInt().toShort()")
                 is U16Type -> CodeBlock.of("reader.readCompactInt().toInt()")
                 is U32Type -> CodeBlock.of("reader.readCompactInt().toLong()")
-                is U64Type -> CodeBlock.of("reader.read(%M()).toBigInteger()", COMPACT_BIG_INT_READER)
-                is U128Type, is U256Type -> CodeBlock.of("reader.read(%M())", COMPACT_BIG_INT_READER)
+                is U64Type -> CodeBlock.of("reader.read(%T()).toBigInteger()", COMPACT_BIG_INT_READER)
+                is U128Type, is U256Type -> CodeBlock.of("reader.read(%T())", COMPACT_BIG_INT_READER)
                 else -> throw RuntimeException("Compact type implementation unresolved: $innerType")
             }
         }
@@ -169,8 +179,13 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
                 )
             }
         }
-        is FixedPointType -> resolveScaleWriteImpl(type.innerType.requireValue(), propName)
-        is CompactType -> CodeBlock.of("writer.write(%M(), %L.toLong())", COMPACT_ULONG_WRITER, propName)
+        is FixedPointType -> {
+            when (type.innerType.requireValue()) {
+                is I64Type -> CodeBlock.of("writer.writeInt64(%1L.%2M().toLong())", propName, TO_FIXED_POINT)
+                else -> throw RuntimeException("Fixed point with base type $type not implemented")
+            }
+        }
+        is CompactType -> CodeBlock.of("writer.write(%T(), %L.toLong())", COMPACT_ULONG_WRITER, propName)
         else -> throw RuntimeException("Unexpected type: $type")
     }
 }

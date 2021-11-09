@@ -7,41 +7,41 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import java.math.BigInteger
 
 class Int32Writer : ScaleWriter<Int> {
-    override fun write(wrt: ScaleCodecWriter, value: Int) {
-        require(Int.MIN_VALUE <= value) { "Value is too small for I32: $value" }
-        require(value <= Int.MAX_VALUE) { "Value is too big for I32: $value" }
+    override fun write(writer: ScaleCodecWriter, instance: Int) {
+        require(Int.MIN_VALUE <= instance) { "Value is too small for I32: $instance" }
+        require(instance <= Int.MAX_VALUE) { "Value is too big for I32: $instance" }
 
-        wrt.directWrite(value and 0xff)
-        wrt.directWrite(value shr 8 and 0xff)
-        wrt.directWrite(value shr 16 and 0xff)
-        wrt.directWrite(value shr 24 and 0xff)
+        writer.directWrite(instance and 0xff)
+        writer.directWrite(instance shr 8 and 0xff)
+        writer.directWrite(instance shr 16 and 0xff)
+        writer.directWrite(instance shr 24 and 0xff)
     }
 }
 
 class Int64Writer : ScaleWriter<Long> {
-    override fun write(wrt: ScaleCodecWriter, value: Long) {
-        require(Long.MIN_VALUE <= value) { "Value is too small for I64: $value" }
-        require(value <= Long.MAX_VALUE) { "Value is too big for I64: $value" }
+    override fun write(writer: ScaleCodecWriter, instance: Long) {
+        require(Long.MIN_VALUE <= instance) { "Value is too small for I64: $instance" }
+        require(instance <= Long.MAX_VALUE) { "Value is too big for I64: $instance" }
 
-        wrt.directWrite(value and 0xff)
-        wrt.directWrite(value shr 8 and 0xff)
-        wrt.directWrite(value shr 16 and 0xff)
-        wrt.directWrite(value shr 24 and 0xff)
-        wrt.directWrite(value shr 32 and 0xff)
-        wrt.directWrite(value shr 40 and 0xff)
-        wrt.directWrite(value shr 48 and 0xff)
-        wrt.directWrite(value shr 56 and 0xff)
+        writer.directWrite(instance and 0xff)
+        writer.directWrite(instance shr 8 and 0xff)
+        writer.directWrite(instance shr 16 and 0xff)
+        writer.directWrite(instance shr 24 and 0xff)
+        writer.directWrite(instance shr 32 and 0xff)
+        writer.directWrite(instance shr 40 and 0xff)
+        writer.directWrite(instance shr 48 and 0xff)
+        writer.directWrite(instance shr 56 and 0xff)
     }
 }
 
 class IntWriter(private val bit: Int) : ScaleWriter<BigInteger> {
-    override fun write(wrt: ScaleCodecWriter, value: BigInteger) {
-        require(IntMin.intMinValue(bit) <= value) { "Value is too small for I$bit: $value" }
-        require(value <= IntMax.intMaxValue(bit)) { "Value is too big for I$bit: $value" }
+    override fun write(writer: ScaleCodecWriter, instance: BigInteger) {
+        require(IntMin.intMinValue(bit) <= instance) { "Value is too small for I$bit: $instance" }
+        require(instance <= IntMax.intMaxValue(bit)) { "Value is too big for I$bit: $instance" }
 
-        wrt.directWrite(value.and(BigInteger.valueOf(255)))
+        writer.directWrite(instance.and(BigInteger.valueOf(255)))
         for (n in 8..bit - 8 step 8) {
-            wrt.directWrite(value.shiftRight(n).and(BigInteger.valueOf(255)))
+            writer.directWrite(instance.shiftRight(n).and(BigInteger.valueOf(255)))
         }
     }
 }

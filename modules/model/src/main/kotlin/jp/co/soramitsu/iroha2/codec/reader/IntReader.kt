@@ -14,28 +14,28 @@ import java.nio.ByteOrder
  * @see UInt32Reader
  */
 class Int32Reader : ScaleReader<Int> {
-    override fun read(rdr: ScaleCodecReader): Int {
+    override fun read(reader: ScaleCodecReader): Int {
         val capacity = 4
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
-        putBytes(buf, capacity, rdr)
+        putBytes(buf, capacity, reader)
         return buf.flip().int
     }
 }
 
 class Int64Reader : ScaleReader<Long> {
-    override fun read(rdr: ScaleCodecReader): Long {
+    override fun read(reader: ScaleCodecReader): Long {
         val capacity = 8
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
-        putBytes(buf, capacity, rdr)
+        putBytes(buf, capacity, reader)
         return buf.flip().long
     }
 }
 
 class IntReader(private val bit: Int) : ScaleReader<BigInteger> {
-    override fun read(rdr: ScaleCodecReader): BigInteger {
+    override fun read(reader: ScaleCodecReader): BigInteger {
         val capacity = bit / 8
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
-        putBytes(buf, capacity, rdr)
+        putBytes(buf, capacity, reader)
         return BigInteger(buf.flip().array())
     }
 }
