@@ -3,13 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
-import java.util.Optional
 import kotlin.Boolean
 
 /**
@@ -27,7 +26,7 @@ public data class If(
             If(
                 EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 Instruction.read(reader),
-                reader.readOptional(Instruction).orElse(null),
+                reader.readNullable(Instruction),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -36,7 +35,7 @@ public data class If(
         public override fun write(writer: ScaleCodecWriter, instance: If) = try {
             EvaluatesTo.write(writer, instance.condition)
             Instruction.write(writer, instance.then)
-            writer.writeOptional(Instruction, Optional.ofNullable(instance.otherwise))
+            writer.writeNullable(Instruction, instance.otherwise)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

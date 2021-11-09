@@ -62,8 +62,10 @@ fun BigInteger.fromFixedPoint(scale: Int = DEFAULT_SCALE): BigDecimal = try {
 fun BigDecimal.toFixedPoint(scale: Int = DEFAULT_SCALE): BigInteger = try {
     val thisZeroStripped = this.stripTrailingZeros().abs()
     if (thisZeroStripped.scale() > scale) {
-        throw FixedPointConversionException("Scale of the original floating point number is ${thisZeroStripped.scale()}" +
-            " and it is greater than fixed point number scale $scale. Need to decrease scale of the original floating point")
+        throw FixedPointConversionException(
+            "Scale of the original floating point number is ${thisZeroStripped.scale()}" +
+                " and it is greater than fixed point number scale $scale. Need to decrease scale of the original floating point"
+        )
     }
     val coef = BigDecimal.valueOf(POWERS_OF_10[scale])
     // leaves only fractional part
@@ -84,7 +86,7 @@ fun BigDecimal.toFixedPoint(scale: Int = DEFAULT_SCALE): BigInteger = try {
     }.multiply(BigDecimal(this.signum()))
         .toBigIntegerExact()
 } catch (ex: Exception) {
-    when(ex) {
+    when (ex) {
         is FixedPointConversionException -> throw ex
         else -> throw FixedPointConversionException("Could not convert to fixed point number", ex)
     }

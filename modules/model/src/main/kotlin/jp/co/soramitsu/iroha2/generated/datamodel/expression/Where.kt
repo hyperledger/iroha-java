@@ -3,12 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.collections.Map
@@ -26,7 +25,7 @@ public data class Where(
         public override fun read(reader: ScaleCodecReader): Where = try {
             Where(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
-                hashMapWithSize(reader.readCompactInt(), { reader.readString() }, {
+                reader.readMap(reader.readCompactInt(), { reader.readString() }, {
                     EvaluatesTo.read(reader) as
                         EvaluatesTo<Value>
                 }),

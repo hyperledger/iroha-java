@@ -77,7 +77,7 @@ open class Iroha2Client(
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
         val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
-            body = signedTransaction.encode(VersionedTransaction)
+            body = VersionedTransaction.encode(signedTransaction)
         }
         response.receive<Unit>()
         return hash
@@ -107,9 +107,11 @@ open class Iroha2Client(
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
         val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
-            this.body = queryAndExtractor.query.encode(VersionedSignedQueryRequest)
+            this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
-        return response.receive<ByteArray>().decode(QueryResult).let { queryAndExtractor.resultExtractor.extract(it) }
+        return response.receive<ByteArray>()
+            .let { QueryResult.decode(it) }
+            .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
@@ -135,7 +137,7 @@ open class Iroha2Client(
                 )
             )
         )
-        val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
+        val payload = VersionedEventSocketMessage.encode(subscriptionRequest)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
         scope.launch {
@@ -205,7 +207,7 @@ open class Iroha2Client(
                 EventSocketMessage.EventReceived()
             )
         )
-        webSocket.send(eventReceived.encode(VersionedEventSocketMessage))
+        webSocket.send(VersionedEventSocketMessage.encode(eventReceived))
     }
 
     /**
@@ -235,7 +237,7 @@ open class Iroha2Client(
     private inline fun <reified T : EventSocketMessage> tryReadMessage(frame: Frame): T {
         return when (frame) {
             is Frame.Binary -> {
-                when (val versionedMessage = frame.readBytes().decode(VersionedEventSocketMessage)) {
+                when (val versionedMessage = frame.readBytes().let { VersionedEventSocketMessage.decode(it) }) {
                     is VersionedEventSocketMessage.V1 -> {
                         val actualMessage = versionedMessage._VersionedEventSocketMessageV1.eventSocketMessage
                         actualMessage as? T

@@ -36,8 +36,7 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             query,
             checkNotNull(accountId) { "Account Id of the sender is mandatory" }
         )
-
-        val encodedPayload = payload.encode(Payload)
+        val encodedPayload = Payload.encode(payload)
         val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
             keyPair.private.sign(encodedPayload)
