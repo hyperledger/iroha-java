@@ -11,6 +11,8 @@ import java.math.BigInteger
  */
 const val MAX_POWER_OF_TWO = 1 shl Integer.SIZE - 2
 
+const val U32_MAX_VALUE = (2L shl 31) - 1
+
 inline fun <T> hashSetWithSize(size: Int, supplier: () -> T): MutableSet<T> {
     val set = HashSet<T>(mapCapacity(size))
     for (index in 0 until size) {

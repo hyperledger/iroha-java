@@ -36,7 +36,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions = lazy { ArrayList() }
         creationTimeMillis = null
         timeToLiveMillis = null
-        nonce = Random.nextLong(0..4_294_967_295) // UInt32 max value
+        nonce = Random.nextLong(0..U32_MAX_VALUE) // UInt32 max value
         metadata = lazy { HashMap() }
         builder(this)
     }
