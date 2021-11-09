@@ -6,16 +6,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 
 class CompactUIntWriter : ScaleWriter<Int> {
-    override fun write(wrt: ScaleCodecWriter, value: Int) {
-        val mode = forNumber(value)
+    override fun write(writer: ScaleCodecWriter, instance: Int) {
+        val mode = forNumber(instance)
         var compact: Int
         var bytes: Int
         if (mode === CompactMode.BIGINT) {
-            wrt.directWrite(mode.value.toInt())
-            compact = value
+            writer.directWrite(mode.value.toInt())
+            compact = instance
             bytes = 4
         } else {
-            compact = (value shl 2) + mode.value
+            compact = (instance shl 2) + mode.value
             bytes = when (mode) {
                 CompactMode.SINGLE -> 1
                 CompactMode.TWO -> 2
@@ -23,7 +23,7 @@ class CompactUIntWriter : ScaleWriter<Int> {
             }
         }
         while (bytes > 0) {
-            wrt.directWrite(compact and 0xff)
+            writer.directWrite(compact and 0xff)
             compact = compact shr 8
             bytes--
         }

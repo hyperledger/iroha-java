@@ -181,7 +181,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         }
         is FixedPointType -> {
             when(type.innerType.requireValue()) {
-                is I64Type -> CodeBlock.of("writer.writeUint64(%1L.%2M())", propName, TO_FIXED_POINT)
+                is I64Type -> CodeBlock.of("writer.writeInt64(%1L.%2M().toLong())", propName, TO_FIXED_POINT)
                 else -> throw RuntimeException("Fixed point with base type $type not implemented")
             }
 

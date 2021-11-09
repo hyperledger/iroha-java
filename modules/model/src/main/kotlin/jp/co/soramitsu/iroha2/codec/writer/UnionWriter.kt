@@ -9,10 +9,10 @@ class UnionWriter<T>(mapping: List<ScaleWriter<out T>>) : ScaleWriter<UnionValue
 
     constructor(vararg mapping: ScaleWriter<out T>) : this(listOf<ScaleWriter<out T>>(*mapping))
 
-    override fun write(wrt: ScaleCodecWriter, value: UnionValue<T>) {
-        wrt.directWrite(value.index)
-        val actual = value.value
-        mapping[value.index].write(wrt, actual)
+    override fun write(writer: ScaleCodecWriter, instance: UnionValue<T>) {
+        writer.directWrite(instance.index)
+        val actual = instance.value
+        mapping[instance.index].write(writer, actual)
     }
 
     init {

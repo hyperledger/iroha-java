@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.codec.UnionValue
 class UnionReader<T>(private val mapping: List<ScaleReader<out T>>) : ScaleReader<UnionValue<T>> {
     constructor(vararg mapping: ScaleReader<out T>) : this(listOf<ScaleReader<out T>>(*mapping))
 
-    override fun read(rdr: ScaleCodecReader): UnionValue<T> {
-        val index = rdr.readUByte()
+    override fun read(reader: ScaleCodecReader): UnionValue<T> {
+        val index = reader.readUByte()
         check(mapping.size > index) { "Unknown type index: $index" }
-        val value = mapping[index].read(rdr) as T
+        val value = mapping[index].read(reader) as T
         return UnionValue(index, value)
     }
 }

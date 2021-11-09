@@ -23,12 +23,17 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+import java.security.SecureRandom
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -372,6 +377,88 @@ class InstructionsTest {
 
         val assetAfter = getAsset(assetId)
         assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
+    }
+
+    @Test
+    @WithIroha
+    fun `check assets with type Fixed are proplerly minted and burned`(): Unit = runBlocking {
+        // register an asset with type `Fixed`
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed())
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // counter to track all changes in balance
+        var counter = BigDecimal.ZERO
+        // count of changes (both mint and burn)
+        val probes = 20
+        val random = SecureRandom()
+        // return positive random number what is never greater than counter
+        val getFpNumber = {
+            BigDecimal(random.nextDouble() + random.nextInt())
+                .abs()
+                .stripTrailingZeros()
+                .remainder(counter, MathContext.DECIMAL64)
+                .setScale(random.nextInt(DEFAULT_SCALE), RoundingMode.DOWN)
+        }
+        val mintAsset : (BigDecimal) -> Unit = {
+            runBlocking {
+                client.sendTransaction {
+                    account(ALICE_ACCOUNT_ID)
+                    mintAsset(DEFAULT_ASSET_ID, it)
+                    buildSigned(ALICE_KEYPAIR)
+                }.also {
+                    Assertions.assertDoesNotThrow {
+                        it.get(10, TimeUnit.SECONDS)
+                    }
+                }
+                counter +=it
+            }
+        }
+        val burnAsset : (BigDecimal) -> Unit = {
+            runBlocking {
+                client.sendTransaction {
+                    account(ALICE_ACCOUNT_ID)
+                    burnAsset(DEFAULT_ASSET_ID, it)
+                    buildSigned(ALICE_KEYPAIR)
+                }.also {
+                    Assertions.assertDoesNotThrow {
+                        it.get(10, TimeUnit.SECONDS)
+                    }
+                }
+                counter -=it
+            }
+        }
+        val assertBalance: (BigDecimal) -> BigDecimal = { expectedBalance ->
+            runBlocking {
+                QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value }
+                    .let { value -> (value as? AssetValue.Fixed)?.fixed?.fixedPoint ?: BigDecimal.ZERO }
+                    .also { actualBalance ->
+                        assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
+                            expectedBalance.compareTo(actualBalance) == 0
+                        }
+                    }
+            }
+        }
+        assertBalance(counter)
+        mintAsset(BigDecimal.TEN)
+        assertBalance(counter)
+        for (i in 0..probes) {
+            if (i % 2 == 0) {
+                mintAsset(getFpNumber())
+            } else {
+                burnAsset(getFpNumber())
+            }
+            assertBalance(counter)
+        }
     }
 
     private suspend fun getAccountAmount(

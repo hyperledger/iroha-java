@@ -30,7 +30,7 @@ public data class Fixed(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
-            writer.writeUint64(instance.fixedPoint.toFixedPoint())
+            writer.writeInt64(instance.fixedPoint.toFixedPoint().toLong())
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

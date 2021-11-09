@@ -7,16 +7,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import java.math.BigInteger
 
 class CompactBigIntReader : ScaleReader<BigInteger> {
-    override fun read(rdr: ScaleCodecReader): BigInteger {
-        val type = rdr.readUByte()
+    override fun read(reader: ScaleCodecReader): BigInteger {
+        val type = reader.readUByte()
         val mode = byValue((type and 3).toByte())
         if (mode !== CompactMode.BIGINT) {
-            rdr.skip(-1)
-            val value = intReader.read(rdr)
+            reader.skip(-1)
+            val value = intReader.read(reader)
             return BigInteger.valueOf(value.toLong())
         }
         val len = (type shr 2) + 4
-        val value = rdr.readByteArray(len)
+        val value = reader.readByteArray(len)
         // LE encoded, so need to reverse it
         for (i in 0 until value.size / 2) {
             val temp = value[i]

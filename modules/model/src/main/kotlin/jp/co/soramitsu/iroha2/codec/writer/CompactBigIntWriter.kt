@@ -7,14 +7,14 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import java.math.BigInteger
 
 class CompactBigIntWriter : ScaleWriter<BigInteger> {
-    override fun write(wrt: ScaleCodecWriter, value: BigInteger) {
-        val mode = forNumber(value)
-        val data = value.toByteArray()
+    override fun write(writer: ScaleCodecWriter, instance: BigInteger) {
+        val mode = forNumber(instance)
+        val data = instance.toByteArray()
         var length = data.size
         var pos = data.size - 1
         var limit = 0
         if (mode !== CompactMode.BIGINT) {
-            LONG_WRITER.write(wrt, value.toLong())
+            LONG_WRITER.write(writer, instance.toLong())
             return
         }
 
@@ -23,9 +23,9 @@ class CompactBigIntWriter : ScaleWriter<BigInteger> {
             length--
             limit++
         }
-        wrt.directWrite((length - 4 shl 2) + mode.value)
+        writer.directWrite((length - 4 shl 2) + mode.value)
         while (pos >= limit) {
-            wrt.directWrite(data[pos].toInt())
+            writer.directWrite(data[pos].toInt())
             pos--
         }
     }

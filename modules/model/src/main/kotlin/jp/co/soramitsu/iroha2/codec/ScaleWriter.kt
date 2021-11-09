@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 interface ScaleWriter<T> {
 
-    fun write(wrt: ScaleCodecWriter, value: T)
+    fun write(writer: ScaleCodecWriter, instance: T)
 
     fun encode(data: T): ByteArray {
         // resource is freed inside `ScaleCodecWriter`

@@ -39,8 +39,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 DEFAULT_GENESIS_FILE_NAME
             )
             .withCommand(PEER_START_COMMAND)
-            // .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
-            .withImagePullPolicy(PullPolicy.defaultPolicy())
+            .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
             .waitingFor(
                 HttpWaitStrategy()
                     .forStatusCode(200)
