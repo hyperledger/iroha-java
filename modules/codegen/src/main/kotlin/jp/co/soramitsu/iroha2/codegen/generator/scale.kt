@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.codegen.generator
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.asClassName
@@ -9,8 +10,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
-import jp.co.soramitsu.iroha2.codec.writer.CompactULongWriter
 import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
@@ -38,8 +37,8 @@ val SCALE_READER = ScaleReader::class.asClassName()
 val SCALE_CODEC_READER = ScaleCodecReader::class.asClassName()
 val SCALE_WRITER = ScaleWriter::class.asClassName()
 val SCALE_CODEC_WRITER = ScaleCodecWriter::class.asClassName()
-val COMPACT_ULONG_WRITER = CompactULongWriter::class.asClassName()
-val COMPACT_BIG_INT_READER = CompactBigIntReader::class.asClassName()
+val COMPACT_ULONG_WRITER = MemberName("jp.co.soramitsu.iroha2.codec.writer", "CompactULongWriter")
+val COMPACT_BIG_INT_READER = MemberName("jp.co.soramitsu.iroha2.codec.reader", "CompactBigIntReader")
 val SCALE_CODEC_EX_WRAPPER = ClassName("jp.co.soramitsu.iroha2", "wrapException")
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
