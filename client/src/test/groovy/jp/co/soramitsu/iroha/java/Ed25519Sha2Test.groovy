@@ -20,6 +20,7 @@ class Ed25519Sha2Test extends Specification {
 
     static IrohaAPI api
     static def iroha = new IrohaContainer()
+            .withIrohaDockerImage(IrohaContainer.defaultIrohaDockerImageWithURSA)
             .withPeerConfig(
                     PeerConfig.builder()
                             .genesisBlock(getGenesisBlock())
@@ -53,7 +54,7 @@ class Ed25519Sha2Test extends Specification {
         def qapi = new QueryAPI(api, account, new Ed25519Sha2SignatureBuilder())
 
         when: "send tx with Iroha builtin Ed25519/Sha3 with default builder without specifying SignatureBuilder"
-        def tx = Transaction.builder(defaultAccountId, )
+        def tx = Transaction.builder(defaultAccountId,)
                 .setAccountDetail(defaultAccountId, "key", "value")
                 .sign(defaultKeyPair)
                 .build()

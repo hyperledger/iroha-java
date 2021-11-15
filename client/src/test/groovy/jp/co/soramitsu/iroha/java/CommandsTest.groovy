@@ -18,6 +18,7 @@ class CommandsTest extends Specification {
 
     static IrohaAPI api
     static def iroha = new IrohaContainer()
+            .withIrohaDockerImage(IrohaContainer.defaultIrohaDockerImageWithBurrow)
             .withPeerConfig(
                     PeerConfig.builder()
                             .genesisBlock(getGenesisBlock())
@@ -93,17 +94,17 @@ class CommandsTest extends Specification {
         actual_value == expected_value
 
         where:
-        key            | value         | oldValue     | checkEmpty | expected_value
-        "initial_key1" | "updated_val" | "wrong_val"  | null       | "{ \"a@test\" : { \"initial_key1\" : \"initial_val\" } }"
-        "initial_key1" | "updated_val" | null         | null       | "{ \"a@test\" : { \"initial_key1\" : \"initial_val\" } }"
-        "initial_key2" | "updated_val" | "initial_val"| null       | "{ \"a@test\" : { \"initial_key2\" : \"updated_val\" } }"
-        "absent_key1"  | "value"       | null         | null       | "{ \"a@test\" : { \"absent_key1\" : \"value\" } }"
-        "absent_key2"  | "value"       | null         | true       | "{ \"a@test\" : { \"absent_key2\" : \"value\" } }"
+        key            | value         | oldValue      | checkEmpty | expected_value
+        "initial_key1" | "updated_val" | "wrong_val"   | null       | "{ \"a@test\" : { \"initial_key1\" : \"initial_val\" } }"
+        "initial_key1" | "updated_val" | null          | null       | "{ \"a@test\" : { \"initial_key1\" : \"initial_val\" } }"
+        "initial_key2" | "updated_val" | "initial_val" | null       | "{ \"a@test\" : { \"initial_key2\" : \"updated_val\" } }"
+        "absent_key1"  | "value"       | null          | null       | "{ \"a@test\" : { \"absent_key1\" : \"value\" } }"
+        "absent_key2"  | "value"       | null          | true       | "{ \"a@test\" : { \"absent_key2\" : \"value\" } }"
         // if value is empty, old value is not checked, like checkEmpty=false
-        "absent_key3"  | "value"       | "wrong"      | null       | "{ \"a@test\" : { \"absent_key3\" : \"value\" } }"
-        "absent_key4"  | "value"       | null         | false      | "{ \"a@test\" : { \"absent_key4\" : \"value\" } }"
-        "absent_key5"  | "value"       | "any_value"  | false      | "{ \"a@test\" : { \"absent_key5\" : \"value\" } }"
-        "absent_key6"  | "value"       | "any_value"  | true       | "{}"
+        "absent_key3"  | "value"       | "wrong"       | null       | "{ \"a@test\" : { \"absent_key3\" : \"value\" } }"
+        "absent_key4"  | "value"       | null          | false      | "{ \"a@test\" : { \"absent_key4\" : \"value\" } }"
+        "absent_key5"  | "value"       | "any_value"   | false      | "{ \"a@test\" : { \"absent_key5\" : \"value\" } }"
+        "absent_key6"  | "value"       | "any_value"   | true       | "{}"
     }
 
     @Unroll
