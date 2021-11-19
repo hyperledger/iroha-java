@@ -1,4 +1,4 @@
-FROM ghcr.io/hyperledger/iroha:1.3.0-rc.1
+FROM ghcr.io/hyperledger/iroha:1.3.0
 WORKDIR /opt/iroha_data
 ENTRYPOINT [""]
 COPY run-iroha.sh wait-for-it.sh /
