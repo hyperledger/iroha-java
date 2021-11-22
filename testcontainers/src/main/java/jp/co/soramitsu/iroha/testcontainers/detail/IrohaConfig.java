@@ -43,7 +43,7 @@ public class IrohaConfig implements Cloneable {
   private int max_proposal_size = 1000;
 
   @Builder.Default
-  private int proposal_delay = 1000;
+  private int proposal_delay = 5000;
 
   @Builder.Default
   private int vote_delay = 1000;

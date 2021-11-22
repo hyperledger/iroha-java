@@ -32,8 +32,12 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
   public static final String defaultPostgresAlias = "iroha.postgres";
   public static final String defaultIrohaAlias = "iroha";
   public static final String irohaWorkdir = "/opt/iroha_data";
-  //  this corresponds to iroha 1.3.0.rc1
-  public static final String defaultIrohaDockerImage = "ghcr.io/hyperledger/iroha:df8b9258ff546ebf7dcdbe6ca2f52ac82f94922138649fe9fc875558b0c3e715-debug";
+  // default last release
+  public static final String defaultIrohaDockerImage = "hyperledger/iroha:1.3.0";
+  // release with URSA integration for ed25519 SHA-2 algorithm
+  public static final String defaultIrohaDockerImageWithURSA = "hyperledger/iroha-ursa:1.3.0";
+  // release with Burrow integration for Solidity smart-contracts
+  public static final String defaultIrohaDockerImageWithBurrow = "hyperledger/iroha-burrow:1.3.0";
   public static final String defaultPostgresDockerImage = "postgres:11-alpine";
 
   // env vars
@@ -254,6 +258,7 @@ public class IrohaContainer extends FailureDetectingExternalResource implements 
 
   /**
    * Returns a URI for API of current peer over TLS.
+   *
    * @return
    */
   @SneakyThrows
