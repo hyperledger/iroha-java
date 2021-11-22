@@ -87,7 +87,7 @@ class TransactionStatusObserverTest extends Specification {
         then:
         sent.get()
         esc.get()
-        // stateless validation success statuc can be omitted by iroha, so we do not expect it any more
+        // stateless validation success status can be omitted by iroha, so we do not expect it any more
 //        slvsucc.get()
         sfvsucc.get()
         committed.get()
