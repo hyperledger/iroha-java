@@ -1,9 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
@@ -18,7 +14,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransact
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
-import java.io.ByteArrayOutputStream
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
@@ -33,20 +28,6 @@ fun Int.asValue() = this.toLong().asValue()
 fun Long.asValue() = Value.U32(this)
 
 fun Boolean.asValue() = Value.Bool(this)
-
-// todo get rid of providing `writer`
-fun <T> T.encode(writer: ScaleWriter<T>): ByteArray {
-    // resource is freed inside `ScaleCodecWriter`
-    val buffer = ByteArrayOutputStream()
-    return ScaleCodecWriter(buffer)
-        .use {
-            writer.write(it, this)
-            buffer.toByteArray()
-        }
-}
-
-// todo get rid of providing `reader`
-fun <T> ByteArray.decode(reader: ScaleReader<T>): T = ScaleCodecReader(this).read(reader)
 
 fun ByteArray.toHex(): String = try {
     Hex.toHexString(this)
@@ -98,7 +79,7 @@ fun VersionedTransaction.V1.hash(): ByteArray {
     return this._VersionedTransactionV1
         .transaction
         .payload
-        .encode(Payload)
+        .let { Payload.encode(it) }
         .hash()
 }
 
@@ -112,7 +93,10 @@ fun VersionedTransaction.hash() = when (this) {
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
         is VersionedTransaction.V1 -> {
-            val encodedPayload = _VersionedTransactionV1.transaction.payload.encode(Payload)
+            val encodedPayload = _VersionedTransactionV1
+                .transaction
+                .payload
+                .let { Payload.encode(it) }
             val signatures = keypairs.map {
                 Signature(
                     it.public.toIrohaPublicKey(),

@@ -3,12 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.metadata
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.hashMapWithSize
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.collections.Map
@@ -24,7 +23,7 @@ public data class Metadata(
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
         public override fun read(reader: ScaleCodecReader): Metadata = try {
             Metadata(
-                hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
+                reader.readMap(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

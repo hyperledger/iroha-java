@@ -3,10 +3,10 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 
@@ -21,7 +21,7 @@ public data class SequenceBox(
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
         public override fun read(reader: ScaleCodecReader): SequenceBox = try {
             SequenceBox(
-                List(reader.readCompactInt()) { Instruction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { Instruction.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

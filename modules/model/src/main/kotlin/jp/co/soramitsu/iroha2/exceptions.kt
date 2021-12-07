@@ -9,3 +9,8 @@ open class IrohaSdkException(message: String? = null, cause: Throwable? = null) 
  * Thrown if there is an exception during scale encoding/decoding
  */
 class ScaleCodecException(message: String? = null, cause: Throwable? = null) : IrohaSdkException(message, cause)
+
+/**
+ * Thrown if there is an exception during converting from/into fixed point number
+ */
+class FixedPointConversionException(message: String? = null, cause: Throwable? = null) : IrohaSdkException(message, cause)

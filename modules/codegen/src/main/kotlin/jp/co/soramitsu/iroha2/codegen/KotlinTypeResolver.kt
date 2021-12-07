@@ -28,6 +28,7 @@ import jp.co.soramitsu.iroha2.type.U64Type
 import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.VecType
 import jp.co.soramitsu.iroha2.type.WrapperType
+import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
@@ -61,7 +62,8 @@ fun resolveKotlinType(type: Type): TypeName {
                 }
             }
         }
-        is CompactType, is FixedPointType -> resolveKotlinType((type as WrapperType).innerType.requireValue())
+        is CompactType -> resolveKotlinType((type as WrapperType).innerType.requireValue())
+        is FixedPointType -> BigDecimal::class.asTypeName()
         is WrapperType -> {
             // special case for vector of bytes
             if (type is VecType && type.innerType.requireValue() is U8Type) {

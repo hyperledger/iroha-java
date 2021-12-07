@@ -3,12 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import io.emeraldpay.polkaj.scale.reader.CompactBigIntReader
-import io.emeraldpay.polkaj.scale.writer.CompactULongWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
+import jp.co.soramitsu.iroha2.codec.writer.CompactULongWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger

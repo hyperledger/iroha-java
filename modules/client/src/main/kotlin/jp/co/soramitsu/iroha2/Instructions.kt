@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
@@ -27,6 +28,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
@@ -75,11 +77,17 @@ object Instructions {
     fun registerDomain(
         domainName: String,
         accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
+        metadata: Map<String, Value> = mapOf()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
-                Domain(domainName, accounts, assetDefinitions)
+                Domain(
+                    domainName,
+                    accounts,
+                    assetDefinitions,
+                    Metadata(metadata)
+                )
             )
         }
     }
@@ -114,26 +122,47 @@ object Instructions {
     }
 
     /**
-     * Instruction for mint of an asset
+     * Instruction for mint of an asset with [AssetValueType] is [AssetValueType.Quantity]
      */
     fun mintAsset(
         assetId: AssetId,
         quantity: Long
     ): Instruction.Mint {
-        return Instruction.Mint(
-            MintBox(
-                `object` = Value.U32(quantity).evaluatesTo(),
-                destinationId = IdBox.AssetId(assetId).evaluatesTo()
-            )
+        return mintSome(
+            Value.U32(quantity),
+            assetId
         )
     }
 
     /**
-     * Instruction for burn of an asset
+     * Instruction for mint of an asset with [AssetValueType] is [AssetValueType.Fixed]
+     */
+    fun mintAsset(
+        assetId: AssetId,
+        quanity: BigDecimal
+    ): Instruction.Mint {
+        return mintSome(
+            Value.Fixed(Fixed(quanity)),
+            assetId
+        )
+    }
+
+    /**
+     * Instruction for burn of an asset with [AssetValueType] is [AssetValueType.Quantity]
      */
     fun burnAsset(assetId: AssetId, value: Long): Instruction {
         return burnSome(
             Value.U32(value),
+            IdBox.AssetId(assetId)
+        )
+    }
+
+    /**
+     * Instruction for burn of an asset with [AssetValueType] is [AssetValueType.Fixed]
+     */
+    fun burnAsset(assetId: AssetId, value: BigDecimal): Instruction {
+        return burnSome(
+            Value.Fixed(Fixed(value)),
             IdBox.AssetId(assetId)
         )
     }
@@ -278,6 +307,15 @@ object Instructions {
                         Value.Id(idBox)
                     )
                 )
+            )
+        )
+    }
+
+    private fun mintSome(value: Value, assetId: AssetId): Instruction.Mint {
+        return Instruction.Mint(
+            MintBox(
+                `object` = value.evaluatesTo(),
+                destinationId = IdBox.AssetId(assetId).evaluatesTo()
             )
         )
     }
