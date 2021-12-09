@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.testcontainers.genesis
 
 import com.google.gson.FieldNamingPolicy
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -19,21 +20,21 @@ import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
-object GenesisJsonSerializer {
-    private val gson = lazy {
-        GsonBuilder()
-            .setPrettyPrinting()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
-            .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
-            .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
-            .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
-            .registerTypeAdapter(UInt::class.java, UIntSerializer)
-            .create()
-    }
+val GSON: Gson by lazy {
+    GsonBuilder()
+        .setPrettyPrinting()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
+        .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
+        .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
+        .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
+        .registerTypeAdapter(UInt::class.java, UIntSerializer)
+        .create()
+}
 
+object GenesisJsonSerializer {
     fun asJson(genesis: Genesis): String {
-        return gson.value.toJson(genesis.genesisBlock)
+        return GSON.toJson(genesis.genesisBlock)
     }
 }
 

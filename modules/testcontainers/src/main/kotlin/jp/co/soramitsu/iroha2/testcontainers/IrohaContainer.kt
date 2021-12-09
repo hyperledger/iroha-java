@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
+import jp.co.soramitsu.iroha2.testcontainers.genesis.GSON
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.PullPolicy
@@ -24,14 +26,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         this.config = config
         this.withNetwork(config.networkToJoin)
             .withEnv(ENV_SUMERAGI_MAX_FAULTY_PEERS.first, ENV_SUMERAGI_MAX_FAULTY_PEERS.second)
-            .withEnv(ENV_TORII_P2P_URL.first, ENV_TORII_P2P_URL.second)
+            .withEnv(ENV_TORII_P2P_ADDR.first, ENV_TORII_P2P_ADDR.second)
             .withEnv(ENV_TORII_API_URL.first, ENV_TORII_API_URL.second)
+            .withEnv(ENV_TORII_STATUS_URL.first, ENV_TORII_STATUS_URL.second)
             .withEnv(ENV_IROHA_PUBLIC_KEY.first, ENV_IROHA_PUBLIC_KEY.second)
             .withEnv(ENV_IROHA_ROOT_PUBLIC_KEY.first, ENV_IROHA_ROOT_PUBLIC_KEY.second)
             .withEnv(ENV_IROHA_PRIVATE_KEY.first, ENV_IROHA_PRIVATE_KEY.second)
             .withEnv(ENV_SUMERAGI_TRUSTED_PEERS.first, ENV_SUMERAGI_TRUSTED_PEERS.second)
             .withEnv(ENV_MAX_LOG_LEVEL, config.maxLogLevel.name)
-            .withExposedPorts(API_PORT, P2P_PORT)
+            .withExposedPorts(API_PORT, P2P_PORT, STATUS_PORT)
             .withNetworkAliases(NETWORK_ALIAS)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
@@ -41,10 +44,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withCommand(PEER_START_COMMAND)
             .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
             .waitingFor(
+                // await genesis was applied and seen in status
                 HttpWaitStrategy()
                     .forStatusCode(200)
-                    .forPort(API_PORT)
-                    .forPath(HEALTHCHECK)
+                    .forPort(STATUS_PORT)
+                    .forPath(STATUS_ENDPOINT)
+                    .forResponsePredicate { GSON.fromJson(it, Map::class.java)["blocks"]?.equals(1.0) ?: false }
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
             )
     }
@@ -86,13 +91,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "ed01207233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"
         const val P2P_PORT = 1337
         const val API_PORT = 8080
+        const val STATUS_PORT = 8180
         const val NETWORK_ALIAS = "iroha"
-        const val P2P_URL = "127.0.0.1:$P2P_PORT"
-        const val HEALTHCHECK = "/health"
+        const val P2P_URL = "$NETWORK_ALIAS:$P2P_PORT"
 
         val ENV_SUMERAGI_MAX_FAULTY_PEERS = "SUMERAGI_MAX_FAULTY_PEERS" to "0"
-        val ENV_TORII_P2P_URL = "TORII_P2P_URL" to P2P_URL
+        val ENV_TORII_P2P_ADDR = "TORII_P2P_ADDR" to P2P_URL
         val ENV_TORII_API_URL = "TORII_API_URL" to "$NETWORK_ALIAS:$API_PORT"
+        val ENV_TORII_STATUS_URL = "TORII_STATUS_URL" to "$NETWORK_ALIAS:$STATUS_PORT"
         val ENV_IROHA_PUBLIC_KEY = "IROHA_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY
         val ENV_IROHA_ROOT_PUBLIC_KEY = "IROHA_ROOT_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY
         val ENV_IROHA_PRIVATE_KEY =
