@@ -87,7 +87,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         const val P2P_PORT = 1337
         const val API_PORT = 8080
         const val NETWORK_ALIAS = "iroha"
-        const val P2P_URL = "$NETWORK_ALIAS:$P2P_PORT"
+        const val P2P_URL = "127.0.0.1:$P2P_PORT"
         const val HEALTHCHECK = "/health"
 
         val ENV_SUMERAGI_MAX_FAULTY_PEERS = "SUMERAGI_MAX_FAULTY_PEERS" to "0"
@@ -101,7 +101,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
         val ENV_MAX_LOG_LEVEL = "MAX_LOG_LEVEL"
 
-        const val DEFAULT_IMAGE_TAG = "dev"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-ac05878aa51eb50ec3b6d5ba8ea7fed8e15c60d5"
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val PEER_START_COMMAND = "./iroha --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"

@@ -313,5 +313,12 @@ class QueriesTest {
             .also { assertContentEquals(hash, it) }
     }
 
+    @Test
+    @WithIroha
+    fun health(): Unit = runBlocking {
+        val status = client.health()
+        assert(status == 200)
+    }
+
     // TODO: FindDomainKeyValueByIdAndKey test
 }

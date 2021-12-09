@@ -8,6 +8,7 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.cio.websocket.Frame
@@ -63,6 +64,15 @@ open class Iroha2Client(
                 }
             }
         }
+    }
+
+    /**
+     * Returns current status of peer
+     */
+    suspend fun health(): Int {
+        return client.value
+            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
+            .status.value
     }
 
     /**
@@ -260,6 +270,7 @@ open class Iroha2Client(
         const val INSTRUCTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
+        const val HEALTH_ENDPOINT = "/health"
     }
 
     override fun close() = client.value.close()

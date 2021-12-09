@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
+import java.math.BigInteger
 
 /**
  * Extractors are used by **[QueryBuilder]** to extract data from query result
@@ -97,6 +98,12 @@ object TransactionValueExtractor : ResultExtractor<TransactionValue> {
 object U32Extractor : ResultExtractor<Long> {
     override fun extract(result: QueryResult): Long {
         return extractValue(result.value, Value.U32::u32)
+    }
+}
+
+object U128Extractor : ResultExtractor<BigInteger> {
+    override fun extract(result: QueryResult): BigInteger {
+        return extractValue(result.value, Value.U128::u128)
     }
 }
 

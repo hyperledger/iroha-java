@@ -381,7 +381,7 @@ class InstructionsTest {
 
     @Test
     @WithIroha
-    fun `check assets with type Fixed are proplerly minted and burned`(): Unit = runBlocking {
+    fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
         // register an asset with type `Fixed`
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -453,6 +453,30 @@ class InstructionsTest {
             }
             assertBalance(counter)
         }
+    }
+
+    @Test
+    @WithIroha
+    fun `register peer instruction committed`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerPeer(
+                "127.0.0.1:1337",
+                "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        QueryBuilder.findAllPeers()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }
     }
 
     private suspend fun getAccountAmount(
