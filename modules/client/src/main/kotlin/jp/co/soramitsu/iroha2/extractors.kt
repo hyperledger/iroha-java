@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import java.math.BigInteger
 
@@ -16,6 +17,12 @@ import java.math.BigInteger
  * Extractors are used by **[QueryBuilder]** to extract data from query result
  */
 interface ResultExtractor<T> {
+    fun extract(result: VersionedQueryResult): T {
+        return when (result) {
+            is VersionedQueryResult.V1 -> extract(result._VersionedQueryResultV1.queryResult)
+        }
+    }
+
     fun extract(result: QueryResult): T
 }
 
@@ -43,19 +50,25 @@ object AccountExtractor : ResultExtractor<Account> {
 
 object AccountsExtractor : ResultExtractor<List<Account>> {
     override fun extract(result: QueryResult): List<Account> {
-        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Account::account) }
+        return extractVec(result.value) {
+            extractIdentifiable(it, IdentifiableBox.Account::account)
+        }
     }
 }
 
 object AssetsExtractor : ResultExtractor<List<Asset>> {
     override fun extract(result: QueryResult): List<Asset> {
-        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Asset::asset) }
+        return extractVec(result.value) {
+            extractIdentifiable(it, IdentifiableBox.Asset::asset)
+        }
     }
 }
 
 object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
     override fun extract(result: QueryResult): List<AssetDefinition> {
-        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition) }
+        return extractVec(result.value) {
+            extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition)
+        }
     }
 }
 
@@ -67,25 +80,33 @@ object DomainExtractor : ResultExtractor<Domain> {
 
 object DomainsExtractor : ResultExtractor<List<Domain>> {
     override fun extract(result: QueryResult): List<Domain> {
-        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Domain::domain) }
+        return extractVec(result.value) {
+            extractIdentifiable(it, IdentifiableBox.Domain::domain)
+        }
     }
 }
 
 object PeersExtractor : ResultExtractor<List<Peer>> {
     override fun extract(result: QueryResult): List<Peer> {
-        return extractVec(result.value) { extractIdentifiable(it, IdentifiableBox.Peer::peer) }
+        return extractVec(result.value) {
+            extractIdentifiable(it, IdentifiableBox.Peer::peer)
+        }
     }
 }
 
 object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
     override fun extract(result: QueryResult): List<PermissionToken> {
-        return extractVec(result.value) { extractValue(it, Value.PermissionToken::permissionToken) }
+        return extractVec(result.value) {
+            extractValue(it, Value.PermissionToken::permissionToken)
+        }
     }
 }
 
 object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
     override fun extract(result: QueryResult): List<TransactionValue> {
-        return extractVec(result.value) { extractValue(it, Value.TransactionValue::transactionValue) }
+        return extractVec(result.value) {
+            extractValue(it, Value.TransactionValue::transactionValue)
+        }
     }
 }
 

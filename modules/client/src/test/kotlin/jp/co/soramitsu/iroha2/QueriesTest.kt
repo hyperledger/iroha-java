@@ -5,6 +5,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
@@ -26,12 +27,13 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(30)
+@Timeout(3000) // TODO
 class QueriesTest {
 
     lateinit var client: Iroha2Client
@@ -116,6 +118,19 @@ class QueriesTest {
                 client.sendQuery(query)
             }.also { assets ->
                 assert(assets.all { it.id.definitionId.name == XorAndValAssets.XOR_DEFINITION_ID.name })
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `find asset by ID`(): Unit = runBlocking {
+        QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { asset ->
+                println(asset)
             }
     }
 

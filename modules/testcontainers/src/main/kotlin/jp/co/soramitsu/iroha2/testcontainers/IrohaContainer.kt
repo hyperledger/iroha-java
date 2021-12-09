@@ -87,11 +87,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         const val P2P_PORT = 1337
         const val API_PORT = 8080
         const val NETWORK_ALIAS = "iroha"
-        const val P2P_URL = "127.0.0.1:$P2P_PORT"
+        const val P2P_URL = "$NETWORK_ALIAS:$P2P_PORT"
         const val HEALTHCHECK = "/health"
 
         val ENV_SUMERAGI_MAX_FAULTY_PEERS = "SUMERAGI_MAX_FAULTY_PEERS" to "0"
-        val ENV_TORII_P2P_URL = "TORII_P2P_URL" to P2P_URL
+        val ENV_TORII_P2P_URL = "TORII_P2P_ADDR" to P2P_URL
         val ENV_TORII_API_URL = "TORII_API_URL" to "$NETWORK_ALIAS:$API_PORT"
         val ENV_IROHA_PUBLIC_KEY = "IROHA_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY
         val ENV_IROHA_ROOT_PUBLIC_KEY = "IROHA_ROOT_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY

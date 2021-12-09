@@ -28,7 +28,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Tra
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
@@ -120,7 +120,7 @@ open class Iroha2Client(
             this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
         return response.receive<ByteArray>()
-            .let { QueryResult.decode(it) }
+            .let { VersionedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
