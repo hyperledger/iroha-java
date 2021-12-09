@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.delay
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
@@ -326,13 +325,6 @@ class QueriesTest {
             .cast<TransactionValue.Transaction>().versionedTransaction
             .hash()
             .also { assertContentEquals(hash, it) }
-    }
-
-    @Test
-    @WithIroha
-    fun health(): Unit = runBlocking {
-        val status = client.health()
-        assert(status == 200)
     }
 
     // TODO: FindDomainKeyValueByIdAndKey test

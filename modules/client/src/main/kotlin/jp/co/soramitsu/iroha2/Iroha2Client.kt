@@ -271,6 +271,7 @@ open class Iroha2Client(
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
         const val HEALTH_ENDPOINT = "/health"
+        const val STATUS_ENDPOINT = "/status"
     }
 
     override fun close() = client.value.close()
