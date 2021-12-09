@@ -70,6 +70,17 @@ object Instructions {
     }
 
     /**
+     * Instruction for account registration
+     */
+    fun registerAccount(
+        id: AccountId,
+        signatories: List<PublicKey>,
+        metadata: Map<String, Value> = mapOf()
+    ): Instruction.Register {
+        return registerAccount(id, signatories, Metadata(metadata))
+    }
+
+    /**
      * Instruction for asset registration
      */
     fun registerAsset(
