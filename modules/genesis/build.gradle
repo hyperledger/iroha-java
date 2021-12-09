@@ -1,0 +1,14 @@
+group 'jp.co.soramitsu'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    api project(":client")
+    implementation 'com.github.multiformats:java-multihash:v1.3.0'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0'
+    implementation 'com.google.crypto.tink:tink:1.6.1'
+    implementation "com.google.code.gson:gson:$gsonVer"
+}
+
+kotlinter {
+    disabledRules = ['no-trailing-spaces']
+}

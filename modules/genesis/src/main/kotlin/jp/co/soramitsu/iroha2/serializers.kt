@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers.genesis
+package jp.co.soramitsu.iroha2
 
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
@@ -10,11 +10,9 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.toHex
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties

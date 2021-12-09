@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.GSON
 import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
-import jp.co.soramitsu.iroha2.testcontainers.genesis.GSON
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.PullPolicy

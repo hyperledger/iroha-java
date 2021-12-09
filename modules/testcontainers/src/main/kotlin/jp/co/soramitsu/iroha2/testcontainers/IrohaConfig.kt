@@ -1,8 +1,8 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
-import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.Network.newNetwork
