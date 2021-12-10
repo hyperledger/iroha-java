@@ -5,7 +5,6 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
