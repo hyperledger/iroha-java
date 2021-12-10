@@ -121,19 +121,6 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    fun `find asset by ID`(): Unit = runBlocking {
-        QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query ->
-                client.sendQuery(query)
-            }.also { asset ->
-                println(asset)
-            }
-    }
-
-    @Test
     @WithIroha(XorAndValAssets::class)
     fun `find assets by account id`(): Unit = runBlocking {
         QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
