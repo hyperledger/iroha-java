@@ -405,7 +405,7 @@ object Instructions {
     fun grantTransferUserAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_REGISTER_DOMAINS_TOKEN,
+                name = CAN_TRANSFER_USER_ASSETS_TOKEN,
                 params = mapOf(
                     ASSET_ID_TOKEN_PARAM_NAME to Value.Id(
                         IdBox.AssetId(assetId)
