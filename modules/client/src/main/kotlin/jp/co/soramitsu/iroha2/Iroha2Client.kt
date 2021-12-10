@@ -67,7 +67,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Returns current status of peer
+     * Sends health check request
      */
     suspend fun health(): Int {
         return client.value
