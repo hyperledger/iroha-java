@@ -381,7 +381,7 @@ class InstructionsTest {
 
     @Test
     @WithIroha
-    fun `check assets with type Fixed are proplerly minted and burned`(): Unit = runBlocking {
+    fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
         // register an asset with type `Fixed`
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -452,6 +452,51 @@ class InstructionsTest {
                 burnAsset(getFpNumber())
             }
             assertBalance(counter)
+        }
+    }
+
+    @Test
+    @WithIroha
+    fun `register peer instruction committed`(): Unit = runBlocking {
+        val address = "127.0.0.1:1338"
+        val payload = "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
+
+        registerPeer(address, payload)
+        assertTrue(isPeerAvailable(address, payload))
+    }
+
+    private suspend fun isPeerAvailable(address: String, payload: ByteArray): Boolean {
+        return QueryBuilder.findAllPeers()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.any { peer ->
+                peer.id.address == address && peer.id.publicKey.payload.contentEquals(payload)
+            }
+    }
+
+    private suspend fun unregisterPeer(address: String, payload: ByteArray) {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            unregisterPeer(address, payload)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(15, TimeUnit.SECONDS)
+            }
+        }
+    }
+
+    private suspend fun registerPeer(address: String, payload: ByteArray) {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerPeer(address, payload)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(15, TimeUnit.SECONDS)
+            }
         }
     }
 

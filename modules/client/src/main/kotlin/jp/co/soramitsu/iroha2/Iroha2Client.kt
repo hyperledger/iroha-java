@@ -8,6 +8,7 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.cio.websocket.Frame
@@ -27,7 +28,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Tra
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +64,15 @@ open class Iroha2Client(
                 }
             }
         }
+    }
+
+    /**
+     * Sends health check request
+     */
+    suspend fun health(): Int {
+        return client.value
+            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
+            .status.value
     }
 
     /**
@@ -110,7 +120,7 @@ open class Iroha2Client(
             this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
         return response.receive<ByteArray>()
-            .let { QueryResult.decode(it) }
+            .let { VersionedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
@@ -260,6 +270,8 @@ open class Iroha2Client(
         const val INSTRUCTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
+        const val HEALTH_ENDPOINT = "/health"
+        const val STATUS_ENDPOINT = "/status"
     }
 
     override fun close() = client.value.close()
