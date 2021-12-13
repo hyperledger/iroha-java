@@ -133,6 +133,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         digestFunction: String = DigestFunction.Ed25519.hashFunName
     ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, digestFunction)) }
 
+    fun unregisterPeer(
+        address: String,
+        payload: ByteArray,
+        digestFunction: String = DigestFunction.Ed25519.hashFunName
+    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, digestFunction)) }
+
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
 

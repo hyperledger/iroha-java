@@ -13,6 +13,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.crypto.tink.subtle.Hex
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -29,6 +30,7 @@ val genesisMapper = ObjectMapper().also { mapper ->
     module.addDeserializer(Value::class.java, ValueDeserializer())
     module.addDeserializer(IdentifiableBox::class.java, IdentifiableBoxDeserializer())
     module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer())
+    module.addDeserializer(IdBox::class.java, IdBoxDeserializer())
     module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer())
     module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer())
     module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer())
@@ -56,14 +58,22 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
         ?.firstOrNull()?.type?.toString()
         ?: throw RuntimeException("Subtype parameter not found by $param")
 
-    var toConvert = node.value
+    val toConvert: ObjectNode
     if (T::class.java.isAssignableFrom(Instruction::class.java)) {
-        val childNode = mapper.createObjectNode()
-        childNode.set<ObjectNode>("expression", node.value.get("object"))
-        val jsonNode: ObjectNode = node.value.deepCopy()
-        jsonNode.set<ObjectNode>("object", childNode)
+        var jsonNode: ObjectNode = node.value.deepCopy()
+        jsonNode.fields().forEach { field ->
+            val key = field.key
+            val child = mapper.createObjectNode()
+            child.set<ObjectNode>("expression", node.value.get(key))
+            val value: ObjectNode = jsonNode.deepCopy()
+            value.set<ObjectNode>(key, child)
+
+            jsonNode = value
+        }
 
         toConvert = jsonNode
+    } else {
+        toConvert = node.value as ObjectNode
     }
 
     val arg = mapper.convertValue(toConvert, Class.forName(argTypeName))
@@ -90,6 +100,12 @@ class ValueDeserializer : JsonDeserializer<Value>() {
 
 class IdentifiableBoxDeserializer : JsonDeserializer<IdentifiableBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): IdentifiableBox {
+        return sealedDeserialize(p, genesisMapper)
+    }
+}
+
+class IdBoxDeserializer : JsonDeserializer<IdBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): IdBox {
         return sealedDeserialize(p, genesisMapper)
     }
 }
