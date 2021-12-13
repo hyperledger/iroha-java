@@ -1,6 +1,7 @@
-package jp.co.soramitsu.iroha2.testcontainers.genesis
+package jp.co.soramitsu.iroha2
 
 import com.google.gson.FieldNamingPolicy
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -9,31 +10,29 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.toHex
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
-object GenesisJsonSerializer {
-    private val gson = lazy {
-        GsonBuilder()
-            .setPrettyPrinting()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
-            .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
-            .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
-            .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
-            .registerTypeAdapter(UInt::class.java, UIntSerializer)
-            .create()
-    }
+val GSON: Gson by lazy {
+    GsonBuilder()
+        .setPrettyPrinting()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
+        .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
+        .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
+        .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
+        .registerTypeAdapter(UInt::class.java, UIntSerializer)
+        .create()
+}
 
+object GenesisJsonSerializer {
     fun asJson(genesis: Genesis): String {
-        return gson.value.toJson(genesis.genesisBlock)
+        return GSON.toJson(genesis.genesisBlock)
     }
 }
 

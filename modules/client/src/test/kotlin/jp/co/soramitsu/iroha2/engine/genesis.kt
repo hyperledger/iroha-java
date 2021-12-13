@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.engine
 
+import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
@@ -9,7 +10,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId

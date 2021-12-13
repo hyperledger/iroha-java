@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.engine
 
-import jp.co.soramitsu.iroha2.testcontainers.genesis.Genesis
+import jp.co.soramitsu.iroha2.Genesis
 import org.junit.jupiter.api.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass

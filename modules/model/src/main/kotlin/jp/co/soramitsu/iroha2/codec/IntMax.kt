@@ -7,7 +7,7 @@ enum class IntMax(val max: BigInteger) {
     U128(BigInteger.TWO.pow(128) - BigInteger.ONE),
     U256(BigInteger.TWO.pow(256) - BigInteger.ONE),
     I128(BigInteger.TWO.pow(127) - BigInteger.ONE),
-    I256(BigInteger.TWO.pow(255) - BigInteger.ONE), ;
+    I256(BigInteger.TWO.pow(255) - BigInteger.ONE);
 
     companion object {
         fun uintMaxValue(bit: Int): BigInteger {

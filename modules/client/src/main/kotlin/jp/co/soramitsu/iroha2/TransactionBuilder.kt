@@ -84,10 +84,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
         return VersionedTransaction.V1(
             _VersionedTransactionV1(
-                Transaction(
-                    payload,
-                    signatures
-                )
+                Transaction(payload, signatures)
             )
         )
     }
@@ -129,6 +126,18 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         accounts: Map<AccountId, Account> = mapOf(),
         assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
     ) = this.apply { instructions.value.add(Instructions.registerDomain(domainName, accounts, assetDefinitions)) }
+
+    fun registerPeer(
+        address: String,
+        payload: ByteArray,
+        digestFunction: String = DigestFunction.Ed25519.hashFunName
+    ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, digestFunction)) }
+
+    fun unregisterPeer(
+        address: String,
+        payload: ByteArray,
+        digestFunction: String = DigestFunction.Ed25519.hashFunName
+    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, digestFunction)) }
 
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }

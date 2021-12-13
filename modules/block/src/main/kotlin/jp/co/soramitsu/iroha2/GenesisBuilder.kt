@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers.genesis
+package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
