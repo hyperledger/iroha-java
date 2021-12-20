@@ -465,6 +465,8 @@ class InstructionsTest {
         assertTrue(isPeerAvailable(address, payload))
     }
 
+    // TODO: unregister peer test (https://github.com/hyperledger/iroha/issues/1726)
+
     private suspend fun isPeerAvailable(address: String, payload: ByteArray): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
