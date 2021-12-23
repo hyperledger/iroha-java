@@ -23,7 +23,7 @@ import kotlin.reflect.full.primaryConstructor
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
-val genesisMapper = ObjectMapper().also { mapper ->
+val iroha2Mapper = ObjectMapper().also { mapper ->
     val module = SimpleModule()
     module.addDeserializer(Instruction::class.java, InstructionDeserializer())
     module.addDeserializer(Expression::class.java, ExpressionDeserializer())
@@ -82,31 +82,31 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
 
 class InstructionDeserializer : JsonDeserializer<Instruction>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Instruction {
-        return sealedDeserialize(p, genesisMapper)
+        return sealedDeserialize(p, iroha2Mapper)
     }
 }
 
 class ExpressionDeserializer : JsonDeserializer<Expression>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Expression {
-        return sealedDeserialize(p, genesisMapper)
+        return sealedDeserialize(p, iroha2Mapper)
     }
 }
 
 class ValueDeserializer : JsonDeserializer<Value>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Value {
-        return sealedDeserialize(p, genesisMapper)
+        return sealedDeserialize(p, iroha2Mapper)
     }
 }
 
 class IdentifiableBoxDeserializer : JsonDeserializer<IdentifiableBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): IdentifiableBox {
-        return sealedDeserialize(p, genesisMapper)
+        return sealedDeserialize(p, iroha2Mapper)
     }
 }
 
 class IdBoxDeserializer : JsonDeserializer<IdBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): IdBox {
-        return sealedDeserialize(p, genesisMapper)
+        return sealedDeserialize(p, iroha2Mapper)
     }
 }
 
@@ -119,18 +119,18 @@ class PublicKeyDeserializer : JsonDeserializer<PublicKey>() {
 
 class DefinitionIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
-        return genesisMapper.readValue(key, DefinitionId::class.java)
+        return iroha2Mapper.readValue(key, DefinitionId::class.java)
     }
 }
 
 class AccountIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AccountId? {
-        return genesisMapper.readValue(key, AccountId::class.java)
+        return iroha2Mapper.readValue(key, AccountId::class.java)
     }
 }
 
 class AssetIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AssetId? {
-        return genesisMapper.readValue(key, AssetId::class.java)
+        return iroha2Mapper.readValue(key, AssetId::class.java)
     }
 }
