@@ -107,7 +107,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
         val ENV_MAX_LOG_LEVEL = "MAX_LOG_LEVEL"
 
-        const val DEFAULT_IMAGE_TAG = "dev-nightly-ac05878aa51eb50ec3b6d5ba8ea7fed8e15c60d5"
+        const val DEFAULT_IMAGE_TAG = "2.0.0-pre.1.rc.1"
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val PEER_START_COMMAND = "./iroha --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"
