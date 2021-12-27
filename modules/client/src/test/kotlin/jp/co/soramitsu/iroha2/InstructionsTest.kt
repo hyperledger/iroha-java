@@ -47,6 +47,27 @@ class InstructionsTest {
 
     @Test
     @WithIroha
+    fun `register domain instruction committed`(): Unit = runBlocking {
+        val domainName = "new_domain_name"
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerDomain(domainName)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        QueryBuilder.findDomainByName(domainName)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { result -> assertEquals(result.name, domainName) }
+    }
+
+    @Test
+    @WithIroha
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
         client.sendTransaction {
@@ -58,10 +79,12 @@ class InstructionsTest {
                 it.get(10, TimeUnit.SECONDS)
             }
         }
-        val query = QueryBuilder.findAccountById(newAccountId)
+
+        QueryBuilder.findAccountById(newAccountId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-        client.sendQuery(query)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id, newAccountId) }
     }
 
     @Test
@@ -201,11 +224,13 @@ class InstructionsTest {
             }
         }
 
-        val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+        QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-        val result = client.sendQuery(query)
-        assertEquals(5, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+            .let { query -> client.sendQuery(query) }
+            .also { result ->
+                assertEquals(5, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+            }
     }
 
     @Test
