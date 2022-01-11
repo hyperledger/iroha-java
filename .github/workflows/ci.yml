@@ -1,7 +1,8 @@
 name: iroha-java CI
 
 on:
-  push:
+  workflow_dispatch:
+#  push:
 
 env:
   BUILD_DIR: client/build
@@ -40,3 +41,15 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           BRANCH_NAME: ${{ github.ref }}
         run: if [[ -n $SONAR_TOKEN ]]; then ./housekeeping/sonar.sh; else echo "Some secret undefined. Step passed..."; fi
+      - name: Publish to nexus
+        if: ${{ github.ref == 'refs/heads/main' }} || ${{ github.ref == 'refs/heads/iroha2-dev' }}
+        uses: sonatype-nexus-community/nexus-repo-github-action@master
+        with:
+          serverUrl: https://nexus.iroha.tech/
+          username: '${{ secrets.NEXUS_USER }}'
+          password: '${{ secrets.NEXUS_PASS }}'
+          format: maven2
+          repository: maven-soramitsu
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=iroha-java version=1.0.0
+          assets: extension=jar
+          filename: '/iroha-java/client/build/libs/client.jar'
