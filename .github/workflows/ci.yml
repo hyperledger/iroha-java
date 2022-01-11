@@ -29,9 +29,8 @@ jobs:
         run: |
           ./gradlew --daemon
           ./gradlew build --parallel --build-cache
-          pwd
-          ls
-          ls ./libs/
+          ls /home/runner/work/iroha-java/iroha-java/client/build/libs/
+          ls /home/runner/work/iroha-java/iroha-java/testcontainers/build/libs/
           ./gradlew jacocoTestReport
       - name: Cleanup Gradle Cache
         run: |
@@ -55,4 +54,4 @@ jobs:
           repository: maven-soramitsu
           coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=iroha-java version=1.0.0
           assets: extension=jar
-          filename: /iroha-java/client/build/libs/*.jar
+          filename: /home/runner/work/iroha-java/iroha-java/client/build/libs/*.jar
