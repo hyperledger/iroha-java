@@ -2,7 +2,7 @@ name: Publisher
 
 on:
   workflow_dispatch:
-#  push:
+  push:
 
 env:
   BUILD_DIR: client/build
@@ -22,7 +22,19 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=1.0.0
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=github.sha
+          assets: extension=jar
+          filename: /libs/client/*.jar
+      - name: Publish client lib to nexus
+        if: ${{ github.ref == 'refs/heads/main' && github.ref_type == tag }}
+        uses: sonatype-nexus-community/nexus-repo-github-action@master
+        with:
+          serverUrl: https://nexus.iroha.tech/
+          username: '${{ secrets.NEXUS_USER }}'
+          password: '${{ secrets.NEXUS_PASS }}'
+          format: maven2
+          repository: maven-soramitsu
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=github.ref_name
           assets: extension=jar
           filename: /libs/client/*.jar
       - name: Publish testcontainers lib to nexus
@@ -34,6 +46,18 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=1.0.0
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=github.sha
+          assets: extension=jar
+          filename: /libs/testcontainers/*.jar
+      - name: Publish testcontainers lib to nexus
+        if: ${{ github.ref == 'refs/heads/main' && github.ref_type == tag }}
+        uses: sonatype-nexus-community/nexus-repo-github-action@master
+        with:
+          serverUrl: https://nexus.iroha.tech/
+          username: '${{ secrets.NEXUS_USER }}'
+          password: '${{ secrets.NEXUS_PASS }}'
+          format: maven2
+          repository: maven-soramitsu
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=github.ref_name
           assets: extension=jar
           filename: /libs/testcontainers/*.jar
