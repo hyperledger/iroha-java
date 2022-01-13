@@ -22,7 +22,7 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=github.sha
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=${{ github.sha }}
           assets: extension=jar
           filename: /libs/client/*.jar
       - name: Publish client lib to nexus
@@ -34,7 +34,7 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=github.ref_name
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=${{ github.ref_name }}
           assets: extension=jar
           filename: /libs/client/*.jar
       - name: Publish testcontainers lib to nexus
@@ -46,7 +46,7 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=github.sha
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.sha }}
           assets: extension=jar
           filename: /libs/testcontainers/*.jar
       - name: Publish testcontainers lib to nexus
@@ -58,6 +58,6 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=github.ref_name
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.ref_name }}
           assets: extension=jar
           filename: /libs/testcontainers/*.jar
