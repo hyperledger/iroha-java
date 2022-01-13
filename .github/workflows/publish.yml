@@ -1,4 +1,4 @@
-name: iroha-java CI
+name: Publisher
 
 on:
   workflow_dispatch:
