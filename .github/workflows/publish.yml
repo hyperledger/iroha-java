@@ -50,7 +50,7 @@ jobs:
           assets: extension=jar
           filename: /libs/testcontainers/*.jar
       - name: Publish testcontainers lib to nexus
-        if: ${{ github.ref == 'refs/heads/main' && github.ref_type == tag }}
+        if: ${{ github.ref == 'refs/heads/main' && github.ref_type == 'tag' }}
         uses: sonatype-nexus-community/nexus-repo-github-action@master
         with:
           serverUrl: https://nexus.iroha.tech/
