@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
+package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -14,7 +14,7 @@ import kotlin.String
 /**
  * InstructionExecutionFail
  *
- * Generated from 'iroha_data_model::events::pipeline::InstructionExecutionFail' regular structure
+ * Generated from 'iroha_data_model::transaction::InstructionExecutionFail' regular structure
  */
 public data class InstructionExecutionFail(
     public val instruction: Instruction,

@@ -4,11 +4,16 @@ import jp.co.soramitsu.iroha2.parse.TypeNest
 
 abstract class CompositeType(override val name: String, open val generics: List<TypeNest>) : Type(name)
 
-data class EnumType(override val name: String, override val generics: List<TypeNest>, val variants: List<Variant>) :
-    CompositeType(name, generics) {
+data class EnumType(
+    override val name: String,
+    override val generics: List<TypeNest>,
+    val variants: List<Variant>
+) : CompositeType(name, generics) {
+
     data class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
 
     private var resolutionInProgress: Boolean = false
+
     override fun notResolvedTypes(): Set<String> {
         if (resolutionInProgress) {
             return setOf()
@@ -26,11 +31,11 @@ data class TupleStructType(
     override val name: String,
     override val generics: List<TypeNest>,
     val types: List<TypeNest>
-) :
-    CompositeType(name, generics) {
+) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
-        return types.union(generics)
-            .flatMap { it.value?.notResolvedTypes() ?: setOf(it.name) }.toSet()
+        return types.union(generics).flatMap {
+            it.value?.notResolvedTypes() ?: setOf(it.name)
+        }.toSet()
     }
 }
 
@@ -40,7 +45,8 @@ data class StructType(
     val mapping: LinkedHashMap<String, TypeNest>
 ) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
-        return mapping.values.union(generics)
-            .flatMap { it.value?.notResolvedTypes() ?: setOf(it.name) }.toSet()
+        return mapping.values.union(generics).flatMap {
+            it.value?.notResolvedTypes() ?: setOf(it.name)
+        }.toSet()
     }
 }

@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.transaction
+package jp.co.soramitsu.iroha2.generated.datamodel.events
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * VersionedTransaction
+ * VersionedEventPublisherMessage
  *
- * Generated from 'iroha_data_model::transaction::VersionedTransaction' enum
+ * Generated from 'iroha_data_model::events::VersionedEventPublisherMessage' enum
  */
-public sealed class VersionedTransaction : ModelEnum {
+public sealed class VersionedEventPublisherMessage : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,8 +26,8 @@ public sealed class VersionedTransaction : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val transaction: Transaction
-    ) : VersionedTransaction() {
+        public val eventPublisherMessage: EventPublisherMessage
+    ) : VersionedEventPublisherMessage() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
@@ -35,30 +35,32 @@ public sealed class VersionedTransaction : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    Transaction.read(reader),
+                    EventPublisherMessage.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                Transaction.write(writer, instance.transaction)
+                EventPublisherMessage.write(writer, instance.eventPublisherMessage)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<VersionedTransaction>, ScaleWriter<VersionedTransaction> {
-        public override fun read(reader: ScaleCodecReader): VersionedTransaction = when (
-            val discriminant =
-                reader.readUByte()
+    public companion object :
+        ScaleReader<VersionedEventPublisherMessage>,
+        ScaleWriter<VersionedEventPublisherMessage> {
+        public override fun read(reader: ScaleCodecReader): VersionedEventPublisherMessage = when (
+            val
+            discriminant = reader.readUByte()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedTransaction) {
+        public override fun write(writer: ScaleCodecWriter, instance: VersionedEventPublisherMessage) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)

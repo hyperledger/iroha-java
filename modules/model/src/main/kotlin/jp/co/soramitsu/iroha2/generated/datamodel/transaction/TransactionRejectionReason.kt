@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
+package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -9,14 +9,13 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureVerificationFail
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
  * TransactionRejectionReason
  *
- * Generated from 'iroha_data_model::events::pipeline::TransactionRejectionReason' enum
+ * Generated from 'iroha_data_model::transaction::TransactionRejectionReason' enum
  */
 public sealed class TransactionRejectionReason : ModelEnum {
     /**

@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
+package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -14,7 +14,7 @@ import kotlin.Int
 /**
  * BlockRejectionReason
  *
- * Generated from 'iroha_data_model::events::pipeline::BlockRejectionReason' enum
+ * Generated from 'iroha_data_model::transaction::BlockRejectionReason' enum
  */
 public sealed class BlockRejectionReason : ModelEnum {
     /**

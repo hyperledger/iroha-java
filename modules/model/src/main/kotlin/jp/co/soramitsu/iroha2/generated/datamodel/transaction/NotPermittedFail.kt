@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline
+package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -13,7 +13,7 @@ import kotlin.String
 /**
  * NotPermittedFail
  *
- * Generated from 'iroha_data_model::events::pipeline::NotPermittedFail' regular structure
+ * Generated from 'iroha_data_model::transaction::NotPermittedFail' regular structure
  */
 public data class NotPermittedFail(
     public val reason: String

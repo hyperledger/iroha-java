@@ -596,46 +596,56 @@
       ]
     }
   },
-  "iroha_data_model::events::EventSocketMessage": {
+  "iroha_data_model::events::EventPublisherMessage": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "SubscriptionAccepted",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Event",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::Event"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::EventSubscriberMessage": {
     "Enum": {
       "variants": [
         {
           "name": "SubscriptionRequest",
           "discriminant": 0,
-          "ty": "iroha_data_model::events::SubscriptionRequest"
-        },
-        {
-          "name": "SubscriptionAccepted",
-          "discriminant": 1,
-          "ty": null
-        },
-        {
-          "name": "Event",
-          "discriminant": 2,
-          "ty": "iroha_data_model::events::Event"
+          "ty": "iroha_data_model::events::EventFilter"
         },
         {
           "name": "EventReceived",
-          "discriminant": 3,
+          "discriminant": 1,
           "ty": null
         }
       ]
     }
   },
-  "iroha_data_model::events::SubscriptionRequest": {
-    "TupleStruct": {
-      "types": [
-        "iroha_data_model::events::EventFilter"
-      ]
-    }
-  },
-  "iroha_data_model::events::VersionedEventSocketMessage": {
+  "iroha_data_model::events::VersionedEventPublisherMessage": {
     "Enum": {
       "variants": [
         {
           "name": "V1",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::EventSocketMessage"
+          "ty": "iroha_data_model::events::EventPublisherMessage"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::VersionedEventSubscriberMessage": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "V1",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::EventSubscriberMessage"
         }
       ]
     }
@@ -648,17 +658,6 @@
   "iroha_data_model::events::data::EventFilter": {
     "TupleStruct": {
       "types": []
-    }
-  },
-  "iroha_data_model::events::pipeline::BlockRejectionReason": {
-    "Enum": {
-      "variants": [
-        {
-          "name": "ConsensusBlockRejection",
-          "discriminant": 0,
-          "ty": null
-        }
-      ]
     }
   },
   "iroha_data_model::events::pipeline::EntityType": {
@@ -709,46 +708,6 @@
       ]
     }
   },
-  "iroha_data_model::events::pipeline::InstructionExecutionFail": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "instruction",
-          "ty": "iroha_data_model::isi::Instruction"
-        },
-        {
-          "name": "reason",
-          "ty": "String"
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::pipeline::NotPermittedFail": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "reason",
-          "ty": "String"
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::pipeline::RejectionReason": {
-    "Enum": {
-      "variants": [
-        {
-          "name": "Block",
-          "discriminant": 0,
-          "ty": "iroha_data_model::events::pipeline::BlockRejectionReason"
-        },
-        {
-          "name": "Transaction",
-          "discriminant": 1,
-          "ty": "iroha_data_model::events::pipeline::TransactionRejectionReason"
-        }
-      ]
-    }
-  },
   "iroha_data_model::events::pipeline::Status": {
     "Enum": {
       "variants": [
@@ -760,53 +719,12 @@
         {
           "name": "Rejected",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::pipeline::RejectionReason"
+          "ty": "iroha_data_model::transaction::RejectionReason"
         },
         {
           "name": "Committed",
           "discriminant": 2,
           "ty": null
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::pipeline::TransactionRejectionReason": {
-    "Enum": {
-      "variants": [
-        {
-          "name": "NotPermitted",
-          "discriminant": 0,
-          "ty": "iroha_data_model::events::pipeline::NotPermittedFail"
-        },
-        {
-          "name": "UnsatisfiedSignatureCondition",
-          "discriminant": 1,
-          "ty": "iroha_data_model::events::pipeline::UnsatisfiedSignatureConditionFail"
-        },
-        {
-          "name": "InstructionExecution",
-          "discriminant": 2,
-          "ty": "iroha_data_model::events::pipeline::InstructionExecutionFail"
-        },
-        {
-          "name": "SignatureVerification",
-          "discriminant": 3,
-          "ty": "iroha_crypto::signature::SignatureVerificationFail<iroha_data_model::transaction::Payload>"
-        },
-        {
-          "name": "UnexpectedGenesisAccountSignature",
-          "discriminant": 4,
-          "ty": null
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::pipeline::UnsatisfiedSignatureConditionFail": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "reason",
-          "ty": "String"
         }
       ]
     }
@@ -1977,6 +1895,41 @@
       ]
     }
   },
+  "iroha_data_model::transaction::BlockRejectionReason": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ConsensusBlockRejection",
+          "discriminant": 0,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::transaction::InstructionExecutionFail": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "instruction",
+          "ty": "iroha_data_model::isi::Instruction"
+        },
+        {
+          "name": "reason",
+          "ty": "String"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::transaction::NotPermittedFail": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "reason",
+          "ty": "String"
+        }
+      ]
+    }
+  },
   "iroha_data_model::transaction::Payload": {
     "Struct": {
       "declarations": [
@@ -2020,7 +1973,23 @@
         },
         {
           "name": "rejection_reason",
-          "ty": "iroha_data_model::events::pipeline::TransactionRejectionReason"
+          "ty": "iroha_data_model::transaction::TransactionRejectionReason"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::transaction::RejectionReason": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Block",
+          "discriminant": 0,
+          "ty": "iroha_data_model::transaction::BlockRejectionReason"
+        },
+        {
+          "name": "Transaction",
+          "discriminant": 1,
+          "ty": "iroha_data_model::transaction::TransactionRejectionReason"
         }
       ]
     }
@@ -2039,6 +2008,37 @@
       ]
     }
   },
+  "iroha_data_model::transaction::TransactionRejectionReason": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "NotPermitted",
+          "discriminant": 0,
+          "ty": "iroha_data_model::transaction::NotPermittedFail"
+        },
+        {
+          "name": "UnsatisfiedSignatureCondition",
+          "discriminant": 1,
+          "ty": "iroha_data_model::transaction::UnsatisfiedSignatureConditionFail"
+        },
+        {
+          "name": "InstructionExecution",
+          "discriminant": 2,
+          "ty": "iroha_data_model::transaction::InstructionExecutionFail"
+        },
+        {
+          "name": "SignatureVerification",
+          "discriminant": 3,
+          "ty": "iroha_crypto::signature::SignatureVerificationFail<iroha_data_model::transaction::Payload>"
+        },
+        {
+          "name": "UnexpectedGenesisAccountSignature",
+          "discriminant": 4,
+          "ty": null
+        }
+      ]
+    }
+  },
   "iroha_data_model::transaction::TransactionValue": {
     "Enum": {
       "variants": [
@@ -2051,6 +2051,16 @@
           "name": "RejectedTransaction",
           "discriminant": 1,
           "ty": "iroha_data_model::transaction::VersionedRejectedTransaction"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::transaction::UnsatisfiedSignatureConditionFail": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "reason",
+          "ty": "String"
         }
       ]
     }

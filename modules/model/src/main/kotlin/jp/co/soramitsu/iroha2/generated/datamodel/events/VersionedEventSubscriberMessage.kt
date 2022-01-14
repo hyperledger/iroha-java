@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * VersionedEventSocketMessage
+ * VersionedEventSubscriberMessage
  *
- * Generated from 'iroha_data_model::events::VersionedEventSocketMessage' enum
+ * Generated from 'iroha_data_model::events::VersionedEventSubscriberMessage' enum
  */
-public sealed class VersionedEventSocketMessage : ModelEnum {
+public sealed class VersionedEventSubscriberMessage : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,8 +26,8 @@ public sealed class VersionedEventSocketMessage : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val _VersionedEventSocketMessageV1: _VersionedEventSocketMessageV1
-    ) : VersionedEventSocketMessage() {
+        public val eventSubscriberMessage: EventSubscriberMessage
+    ) : VersionedEventSubscriberMessage() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
@@ -35,14 +35,14 @@ public sealed class VersionedEventSocketMessage : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    _VersionedEventSocketMessageV1.read(reader),
+                    EventSubscriberMessage.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                _VersionedEventSocketMessageV1.write(writer, instance._VersionedEventSocketMessageV1)
+                EventSubscriberMessage.write(writer, instance.eventSubscriberMessage)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -50,9 +50,9 @@ public sealed class VersionedEventSocketMessage : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<VersionedEventSocketMessage>,
-        ScaleWriter<VersionedEventSocketMessage> {
-        public override fun read(reader: ScaleCodecReader): VersionedEventSocketMessage = when (
+        ScaleReader<VersionedEventSubscriberMessage>,
+        ScaleWriter<VersionedEventSubscriberMessage> {
+        public override fun read(reader: ScaleCodecReader): VersionedEventSubscriberMessage = when (
             val
             discriminant = reader.readUByte()
         ) {
@@ -60,7 +60,7 @@ public sealed class VersionedEventSocketMessage : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedEventSocketMessage) {
+        public override fun write(writer: ScaleCodecWriter, instance: VersionedEventSubscriberMessage) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)
