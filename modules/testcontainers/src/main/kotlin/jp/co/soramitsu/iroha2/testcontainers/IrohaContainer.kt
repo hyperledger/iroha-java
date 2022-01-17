@@ -34,6 +34,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv(ENV_IROHA_PRIVATE_KEY.first, ENV_IROHA_PRIVATE_KEY.second)
             .withEnv(ENV_SUMERAGI_TRUSTED_PEERS.first, ENV_SUMERAGI_TRUSTED_PEERS.second)
             .withEnv(ENV_MAX_LOG_LEVEL, config.maxLogLevel.name)
+            .withEnv(ENV_IROHA2_GENESIS_PATH, DEFAULT_GENESIS_FILE_NAME)
             .withExposedPorts(API_PORT, P2P_PORT, STATUS_PORT)
             .withNetworkAliases(NETWORK_ALIAS)
             .withLogConsumer(config.logConsumer)
@@ -105,12 +106,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "IROHA_PRIVATE_KEY" to """{"digest_function": "ed25519", "payload": "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"}"""
         val ENV_SUMERAGI_TRUSTED_PEERS =
             "SUMERAGI_TRUSTED_PEERS" to """[{"address":"$P2P_URL", "public_key": "$IROHA_ROOT_PUBLIC_KEY"}]"""
-        val ENV_MAX_LOG_LEVEL = "MAX_LOG_LEVEL"
+        const val ENV_MAX_LOG_LEVEL = "MAX_LOG_LEVEL"
+        const val ENV_IROHA2_GENESIS_PATH = "IROHA2_GENESIS_PATH"
 
-        const val DEFAULT_IMAGE_TAG = "dev-nightly-ac05878aa51eb50ec3b6d5ba8ea7fed8e15c60d5"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-86862ed8937e49bcacc0cce9fd0c878b59021b55"
+//        const val DEFAULT_IMAGE_TAG = "dev-nightly-ac05878aa51eb50ec3b6d5ba8ea7fed8e15c60d5"
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
-        const val PEER_START_COMMAND = "./iroha --submit-genesis --genesis-path $DEFAULT_GENESIS_FILE_NAME"
+        const val PEER_START_COMMAND = "./iroha"
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }
 }

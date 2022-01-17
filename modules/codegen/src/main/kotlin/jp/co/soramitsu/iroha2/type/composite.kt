@@ -46,7 +46,7 @@ data class StructType(
 ) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
         return mapping.values.union(generics).flatMap {
-            it.value?.notResolvedTypes() ?: setOf(it.name)
+            it.value?.let { setOf() } ?: setOf(it.name)
         }.toSet()
     }
 }
