@@ -126,8 +126,8 @@
   "Vec<iroha_data_model::transaction::VersionedValidTransaction>": {
     "Vec": "iroha_data_model::transaction::VersionedValidTransaction"
   },
-  "Vec<iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>>": {
-    "Vec": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>"
+  "Vec<iroha_schema::iroha_crypto::hash::HashOf>": {
+    "Vec": "iroha_schema::iroha_crypto::hash::HashOf"
   },
   "Vec<iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
     "Vec": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
@@ -162,11 +162,11 @@
         },
         {
           "name": "transactions_hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>"
+          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
         },
         {
           "name": "rejected_transactions_hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>"
+          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
         },
         {
           "name": "view_change_proofs",
@@ -174,7 +174,7 @@
         },
         {
           "name": "invalidated_blocks_hashes",
-          "ty": "Vec<iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>>"
+          "ty": "Vec<iroha_schema::iroha_crypto::hash::HashOf>"
         },
         {
           "name": "genesis_topology",
@@ -322,7 +322,7 @@
       "declarations": [
         {
           "name": "hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>"
+          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
         }
       ]
     }
@@ -2689,7 +2689,7 @@
       ]
     }
   },
-  "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>": {
+  "iroha_schema::iroha_crypto::hash::HashOf": {
     "TupleStruct": {
       "types": [
         "[u8; 32]"
@@ -2697,13 +2697,6 @@
     }
   },
   "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::sumeragi::view_change::Proof>": {
-    "TupleStruct": {
-      "types": [
-        "[u8; 32]"
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>": {
     "TupleStruct": {
       "types": [
         "[u8; 32]"

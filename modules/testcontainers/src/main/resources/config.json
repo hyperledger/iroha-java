@@ -1,0 +1,98 @@
+{
+  "PUBLIC_KEY": "ed0120bbc1503cceaa4ab614fe7252af1bf7e743a0814f5e67a3d6d2c7090fd687a4f9",
+  "PRIVATE_KEY": {
+    "digest_function": "ed25519",
+    "payload": "bd52333ea4c3558dbb65f4d0c32cc33bc09f99b2fe1255ee388c6fbc8c777742bbc1503cceaa4ab614fe7252af1bf7e743a0814f5e67a3d6d2c7090fd687a4f9"
+  },
+  "KURA": {
+    "BLOCKS_PER_STORAGE_FILE": 1000,
+    "BLOCK_STORE_PATH": "./blocks",
+    "INIT_MODE": "strict",
+    "MAILBOX": 100
+  },
+  "SUMERAGI": {
+    "PEER_ID": {
+      "address": "127.0.0.1:1337",
+      "public_key": "ed0120bbc1503cceaa4ab614fe7252af1bf7e743a0814f5e67a3d6d2c7090fd687a4f9"
+    },
+    "BLOCK_TIME_MS": 1000,
+    "TRUSTED_PEERS": [
+      {
+        "address": "127.0.0.1:1337",
+        "public_key": "ed0120bbc1503cceaa4ab614fe7252af1bf7e743a0814f5e67a3d6d2c7090fd687a4f9"
+      }
+    ],
+    "COMMIT_TIME_MS": 1000,
+    "TX_RECEIPT_TIME_MS": 200,
+    "N_TOPOLOGY_SHIFTS_BEFORE_RESHUFFLE": 1,
+    "MAX_INSTRUCTION_NUMBER": 4096,
+    "MAILBOX": 100
+  },
+  "TORII": {
+    "P2P_ADDR": "127.0.0.1:1337",
+    "API_URL": "127.0.0.1:8080",
+    "TELEMETRY_URL": "127.0.0.1:8180",
+    "MAX_TRANSACTION_SIZE": 32768,
+    "MAX_SUMERAGI_MESSAGE_SIZE": 16384000,
+    "MAX_INSTRUCTION_NUMBER": 4096
+  },
+  "BLOCK_SYNC": {
+    "GOSSIP_PERIOD_MS": 10000,
+    "BATCH_SIZE": 4,
+    "MAILBOX": 100
+  },
+  "QUEUE": {
+    "MAXIMUM_TRANSACTIONS_IN_BLOCK": 8192,
+    "MAXIMUM_TRANSACTIONS_IN_QUEUE": 65536,
+    "TRANSACTION_TIME_TO_LIVE_MS": 86400000,
+    "FUTURE_THRESHOLD_MS": 1000
+  },
+  "LOGGER": {
+    "MAX_LOG_LEVEL": "DEBUG",
+    "TELEMETRY_CAPACITY": 1000,
+    "COMPACT_MODE": false,
+    "LOG_FILE_PATH": null
+  },
+  "GENESIS": {
+    "ACCOUNT_PUBLIC_KEY": "ed012038f93abc7819947a0195e1d25f670dedb2e0e509ef9bb6bcffd2c4a187d242d0",
+    "ACCOUNT_PRIVATE_KEY": {
+      "digest_function": "ed25519",
+      "payload": "8134cd3365b61bd1da8b86ead45064074ddc84633838cd51ea03ff346a62ac8c38f93abc7819947a0195e1d25f670dedb2e0e509ef9bb6bcffd2c4a187d242d0"
+    },
+    "WAIT_FOR_PEERS_RETRY_COUNT": 100,
+    "WAIT_FOR_PEERS_RETRY_PERIOD_MS": 500,
+    "GENESIS_SUBMISSION_DELAY_MS": 1000
+  },
+  "WSV": {
+    "ASSET_METADATA_LIMITS": {
+      "max_len": 1048576,
+      "max_entry_byte_size": 4096
+    },
+    "ASSET_DEFINITION_METADATA_LIMITS": {
+      "max_len": 1048576,
+      "max_entry_byte_size": 4096
+    },
+    "ACCOUNT_METADATA_LIMITS": {
+      "max_len": 1048576,
+      "max_entry_byte_size": 4096
+    },
+    "DOMAIN_METADATA_LIMITS": {
+      "max_len": 1048576,
+      "max_entry_byte_size": 4096
+    },
+    "IDENT_LENGTH_LIMITS": {
+      "min": 1,
+      "max": 128
+    }
+  },
+  "TELEMETRY": {
+    "NAME": null,
+    "URL": null,
+    "MIN_PERIOD": 1,
+    "MAX_EXPONENT": 4,
+    "FILE": null
+  },
+  "NETWORK": {
+    "MAILBOX": 100
+  }
+}

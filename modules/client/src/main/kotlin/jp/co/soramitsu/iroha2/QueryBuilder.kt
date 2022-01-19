@@ -1,18 +1,19 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
-import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.query._VersionedSignedQueryRequestV1
+import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.signature.SignatureOf
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 
 class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: ResultExtractor<R>) {
 
@@ -21,7 +22,7 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: String, domain: String) = this.account(AccountId(accountName, domain))
+    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(accountName, domainId))
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -37,18 +38,13 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             checkNotNull(accountId) { "Account Id of the sender is mandatory" }
         )
         val encodedPayload = Payload.encode(payload)
-        val signature = Signature(
+        val signature = SignatureOf<Payload>(
             keyPair.public.toIrohaPublicKey(),
             keyPair.private.sign(encodedPayload)
         )
 
         val query = VersionedSignedQueryRequest.V1(
-            _VersionedSignedQueryRequestV1(
-                SignedQueryRequest(
-                    payload,
-                    signature
-                )
-            )
+            SignedQueryRequest(payload, signature)
         )
         return QueryAndExtractor(query, resultExtractor)
     }
@@ -61,18 +57,23 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AccountsExtractor
         )
 
-        fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) = QueryBuilder(
+        fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBuilder(
             Queries.findAccountKeyValueByIdAndKey(accountId, key),
             ValueExtractor
         )
 
-        fun findAccountsByName(name: String) = QueryBuilder(
+        fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) =
+            findAccountKeyValueByIdAndKey(accountId, key.asName())
+
+        fun findAccountsByName(name: Name) = QueryBuilder(
             Queries.findAccountsByName(name),
             AccountsExtractor
         )
 
-        fun findAccountsByDomainName(domain: String) = QueryBuilder(
-            Queries.findAccountsByDomainName(domain),
+        fun findAccountsByName(name: String) = findAccountsByName(name.asName())
+
+        fun findAccountsByDomainId(domainId: DomainId) = QueryBuilder(
+            Queries.findAccountsByDomainId(domainId),
             AccountsExtractor
         )
 
@@ -86,10 +87,12 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AssetDefinitionsExtractor
         )
 
-        fun findAssetsByName(name: String) = QueryBuilder(
+        fun findAssetsByName(name: Name) = QueryBuilder(
             Queries.findAssetsByName(name),
             AssetsExtractor
         )
+
+        fun findAssetsByName(name: String) = findAssetsByName(name.asName())
 
         fun findAssetsByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findAssetsByAccountId(accountId),
@@ -106,28 +109,26 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AssetExtractor
         )
 
-        fun findAssetsByDomainName(domain: String) = QueryBuilder(
-            Queries.findAssetsByDomainName(domain),
+        fun findAssetsByDomainId(domainId: DomainId) = QueryBuilder(
+            Queries.findAssetsByDomainId(domainId),
             AssetsExtractor
         )
 
-        fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) =
-            QueryBuilder(
-                Queries.findAssetsByAssetDefinitionId(assetDefinition),
-                AssetsExtractor
-            )
+        fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = QueryBuilder(
+            Queries.findAssetsByAssetDefinitionId(assetDefinition),
+            AssetsExtractor
+        )
 
-        fun findAllAssetsDefinitions(assetDefinition: DefinitionId) =
-            QueryBuilder(
-                Queries.findAssetsByAssetDefinitionId(assetDefinition),
-                AssetDefinitionsExtractor
-            )
+        fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = QueryBuilder(
+            Queries.findAssetsByAssetDefinitionId(assetDefinition),
+            AssetDefinitionsExtractor
+        )
 
-        fun findAssetsByDomainNameAndAssetDefinitionId(
-            domain: String,
+        fun findAssetsByDomainIdAndAssetDefinitionId(
+            domainId: DomainId,
             assetDefinition: DefinitionId
         ) = QueryBuilder(
-            Queries.findAssetsByDomainNameAndAssetDefinitionId(domain, assetDefinition),
+            Queries.findAssetsByDomainIdAndAssetDefinitionId(domainId, assetDefinition),
             AssetsExtractor
         )
 
@@ -136,22 +137,25 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             U32Extractor
         )
 
-        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) = QueryBuilder(
+        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBuilder(
             Queries.findAssetKeyValueByIdAndKey(assetId, key),
             ValueExtractor
         )
 
-        fun findAssetDefinitionKeyValueByIdAndKey(
-            assetDefinition: DefinitionId,
-            key: String
-        ) = QueryBuilder(
-            Queries.findAssetDefinitionKeyValueByIdAndKey(assetDefinition, key),
+        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) =
+            findAssetKeyValueByIdAndKey(assetId, key.asName())
+
+        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: Name) = QueryBuilder(
+            Queries.findAssetDefinitionKeyValueByIdAndKey(id, key),
             ValueExtractor
         )
 
+        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: String) =
+            findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
+
         fun findAllDomains() = QueryBuilder(Queries.findAllDomains(), DomainsExtractor)
 
-        fun findDomainByName(name: String) = QueryBuilder(Queries.findDomainByName(name), DomainExtractor)
+        fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
 
         fun findAllPeers() = QueryBuilder(Queries.findAllPeers(), PeersExtractor)
 

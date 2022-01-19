@@ -7,6 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
+import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.String
@@ -19,7 +21,7 @@ import kotlin.String
  * structure
  */
 public data class SignatureVerificationFail<T0>(
-    public val signature: Signature,
+    public val signature: SignatureOf<Payload>,
     public val reason: String
 ) {
     public companion object :
@@ -27,7 +29,7 @@ public data class SignatureVerificationFail<T0>(
         ScaleWriter<SignatureVerificationFail<out Any>> {
         public override fun read(reader: ScaleCodecReader): SignatureVerificationFail<out Any> = try {
             SignatureVerificationFail(
-                Signature.read(reader),
+                SignatureOf.read(reader) as SignatureOf<Payload>,
                 reader.readString(),
             )
         } catch (ex: Exception) {
@@ -39,7 +41,7 @@ public data class SignatureVerificationFail<T0>(
             instance: SignatureVerificationFail<out        
                 Any>
         ) = try {
-            Signature.write(writer, instance.signature)
+            SignatureOf.write(writer, instance.signature)
             writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

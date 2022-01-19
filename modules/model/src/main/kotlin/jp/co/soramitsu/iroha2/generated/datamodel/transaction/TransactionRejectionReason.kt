@@ -108,6 +108,33 @@ public sealed class TransactionRejectionReason : ModelEnum {
     }
 
     /**
+     * 'WasmExecution' variant
+     */
+    public data class WasmExecution(
+        public val wasmExecutionFail: WasmExecutionFail
+    ) : TransactionRejectionReason() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<WasmExecution>, ScaleWriter<WasmExecution> {
+            public const val DISCRIMINANT: Int = 3
+
+            public override fun read(reader: ScaleCodecReader): WasmExecution = try {
+                WasmExecution(
+                    WasmExecutionFail.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: WasmExecution) = try {
+                WasmExecutionFail.write(writer, instance.wasmExecutionFail)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'SignatureVerification' variant
      */
     public data class SignatureVerification(
@@ -116,7 +143,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<SignatureVerification>, ScaleWriter<SignatureVerification> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): SignatureVerification = try {
                 SignatureVerification(
@@ -143,7 +170,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
         public companion object :
             ScaleReader<UnexpectedGenesisAccountSignature>,
             ScaleWriter<UnexpectedGenesisAccountSignature> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature = try {
                 UnexpectedGenesisAccountSignature()
@@ -171,8 +198,9 @@ public sealed class TransactionRejectionReason : ModelEnum {
             0 -> NotPermitted.read(reader)
             1 -> UnsatisfiedSignatureCondition.read(reader)
             2 -> InstructionExecution.read(reader)
-            3 -> SignatureVerification.read(reader)
-            4 -> UnexpectedGenesisAccountSignature.read(reader)
+            3 -> WasmExecution.read(reader)
+            4 -> SignatureVerification.read(reader)
+            5 -> UnexpectedGenesisAccountSignature.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -182,8 +210,9 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 0 -> NotPermitted.write(writer, instance as NotPermitted)
                 1 -> UnsatisfiedSignatureCondition.write(writer, instance as UnsatisfiedSignatureCondition)
                 2 -> InstructionExecution.write(writer, instance as InstructionExecution)
-                3 -> SignatureVerification.write(writer, instance as SignatureVerification)
-                4 -> UnexpectedGenesisAccountSignature.write(
+                3 -> WasmExecution.write(writer, instance as WasmExecution)
+                4 -> SignatureVerification.write(writer, instance as SignatureVerification)
+                5 -> UnexpectedGenesisAccountSignature.write(
                     writer,
                     instance as
                         UnexpectedGenesisAccountSignature
