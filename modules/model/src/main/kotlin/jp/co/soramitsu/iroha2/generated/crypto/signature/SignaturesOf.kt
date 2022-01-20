@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.collections.Map

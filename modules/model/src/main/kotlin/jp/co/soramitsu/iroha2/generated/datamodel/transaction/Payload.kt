@@ -12,6 +12,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Long
+import kotlin.collections.Map
 
 /**
  * Payload
@@ -47,7 +49,7 @@ public data class Payload(
             writer.writeUint64(instance.timeToLiveMs)
             writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
-            instance.metadata.forEach { (key, value) ->
+            instance.metadata.forEach { (key, value) ->  
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

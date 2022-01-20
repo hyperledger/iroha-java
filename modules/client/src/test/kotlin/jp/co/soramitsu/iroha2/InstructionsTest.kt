@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.HttpResponseValidator
-import io.ktor.client.features.logging.Logging
-import io.ktor.client.features.websocket.WebSockets
-import io.ktor.client.utils.EmptyContent.status
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+import java.security.SecureRandom
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
@@ -29,13 +29,6 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import java.math.BigDecimal
-import java.math.MathContext
-import java.math.RoundingMode
-import java.security.SecureRandom
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.delay
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -47,7 +40,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(300)
+@Timeout(30)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client

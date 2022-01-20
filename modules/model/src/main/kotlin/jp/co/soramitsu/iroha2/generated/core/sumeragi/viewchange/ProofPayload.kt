@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.hash.HashOf
+import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.wrapException
 
 /**

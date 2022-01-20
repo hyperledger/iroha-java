@@ -1,16 +1,16 @@
 package jp.co.soramitsu.iroha2
 
+import java.math.BigInteger
+import java.security.KeyPair
+import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
+import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.signature.SignatureOf
-import java.math.BigInteger
-import java.security.KeyPair
-import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
@@ -38,13 +38,13 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             checkNotNull(accountId) { "Account Id of the sender is mandatory" }
         )
         val encodedPayload = Payload.encode(payload)
-        val signature = SignatureOf<Payload>(
+        val signature = Signature(
             keyPair.public.toIrohaPublicKey(),
             keyPair.private.sign(encodedPayload)
         )
 
         val query = VersionedSignedQueryRequest.V1(
-            SignedQueryRequest(payload, signature)
+            SignedQueryRequest(payload, signature.asSignatureOf())
         )
         return QueryAndExtractor(query, resultExtractor)
     }

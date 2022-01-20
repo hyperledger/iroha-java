@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.collections.Map
 
 /**
  * PermissionToken
@@ -33,7 +34,7 @@ public data class PermissionToken(
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
             Name.write(writer, instance.name)
             writer.writeCompact(instance.params.size)
-            instance.params.forEach { (key, value) ->
+            instance.params.forEach { (key, value) ->  
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

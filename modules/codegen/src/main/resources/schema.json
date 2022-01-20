@@ -5,22 +5,22 @@
       "value": "iroha_data_model::expression::EvaluatesTo<iroha_data_model::Value>"
     }
   },
-  "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>>": {
+  "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>>": {
     "Map": {
       "key": "iroha_crypto::PublicKey",
-      "value": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>"
+      "value": "iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>"
     }
   },
-  "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>>": {
+  "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>>": {
     "Map": {
       "key": "iroha_crypto::PublicKey",
-      "value": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>"
+      "value": "iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>"
     }
   },
-  "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
+  "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
     "Map": {
       "key": "iroha_crypto::PublicKey",
-      "value": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
+      "value": "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
     }
   },
   "BTreeMap<iroha_data_model::Name, iroha_data_model::Value>": {
@@ -47,11 +47,14 @@
       "value": "iroha_data_model::asset::Asset"
     }
   },
+  "BTreeSet<iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>>": {
+    "Vec": "iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>"
+  },
+  "BTreeSet<iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
+    "Vec": "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
+  },
   "BTreeSet<iroha_data_model::permissions::PermissionToken>": {
     "Vec": "iroha_data_model::permissions::PermissionToken"
-  },
-  "BTreeSet<iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
-    "Vec": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
   },
   "FixedPoint<i64>": {
     "FixedPoint": {
@@ -108,6 +111,15 @@
   "Vec<iroha_crypto::PublicKey>": {
     "Vec": "iroha_crypto::PublicKey"
   },
+  "Vec<iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>>": {
+    "Vec": "iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>"
+  },
+  "Vec<iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>>": {
+    "Vec": "iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>"
+  },
+  "Vec<iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
+    "Vec": "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
+  },
   "Vec<iroha_data_model::Value>": {
     "Vec": "iroha_data_model::Value"
   },
@@ -125,12 +137,6 @@
   },
   "Vec<iroha_data_model::transaction::VersionedValidTransaction>": {
     "Vec": "iroha_data_model::transaction::VersionedValidTransaction"
-  },
-  "Vec<iroha_schema::iroha_crypto::hash::HashOf>": {
-    "Vec": "iroha_schema::iroha_crypto::hash::HashOf"
-  },
-  "Vec<iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>": {
-    "Vec": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
   },
   "Vec<u8>": {
     "Vec": "u8"
@@ -158,15 +164,15 @@
         },
         {
           "name": "previous_block_hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
+          "ty": "iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
         },
         {
           "name": "transactions_hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
+          "ty": "iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>"
         },
         {
           "name": "rejected_transactions_hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
+          "ty": "iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>"
         },
         {
           "name": "view_change_proofs",
@@ -174,7 +180,7 @@
         },
         {
           "name": "invalidated_blocks_hashes",
-          "ty": "Vec<iroha_schema::iroha_crypto::hash::HashOf>"
+          "ty": "Vec<iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>>"
         },
         {
           "name": "genesis_topology",
@@ -205,6 +211,28 @@
       ]
     }
   },
+  "iroha_core::block::ValidBlock": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "header",
+          "ty": "iroha_core::block::BlockHeader"
+        },
+        {
+          "name": "rejected_transactions",
+          "ty": "Vec<iroha_data_model::transaction::VersionedRejectedTransaction>"
+        },
+        {
+          "name": "transactions",
+          "ty": "Vec<iroha_data_model::transaction::VersionedValidTransaction>"
+        },
+        {
+          "name": "signatures",
+          "ty": "BTreeSet<iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>>"
+        }
+      ]
+    }
+  },
   "iroha_core::block::VersionedCommittedBlock": {
     "Enum": {
       "variants": [
@@ -212,6 +240,17 @@
           "name": "V1",
           "discriminant": 1,
           "ty": "iroha_core::block::CommittedBlock"
+        }
+      ]
+    }
+  },
+  "iroha_core::block::VersionedValidBlock": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "V1",
+          "discriminant": 1,
+          "ty": "iroha_core::block::ValidBlock"
         }
       ]
     }
@@ -303,7 +342,7 @@
         },
         {
           "name": "at_block",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
+          "ty": "iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
         },
         {
           "name": "view_change_proofs",
@@ -322,7 +361,7 @@
       "declarations": [
         {
           "name": "hash",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf"
+          "ty": "iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>"
         }
       ]
     }
@@ -361,11 +400,11 @@
       "declarations": [
         {
           "name": "previous_proof",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::sumeragi::view_change::Proof>"
+          "ty": "iroha_crypto::hash::HashOf<iroha_core::sumeragi::view_change::Proof>"
         },
         {
           "name": "latest_block",
-          "ty": "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
+          "ty": "iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>"
         },
         {
           "name": "reason",
@@ -416,6 +455,48 @@
       ]
     }
   },
+  "iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
+  "iroha_crypto::hash::HashOf<iroha_core::block::VersionedValidBlock>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
+  "iroha_crypto::hash::HashOf<iroha_core::sumeragi::view_change::Proof>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
+  "iroha_crypto::hash::HashOf<iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
+  "iroha_crypto::hash::HashOf<iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
+  "iroha_crypto::hash::HashOf<iroha_data_model::transaction::VersionedTransaction>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::hash::Hash"
+      ]
+    }
+  },
   "iroha_crypto::signature::Signature": {
     "Struct": {
       "declarations": [
@@ -430,12 +511,47 @@
       ]
     }
   },
+  "iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::signature::Signature"
+      ]
+    }
+  },
+  "iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::signature::Signature"
+      ]
+    }
+  },
+  "iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::signature::Signature"
+      ]
+    }
+  },
+  "iroha_crypto::signature::SignatureOf<iroha_data_model::query::Payload>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::signature::Signature"
+      ]
+    }
+  },
+  "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_crypto::signature::Signature"
+      ]
+    }
+  },
   "iroha_crypto::signature::SignatureVerificationFail<iroha_data_model::transaction::Payload>": {
     "Struct": {
       "declarations": [
         {
           "name": "signature",
-          "ty": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
+          "ty": "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
         },
         {
           "name": "reason",
@@ -449,7 +565,7 @@
       "declarations": [
         {
           "name": "signatures",
-          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>>"
+          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>>"
         }
       ]
     }
@@ -459,7 +575,7 @@
       "declarations": [
         {
           "name": "signatures",
-          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>>"
+          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>>"
         }
       ]
     }
@@ -469,7 +585,7 @@
       "declarations": [
         {
           "name": "signatures",
-          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>"
+          "ty": "BTreeMap<iroha_crypto::PublicKey, iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>"
         }
       ]
     }
@@ -1279,7 +1395,7 @@
       "declarations": [
         {
           "name": "collection",
-          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>"
+          "ty": "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>"
         },
         {
           "name": "element",
@@ -1293,11 +1409,11 @@
       "declarations": [
         {
           "name": "collection",
-          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>"
+          "ty": "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>"
         },
         {
           "name": "elements",
-          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>"
+          "ty": "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>"
         }
       ]
     }
@@ -1307,11 +1423,11 @@
       "declarations": [
         {
           "name": "collection",
-          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>"
+          "ty": "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>"
         },
         {
           "name": "elements",
-          "ty": "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>"
+          "ty": "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>"
         }
       ]
     }
@@ -1354,7 +1470,7 @@
       ]
     }
   },
-  "iroha_data_model::expression::EvaluatesTo<alloc::vec::Vec<iroha_data_model::Value>>": {
+  "iroha_data_model::expression::EvaluatesTo<Vec<iroha_data_model::Value>>": {
     "Struct": {
       "declarations": [
         {
@@ -1976,6 +2092,65 @@
       ]
     }
   },
+  "iroha_data_model::merkle::Leaf<iroha_data_model::transaction::VersionedTransaction>": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "hash",
+          "ty": "iroha_crypto::hash::HashOf<iroha_data_model::transaction::VersionedTransaction>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::merkle::MerkleTree<iroha_data_model::transaction::VersionedTransaction>": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "root_node",
+          "ty": "iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Subtree",
+          "discriminant": 0,
+          "ty": "iroha_data_model::merkle::Subtree<iroha_data_model::transaction::VersionedTransaction>"
+        },
+        {
+          "name": "Leaf",
+          "discriminant": 1,
+          "ty": "iroha_data_model::merkle::Leaf<iroha_data_model::transaction::VersionedTransaction>"
+        },
+        {
+          "name": "Empty",
+          "discriminant": 2,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::merkle::Subtree<iroha_data_model::transaction::VersionedTransaction>": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "left",
+          "ty": "iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>"
+        },
+        {
+          "name": "right",
+          "ty": "iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>"
+        },
+        {
+          "name": "hash",
+          "ty": "iroha_crypto::hash::HashOf<iroha_data_model::merkle::Node<iroha_data_model::transaction::VersionedTransaction>>"
+        }
+      ]
+    }
+  },
   "iroha_data_model::metadata::Metadata": {
     "Struct": {
       "declarations": [
@@ -2179,7 +2354,7 @@
         },
         {
           "name": "signature",
-          "ty": "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::query::Payload>"
+          "ty": "iroha_crypto::signature::SignatureOf<iroha_data_model::query::Payload>"
         }
       ]
     }
@@ -2555,7 +2730,7 @@
         },
         {
           "name": "signatures",
-          "ty": "BTreeSet<iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>"
+          "ty": "BTreeSet<iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>>"
         }
       ]
     }
@@ -2681,83 +2856,6 @@
   },
   "iroha_schema::Compact<u128>": {
     "Int": "Compact"
-  },
-  "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::block::VersionedCommittedBlock>": {
-    "TupleStruct": {
-      "types": [
-        "[u8; 32]"
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::hash::HashOf": {
-    "TupleStruct": {
-      "types": [
-        "[u8; 32]"
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::hash::HashOf<iroha_core::sumeragi::view_change::Proof>": {
-    "TupleStruct": {
-      "types": [
-        "[u8; 32]"
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::block::CommittedBlock>": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "public_key",
-          "ty": "iroha_crypto::PublicKey"
-        },
-        {
-          "name": "signature",
-          "ty": "Vec<u8>"
-        }
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_core::sumeragi::view_change::Proof>": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "public_key",
-          "ty": "iroha_crypto::PublicKey"
-        },
-        {
-          "name": "signature",
-          "ty": "Vec<u8>"
-        }
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::query::Payload>": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "public_key",
-          "ty": "iroha_crypto::PublicKey"
-        },
-        {
-          "name": "signature",
-          "ty": "Vec<u8>"
-        }
-      ]
-    }
-  },
-  "iroha_schema::iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "public_key",
-          "ty": "iroha_crypto::PublicKey"
-        },
-        {
-          "name": "signature",
-          "ty": "Vec<u8>"
-        }
-      ]
-    }
   },
   "u128": {
     "Int": "FixedWidth"

@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.signature.SignatureOf
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
@@ -18,9 +17,13 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
+import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+
+fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
 fun String.asDomainId() = DomainId(Name(this))
 
@@ -101,10 +104,10 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
                 .payload
                 .let { Payload.encode(it) }
             val signatures = keypairs.map {
-                SignatureOf<Payload>(
+                Signature(
                     it.public.toIrohaPublicKey(),
                     it.private.sign(encodedPayload)
-                )
+                ).asSignatureOf<Payload>()
             }.toSet()
 
             VersionedTransaction.V1(

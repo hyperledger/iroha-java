@@ -7,7 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.hash.HashOf
+import jp.co.soramitsu.iroha2.generated.core.block.VersionedValidBlock
+import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_core::sumeragi::view_change::CommitTimeout' regular structure
  */
 public data class CommitTimeout(
-    public val hash: HashOf<out Any>
+    public val hash: HashOf<VersionedValidBlock>
 ) {
     public companion object : ScaleReader<CommitTimeout>, ScaleWriter<CommitTimeout> {
         public override fun read(reader: ScaleCodecReader): CommitTimeout = try {
             CommitTimeout(
-                HashOf.read(reader),
+                HashOf.read(reader) as HashOf<VersionedValidBlock>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

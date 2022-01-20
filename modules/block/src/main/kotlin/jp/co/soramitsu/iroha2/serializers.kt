@@ -9,13 +9,13 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
+import java.io.ByteArrayOutputStream
+import java.lang.reflect.Type
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import java.io.ByteArrayOutputStream
-import java.lang.reflect.Type
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.javaType
 
@@ -23,6 +23,7 @@ val GSON: Gson by lazy {
     GsonBuilder()
         .setPrettyPrinting()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .enableComplexMapKeySerialization()
         .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
         .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
         .registerTypeAdapter(Metadata::class.java, MetadataSerializer)

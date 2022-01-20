@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.collections.Map
 
 /**
  * Metadata
@@ -30,7 +31,7 @@ public data class Metadata(
 
         public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
             writer.writeCompact(instance.map.size)
-            instance.map.forEach { (key, value) ->
+            instance.map.forEach { (key, value) ->  
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

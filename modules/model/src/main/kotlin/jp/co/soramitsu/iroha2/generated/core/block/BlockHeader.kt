@@ -9,7 +9,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.sumeragi.networktopology.Topology
 import jp.co.soramitsu.iroha2.generated.core.sumeragi.viewchange.ProofChain
-import jp.co.soramitsu.iroha2.generated.schema.irohacrypto.hash.HashOf
+import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
+import jp.co.soramitsu.iroha2.generated.datamodel.merkle.MerkleTree
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.collections.List
@@ -23,10 +25,10 @@ public data class BlockHeader(
     public val timestamp: BigInteger,
     public val height: BigInteger,
     public val previousBlockHash: HashOf<VersionedCommittedBlock>,
-    public val transactionsHash: HashOf<out Any>,
-    public val rejectedTransactionsHash: HashOf<out Any>,
+    public val transactionsHash: HashOf<MerkleTree<VersionedTransaction>>,
+    public val rejectedTransactionsHash: HashOf<MerkleTree<VersionedTransaction>>,
     public val viewChangeProofs: ProofChain,
-    public val invalidatedBlocksHashes: List<HashOf<out Any>>,
+    public val invalidatedBlocksHashes: List<HashOf<VersionedValidBlock>>,
     public val genesisTopology: Topology?
 ) {
     public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
@@ -35,10 +37,13 @@ public data class BlockHeader(
                 reader.readUint128(),
                 reader.readUint64(),
                 HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
-                HashOf.read(reader),
-                HashOf.read(reader),
+                HashOf.read(reader) as HashOf<MerkleTree<VersionedTransaction>>,
+                HashOf.read(reader) as HashOf<MerkleTree<VersionedTransaction>>,
                 ProofChain.read(reader),
-                reader.readVec(reader.readCompactInt()) { HashOf.read(reader) },
+                reader.readVec(reader.readCompactInt()) {
+                    HashOf.read(reader) as
+                        HashOf<VersionedValidBlock>
+                },
                 reader.readNullable(Topology),
             )
         } catch (ex: Exception) {
