@@ -8,10 +8,10 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 
 /**
  * SetKeyValueBox
@@ -20,14 +20,14 @@ import kotlin.String
  */
 public data class SetKeyValueBox(
     public val objectId: EvaluatesTo<IdBox>,
-    public val key: EvaluatesTo<String>,
+    public val key: EvaluatesTo<Name>,
     public val `value`: EvaluatesTo<Value>
 ) {
     public companion object : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
         public override fun read(reader: ScaleCodecReader): SetKeyValueBox = try {
             SetKeyValueBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
             )
         } catch (ex: Exception) {

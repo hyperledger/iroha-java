@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 

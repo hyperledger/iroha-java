@@ -7,10 +7,10 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 
 /**
  * FindAssetKeyValueByIdAndKey
@@ -19,7 +19,7 @@ import kotlin.String
  */
 public data class FindAssetKeyValueByIdAndKey(
     public val id: EvaluatesTo<Id>,
-    public val key: EvaluatesTo<String>
+    public val key: EvaluatesTo<Name>
 ) {
     public companion object :
         ScaleReader<FindAssetKeyValueByIdAndKey>,
@@ -27,7 +27,7 @@ public data class FindAssetKeyValueByIdAndKey(
         public override fun read(reader: ScaleCodecReader): FindAssetKeyValueByIdAndKey = try {
             FindAssetKeyValueByIdAndKey(
                 EvaluatesTo.read(reader) as EvaluatesTo<Id>,
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

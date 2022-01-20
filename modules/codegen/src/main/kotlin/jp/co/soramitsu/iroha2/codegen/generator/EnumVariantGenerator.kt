@@ -4,9 +4,11 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumVariantBlueprint
+import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 
 object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
@@ -58,10 +60,18 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
     override fun implSuperClasses(blueprint: EnumVariantBlueprint, clazz: TypeSpec.Builder) {
         super.implSuperClasses(blueprint, clazz)
-        clazz.superclass(
-            ClassName(
-                blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className
-            )
-        )
+
+        val className = ClassName(blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className)
+        val generics = blueprint.parentBlueprint.source.generics
+
+        if (generics.isNotEmpty()) {
+            className.parameterizedBy(
+                generics.map {
+                    resolveKotlinType(it.requireValue())
+                }
+            ).also { clazz.superclass(it) }
+        } else {
+            clazz.superclass(className)
+        }
     }
 }

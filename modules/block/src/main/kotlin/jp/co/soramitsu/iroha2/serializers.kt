@@ -11,6 +11,7 @@ import com.google.gson.JsonSerializer
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import java.io.ByteArrayOutputStream
@@ -22,11 +23,13 @@ val GSON: Gson by lazy {
     GsonBuilder()
         .setPrettyPrinting()
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+        .enableComplexMapKeySerialization()
         .registerTypeHierarchyAdapter(ModelEnum::class.java, EnumerationSerializer)
         .registerTypeAdapter(EvaluatesTo::class.java, EvaluatesToSerializer)
         .registerTypeAdapter(Metadata::class.java, MetadataSerializer)
         .registerTypeAdapter(PublicKey::class.java, PublicKeySerializer)
         .registerTypeAdapter(UInt::class.java, UIntSerializer)
+        .registerTypeAdapter(Name::class.java, NameSerializer)
         .create()
 }
 
@@ -75,7 +78,7 @@ object MetadataSerializer : JsonSerializer<Metadata> {
     override fun serialize(src: Metadata, typeOfSrc: Type?, context: JsonSerializationContext): JsonElement {
         val jsonObject = JsonObject()
         src.map.forEach { (key, value) ->
-            jsonObject.add(key, EnumerationSerializer.serialize(value, null, context))
+            jsonObject.add(key.string, EnumerationSerializer.serialize(value, null, context))
         }
         return jsonObject
     }
@@ -100,5 +103,14 @@ object PublicKeySerializer : JsonSerializer<PublicKey> {
 object UIntSerializer : JsonSerializer<UInt> {
     override fun serialize(src: UInt, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         return context.serialize(src.toLong())
+    }
+}
+
+/**
+ * Custom serializer of **[Name]**
+ */
+object NameSerializer : JsonSerializer<Name> {
+    override fun serialize(src: Name, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
+        return context.serialize(src.string)
     }
 }

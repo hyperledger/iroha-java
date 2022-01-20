@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
@@ -9,10 +10,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.security.KeyPair
@@ -22,6 +23,7 @@ import kotlin.random.Random
 import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
@@ -30,7 +32,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
     var nonce: Long?
-    var metadata: Lazy<HashMap<String, Value>>
+    var metadata: Lazy<HashMap<Name, Value>>
 
     init {
         accountId = null
@@ -44,7 +46,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: String, domain: String) = this.account(AccountId(accountName, domain))
+    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(accountName, domainId))
 
     fun instructions(vararg instructions: Instruction) = this.apply { this.instructions.value.addAll(instructions) }
 
@@ -67,7 +69,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun buildSigned(vararg keyPairs: KeyPair): VersionedTransaction {
         val payload = Payload(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
-            instructions.value,
+            Executable.Instructions(instructions.value),
             creationTimeMillis ?: fallbackCreationTime(),
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
             nonce,
@@ -79,13 +81,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             Signature(
                 it.public.toIrohaPublicKey(),
                 it.private.sign(encodedPayload)
-            )
+            ).asSignatureOf<Payload>()
         }.toSet()
 
         return VersionedTransaction.V1(
-            _VersionedTransactionV1(
-                Transaction(payload, signatures)
-            )
+            Transaction(payload, signatures)
         )
     }
 
@@ -104,12 +104,23 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetId: AssetId,
         key: String,
         value: Value
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key.asName(), value)) }
+
+    fun setKeyValue(
+        assetId: AssetId,
+        key: Name,
+        value: Value
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
 
     fun removeKeyValue(
         assetId: AssetId,
-        key: String,
+        key: Name,
     ) = this.apply { instructions.value.add(Instructions.removeKeyValue(assetId, key)) }
+
+    fun removeKeyValue(
+        assetId: AssetId,
+        key: String
+    ) = removeKeyValue(assetId, key.asName())
 
     fun mintAsset(
         assetId: AssetId,
@@ -122,10 +133,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
     fun registerDomain(
-        domainName: String,
+        domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
         assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
-    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainName, accounts, assetDefinitions)) }
+    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions)) }
 
     fun registerPeer(
         address: String,

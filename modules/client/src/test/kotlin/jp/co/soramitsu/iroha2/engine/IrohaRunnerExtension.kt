@@ -41,7 +41,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
             ?.let {
                 val container = IrohaContainer { genesis = it.genesis.createInstance() }
                 container.start()
-                val irohaClient = Iroha2Client(container.getApiUrl(), log = true)
+                val irohaClient = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
                 val testClassInstance = invocationContext.target.get()
                 val declaredProperties = testClassInstance::class.declaredMemberProperties
                 setPropertyValue(declaredProperties, testClassInstance, container)
