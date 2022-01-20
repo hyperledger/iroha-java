@@ -135,8 +135,7 @@ object EnumResolver : Resolver<EnumType> {
                 EnumType.Variant(
                     it["name"]!! as String,
                     (it["discriminant"]!! as Double).toInt(),
-                    variantProperty?.let(schemaParser::createAndGetNest),
-                    generics
+                    variantProperty?.let(schemaParser::createAndGetNest)
                 )
             }
             EnumType(name, generics, variants)

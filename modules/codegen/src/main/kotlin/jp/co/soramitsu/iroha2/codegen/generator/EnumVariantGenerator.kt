@@ -62,7 +62,7 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
         super.implSuperClasses(blueprint, clazz)
 
         val className = ClassName(blueprint.parentBlueprint.packageName, blueprint.parentBlueprint.className)
-        val generics = blueprint.source.generics
+        val generics = blueprint.parentBlueprint.source.generics
 
         if (generics.isNotEmpty()) {
             className.parameterizedBy(
