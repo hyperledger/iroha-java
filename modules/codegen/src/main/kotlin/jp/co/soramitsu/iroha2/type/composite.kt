@@ -10,7 +10,7 @@ data class EnumType(
     val variants: List<Variant>
 ) : CompositeType(name, generics) {
 
-    data class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
+    data class Variant(val name: String, val discriminant: Int, val type: TypeNest?, var generics: List<TypeNest> = listOf())
 
     private var resolutionInProgress: Boolean = false
 

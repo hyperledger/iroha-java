@@ -129,15 +129,16 @@ object EnumResolver : Resolver<EnumType> {
         return if (typeValue is Map<*, *> && typeValue["Enum"] != null) {
             val components = (typeValue["Enum"] as Map<String, List<Map<String, Any>>>)["variants"]
                 ?: return null
+            val generics = extractGeneric(name, schemaParser)
             val variants = components.map {
                 val variantProperty = it["ty"] as String?
                 EnumType.Variant(
                     it["name"]!! as String,
                     (it["discriminant"]!! as Double).toInt(),
-                    variantProperty?.let(schemaParser::createAndGetNest)
+                    variantProperty?.let(schemaParser::createAndGetNest),
+                    generics
                 )
             }
-            val generics = extractGeneric(name, schemaParser)
             EnumType(name, generics, variants)
         } else null
     }

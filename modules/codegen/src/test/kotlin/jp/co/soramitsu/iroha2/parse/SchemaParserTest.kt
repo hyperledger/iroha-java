@@ -54,7 +54,7 @@ class SchemaParserTest {
     }
 
     @Test
-    fun `should parse recursive`() {
+    fun `should parse recursive relations`() {
         val schemaJson = """
         {
           "foo::bar::AAA": {
