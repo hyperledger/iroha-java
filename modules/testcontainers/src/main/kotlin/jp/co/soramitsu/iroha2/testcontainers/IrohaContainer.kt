@@ -1,11 +1,5 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
-import java.io.IOException
-import java.net.URL
-import java.nio.file.Files
-import java.nio.file.Path
-import java.time.Duration
-import java.util.UUID.randomUUID
 import jp.co.soramitsu.iroha2.GSON
 import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
 import org.testcontainers.containers.GenericContainer
@@ -13,6 +7,12 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.PullPolicy
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
+import java.io.IOException
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Path
+import java.time.Duration
+import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
