@@ -45,7 +45,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as
 
 open class Iroha2Client(
     open var peerUrl: URL,
-    open var telemetryUrl: URL? = null,
+    open var telemetryUrl: URL,
     open val log: Boolean = false
 ) : AutoCloseable {
 
@@ -247,9 +247,7 @@ open class Iroha2Client(
                     "Genesis account can sign only transactions in the genesis block"
                 is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
                     reason.unsatisfiedSignatureConditionFail.reason
-                else -> throw IllegalArgumentException(
-                    "Unsupported value type `${rejectionReason::class.qualifiedName}`"
-                )
+                is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             }
         }
     }
