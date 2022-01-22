@@ -1,8 +1,8 @@
 package jp.co.soramitsu.iroha2
 
-import java.io.File
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class DeserializerTest {
     @Test
