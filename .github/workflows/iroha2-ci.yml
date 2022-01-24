@@ -25,4 +25,4 @@ jobs:
         arguments: build
     - uses: actions/upload-artifact@v2
       with:
-        path: /modules/*/build/libs/*-1.0-SNAPSHOT.jar
+        path: modules/**/*-1.0-SNAPSHOT.jar
