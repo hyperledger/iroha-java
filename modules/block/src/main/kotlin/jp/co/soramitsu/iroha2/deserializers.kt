@@ -15,10 +15,13 @@ import com.google.crypto.tink.subtle.Hex
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.primaryConstructor
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -31,6 +34,8 @@ val iroha2Mapper = ObjectMapper().also { mapper ->
     module.addDeserializer(IdentifiableBox::class.java, IdentifiableBoxDeserializer())
     module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer())
     module.addDeserializer(IdBox::class.java, IdBoxDeserializer())
+    module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer())
+    module.addDeserializer(Name::class.java, NameDeserializer())
     module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer())
     module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer())
     module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer())
@@ -46,6 +51,18 @@ val iroha2Mapper = ObjectMapper().also { mapper ->
     mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
 }
 
+private fun String.asClass(): Class<*> {
+    return runCatching {
+        Class.forName(this)
+    }.getOrNull() ?: run {
+        when (this) {
+            "kotlin.Long" -> Long::class.java
+            "kotlin.Int" -> Int::class.java
+            else -> null
+        }
+    } ?: throw RuntimeException("Class $this not found")
+}
+
 private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapper: ObjectMapper): T {
     val node = p.readValueAsTree<JsonNode>().fields().next()
     val param = node.key
@@ -58,7 +75,7 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
         ?.firstOrNull()?.type?.toString()
         ?: throw RuntimeException("Subtype parameter not found by $param")
 
-    val toConvert: ObjectNode
+    val toConvert: JsonNode
     if (T::class.java.isAssignableFrom(Instruction::class.java)) {
         var jsonNode: ObjectNode = node.value.deepCopy()
         jsonNode.fields().forEach { field ->
@@ -73,10 +90,10 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
 
         toConvert = jsonNode
     } else {
-        toConvert = node.value as ObjectNode
+        toConvert = node.value as JsonNode
     }
 
-    val arg = mapper.convertValue(toConvert, Class.forName(argTypeName))
+    val arg = mapper.convertValue(toConvert, argTypeName.asClass())
     return subtype.primaryConstructor?.call(arg) as T
 }
 
@@ -110,10 +127,27 @@ class IdBoxDeserializer : JsonDeserializer<IdBox>() {
     }
 }
 
+class AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetValueType {
+        val text = p.readValueAs(String::class.java)
+        return AssetValueType::class.nestedClasses
+            .findLast { it.simpleName == text }
+            ?.createInstance() as AssetValueType?
+            ?: throw RuntimeException("AssetValueType $text not found")
+    }
+}
+
 class PublicKeyDeserializer : JsonDeserializer<PublicKey>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
         val key = p.readValueAs(String::class.java)
         return PublicKey("ed25519", Hex.decode(key))
+    }
+}
+
+class NameDeserializer : JsonDeserializer<Name>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Name {
+        val key = p.readValueAs(String::class.java)
+        return Name(key)
     }
 }
 

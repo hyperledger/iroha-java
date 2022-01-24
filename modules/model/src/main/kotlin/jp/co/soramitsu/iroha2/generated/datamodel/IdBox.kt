@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
-import kotlin.String
 
 /**
  * IdBox
@@ -107,26 +106,26 @@ public sealed class IdBox : ModelEnum {
     }
 
     /**
-     * 'DomainName' variant
+     * 'DomainId' variant
      */
-    public data class DomainName(
-        public val string: String
+    public data class DomainId(
+        public val id: jp.co.soramitsu.iroha2.generated.datamodel.domain.Id
     ) : IdBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<DomainName>, ScaleWriter<DomainName> {
+        public companion object : ScaleReader<DomainId>, ScaleWriter<DomainId> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): DomainName = try {
-                DomainName(
-                    reader.readString(),
+            public override fun read(reader: ScaleCodecReader): DomainId = try {
+                DomainId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: DomainName) = try {
-                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
+            public override fun write(writer: ScaleCodecWriter, instance: DomainId) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.write(writer, instance.id)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -190,7 +189,7 @@ public sealed class IdBox : ModelEnum {
             0 -> AccountId.read(reader)
             1 -> AssetId.read(reader)
             2 -> AssetDefinitionId.read(reader)
-            3 -> DomainName.read(reader)
+            3 -> DomainId.read(reader)
             4 -> PeerId.read(reader)
             5 -> WorldId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
@@ -202,7 +201,7 @@ public sealed class IdBox : ModelEnum {
                 0 -> AccountId.write(writer, instance as AccountId)
                 1 -> AssetId.write(writer, instance as AssetId)
                 2 -> AssetDefinitionId.write(writer, instance as AssetDefinitionId)
-                3 -> DomainName.write(writer, instance as DomainName)
+                3 -> DomainId.write(writer, instance as DomainId)
                 4 -> PeerId.write(writer, instance as PeerId)
                 5 -> WorldId.write(writer, instance as WorldId)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

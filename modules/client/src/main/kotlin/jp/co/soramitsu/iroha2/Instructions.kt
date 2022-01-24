@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
@@ -33,25 +34,26 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
 
-const val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN = "can_set_key_value_in_user_assets"
-const val CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS = "can_remove_key_value_in_user_assets"
-const val CAN_SET_KEY_VALUE_IN_USER_METADATA = "can_set_key_value_in_user_metadata"
-const val CAN_REMOVE_KEY_VALUE_IN_USER_METADATA = "can_remove_key_value_in_user_metadata"
-const val CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION = "can_set_key_value_in_asset_definition"
-const val CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION = "can_remove_key_value_in_asset_definition"
-const val CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN = "can_mint_user_asset_definitions"
-const val CAN_MINT_USER_ASSETS_DEFINITION = "can_mint_user_asset_definitions"
-const val CAN_BURN_ASSET_WITH_DEFINITION = "can_burn_asset_with_definition"
-const val CAN_BURN_USER_ASSETS_TOKEN = "can_burn_user_assets"
-const val CAN_REGISTER_DOMAINS_TOKEN = "can_register_domains"
-const val CAN_TRANSFER_USER_ASSETS_TOKEN = "can_transfer_user_assets"
-const val CAN_UNREGISTER_ASSET_WITH_DEFINITION = "can_unregister_asset_with_definition"
+val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN by lazy { "can_set_key_value_in_user_assets".asName() }
+val CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS by lazy { "can_remove_key_value_in_user_assets".asName() }
+val CAN_SET_KEY_VALUE_IN_USER_METADATA by lazy { "can_set_key_value_in_user_metadata".asName() }
+val CAN_REMOVE_KEY_VALUE_IN_USER_METADATA by lazy { "can_remove_key_value_in_user_metadata".asName() }
+val CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION by lazy { "can_set_key_value_in_asset_definition".asName() }
+val CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION by lazy { "can_remove_key_value_in_asset_definition".asName() }
+val CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN by lazy { "can_mint_user_asset_definitions".asName() }
+val CAN_MINT_USER_ASSETS_DEFINITION by lazy { "can_mint_user_asset_definitions".asName() }
+val CAN_BURN_ASSET_WITH_DEFINITION by lazy { "can_burn_asset_with_definition".asName() }
+val CAN_BURN_USER_ASSETS_TOKEN by lazy { "can_burn_user_assets".asName() }
+val CAN_REGISTER_DOMAINS_TOKEN by lazy { "can_register_domains".asName() }
+val CAN_TRANSFER_USER_ASSETS_TOKEN by lazy { "can_transfer_user_assets".asName() }
+val CAN_UNREGISTER_ASSET_WITH_DEFINITION by lazy { "can_unregister_asset_with_definition".asName() }
 
-const val ACCOUNT_ID_TOKEN_PARAM_NAME = "account_id"
-const val ASSET_ID_TOKEN_PARAM_NAME = "asset_id"
-const val ASSET_DEFINITION_PARAM_NAME = "asset_definition_id"
+val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
+val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
+val ASSET_DEFINITION_PARAM_NAME by lazy { "asset_definition_id".asName() }
 
 object Instructions {
 
@@ -90,15 +92,15 @@ object Instructions {
      * Instruction for domain registration
      */
     fun registerDomain(
-        domainName: String,
+        domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
         assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
-        metadata: Map<String, Value> = mapOf()
+        metadata: Map<Name, Value> = mapOf()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
                 Domain(
-                    domainName,
+                    domainId,
                     accounts,
                     assetDefinitions,
                     Metadata(metadata)
@@ -161,7 +163,7 @@ object Instructions {
      */
     fun setKeyValue(
         assetId: AssetId,
-        key: String,
+        key: Name,
         value: Value
     ): Instruction.SetKeyValue {
         return Instruction.SetKeyValue(
@@ -176,7 +178,7 @@ object Instructions {
     /**
      * Instruction to remove key value at the object
      */
-    fun removeKeyValue(assetId: AssetId, key: String): Instruction.RemoveKeyValue {
+    fun removeKeyValue(assetId: AssetId, key: Name): Instruction.RemoveKeyValue {
         return Instruction.RemoveKeyValue(
             RemoveKeyValueBox(
                 objectId = IdBox.AssetId(assetId).evaluatesTo(),
