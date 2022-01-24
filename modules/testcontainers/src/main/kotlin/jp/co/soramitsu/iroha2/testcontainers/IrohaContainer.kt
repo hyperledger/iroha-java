@@ -1,5 +1,8 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.GSON
 import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
 import org.testcontainers.containers.GenericContainer
@@ -13,9 +16,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
-import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
