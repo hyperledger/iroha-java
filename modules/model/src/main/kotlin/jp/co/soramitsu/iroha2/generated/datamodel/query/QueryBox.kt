@@ -150,31 +150,31 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
-     * 'FindAccountsByDomainName' variant
+     * 'FindAccountsByDomainId' variant
      */
-    public data class FindAccountsByDomainName(
-        public val findAccountsByDomainName:  
-            jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
+    public data class FindAccountsByDomainId(
+        public val findAccountsByDomainId:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainId
     ) : QueryBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<FindAccountsByDomainName>,
-            ScaleWriter<FindAccountsByDomainName> {
+            ScaleReader<FindAccountsByDomainId>,
+            ScaleWriter<FindAccountsByDomainId> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): FindAccountsByDomainName = try {
-                FindAccountsByDomainName(
-                    jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName.read(reader),
+            public override fun read(reader: ScaleCodecReader): FindAccountsByDomainId = try {
+                FindAccountsByDomainId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainName) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName.write(
+            public override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainId) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainId.write(
                     writer,
-                    instance.findAccountsByDomainName
+                    instance.findAccountsByDomainId
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -372,31 +372,29 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
-     * 'FindAssetsByDomainName' variant
+     * 'FindAssetsByDomainId' variant
      */
-    public data class FindAssetsByDomainName(
-        public val findAssetsByDomainName:  
-            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
+    public data class FindAssetsByDomainId(
+        public val findAssetsByDomainId:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId
     ) : QueryBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object :
-            ScaleReader<FindAssetsByDomainName>,
-            ScaleWriter<FindAssetsByDomainName> {
+        public companion object : ScaleReader<FindAssetsByDomainId>, ScaleWriter<FindAssetsByDomainId> {
             public const val DISCRIMINANT: Int = 11
 
-            public override fun read(reader: ScaleCodecReader): FindAssetsByDomainName = try {
-                FindAssetsByDomainName(
-                    jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName.read(reader),
+            public override fun read(reader: ScaleCodecReader): FindAssetsByDomainId = try {
+                FindAssetsByDomainId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainName) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName.write(
+            public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByDomainId) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId.write(
                     writer,
-                    instance.findAssetsByDomainName
+                    instance.findAssetsByDomainId
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -405,23 +403,23 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
-     * 'FindAssetsByDomainNameAndAssetDefinitionId' variant
+     * 'FindAssetsByDomainIdAndAssetDefinitionId' variant
      */
-    public data class FindAssetsByDomainNameAndAssetDefinitionId(
-        public val findAssetsByDomainNameAndAssetDefinitionId:  
-            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
+    public data class FindAssetsByDomainIdAndAssetDefinitionId(
+        public val findAssetsByDomainIdAndAssetDefinitionId:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId
     ) : QueryBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<FindAssetsByDomainNameAndAssetDefinitionId>,
-            ScaleWriter<FindAssetsByDomainNameAndAssetDefinitionId> {
+            ScaleReader<FindAssetsByDomainIdAndAssetDefinitionId>,
+            ScaleWriter<FindAssetsByDomainIdAndAssetDefinitionId> {
             public const val DISCRIMINANT: Int = 12
 
-            public override fun read(reader: ScaleCodecReader): FindAssetsByDomainNameAndAssetDefinitionId =
+            public override fun read(reader: ScaleCodecReader): FindAssetsByDomainIdAndAssetDefinitionId =
                 try {
-                    FindAssetsByDomainNameAndAssetDefinitionId(
-                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.read(reader),
+                    FindAssetsByDomainIdAndAssetDefinitionId(
+                        jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId.read(reader),
                     )
                 } catch (ex: Exception) {
                     throw wrapException(ex)
@@ -429,11 +427,11 @@ public sealed class QueryBox : ModelEnum {
 
             public override fun write(
                 writer: ScaleCodecWriter,
-                instance: FindAssetsByDomainNameAndAssetDefinitionId
+                instance: FindAssetsByDomainIdAndAssetDefinitionId
             ) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId.write(
+                jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId.write(
                     writer,
-                    instance.findAssetsByDomainNameAndAssetDefinitionId
+                    instance.findAssetsByDomainIdAndAssetDefinitionId
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -575,29 +573,29 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
-     * 'FindDomainByName' variant
+     * 'FindDomainById' variant
      */
-    public data class FindDomainByName(
-        public val findDomainByName:  
-            jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
+    public data class FindDomainById(
+        public val findDomainById:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
     ) : QueryBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<FindDomainByName>, ScaleWriter<FindDomainByName> {
+        public companion object : ScaleReader<FindDomainById>, ScaleWriter<FindDomainById> {
             public const val DISCRIMINANT: Int = 17
 
-            public override fun read(reader: ScaleCodecReader): FindDomainByName = try {
-                FindDomainByName(
-                    jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName.read(reader),
+            public override fun read(reader: ScaleCodecReader): FindDomainById = try {
+                FindDomainById(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: FindDomainByName) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName.write(
+            public override fun write(writer: ScaleCodecWriter, instance: FindDomainById) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById.write(
                     writer,
-                    instance.findDomainByName
+                    instance.findDomainById
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -777,20 +775,20 @@ public sealed class QueryBox : ModelEnum {
             1 -> FindAccountById.read(reader)
             2 -> FindAccountKeyValueByIdAndKey.read(reader)
             3 -> FindAccountsByName.read(reader)
-            4 -> FindAccountsByDomainName.read(reader)
+            4 -> FindAccountsByDomainId.read(reader)
             5 -> FindAllAssets.read(reader)
             6 -> FindAllAssetsDefinitions.read(reader)
             7 -> FindAssetById.read(reader)
             8 -> FindAssetsByName.read(reader)
             9 -> FindAssetsByAccountId.read(reader)
             10 -> FindAssetsByAssetDefinitionId.read(reader)
-            11 -> FindAssetsByDomainName.read(reader)
-            12 -> FindAssetsByDomainNameAndAssetDefinitionId.read(reader)
+            11 -> FindAssetsByDomainId.read(reader)
+            12 -> FindAssetsByDomainIdAndAssetDefinitionId.read(reader)
             13 -> FindAssetQuantityById.read(reader)
             14 -> FindAssetKeyValueByIdAndKey.read(reader)
             15 -> FindAssetDefinitionKeyValueByIdAndKey.read(reader)
             16 -> FindAllDomains.read(reader)
-            17 -> FindDomainByName.read(reader)
+            17 -> FindDomainById.read(reader)
             18 -> FindDomainKeyValueByIdAndKey.read(reader)
             19 -> FindAllPeers.read(reader)
             20 -> FindTransactionsByAccountId.read(reader)
@@ -806,18 +804,18 @@ public sealed class QueryBox : ModelEnum {
                 1 -> FindAccountById.write(writer, instance as FindAccountById)
                 2 -> FindAccountKeyValueByIdAndKey.write(writer, instance as FindAccountKeyValueByIdAndKey)
                 3 -> FindAccountsByName.write(writer, instance as FindAccountsByName)
-                4 -> FindAccountsByDomainName.write(writer, instance as FindAccountsByDomainName)
+                4 -> FindAccountsByDomainId.write(writer, instance as FindAccountsByDomainId)
                 5 -> FindAllAssets.write(writer, instance as FindAllAssets)
                 6 -> FindAllAssetsDefinitions.write(writer, instance as FindAllAssetsDefinitions)
                 7 -> FindAssetById.write(writer, instance as FindAssetById)
                 8 -> FindAssetsByName.write(writer, instance as FindAssetsByName)
                 9 -> FindAssetsByAccountId.write(writer, instance as FindAssetsByAccountId)
                 10 -> FindAssetsByAssetDefinitionId.write(writer, instance as FindAssetsByAssetDefinitionId)
-                11 -> FindAssetsByDomainName.write(writer, instance as FindAssetsByDomainName)
-                12 -> FindAssetsByDomainNameAndAssetDefinitionId.write(
+                11 -> FindAssetsByDomainId.write(writer, instance as FindAssetsByDomainId)
+                12 -> FindAssetsByDomainIdAndAssetDefinitionId.write(
                     writer,
                     instance as
-                        FindAssetsByDomainNameAndAssetDefinitionId
+                        FindAssetsByDomainIdAndAssetDefinitionId
                 )
                 13 -> FindAssetQuantityById.write(writer, instance as FindAssetQuantityById)
                 14 -> FindAssetKeyValueByIdAndKey.write(writer, instance as FindAssetKeyValueByIdAndKey)
@@ -827,7 +825,7 @@ public sealed class QueryBox : ModelEnum {
                         FindAssetDefinitionKeyValueByIdAndKey
                 )
                 16 -> FindAllDomains.write(writer, instance as FindAllDomains)
-                17 -> FindDomainByName.write(writer, instance as FindDomainByName)
+                17 -> FindDomainById.write(writer, instance as FindDomainById)
                 18 -> FindDomainKeyValueByIdAndKey.write(writer, instance as FindDomainKeyValueByIdAndKey)
                 19 -> FindAllPeers.write(writer, instance as FindAllPeers)
                 20 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)

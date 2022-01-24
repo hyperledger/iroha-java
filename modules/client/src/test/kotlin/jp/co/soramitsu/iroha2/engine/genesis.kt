@@ -2,6 +2,8 @@ package jp.co.soramitsu.iroha2.engine
 
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Instructions
+import jp.co.soramitsu.iroha2.asDomainId
+import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
@@ -59,9 +61,9 @@ open class StoreAssetWithMetadata : Genesis(
     )
 ) {
     companion object {
-        const val ASSET_KEY = "key"
+        val ASSET_KEY = "key".asName()
         val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = DefinitionId("foo", DEFAULT_DOMAIN_NAME)
+        val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 }
@@ -81,8 +83,8 @@ open class XorAndValAssets : Genesis(
     companion object {
         const val XOR_QUANTITY = 1L
         const val VAL_QUANTITY = 1L
-        val XOR_DEFINITION_ID = DefinitionId("xor", DEFAULT_DOMAIN_NAME)
-        val VAL_DEFINITION_ID = DefinitionId("val", DEFAULT_DOMAIN_NAME)
+        val XOR_DEFINITION_ID = DefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+        val VAL_DEFINITION_ID = DefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
@@ -99,11 +101,11 @@ open class NewAccountWithMetadata : Genesis(
     )
 ) {
     companion object {
-        const val ACCOUNT_NAME = "foo"
-        const val KEY = "key"
+        val ACCOUNT_NAME = "foo".asName()
+        val KEY = "key".asName()
 
         val VALUE = "value".asValue()
-        val ACCOUNT_ID = AccountId(ACCOUNT_NAME, DEFAULT_DOMAIN_NAME)
+        val ACCOUNT_ID = AccountId(ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
         val KEYPAIR = generateKeyPair()
     }
 }
@@ -113,11 +115,11 @@ open class NewAccountWithMetadata : Genesis(
  */
 open class NewDomain : Genesis(
     rawGenesisBlock(
-        Instructions.registerDomain(DOMAIN_NAME, mapOf(), mapOf())
+        Instructions.registerDomain(DOMAIN_ID, mapOf(), mapOf())
     )
 ) {
     companion object {
-        const val DOMAIN_NAME = "foo_domain"
+        val DOMAIN_ID = "foo_domain".asDomainId()
     }
 }
 
@@ -129,7 +131,7 @@ fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
         listOf(
             GenesisTransaction(
                 listOf(
-                    Instructions.registerDomain(DEFAULT_DOMAIN_NAME, mapOf(), mapOf()),
+                    Instructions.registerDomain(DEFAULT_DOMAIN_ID),
                     Instructions.registerAccount(
                         ALICE_ACCOUNT_ID,
                         listOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),

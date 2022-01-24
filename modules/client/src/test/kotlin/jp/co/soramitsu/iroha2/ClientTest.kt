@@ -19,7 +19,14 @@ class ClientTest {
     @Test
     @WithIroha
     fun health(): Unit = runBlocking {
-        val status = client.health()
-        assert(status == 200)
+        val health = client.health()
+        assert(health == 200)
+    }
+
+    @Test
+    @WithIroha
+    fun status(): Unit = runBlocking {
+        val status = client.status()
+        println(status["blocks"] == 1)
     }
 }

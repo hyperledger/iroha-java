@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
+import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
@@ -48,10 +48,10 @@ class InstructionsTest {
     @Test
     @WithIroha
     fun `register domain instruction committed`(): Unit = runBlocking {
-        val domainName = "new_domain_name"
+        val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerDomain(domainName)
+            registerDomain(domainId)
             buildSigned(ALICE_KEYPAIR)
         }.also {
             Assertions.assertDoesNotThrow {
@@ -59,17 +59,17 @@ class InstructionsTest {
             }
         }
 
-        QueryBuilder.findDomainByName(domainName)
+        QueryBuilder.findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .also { result -> assertEquals(result.name, domainName) }
+            .also { result -> assertEquals(result.id, domainId) }
     }
 
     @Test
     @WithIroha
     fun `register account instruction committed`(): Unit = runBlocking {
-        val newAccountId = AccountId("foo", DEFAULT_DOMAIN_NAME)
+        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerAccount(newAccountId, listOf())
@@ -112,9 +112,9 @@ class InstructionsTest {
     @Test
     @WithIroha
     fun `store asset instruction committed`(): Unit = runBlocking {
-        val pair1 = "key1" to "bar".asValue()
-        val pair2 = "key2" to true.asValue()
-        val pair3 = "key3" to 12345.asValue()
+        val pair1 = "key1".asName() to "bar".asValue()
+        val pair2 = "key2".asName() to true.asValue()
+        val pair3 = "key3".asName() to 12345.asValue()
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -135,7 +135,7 @@ class InstructionsTest {
         val asset = client.sendQuery(findAssetByIdQry)
 
         assertEquals(DEFAULT_ASSET_ID.definitionId.name, asset.id.definitionId.name)
-        assertEquals(DEFAULT_ASSET_ID.definitionId.domainName, asset.id.definitionId.domainName)
+        assertEquals(DEFAULT_ASSET_ID.definitionId.domainId, asset.id.definitionId.domainId)
         when (val value = asset.value) {
             is AssetValue.Store -> {
                 assertEquals(pair1.second.string, value.metadata.map[pair1.first]?.cast<Value.String>()?.string)
@@ -146,7 +146,7 @@ class InstructionsTest {
         }
 
         // try to find saved assets by domain name
-        val findAssetsByDomainNameQry = QueryBuilder.findAssetsByDomainName(DEFAULT_DOMAIN_NAME)
+        val findAssetsByDomainNameQry = QueryBuilder.findAssetsByDomainId(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val assetsByDomainName = client.sendQuery(findAssetsByDomainNameQry)
@@ -190,10 +190,10 @@ class InstructionsTest {
         val asset = client.sendQuery(query)
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
-        assertEquals(aliceAssetId.definitionId.domainName, asset.id.definitionId.domainName)
+        assertEquals(aliceAssetId.definitionId.domainId, asset.id.definitionId.domainId)
         when (val value = asset.value) {
             is AssetValue.Store -> {
-                assertEquals("bar", (value.metadata.map["foo"]?.cast<Value.String>())?.string)
+                assertEquals("bar", (value.metadata.map["foo".asName()]?.cast<Value.String>())?.string)
             }
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
@@ -314,6 +314,16 @@ class InstructionsTest {
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
         val toBurn = 80L
+
+        QueryBuilder.findAllDomains()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.let { value ->
+                println(value)
+            }
+
         val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)

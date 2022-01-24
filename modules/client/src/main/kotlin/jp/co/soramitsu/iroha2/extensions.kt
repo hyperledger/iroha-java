@@ -2,7 +2,9 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
+import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
@@ -10,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction._VersionedTransactionV1
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
@@ -20,6 +21,13 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+
+fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
+
+fun String.asDomainId() = DomainId(Name(this))
+
+fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
@@ -76,8 +84,7 @@ fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean = try {
 fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
 
 fun VersionedTransaction.V1.hash(): ByteArray {
-    return this._VersionedTransactionV1
-        .transaction
+    return this.transaction
         .payload
         .let { Payload.encode(it) }
         .hash()
@@ -93,23 +100,20 @@ fun VersionedTransaction.hash() = when (this) {
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
         is VersionedTransaction.V1 -> {
-            val encodedPayload = _VersionedTransactionV1
-                .transaction
+            val encodedPayload = transaction
                 .payload
                 .let { Payload.encode(it) }
             val signatures = keypairs.map {
                 Signature(
                     it.public.toIrohaPublicKey(),
                     it.private.sign(encodedPayload)
-                )
+                ).asSignatureOf<Payload>()
             }.toSet()
 
             VersionedTransaction.V1(
-                _VersionedTransactionV1(
-                    Transaction(
-                        _VersionedTransactionV1.transaction.payload,
-                        _VersionedTransactionV1.transaction.signatures.plus(signatures)
-                    )
+                Transaction(
+                    transaction.payload,
+                    transaction.signatures.plus(signatures)
                 )
             )
         }
@@ -131,8 +135,10 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is AssetId -> Value.Id(IdBox.AssetId(this))
         is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
+        is DomainId -> Value.Id(IdBox.DomainId(this))
         is IdBox -> Value.Id(this)
         is Hash -> Value.Hash(this)
+        is Name -> Value.Name(this)
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->

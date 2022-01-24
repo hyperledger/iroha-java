@@ -1,11 +1,12 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
@@ -16,17 +17,18 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueB
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainName
-import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainNameAndAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
-import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 
 object Queries {
 
@@ -38,7 +40,7 @@ object Queries {
         return QueryBox.FindAccountById(FindAccountById(accountId.evaluatesTo()))
     }
 
-    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String): QueryBox.FindAccountKeyValueByIdAndKey {
+    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name): QueryBox.FindAccountKeyValueByIdAndKey {
         return QueryBox.FindAccountKeyValueByIdAndKey(
             FindAccountKeyValueByIdAndKey(
                 accountId.evaluatesTo(),
@@ -47,13 +49,13 @@ object Queries {
         )
     }
 
-    fun findAccountsByName(name: String): QueryBox.FindAccountsByName {
+    fun findAccountsByName(name: Name): QueryBox.FindAccountsByName {
         return QueryBox.FindAccountsByName(FindAccountsByName(name.evaluatesTo()))
     }
 
-    fun findAccountsByDomainName(domain: String): QueryBox.FindAccountsByDomainName {
-        return QueryBox.FindAccountsByDomainName(
-            FindAccountsByDomainName(domain.evaluatesTo())
+    fun findAccountsByDomainId(domainId: DomainId): QueryBox.FindAccountsByDomainId {
+        return QueryBox.FindAccountsByDomainId(
+            FindAccountsByDomainId(domainId.evaluatesTo())
         )
     }
 
@@ -65,11 +67,11 @@ object Queries {
         return QueryBox.FindAssetById(FindAssetById(assetId.evaluatesTo()))
     }
 
-    fun findAssetsByDomainName(domain: String): QueryBox.FindAssetsByDomainName {
-        return QueryBox.FindAssetsByDomainName(FindAssetsByDomainName(domain.evaluatesTo()))
+    fun findAssetsByDomainId(domainId: DomainId): QueryBox.FindAssetsByDomainId {
+        return QueryBox.FindAssetsByDomainId(FindAssetsByDomainId(domainId.evaluatesTo()))
     }
 
-    fun findAssetsByName(name: String): QueryBox.FindAssetsByName {
+    fun findAssetsByName(name: Name): QueryBox.FindAssetsByName {
         return QueryBox.FindAssetsByName(FindAssetsByName(name.evaluatesTo()))
     }
 
@@ -83,13 +85,13 @@ object Queries {
         )
     }
 
-    fun findAssetsByDomainNameAndAssetDefinitionId(
-        domain: String,
+    fun findAssetsByDomainIdAndAssetDefinitionId(
+        domainId: DomainId,
         assetDefinition: DefinitionId
-    ): QueryBox.FindAssetsByDomainNameAndAssetDefinitionId {
-        return QueryBox.FindAssetsByDomainNameAndAssetDefinitionId(
-            FindAssetsByDomainNameAndAssetDefinitionId(
-                domain.evaluatesTo(),
+    ): QueryBox.FindAssetsByDomainIdAndAssetDefinitionId {
+        return QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
+            FindAssetsByDomainIdAndAssetDefinitionId(
+                domainId.evaluatesTo(),
                 assetDefinition.evaluatesTo()
             )
         )
@@ -107,7 +109,7 @@ object Queries {
         )
     }
 
-    fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String): QueryBox.FindAssetKeyValueByIdAndKey {
+    fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name): QueryBox.FindAssetKeyValueByIdAndKey {
         return QueryBox.FindAssetKeyValueByIdAndKey(
             FindAssetKeyValueByIdAndKey(
                 assetId.evaluatesTo(),
@@ -118,7 +120,7 @@ object Queries {
 
     fun findAssetDefinitionKeyValueByIdAndKey(
         assetDefinition: DefinitionId,
-        key: String
+        key: Name
     ): QueryBox.FindAssetDefinitionKeyValueByIdAndKey {
         return QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
             FindAssetDefinitionKeyValueByIdAndKey(
@@ -132,8 +134,8 @@ object Queries {
         return QueryBox.FindAllDomains(FindAllDomains())
     }
 
-    fun findDomainByName(name: String): QueryBox.FindDomainByName {
-        return QueryBox.FindDomainByName(FindDomainByName(name.evaluatesTo()))
+    fun findDomainById(domainId: DomainId): QueryBox.FindDomainById {
+        return QueryBox.FindDomainById(FindDomainById(domainId.evaluatesTo()))
     }
 
     fun findAllPeers(): QueryBox.FindAllPeers {
