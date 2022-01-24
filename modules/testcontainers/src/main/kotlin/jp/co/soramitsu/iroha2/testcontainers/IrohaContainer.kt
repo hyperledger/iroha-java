@@ -13,6 +13,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
+import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
@@ -37,7 +40,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv(ENV_GENESIS_ACCOUNT_PUBLIC_KEY.first, ENV_GENESIS_ACCOUNT_PUBLIC_KEY.second)
             .withEnv(ENV_GENESIS_ACCOUNT_PRIVATE_KEY.first, ENV_GENESIS_ACCOUNT_PRIVATE_KEY.second)
             .withEnv(ENV_IROHA2_GENESIS_PATH.first, ENV_IROHA2_GENESIS_PATH.second)
-            .withExposedPorts(API_PORT, P2P_PORT, TELEMETRY_PORT)
+            .withExposedPorts(DEFAULT_API_PORT, DEFAULT_P2P_PORT, DEFAULT_TELEMETRY_PORT)
             .withNetworkAliases(NETWORK_ALIAS)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
@@ -50,7 +53,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 // await genesis was applied and seen in status
                 HttpWaitStrategy()
                     .forStatusCode(200)
-                    .forPort(TELEMETRY_PORT)
+                    .forPort(DEFAULT_TELEMETRY_PORT)
                     .forPath(STATUS_ENDPOINT)
                     .forResponsePredicate { GSON.fromJson(it, Map::class.java)["blocks"]?.equals(1.0) ?: false }
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
@@ -87,18 +90,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Iroha container stopped")
     }
 
-    fun getApiUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(API_PORT), "")
+    fun getApiUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_API_PORT), "")
 
-    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(TELEMETRY_PORT), "")
+    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_TELEMETRY_PORT), "")
 
     companion object {
         const val IROHA_ROOT_PUBLIC_KEY =
             "ed01207233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"
-        const val P2P_PORT = 1337
-        const val API_PORT = 8080
-        const val TELEMETRY_PORT = 8180
         const val NETWORK_ALIAS = "iroha"
-        const val P2P_URL = "$NETWORK_ALIAS:$P2P_PORT"
+        const val P2P_URL = "$NETWORK_ALIAS:$DEFAULT_P2P_PORT"
         const val DEFAULT_IMAGE_TAG = "dev-nightly-f5a8aeb86fad79c35537bc1a9cec9da1f183eb8b"
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
@@ -110,8 +110,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "IROHA_GENESIS_ACCOUNT_PRIVATE_KEY" to """{"digest_function": "ed25519", "payload": "8134cd3365b61bd1da8b86ead45064074ddc84633838cd51ea03ff346a62ac8c38f93abc7819947a0195e1d25f670dedb2e0e509ef9bb6bcffd2c4a187d242d0"}"""
         val ENV_SUMERAGI_MAX_FAULTY_PEERS = "SUMERAGI_MAX_FAULTY_PEERS" to "0"
         val ENV_TORII_P2P_ADDR = "TORII_P2P_ADDR" to P2P_URL
-        val ENV_TORII_API_URL = "TORII_API_URL" to "$NETWORK_ALIAS:$API_PORT"
-        val ENV_TORII_TELEMETRY_URL = "TORII_TELEMETRY_URL" to "$NETWORK_ALIAS:$TELEMETRY_PORT"
+        val ENV_TORII_API_URL = "TORII_API_URL" to "$NETWORK_ALIAS:$DEFAULT_API_PORT"
+        val ENV_TORII_TELEMETRY_URL = "TORII_TELEMETRY_URL" to "$NETWORK_ALIAS:$DEFAULT_TELEMETRY_PORT"
         val ENV_IROHA_PUBLIC_KEY = "IROHA_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY
         val ENV_IROHA_ROOT_PUBLIC_KEY = "IROHA_ROOT_PUBLIC_KEY" to IROHA_ROOT_PUBLIC_KEY
         val ENV_IROHA_PRIVATE_KEY =

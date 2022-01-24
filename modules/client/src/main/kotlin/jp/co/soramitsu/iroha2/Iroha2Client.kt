@@ -45,7 +45,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as
 
 open class Iroha2Client(
     open var peerUrl: URL,
-    open var telemetryUrl: URL,
+    open var telemetryUrl: URL? = URL(peerUrl.protocol, peerUrl.host, DEFAULT_TELEMETRY_PORT, peerUrl.file),
     open val log: Boolean = false
 ) : AutoCloseable {
 
