@@ -11,9 +11,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -27,5 +25,4 @@ jobs:
         arguments: build
     - uses: actions/upload-artifact@v2
       with:
-        name: Package
-        path: build/libs
+        path: /modules/*/build/libs/*-1.0-SNAPSHOT.jar
