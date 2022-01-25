@@ -27,7 +27,7 @@ subprojects {
     apply plugin: 'org.jmailen.kotlinter'
 
     group = 'jp.co.soramitsu.iroha-java'
-    version = '0.0.1-SNAPSHOT'
+    version = 'git rev-parse --short HEAD'.execute().text.trim()
 
     dependencies {
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
