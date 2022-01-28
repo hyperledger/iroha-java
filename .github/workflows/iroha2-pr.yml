@@ -1,8 +1,9 @@
 name: Iroha2-java pull requests workflow
 
 on:
-  pull_request:
-    branches: [ iroha2-dev, iroha2-main ]
+#  pull_request:
+#    branches: [ iroha2-dev, iroha2-main ]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,3 +31,5 @@ jobs:
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
+      - name: debug
+        run: ls ./build
