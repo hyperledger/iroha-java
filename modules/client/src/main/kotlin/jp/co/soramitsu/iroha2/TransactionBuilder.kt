@@ -112,6 +112,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         value: Value
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
 
+    fun setKeyValue(
+        accountId: AccountId,
+        key: Name,
+        value: Value
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
+
     fun removeKeyValue(
         assetId: AssetId,
         key: Name,
@@ -153,6 +159,9 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
 
+    fun grantSetKeyValueAccount(accountId: AccountId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantSetKeyValueMetadata(accountId, target)) }
+
     fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantMintUserAssetsDefinition(assetDefinitionId, target)) }
 
@@ -169,6 +178,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
         instructions.value.add(Instructions.burnPublicKey(accountId, pubKey))
+    }
+
+    fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
+        instructions.value.add(Instructions.mintPublicKey(accountId, pubKey))
     }
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)

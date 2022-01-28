@@ -287,6 +287,102 @@ class InstructionsTest {
     }
 
     @Test
+    @WithIroha
+    fun `burn and mint public key instruction committed`(): Unit = runBlocking {
+        // check Bob's public key before burn it
+        val bobPubKey = BOB_KEYPAIR.public.toIrohaPublicKey()
+        var query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        var signatories = client.sendQuery(query).signatories
+        assertEquals(1, signatories.size)
+        assertContentEquals(bobPubKey.payload, signatories.first().payload)
+
+        // burn Bob's public key
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            burnPublicKey(BOB_ACCOUNT_ID, bobPubKey)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // check Bob's account has no public keys
+        query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        signatories = client.sendQuery(query).signatories
+        assertEquals(0, signatories.size)
+
+        // generate new key pair without salt for Bob's account
+        val newKeyPair = generateKeyPair()
+
+        // change Bob's account public key
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            mintPublicKey(BOB_ACCOUNT_ID, newKeyPair.public.toIrohaPublicKey())
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // check new public key in Bob's account
+        val newPubKeyQuery = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val signatoriesWithNewPubKey = client.sendQuery(newPubKeyQuery).signatories
+        assertEquals(1, signatoriesWithNewPubKey.size)
+        assertContentEquals(newKeyPair.public.toIrohaPublicKey().payload, signatoriesWithNewPubKey.first().payload)
+    }
+
+    @Test
+    @WithIroha
+    fun `change user account metadata`(): Unit = runBlocking {
+        val saltKey = "salt"
+
+        // grant permission to Alice to change Bob's account metadata
+        client.sendTransaction {
+            account(BOB_ACCOUNT_ID)
+            grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
+            buildSigned(BOB_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // check permission
+        val permissionQuery = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val permissionTokens = client.sendQuery(permissionQuery).permissionTokens
+        assertEquals(1, permissionTokens.size)
+
+        // add\update salt value in Bob's account metadata
+        val salt = "ABCDEFG".asValue()
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            setKeyValue(BOB_ACCOUNT_ID, saltKey.asName(), salt)
+            buildSigned(ALICE_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        // check new metadata in Bob's account
+        val saltQuery = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val bobAccountMetadata = client.sendQuery(saltQuery).metadata
+        assertEquals(salt, bobAccountMetadata.map["salt".asName()])
+    }
+
+    @Test
     @WithIroha(AliceAndBobEachHave100Xor::class)
     fun `transfer asset instruction committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
