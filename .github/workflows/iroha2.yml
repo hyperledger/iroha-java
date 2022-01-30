@@ -17,10 +17,8 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
-    # - name: debug
-    #   run: ls ./modules/client/build/**/
-    # - name: debug2
-    #   run: find ./ -name *.jar
+    - name: Generate list of libs
+      run: echo "{ libs_list } = { ls ./modules/**/*.jar }" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -30,6 +28,6 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=* version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ env.libs_list }} version=${{ github.sha }}
         assets: extension=jar
-        filename: modules/**/*.jar
+        filename: ${{ env.libs_list }}
