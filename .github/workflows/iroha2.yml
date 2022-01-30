@@ -18,4 +18,4 @@ jobs:
       with:
         arguments: build
     - name: debug
-      run: ls ./build/libs
+      run: ls
