@@ -18,7 +18,7 @@ jobs:
       with:
         arguments: build
     - name: debug
-      run: ls ./modiles/client/build/libs/
+      run: ls ./modiles/client/build/**/
     - name: debug2
       run: find ./ -name *.jar
     # - name: Publish lib to nexus for branch
