@@ -32,4 +32,4 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=* version=${{ github.sha }}
         assets: extension=jar
-        filename: ./modules/**/*.jar
+        filename: modules/**/*.jar
