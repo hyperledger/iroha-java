@@ -18,7 +18,7 @@ jobs:
       with:
         arguments: build
     - name: Publish lib to nexus for branch
-      if: ${{ github.ref == 'refs/heads/main' }}
+      if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
       with:
         serverUrl: https://nexus.iroha.tech/
