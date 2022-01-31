@@ -39,7 +39,7 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT.jar
     - name: Publish sources lib to nexus for branch
@@ -51,7 +51,7 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-sources.jar
     - name: Publish javadoc lib to nexus for branch
@@ -63,7 +63,7 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-javadoc.jar
     - name: Publish lib to nexus for tag
@@ -75,7 +75,7 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT.jar
     - name: Publish sources lib to nexus for tag
@@ -87,7 +87,7 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-sources.jar
     - name: Publish javadoc lib to nexus for tag
@@ -99,6 +99,6 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java directory=${{ matrix.library }} artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
         assets: extension=jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-javadoc.jar
