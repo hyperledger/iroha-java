@@ -64,41 +64,41 @@ jobs:
         format: maven2
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=jar, classifier=javadoc
+        assets: extension=jar classifier=javadoc
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-javadoc.jar
-    # - name: Publish lib to nexus for tag
-    #   if: ${{ github.ref_type == 'tag' }}
-    #   uses: sonatype-nexus-community/nexus-repo-github-action@master
-    #   with:
-    #     serverUrl: https://nexus.iroha.tech/
-    #     username: '${{ secrets.NEXUS_USER }}'
-    #     password: '${{ secrets.NEXUS_PASS }}'
-    #     format: maven2
-    #     repository: maven-soramitsu
-    #     coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-    #     assets: extension=jar
-    #     filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT.jar
-    # - name: Publish sources lib to nexus for tag
-    #   if: ${{ github.ref_type == 'tag' }}
-    #   uses: sonatype-nexus-community/nexus-repo-github-action@master
-    #   with:
-    #     serverUrl: https://nexus.iroha.tech/
-    #     username: '${{ secrets.NEXUS_USER }}'
-    #     password: '${{ secrets.NEXUS_PASS }}'
-    #     format: maven2
-    #     repository: maven-soramitsu
-    #     coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
-    #     assets: extension=jar
-    #     filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-sources.jar
-    # - name: Publish javadoc lib to nexus for tag
-    #   if: ${{ github.ref_type == 'tag' }}
-    #   uses: sonatype-nexus-community/nexus-repo-github-action@master
-    #   with:
-    #     serverUrl: https://nexus.iroha.tech/
-    #     username: '${{ secrets.NEXUS_USER }}'
-    #     password: '${{ secrets.NEXUS_PASS }}'
-    #     format: maven2
-    #     repository: maven-soramitsu
-    #     coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
-    #     assets: extension=jar
-    #     filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-javadoc.jar
+    - name: Publish lib to nexus for tag
+      if: ${{ github.ref_type == 'tag' }}
+      uses: sonatype-nexus-community/nexus-repo-github-action@master
+      with:
+        serverUrl: https://nexus.iroha.tech/
+        username: '${{ secrets.NEXUS_USER }}'
+        password: '${{ secrets.NEXUS_PASS }}'
+        format: maven2
+        repository: maven-soramitsu
+        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
+        assets: extension=jar
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT.jar
+    - name: Publish sources lib to nexus for tag
+      if: ${{ github.ref_type == 'tag' }}
+      uses: sonatype-nexus-community/nexus-repo-github-action@master
+      with:
+        serverUrl: https://nexus.iroha.tech/
+        username: '${{ secrets.NEXUS_USER }}'
+        password: '${{ secrets.NEXUS_PASS }}'
+        format: maven2
+        repository: maven-soramitsu
+        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
+        assets: extension=jar classifier=sources
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-sources.jar
+    - name: Publish javadoc lib to nexus for tag
+      if: ${{ github.ref_type == 'tag' }}
+      uses: sonatype-nexus-community/nexus-repo-github-action@master
+      with:
+        serverUrl: https://nexus.iroha.tech/
+        username: '${{ secrets.NEXUS_USER }}'
+        password: '${{ secrets.NEXUS_PASS }}'
+        format: maven2
+        repository: maven-soramitsu
+        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
+        assets: extension=jar classifier=javadoc
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-javadoc.jar
