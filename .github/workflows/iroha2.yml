@@ -6,6 +6,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        library:
+          - client
+          - model
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -29,6 +34,6 @@ jobs:
         password: '${{ secrets.NEXUS_PASS }}'
         format: maven2
         repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=test version=${{ github.sha }}
+        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId={{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
-        filename: ./modules/client/build/libs/client-1.0-SNAPSHOT.jar
+        filename: ./modules/{{ matrix.library }}/build/libs/{{ matrix.library }}-1.0-SNAPSHOT.jar
