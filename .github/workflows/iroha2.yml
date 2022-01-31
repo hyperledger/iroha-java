@@ -52,7 +52,7 @@ jobs:
         format: maven2
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=sources.jar
+        assets: filename=${{ matrix.library }}-${{ github.sha }}-sources.jar
         filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-1.0-SNAPSHOT-sources.jar
     - name: Publish javadoc lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
