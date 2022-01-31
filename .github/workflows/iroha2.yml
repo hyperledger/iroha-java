@@ -4,13 +4,21 @@ on:
   push:
     branches: [ iroha2-dev, iroha2-main ]
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Generate libraries list
+      id: generate-matrix
+      run: echo "::set-output name=matrix::$(ls ./modules/)"
+    outputs:
+        matrix: ${{ steps.generate-matrix.outputs.matrix }}
   build:
+    needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        library:
-          - client
-          - model
+        library: ${{ fromJson(needs.prepare.outputs.matrix) }}          
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -22,9 +30,6 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
-    # - name: Generate list of libs
-    #   run: ls ./modules/**/*.jar 
-    #   run: echo "{ libs_list } = {  }" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
