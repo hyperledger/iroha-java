@@ -12,13 +12,13 @@ jobs:
       id: generate-matrix
       run: echo "::set-output name=library::$(find ./modules -name *.jar -type f -printf "%f\n" | jq  --raw-input . | jq --slurp . | jq -c .)"
     outputs:
-        matrix: ${{ steps.generate-matrix.outputs.matrix }}
+        matrix: ${{ steps.generate-matrix.outputs.library }}
   build:
     needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        library: ${{ fromJson(needs.prepare.outputs.matrix) }}          
+        library: ${{ fromJson(needs.prepare.outputs.libraty) }}          
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
