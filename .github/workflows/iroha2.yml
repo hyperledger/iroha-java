@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Generate libraries list
       id: generate-matrix
-      run: echo "::set-output name=matrix::$(find ./modules -name *.jar -type f -printf "%f\n" | jq  --raw-input . | jq --slurp . | jq -c .)"
+      run: echo "::set-output name=matrix::$(ls ./modules | jq  --raw-input . | jq --slurp . | jq -c .)"
     outputs:
         matrix: ${{ steps.generate-matrix.outputs.matrix }}
   build:
