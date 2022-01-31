@@ -312,15 +312,5 @@ class QueriesTest {
             .also { assertContentEquals(hash, it) }
     }
 
-    @Test
-    @WithIroha
-    fun configure(): Unit = runBlocking {
-        val configuration = client.configuration(
-            ConfigurationFieldType.DOCS,
-            listOf("torii")
-        )
-        assert(configuration["GENESIS"] != null)
-    }
-
     // TODO: FindDomainKeyValueByIdAndKey test
 }

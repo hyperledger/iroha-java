@@ -19,7 +19,7 @@ import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
 import io.ktor.http.contentType
-import jp.co.soramitsu.iroha2.generated.crypto.Hash
+import io.ktor.util.toByteArray
 import io.ktor.utils.io.readUTF8Line
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
@@ -85,12 +85,12 @@ open class Iroha2Client(
     }
 
     /**
-     * TODO
+     * Sends configuration request
      */
-    suspend fun configuration(
+    suspend inline fun <reified T> configuration(
         fieldName: ConfigurationFieldType = ConfigurationFieldType.VALUE,
         fieldValue: Collection<String>? = null
-    ): Map<String, Any?> {
+    ): T {
         val response: HttpResponse = client.value.get("$peerUrl$CONFIGURATION_ENDPOINT") {
             contentType(ContentType.Application.Json)
             body = mapOf(fieldName.fieldName to fieldValue)
@@ -104,8 +104,16 @@ open class Iroha2Client(
     suspend fun status(): Map<*, *> {
         return client.value
             .get<HttpResponse>("$telemetryUrl$STATUS_ENDPOINT")
-            .content.readUTF8Line()
-            .let { mapper.readValue(it, Map::class.java) }
+            .receive()
+    }
+
+    /**
+     * Sends metrics request
+     */
+    suspend fun metrics(): String {
+        return client.value
+            .get<HttpResponse>("$telemetryUrl$METRICS_ENDPOINT")
+            .receive()
     }
 
     /**
@@ -302,6 +310,7 @@ open class Iroha2Client(
         const val WS_ENDPOINT = "/events"
         const val HEALTH_ENDPOINT = "/health"
         const val STATUS_ENDPOINT = "/status"
+        const val METRICS_ENDPOINT = "/metrics"
         const val CONFIGURATION_ENDPOINT = "/configuration"
     }
 

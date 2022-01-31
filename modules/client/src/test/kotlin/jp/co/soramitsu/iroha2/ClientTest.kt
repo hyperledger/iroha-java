@@ -29,4 +29,21 @@ class ClientTest {
         val status = client.status()
         println(status["blocks"] == 1)
     }
+
+    @Test
+    @WithIroha
+    fun metrics(): Unit = runBlocking {
+        val metrics = client.metrics()
+        assert(metrics.isNotEmpty())
+    }
+
+    @Test
+    @WithIroha
+    fun configure(): Unit = runBlocking {
+        val configuration = client.configuration<Map<String, *>>()
+        assert(configuration.containsKey("GENESIS"))
+
+        val configuration2 = client.configuration<String>(ConfigurationFieldType.DOCS, listOf("genesis"))
+        assert(configuration2.isNotEmpty())
+    }
 }
