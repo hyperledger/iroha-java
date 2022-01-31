@@ -3,13 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.account
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 
 /**
  * FindAccountsByName
@@ -17,12 +17,12 @@ import kotlin.String
  * Generated from 'iroha_data_model::query::account::FindAccountsByName' regular structure
  */
 public data class FindAccountsByName(
-    public val name: EvaluatesTo<String>
+    public val name: EvaluatesTo<Name>
 ) {
     public companion object : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName> {
         public override fun read(reader: ScaleCodecReader): FindAccountsByName = try {
             FindAccountsByName(
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

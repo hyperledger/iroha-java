@@ -28,6 +28,7 @@ import jp.co.soramitsu.iroha2.type.U64Type
 import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.VecType
 import jp.co.soramitsu.iroha2.type.WrapperType
+import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
@@ -61,7 +62,8 @@ fun resolveKotlinType(type: Type): TypeName {
                 }
             }
         }
-        is CompactType, is FixedPointType -> resolveKotlinType((type as WrapperType).innerType.requireValue())
+        is CompactType -> resolveKotlinType((type as WrapperType).innerType.requireValue())
+        is FixedPointType -> BigDecimal::class.asTypeName()
         is WrapperType -> {
             // special case for vector of bytes
             if (type is VecType && type.innerType.requireValue() is U8Type) {
@@ -77,7 +79,7 @@ fun resolveKotlinType(type: Type): TypeName {
                 resolveKotlinType(type.value.requireValue())
             )
         }
-        // only "primitive" types left"
+        // only "primitive" types left
         else -> lookUpInBuiltInTypes(type)
     }
 }
@@ -99,10 +101,10 @@ fun defineClassName(typeName: String) = typeName.substringBefore('<')
 val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     StringType::class to String::class.asTypeName(),
     BooleanType::class to Boolean::class.asTypeName(),
-    U8Type::class to UByte::class.asTypeName(),
-    U16Type::class to UShort::class.asTypeName(),
-    U32Type::class to UInt::class.asTypeName(),
-    U64Type::class to ULong::class.asTypeName(),
+    U8Type::class to Short::class.asTypeName(),
+    U16Type::class to Int::class.asTypeName(),
+    U32Type::class to Long::class.asTypeName(),
+    U64Type::class to BigInteger::class.asTypeName(),
     U128Type::class to BigInteger::class.asTypeName(),
     U256Type::class to BigInteger::class.asTypeName(),
     I8Type::class to Byte::class.asTypeName(),

@@ -1,9 +1,11 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
+import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@Timeout(30)
 internal class IrohaContainerTest {
 
     @Test

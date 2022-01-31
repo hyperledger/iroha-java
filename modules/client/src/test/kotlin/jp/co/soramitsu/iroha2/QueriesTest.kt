@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_NAME
+import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
@@ -20,13 +20,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.util.concurrent.TimeUnit
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -82,13 +82,13 @@ class QueriesTest {
     @Test
     @WithIroha
     fun `find accounts by domain name`(): Unit = runBlocking {
-        QueryBuilder.findAccountsByDomainName(DEFAULT_DOMAIN_NAME)
+        QueryBuilder.findAccountsByDomainId(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
             }.also { accounts ->
-                assert(accounts.all { it.id.domainName == DEFAULT_DOMAIN_NAME })
+                assert(accounts.all { it.id.domainId == DEFAULT_DOMAIN_ID })
             }
     }
 
@@ -137,8 +137,8 @@ class QueriesTest {
     @Test
     @WithIroha(XorAndValAssets::class)
     fun `find assets by domain name and asset definition id`(): Unit = runBlocking {
-        QueryBuilder.findAssetsByDomainNameAndAssetDefinitionId(
-            DEFAULT_DOMAIN_NAME,
+        QueryBuilder.findAssetsByDomainIdAndAssetDefinitionId(
+            DEFAULT_DOMAIN_ID,
             XorAndValAssets.XOR_DEFINITION_ID
         )
             .account(ALICE_ACCOUNT_ID)
@@ -147,7 +147,7 @@ class QueriesTest {
                 client.sendQuery(query)
             }.also { assets ->
                 assert(assets.all { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
-                assert(assets.all { it.id.accountId.domainName == DEFAULT_DOMAIN_NAME })
+                assert(assets.all { it.id.accountId.domainId == DEFAULT_DOMAIN_ID })
             }
     }
 
@@ -206,21 +206,21 @@ class QueriesTest {
             .let { query ->
                 client.sendQuery(query)
             }.also { domains ->
-                assert(domains.any { it.name == DEFAULT_DOMAIN_NAME })
-                assert(domains.any { it.name == NewDomain.DOMAIN_NAME })
+                assert(domains.any { it.id == DEFAULT_DOMAIN_ID })
+                assert(domains.any { it.id == NewDomain.DOMAIN_ID })
             }
     }
 
     @Test
     @WithIroha
     fun `find domain by name`(): Unit = runBlocking {
-        QueryBuilder.findDomainByName(DEFAULT_DOMAIN_NAME)
+        QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
             }.also { domain ->
-                assert(domain.name == DEFAULT_DOMAIN_NAME)
+                assert(domain.id == DEFAULT_DOMAIN_ID)
             }
     }
 
@@ -260,7 +260,6 @@ class QueriesTest {
                     value.cast<TransactionValue.Transaction>()
                         .versionedTransaction
                         .cast<VersionedTransaction.V1>()
-                        ._VersionedTransactionV1
                         .transaction
                         .payload
                         .accountId == ALICE_ACCOUNT_ID
@@ -293,7 +292,6 @@ class QueriesTest {
 
     @Test
     @WithIroha
-    @Disabled
     fun `find transaction by hash`(): Unit = runBlocking {
         val hash = client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -311,14 +309,7 @@ class QueriesTest {
             .let { query -> client.sendQuery(query) }
             .cast<TransactionValue.Transaction>().versionedTransaction
             .hash()
-            .also { assertEquals(hash, it) }
-    }
-
-    @Test
-    @WithIroha
-    fun health(): Unit = runBlocking {
-        val status = client.health()
-        assert(status == 200)
+            .also { assertContentEquals(hash, it) }
     }
 
     @Test
@@ -330,4 +321,6 @@ class QueriesTest {
         )
         assert(configuration["GENESIS"] != null)
     }
+
+    // TODO: FindDomainKeyValueByIdAndKey test
 }

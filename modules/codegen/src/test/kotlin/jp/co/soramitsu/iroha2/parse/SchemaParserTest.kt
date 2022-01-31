@@ -33,7 +33,7 @@ class SchemaParserTest {
     @Test
     fun `when schema is empty then types are empty too`() {
         val schemaJson = """
-        {}    
+        {}
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -44,7 +44,7 @@ class SchemaParserTest {
     @Test
     fun `should parse boolean type`() {
         val schemaJson = """
-        {"bool": "Bool"}    
+        {"bool": "Bool"}
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -54,9 +54,52 @@ class SchemaParserTest {
     }
 
     @Test
+    fun `should parse recursive relations`() {
+        val schemaJson = """
+        {
+          "foo::bar::AAA": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "bbb",
+                  "ty": "foo::bar::BBB"
+                }
+              ]
+            }
+          },
+          "foo::bar::BBB": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "ccc",
+                  "ty": "foo::bar::CCC"
+                }
+              ]
+            }
+          },
+          "foo::bar::CCC": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "aaa",
+                  "ty": "foo::bar::AAA"
+                }
+              ]
+            }
+          }
+        }
+        """.trimIndent()
+
+        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val types = SchemaParser().parse(schema)
+
+        assertEquals(3, types.size)
+    }
+
+    @Test
     fun `should parse string type`() {
         val schemaJson = """
-        {"String": "String"}    
+        {"String": "String"}
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -87,7 +130,7 @@ class SchemaParserTest {
            "u256":{
               "Int":"FixedWidth"
            }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -123,7 +166,7 @@ class SchemaParserTest {
           "iroha_schema::Compact<u256>": {
             "Int": "Compact"
           }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -162,7 +205,7 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -194,7 +237,7 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -221,7 +264,7 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -248,7 +291,7 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         val types = SchemaParser().parse(schema)
@@ -446,7 +489,7 @@ class SchemaParserTest {
             "Vec<$unresolvedStruct>": {
                 "Vec": "$unresolvedStruct"
             }
-        }    
+        }
         """.trimIndent()
         val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
         assertFailsWith(RuntimeException::class) { SchemaParser().parse(schema) }

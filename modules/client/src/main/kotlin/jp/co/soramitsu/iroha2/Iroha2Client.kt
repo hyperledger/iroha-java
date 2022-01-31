@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
@@ -19,20 +20,21 @@ import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
 import io.ktor.http.contentType
 import jp.co.soramitsu.iroha2.generated.crypto.Hash
+import io.ktor.utils.io.readUTF8Line
+import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSocketMessage.SubscriptionAccepted
-import jp.co.soramitsu.iroha2.generated.datamodel.events.SubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSocketMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events._VersionedEventSocketMessageV1
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.BlockRejectionReason
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Transaction
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +49,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as
 
 open class Iroha2Client(
     open var peerUrl: URL,
+    open var telemetryUrl: URL = URL(peerUrl.protocol, peerUrl.host, DEFAULT_TELEMETRY_PORT, peerUrl.file),
     open val log: Boolean = false
 ) : AutoCloseable {
 
@@ -70,8 +73,10 @@ open class Iroha2Client(
         }
     }
 
+    open val mapper = ObjectMapper()
+
     /**
-     * Returns current status of peer
+     * Sends health check request
      */
     suspend fun health(): Int {
         return client.value
@@ -94,6 +99,16 @@ open class Iroha2Client(
     }
 
     /**
+     * Sends status check request
+     */
+    suspend fun status(): Map<*, *> {
+        return client.value
+            .get<HttpResponse>("$telemetryUrl$STATUS_ENDPOINT")
+            .content.readUTF8Line()
+            .let { mapper.readValue(it, Map::class.java) }
+    }
+
+    /**
      * Sends transaction to Iroha peer
      *
      * The method only sends transaction to peer and do not await it final committing status. It means when peer
@@ -104,8 +119,8 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.value.post("$peerUrl$INSTRUCTION_ENDPOINT") {
-            body = signedTransaction.encode(VersionedTransaction)
+        val response: HttpResponse = client.value.post("$peerUrl$TRANSACTION_ENDPOINT") {
+            body = VersionedTransaction.encode(signedTransaction)
         }
         response.receive<Unit>()
         return hash
@@ -135,9 +150,11 @@ open class Iroha2Client(
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
         val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
-            this.body = queryAndExtractor.query.encode(VersionedSignedQueryRequest)
+            this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
-        return response.receive<ByteArray>().decode(QueryResult).let { queryAndExtractor.resultExtractor.extract(it) }
+        return response.receive<ByteArray>()
+            .let { VersionedQueryResult.decode(it) }
+            .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
@@ -152,18 +169,14 @@ open class Iroha2Client(
     ): CompletableFuture<ByteArray> {
         val hexHash = hash.toHex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
-        val subscriptionRequest = VersionedEventSocketMessage.V1(
-            _VersionedEventSocketMessageV1(
-                EventSocketMessage.SubscriptionRequest(
-                    SubscriptionRequest(
-                        Pipeline(
-                            Filter(Transaction(), Hash(hash))
-                        )
-                    )
+        val subscriptionRequest = VersionedEventSubscriberMessage.V1(
+            EventSubscriberMessage.SubscriptionRequest(
+                Pipeline(
+                    Filter(Transaction(), Hash(hash))
                 )
             )
         )
-        val payload = subscriptionRequest.encode(VersionedEventSocketMessage)
+        val payload = VersionedEventSubscriberMessage.encode(subscriptionRequest)
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
         scope.launch {
@@ -175,12 +188,12 @@ open class Iroha2Client(
                 logger.debug("WebSocket opened")
 
                 send(payload)
-                tryReadMessage<SubscriptionAccepted>(incoming.receive())
+                tryReadMessage<EventPublisherMessage.SubscriptionAccepted>(incoming.receive())
                 afterSubscription?.invoke()
 
                 logger.debug("Subscription was accepted by peer")
                 while (true) {
-                    when (val event = tryReadMessage<EventSocketMessage.Event>(incoming.receive()).event) {
+                    when (val event = tryReadMessage<EventPublisherMessage.Event>(incoming.receive()).event) {
                         is Event.Pipeline -> {
                             val eventInner = event.event
                             if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
@@ -228,12 +241,10 @@ open class Iroha2Client(
      * Sends message to peer event was accepted
      */
     private suspend fun ack(webSocket: ClientWebSocketSession) {
-        val eventReceived = VersionedEventSocketMessage.V1(
-            _VersionedEventSocketMessageV1(
-                EventSocketMessage.EventReceived()
-            )
+        val eventReceived = VersionedEventSubscriberMessage.V1(
+            EventSubscriberMessage.EventReceived()
         )
-        webSocket.send(eventReceived.encode(VersionedEventSocketMessage))
+        webSocket.send(VersionedEventSubscriberMessage.encode(eventReceived))
     }
 
     /**
@@ -251,8 +262,11 @@ open class Iroha2Client(
                 }
                 is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
                 is TransactionRejectionReason.SignatureVerification -> reason.signatureVerificationFail.reason
-                is TransactionRejectionReason.UnexpectedGenesisAccountSignature -> "Genesis account can sign only transactions in the genesis block"
-                is TransactionRejectionReason.UnsatisfiedSignatureCondition -> reason.unsatisfiedSignatureConditionFail.reason
+                is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
+                    "Genesis account can sign only transactions in the genesis block"
+                is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
+                    reason.unsatisfiedSignatureConditionFail.reason
+                is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             }
         }
     }
@@ -260,19 +274,19 @@ open class Iroha2Client(
     /**
      * Tries to read message from the frame
      */
-    private inline fun <reified T : EventSocketMessage> tryReadMessage(frame: Frame): T {
+    private inline fun <reified T : EventPublisherMessage> tryReadMessage(frame: Frame): T {
         return when (frame) {
             is Frame.Binary -> {
-                when (val versionedMessage = frame.readBytes().decode(VersionedEventSocketMessage)) {
-                    is VersionedEventSocketMessage.V1 -> {
-                        val actualMessage = versionedMessage._VersionedEventSocketMessageV1.eventSocketMessage
+                when (val versionedMessage = frame.readBytes().let { VersionedEventPublisherMessage.decode(it) }) {
+                    is VersionedEventPublisherMessage.V1 -> {
+                        val actualMessage = versionedMessage.eventPublisherMessage
                         actualMessage as? T
                             ?: throw WebSocketProtocolException(
                                 "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
                             )
                     }
                     else -> throw WebSocketProtocolException(
-                        "Expected `${VersionedEventSocketMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
+                        "Expected `${VersionedEventSubscriberMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
                     )
                 }
             }
@@ -283,11 +297,12 @@ open class Iroha2Client(
     }
 
     companion object {
-        const val INSTRUCTION_ENDPOINT = "/transaction"
+        const val TRANSACTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
-        const val CONFIGURATION_ENDPOINT = "/configuration"
         const val HEALTH_ENDPOINT = "/health"
+        const val STATUS_ENDPOINT = "/status"
+        const val CONFIGURATION_ENDPOINT = "/configuration"
     }
 
     override fun close() = client.value.close()

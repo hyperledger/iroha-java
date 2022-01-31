@@ -3,15 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.crypto.Signature
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.hashSetWithSize
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.crypto.signature.SignaturesOf
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.Set
 
 /**
  * RejectedTransaction
@@ -20,14 +17,14 @@ import kotlin.collections.Set
  */
 public data class RejectedTransaction(
     public val payload: Payload,
-    public val signatures: Set<Signature>,
+    public val signatures: SignaturesOf<Payload>,
     public val rejectionReason: TransactionRejectionReason
 ) {
     public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
         public override fun read(reader: ScaleCodecReader): RejectedTransaction = try {
             RejectedTransaction(
                 Payload.read(reader),
-                hashSetWithSize(reader.readCompactInt()) { Signature.read(reader) },
+                SignaturesOf.read(reader) as SignaturesOf<Payload>,
                 TransactionRejectionReason.read(reader),
             )
         } catch (ex: Exception) {
@@ -36,8 +33,7 @@ public data class RejectedTransaction(
 
         public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) = try {
             Payload.write(writer, instance.payload)
-            writer.writeCompact(instance.signatures.size)
-            instance.signatures.forEach { value -> Signature.write(writer, value) }
+            SignaturesOf.write(writer, instance.signatures)
             TransactionRejectionReason.write(writer, instance.rejectionReason)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -3,11 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.crypto.Signature
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,13 +17,13 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class SignedQueryRequest(
     public val payload: Payload,
-    public val signature: Signature
+    public val signature: SignatureOf<Payload>
 ) {
     public companion object : ScaleReader<SignedQueryRequest>, ScaleWriter<SignedQueryRequest> {
         public override fun read(reader: ScaleCodecReader): SignedQueryRequest = try {
             SignedQueryRequest(
                 Payload.read(reader),
-                Signature.read(reader),
+                SignatureOf.read(reader) as SignatureOf<Payload>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class SignedQueryRequest(
 
         public override fun write(writer: ScaleCodecWriter, instance: SignedQueryRequest) = try {
             Payload.write(writer, instance.payload)
-            Signature.write(writer, instance.signature)
+            SignatureOf.write(writer, instance.signature)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -3,12 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.UInt
+import kotlin.Long
 
 /**
  * Multiply
@@ -16,14 +16,14 @@ import kotlin.UInt
  * Generated from 'iroha_data_model::expression::Multiply' regular structure
  */
 public data class Multiply(
-    public val left: EvaluatesTo<UInt>,
-    public val right: EvaluatesTo<UInt>
+    public val left: EvaluatesTo<Long>,
+    public val right: EvaluatesTo<Long>
 ) {
     public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
         public override fun read(reader: ScaleCodecReader): Multiply = try {
             Multiply(
-                EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
-                EvaluatesTo.read(reader) as EvaluatesTo<UInt>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

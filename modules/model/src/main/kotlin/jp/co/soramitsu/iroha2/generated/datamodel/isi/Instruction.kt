@@ -3,11 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -346,6 +346,33 @@ public sealed class Instruction : ModelEnum {
         }
     }
 
+    /**
+     * 'Revoke' variant
+     */
+    public data class Revoke(
+        public val revokeBox: RevokeBox
+    ) : Instruction() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Revoke>, ScaleWriter<Revoke> {
+            public const val DISCRIMINANT: Int = 12
+
+            public override fun read(reader: ScaleCodecReader): Revoke = try {
+                Revoke(
+                    RevokeBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Revoke) = try {
+                RevokeBox.write(writer, instance.revokeBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Instruction>, ScaleWriter<Instruction> {
         public override fun read(reader: ScaleCodecReader): Instruction = when (
             val discriminant =
@@ -363,6 +390,7 @@ public sealed class Instruction : ModelEnum {
             9 -> SetKeyValue.read(reader)
             10 -> RemoveKeyValue.read(reader)
             11 -> Grant.read(reader)
+            12 -> Revoke.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -381,6 +409,7 @@ public sealed class Instruction : ModelEnum {
                 9 -> SetKeyValue.write(writer, instance as SetKeyValue)
                 10 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
                 11 -> Grant.write(writer, instance as Grant)
+                12 -> Revoke.write(writer, instance as Revoke)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

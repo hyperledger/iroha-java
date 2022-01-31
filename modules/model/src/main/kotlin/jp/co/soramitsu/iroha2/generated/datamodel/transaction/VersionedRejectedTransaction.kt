@@ -3,11 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -26,7 +26,7 @@ public sealed class VersionedRejectedTransaction : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val _VersionedRejectedTransactionV1: _VersionedRejectedTransactionV1
+        public val rejectedTransaction: RejectedTransaction
     ) : VersionedRejectedTransaction() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +35,14 @@ public sealed class VersionedRejectedTransaction : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    _VersionedRejectedTransactionV1.read(reader),
+                    RejectedTransaction.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                _VersionedRejectedTransactionV1.write(writer, instance._VersionedRejectedTransactionV1)
+                RejectedTransaction.write(writer, instance.rejectedTransaction)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

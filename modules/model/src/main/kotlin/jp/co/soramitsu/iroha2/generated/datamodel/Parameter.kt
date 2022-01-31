@@ -3,15 +3,15 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
-import kotlin.UInt
+import kotlin.Long
 
 /**
  * Parameter
@@ -28,7 +28,7 @@ public sealed class Parameter : ModelEnum {
      * 'MaximumFaultyPeersAmount' variant
      */
     public data class MaximumFaultyPeersAmount(
-        public val u32: UInt
+        public val u32: Long
     ) : Parameter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -39,14 +39,14 @@ public sealed class Parameter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MaximumFaultyPeersAmount = try {
                 MaximumFaultyPeersAmount(
-                    reader.readUint32().toUInt(),
+                    reader.readUint32(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MaximumFaultyPeersAmount) = try {
-                writer.writeUint32(instance.u32.toInt())
+                writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

@@ -3,14 +3,14 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.account
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -20,7 +20,7 @@ import kotlin.String
  */
 public data class FindAccountKeyValueByIdAndKey(
     public val id: EvaluatesTo<Id>,
-    public val key: EvaluatesTo<String>
+    public val key: EvaluatesTo<Name>
 ) {
     public companion object :
         ScaleReader<FindAccountKeyValueByIdAndKey>,
@@ -28,7 +28,7 @@ public data class FindAccountKeyValueByIdAndKey(
         public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
             FindAccountKeyValueByIdAndKey(
                 EvaluatesTo.read(reader) as EvaluatesTo<Id>,
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

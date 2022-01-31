@@ -3,16 +3,16 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
 import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
-import kotlin.UInt
+import kotlin.Long
 
 /**
  * AssetValue
@@ -29,7 +29,7 @@ public sealed class AssetValue : ModelEnum {
      * 'Quantity' variant
      */
     public data class Quantity(
-        public val u32: UInt
+        public val u32: Long
     ) : AssetValue() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -38,14 +38,14 @@ public sealed class AssetValue : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Quantity = try {
                 Quantity(
-                    reader.readUint32().toUInt(),
+                    reader.readUint32(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Quantity) = try {
-                writer.writeUint32(instance.u32.toInt())
+                writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

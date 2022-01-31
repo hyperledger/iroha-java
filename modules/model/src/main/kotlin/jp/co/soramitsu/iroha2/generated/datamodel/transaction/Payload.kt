@@ -3,20 +3,16 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.hashMapWithSize
-import jp.co.soramitsu.iroha2.readBit64
 import jp.co.soramitsu.iroha2.wrapException
-import jp.co.soramitsu.iroha2.writeBit64
-import kotlin.String
-import kotlin.ULong
-import kotlin.collections.List
+import java.math.BigInteger
+import kotlin.Long
 import kotlin.collections.Map
 
 /**
@@ -26,19 +22,21 @@ import kotlin.collections.Map
  */
 public data class Payload(
     public val accountId: Id,
-    public val instructions: List<Instruction>,
-    public val creationTime: ULong,
-    public val timeToLiveMs: ULong,
-    public val metadata: Map<String, Value>
+    public val instructions: Executable,
+    public val creationTime: BigInteger,
+    public val timeToLiveMs: BigInteger,
+    public val nonce: Long?,
+    public val metadata: Map<Name, Value>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = try {
             Payload(
                 Id.read(reader),
-                List(reader.readCompactInt()) { Instruction.read(reader) },
-                readBit64(reader).toULong(),
-                readBit64(reader).toULong(),
-                hashMapWithSize(reader.readCompactInt(), { reader.readString() }, { Value.read(reader) }),
+                Executable.read(reader),
+                reader.readUint64(),
+                reader.readUint64(),
+                reader.readNullable(),
+                reader.readMap(reader.readCompactInt(), { Name.read(reader) }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -46,13 +44,13 @@ public data class Payload(
 
         public override fun write(writer: ScaleCodecWriter, instance: Payload) = try {
             Id.write(writer, instance.accountId)
-            writer.writeCompact(instance.instructions.size)
-            instance.instructions.forEach { value -> Instruction.write(writer, value) }
-            writeBit64(writer, instance.creationTime.toLong())
-            writeBit64(writer, instance.timeToLiveMs.toLong())
+            Executable.write(writer, instance.instructions)
+            writer.writeUint64(instance.creationTime)
+            writer.writeUint64(instance.timeToLiveMs)
+            writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
             instance.metadata.forEach { (key, value) ->  
-                writer.writeAsList(key.toByteArray(Charsets.UTF_8))
+                Name.write(writer, key)
                 Value.write(writer, value)
             }
         } catch (ex: Exception) {
