@@ -40,10 +40,10 @@ class ClientTest {
     @Test
     @WithIroha
     fun configure(): Unit = runBlocking {
-        val configuration = client.configuration<Map<String, *>>()
-        assert(configuration.containsKey("GENESIS"))
+        val valueConfig = client.configuration<Map<String, *>>()
+        assert(valueConfig.containsKey("GENESIS"))
 
-        val configuration2 = client.configuration<String>(ConfigurationFieldType.DOCS, listOf("genesis"))
-        assert(configuration2.isNotEmpty())
+        val docsConfig = client.configuration<String>(ConfigurationFieldType.DOCS, listOf("genesis"))
+        assert(docsConfig.isNotEmpty())
     }
 }
