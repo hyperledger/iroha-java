@@ -176,6 +176,23 @@ object Instructions {
     }
 
     /**
+     * Instruction to set key value at the account's metadata
+     */
+    fun setKeyValue(
+        accountId: AccountId,
+        key: Name,
+        value: Value
+    ): Instruction.SetKeyValue {
+        return Instruction.SetKeyValue(
+            SetKeyValueBox(
+                objectId = IdBox.AccountId(accountId).evaluatesTo(),
+                key = key.evaluatesTo(),
+                value = value.evaluatesTo()
+            )
+        )
+    }
+
+    /**
      * Instruction to remove key value at the object
      */
     fun removeKeyValue(assetId: AssetId, key: Name): Instruction.RemoveKeyValue {
@@ -210,6 +227,16 @@ object Instructions {
         return mintSome(
             Value.Fixed(Fixed(quanity)),
             assetId
+        )
+    }
+
+    /**
+     * Instruction for mint of a public key
+     */
+    fun mintPublicKey(accountId: AccountId, pubKey: PublicKey): Instruction {
+        return mintSomePublicKey(
+            Value.PublicKey(pubKey),
+            IdBox.AccountId(accountId)
         )
     }
 
@@ -529,6 +556,21 @@ object Instructions {
     private fun burnSome(value: Value, idBox: IdBox): Instruction.Burn {
         return Instruction.Burn(
             BurnBox(
+                `object` = EvaluatesTo(
+                    Expression.Raw(value)
+                ),
+                destinationId = EvaluatesTo(
+                    Expression.Raw(
+                        Value.Id(idBox)
+                    )
+                )
+            )
+        )
+    }
+
+    private fun mintSomePublicKey(value: Value, idBox: IdBox): Instruction.Mint {
+        return Instruction.Mint(
+            MintBox(
                 `object` = EvaluatesTo(
                     Expression.Raw(value)
                 ),
