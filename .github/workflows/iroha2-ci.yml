@@ -33,7 +33,7 @@ jobs:
     - name: debug
       run: ls ./modules/${{ matrix.library }}/build/libs/
     - name: Set lib name
-      run: echo "lib_name=$(find . -type f -print | awk -F/ '{print length($NF)" "$NF}' | sort -k1,1n | head -1 | sed 's/[^ ]* //')" >> $GITHUB_ENV
+      run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print length($NF)" "$NF}' | sort -k1,1n | head -1 | sed 's/[^ ]* //')" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
