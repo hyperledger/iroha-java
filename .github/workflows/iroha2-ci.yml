@@ -31,7 +31,7 @@ jobs:
       with:
         arguments: build
     - name: Set lib name
-      run: echo "lib_name=${find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print $NF}' | sort | head -1}" >> $GITHUB_ENV
+      run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print $NF}' | sort | head -1)" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
