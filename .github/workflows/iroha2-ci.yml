@@ -43,7 +43,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
-        filename: ${{ env.lib_name }}
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}
     - name: Publish sources lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -55,7 +55,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar classifier=sources
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-*-sources.jar
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-sources.jar
     - name: Publish javadoc lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -67,7 +67,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar classifier=javadoc
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-*-javadoc.jar
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-javadoc.jar
     - name: Publish lib to nexus for tag
       if: ${{ github.ref_type == 'tag' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -79,7 +79,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
-        filename: ${{ env.lib_name }}
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}
     - name: Publish sources lib to nexus for tag
       if: ${{ github.ref_type == 'tag' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -91,7 +91,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
         assets: extension=jar classifier=sources
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-*-sources.jar
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-sources.jar
     - name: Publish javadoc lib to nexus for tag
       if: ${{ github.ref_type == 'tag' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -103,4 +103,4 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
         assets: extension=jar classifier=javadoc
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ matrix.library }}-*-javadoc.jar
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-javadoc.jar
