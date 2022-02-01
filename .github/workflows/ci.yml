@@ -38,7 +38,7 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
       - name: debug
-        run: ls /${{ matrix.library }}/build/libs/
+        run: ls ./${{ matrix.library }}/build/libs/
       - name: Codecov
         uses: codecov/codecov-action@v1.2.1        
       - name: Sonar
