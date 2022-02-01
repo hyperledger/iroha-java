@@ -71,8 +71,6 @@ open class Iroha2Client(
         }
     }
 
-    open val mapper = ObjectMapper()
-
     /**
      * Sends health check request
      */
@@ -83,10 +81,22 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends configuration request
+     * Sends value configuration request
      */
-    suspend inline fun <reified T> configuration(
-        fieldName: ConfigurationFieldType = ConfigurationFieldType.VALUE,
+    suspend fun valueConfig(fieldValue: Collection<String>? = null): Map<String, *> {
+        return config(ConfigurationFieldType.VALUE, fieldValue)
+
+    }
+
+    /**
+     * Sends docs configuration request
+     */
+    suspend fun docsConfig(fieldValue: Collection<String>? = null): String {
+        return config(ConfigurationFieldType.DOCS, fieldValue)
+    }
+
+    private suspend inline fun <reified T> config(
+        fieldName: ConfigurationFieldType,
         fieldValue: Collection<String>? = null
     ): T {
         val response: HttpResponse = client.value.get("$peerUrl$CONFIGURATION_ENDPOINT") {
