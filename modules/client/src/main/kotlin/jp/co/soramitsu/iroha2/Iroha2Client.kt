@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
@@ -85,7 +84,6 @@ open class Iroha2Client(
      */
     suspend fun valueConfig(fieldValue: Collection<String>? = null): Map<String, *> {
         return config(ConfigurationFieldType.VALUE, fieldValue)
-
     }
 
     /**
