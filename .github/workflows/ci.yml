@@ -9,6 +9,10 @@ jobs:
   Linux:
     strategy:
       fail-fast: false
+      matrix:
+        library:
+          - client
+          - testcontainers
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -34,7 +38,7 @@ jobs:
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
       - name: debug
-        run: ls
+        run: ls /${{ matrix.library }}/build/libs/
       - name: Codecov
         uses: codecov/codecov-action@v1.2.1        
       - name: Sonar
@@ -42,7 +46,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           BRANCH_NAME: ${{ github.ref }}
         run: if [[ -n $SONAR_TOKEN ]]; then ./housekeeping/sonar.sh; else echo "Some secret undefined. Step passed..."; fi
-      - name: Publish client lib to nexus for branch
+      - name: Publish lib to nexus for branch
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: sonatype-nexus-community/nexus-repo-github-action@master
         with:
@@ -51,10 +55,10 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=${{ github.sha }}
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=${{ matrix.library }} version=${{ github.sha }}
           assets: extension=jar
-          filename: /client/build/libs/*.jar
-      - name: Publish client lib to nexus for tag
+          filename: /${{ matrix.library }}/build/libs/*.jar
+      - name: Publish lib to nexus for tag
         if: ${{ github.ref_type == 'tag' }}
         uses: sonatype-nexus-community/nexus-repo-github-action@master
         with:
@@ -63,30 +67,30 @@ jobs:
           password: '${{ secrets.NEXUS_PASS }}'
           format: maven2
           repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=client version=${{ github.ref_name }}
+          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=${{ matrix.library }} version=${{ github.ref_name }}
           assets: extension=jar
-          filename: /client/build/libs/*.jar
-      - name: Publish testcontainers lib to nexus for branch
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: sonatype-nexus-community/nexus-repo-github-action@master
-        with:
-          serverUrl: https://nexus.iroha.tech/
-          username: '${{ secrets.NEXUS_USER }}'
-          password: '${{ secrets.NEXUS_PASS }}'
-          format: maven2
-          repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.sha }}
-          assets: extension=jar
-          filename: /testcontainers/build/libs/*.jar
-      - name: Publish testcontainers lib to nexus for tag
-        if: ${{ github.ref_type == 'tag' }}
-        uses: sonatype-nexus-community/nexus-repo-github-action@master
-        with:
-          serverUrl: https://nexus.iroha.tech/
-          username: '${{ secrets.NEXUS_USER }}'
-          password: '${{ secrets.NEXUS_PASS }}'
-          format: maven2
-          repository: maven-soramitsu
-          coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.ref_name }}
-          assets: extension=jar
-          filename: /testcontainers/build/libs/*.jar
+          filename: /${{ matrix.library }}/build/libs/*.jar
+      # - name: Publish testcontainers lib to nexus for branch
+      #   if: ${{ github.ref == 'refs/heads/main' }}
+      #   uses: sonatype-nexus-community/nexus-repo-github-action@master
+      #   with:
+      #     serverUrl: https://nexus.iroha.tech/
+      #     username: '${{ secrets.NEXUS_USER }}'
+      #     password: '${{ secrets.NEXUS_PASS }}'
+      #     format: maven2
+      #     repository: maven-soramitsu
+      #     coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.sha }}
+      #     assets: extension=jar
+      #     filename: /testcontainers/build/libs/*.jar
+      # - name: Publish testcontainers lib to nexus for tag
+      #   if: ${{ github.ref_type == 'tag' }}
+      #   uses: sonatype-nexus-community/nexus-repo-github-action@master
+      #   with:
+      #     serverUrl: https://nexus.iroha.tech/
+      #     username: '${{ secrets.NEXUS_USER }}'
+      #     password: '${{ secrets.NEXUS_PASS }}'
+      #     format: maven2
+      #     repository: maven-soramitsu
+      #     coordinates: groupId=jp.co.soramitsu.iroha-java artifactId=testcontainers version=${{ github.ref_name }}
+      #     assets: extension=jar
+      #     filename: /testcontainers/build/libs/*.jar
