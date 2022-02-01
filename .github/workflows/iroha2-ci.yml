@@ -29,7 +29,11 @@ jobs:
     - name: Build with Gradle
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
-        arguments: build
+        arguments: |
+          build
+          --no-cache
+    - name: debug
+      run: ls ./modules/${{ matrix.library }}/build/libs/
     - name: Set lib name
       run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print $NF}' | sort | head -1)" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
