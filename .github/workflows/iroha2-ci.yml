@@ -30,8 +30,8 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
-    - name: Generate lib name
-      run: echo "{lib_name}={find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print $NF}' | sort | head -1}" >> $GITHUB_ENV
+    - name: Set lib name
+      run: echo "lib_name=(find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print $NF}' | sort | head -1)" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
