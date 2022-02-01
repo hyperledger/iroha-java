@@ -30,10 +30,8 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
-    - name: debug
-      run: ls ./modules/${{ matrix.library }}/build/libs/
     - name: Set lib name
-      run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -type f -print | awk -F/ '{print length($NF)" "$NF}' | sort -k1,1n | head -1 | sed 's/[^ ]* //')" >> $GITHUB_ENV
+      run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -name *.jar -type f -print | awk -F/ '{print length($NF)" "$NF}' | sort -nk1 | head -1 | sed 's/[^ ]* //' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
     - name: Publish lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
@@ -45,7 +43,7 @@ jobs:
         repository: maven-soramitsu
         coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
         assets: extension=jar
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}
+        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}.jar
     - name: Publish sources lib to nexus for branch
       if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
       uses: sonatype-nexus-community/nexus-repo-github-action@master
