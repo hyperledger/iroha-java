@@ -6,9 +6,9 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import org.hawkular.agent.prometheus.text.TextPrometheusMetricDataParser
 import java.io.InputStream
 import java.net.URL
-import org.hawkular.agent.prometheus.text.TextPrometheusMetricDataParser
 
 open class AdminIroha2Client(
     peerUrl: URL,
