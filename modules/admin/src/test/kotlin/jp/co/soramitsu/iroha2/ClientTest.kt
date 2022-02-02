@@ -14,7 +14,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 @Timeout(30)
 class ClientTest {
 
-    lateinit var client: Iroha2Client
+    lateinit var client: AdminIroha2Client
 
     @Test
     @WithIroha

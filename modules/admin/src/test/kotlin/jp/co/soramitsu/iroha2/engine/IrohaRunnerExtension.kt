@@ -1,21 +1,16 @@
 package jp.co.soramitsu.iroha2.engine
 
-import jp.co.soramitsu.iroha2.Iroha2Client
+import java.lang.reflect.Method
+import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
-import java.lang.reflect.Method
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMemberProperties
 
-/**
- * Starts Iroha2 docker containers
- */
 class IrohaRunnerExtension : InvocationInterceptor {
-
     override fun interceptTestMethod(
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
@@ -33,17 +28,23 @@ class IrohaRunnerExtension : InvocationInterceptor {
         }
     }
 
-    private fun initIfRequested(invocationContext: ReflectiveInvocationContext<Method>): Pair<Iroha2Client?, IrohaContainer?> {
+    private fun initIfRequested(invocationContext: ReflectiveInvocationContext<Method>): Pair<AdminIroha2Client?, IrohaContainer?> {
         return invocationContext
             .executable
             .declaredAnnotations.filterIsInstance<WithIroha>()
             .firstOrNull()
             ?.let {
-                val container = IrohaContainer { genesis = it.genesis.createInstance() }
+                val container = IrohaContainer()
                 container.start()
-                val irohaClient = Iroha2Client(container.getApiUrl(), log = true)
+
+                val irohaClient = AdminIroha2Client(
+                    container.getApiUrl(),
+                    container.getTelemetryUrl(),
+                    log = true
+                )
                 val testClassInstance = invocationContext.target.get()
                 val declaredProperties = testClassInstance::class.declaredMemberProperties
+
                 setPropertyValue(declaredProperties, testClassInstance, container)
                 setPropertyValue(declaredProperties, testClassInstance, irohaClient)
                 (irohaClient to container)

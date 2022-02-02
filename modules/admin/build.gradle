@@ -1,0 +1,15 @@
+group 'jp.co.soramitsu'
+
+dependencies {
+    //kotlin support
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
+    implementation "io.ktor:ktor-client-jackson:$ktorVer"
+
+    api project(":model")
+    api project(":client")
+
+    testImplementation project(":testcontainers")
+
+    implementation "org.hawkular.agent:prometheus-scraper:0.23.0.Final"
+}

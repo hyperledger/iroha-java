@@ -9,15 +9,14 @@ import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
-import io.ktor.http.contentType
+import java.net.URL
+import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -40,13 +39,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.net.URL
-import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
     open var peerUrl: URL,
-    open var telemetryUrl: URL = URL(peerUrl.protocol, peerUrl.host, DEFAULT_TELEMETRY_PORT, peerUrl.file),
     open val log: Boolean = false
 ) : AutoCloseable {
 
@@ -68,58 +64,6 @@ open class Iroha2Client(
                 }
             }
         }
-    }
-
-    /**
-     * Sends health check request
-     */
-    suspend fun health(): Int {
-        return client.value
-            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
-            .status.value
-    }
-
-    /**
-     * Sends value configuration request
-     */
-    suspend fun valueConfig(fieldValue: Collection<String>? = null): Map<String, *> {
-        return config(ConfigurationFieldType.VALUE, fieldValue)
-    }
-
-    /**
-     * Sends docs configuration request
-     */
-    suspend fun docsConfig(fieldValue: Collection<String>? = null): String {
-        return config(ConfigurationFieldType.DOCS, fieldValue)
-    }
-
-    private suspend inline fun <reified T> config(
-        fieldName: ConfigurationFieldType,
-        fieldValue: Collection<String>? = null
-    ): T {
-        val response: HttpResponse = client.value.get("$peerUrl$CONFIGURATION_ENDPOINT") {
-            contentType(ContentType.Application.Json)
-            body = mapOf(fieldName.fieldName to fieldValue)
-        }
-        return response.receive()
-    }
-
-    /**
-     * Sends status check request
-     */
-    suspend fun status(): Map<*, *> {
-        return client.value
-            .get<HttpResponse>("$telemetryUrl$STATUS_ENDPOINT")
-            .receive()
-    }
-
-    /**
-     * Sends metrics request
-     */
-    suspend fun metrics(): String {
-        return client.value
-            .get<HttpResponse>("$telemetryUrl$METRICS_ENDPOINT")
-            .receive()
     }
 
     /**
