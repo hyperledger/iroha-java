@@ -26,7 +26,7 @@ public sealed class VersionedSignedQueryRequest : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val _VersionedSignedQueryRequestV1: _VersionedSignedQueryRequestV1
+        public val signedQueryRequest: SignedQueryRequest
     ) : VersionedSignedQueryRequest() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +35,14 @@ public sealed class VersionedSignedQueryRequest : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    _VersionedSignedQueryRequestV1.read(reader),
+                    SignedQueryRequest.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                _VersionedSignedQueryRequestV1.write(writer, instance._VersionedSignedQueryRequestV1)
+                SignedQueryRequest.write(writer, instance.signedQueryRequest)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

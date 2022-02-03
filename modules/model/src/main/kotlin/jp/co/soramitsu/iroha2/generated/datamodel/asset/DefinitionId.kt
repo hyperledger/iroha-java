@@ -7,8 +7,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 
 /**
  * DefinitionId
@@ -16,22 +17,22 @@ import kotlin.String
  * Generated from 'iroha_data_model::asset::DefinitionId' regular structure
  */
 public data class DefinitionId(
-    public val name: String,
-    public val domainName: String
+    public val name: Name,
+    public val domainId: Id
 ) {
     public companion object : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
         public override fun read(reader: ScaleCodecReader): DefinitionId = try {
             DefinitionId(
-                reader.readString(),
-                reader.readString(),
+                Name.read(reader),
+                Id.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: DefinitionId) = try {
-            writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
-            writer.writeAsList(instance.domainName.toByteArray(Charsets.UTF_8))
+            Name.write(writer, instance.name)
+            Id.write(writer, instance.domainId)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

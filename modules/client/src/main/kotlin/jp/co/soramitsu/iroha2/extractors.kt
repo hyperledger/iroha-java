@@ -19,7 +19,7 @@ import java.math.BigInteger
 interface ResultExtractor<T> {
     fun extract(result: VersionedQueryResult): T {
         return when (result) {
-            is VersionedQueryResult.V1 -> extract(result._VersionedQueryResultV1.queryResult)
+            is VersionedQueryResult.V1 -> extract(result.queryResult)
         }
     }
 
