@@ -5,6 +5,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "com.google.code.gson:gson:$gsonVer"
     implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }
 
 task generate(type: JavaExec) {

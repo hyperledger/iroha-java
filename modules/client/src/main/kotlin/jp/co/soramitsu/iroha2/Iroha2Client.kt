@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.HttpResponseValidator
+import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
@@ -50,14 +51,16 @@ open class Iroha2Client(
 
     open val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    open val client = lazy {
+    open val client by lazy {
         HttpClient(CIO) {
             expectSuccess = true
             if (log) {
                 install(Logging)
             }
             install(WebSockets)
-            install(JsonFeature)
+            install(JsonFeature) {
+                serializer = GsonSerializer()
+            }
             HttpResponseValidator {
                 handleResponseException { exception ->
                     throw IrohaClientException(cause = exception)
@@ -77,7 +80,7 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.value.post("$peerUrl$TRANSACTION_ENDPOINT") {
+        val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
             body = VersionedTransaction.encode(signedTransaction)
         }
         response.receive<Unit>()
@@ -107,7 +110,7 @@ open class Iroha2Client(
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
-        val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
+        val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
         return response.receive<ByteArray>()
@@ -138,7 +141,7 @@ open class Iroha2Client(
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
         scope.launch {
-            client.value.webSocket(
+            client.webSocket(
                 host = peerUrl.host,
                 port = peerUrl.port,
                 path = WS_ENDPOINT
@@ -264,10 +267,5 @@ open class Iroha2Client(
         const val CONFIGURATION_ENDPOINT = "/configuration"
     }
 
-    override fun close() = client.value.close()
-}
-
-enum class ConfigurationFieldType(val fieldName: String) {
-    VALUE("Value"),
-    DOCS("Docs");
+    override fun close() = client.close()
 }

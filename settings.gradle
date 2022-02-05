@@ -15,5 +15,8 @@ project(':model').projectDir = 'modules/model' as File
 include 'block'
 project(':block').projectDir = 'modules/block' as File
 
-include 'admin'
-project(':admin').projectDir = 'modules/admin' as File
+include 'admin-client'
+project(':admin-client').projectDir = 'modules/admin-client' as File
+
+include 'test-tools'
+project(':test-tools').projectDir = 'modules/test-tools' as File

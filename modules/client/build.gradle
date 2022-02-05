@@ -4,7 +4,6 @@ dependencies {
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
-    implementation "io.ktor:ktor-client-jackson:$ktorVer"
 
     //crypto
     api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
@@ -16,10 +15,9 @@ dependencies {
     implementation "io.ktor:ktor-client-cio:$ktorVer"
     implementation "io.ktor:ktor-client-websockets:$ktorVer"
     implementation "io.ktor:ktor-client-logging:$ktorVer"
-    implementation "io.ktor:ktor-client-jackson:$ktorVer"
+    implementation "io.ktor:ktor-client-gson:$ktorVer"
 
     api project(":model")
 
-    testImplementation project(":testcontainers")
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+    testImplementation project(":test-tools")
 }
