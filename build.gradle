@@ -29,10 +29,6 @@ subprojects {
     group = 'jp.co.soramitsu.iroha-java'
     version = 'git rev-parse --short HEAD'.execute().text.trim()
 
-    dependencies {
-        testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
-    }
-
     test {
         useJUnitPlatform()
     }

@@ -1,0 +1,10 @@
+group 'jp.co.soramitsu'
+
+dependencies {
+    api project(":client")
+    api project(":admin-client")
+    api project(":testcontainers")
+    api "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
+    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+}
