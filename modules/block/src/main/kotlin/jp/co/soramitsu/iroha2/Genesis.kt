@@ -23,5 +23,5 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     /**
      * Represents genesis as JSON
      */
-    fun asJson() = GenesisJsonSerializer.asJson(this)
+    fun asJson() = JSON_SERDE.writeValueAsString(this.genesisBlock)
 }

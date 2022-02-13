@@ -15,7 +15,7 @@ dependencies {
     implementation "io.ktor:ktor-client-cio:$ktorVer"
     implementation "io.ktor:ktor-client-websockets:$ktorVer"
     implementation "io.ktor:ktor-client-logging:$ktorVer"
-    implementation "io.ktor:ktor-client-gson:$ktorVer"
+    implementation "io.ktor:ktor-client-jackson:$ktorVer"
 
     api project(":model")
 

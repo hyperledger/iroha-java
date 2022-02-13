@@ -4,7 +4,6 @@ dependencies {
     api project(":block")
     api "org.testcontainers:testcontainers:$testContainersVer"
     api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
-    implementation "com.google.code.gson:gson:$gsonVer"
     implementation "ch.qos.logback:logback-classic:$logbackVer"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
 

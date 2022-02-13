@@ -1,10 +1,16 @@
 package jp.co.soramitsu.iroha2
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.module.SimpleModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.HttpResponseValidator
-import io.ktor.client.features.json.GsonSerializer
+import io.ktor.client.features.json.JacksonSerializer
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
@@ -39,6 +45,7 @@ import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
+import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
@@ -59,7 +66,23 @@ open class Iroha2Client(
             }
             install(WebSockets)
             install(JsonFeature) {
-                serializer = GsonSerializer()
+                this.serializer = JacksonSerializer {
+                    registerModule(
+                        SimpleModule().apply {
+                            addDeserializer(
+                                Duration::class.java,
+                                object : JsonDeserializer<Duration>() {
+                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
+                                        val pairs: Map<String, Long> = p.readValueAs(object : TypeReference<Map<String, Long>>() {})
+                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(p, "Expected `secs` item for duration deserialization")
+                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(p, "Expected `nanos` item for duration deserialization")
+                                        return Duration.ofSeconds(seconds, nanos)
+                                    }
+                                }
+                            )
+                        }
+                    )
+                }
             }
             HttpResponseValidator {
                 handleResponseException { exception ->
