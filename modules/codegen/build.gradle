@@ -1,9 +1,10 @@
 group 'jp.co.soramitsu'
 
 dependencies {
-    api project(":model")
+    implementation project(":model")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
-    implementation "com.google.code.gson:gson:$gsonVer"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonKotlinVer"
+
     implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
