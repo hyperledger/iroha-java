@@ -19,6 +19,7 @@ import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import kotlin.random.Random
 import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -141,8 +142,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerDomain(
         domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
-    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions)) }
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
+        metadata: Map<Name, Value> = mapOf(),
+        logo: IpfsPath? = null
+    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions, metadata, logo)) }
 
     fun registerPeer(
         address: String,

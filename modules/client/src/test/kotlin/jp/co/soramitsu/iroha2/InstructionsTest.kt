@@ -40,7 +40,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(30)
+@Timeout(40)
 class InstructionsTest {
 
     lateinit var client: Iroha2Client
@@ -261,13 +261,16 @@ class InstructionsTest {
     @Test
     @WithIroha
     fun `burn public key instruction committed`(): Unit = runBlocking {
+        // mint public key, because needs at least 2 public keys to burn one of them
+        mintPublicKey(ALICE_ACCOUNT_ID)
+
         val alicePubKey = ALICE_KEYPAIR.public.toIrohaPublicKey()
         // check public key before burn it
         val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val signatories = client.sendQuery(query).signatories
-        assertEquals(1, signatories.size)
+        assertEquals(2, signatories.size)
         assertContentEquals(alicePubKey.payload, signatories.first().payload)
 
         client.sendTransaction {
@@ -289,14 +292,16 @@ class InstructionsTest {
     @Test
     @WithIroha
     fun `burn and mint public key instruction committed`(): Unit = runBlocking {
+        // mint public key, because needs at least 2 public keys to burn one of them
+        mintPublicKey(BOB_ACCOUNT_ID)
+
         // check Bob's public key before burn it
         val bobPubKey = BOB_KEYPAIR.public.toIrohaPublicKey()
         var query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         var signatories = client.sendQuery(query).signatories
-        assertEquals(1, signatories.size)
-        assertContentEquals(bobPubKey.payload, signatories.first().payload)
+        assertEquals(2, signatories.size)
 
         // burn Bob's public key
         client.sendTransaction {
@@ -309,12 +314,12 @@ class InstructionsTest {
             }
         }
 
-        // check Bob's account has no public keys
+        // check Bob's account has only 1 public key (was 2)
         query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         signatories = client.sendQuery(query).signatories
-        assertEquals(0, signatories.size)
+        assertEquals(1, signatories.size)
 
         // generate new key pair without salt for Bob's account
         val newKeyPair = generateKeyPair()
@@ -330,13 +335,12 @@ class InstructionsTest {
             }
         }
 
-        // check new public key in Bob's account
+        // check public keys in Bob's account
         val newPubKeyQuery = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val signatoriesWithNewPubKey = client.sendQuery(newPubKeyQuery).signatories
-        assertEquals(1, signatoriesWithNewPubKey.size)
-        assertContentEquals(newKeyPair.public.toIrohaPublicKey().payload, signatoriesWithNewPubKey.first().payload)
+        assertEquals(2, signatoriesWithNewPubKey.size)
     }
 
     @Test
@@ -670,5 +674,19 @@ class InstructionsTest {
             .let { query ->
                 client.sendQuery(query)
             }
+    }
+
+    private suspend fun mintPublicKey(accountId: AccountId) {
+        generateKeyPair().let { pair ->
+            client.sendTransaction {
+                account(ALICE_ACCOUNT_ID)
+                mintPublicKey(accountId, pair.public.toIrohaPublicKey())
+                buildSigned(ALICE_KEYPAIR)
+            }
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
     }
 }

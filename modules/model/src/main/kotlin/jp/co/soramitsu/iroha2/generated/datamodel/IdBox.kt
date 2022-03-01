@@ -160,13 +160,40 @@ public sealed class IdBox : ModelEnum {
     }
 
     /**
+     * 'TriggerId' variant
+     */
+    public data class TriggerId(
+        public val id: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id
+    ) : IdBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<TriggerId>, ScaleWriter<TriggerId> {
+            public const val DISCRIMINANT: Int = 5
+
+            public override fun read(reader: ScaleCodecReader): TriggerId = try {
+                TriggerId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: TriggerId) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'WorldId' variant
      */
     public class WorldId : IdBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<WorldId>, ScaleWriter<WorldId> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 6
 
             public override fun read(reader: ScaleCodecReader): WorldId = try {
                 WorldId()
@@ -191,7 +218,8 @@ public sealed class IdBox : ModelEnum {
             2 -> AssetDefinitionId.read(reader)
             3 -> DomainId.read(reader)
             4 -> PeerId.read(reader)
-            5 -> WorldId.read(reader)
+            5 -> TriggerId.read(reader)
+            6 -> WorldId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -203,7 +231,8 @@ public sealed class IdBox : ModelEnum {
                 2 -> AssetDefinitionId.write(writer, instance as AssetDefinitionId)
                 3 -> DomainId.write(writer, instance as DomainId)
                 4 -> PeerId.write(writer, instance as PeerId)
-                5 -> WorldId.write(writer, instance as WorldId)
+                5 -> TriggerId.write(writer, instance as TriggerId)
+                6 -> WorldId.write(writer, instance as WorldId)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

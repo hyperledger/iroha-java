@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`
+package jp.co.soramitsu.iroha2.generated.datamodel.trigger
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -10,34 +10,35 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Long
 
 /**
- * MetadataUpdated
+ * Repeats
  *
- * Generated from 'iroha_data_model::events::data::MetadataUpdated' enum
+ * Generated from 'iroha_data_model::trigger::Repeats' enum
  */
-public sealed class MetadataUpdated : ModelEnum {
+public sealed class Repeats : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
 
     /**
-     * 'Inserted' variant
+     * 'Indefinitely' variant
      */
-    public class Inserted : MetadataUpdated() {
+    public class Indefinitely : Repeats() {
         public override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Inserted>, ScaleWriter<Inserted> {
+        public companion object : ScaleReader<Indefinitely>, ScaleWriter<Indefinitely> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Inserted = try {
-                Inserted()
+            public override fun read(reader: ScaleCodecReader): Indefinitely = try {
+                Indefinitely()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Inserted) = try {
+            public override fun write(writer: ScaleCodecWriter, instance: Indefinitely) = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -45,42 +46,47 @@ public sealed class MetadataUpdated : ModelEnum {
     }
 
     /**
-     * 'Removed' variant
+     * 'Exactly' variant
      */
-    public class Removed : MetadataUpdated() {
+    public data class Exactly(
+        public val u32: Long
+    ) : Repeats() {
         public override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Removed>, ScaleWriter<Removed> {
+        public companion object : ScaleReader<Exactly>, ScaleWriter<Exactly> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Removed = try {
-                Removed()
+            public override fun read(reader: ScaleCodecReader): Exactly = try {
+                Exactly(
+                    reader.readUint32(),
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Removed) = try {
+            public override fun write(writer: ScaleCodecWriter, instance: Exactly) = try {
+                writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<MetadataUpdated>, ScaleWriter<MetadataUpdated> {
-        public override fun read(reader: ScaleCodecReader): MetadataUpdated = when (
+    public companion object : ScaleReader<Repeats>, ScaleWriter<Repeats> {
+        public override fun read(reader: ScaleCodecReader): Repeats = when (
             val discriminant =
                 reader.readUByte()
         ) {
-            0 -> Inserted.read(reader)
-            1 -> Removed.read(reader)
+            0 -> Indefinitely.read(reader)
+            1 -> Exactly.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MetadataUpdated) {
+        public override fun write(writer: ScaleCodecWriter, instance: Repeats) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Inserted.write(writer, instance as Inserted)
-                1 -> Removed.write(writer, instance as Removed)
+                0 -> Indefinitely.write(writer, instance as Indefinitely)
+                1 -> Exactly.write(writer, instance as Exactly)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

@@ -68,35 +68,14 @@
   "Option<iroha_crypto::hash::Hash>": {
     "Option": "iroha_crypto::hash::Hash"
   },
-  "Option<iroha_data_model::account::Id>": {
-    "Option": "iroha_data_model::account::Id"
-  },
-  "Option<iroha_data_model::asset::DefinitionId>": {
-    "Option": "iroha_data_model::asset::DefinitionId"
-  },
-  "Option<iroha_data_model::asset::Id>": {
-    "Option": "iroha_data_model::asset::Id"
-  },
-  "Option<iroha_data_model::domain::Id>": {
-    "Option": "iroha_data_model::domain::Id"
-  },
-  "Option<iroha_data_model::events::data::EntityFilter>": {
-    "Option": "iroha_data_model::events::data::EntityFilter"
-  },
-  "Option<iroha_data_model::events::data::StatusFilter>": {
-    "Option": "iroha_data_model::events::data::StatusFilter"
-  },
-  "Option<iroha_data_model::events::data::Updated>": {
-    "Option": "iroha_data_model::events::data::Updated"
+  "Option<iroha_data_model::domain::IpfsPath>": {
+    "Option": "iroha_data_model::domain::IpfsPath"
   },
   "Option<iroha_data_model::events::pipeline::EntityType>": {
     "Option": "iroha_data_model::events::pipeline::EntityType"
   },
   "Option<iroha_data_model::isi::Instruction>": {
     "Option": "iroha_data_model::isi::Instruction"
-  },
-  "Option<iroha_data_model::peer::Id>": {
-    "Option": "iroha_data_model::peer::Id"
   },
   "Option<u32>": {
     "Option": "u32"
@@ -137,6 +116,9 @@
   },
   "Vec<iroha_data_model::transaction::VersionedValidTransaction>": {
     "Vec": "iroha_data_model::transaction::VersionedValidTransaction"
+  },
+  "Vec<iroha_data_model::trigger::Action>": {
+    "Vec": "iroha_data_model::trigger::Action"
   },
   "Vec<u8>": {
     "Vec": "u8"
@@ -205,6 +187,10 @@
           "ty": "Vec<iroha_data_model::transaction::VersionedValidTransaction>"
         },
         {
+          "name": "trigger_recommendations",
+          "ty": "Vec<iroha_data_model::trigger::Action>"
+        },
+        {
           "name": "signatures",
           "ty": "iroha_crypto::signature::SignaturesOf<iroha_core::block::CommittedBlock>"
         }
@@ -229,6 +215,10 @@
         {
           "name": "signatures",
           "ty": "BTreeSet<iroha_crypto::signature::SignatureOf<iroha_core::block::ValidBlock>>"
+        },
+        {
+          "name": "trigger_recommendations",
+          "ty": "Vec<iroha_data_model::trigger::Action>"
         }
       ]
     }
@@ -546,20 +536,6 @@
       ]
     }
   },
-  "iroha_crypto::signature::SignatureVerificationFail<iroha_data_model::transaction::Payload>": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "signature",
-          "ty": "iroha_crypto::signature::SignatureOf<iroha_data_model::transaction::Payload>"
-        },
-        {
-          "name": "reason",
-          "ty": "String"
-        }
-      ]
-    }
-  },
   "iroha_crypto::signature::SignaturesOf<iroha_core::block::CommittedBlock>": {
     "Struct": {
       "declarations": [
@@ -619,8 +595,13 @@
           "ty": "iroha_data_model::peer::Id"
         },
         {
-          "name": "WorldId",
+          "name": "TriggerId",
           "discriminant": 5,
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "WorldId",
+          "discriminant": 6,
           "ty": null
         }
       ]
@@ -660,8 +641,13 @@
           "ty": "iroha_data_model::peer::Peer"
         },
         {
-          "name": "World",
+          "name": "Trigger",
           "discriminant": 6,
+          "ty": "iroha_data_model::trigger::Trigger"
+        },
+        {
+          "name": "World",
+          "discriminant": 7,
           "ty": null
         }
       ]
@@ -731,7 +717,7 @@
         {
           "name": "Fixed",
           "discriminant": 5,
-          "ty": "iroha_data_model::fixed::Fixed"
+          "ty": "iroha_data_primitives::fixed::Fixed"
         },
         {
           "name": "Vec",
@@ -921,7 +907,7 @@
         {
           "name": "Fixed",
           "discriminant": 2,
-          "ty": "iroha_data_model::fixed::Fixed"
+          "ty": "iroha_data_primitives::fixed::Fixed"
         },
         {
           "name": "Store",
@@ -1003,6 +989,10 @@
         {
           "name": "metadata",
           "ty": "iroha_data_model::metadata::Metadata"
+        },
+        {
+          "name": "logo",
+          "ty": "Option<iroha_data_model::domain::IpfsPath>"
         }
       ]
     }
@@ -1017,6 +1007,13 @@
       ]
     }
   },
+  "iroha_data_model::domain::IpfsPath": {
+    "TupleStruct": {
+      "types": [
+        "String"
+      ]
+    }
+  },
   "iroha_data_model::events::Event": {
     "Enum": {
       "variants": [
@@ -1028,7 +1025,7 @@
         {
           "name": "Data",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::Event"
+          "ty": "iroha_data_model::events::data::events::Event"
         }
       ]
     }
@@ -1044,7 +1041,7 @@
         {
           "name": "Data",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::EventFilter"
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::EntityFilter>"
         }
       ]
     }
@@ -1103,192 +1100,886 @@
       ]
     }
   },
-  "iroha_data_model::events::data::AssetUpdated": {
+  "iroha_data_model::events::data::events::Event": {
     "Enum": {
       "variants": [
         {
-          "name": "Received",
+          "name": "Domain",
           "discriminant": 0,
-          "ty": null
+          "ty": "iroha_data_model::events::data::events::domain::DomainEvent"
         },
         {
-          "name": "Sent",
+          "name": "Peer",
           "discriminant": 1,
-          "ty": null
+          "ty": "iroha_data_model::events::data::events::peer::PeerEvent"
+        },
+        {
+          "name": "Account",
+          "discriminant": 2,
+          "ty": "iroha_data_model::events::data::events::account::AccountEvent"
+        },
+        {
+          "name": "AssetDefinition",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::data::events::asset::AssetDefinitionEvent"
+        },
+        {
+          "name": "Asset",
+          "discriminant": 4,
+          "ty": "iroha_data_model::events::data::events::asset::AssetEvent"
+        },
+        {
+          "name": "Trigger",
+          "discriminant": 5,
+          "ty": "iroha_data_model::events::data::events::trigger::TriggerEvent"
         }
       ]
     }
   },
-  "iroha_data_model::events::data::Entity": {
+  "iroha_data_model::events::data::events::account::AccountEvent": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Asset",
+          "discriminant": 0,
+          "ty": "iroha_data_model::events::data::events::asset::AssetEvent"
+        },
+        {
+          "name": "Created",
+          "discriminant": 1,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "Deleted",
+          "discriminant": 2,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "AuthenticationAdded",
+          "discriminant": 3,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "AuthenticationRemoved",
+          "discriminant": 4,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "PermissionAdded",
+          "discriminant": 5,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "PermissionRemoved",
+          "discriminant": 6,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "MetadataInserted",
+          "discriminant": 7,
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "MetadataRemoved",
+          "discriminant": 8,
+          "ty": "iroha_data_model::account::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::events::asset::AssetDefinitionEvent": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Created",
+          "discriminant": 0,
+          "ty": "iroha_data_model::asset::DefinitionId"
+        },
+        {
+          "name": "Deleted",
+          "discriminant": 1,
+          "ty": "iroha_data_model::asset::DefinitionId"
+        },
+        {
+          "name": "MetadataInserted",
+          "discriminant": 2,
+          "ty": "iroha_data_model::asset::DefinitionId"
+        },
+        {
+          "name": "MetadataRemoved",
+          "discriminant": 3,
+          "ty": "iroha_data_model::asset::DefinitionId"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::events::asset::AssetEvent": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Created",
+          "discriminant": 0,
+          "ty": "iroha_data_model::asset::Id"
+        },
+        {
+          "name": "Deleted",
+          "discriminant": 1,
+          "ty": "iroha_data_model::asset::Id"
+        },
+        {
+          "name": "Added",
+          "discriminant": 2,
+          "ty": "iroha_data_model::asset::Id"
+        },
+        {
+          "name": "Removed",
+          "discriminant": 3,
+          "ty": "iroha_data_model::asset::Id"
+        },
+        {
+          "name": "MetadataInserted",
+          "discriminant": 4,
+          "ty": "iroha_data_model::asset::Id"
+        },
+        {
+          "name": "MetadataRemoved",
+          "discriminant": 5,
+          "ty": "iroha_data_model::asset::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::events::domain::DomainEvent": {
     "Enum": {
       "variants": [
         {
           "name": "Account",
           "discriminant": 0,
-          "ty": "iroha_data_model::account::Id"
+          "ty": "iroha_data_model::events::data::events::account::AccountEvent"
         },
         {
           "name": "AssetDefinition",
           "discriminant": 1,
-          "ty": "iroha_data_model::asset::DefinitionId"
+          "ty": "iroha_data_model::events::data::events::asset::AssetDefinitionEvent"
         },
         {
-          "name": "Asset",
+          "name": "Created",
           "discriminant": 2,
-          "ty": "iroha_data_model::asset::Id"
+          "ty": "iroha_data_model::domain::Id"
         },
         {
-          "name": "Domain",
+          "name": "Deleted",
           "discriminant": 3,
           "ty": "iroha_data_model::domain::Id"
         },
         {
-          "name": "Peer",
+          "name": "MetadataInserted",
           "discriminant": 4,
+          "ty": "iroha_data_model::domain::Id"
+        },
+        {
+          "name": "MetadataRemoved",
+          "discriminant": 5,
+          "ty": "iroha_data_model::domain::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::events::peer::PeerEvent": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Added",
+          "discriminant": 0,
+          "ty": "iroha_data_model::peer::Id"
+        },
+        {
+          "name": "Removed",
+          "discriminant": 1,
           "ty": "iroha_data_model::peer::Id"
         }
       ]
     }
   },
-  "iroha_data_model::events::data::EntityFilter": {
+  "iroha_data_model::events::data::events::trigger::TriggerEvent": {
     "Enum": {
       "variants": [
         {
-          "name": "Account",
+          "name": "Created",
           "discriminant": 0,
-          "ty": "Option<iroha_data_model::account::Id>"
+          "ty": "iroha_data_model::trigger::Id"
         },
         {
-          "name": "AssetDefinition",
+          "name": "Deleted",
           "discriminant": 1,
-          "ty": "Option<iroha_data_model::asset::DefinitionId>"
+          "ty": "iroha_data_model::trigger::Id"
         },
         {
-          "name": "Asset",
+          "name": "Extended",
           "discriminant": 2,
-          "ty": "Option<iroha_data_model::asset::Id>"
+          "ty": "iroha_data_model::trigger::Id"
         },
         {
-          "name": "Domain",
+          "name": "Shortened",
           "discriminant": 3,
-          "ty": "Option<iroha_data_model::domain::Id>"
+          "ty": "iroha_data_model::trigger::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::EntityFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByDomain",
+          "discriminant": 0,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainFilter>"
         },
         {
-          "name": "Peer",
+          "name": "ByPeer",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerFilter>"
+        },
+        {
+          "name": "ByAccount",
+          "discriminant": 2,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>"
+        },
+        {
+          "name": "ByAssetDefinition",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>"
+        },
+        {
+          "name": "ByAsset",
           "discriminant": 4,
-          "ty": "Option<iroha_data_model::peer::Id>"
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::data::Event": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "entity",
-          "ty": "iroha_data_model::events::data::Entity"
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>"
         },
         {
-          "name": "status",
-          "ty": "iroha_data_model::events::data::Status"
+          "name": "ByTrigger",
+          "discriminant": 5,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerFilter>"
         }
       ]
     }
   },
-  "iroha_data_model::events::data::EventFilter": {
-    "Struct": {
-      "declarations": [
-        {
-          "name": "entity",
-          "ty": "Option<iroha_data_model::events::data::EntityFilter>"
-        },
-        {
-          "name": "status",
-          "ty": "Option<iroha_data_model::events::data::StatusFilter>"
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::data::MetadataUpdated": {
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::EntityFilter>": {
     "Enum": {
       "variants": [
         {
-          "name": "Inserted",
+          "name": "AcceptAll",
           "discriminant": 0,
           "ty": null
         },
         {
-          "name": "Removed",
+          "name": "BySome",
           "discriminant": 1,
-          "ty": null
+          "ty": "iroha_data_model::events::data::filters::EntityFilter"
         }
       ]
     }
   },
-  "iroha_data_model::events::data::Status": {
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>>": {
     "Enum": {
       "variants": [
         {
-          "name": "Created",
+          "name": "AcceptAll",
           "discriminant": 0,
           "ty": null
         },
         {
-          "name": "Updated",
+          "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::Updated"
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
         },
         {
-          "name": "Deleted",
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::account::AccountEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::account::AccountFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::asset::AssetDefinitionFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::asset::AssetEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::asset::AssetFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::domain::DomainEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::domain::DomainFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::peer::PeerEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::peer::PeerFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerEventFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::trigger::TriggerEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerFilter>": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "AcceptAll",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "BySome",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::trigger::TriggerFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::account::Id"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::asset::DefinitionId"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::asset::Id"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::domain::Id"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::peer::Id"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>": {
+    "TupleStruct": {
+      "types": [
+        "iroha_data_model::trigger::Id"
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::account::AccountEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByAsset",
+          "discriminant": 0,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>"
+        },
+        {
+          "name": "ByCreated",
+          "discriminant": 1,
+          "ty": null
+        },
+        {
+          "name": "ByDeleted",
           "discriminant": 2,
           "ty": null
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::data::StatusFilter": {
-    "Enum": {
-      "variants": [
-        {
-          "name": "Created",
-          "discriminant": 0,
-          "ty": null
         },
         {
-          "name": "Updated",
-          "discriminant": 1,
-          "ty": "Option<iroha_data_model::events::data::Updated>"
-        },
-        {
-          "name": "Deleted",
-          "discriminant": 2,
-          "ty": null
-        }
-      ]
-    }
-  },
-  "iroha_data_model::events::data::Updated": {
-    "Enum": {
-      "variants": [
-        {
-          "name": "Metadata",
-          "discriminant": 0,
-          "ty": "iroha_data_model::events::data::MetadataUpdated"
-        },
-        {
-          "name": "Authentication",
-          "discriminant": 1,
-          "ty": null
-        },
-        {
-          "name": "Permission",
-          "discriminant": 2,
-          "ty": null
-        },
-        {
-          "name": "Asset",
+          "name": "ByAuthenticationAdded",
           "discriminant": 3,
-          "ty": "iroha_data_model::events::data::AssetUpdated"
+          "ty": null
+        },
+        {
+          "name": "ByAuthenticationRemoved",
+          "discriminant": 4,
+          "ty": null
+        },
+        {
+          "name": "ByPermissionAdded",
+          "discriminant": 5,
+          "ty": null
+        },
+        {
+          "name": "ByPermissionRemoved",
+          "discriminant": 6,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataInserted",
+          "discriminant": 7,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataRemoved",
+          "discriminant": 8,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::account::AccountFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountEventFilter>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByCreated",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "ByDeleted",
+          "discriminant": 1,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataInserted",
+          "discriminant": 2,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataRemoved",
+          "discriminant": 3,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::asset::AssetDefinitionFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::asset::AssetEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByCreated",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "ByDeleted",
+          "discriminant": 1,
+          "ty": null
+        },
+        {
+          "name": "ByAdded",
+          "discriminant": 2,
+          "ty": null
+        },
+        {
+          "name": "ByRemoved",
+          "discriminant": 3,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataInserted",
+          "discriminant": 4,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataRemoved",
+          "discriminant": 5,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::asset::AssetFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetEventFilter>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::domain::DomainEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByAccount",
+          "discriminant": 0,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>"
+        },
+        {
+          "name": "ByAssetDefinition",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>"
+        },
+        {
+          "name": "ByCreated",
+          "discriminant": 2,
+          "ty": null
+        },
+        {
+          "name": "ByDeleted",
+          "discriminant": 3,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataInserted",
+          "discriminant": 4,
+          "ty": null
+        },
+        {
+          "name": "ByMetadataRemoved",
+          "discriminant": 5,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::domain::DomainFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainEventFilter>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::peer::PeerEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByAdded",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "ByRemoved",
+          "discriminant": 1,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::peer::PeerFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerEventFilter>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::trigger::TriggerEventFilter": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ByCreated",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "ByDeleted",
+          "discriminant": 1,
+          "ty": null
+        },
+        {
+          "name": "ByExtended",
+          "discriminant": 2,
+          "ty": null
+        },
+        {
+          "name": "ByShortened",
+          "discriminant": 3,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::data::filters::trigger::TriggerFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>>"
+        },
+        {
+          "name": "event_filter",
+          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerEventFilter>"
         }
       ]
     }
@@ -1833,13 +2524,6 @@
           "name": "values",
           "ty": "BTreeMap<String, iroha_data_model::expression::EvaluatesTo<iroha_data_model::Value>>"
         }
-      ]
-    }
-  },
-  "iroha_data_model::fixed::Fixed": {
-    "TupleStruct": {
-      "types": [
-        "FixedPoint<i64>"
       ]
     }
   },
@@ -2628,7 +3312,7 @@
         {
           "name": "Wasm",
           "discriminant": 1,
-          "ty": "Vec<u8>"
+          "ty": "iroha_data_model::transaction::WasmSmartContract"
         }
       ]
     }
@@ -2735,6 +3419,13 @@
       ]
     }
   },
+  "iroha_data_model::transaction::TransactionLimitError": {
+    "TupleStruct": {
+      "types": [
+        "String"
+      ]
+    }
+  },
   "iroha_data_model::transaction::TransactionRejectionReason": {
     "Enum": {
       "variants": [
@@ -2749,19 +3440,19 @@
           "ty": "iroha_data_model::transaction::UnsatisfiedSignatureConditionFail"
         },
         {
-          "name": "InstructionExecution",
+          "name": "LimitCheck",
           "discriminant": 2,
+          "ty": "iroha_data_model::transaction::TransactionLimitError"
+        },
+        {
+          "name": "InstructionExecution",
+          "discriminant": 3,
           "ty": "iroha_data_model::transaction::InstructionExecutionFail"
         },
         {
           "name": "WasmExecution",
-          "discriminant": 3,
-          "ty": "iroha_data_model::transaction::WasmExecutionFail"
-        },
-        {
-          "name": "SignatureVerification",
           "discriminant": 4,
-          "ty": "iroha_crypto::signature::SignatureVerificationFail<iroha_data_model::transaction::Payload>"
+          "ty": "iroha_data_model::transaction::WasmExecutionFail"
         },
         {
           "name": "UnexpectedGenesisAccountSignature",
@@ -2851,6 +3542,89 @@
           "name": "reason",
           "ty": "String"
         }
+      ]
+    }
+  },
+  "iroha_data_model::transaction::WasmSmartContract": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "raw_data",
+          "ty": "Vec<u8>"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::trigger::Action": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "executable",
+          "ty": "iroha_data_model::transaction::Executable"
+        },
+        {
+          "name": "repeats",
+          "ty": "iroha_data_model::trigger::Repeats"
+        },
+        {
+          "name": "technical_account",
+          "ty": "iroha_data_model::account::Id"
+        },
+        {
+          "name": "filter",
+          "ty": "iroha_data_model::events::EventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::trigger::Id": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "name",
+          "ty": "iroha_data_model::Name"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::trigger::Repeats": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Indefinitely",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Exactly",
+          "discriminant": 1,
+          "ty": "u32"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::trigger::Trigger": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "id",
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "action",
+          "ty": "iroha_data_model::trigger::Action"
+        },
+        {
+          "name": "metadata",
+          "ty": "iroha_data_model::metadata::Metadata"
+        }
+      ]
+    }
+  },
+  "iroha_data_primitives::fixed::Fixed": {
+    "TupleStruct": {
+      "types": [
+        "FixedPoint<i64>"
       ]
     }
   },

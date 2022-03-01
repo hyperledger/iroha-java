@@ -99,7 +99,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             "ed01207233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"
         const val NETWORK_ALIAS = "iroha"
         const val P2P_URL = "$NETWORK_ALIAS:$DEFAULT_P2P_PORT"
-        const val DEFAULT_IMAGE_TAG = "dev-nightly-f5a8aeb86fad79c35537bc1a9cec9da1f183eb8b"
+        const val DEFAULT_IMAGE_TAG = "dev"
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val PEER_START_COMMAND = "./iroha --submit-genesis"

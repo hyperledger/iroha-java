@@ -12,9 +12,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
-import jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -95,7 +96,8 @@ object Instructions {
         domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
         assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
-        metadata: Map<Name, Value> = mapOf()
+        metadata: Map<Name, Value> = mapOf(),
+        logo: IpfsPath? = null
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Domain(
@@ -103,7 +105,8 @@ object Instructions {
                     domainId,
                     accounts,
                     assetDefinitions,
-                    Metadata(metadata)
+                    Metadata(metadata),
+                    logo
                 )
             )
         }

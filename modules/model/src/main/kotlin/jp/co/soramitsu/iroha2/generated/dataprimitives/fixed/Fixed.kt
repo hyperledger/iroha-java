@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.fixed
+package jp.co.soramitsu.iroha2.generated.dataprimitives.fixed
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -15,7 +15,7 @@ import java.math.BigDecimal
 /**
  * Fixed
  *
- * Generated from 'iroha_data_model::fixed::Fixed' tuple structure
+ * Generated from 'iroha_data_primitives::fixed::Fixed' tuple structure
  */
 public data class Fixed(
     public val fixedPoint: BigDecimal

@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignaturesOf
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedRejectedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedValidTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 
@@ -22,6 +23,7 @@ public data class CommittedBlock(
     public val header: BlockHeader,
     public val rejectedTransactions: List<VersionedRejectedTransaction>,
     public val transactions: List<VersionedValidTransaction>,
+    public val triggerRecommendations: List<Action>,
     public val signatures: SignaturesOf<CommittedBlock>
 ) {
     public companion object : ScaleReader<CommittedBlock>, ScaleWriter<CommittedBlock> {
@@ -30,6 +32,7 @@ public data class CommittedBlock(
                 BlockHeader.read(reader),
                 reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { Action.read(reader) },
                 SignaturesOf.read(reader) as SignaturesOf<CommittedBlock>,
             )
         } catch (ex: Exception) {
@@ -47,6 +50,8 @@ public data class CommittedBlock(
             }
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value -> VersionedValidTransaction.write(writer, value) }
+            writer.writeCompact(instance.triggerRecommendations.size)
+            instance.triggerRecommendations.forEach { value -> Action.write(writer, value) }
             SignaturesOf.write(writer, instance.signatures)
         } catch (ex: Exception) {
             throw wrapException(ex)
