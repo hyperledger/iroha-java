@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
@@ -19,7 +20,6 @@ import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import kotlin.random.Random
 import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
