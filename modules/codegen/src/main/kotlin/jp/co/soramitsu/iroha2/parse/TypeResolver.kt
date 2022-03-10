@@ -134,7 +134,7 @@ object EnumResolver : Resolver<EnumType> {
                 val variantProperty = it["ty"] as String?
                 EnumType.Variant(
                     it["name"]!! as String,
-                    (it["discriminant"]!! as Double).toInt(),
+                    it["discriminant"]!! as Int,
                     variantProperty?.let(schemaParser::createAndGetNest)
                 )
             }
@@ -220,7 +220,7 @@ object FixedPointResolver : Resolver<FixedPointType> {
         return if (name.startsWith("FixedPoint<") && typeValue is Map<*, *>) {
             val members = (typeValue["FixedPoint"] as? Map<String, Any>)!!
             val base = schemaParser.createAndGetNest(members["base"]!! as String)
-            val decimalPlaces = (members["decimal_places"]!! as Double).toInt()
+            val decimalPlaces = members["decimal_places"]!! as Int
             FixedPointType(name, base, decimalPlaces)
         } else null
     }
