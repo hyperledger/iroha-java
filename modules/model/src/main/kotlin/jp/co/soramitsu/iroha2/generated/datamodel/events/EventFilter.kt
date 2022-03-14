@@ -84,7 +84,7 @@ public sealed class EventFilter : ModelEnum {
     public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
         public override fun read(reader: ScaleCodecReader): EventFilter = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Pipeline.read(reader)
             1 -> Data.read(reader)

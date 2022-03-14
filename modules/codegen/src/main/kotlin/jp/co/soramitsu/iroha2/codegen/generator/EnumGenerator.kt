@@ -38,7 +38,7 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
     }
 
     override fun scaleReaderCode(blueprint: EnumBlueprint): CodeBlock {
-        val codeBlock = CodeBlock.builder().add("return when(val discriminant = reader.readUByte()) {\n")
+        val codeBlock = CodeBlock.builder().add("return when(val discriminant = reader.readUByte().toInt()) {\n")
         val whenFlow = blueprint.variants.joinToString("\n") {
             CodeBlock.of("\t${it.discriminant} -> ${it.className}.read(reader)").toString()
         }

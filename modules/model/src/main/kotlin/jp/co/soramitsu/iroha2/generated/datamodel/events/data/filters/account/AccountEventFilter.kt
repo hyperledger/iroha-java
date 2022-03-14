@@ -232,7 +232,7 @@ public sealed class AccountEventFilter : ModelEnum {
     public companion object : ScaleReader<AccountEventFilter>, ScaleWriter<AccountEventFilter> {
         public override fun read(reader: ScaleCodecReader): AccountEventFilter = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> ByAsset.read(reader)
             1 -> ByCreated.read(reader)

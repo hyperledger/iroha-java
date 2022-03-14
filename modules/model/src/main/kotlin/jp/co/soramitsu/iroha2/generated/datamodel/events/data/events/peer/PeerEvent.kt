@@ -80,7 +80,7 @@ public sealed class PeerEvent : ModelEnum {
     public companion object : ScaleReader<PeerEvent>, ScaleWriter<PeerEvent> {
         public override fun read(reader: ScaleCodecReader): PeerEvent = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Added.read(reader)
             1 -> Removed.read(reader)

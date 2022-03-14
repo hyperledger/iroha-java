@@ -170,7 +170,7 @@ public sealed class DomainEventFilter : ModelEnum {
     public companion object : ScaleReader<DomainEventFilter>, ScaleWriter<DomainEventFilter> {
         public override fun read(reader: ScaleCodecReader): DomainEventFilter = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> ByAccount.read(reader)
             1 -> ByAssetDefinition.read(reader)

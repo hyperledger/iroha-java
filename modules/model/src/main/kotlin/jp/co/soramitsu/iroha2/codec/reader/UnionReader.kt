@@ -10,7 +10,7 @@ class UnionReader<T>(private val mapping: List<ScaleReader<out T>>) : ScaleReade
     override fun read(reader: ScaleCodecReader): UnionValue<T> {
         val index = reader.readUByte()
         check(mapping.size > index) { "Unknown type index: $index" }
-        val value = mapping[index].read(reader) as T
-        return UnionValue(index, value)
+        val value = mapping[index.toInt()].read(reader)
+        return UnionValue(index.toInt(), value)
     }
 }

@@ -414,16 +414,6 @@ class InstructionsTest {
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
         val toBurn = 80L
-
-        QueryBuilder.findAllDomains()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query ->
-                client.sendQuery(query)
-            }.let { value ->
-                println(value)
-            }
-
         val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)

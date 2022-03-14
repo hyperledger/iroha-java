@@ -16,7 +16,7 @@ class EnumReader<T : Enum<*>?>(values: Array<T>) : ScaleReader<T> {
     override fun read(reader: ScaleCodecReader): T {
         val id = reader.readUByte()
         for (t in values) {
-            if (t!!.ordinal == id) {
+            if (t!!.ordinal == id.toInt()) {
                 return t
             }
         }

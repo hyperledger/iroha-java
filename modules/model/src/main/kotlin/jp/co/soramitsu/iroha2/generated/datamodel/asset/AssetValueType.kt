@@ -113,7 +113,7 @@ public sealed class AssetValueType : ModelEnum {
     public companion object : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
         public override fun read(reader: ScaleCodecReader): AssetValueType = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Quantity.read(reader)
             1 -> BigQuantity.read(reader)

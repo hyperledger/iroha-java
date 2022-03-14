@@ -139,7 +139,7 @@ public sealed class Parameter : ModelEnum {
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
         public override fun read(reader: ScaleCodecReader): Parameter = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> MaximumFaultyPeersAmount.read(reader)
             1 -> BlockTime.read(reader)

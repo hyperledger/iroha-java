@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.writer.CompactUIntWriter
 import jp.co.soramitsu.iroha2.codec.writer.Int32Writer
 import jp.co.soramitsu.iroha2.codec.writer.Int64Writer
 import jp.co.soramitsu.iroha2.codec.writer.IntWriter
+import jp.co.soramitsu.iroha2.codec.writer.UByteWriter
 import jp.co.soramitsu.iroha2.codec.writer.UInt16Writer
 import jp.co.soramitsu.iroha2.codec.writer.UInt32Writer
 import jp.co.soramitsu.iroha2.codec.writer.UIntWriter
@@ -32,16 +33,22 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
      * @param b byte to write
      * @throws IOException if failed to write
      */
+    fun directWrite(b: Short) {
+        out.write(b.toInt())
+    }
+
     fun directWrite(b: Int) {
         out.write(b)
     }
 
     fun directWrite(b: Long) {
         out.write(b.toInt())
+//        out.write(b.toBytes())
     }
 
     fun directWrite(b: BigInteger) {
         out.write(b.toInt())
+//        out.write(b.toByteArray())
     }
 
     /**
@@ -98,6 +105,10 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         directWrite(value.toInt())
     }
 
+    fun writeUByte(value: Short) {
+        UBYTE.write(this, value)
+    }
+
     fun writeUint16(value: Int) {
         UINT16.write(this, value)
     }
@@ -141,6 +152,7 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
     companion object {
         val COMPACT_UINT = CompactUIntWriter()
         val COMPACT_BIGINT = CompactBigIntWriter()
+        val UBYTE = UByteWriter()
         val UINT16 = UInt16Writer()
         val UINT32 = UInt32Writer()
         val UINT64 = UIntWriter(64)

@@ -193,7 +193,7 @@ public sealed class EntityFilter : ModelEnum {
     public companion object : ScaleReader<EntityFilter>, ScaleWriter<EntityFilter> {
         public override fun read(reader: ScaleCodecReader): EntityFilter = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> ByDomain.read(reader)
             1 -> ByPeer.read(reader)

@@ -192,7 +192,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
         ScaleWriter<TransactionRejectionReason> {
         public override fun read(reader: ScaleCodecReader): TransactionRejectionReason = when (
             val
-            discriminant = reader.readUByte()
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> NotPermitted.read(reader)
             1 -> UnsatisfiedSignatureCondition.read(reader)

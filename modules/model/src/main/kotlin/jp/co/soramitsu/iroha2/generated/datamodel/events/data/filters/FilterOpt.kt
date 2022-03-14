@@ -78,7 +78,7 @@ public sealed class FilterOpt<T0> : ModelEnum {
     public companion object : ScaleReader<FilterOpt<out Any>>, ScaleWriter<FilterOpt<out Any>> {
         public override fun read(reader: ScaleCodecReader): FilterOpt<out Any> = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)

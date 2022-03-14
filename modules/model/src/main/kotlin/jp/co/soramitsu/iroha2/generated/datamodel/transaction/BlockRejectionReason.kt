@@ -49,7 +49,7 @@ public sealed class BlockRejectionReason : ModelEnum {
     public companion object : ScaleReader<BlockRejectionReason>, ScaleWriter<BlockRejectionReason> {
         public override fun read(reader: ScaleCodecReader): BlockRejectionReason = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> ConsensusBlockRejection.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

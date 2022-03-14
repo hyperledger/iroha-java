@@ -121,7 +121,7 @@ public sealed class Reason : ModelEnum {
     public companion object : ScaleReader<Reason>, ScaleWriter<Reason> {
         public override fun read(reader: ScaleCodecReader): Reason = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> CommitTimeout.read(reader)
             1 -> NoTransactionReceiptReceived.read(reader)

@@ -81,7 +81,7 @@ class QueriesTest {
 
     @Test
     @WithIroha
-    fun `find accounts by domain name`(): Unit = runBlocking {
+    fun `find accounts by domain ID`(): Unit = runBlocking {
         QueryBuilder.findAccountsByDomainId(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

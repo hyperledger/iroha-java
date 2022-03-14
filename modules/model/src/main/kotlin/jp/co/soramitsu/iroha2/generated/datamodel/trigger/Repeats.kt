@@ -75,7 +75,7 @@ public sealed class Repeats : ModelEnum {
     public companion object : ScaleReader<Repeats>, ScaleWriter<Repeats> {
         public override fun read(reader: ScaleCodecReader): Repeats = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Indefinitely.read(reader)
             1 -> Exactly.read(reader)
