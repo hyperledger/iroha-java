@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
@@ -51,7 +52,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find accounts by name`(): Unit = runBlocking {
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
             .account(ALICE_ACCOUNT_ID)
@@ -80,7 +81,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find accounts by domain ID`(): Unit = runBlocking {
         QueryBuilder.findAccountsByDomainId(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -212,7 +213,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find domain by name`(): Unit = runBlocking {
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -225,7 +226,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find all peers`(): Unit = runBlocking {
         QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -238,7 +239,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find transactions by account id`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -291,7 +292,7 @@ class QueriesTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `find transaction by hash`(): Unit = runBlocking {
         val hash = client.sendTransaction {
             account(ALICE_ACCOUNT_ID)

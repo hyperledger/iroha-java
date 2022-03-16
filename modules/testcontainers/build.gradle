@@ -1,13 +1,14 @@
 group 'jp.co.soramitsu'
 
 dependencies {
-    api project(":client")
     api project(":block")
     api "org.testcontainers:testcontainers:$testContainersVer"
-    implementation "com.google.code.gson:gson:$gsonVer"
+    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     implementation "ch.qos.logback:logback-classic:$logbackVer"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
+
 }
 
 test {

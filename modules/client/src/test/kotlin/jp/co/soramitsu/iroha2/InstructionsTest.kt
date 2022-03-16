@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.engine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
@@ -46,7 +47,7 @@ class InstructionsTest {
     lateinit var client: Iroha2Client
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `register domain instruction committed`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
@@ -67,7 +68,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
@@ -88,7 +89,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `register asset instruction committed`(): Unit = runBlocking {
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -110,7 +111,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `store asset instruction committed`(): Unit = runBlocking {
         val pair1 = "key1".asName() to "bar".asValue()
         val pair2 = "key2".asName() to true.asValue()
@@ -155,7 +156,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
@@ -200,7 +201,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `mint asset instruction committed`(): Unit = runBlocking {
         // currently Iroha2 does not support registering an asset and minting the asset in the same transaction,
         // so below 2 separate transaction created
@@ -259,7 +260,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `burn public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
         mintPublicKey(ALICE_ACCOUNT_ID)
@@ -290,7 +291,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `burn and mint public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
         mintPublicKey(BOB_ACCOUNT_ID)
@@ -344,7 +345,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `change user account metadata`(): Unit = runBlocking {
         val saltKey = "salt"
 
@@ -465,7 +466,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `instruction failed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -505,7 +506,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
         // register an asset with type `Fixed`
         client.sendTransaction {
@@ -581,7 +582,7 @@ class InstructionsTest {
     }
 
     @Test
-    @WithIroha
+    @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
         val payload = "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()

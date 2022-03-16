@@ -1,22 +1,27 @@
 package jp.co.soramitsu.iroha2
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.module.SimpleModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.HttpResponseValidator
+import io.ktor.client.features.json.JacksonSerializer
+import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.features.websocket.ClientWebSocketSession
 import io.ktor.client.features.websocket.WebSockets
 import io.ktor.client.features.websocket.webSocket
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.send
-import io.ktor.utils.io.readUTF8Line
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -40,12 +45,12 @@ import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
+import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
     open var peerUrl: URL,
-    open var telemetryUrl: URL = URL(peerUrl.protocol, peerUrl.host, DEFAULT_TELEMETRY_PORT, peerUrl.file),
     open val log: Boolean = false
 ) : AutoCloseable {
 
@@ -53,40 +58,38 @@ open class Iroha2Client(
 
     open val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    open val client = lazy {
+    open val client by lazy {
         HttpClient(CIO) {
             expectSuccess = true
             if (log) {
                 install(Logging)
             }
             install(WebSockets)
+            install(JsonFeature) {
+                this.serializer = JacksonSerializer {
+                    registerModule(
+                        SimpleModule().apply {
+                            addDeserializer(
+                                Duration::class.java,
+                                object : JsonDeserializer<Duration>() {
+                                    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
+                                        val pairs: Map<String, Long> = p.readValueAs(object : TypeReference<Map<String, Long>>() {})
+                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(p, "Expected `secs` item for duration deserialization")
+                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(p, "Expected `nanos` item for duration deserialization")
+                                        return Duration.ofSeconds(seconds, nanos)
+                                    }
+                                }
+                            )
+                        }
+                    )
+                }
+            }
             HttpResponseValidator {
                 handleResponseException { exception ->
                     throw IrohaClientException(cause = exception)
                 }
             }
         }
-    }
-
-    open val mapper = ObjectMapper()
-
-    /**
-     * Sends health check request
-     */
-    suspend fun health(): Int {
-        return client.value
-            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
-            .status.value
-    }
-
-    /**
-     * Sends status check request
-     */
-    suspend fun status(): Map<*, *> {
-        return client.value
-            .get<HttpResponse>("$telemetryUrl$STATUS_ENDPOINT")
-            .content.readUTF8Line()
-            .let { mapper.readValue(it, Map::class.java) }
     }
 
     /**
@@ -100,7 +103,7 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.value.post("$peerUrl$TRANSACTION_ENDPOINT") {
+        val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
             body = VersionedTransaction.encode(signedTransaction)
         }
         response.receive<Unit>()
@@ -130,7 +133,7 @@ open class Iroha2Client(
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
-        val response: HttpResponse = client.value.post("$peerUrl$QUERY_ENDPOINT") {
+        val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
         }
         return response.receive<ByteArray>()
@@ -161,7 +164,7 @@ open class Iroha2Client(
         val result: CompletableFuture<ByteArray> = CompletableFuture()
 
         scope.launch {
-            client.value.webSocket(
+            client.webSocket(
                 host = peerUrl.host,
                 port = peerUrl.port,
                 path = WS_ENDPOINT
@@ -283,7 +286,9 @@ open class Iroha2Client(
         const val WS_ENDPOINT = "/events"
         const val HEALTH_ENDPOINT = "/health"
         const val STATUS_ENDPOINT = "/status"
+        const val METRICS_ENDPOINT = "/metrics"
+        const val CONFIGURATION_ENDPOINT = "/configuration"
     }
 
-    override fun close() = client.value.close()
+    override fun close() = client.close()
 }

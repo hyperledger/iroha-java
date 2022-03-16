@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.engine
 
+import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.Iroha2Client
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -22,44 +23,57 @@ class IrohaRunnerExtension : InvocationInterceptor {
         extensionContext: ExtensionContext
     ) {
         // init container and client if annotation was passed on test method
-        val (iroha2Client, container) = initIfRequested(invocationContext)
+        val resources = initIfRequested(invocationContext)
         try {
             // invoke actual test method
             super.interceptTestMethod(invocation, invocationContext, extensionContext)
         } finally {
             // stop container and client if they were created
-            iroha2Client?.close()
-            container?.stop()
+            resources.forEach { it.close() }
         }
     }
 
-    private fun initIfRequested(invocationContext: ReflectiveInvocationContext<Method>): Pair<Iroha2Client?, IrohaContainer?> {
+    private fun initIfRequested(invocationContext: ReflectiveInvocationContext<Method>): List<AutoCloseable> {
         return invocationContext
             .executable
             .declaredAnnotations.filterIsInstance<WithIroha>()
             .firstOrNull()
             ?.let {
+                val utilizedResources = mutableListOf<AutoCloseable>()
+                // start container
                 val container = IrohaContainer { genesis = it.genesis.createInstance() }
                 container.start()
-                val irohaClient = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
+                utilizedResources.add(container)
+
                 val testClassInstance = invocationContext.target.get()
                 val declaredProperties = testClassInstance::class.declaredMemberProperties
-                setPropertyValue(declaredProperties, testClassInstance, container)
-                setPropertyValue(declaredProperties, testClassInstance, irohaClient)
-                (irohaClient to container)
-            } ?: (null to null)
+
+                // inject `Iroha2Client` if it is declared in test class
+                setPropertyValue(declaredProperties, testClassInstance) {
+                    Iroha2Client(container.getApiUrl(), log = true)
+                        .also { utilizedResources.add(it) }
+                }
+
+                // inject `AdminIroha2Client` if it is declared in test class
+                setPropertyValue(declaredProperties, testClassInstance) {
+                    AdminIroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
+                        .also { utilizedResources.add(it) }
+                }
+
+                utilizedResources
+            } ?: emptyList()
     }
 
     private inline fun <reified V : Any> setPropertyValue(
         declaredProperties: Collection<KProperty1<out Any, *>>,
         testClassInstance: Any,
-        valueToSet: V
+        valueToSet: () -> V
     ) {
         (declaredProperties.filter { it.returnType.classifier == V::class })
             .filterIsInstance<KMutableProperty1<out Any, V>>()
             .also { check(it.size <= 1) { "Found more than one property with type `${V::class.qualifiedName}` in test class `${testClassInstance::class::qualifiedName}`" } }
             .firstOrNull()
             ?.setter
-            ?.call(testClassInstance, valueToSet)
+            ?.call(testClassInstance, valueToSet())
     }
 }

@@ -19,6 +19,5 @@ dependencies {
 
     api project(":model")
 
-    testImplementation project(":testcontainers")
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+    testImplementation project(":test-tools")
 }

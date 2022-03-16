@@ -2,8 +2,8 @@
 
 package jp.co.soramitsu.iroha2
 
-import com.google.gson.Gson
-import com.google.gson.stream.JsonReader
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import jp.co.soramitsu.iroha2.codegen.generator.GeneratorEntryPoint
 import jp.co.soramitsu.iroha2.parse.Schema
 import jp.co.soramitsu.iroha2.parse.SchemaParser
@@ -24,10 +24,8 @@ fun main(args: Array<String>) {
 }
 
 fun readSchema(fileName: String): Schema {
-    val gson = Gson()
     val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
-    return JsonReader(InputStreamReader(resource))
-        .use { gson.fromJson(it, Map::class.java) }
+    return ObjectMapper().readValue(InputStreamReader(resource), object : TypeReference<Map<String, Any>>() {})
 }
 
 fun parseArgs(args: Array<String>): Map<String, String> {

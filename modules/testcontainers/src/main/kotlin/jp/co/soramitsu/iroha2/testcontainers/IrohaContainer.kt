@@ -3,8 +3,8 @@ package jp.co.soramitsu.iroha2.testcontainers
 import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
-import jp.co.soramitsu.iroha2.GSON
 import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
+import jp.co.soramitsu.iroha2.JSON_SERDE
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.PullPolicy
@@ -55,7 +55,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                     .forStatusCode(200)
                     .forPort(DEFAULT_TELEMETRY_PORT)
                     .forPath(STATUS_ENDPOINT)
-                    .forResponsePredicate { GSON.fromJson(it, Map::class.java)["blocks"]?.equals(1.0) ?: false }
+                    .forResponsePredicate { JSON_SERDE.readTree(it).get("blocks")?.doubleValue()?.equals(1.0) ?: false }
                     .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
             )
     }
