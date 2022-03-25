@@ -107,7 +107,7 @@ public sealed class Node<T0> : ModelEnum {
     public companion object : ScaleReader<Node<out Any>>, ScaleWriter<Node<out Any>> {
         public override fun read(reader: ScaleCodecReader): Node<out Any> = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Subtree.read(reader)
             1 -> Leaf.read(reader)

@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.codec.reader
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.shl
 import java.math.BigInteger
 
 class UIntReader(private val bit: Int) : ScaleReader<BigInteger> {

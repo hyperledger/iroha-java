@@ -4,6 +4,8 @@ import jp.co.soramitsu.iroha2.codec.CompactMode
 import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.byValue
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.and
+import jp.co.soramitsu.iroha2.codec.shr
 import java.math.BigInteger
 
 class CompactBigIntReader : ScaleReader<BigInteger> {

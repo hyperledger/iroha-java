@@ -166,7 +166,7 @@ public sealed class Value : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val fixed: jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed
+        public val fixed: jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -175,14 +175,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Fixed = try {
                 Fixed(
-                    jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed.read(reader),
+                    jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.fixed.Fixed.write(writer, instance.fixed)
+                jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.write(writer, instance.fixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -477,7 +477,7 @@ public sealed class Value : ModelEnum {
     public companion object : ScaleReader<Value>, ScaleWriter<Value> {
         public override fun read(reader: ScaleCodecReader): Value = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> U32.read(reader)
             1 -> U128.read(reader)

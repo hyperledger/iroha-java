@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
@@ -141,8 +142,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerDomain(
         domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf()
-    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions)) }
+        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
+        metadata: Map<Name, Value> = mapOf(),
+        logo: IpfsPath? = null
+    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions, metadata, logo)) }
 
     fun registerPeer(
         address: String,

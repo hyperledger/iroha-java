@@ -69,7 +69,7 @@ public sealed class EntityType : ModelEnum {
     public companion object : ScaleReader<EntityType>, ScaleWriter<EntityType> {
         public override fun read(reader: ScaleCodecReader): EntityType = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Block.read(reader)
             1 -> Transaction.read(reader)

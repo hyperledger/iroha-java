@@ -591,7 +591,7 @@ public sealed class Expression : ModelEnum {
     public companion object : ScaleReader<Expression>, ScaleWriter<Expression> {
         public override fun read(reader: ScaleCodecReader): Expression = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Add.read(reader)
             1 -> Subtract.read(reader)

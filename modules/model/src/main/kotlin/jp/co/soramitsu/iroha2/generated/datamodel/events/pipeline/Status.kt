@@ -97,7 +97,7 @@ public sealed class Status : ModelEnum {
     public companion object : ScaleReader<Status>, ScaleWriter<Status> {
         public override fun read(reader: ScaleCodecReader): Status = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Validating.read(reader)
             1 -> Rejected.read(reader)

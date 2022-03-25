@@ -54,7 +54,7 @@ public sealed class VersionedRejectedTransaction : ModelEnum {
         ScaleWriter<VersionedRejectedTransaction> {
         public override fun read(reader: ScaleCodecReader): VersionedRejectedTransaction = when (
             val
-            discriminant = reader.readUByte()
+            discriminant = reader.readUByte().toInt()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

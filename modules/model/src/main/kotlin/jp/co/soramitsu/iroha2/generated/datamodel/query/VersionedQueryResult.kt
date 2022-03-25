@@ -52,7 +52,7 @@ public sealed class VersionedQueryResult : ModelEnum {
     public companion object : ScaleReader<VersionedQueryResult>, ScaleWriter<VersionedQueryResult> {
         public override fun read(reader: ScaleCodecReader): VersionedQueryResult = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

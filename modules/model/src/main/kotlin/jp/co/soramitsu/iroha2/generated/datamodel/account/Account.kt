@@ -27,7 +27,8 @@ public data class Account(
     public val signatories: List<PublicKey>,
     public val permissionTokens: Set<PermissionToken>,
     public val signatureCheckCondition: SignatureCheckCondition,
-    public val metadata: Metadata
+    public val metadata: Metadata,
+    public val roles: Set<jp.co.soramitsu.iroha2.generated.datamodel.role.Id>
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
         public override fun read(reader: ScaleCodecReader): Account = try {
@@ -42,6 +43,7 @@ public data class Account(
                 reader.readSet(reader.readCompactInt()) { PermissionToken.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),
+                reader.readSet(reader.readCompactInt()) { jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -60,6 +62,10 @@ public data class Account(
             instance.permissionTokens.forEach { value -> PermissionToken.write(writer, value) }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
+            writer.writeCompact(instance.roles.size)
+            instance.roles.forEach { value ->
+                jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

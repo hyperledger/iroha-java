@@ -75,7 +75,7 @@ public sealed class BlockSubscriberMessage : ModelEnum {
     public companion object : ScaleReader<BlockSubscriberMessage>, ScaleWriter<BlockSubscriberMessage> {
         public override fun read(reader: ScaleCodecReader): BlockSubscriberMessage = when (
             val
-            discriminant = reader.readUByte()
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> SubscriptionRequest.read(reader)
             1 -> BlockReceived.read(reader)

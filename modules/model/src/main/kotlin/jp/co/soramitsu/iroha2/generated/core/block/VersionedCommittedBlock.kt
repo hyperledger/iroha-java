@@ -54,7 +54,7 @@ public sealed class VersionedCommittedBlock : ModelEnum {
         ScaleWriter<VersionedCommittedBlock> {
         public override fun read(reader: ScaleCodecReader): VersionedCommittedBlock = when (
             val
-            discriminant = reader.readUByte()
+            discriminant = reader.readUByte().toInt()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
