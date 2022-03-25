@@ -81,6 +81,36 @@ public sealed class EventFilter : ModelEnum {
         }
     }
 
+    /**
+     * 'Time' variant
+     */
+    public data class Time(
+        public val eventFilter: jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter
+    ) : EventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Time>, ScaleWriter<Time> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): Time = try {
+                Time(
+                    jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Time) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter.write(
+                    writer,
+                    instance.eventFilter
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
         public override fun read(reader: ScaleCodecReader): EventFilter = when (
             val discriminant =
@@ -88,6 +118,7 @@ public sealed class EventFilter : ModelEnum {
         ) {
             0 -> Pipeline.read(reader)
             1 -> Data.read(reader)
+            2 -> Time.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -96,6 +127,7 @@ public sealed class EventFilter : ModelEnum {
             when (val discriminant = instance.discriminant()) {
                 0 -> Pipeline.write(writer, instance as Pipeline)
                 1 -> Data.write(writer, instance as Data)
+                2 -> Time.write(writer, instance as Time)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

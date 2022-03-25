@@ -82,6 +82,33 @@ public sealed class Event : ModelEnum {
         }
     }
 
+    /**
+     * 'Time' variant
+     */
+    public data class Time(
+        public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event
+    ) : Event() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Time>, ScaleWriter<Time> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): Time = try {
+                Time(
+                    jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Time) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event.write(writer, instance.event)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = when (
             val discriminant =
@@ -89,6 +116,7 @@ public sealed class Event : ModelEnum {
         ) {
             0 -> Pipeline.read(reader)
             1 -> Data.read(reader)
+            2 -> Time.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -97,6 +125,7 @@ public sealed class Event : ModelEnum {
             when (val discriminant = instance.discriminant()) {
                 0 -> Pipeline.write(writer, instance as Pipeline)
                 1 -> Data.write(writer, instance as Data)
+                2 -> Time.write(writer, instance as Time)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

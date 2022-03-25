@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(30)
+@Timeout(40)
 class QueriesTest {
 
     lateinit var client: Iroha2Client
@@ -214,7 +214,7 @@ class QueriesTest {
 
     @Test
     @WithIroha(DefaultGenesis::class)
-    fun `find domain by name`(): Unit = runBlocking {
+    fun `find domain by ID`(): Unit = runBlocking {
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

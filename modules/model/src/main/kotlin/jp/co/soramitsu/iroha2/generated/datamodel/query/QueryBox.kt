@@ -733,6 +733,67 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
+     * 'FindAllRoles' variant
+     */
+    public data class FindAllRoles(
+        public val findAllRoles: jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoles
+    ) : QueryBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<FindAllRoles>, ScaleWriter<FindAllRoles> {
+            public const val DISCRIMINANT: Int = 22
+
+            public override fun read(reader: ScaleCodecReader): FindAllRoles = try {
+                FindAllRoles(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoles.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: FindAllRoles) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoles.write(
+                    writer,
+                    instance.findAllRoles
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'FindRolesByAccountId' variant
+     */
+    public data class FindRolesByAccountId(
+        public val findRolesByAccountId:  
+            jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
+    ) : QueryBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<FindRolesByAccountId>, ScaleWriter<FindRolesByAccountId> {
+            public const val DISCRIMINANT: Int = 23
+
+            public override fun read(reader: ScaleCodecReader): FindRolesByAccountId = try {
+                FindRolesByAccountId(
+                    jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: FindRolesByAccountId) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId.write(
+                    writer,
+                    instance.findRolesByAccountId
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'FindPermissionTokensByAccountId' variant
      */
     public data class FindPermissionTokensByAccountId(
@@ -744,7 +805,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<FindPermissionTokensByAccountId>,
             ScaleWriter<FindPermissionTokensByAccountId> {
-            public const val DISCRIMINANT: Int = 22
+            public const val DISCRIMINANT: Int = 24
 
             public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
                 FindPermissionTokensByAccountId(
@@ -793,7 +854,9 @@ public sealed class QueryBox : ModelEnum {
             19 -> FindAllPeers.read(reader)
             20 -> FindTransactionsByAccountId.read(reader)
             21 -> FindTransactionByHash.read(reader)
-            22 -> FindPermissionTokensByAccountId.read(reader)
+            22 -> FindAllRoles.read(reader)
+            23 -> FindRolesByAccountId.read(reader)
+            24 -> FindPermissionTokensByAccountId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -830,7 +893,9 @@ public sealed class QueryBox : ModelEnum {
                 19 -> FindAllPeers.write(writer, instance as FindAllPeers)
                 20 -> FindTransactionsByAccountId.write(writer, instance as FindTransactionsByAccountId)
                 21 -> FindTransactionByHash.write(writer, instance as FindTransactionByHash)
-                22 -> FindPermissionTokensByAccountId.write(
+                22 -> FindAllRoles.write(writer, instance as FindAllRoles)
+                23 -> FindRolesByAccountId.write(writer, instance as FindRolesByAccountId)
+                24 -> FindPermissionTokensByAccountId.write(
                     writer,
                     instance as
                         FindPermissionTokensByAccountId

@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.As
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.AssetFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.domain.DomainFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.peer.PeerFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.role.RoleFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.trigger.TriggerFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -83,6 +84,33 @@ public sealed class EntityFilter : ModelEnum {
     }
 
     /**
+     * 'ByRole' variant
+     */
+    public data class ByRole(
+        public val filterOpt: FilterOpt<RoleFilter>
+    ) : EntityFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ByRole>, ScaleWriter<ByRole> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): ByRole = try {
+                ByRole(
+                    FilterOpt.read(reader) as FilterOpt<RoleFilter>,
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByRole) = try {
+                FilterOpt.write(writer, instance.filterOpt)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'ByAccount' variant
      */
     public data class ByAccount(
@@ -91,7 +119,7 @@ public sealed class EntityFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByAccount>, ScaleWriter<ByAccount> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): ByAccount = try {
                 ByAccount(
@@ -118,7 +146,7 @@ public sealed class EntityFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByAssetDefinition>, ScaleWriter<ByAssetDefinition> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): ByAssetDefinition = try {
                 ByAssetDefinition(
@@ -145,7 +173,7 @@ public sealed class EntityFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByAsset>, ScaleWriter<ByAsset> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): ByAsset = try {
                 ByAsset(
@@ -172,7 +200,7 @@ public sealed class EntityFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByTrigger>, ScaleWriter<ByTrigger> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 6
 
             public override fun read(reader: ScaleCodecReader): ByTrigger = try {
                 ByTrigger(
@@ -197,10 +225,11 @@ public sealed class EntityFilter : ModelEnum {
         ) {
             0 -> ByDomain.read(reader)
             1 -> ByPeer.read(reader)
-            2 -> ByAccount.read(reader)
-            3 -> ByAssetDefinition.read(reader)
-            4 -> ByAsset.read(reader)
-            5 -> ByTrigger.read(reader)
+            2 -> ByRole.read(reader)
+            3 -> ByAccount.read(reader)
+            4 -> ByAssetDefinition.read(reader)
+            5 -> ByAsset.read(reader)
+            6 -> ByTrigger.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -209,10 +238,11 @@ public sealed class EntityFilter : ModelEnum {
             when (val discriminant = instance.discriminant()) {
                 0 -> ByDomain.write(writer, instance as ByDomain)
                 1 -> ByPeer.write(writer, instance as ByPeer)
-                2 -> ByAccount.write(writer, instance as ByAccount)
-                3 -> ByAssetDefinition.write(writer, instance as ByAssetDefinition)
-                4 -> ByAsset.write(writer, instance as ByAsset)
-                5 -> ByTrigger.write(writer, instance as ByTrigger)
+                2 -> ByRole.write(writer, instance as ByRole)
+                3 -> ByAccount.write(writer, instance as ByAccount)
+                4 -> ByAssetDefinition.write(writer, instance as ByAssetDefinition)
+                5 -> ByAsset.write(writer, instance as ByAsset)
+                6 -> ByTrigger.write(writer, instance as ByTrigger)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

@@ -43,12 +43,10 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
 
     fun directWrite(b: Long) {
         out.write(b.toInt())
-//        out.write(b.toBytes())
     }
 
     fun directWrite(b: BigInteger) {
         out.write(b.toInt())
-//        out.write(b.toByteArray())
     }
 
     /**

@@ -191,6 +191,33 @@ public sealed class IdentifiableBox : ModelEnum {
     }
 
     /**
+     * 'Role' variant
+     */
+    public data class Role(
+        public val role: jp.co.soramitsu.iroha2.generated.datamodel.role.Role
+    ) : IdentifiableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Role>, ScaleWriter<Role> {
+            public const val DISCRIMINANT: Int = 6
+
+            public override fun read(reader: ScaleCodecReader): Role = try {
+                Role(
+                    jp.co.soramitsu.iroha2.generated.datamodel.role.Role.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.role.Role.write(writer, instance.role)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Trigger' variant
      */
     public data class Trigger(
@@ -199,7 +226,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Trigger>, ScaleWriter<Trigger> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 7
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
@@ -224,7 +251,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<World>, ScaleWriter<World> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 8
 
             public override fun read(reader: ScaleCodecReader): World = try {
                 World()
@@ -250,8 +277,9 @@ public sealed class IdentifiableBox : ModelEnum {
             3 -> AssetDefinition.read(reader)
             4 -> Domain.read(reader)
             5 -> Peer.read(reader)
-            6 -> Trigger.read(reader)
-            7 -> World.read(reader)
+            6 -> Role.read(reader)
+            7 -> Trigger.read(reader)
+            8 -> World.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -264,8 +292,9 @@ public sealed class IdentifiableBox : ModelEnum {
                 3 -> AssetDefinition.write(writer, instance as AssetDefinition)
                 4 -> Domain.write(writer, instance as Domain)
                 5 -> Peer.write(writer, instance as Peer)
-                6 -> Trigger.write(writer, instance as Trigger)
-                7 -> World.write(writer, instance as World)
+                6 -> Role.write(writer, instance as Role)
+                7 -> Trigger.write(writer, instance as Trigger)
+                8 -> World.write(writer, instance as World)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

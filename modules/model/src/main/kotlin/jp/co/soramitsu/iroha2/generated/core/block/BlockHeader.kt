@@ -23,6 +23,7 @@ import kotlin.collections.List
  */
 public data class BlockHeader(
     public val timestamp: BigInteger,
+    public val consensusEstimation: BigInteger,
     public val height: BigInteger,
     public val previousBlockHash: HashOf<VersionedCommittedBlock>,
     public val transactionsHash: HashOf<MerkleTree<VersionedTransaction>>,
@@ -35,6 +36,7 @@ public data class BlockHeader(
         public override fun read(reader: ScaleCodecReader): BlockHeader = try {
             BlockHeader(
                 reader.readUint128(),
+                reader.readUint64(),
                 reader.readUint64(),
                 HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
                 HashOf.read(reader) as HashOf<MerkleTree<VersionedTransaction>>,
@@ -52,6 +54,7 @@ public data class BlockHeader(
 
         public override fun write(writer: ScaleCodecWriter, instance: BlockHeader) = try {
             writer.writeUint128(instance.timestamp)
+            writer.writeUint64(instance.consensusEstimation)
             writer.writeUint64(instance.height)
             HashOf.write(writer, instance.previousBlockHash)
             HashOf.write(writer, instance.transactionsHash)
