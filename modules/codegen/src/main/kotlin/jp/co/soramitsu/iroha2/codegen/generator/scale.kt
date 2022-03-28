@@ -64,7 +64,7 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
             resolveScaleReadImpl(type.key.requireValue()),
             resolveScaleReadImpl(type.value.requireValue())
         )
-        is U8Type -> CodeBlock.of("reader.readByte()")
+        is U8Type -> CodeBlock.of("reader.readUByte()")
         is U16Type -> CodeBlock.of("reader.readUint16()")
         is U32Type -> CodeBlock.of("reader.readUint32()")
         is U64Type -> CodeBlock.of("reader.readUint64()")
@@ -143,7 +143,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
                 resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value"))
             )
         }
-        is U8Type -> CodeBlock.of("writer.writeByte(%L.toByte())", propName)
+        is U8Type -> CodeBlock.of("writer.writeUByte(%L.toShort())", propName)
         is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
         is U32Type -> CodeBlock.of("writer.writeUint32(%L)", propName)
         is U64Type -> CodeBlock.of("writer.writeUint64(%L)", propName)

@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.ByteArray
 import kotlin.Int
 import kotlin.collections.List
 
@@ -57,7 +56,7 @@ public sealed class Executable : ModelEnum {
      * 'Wasm' variant
      */
     public data class Wasm(
-        public val vec: ByteArray
+        public val wasmSmartContract: WasmSmartContract
     ) : Executable() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -66,14 +65,14 @@ public sealed class Executable : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Wasm = try {
                 Wasm(
-                    reader.readByteArray(),
+                    WasmSmartContract.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Wasm) = try {
-                writer.writeAsList(instance.vec)
+                WasmSmartContract.write(writer, instance.wasmSmartContract)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -83,7 +82,7 @@ public sealed class Executable : ModelEnum {
     public companion object : ScaleReader<Executable>, ScaleWriter<Executable> {
         public override fun read(reader: ScaleCodecReader): Executable = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Instructions.read(reader)
             1 -> Wasm.read(reader)

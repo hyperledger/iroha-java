@@ -1,22 +1,23 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`
+package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * StatusFilter
+ * RoleEvent
  *
- * Generated from 'iroha_data_model::events::data::StatusFilter' enum
+ * Generated from 'iroha_data_model::events::data::events::role::RoleEvent' enum
  */
-public sealed class StatusFilter : ModelEnum {
+public sealed class RoleEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -25,49 +26,24 @@ public sealed class StatusFilter : ModelEnum {
     /**
      * 'Created' variant
      */
-    public class Created : StatusFilter() {
+    public data class Created(
+        public val id: Id
+    ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Created>, ScaleWriter<Created> {
             public const val DISCRIMINANT: Int = 0
 
             public override fun read(reader: ScaleCodecReader): Created = try {
-                Created()
+                Created(
+                    Id.read(reader),
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
-     * 'Updated' variant
-     */
-    public data class Updated(
-        public val option: jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Updated?
-    ) : StatusFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Updated>, ScaleWriter<Updated> {
-            public const val DISCRIMINANT: Int = 1
-
-            public override fun read(reader: ScaleCodecReader): Updated = try {
-                Updated(
-                    reader.readNullable(jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Updated),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Updated) = try {
-                writer.writeNullable(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.Updated,
-                    instance.option
-                )
+                Id.write(writer, instance.id)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -77,42 +53,45 @@ public sealed class StatusFilter : ModelEnum {
     /**
      * 'Deleted' variant
      */
-    public class Deleted : StatusFilter() {
+    public data class Deleted(
+        public val id: Id
+    ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
-                Deleted()
+                Deleted(
+                    Id.read(reader),
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
+                Id.write(writer, instance.id)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<StatusFilter>, ScaleWriter<StatusFilter> {
-        public override fun read(reader: ScaleCodecReader): StatusFilter = when (
+    public companion object : ScaleReader<RoleEvent>, ScaleWriter<RoleEvent> {
+        public override fun read(reader: ScaleCodecReader): RoleEvent = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Created.read(reader)
-            1 -> Updated.read(reader)
-            2 -> Deleted.read(reader)
+            1 -> Deleted.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: StatusFilter) {
+        public override fun write(writer: ScaleCodecWriter, instance: RoleEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)
-                1 -> Updated.write(writer, instance as Updated)
-                2 -> Deleted.write(writer, instance as Deleted)
+                1 -> Deleted.write(writer, instance as Deleted)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

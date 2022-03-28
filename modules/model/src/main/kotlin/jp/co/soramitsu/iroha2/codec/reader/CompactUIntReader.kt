@@ -4,6 +4,9 @@ import jp.co.soramitsu.iroha2.codec.CompactMode
 import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.byValue
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.and
+import jp.co.soramitsu.iroha2.codec.shl
+import jp.co.soramitsu.iroha2.codec.shr
 
 class CompactUIntReader : ScaleReader<Int> {
     /**
@@ -15,13 +18,10 @@ class CompactUIntReader : ScaleReader<Int> {
         val i = reader.readUByte()
         val mode = byValue((i and 3).toByte())
         if (mode === CompactMode.SINGLE) {
-            return i shr 2
+            return i.toInt() shr 2
         }
         if (mode === CompactMode.TWO) {
-            return (
-                (i shr 2) +
-                    (reader.readUByte() shl 6)
-                )
+            return ((i shr 2) + (reader.readUByte() shl 6))
         }
         if (mode === CompactMode.FOUR) {
             return (i shr 2) +

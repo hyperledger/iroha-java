@@ -79,7 +79,7 @@ public sealed class TransactionValue : ModelEnum {
     public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
         public override fun read(reader: ScaleCodecReader): TransactionValue = when (
             val discriminant =
-                reader.readUByte()
+                reader.readUByte().toInt()
         ) {
             0 -> Transaction.read(reader)
             1 -> RejectedTransaction.read(reader)

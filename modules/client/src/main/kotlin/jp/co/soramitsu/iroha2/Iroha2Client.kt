@@ -245,12 +245,12 @@ open class Iroha2Client(
                     "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
                 }
                 is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
-                is TransactionRejectionReason.SignatureVerification -> reason.signatureVerificationFail.reason
                 is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                     "Genesis account can sign only transactions in the genesis block"
                 is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
                     reason.unsatisfiedSignatureConditionFail.reason
                 is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
+                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.string
             }
         }
     }

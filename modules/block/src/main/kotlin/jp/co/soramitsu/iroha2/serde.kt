@@ -75,7 +75,6 @@ val JSON_SERDE by lazy {
 
         mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
-        mapper.enable(SerializationFeature.INDENT_OUTPUT)
     }
 }
 

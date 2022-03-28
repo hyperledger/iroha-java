@@ -74,7 +74,7 @@ public sealed class EventPublisherMessage : ModelEnum {
     public companion object : ScaleReader<EventPublisherMessage>, ScaleWriter<EventPublisherMessage> {
         public override fun read(reader: ScaleCodecReader): EventPublisherMessage = when (
             val
-            discriminant = reader.readUByte()
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> SubscriptionAccepted.read(reader)
             1 -> Event.read(reader)
