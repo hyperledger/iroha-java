@@ -23,7 +23,7 @@ final def objgenesisVersion = '3.0.1'
 
 dependencies {
     compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
-    compile "com.github.warchant:ed25519-sha3-java:${edSha3Version}"
+    compile "com.github.Warchant:ed25519-sha3-java:${edSha3Version}"
     compile "net.i2p.crypto:eddsa:${edDsaVersion}"
 
     compileOnly("org.projectlombok:lombok:$lombokVersion")
