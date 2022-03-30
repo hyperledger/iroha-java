@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.xml.bind.DatatypeConverter;
 import lombok.val;
-import org.spongycastle.jcajce.provider.digest.SHA3;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 public class Utils {
 
