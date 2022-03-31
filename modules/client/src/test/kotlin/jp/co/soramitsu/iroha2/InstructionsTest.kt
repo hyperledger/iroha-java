@@ -31,6 +31,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
+import java.security.KeyPair
 import java.security.SecureRandom
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
@@ -589,7 +590,7 @@ class InstructionsTest {
     @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
-        val payload = "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
+        val payload = "76cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
 
         registerPeer(address, payload)
         assertTrue(isPeerAvailable(address, payload))
@@ -599,7 +600,7 @@ class InstructionsTest {
 //    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
-        val payload = "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
+        val payload = "76cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
 
         registerPeer(address, payload)
         assertTrue(isPeerAvailable(address, payload))
@@ -635,10 +636,14 @@ class InstructionsTest {
         }
     }
 
-    private suspend fun isPeerAvailable(address: String, payload: ByteArray): Boolean {
+    private suspend fun isPeerAvailable(
+        address: String,
+        payload: ByteArray,
+        keyPair: KeyPair = ALICE_KEYPAIR
+    ): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
+            .buildSigned(keyPair)
             .let { query ->
                 client.sendQuery(query)
             }.any { peer ->
@@ -646,11 +651,11 @@ class InstructionsTest {
             }
     }
 
-    private suspend fun unregisterPeer(address: String, payload: ByteArray) {
+    private suspend fun unregisterPeer(address: String, payload: ByteArray, keyPair: KeyPair = ALICE_KEYPAIR) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             unregisterPeer(address, payload)
-            buildSigned(ALICE_KEYPAIR)
+            buildSigned(keyPair)
         }.also {
             Assertions.assertDoesNotThrow {
                 it.get(15, TimeUnit.SECONDS)
@@ -658,11 +663,15 @@ class InstructionsTest {
         }
     }
 
-    private suspend fun registerPeer(address: String, payload: ByteArray) {
+    private suspend fun registerPeer(
+        address: String,
+        payload: ByteArray,
+        keyPair: KeyPair = ALICE_KEYPAIR
+    ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             registerPeer(address, payload)
-            buildSigned(ALICE_KEYPAIR)
+            buildSigned(keyPair)
         }.also {
             Assertions.assertDoesNotThrow {
                 it.get(15, TimeUnit.SECONDS)
