@@ -373,6 +373,33 @@ public sealed class Instruction : ModelEnum {
         }
     }
 
+    /**
+     * 'ExecuteTrigger' variant
+     */
+    public data class ExecuteTrigger(
+        public val executeTriggerBox: ExecuteTriggerBox
+    ) : Instruction() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
+            public const val DISCRIMINANT: Int = 13
+
+            public override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
+                ExecuteTrigger(
+                    ExecuteTriggerBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger) = try {
+                ExecuteTriggerBox.write(writer, instance.executeTriggerBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Instruction>, ScaleWriter<Instruction> {
         public override fun read(reader: ScaleCodecReader): Instruction = when (
             val discriminant =
@@ -391,6 +418,7 @@ public sealed class Instruction : ModelEnum {
             10 -> RemoveKeyValue.read(reader)
             11 -> Grant.read(reader)
             12 -> Revoke.read(reader)
+            13 -> ExecuteTrigger.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -410,6 +438,7 @@ public sealed class Instruction : ModelEnum {
                 10 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
                 11 -> Grant.write(writer, instance as Grant)
                 12 -> Revoke.write(writer, instance as Revoke)
+                13 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

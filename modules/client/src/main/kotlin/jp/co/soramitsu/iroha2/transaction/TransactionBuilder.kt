@@ -1,5 +1,9 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.transaction
 
+import jp.co.soramitsu.iroha2.DigestFunction
+import jp.co.soramitsu.iroha2.U32_MAX_VALUE
+import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
@@ -9,12 +13,17 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
+import jp.co.soramitsu.iroha2.sign
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.security.KeyPair
@@ -25,6 +34,8 @@ import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
@@ -90,6 +101,54 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    fun registerTimeTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        schedule: Schedule,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerTimeTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                schedule,
+                metadata
+            )
+        )
+    }
+
+    fun registerExecutableTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerExecutableTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
+
+    fun grantRole(
+        roleId: RoleId,
+        accountId: AccountId
+    ) = this.apply { instructions.value.add(Instructions.grantRole(roleId, accountId)) }
+
+    fun registerRole(
+        id: RoleId,
+        vararg tokens: PermissionToken
+    ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
+
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
@@ -129,6 +188,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         key: String
     ) = removeKeyValue(assetId, key.asName())
 
+    fun executeTrigger(
+        triggerId: TriggerId
+    ) = this.apply { instructions.value.add(Instructions.executeTrigger(triggerId)) }
+
     fun mintAsset(
         assetId: AssetId,
         quantity: Long
@@ -145,7 +208,17 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
         metadata: Map<Name, Value> = mapOf(),
         logo: IpfsPath? = null
-    ) = this.apply { instructions.value.add(Instructions.registerDomain(domainId, accounts, assetDefinitions, metadata, logo)) }
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerDomain(
+                domainId,
+                accounts,
+                assetDefinitions,
+                metadata,
+                logo
+            )
+        )
+    }
 
     fun registerPeer(
         address: String,

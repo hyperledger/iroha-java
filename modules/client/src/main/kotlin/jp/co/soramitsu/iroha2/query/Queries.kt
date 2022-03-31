@@ -1,5 +1,6 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.query
 
+import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -24,6 +25,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -157,6 +159,12 @@ object Queries {
     fun findTransactionByHash(hash: Hash): QueryBox.FindTransactionByHash {
         return QueryBox.FindTransactionByHash(
             FindTransactionByHash(hash.evaluatesTo())
+        )
+    }
+
+    fun findRolesByAccountId(accountId: AccountId): QueryBox.FindRolesByAccountId {
+        return QueryBox.FindRolesByAccountId(
+            FindRolesByAccountId(accountId.evaluatesTo())
         )
     }
 }

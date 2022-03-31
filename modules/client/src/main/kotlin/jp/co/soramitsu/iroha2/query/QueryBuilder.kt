@@ -1,5 +1,23 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.query
 
+import jp.co.soramitsu.iroha2.AccountExtractor
+import jp.co.soramitsu.iroha2.AccountsExtractor
+import jp.co.soramitsu.iroha2.AssetDefinitionsExtractor
+import jp.co.soramitsu.iroha2.AssetExtractor
+import jp.co.soramitsu.iroha2.AssetsExtractor
+import jp.co.soramitsu.iroha2.DomainExtractor
+import jp.co.soramitsu.iroha2.DomainsExtractor
+import jp.co.soramitsu.iroha2.PeersExtractor
+import jp.co.soramitsu.iroha2.PermissionTokensExtractor
+import jp.co.soramitsu.iroha2.ResultExtractor
+import jp.co.soramitsu.iroha2.RolesExtractor
+import jp.co.soramitsu.iroha2.TransactionValueExtractor
+import jp.co.soramitsu.iroha2.TransactionValuesExtractor
+import jp.co.soramitsu.iroha2.U32Extractor
+import jp.co.soramitsu.iroha2.ValueExtractor
+import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asSignatureOf
+import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
@@ -8,6 +26,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
+import jp.co.soramitsu.iroha2.hash
+import jp.co.soramitsu.iroha2.sign
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
@@ -167,6 +188,11 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findPermissionTokensByAccountId(accountId),
             PermissionTokensExtractor
+        )
+
+        fun findRolesByAccountId(accountId: AccountId) = QueryBuilder(
+            Queries.findRolesByAccountId(accountId),
+            RolesExtractor
         )
 
         fun findTransactionByHash(hash: Hash) = QueryBuilder(

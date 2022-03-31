@@ -1,7 +1,8 @@
 package jp.co.soramitsu.iroha2.engine
 
+import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_METADATA
+import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_USER_METADATA
 import jp.co.soramitsu.iroha2.Genesis
-import jp.co.soramitsu.iroha2.Instructions
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
@@ -12,14 +13,39 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
+import jp.co.soramitsu.iroha2.toValueId
+import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
 /**
  * Default genesis where just one domain and Alice with Bob in it
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
+
+open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
+    rawGenesisBlock(
+        Instructions.registerRole(
+            ROLE_ID,
+            PermissionToken(
+                CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+            ),
+            PermissionToken(
+                CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+            )
+        ),
+        Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID)
+    )
+) {
+    companion object {
+        val ROLE_ID = RoleId("USER_METADATA_ACCESS".asName())
+    }
+}
 
 /**
  * Gives to Alice has 100 XOR and permission to burn

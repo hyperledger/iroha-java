@@ -37,6 +37,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReas
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.query.QueryAndExtractor
+import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -73,9 +75,14 @@ open class Iroha2Client(
                                 Duration::class.java,
                                 object : JsonDeserializer<Duration>() {
                                     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
-                                        val pairs: Map<String, Long> = p.readValueAs(object : TypeReference<Map<String, Long>>() {})
-                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(p, "Expected `secs` item for duration deserialization")
-                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(p, "Expected `nanos` item for duration deserialization")
+                                        val pairs: Map<String, Long> =
+                                            p.readValueAs(object : TypeReference<Map<String, Long>>() {})
+                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(
+                                            p, "Expected `secs` item for duration deserialization"
+                                        )
+                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(
+                                            p, "Expected `nanos` item for duration deserialization"
+                                        )
                                         return Duration.ofSeconds(seconds, nanos)
                                     }
                                 }

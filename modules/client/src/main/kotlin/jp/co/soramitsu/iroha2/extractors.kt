@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import java.math.BigInteger
 
@@ -131,6 +132,14 @@ object U128Extractor : ResultExtractor<BigInteger> {
 object ValueExtractor : ResultExtractor<Value> {
     override fun extract(result: QueryResult): Value {
         return result.value
+    }
+}
+
+object RolesExtractor : ResultExtractor<List<Role>> {
+    override fun extract(result: QueryResult): List<Role> {
+        return extractVec(result.value) {
+            extractValue(it, IdentifiableBox.Role::role)
+        }
     }
 }
 

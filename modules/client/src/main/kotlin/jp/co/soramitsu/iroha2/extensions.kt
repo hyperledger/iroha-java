@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
@@ -19,9 +20,11 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
@@ -136,12 +139,21 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is DomainId -> Value.Id(IdBox.DomainId(this))
+        is RoleId -> Value.Id(IdBox.RoleId(this))
         is IdBox -> Value.Id(this)
         is Hash -> Value.Hash(this)
         is Name -> Value.Name(this)
+        is PermissionToken -> Value.PermissionToken(this)
+        is IdentifiableBox -> Value.Identifiable(this)
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->
         EvaluatesTo(Expression.Raw(value))
     }
 }
+
+fun AccountId.toValueId() = Value.Id(IdBox.AccountId(this))
+
+fun AssetId.toValueId() = Value.Id(IdBox.AssetId(this))
+
+fun DefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))

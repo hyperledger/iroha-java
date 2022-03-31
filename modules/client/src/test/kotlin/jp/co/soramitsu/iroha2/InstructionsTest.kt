@@ -17,6 +17,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
+import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -591,7 +595,45 @@ class InstructionsTest {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-    // TODO: unregister peer test (https://github.com/hyperledger/iroha/issues/1726)
+//    @Test
+//    @WithIroha(DefaultGenesis::class)
+    fun `unregister peer instruction committed`(): Unit = runBlocking {
+        val address = "127.0.0.1:1338"
+        val payload = "ed012076cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
+
+        registerPeer(address, payload)
+        assertTrue(isPeerAvailable(address, payload))
+
+        unregisterPeer(address, payload)
+        assertFalse(isPeerAvailable(address, payload))
+    }
+
+//    @Test
+//    @WithIroha(DefaultGenesis::class)
+    fun `register and grant role to account`(): Unit = runBlocking {
+        val roleId = Id("USER_METADATA_ACCESS".asName())
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
+            registerRole(
+                roleId,
+                PermissionToken(
+                    CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                    mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+                ),
+                PermissionToken(
+                    CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                    mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+                )
+            )
+            grantRole(roleId, ALICE_ACCOUNT_ID)
+            buildSigned(BOB_KEYPAIR)
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+    }
 
     private suspend fun isPeerAvailable(address: String, payload: ByteArray): Boolean {
         return QueryBuilder.findAllPeers()
