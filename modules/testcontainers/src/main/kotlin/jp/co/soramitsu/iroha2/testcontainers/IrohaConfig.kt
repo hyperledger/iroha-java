@@ -15,10 +15,5 @@ class IrohaConfig(
     var logConsumer: Consumer<OutputFrame> = Slf4jLogConsumer(getLogger(IrohaContainer::class.java)),
     var genesis: Genesis = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf())))),
     var shouldCloseNetwork: Boolean = true,
-    var maxLogLevel: MaxLogLevel = MaxLogLevel.DEBUG,
     var imageTag: String = IrohaContainer.DEFAULT_IMAGE_TAG
 )
-
-enum class MaxLogLevel {
-    ERROR, WARN, INFO, DEBUG, TRACE
-}
