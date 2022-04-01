@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
@@ -57,7 +58,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
