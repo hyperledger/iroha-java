@@ -2383,7 +2383,23 @@
   "iroha_data_model::events::time::EventFilter": {
     "TupleStruct": {
       "types": [
-        "iroha_data_model::events::time::Schedule"
+        "iroha_data_model::events::time::ExecutionTime"
+      ]
+    }
+  },
+  "iroha_data_model::events::time::ExecutionTime": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "PreCommit",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Schedule",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::time::Schedule"
+        }
       ]
     }
   },
