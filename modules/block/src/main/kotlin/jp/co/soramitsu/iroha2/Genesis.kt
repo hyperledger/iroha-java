@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import java.nio.file.Files
 import java.nio.file.Path
@@ -24,4 +25,11 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
      * Represents genesis as JSON
      */
     fun asJson() = JSON_SERDE.writeValueAsString(this.genesisBlock)
+
+    companion object {
+        /**
+         * Returns empty genesis
+         */
+        fun getEmpty() = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf()))))
+    }
 }
