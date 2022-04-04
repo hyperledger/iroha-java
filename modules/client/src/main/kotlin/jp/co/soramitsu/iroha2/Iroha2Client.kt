@@ -42,6 +42,7 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -50,7 +51,6 @@ import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
-import kotlinx.coroutines.future.future
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
