@@ -43,12 +43,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
+import kotlinx.coroutines.future.future
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 open class Iroha2Client(
@@ -135,6 +137,15 @@ open class Iroha2Client(
     }
 
     /**
+     * [for Java]
+     */
+    fun sendTransaction(
+        transaction: VersionedTransaction
+    ): CompletableFuture<ByteArray> = runBlocking {
+        sendTransaction { transaction }
+    }
+
+    /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
      */
@@ -146,6 +157,12 @@ open class Iroha2Client(
         return response.receive<ByteArray>()
             .let { VersionedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
+    }
+
+    fun <T> sendQueryAsync(
+        queryAndExtractor: QueryAndExtractor<T>
+    ): CompletableFuture<T> = scope.future {
+        sendQuery(queryAndExtractor)
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)

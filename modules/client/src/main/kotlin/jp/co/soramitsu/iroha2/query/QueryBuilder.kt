@@ -73,78 +73,95 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
     private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
 
     companion object {
+        @JvmStatic
         fun findAllAccounts() = QueryBuilder(
             Queries.findAllAccounts(),
             AccountsExtractor
         )
 
+        @JvmStatic
         fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBuilder(
             Queries.findAccountKeyValueByIdAndKey(accountId, key),
             ValueExtractor
         )
 
+        @JvmStatic
         fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) =
             findAccountKeyValueByIdAndKey(accountId, key.asName())
 
+        @JvmStatic
         fun findAccountsByName(name: Name) = QueryBuilder(
             Queries.findAccountsByName(name),
             AccountsExtractor
         )
 
+        @JvmStatic
         fun findAccountsByName(name: String) = findAccountsByName(name.asName())
 
+        @JvmStatic
         fun findAccountsByDomainId(domainId: DomainId) = QueryBuilder(
             Queries.findAccountsByDomainId(domainId),
             AccountsExtractor
         )
 
+        @JvmStatic
         fun findAllAssets() = QueryBuilder(
             Queries.findAllAssets(),
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAllAssetsDefinitions() = QueryBuilder(
             Queries.findAllAssetsDefinitions(),
             AssetDefinitionsExtractor
         )
 
+        @JvmStatic
         fun findAssetsByName(name: Name) = QueryBuilder(
             Queries.findAssetsByName(name),
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAssetsByName(name: String) = findAssetsByName(name.asName())
 
+        @JvmStatic
         fun findAssetsByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findAssetsByAccountId(accountId),
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAccountById(accountId: AccountId) = QueryBuilder(
             Queries.findAccountById(accountId),
             AccountExtractor
         )
 
+        @JvmStatic
         fun findAssetById(assetId: AssetId) = QueryBuilder(
             Queries.findAssetById(assetId),
             AssetExtractor
         )
 
+        @JvmStatic
         fun findAssetsByDomainId(domainId: DomainId) = QueryBuilder(
             Queries.findAssetsByDomainId(domainId),
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
             AssetDefinitionsExtractor
         )
 
+        @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
             domainId: DomainId,
             assetDefinition: DefinitionId
@@ -153,55 +170,69 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             AssetsExtractor
         )
 
+        @JvmStatic
         fun findAssetQuantityById(assetId: AssetId) = QueryBuilder(
             Queries.findAssetQuantityById(assetId),
             U32Extractor
         )
 
+        @JvmStatic
         fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBuilder(
             Queries.findAssetKeyValueByIdAndKey(assetId, key),
             ValueExtractor
         )
 
+        @JvmStatic
         fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) =
             findAssetKeyValueByIdAndKey(assetId, key.asName())
 
+        @JvmStatic
         fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: Name) = QueryBuilder(
             Queries.findAssetDefinitionKeyValueByIdAndKey(id, key),
             ValueExtractor
         )
 
+        @JvmStatic
         fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: String) =
             findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
 
+        @JvmStatic
         fun findAllDomains() = QueryBuilder(Queries.findAllDomains(), DomainsExtractor)
 
+        @JvmStatic
         fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
 
+        @JvmStatic
         fun findAllPeers() = QueryBuilder(Queries.findAllPeers(), PeersExtractor)
 
+        @JvmStatic
         fun findTransactionsByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findTransactionsByAccountId(accountId),
             TransactionValuesExtractor
         )
 
+        @JvmStatic
         fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findPermissionTokensByAccountId(accountId),
             PermissionTokensExtractor
         )
 
+        @JvmStatic
         fun findRolesByAccountId(accountId: AccountId) = QueryBuilder(
             Queries.findRolesByAccountId(accountId),
             RolesExtractor
         )
 
+        @JvmStatic
         fun findTransactionByHash(hash: Hash) = QueryBuilder(
             Queries.findTransactionByHash(hash),
             TransactionValueExtractor
         )
 
+        @JvmStatic
         fun findTransactionByHash(hashBytes: ByteArray) = findTransactionByHash(Hash(hashBytes))
 
+        @JvmStatic
         fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
     }
 }

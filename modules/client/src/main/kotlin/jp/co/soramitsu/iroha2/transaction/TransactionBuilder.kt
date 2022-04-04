@@ -101,6 +101,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
     fun registerTimeTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
@@ -121,6 +122,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
     fun registerExecutableTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
@@ -149,6 +151,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         vararg tokens: PermissionToken
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
+    @JvmOverloads
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
@@ -202,6 +205,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
+    @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
         accounts: Map<AccountId, Account> = mapOf(),
@@ -220,12 +224,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
     fun registerPeer(
         address: String,
         payload: ByteArray,
         digestFunction: String = DigestFunction.Ed25519.hashFunName
     ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, digestFunction)) }
 
+    @JvmOverloads
     fun unregisterPeer(
         address: String,
         payload: ByteArray,
