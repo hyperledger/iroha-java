@@ -17,6 +17,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -86,6 +88,57 @@ class InstructionsTest {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { account -> assertEquals(account.id, newAccountId) }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `register account with metadata instruction committed`(): Unit = runBlocking {
+        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val addressKey = "address".asName()
+        val phoneKey = "phone".asName()
+        val emailKey = "email".asName()
+        val cityKey = "city".asName()
+        val addressValue = "address".asValue()
+        val phoneValue = "phone".asValue()
+        val emailValue = "email".asValue()
+        val cityValue = "city".asValue()
+        val metadata = Metadata(
+            mapOf(
+                Pair(addressKey, addressValue),
+                Pair(phoneKey, phoneValue),
+                Pair(emailKey, emailValue),
+                Pair(cityKey, cityValue)
+            )
+        )
+
+        val encodedTx = TransactionBuilder {
+            account(ALICE_ACCOUNT_ID)
+            registerAccount(newAccountId, listOf(), metadata)
+        }.buildSigned()
+            .let { VersionedTransaction.encode(it) }
+
+        val decodedTx = encodedTx.let { VersionedTransaction.decode(it) }
+        val signedTx = decodedTx.appendSignatures(ALICE_KEYPAIR)
+
+        client.sendTransaction {
+            signedTx
+        }.also {
+            Assertions.assertDoesNotThrow {
+                it.get(10, TimeUnit.SECONDS)
+            }
+        }
+
+        val accountMetadata = QueryBuilder.findAccountById(newAccountId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id, newAccountId) }
+            .metadata
+        assertEquals(4, accountMetadata.map.size)
+        assertEquals(addressValue, accountMetadata.map[addressKey])
+        assertEquals(phoneValue, accountMetadata.map[phoneKey])
+        assertEquals(emailValue, accountMetadata.map[emailKey])
+        assertEquals(cityValue, accountMetadata.map[cityKey])
     }
 
     @Test
