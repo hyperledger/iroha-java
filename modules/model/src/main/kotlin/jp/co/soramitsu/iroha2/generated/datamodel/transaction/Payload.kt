@@ -49,7 +49,7 @@ public data class Payload(
             writer.writeUint64(instance.timeToLiveMs)
             writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
-            instance.metadata.forEach { (key, value) ->  
+            instance.metadata.toSortedMap(Comparator.comparing(Name::string)).forEach { (key, value) ->  
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

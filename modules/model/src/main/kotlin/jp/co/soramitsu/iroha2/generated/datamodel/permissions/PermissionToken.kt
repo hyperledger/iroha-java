@@ -34,7 +34,7 @@ public data class PermissionToken(
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
             Name.write(writer, instance.name)
             writer.writeCompact(instance.params.size)
-            instance.params.forEach { (key, value) ->  
+            instance.params.toSortedMap(Comparator.comparing(Name::string)).forEach { (key, value) ->  
                 Name.write(writer, key)
                 Value.write(writer, value)
             }
