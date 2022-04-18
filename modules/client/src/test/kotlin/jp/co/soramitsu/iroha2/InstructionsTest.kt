@@ -37,6 +37,7 @@ import java.security.KeyPair
 import java.security.SecureRandom
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
+import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
