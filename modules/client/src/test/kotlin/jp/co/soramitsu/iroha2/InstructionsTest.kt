@@ -23,6 +23,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -37,7 +38,6 @@ import java.security.KeyPair
 import java.security.SecureRandom
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
-import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
