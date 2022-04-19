@@ -37,10 +37,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReas
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.query.QueryAndExtractor
+import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -73,9 +77,14 @@ open class Iroha2Client(
                                 Duration::class.java,
                                 object : JsonDeserializer<Duration>() {
                                     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
-                                        val pairs: Map<String, Long> = p.readValueAs(object : TypeReference<Map<String, Long>>() {})
-                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(p, "Expected `secs` item for duration deserialization")
-                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(p, "Expected `nanos` item for duration deserialization")
+                                        val pairs: Map<String, Long> =
+                                            p.readValueAs(object : TypeReference<Map<String, Long>>() {})
+                                        val seconds = pairs["secs"] ?: throw JsonMappingException.from(
+                                            p, "Expected `secs` item for duration deserialization"
+                                        )
+                                        val nanos = pairs["nanos"] ?: throw JsonMappingException.from(
+                                            p, "Expected `nanos` item for duration deserialization"
+                                        )
                                         return Duration.ofSeconds(seconds, nanos)
                                     }
                                 }
@@ -128,6 +137,15 @@ open class Iroha2Client(
     }
 
     /**
+     * [for Java]
+     */
+    fun sendTransaction(
+        transaction: VersionedTransaction
+    ): CompletableFuture<ByteArray> = runBlocking {
+        sendTransaction { transaction }
+    }
+
+    /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
      */
@@ -139,6 +157,12 @@ open class Iroha2Client(
         return response.receive<ByteArray>()
             .let { VersionedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
+    }
+
+    fun <T> sendQueryAsync(
+        queryAndExtractor: QueryAndExtractor<T>
+    ): CompletableFuture<T> = scope.future {
+        sendQuery(queryAndExtractor)
     }
 
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)

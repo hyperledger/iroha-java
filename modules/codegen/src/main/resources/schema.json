@@ -1185,6 +1185,11 @@
           "name": "Time",
           "discriminant": 2,
           "ty": "iroha_data_model::events::time::Event"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::execute_trigger::Event"
         }
       ]
     }
@@ -1206,6 +1211,11 @@
           "name": "Time",
           "discriminant": 2,
           "ty": "iroha_data_model::events::time::EventFilter"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::execute_trigger::EventFilter"
         }
       ]
     }
@@ -2259,6 +2269,34 @@
       ]
     }
   },
+  "iroha_data_model::events::execute_trigger::Event": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "authority",
+          "ty": "iroha_data_model::account::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::execute_trigger::EventFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "authority",
+          "ty": "iroha_data_model::account::Id"
+        }
+      ]
+    }
+  },
   "iroha_data_model::events::pipeline::EntityType": {
     "Enum": {
       "variants": [
@@ -2345,7 +2383,23 @@
   "iroha_data_model::events::time::EventFilter": {
     "TupleStruct": {
       "types": [
-        "iroha_data_model::events::time::Schedule"
+        "iroha_data_model::events::time::ExecutionTime"
+      ]
+    }
+  },
+  "iroha_data_model::events::time::ExecutionTime": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "PreCommit",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Schedule",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::time::Schedule"
+        }
       ]
     }
   },
@@ -2865,6 +2919,16 @@
       ]
     }
   },
+  "iroha_data_model::isi::ExecuteTriggerBox": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        }
+      ]
+    }
+  },
   "iroha_data_model::isi::FailBox": {
     "Struct": {
       "declarations": [
@@ -2974,6 +3038,11 @@
           "name": "Revoke",
           "discriminant": 12,
           "ty": "iroha_data_model::isi::RevokeBox"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 13,
+          "ty": "iroha_data_model::isi::ExecuteTriggerBox"
         }
       ]
     }

@@ -19,6 +19,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -311,6 +313,16 @@ class QueriesTest {
             .cast<TransactionValue.Transaction>().versionedTransaction
             .hash()
             .also { assertContentEquals(hash, it) }
+    }
+
+//    @Test
+//    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    fun `find roles`(): Unit = runBlocking {
+        QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { roles -> assert(roles.isNotEmpty()) }
     }
 
     // TODO: FindDomainKeyValueByIdAndKey test

@@ -1,5 +1,22 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.transaction
 
+import jp.co.soramitsu.iroha2.CAN_BURN_ASSET_WITH_DEFINITION
+import jp.co.soramitsu.iroha2.CAN_BURN_USER_ASSETS_TOKEN
+import jp.co.soramitsu.iroha2.CAN_MINT_USER_ASSETS_DEFINITION
+import jp.co.soramitsu.iroha2.CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN
+import jp.co.soramitsu.iroha2.CAN_REGISTER_DOMAINS_TOKEN
+import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION
+import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS
+import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_METADATA
+import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION
+import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_USER_METADATA
+import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN
+import jp.co.soramitsu.iroha2.CAN_TRANSFER_USER_ASSETS_TOKEN
+import jp.co.soramitsu.iroha2.CAN_UNREGISTER_ASSET_WITH_DEFINITION
+import jp.co.soramitsu.iroha2.DigestFunction
+import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.cast
+import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
@@ -13,9 +30,11 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.If
@@ -31,32 +50,42 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
+import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter as ExecutableEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
-
-val CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN by lazy { "can_set_key_value_in_user_assets".asName() }
-val CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS by lazy { "can_remove_key_value_in_user_assets".asName() }
-val CAN_SET_KEY_VALUE_IN_USER_METADATA by lazy { "can_set_key_value_in_user_metadata".asName() }
-val CAN_REMOVE_KEY_VALUE_IN_USER_METADATA by lazy { "can_remove_key_value_in_user_metadata".asName() }
-val CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION by lazy { "can_set_key_value_in_asset_definition".asName() }
-val CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION by lazy { "can_remove_key_value_in_asset_definition".asName() }
-val CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN by lazy { "can_mint_user_asset_definitions".asName() }
-val CAN_MINT_USER_ASSETS_DEFINITION by lazy { "can_mint_user_asset_definitions".asName() }
-val CAN_BURN_ASSET_WITH_DEFINITION by lazy { "can_burn_asset_with_definition".asName() }
-val CAN_BURN_USER_ASSETS_TOKEN by lazy { "can_burn_user_assets".asName() }
-val CAN_REGISTER_DOMAINS_TOKEN by lazy { "can_register_domains".asName() }
-val CAN_TRANSFER_USER_ASSETS_TOKEN by lazy { "can_transfer_user_assets".asName() }
-val CAN_UNREGISTER_ASSET_WITH_DEFINITION by lazy { "can_unregister_asset_with_definition".asName() }
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
 val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
 val ASSET_DEFINITION_PARAM_NAME by lazy { "asset_definition_id".asName() }
 
 object Instructions {
+
+    /**
+     * Instruction for role registration
+     */
+    fun registerRole(
+        roleId: RoleId,
+        vararg tokens: PermissionToken
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Role(
+                Role(roleId, tokens.toSet())
+            )
+        }
+    }
 
     /**
      * Instruction for account registration
@@ -69,6 +98,65 @@ object Instructions {
         return registerSome {
             IdentifiableBox.NewAccount(
                 NewAccount(id, signatories, metadata)
+            )
+        }
+    }
+
+    /**
+     * Instruction for time trigger registration
+     */
+    fun registerTimeTrigger(
+        triggerId: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
+        schedule: Schedule,
+        metadata: Metadata
+    ): Instruction {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.Time(
+                            TimeEventFilter(
+                                ExecutionTime.Schedule(schedule)
+                            )
+                        )
+                    ),
+                    metadata
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for executable trigger registration
+     */
+    fun registerExecutableTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.ExecuteTrigger(
+                            ExecutableEventFilter(triggerId, accountId)
+                        )
+                    ),
+                    metadata
+                )
             )
         }
     }
@@ -141,12 +229,10 @@ object Instructions {
         digestFunction: String = DigestFunction.Ed25519.hashFunName
     ): Instruction.Unregister {
         return unregisterSome {
-            IdentifiableBox.Peer(
-                Peer(
-                    PeerId(
-                        address,
-                        PublicKey(digestFunction, payload)
-                    )
+            IdBox.PeerId(
+                PeerId(
+                    address,
+                    PublicKey(digestFunction, payload)
                 )
             )
         }
@@ -207,6 +293,10 @@ object Instructions {
         )
     }
 
+    fun executeTrigger(triggerId: TriggerId): Instruction.ExecuteTrigger {
+        return Instruction.ExecuteTrigger(ExecuteTriggerBox(triggerId))
+    }
+
     /**
      * Instruction for mint of an asset with [AssetValueType] is [AssetValueType.Quantity]
      */
@@ -237,7 +327,7 @@ object Instructions {
      * Instruction for mint of a public key
      */
     fun mintPublicKey(accountId: AccountId, pubKey: PublicKey): Instruction {
-        return mintSomePublicKey(
+        return mintSome(
             Value.PublicKey(pubKey),
             IdBox.AccountId(accountId)
         )
@@ -282,7 +372,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN,
-                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
+                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
             )
         }
     }
@@ -294,7 +384,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS,
-                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AssetId(assetId)))
+                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
             )
         }
     }
@@ -306,7 +396,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_SET_KEY_VALUE_IN_USER_METADATA,
-                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AccountId(accountId)))
+                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
             )
         }
     }
@@ -318,7 +408,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
-                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to Value.Id(IdBox.AccountId(accountId)))
+                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
             )
         }
     }
@@ -331,11 +421,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -349,11 +435,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -367,11 +449,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -385,11 +463,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_MINT_USER_ASSETS_DEFINITION,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -403,11 +477,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_BURN_ASSET_WITH_DEFINITION,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -421,9 +491,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_BURN_USER_ASSETS_TOKEN,
                 params = mapOf(
-                    ASSET_ID_TOKEN_PARAM_NAME to Value.Id(
-                        IdBox.AssetId(assetId)
-                    )
+                    ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
                 )
             )
         }
@@ -449,9 +517,7 @@ object Instructions {
             PermissionToken(
                 name = CAN_TRANSFER_USER_ASSETS_TOKEN,
                 params = mapOf(
-                    ASSET_ID_TOKEN_PARAM_NAME to Value.Id(
-                        IdBox.AssetId(assetId)
-                    )
+                    ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
                 )
             )
         }
@@ -465,14 +531,19 @@ object Instructions {
             PermissionToken(
                 name = CAN_UNREGISTER_ASSET_WITH_DEFINITION,
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to Value.Id(
-                        IdBox.AssetDefinitionId(
-                            assetDefinitionId
-                        )
-                    )
+                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
             )
         }
+    }
+
+    fun grantRole(roleId: RoleId, accountId: AccountId): Instruction {
+        return Instruction.Grant(
+            GrantBox(
+                destinationId = IdBox.RoleId(roleId).evaluatesTo(),
+                `object` = accountId.evaluatesTo().cast()
+            )
+        )
     }
 
     /**
@@ -515,43 +586,23 @@ object Instructions {
         return Instruction.Fail(FailBox(message))
     }
 
-    private inline fun unregisterSome(idBox: () -> IdentifiableBox): Instruction.Unregister {
+    private inline fun unregisterSome(idBox: () -> IdBox): Instruction.Unregister {
         return Instruction.Unregister(
-            UnregisterBox(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Identifiable(idBox())
-                    )
-                )
-            )
+            UnregisterBox(idBox().evaluatesTo())
         )
     }
 
     private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {
         return Instruction.Register(
-            RegisterBox(
-                EvaluatesTo(
-                    Expression.Raw(
-                        Value.Identifiable(idBox())
-                    )
-                )
-            )
+            RegisterBox(idBox().evaluatesTo())
         )
     }
 
     private inline fun grantSome(idBox: IdBox, permissionToken: () -> PermissionToken): Instruction.Grant {
         return Instruction.Grant(
             GrantBox(
-                destinationId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(idBox)
-                    )
-                ),
-                `object` = EvaluatesTo(
-                    Expression.Raw(
-                        Value.PermissionToken(permissionToken())
-                    )
-                )
+                destinationId = idBox.evaluatesTo(),
+                `object` = Value.PermissionToken(permissionToken()).evaluatesTo()
             )
         )
     }
@@ -559,29 +610,17 @@ object Instructions {
     private fun burnSome(value: Value, idBox: IdBox): Instruction.Burn {
         return Instruction.Burn(
             BurnBox(
-                `object` = EvaluatesTo(
-                    Expression.Raw(value)
-                ),
-                destinationId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(idBox)
-                    )
-                )
+                `object` = value.evaluatesTo(),
+                destinationId = idBox.evaluatesTo()
             )
         )
     }
 
-    private fun mintSomePublicKey(value: Value, idBox: IdBox): Instruction.Mint {
+    private fun mintSome(value: Value, idBox: IdBox): Instruction.Mint {
         return Instruction.Mint(
             MintBox(
-                `object` = EvaluatesTo(
-                    Expression.Raw(value)
-                ),
-                destinationId = EvaluatesTo(
-                    Expression.Raw(
-                        Value.Id(idBox)
-                    )
-                )
+                `object` = value.evaluatesTo(),
+                destinationId = idBox.evaluatesTo()
             )
         )
     }
