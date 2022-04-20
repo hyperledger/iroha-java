@@ -141,6 +141,44 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
+    fun registerDataCreatedEventTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerDataCreatedEventTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
+
+    @JvmOverloads
+    fun registerPreCommitTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerPreCommitTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
+
     fun grantRole(
         roleId: RoleId,
         accountId: AccountId

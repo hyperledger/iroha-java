@@ -31,6 +31,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -153,6 +160,73 @@ object Instructions {
                         accountId,
                         EventFilter.ExecuteTrigger(
                             ExecutableEventFilter(triggerId, accountId)
+                        )
+                    ),
+                    metadata
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for trigger to run after some asset definition for account is created
+     */
+    fun registerDataCreatedEventTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.Data(
+                            FilterOptEntityFilter.BySome(
+                                EntityFilter.ByAssetDefinition(
+                                    FilterOptAssetDefinitionFilter.BySome(
+                                        AssetDefinitionFilter(
+                                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                                            FilterOptAssetDefinitionEventFilter.BySome(
+                                                AssetDefinitionEventFilter.ByCreated()
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    metadata
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for pre commit trigger to run after every transaction
+     */
+    fun registerPreCommitTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.Time(
+                            TimeEventFilter(ExecutionTime.PreCommit())
                         )
                     ),
                     metadata
