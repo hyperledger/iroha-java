@@ -31,13 +31,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -169,14 +163,15 @@ object Instructions {
     }
 
     /**
-     * Instruction for trigger to run after some asset definition for account is created
+     * Instruction for data trigger registration
      */
     fun registerDataCreatedEventTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata
+        metadata: Metadata,
+        filter: FilterOptEntityFilter
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Trigger(
@@ -187,18 +182,7 @@ object Instructions {
                         repeats,
                         accountId,
                         EventFilter.Data(
-                            FilterOptEntityFilter.BySome(
-                                EntityFilter.ByAssetDefinition(
-                                    FilterOptAssetDefinitionFilter.BySome(
-                                        AssetDefinitionFilter(
-                                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                                            FilterOptAssetDefinitionEventFilter.BySome(
-                                                AssetDefinitionEventFilter.ByCreated()
-                                            )
-                                        )
-                                    )
-                                )
-                            )
+                            filter
                         )
                     ),
                     metadata

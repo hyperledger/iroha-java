@@ -14,8 +14,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
@@ -48,7 +56,6 @@ class TriggersTest {
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `data created trigger`(): Unit = runBlocking {
         val triggerId = TriggerId("data_trigger".asName())
-        val domainId = "wonderland".asDomainId()
         val newAssetName = "token1"
 
         // check account assets before trigger
@@ -61,26 +68,31 @@ class TriggersTest {
         assertNotNull(asset)
 
         // Check default asset quantity before trigger
-        val prevQuantity = QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
-
+        val prevQuantity = checkDefaultDomainQuantity()
         assertEquals(100L, prevQuantity)
 
         // register trigger
+        val filter = FilterOptEntityFilter.BySome(
+            EntityFilter.ByAssetDefinition(
+                FilterOptAssetDefinitionFilter.BySome(
+                    AssetDefinitionFilter(
+                        FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                        FilterOptAssetDefinitionEventFilter.BySome(
+                            AssetDefinitionEventFilter.ByCreated()
+                        )
+                    )
+                )
+            )
+        )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerDataCreatedEventTrigger(
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
                 Repeats.Indefinitely(),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
+                Metadata(mapOf()),
+                filter
             )
             executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
@@ -92,22 +104,14 @@ class TriggersTest {
 
         // register new asset
         // after that trigger should mint DEFAULT_ASSET_ID
-        createNewAsset(newAssetName)
+        createNewAsset(newAssetName, assetDefinitions.size)
 
         // check new quantity after trigger is run
-        val newQuantity = QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
+        val newQuantity = checkDefaultDomainQuantity()
         assertEquals(prevQuantity + 1L, newQuantity)
     }
 
-    private suspend fun createNewAsset(assetName: String) {
+    private suspend fun createNewAsset(assetName: String, prevSize: Int) {
         val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -124,20 +128,13 @@ class TriggersTest {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val assetDefinitions = client.sendQuery(query)
-        assertEquals(2, assetDefinitions.size)
-        val asset = assetDefinitions.filter { it.id.name.string == assetName }.first()
+        assertEquals(prevSize + 1, assetDefinitions.size)
+        val asset = assetDefinitions.first { it.id.name.string == assetName }
         assertNotNull(asset)
     }
 
-    @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
-        val triggerId = TriggerId("pre_commit_trigger".asName())
-        val domainId = "wonderland".asDomainId()
-        val newAssetName = "token1"
-
-        // check DEFAULT_ASSET_ID quantity before trigger
-        val prevQuantity = QueryBuilder.findDomainById(domainId)
+    private suspend fun checkDefaultDomainQuantity(): Long {
+        return QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
@@ -146,6 +143,23 @@ class TriggersTest {
             .map { it.value.assets[DEFAULT_ASSET_ID] }
             .map { (it?.value as AssetValue.Quantity).u32 }
             .first()
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
+        val triggerId = TriggerId("pre_commit_trigger".asName())
+        val newAssetName = "token1"
+
+        // check account assets before trigger
+        val query = QueryBuilder.findAllAssetsDefinitions()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val assetDefinitions = client.sendQuery(query)
+        assertEquals(1, assetDefinitions.size)
+
+        // check DEFAULT_ASSET_ID quantity before trigger
+        val prevQuantity = checkDefaultDomainQuantity()
         assertEquals(100L, prevQuantity)
 
         // register pre commit trigger
@@ -166,31 +180,15 @@ class TriggersTest {
         }
 
         // check DEFAULT_ASSET_ID quantity after trigger is run
-        var newQuantity = QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
+        var newQuantity = checkDefaultDomainQuantity()
         assertEquals(110L, newQuantity)
 
         // register new asset
         // after that trigger should mint 10 more quantity to DEFAULT_ASSET_ID
-        createNewAsset(newAssetName)
+        createNewAsset(newAssetName, assetDefinitions.size)
 
         // check DEFAULT_ASSET_ID quantity after trigger is run
-        newQuantity = QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
+        newQuantity = checkDefaultDomainQuantity()
         assertEquals(120L, newQuantity)
 
         // transfer asset instruction just to test trigger
@@ -206,15 +204,7 @@ class TriggersTest {
         }
 
         // check DEFAULT_ASSET_ID quantity after trigger is run
-        newQuantity = QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
+        newQuantity = checkDefaultDomainQuantity()
         assertEquals(30L, newQuantity)
     }
 
