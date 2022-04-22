@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -153,6 +154,63 @@ object Instructions {
                         accountId,
                         EventFilter.ExecuteTrigger(
                             ExecutableEventFilter(triggerId, accountId)
+                        )
+                    ),
+                    metadata
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for data trigger registration
+     */
+    fun registerDataCreatedEventTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata,
+        filter: FilterOptEntityFilter
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.Data(
+                            filter
+                        )
+                    ),
+                    metadata
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for pre commit trigger to run after every transaction
+     */
+    fun registerPreCommitTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata
+    ): Instruction.Register {
+        return registerSome {
+            IdentifiableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Instructions(isi),
+                        repeats,
+                        accountId,
+                        EventFilter.Time(
+                            TimeEventFilter(ExecutionTime.PreCommit())
                         )
                     ),
                     metadata

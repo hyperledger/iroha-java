@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -132,6 +133,46 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply {
         instructions.value.add(
             Instructions.registerExecutableTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
+
+    @JvmOverloads
+    fun registerDataCreatedEventTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf()),
+        filter: FilterOptEntityFilter
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerDataCreatedEventTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata,
+                filter
+            )
+        )
+    }
+
+    @JvmOverloads
+    fun registerPreCommitTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerPreCommitTrigger(
                 triggerId,
                 isi,
                 repeats,
