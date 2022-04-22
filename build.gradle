@@ -23,7 +23,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
 
     group = 'jp.co.soramitsu.iroha-java'
