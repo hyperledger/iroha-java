@@ -1185,6 +1185,11 @@
           "name": "Time",
           "discriminant": 2,
           "ty": "iroha_data_model::events::time::Event"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::execute_trigger::Event"
         }
       ]
     }
@@ -1200,12 +1205,17 @@
         {
           "name": "Data",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::EntityFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptEntityFilter"
         },
         {
           "name": "Time",
           "discriminant": 2,
           "ty": "iroha_data_model::events::time::EventFilter"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 3,
+          "ty": "iroha_data_model::events::execute_trigger::EventFilter"
         }
       ]
     }
@@ -1518,42 +1528,42 @@
         {
           "name": "ByDomain",
           "discriminant": 0,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptDomainFilter"
         },
         {
           "name": "ByPeer",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptPeerFilter"
         },
         {
           "name": "ByRole",
           "discriminant": 2,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::role::RoleFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptRoleFilter"
         },
         {
           "name": "ByAccount",
           "discriminant": 3,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAccountFilter"
         },
         {
           "name": "ByAssetDefinition",
           "discriminant": 4,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetDefinitionFilter"
         },
         {
           "name": "ByAsset",
           "discriminant": 5,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetFilter"
         },
         {
           "name": "ByTrigger",
           "discriminant": 6,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptTriggerFilter"
         }
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::EntityFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptEntityFilter": {
     "Enum": {
       "variants": [
         {
@@ -1569,7 +1579,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterAccountId": {
     "Enum": {
       "variants": [
         {
@@ -1585,7 +1595,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterAssetDefinitionId": {
     "Enum": {
       "variants": [
         {
@@ -1601,7 +1611,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterAssetId": {
     "Enum": {
       "variants": [
         {
@@ -1617,7 +1627,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterDomainId": {
     "Enum": {
       "variants": [
         {
@@ -1633,7 +1643,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterPeerId": {
     "Enum": {
       "variants": [
         {
@@ -1649,7 +1659,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::role::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterRoleId": {
     "Enum": {
       "variants": [
         {
@@ -1665,7 +1675,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>>": {
+  "iroha_data_model::events::data::filters::FilterOptIdFilterTriggerId": {
     "Enum": {
       "variants": [
         {
@@ -1681,7 +1691,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAccountEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1697,7 +1707,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAccountFilter": {
     "Enum": {
       "variants": [
         {
@@ -1713,7 +1723,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAssetDefinitionEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1729,7 +1739,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAssetDefinitionFilter": {
     "Enum": {
       "variants": [
         {
@@ -1745,7 +1755,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAssetEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1761,7 +1771,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptAssetFilter": {
     "Enum": {
       "variants": [
         {
@@ -1777,7 +1787,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptDomainEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1793,7 +1803,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptDomainFilter": {
     "Enum": {
       "variants": [
         {
@@ -1809,7 +1819,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptPeerEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1825,7 +1835,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptPeerFilter": {
     "Enum": {
       "variants": [
         {
@@ -1841,7 +1851,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::role::RoleEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptRoleEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1857,7 +1867,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::role::RoleFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptRoleFilter": {
     "Enum": {
       "variants": [
         {
@@ -1873,7 +1883,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerEventFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptTriggerEventFilter": {
     "Enum": {
       "variants": [
         {
@@ -1889,7 +1899,7 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerFilter>": {
+  "iroha_data_model::events::data::filters::FilterOptTriggerFilter": {
     "Enum": {
       "variants": [
         {
@@ -1960,7 +1970,7 @@
         {
           "name": "ByAsset",
           "discriminant": 0,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetFilter"
         },
         {
           "name": "ByCreated",
@@ -2010,11 +2020,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterAccountId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAccountEventFilter"
         }
       ]
     }
@@ -2050,11 +2060,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterAssetDefinitionId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetDefinitionEventFilter"
         }
       ]
     }
@@ -2100,11 +2110,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterAssetId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetEventFilter"
         }
       ]
     }
@@ -2115,12 +2125,12 @@
         {
           "name": "ByAccount",
           "discriminant": 0,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::account::AccountFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAccountFilter"
         },
         {
           "name": "ByAssetDefinition",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::asset::AssetDefinitionFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptAssetDefinitionFilter"
         },
         {
           "name": "ByCreated",
@@ -2150,11 +2160,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterDomainId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::domain::DomainEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptDomainEventFilter"
         }
       ]
     }
@@ -2180,11 +2190,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterPeerId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::peer::PeerEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptPeerEventFilter"
         }
       ]
     }
@@ -2210,11 +2220,11 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::role::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterRoleId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::role::RoleEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptRoleEventFilter"
         }
       ]
     }
@@ -2250,11 +2260,39 @@
       "declarations": [
         {
           "name": "id_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptIdFilterTriggerId"
         },
         {
           "name": "event_filter",
-          "ty": "iroha_data_model::events::data::filters::FilterOpt<iroha_data_model::events::data::filters::trigger::TriggerEventFilter>"
+          "ty": "iroha_data_model::events::data::filters::FilterOptTriggerEventFilter"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::execute_trigger::Event": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "authority",
+          "ty": "iroha_data_model::account::Id"
+        }
+      ]
+    }
+  },
+  "iroha_data_model::events::execute_trigger::EventFilter": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        },
+        {
+          "name": "authority",
+          "ty": "iroha_data_model::account::Id"
         }
       ]
     }
@@ -2345,7 +2383,23 @@
   "iroha_data_model::events::time::EventFilter": {
     "TupleStruct": {
       "types": [
-        "iroha_data_model::events::time::Schedule"
+        "iroha_data_model::events::time::ExecutionTime"
+      ]
+    }
+  },
+  "iroha_data_model::events::time::ExecutionTime": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "PreCommit",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Schedule",
+          "discriminant": 1,
+          "ty": "iroha_data_model::events::time::Schedule"
+        }
       ]
     }
   },
@@ -2865,6 +2919,16 @@
       ]
     }
   },
+  "iroha_data_model::isi::ExecuteTriggerBox": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "trigger_id",
+          "ty": "iroha_data_model::trigger::Id"
+        }
+      ]
+    }
+  },
   "iroha_data_model::isi::FailBox": {
     "Struct": {
       "declarations": [
@@ -2974,6 +3038,11 @@
           "name": "Revoke",
           "discriminant": 12,
           "ty": "iroha_data_model::isi::RevokeBox"
+        },
+        {
+          "name": "ExecuteTrigger",
+          "discriminant": 13,
+          "ty": "iroha_data_model::isi::ExecuteTriggerBox"
         }
       ]
     }

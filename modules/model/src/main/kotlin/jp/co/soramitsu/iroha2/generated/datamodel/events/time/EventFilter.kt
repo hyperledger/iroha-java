@@ -15,19 +15,19 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::time::EventFilter' tuple structure
  */
 public data class EventFilter(
-    public val schedule: Schedule
+    public val executionTime: ExecutionTime
 ) {
     public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
         public override fun read(reader: ScaleCodecReader): EventFilter = try {
             EventFilter(
-                Schedule.read(reader),
+                ExecutionTime.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: EventFilter) = try {
-            Schedule.write(writer, instance.schedule)
+            ExecutionTime.write(writer, instance.executionTime)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
