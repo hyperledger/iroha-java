@@ -1,3 +1,4 @@
+@file:JvmName("CryptoUtils")
 package jp.co.soramitsu.iroha2
 
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
@@ -11,7 +12,7 @@ import java.security.Key
 import java.security.KeyPair
 import java.security.SecureRandom
 
-val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
+@JvmField val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
 
 enum class DigestFunction(val hashFunName: String, val index: Int) {
     Ed25519("ed25519", 0xed)
@@ -22,6 +23,7 @@ enum class DigestFunction(val hashFunName: String, val index: Int) {
  *
  * @throws CryptoException
  */
+@JvmOverloads
 fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
     return try {
         val seed = ByteArray(spec.curve.field.getb() / 8)
@@ -43,6 +45,7 @@ fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
  *
  * @throws CryptoException if keypair cannot be created
  */
+@JvmOverloads
 fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     KeyPair(publicKeyFromHex(publicKeyHex, spec), privateKeyFromHex(privateKeyHex, spec))
 
@@ -51,6 +54,7 @@ fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParam
  *
  * @throws CryptoException if key cannot be created from hex
  */
+@JvmOverloads
 fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     try {
         EdDSAPrivateKey(EdDSAPrivateKeySpec(privateKeyHex.fromHex(), spec))
@@ -63,6 +67,7 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
  *
  * @throws CryptoException if key cannot be created from hex
  */
+@JvmOverloads
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     try {
         EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.fromHex(), spec))
