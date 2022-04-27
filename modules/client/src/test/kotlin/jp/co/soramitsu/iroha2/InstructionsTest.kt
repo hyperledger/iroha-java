@@ -567,7 +567,6 @@ class InstructionsTest {
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
-        // register an asset with type `Fixed`
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed())
@@ -619,8 +618,9 @@ class InstructionsTest {
             QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
                 .account(ALICE_ACCOUNT_ID)
                 .buildSigned(ALICE_KEYPAIR)
-                .let { query -> client.sendQuery(query).assets[DEFAULT_ASSET_ID]?.value }
-                .let { value -> (value as? AssetValue.Fixed)?.fixed?.fixedPoint ?: BigDecimal.ZERO }
+                .let { query -> client.sendQuery(query) }
+                .let { account -> account.assets[DEFAULT_ASSET_ID]?.value }
+                .let { value -> value?.cast<AssetValue.Fixed>()?.fixed?.fixedPoint ?: BigDecimal.ZERO }
                 .also { actualBalance ->
                     assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
                         expectedBalance.compareTo(actualBalance) == 0
@@ -650,7 +650,7 @@ class InstructionsTest {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-    //    @Test
+//    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
@@ -663,7 +663,7 @@ class InstructionsTest {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-    //    @Test
+//    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
         val roleId = Id("USER_METADATA_ACCESS".asName())
