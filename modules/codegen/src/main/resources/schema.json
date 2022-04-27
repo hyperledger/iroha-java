@@ -1590,7 +1590,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterAccountId"
         }
       ]
     }
@@ -1606,7 +1606,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterAssetDefinitionId"
         }
       ]
     }
@@ -1622,7 +1622,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterAssetId"
         }
       ]
     }
@@ -1638,7 +1638,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterDomainId"
         }
       ]
     }
@@ -1654,7 +1654,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterPeerId"
         }
       ]
     }
@@ -1670,7 +1670,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::role::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterRoleId"
         }
       ]
     }
@@ -1686,7 +1686,7 @@
         {
           "name": "BySome",
           "discriminant": 1,
-          "ty": "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>"
+          "ty": "iroha_data_model::events::data::filters::IdFilterTriggerId"
         }
       ]
     }
@@ -1915,49 +1915,49 @@
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::account::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterAccountId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::account::Id"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::DefinitionId>": {
+  "iroha_data_model::events::data::filters::IdFilterAssetDefinitionId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::asset::DefinitionId"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::asset::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterAssetId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::asset::Id"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::domain::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterDomainId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::domain::Id"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::peer::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterPeerId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::peer::Id"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::role::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterRoleId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::role::Id"
       ]
     }
   },
-  "iroha_data_model::events::data::filters::IdFilter<iroha_data_model::trigger::Id>": {
+  "iroha_data_model::events::data::filters::IdFilterTriggerId": {
     "TupleStruct": {
       "types": [
         "iroha_data_model::trigger::Id"

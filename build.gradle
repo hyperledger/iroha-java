@@ -26,6 +26,14 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
     group = 'jp.co.soramitsu.iroha-java'
     version = 'git rev-parse --short HEAD'.execute().text.trim()
 
