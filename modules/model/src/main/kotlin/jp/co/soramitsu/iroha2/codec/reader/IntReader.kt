@@ -18,7 +18,7 @@ class Int32Reader : ScaleReader<Int> {
         val capacity = 4
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
         putBytes(buf, capacity, reader)
-        return buf.flip().int
+        return (buf.flip() as ByteBuffer).int
     }
 }
 
@@ -27,7 +27,7 @@ class Int64Reader : ScaleReader<Long> {
         val capacity = 8
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
         putBytes(buf, capacity, reader)
-        return buf.flip().long
+        return (buf.flip() as ByteBuffer).long
     }
 }
 
@@ -36,7 +36,7 @@ class IntReader(private val bit: Int) : ScaleReader<BigInteger> {
         val capacity = bit / 8
         val buf = ByteBuffer.allocate(capacity).order(ByteOrder.LITTLE_ENDIAN)
         putBytes(buf, capacity, reader)
-        return BigInteger(buf.flip().array())
+        return BigInteger(buf.flip().array() as ByteArray)
     }
 }
 

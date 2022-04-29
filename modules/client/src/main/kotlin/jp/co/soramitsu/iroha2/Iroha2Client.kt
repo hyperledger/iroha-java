@@ -53,6 +53,7 @@ import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
+@Suppress("unused")
 open class Iroha2Client(
     open var peerUrl: URL,
     open val log: Boolean = false

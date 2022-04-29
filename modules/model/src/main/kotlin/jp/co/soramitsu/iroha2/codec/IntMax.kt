@@ -3,11 +3,11 @@ package jp.co.soramitsu.iroha2.codec
 import java.math.BigInteger
 
 enum class IntMax(val max: BigInteger) {
-    U64(BigInteger.TWO.pow(64) - BigInteger.ONE),
-    U128(BigInteger.TWO.pow(128) - BigInteger.ONE),
-    U256(BigInteger.TWO.pow(256) - BigInteger.ONE),
-    I128(BigInteger.TWO.pow(127) - BigInteger.ONE),
-    I256(BigInteger.TWO.pow(255) - BigInteger.ONE);
+    U64(BigInteger.valueOf(2).pow(64) - BigInteger.ONE),
+    U128(BigInteger.valueOf(2).pow(128) - BigInteger.ONE),
+    U256(BigInteger.valueOf(2).pow(256) - BigInteger.ONE),
+    I128(BigInteger.valueOf(2).pow(127) - BigInteger.ONE),
+    I256(BigInteger.valueOf(2).pow(255) - BigInteger.ONE);
 
     companion object {
         fun uintMaxValue(bit: Int): BigInteger {
@@ -30,8 +30,8 @@ enum class IntMax(val max: BigInteger) {
 }
 
 enum class IntMin(val min: BigInteger) {
-    I128(-BigInteger.TWO.pow(127)),
-    I256(-BigInteger.TWO.pow(255));
+    I128(-BigInteger.valueOf(2).pow(127)),
+    I256(-BigInteger.valueOf(2).pow(255));
 
     companion object {
         fun intMinValue(bit: Int): BigInteger {

@@ -5,11 +5,13 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.coroutines.future.future
 import java.net.URL
 
 /**
  * Enhancement of [Iroha2Client] for peer's monitoring and configuration support
  */
+@Suppress("unused")
 open class AdminIroha2Client(
     peerUrl: URL,
     open var telemetryUrl: URL = URL(
@@ -66,6 +68,16 @@ open class AdminIroha2Client(
     }
 
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
+
+    fun healthAsync() = scope.future { health() }
+
+    fun statusAsync() = scope.future { status() }
+
+    fun metricsAsync() = scope.future { metrics() }
+
+    fun getConfigsAsync() = scope.future { getConfigs() }
+
+    fun describeConfigAsync(fieldValue: Collection<String>) = scope.future { describeConfig(fieldValue) }
 
     private suspend inline fun <reified T, B> config(body: B): T {
         val response: HttpResponse = client.get("$peerUrl$CONFIGURATION_ENDPOINT") {
