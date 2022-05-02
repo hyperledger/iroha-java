@@ -255,9 +255,6 @@ object EnumerationSerializer : JsonSerializer<ModelEnum>() {
         serializeNoneOrSingleMemberObject(gen, value)
 }
 
-/**
- * //todo describe
- */
 fun serializeNoneOrSingleMemberObject(
     gen: JsonGenerator,
     objectValue: Any,

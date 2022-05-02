@@ -31,7 +31,7 @@ import static jp.co.soramitsu.iroha2.engine.TestConstsKt.*;
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension.class)
 @Timeout(40)
-public class JavaTest {
+public class JavaTest extends AbstractTest {
 
     public Iroha2Client client;
 
@@ -43,7 +43,7 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .fail("FAIL MESSAGE")
             .buildSigned(ALICE_KEYPAIR);
-        final CompletableFuture<byte[]> future = client.sendTransaction(transaction);
+        final CompletableFuture<byte[]> future = client.sendTransactionAsync(transaction);
         Assertions.assertThrows(ExecutionException.class, () -> future.get(10, TimeUnit.SECONDS));
     }
 
@@ -56,7 +56,7 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerDomain(domainId)
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(transaction).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(transaction).get(10, TimeUnit.SECONDS);
 
         final QueryAndExtractor<Domain> query = QueryBuilder
             .findDomainById(domainId)
@@ -79,7 +79,7 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerAccount(accountId, new ArrayList<>())
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(transaction).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(transaction).get(10, TimeUnit.SECONDS);
 
         final QueryAndExtractor<Account> query = QueryBuilder
             .findAccountById(accountId)
@@ -98,14 +98,14 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(registerAssetTx).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(registerAssetTx).get(10, TimeUnit.SECONDS);
 
         final VersionedTransaction mintAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
             .mintAsset(DEFAULT_ASSET_ID, 5L)
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(mintAssetTx).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(mintAssetTx).get(10, TimeUnit.SECONDS);
 
         final QueryAndExtractor<Account> query = QueryBuilder
             .findAccountById(ALICE_ACCOUNT_ID)

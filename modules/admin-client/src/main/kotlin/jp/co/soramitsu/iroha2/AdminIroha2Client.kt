@@ -69,15 +69,15 @@ open class AdminIroha2Client(
 
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
 
-    fun healthAsync() = scope.future { health() }
+    fun healthAsync() = future { health() }  // todo oop
 
-    fun statusAsync() = scope.future { status() }
+    fun statusAsync() = future { status() }
 
-    fun metricsAsync() = scope.future { metrics() }
+    fun metricsAsync() = future { metrics() }
 
-    fun getConfigsAsync() = scope.future { getConfigs() }
+    fun getConfigsAsync() = future { getConfigs() }
 
-    fun describeConfigAsync(fieldValue: Collection<String>) = scope.future { describeConfig(fieldValue) }
+    fun describeConfigAsync(fieldValue: Collection<String>) = future { describeConfig(fieldValue) }
 
     private suspend inline fun <reified T, B> config(body: B): T {
         val response: HttpResponse = client.get("$peerUrl$CONFIGURATION_ENDPOINT") {

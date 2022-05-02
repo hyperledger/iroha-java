@@ -22,20 +22,19 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class QueriesTest {
+class QueriesTest : AbstractTest() {
 
     lateinit var client: Iroha2Client
 
@@ -245,12 +244,8 @@ class QueriesTest {
     fun `find transactions by account id`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()) // todo genesis
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
         }
 
         QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
@@ -300,18 +295,16 @@ class QueriesTest {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
-        }.get()
+        }.let { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
 
         QueryBuilder.findTransactionByHash(hash)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .cast<TransactionValue.Transaction>().versionedTransaction
-            .hash()
+            .cast<TransactionValue.Transaction>()
+            .versionedTransaction.hash()
             .also { assertContentEquals(hash, it) }
     }
 
