@@ -24,7 +24,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
@@ -258,7 +257,6 @@ class InstructionsTest : AbstractTest() {
             withTimeout(txTimeout) { d.await() }
         }
 
-        delay(10000)
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             mintAsset(DEFAULT_ASSET_ID, 5)
@@ -266,7 +264,6 @@ class InstructionsTest : AbstractTest() {
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
-        delay(10000)
 
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)

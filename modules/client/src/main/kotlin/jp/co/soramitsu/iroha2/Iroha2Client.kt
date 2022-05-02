@@ -197,21 +197,20 @@ open class Iroha2Client(
                 afterSubscription?.invoke()
                 logger.debug("Subscription was accepted by peer")
 
-                repeat(eventReadMaxAttempts) {
+                for (i in 1..eventReadMaxAttempts) {
                     try {
-                        pipelineEventProcess(
-                            readMessage(incoming.receive()),
-                            hash, hexHash
-                        )?.also {
-                            result.complete(it)
-                            return@repeat
+                        val processed = pipelineEventProcess(readMessage(incoming.receive()), hash, hexHash)
+                        if (processed != null) {
+                            result.complete(processed)
+                            break
                         }
                     } catch (e: TransactionRejectedException) {
                         result.completeExceptionally(e)
-                        return@repeat
+                        break
+                    } finally {
+                        accepted(this)
                     }
 
-                    accepted(this)
                     delay(eventReadTimeoutInMills)
                 }
                 logger.debug("WebSocket is closing")
