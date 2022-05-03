@@ -5,11 +5,11 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
@@ -53,8 +53,8 @@ class ClientTest {
         assert(docsConfig.isNotEmpty())
 
         // must throw ex if config's property name not provided
-        assertThrows<IrohaClientException> {
-            runBlocking { client.describeConfig() }
+        assertFailsWith<IrohaClientException> {
+            client.describeConfig()
         }
     }
 }
