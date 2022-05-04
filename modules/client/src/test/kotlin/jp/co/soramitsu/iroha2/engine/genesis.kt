@@ -19,8 +19,8 @@ import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
 /**
  * Default genesis where just one domain and Alice with Bob in it
