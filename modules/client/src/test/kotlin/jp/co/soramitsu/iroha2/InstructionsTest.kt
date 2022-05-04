@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
@@ -10,7 +11,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -25,10 +26,9 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
-import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigDecimal
@@ -36,11 +36,10 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.security.KeyPair
 import java.security.SecureRandom
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -48,11 +47,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 @Execution(ExecutionMode.CONCURRENT)
-@ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class InstructionsTest {
-
-    lateinit var client: Iroha2Client
+class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(DefaultGenesis::class)
@@ -62,10 +58,8 @@ class InstructionsTest {
             accountId = ALICE_ACCOUNT_ID
             registerDomain(domainId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         QueryBuilder.findDomainById(domainId)
@@ -83,10 +77,8 @@ class InstructionsTest {
             accountId = ALICE_ACCOUNT_ID
             registerAccount(newAccountId, listOf())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         QueryBuilder.findAccountById(newAccountId)
@@ -128,10 +120,8 @@ class InstructionsTest {
 
         client.sendTransaction {
             signedTx
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         val accountMetadata = QueryBuilder.findAccountById(newAccountId)
@@ -154,10 +144,8 @@ class InstructionsTest {
             accountId = ALICE_ACCOUNT_ID
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         val query = QueryBuilder.findAllAssetsDefinitions()
@@ -183,10 +171,8 @@ class InstructionsTest {
             setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
             setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         val findAssetByIdQry = QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
@@ -227,10 +213,8 @@ class InstructionsTest {
             // grant by Alice to Bob permissions to set key value in Asset.Store
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
@@ -238,10 +222,8 @@ class InstructionsTest {
             account(BOB_ACCOUNT_ID)
             setKeyValue(aliceAssetId, "foo", "bar".asValue())
             buildSigned(BOB_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         val query = QueryBuilder.findAssetById(aliceAssetId)
@@ -268,20 +250,16 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             mintAsset(DEFAULT_ASSET_ID, 5)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
@@ -307,10 +285,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             burnAsset(DEFAULT_ASSET_ID, 50)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check balance after burn
@@ -337,10 +313,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             burnPublicKey(ALICE_ACCOUNT_ID, alicePubKey)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // if keys was burned, then peer should return an error due cannot verify signature
@@ -368,10 +342,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             burnPublicKey(BOB_ACCOUNT_ID, bobPubKey)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check Bob's account has only 1 public key (was 2)
@@ -389,10 +361,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             mintPublicKey(BOB_ACCOUNT_ID, newKeyPair.public.toIrohaPublicKey())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check public keys in Bob's account
@@ -413,10 +383,8 @@ class InstructionsTest {
             account(BOB_ACCOUNT_ID)
             grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check permission
@@ -432,10 +400,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             setKeyValue(BOB_ACCOUNT_ID, saltKey.asName(), salt)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check new metadata in Bob's account
@@ -459,10 +425,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             transferAsset(aliceAssetId, 40, bobAssetId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check balance after transfer
@@ -495,10 +459,8 @@ class InstructionsTest {
                 Instructions.burnAsset(DEFAULT_ASSET_ID, 20)
             )
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         assert(getAccountAmount() == 70L)
@@ -515,10 +477,8 @@ class InstructionsTest {
                 Instructions.burnAsset(DEFAULT_ASSET_ID, 30),
             )
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         assert(getAccountAmount() == 40L)
@@ -531,9 +491,9 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             fail("FAIL MESSAGE")
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertThrows(ExecutionException::class.java) {
-                it.get(10, TimeUnit.SECONDS)
+        }.also { d ->
+            assertFailsWith<TransactionRejectedException> {
+                withTimeout(txTimeout) { d.await() }
             }
         }
     }
@@ -554,10 +514,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             removeKeyValue(assetId, assetKey)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         val assetAfter = getAsset(assetId)
@@ -571,10 +529,8 @@ class InstructionsTest {
             accountId = ALICE_ACCOUNT_ID
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // counter to track all changes in balance
@@ -595,10 +551,8 @@ class InstructionsTest {
                 account(ALICE_ACCOUNT_ID)
                 mintAsset(DEFAULT_ASSET_ID, it)
                 buildSigned(ALICE_KEYPAIR)
-            }.also {
-                Assertions.assertDoesNotThrow {
-                    it.get(10, TimeUnit.SECONDS)
-                }
+            }.also { d ->
+                withTimeout(txTimeout) { d.await() }
             }
             counter += it
         }
@@ -607,10 +561,8 @@ class InstructionsTest {
                 account(ALICE_ACCOUNT_ID)
                 burnAsset(DEFAULT_ASSET_ID, it)
                 buildSigned(ALICE_KEYPAIR)
-            }.also {
-                Assertions.assertDoesNotThrow {
-                    it.get(10, TimeUnit.SECONDS)
-                }
+            }.also { d ->
+                withTimeout(txTimeout) { d.await() }
             }
             counter -= it
         }
@@ -650,7 +602,7 @@ class InstructionsTest {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-//    @Test
+    //    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
@@ -663,7 +615,7 @@ class InstructionsTest {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-//    @Test
+    //    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
         val roleId = Id("USER_METADATA_ACCESS".asName())
@@ -683,10 +635,8 @@ class InstructionsTest {
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 
@@ -710,10 +660,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             unregisterPeer(address, payload)
             buildSigned(keyPair)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(15, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 
@@ -726,10 +674,8 @@ class InstructionsTest {
             account(ALICE_ACCOUNT_ID)
             registerPeer(address, payload)
             buildSigned(keyPair)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(15, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 
@@ -756,10 +702,8 @@ class InstructionsTest {
                 otherwise = Instructions.burnAsset(assetId, 0)
             )
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 
@@ -779,10 +723,8 @@ class InstructionsTest {
                 mintPublicKey(accountId, pair.public.toIrohaPublicKey())
                 buildSigned(ALICE_KEYPAIR)
             }
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 }
