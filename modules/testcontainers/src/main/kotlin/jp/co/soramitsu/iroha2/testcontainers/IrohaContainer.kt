@@ -3,8 +3,8 @@ package jp.co.soramitsu.iroha2.testcontainers
 import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
-import jp.co.soramitsu.iroha2.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.JSON_SERDE
+import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.images.PullPolicy

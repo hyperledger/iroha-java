@@ -1,7 +1,9 @@
 package jp.co.soramitsu.iroha2;
 
+import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis;
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension;
+import jp.co.soramitsu.iroha2.engine.IrohaTest;
 import jp.co.soramitsu.iroha2.engine.WithIroha;
 import jp.co.soramitsu.iroha2.generated.datamodel.Name;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
@@ -31,9 +33,7 @@ import static jp.co.soramitsu.iroha2.engine.TestConstsKt.*;
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension.class)
 @Timeout(40)
-public class JavaTest {
-
-    public Iroha2Client client;
+public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
@@ -43,8 +43,10 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .fail("FAIL MESSAGE")
             .buildSigned(ALICE_KEYPAIR);
-        final CompletableFuture<byte[]> future = client.sendTransaction(transaction);
-        Assertions.assertThrows(ExecutionException.class, () -> future.get(10, TimeUnit.SECONDS));
+        final CompletableFuture<byte[]> future = client.sendTransactionAsync(transaction);
+        Assertions.assertThrows(ExecutionException.class,
+            () -> future.get(getTxTimeout().getSeconds(), TimeUnit.SECONDS)
+        );
     }
 
     @Test
@@ -56,14 +58,14 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerDomain(domainId)
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(transaction).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(transaction).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
         final QueryAndExtractor<Domain> query = QueryBuilder
             .findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR);
         final CompletableFuture<Domain> future = client.sendQueryAsync(query);
-        final Domain domain = future.get(10, TimeUnit.SECONDS);
+        final Domain domain = future.get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
         Assertions.assertEquals(domain.getId(), domainId);
     }
 
@@ -79,14 +81,14 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerAccount(accountId, new ArrayList<>())
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(transaction).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(transaction).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
         final QueryAndExtractor<Account> query = QueryBuilder
             .findAccountById(accountId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR);
         final CompletableFuture<Account> future = client.sendQueryAsync(query);
-        final Account account = future.get(10, TimeUnit.SECONDS);
+        final Account account = future.get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
         Assertions.assertEquals(account.getId(), accountId);
     }
 
@@ -98,21 +100,21 @@ public class JavaTest {
             .account(ALICE_ACCOUNT_ID)
             .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(registerAssetTx).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
         final VersionedTransaction mintAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
             .mintAsset(DEFAULT_ASSET_ID, 5L)
             .buildSigned(ALICE_KEYPAIR);
-        client.sendTransaction(mintAssetTx).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(mintAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
         final QueryAndExtractor<Account> query = QueryBuilder
             .findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR);
         final CompletableFuture<Account> future = client.sendQueryAsync(query);
-        final Account account = future.get(10, TimeUnit.SECONDS);
+        final Account account = future.get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
         final AssetValue value = account.getAssets().get(DEFAULT_ASSET_ID).getValue();
         Assertions.assertEquals(5, ((AssetValue.Quantity) value).getU32());
     }

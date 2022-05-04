@@ -1,11 +1,12 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.client.call.receive
+import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.future.future
+import jp.co.soramitsu.iroha2.client.Iroha2Client
 import java.net.URL
 
 /**
@@ -28,8 +29,8 @@ open class AdminIroha2Client(
      */
     suspend fun metrics(): String {
         return client
-            .get<HttpResponse>("$telemetryUrl$METRICS_ENDPOINT")
-            .receive()
+            .get("$telemetryUrl$METRICS_ENDPOINT")
+            .body()
     }
 
     /**
@@ -37,7 +38,7 @@ open class AdminIroha2Client(
      */
     suspend fun health(): Int {
         return client
-            .get<HttpResponse>("$peerUrl$HEALTH_ENDPOINT")
+            .get("$peerUrl$HEALTH_ENDPOINT")
             .status.value
     }
 
@@ -46,8 +47,8 @@ open class AdminIroha2Client(
      */
     suspend fun status(): PeerStatus {
         return client
-            .get<HttpResponse>("$telemetryUrl$STATUS_ENDPOINT")
-            .receive()
+            .get("$telemetryUrl$STATUS_ENDPOINT")
+            .body()
     }
 
     /**
@@ -69,22 +70,12 @@ open class AdminIroha2Client(
 
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
 
-    fun healthAsync() = scope.future { health() }
-
-    fun statusAsync() = scope.future { status() }
-
-    fun metricsAsync() = scope.future { metrics() }
-
-    fun getConfigsAsync() = scope.future { getConfigs() }
-
-    fun describeConfigAsync(fieldValue: Collection<String>) = scope.future { describeConfig(fieldValue) }
-
-    private suspend inline fun <reified T, B> config(body: B): T {
+    private suspend inline fun <reified T, reified B> config(body: B): T {
         val response: HttpResponse = client.get("$peerUrl$CONFIGURATION_ENDPOINT") {
             contentType(ContentType.Application.Json)
-            this.body = body!!
+            setBody(body)
         }
-        return response.receive()
+        return response.body()
     }
 
     enum class ConfigurationFieldType { Value, Docs }
