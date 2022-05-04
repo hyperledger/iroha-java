@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.client
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
@@ -7,21 +7,23 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.module.SimpleModule
 import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.HttpResponseValidator
-import io.ktor.client.features.json.JacksonSerializer
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.logging.Logging
-import io.ktor.client.features.websocket.ClientWebSocketSession
-import io.ktor.client.features.websocket.WebSockets
-import io.ktor.client.features.websocket.webSocket
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.websocket.ClientWebSocketSession
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.close
-import io.ktor.http.cio.websocket.readBytes
-import io.ktor.http.cio.websocket.send
+import io.ktor.serialization.jackson.jackson
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readBytes
+import jp.co.soramitsu.iroha2.IrohaClientException
+import jp.co.soramitsu.iroha2.TransactionRejectedException
+import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
@@ -37,7 +39,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReas
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
+import jp.co.soramitsu.iroha2.toFrame
+import jp.co.soramitsu.iroha2.toHex
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -45,16 +50,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.future.asCompletableFuture
-import kotlinx.coroutines.future.future
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.Duration
-import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
@@ -86,8 +87,8 @@ open class Iroha2Client(
                 install(Logging)
             }
             install(WebSockets)
-            install(JsonFeature) {
-                this.serializer = JacksonSerializer {
+            install(ContentNegotiation) {
+                jackson {
                     registerModule(
                         SimpleModule().apply {
                             addDeserializer(Duration::class.java, DurationDeserializer)
@@ -103,6 +104,8 @@ open class Iroha2Client(
         }
     }
 
+    override fun close() = client.close()
+
     /**
      * Sends request to Iroha2 and extract payload.
      * {@see Extractors}
@@ -110,17 +113,11 @@ open class Iroha2Client(
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
-            this.body = VersionedSignedQueryRequest.encode(queryAndExtractor.query)
+            setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
         }
-        return response.receive<ByteArray>()
+        return response.body<ByteArray>()
             .let { VersionedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
-    }
-
-    fun <T> sendQueryAsync(
-        queryAndExtractor: QueryAndExtractor<T>
-    ): CompletableFuture<T> = future {
-        sendQuery(queryAndExtractor)
     }
 
     /**
@@ -135,9 +132,9 @@ open class Iroha2Client(
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
         val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
-            body = VersionedTransaction.encode(signedTransaction)
+            setBody(VersionedTransaction.encode(signedTransaction))
         }
-        response.receive<Unit>()
+        response.body<Unit>()
         return hash
     }
 
@@ -158,15 +155,6 @@ open class Iroha2Client(
         }
     }
 
-    /**
-     * [for Java]
-     */
-    fun sendTransactionAsync(
-        transaction: VersionedTransaction
-    ): CompletableFuture<ByteArray> = runBlocking {
-        sendTransaction { transaction }.asCompletableFuture()
-    }
-
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
 
     /**
@@ -185,13 +173,13 @@ open class Iroha2Client(
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
 
         launch {
-            client.webSocket( // todo creates for each tx
+            client.webSocket(
                 host = peerUrl.host,
                 port = peerUrl.port,
                 path = WS_ENDPOINT
             ) {
                 logger.debug("WebSocket opened")
-                send(payload)
+                send(payload.toFrame())
                 readMessage<EventPublisherMessage.SubscriptionAccepted>(incoming.receive())
 
                 afterSubscription?.invoke()
@@ -210,12 +198,8 @@ open class Iroha2Client(
                     } finally {
                         accepted(this)
                     }
-
                     delay(eventReadTimeoutInMills)
                 }
-                logger.debug("WebSocket is closing")
-                this.close()
-                logger.debug("WebSocket closed")
             }
         }
         return result
@@ -248,8 +232,8 @@ open class Iroha2Client(
                 return null
             }
             else -> throw WebSocketProtocolException(
-                "Expected message with type ${Event.Pipeline::class.qualifiedName}," +
-                    " but was ${event::class.qualifiedName}"
+                "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
+                    "but was ${event::class.qualifiedName}"
             )
         }
     }
@@ -261,7 +245,7 @@ open class Iroha2Client(
         val eventReceived = VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.EventReceived()
         )
-        webSocket.send(VersionedEventSubscriberMessage.encode(eventReceived))
+        webSocket.send(VersionedEventSubscriberMessage.encode(eventReceived).toFrame())
     }
 
     /**
@@ -289,7 +273,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Tries to read message from the frame
+     * Reads message from the frame
      */
     private inline fun <reified T : EventPublisherMessage> readMessage(frame: Frame): T {
         return when (frame) {
@@ -313,7 +297,15 @@ open class Iroha2Client(
         }
     }
 
-    override fun close() = client.close()
+    private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
+        return VersionedEventSubscriberMessage.V1(
+            EventSubscriberMessage.SubscriptionRequest(
+                Pipeline(
+                    Filter(Transaction(), Hash(hash))
+                )
+            )
+        )
+    }
 
     object DurationDeserializer : JsonDeserializer<Duration>() {
         override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
@@ -327,15 +319,5 @@ open class Iroha2Client(
             )
             return Duration.ofSeconds(seconds, nanos)
         }
-    }
-
-    private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
-        return VersionedEventSubscriberMessage.V1(
-            EventSubscriberMessage.SubscriptionRequest(
-                Pipeline(
-                    Filter(Transaction(), Hash(hash))
-                )
-            )
-        )
     }
 }

@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2;
 
+import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis;
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension;
 import jp.co.soramitsu.iroha2.engine.WithIroha;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -33,11 +35,11 @@ import static jp.co.soramitsu.iroha2.engine.TestConstsKt.*;
 @Timeout(40)
 public class JavaTest extends AbstractTest {
 
-    public Iroha2Client client;
+    public Iroha2AsyncClient client;
 
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
-    public void instructionFailed() {
+    public void instructionFailed() throws MalformedURLException {
         final VersionedTransaction transaction = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)

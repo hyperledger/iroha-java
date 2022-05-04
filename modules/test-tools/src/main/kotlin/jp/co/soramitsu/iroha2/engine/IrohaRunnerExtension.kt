@@ -1,7 +1,8 @@
 package jp.co.soramitsu.iroha2.engine
 
 import jp.co.soramitsu.iroha2.AdminIroha2Client
-import jp.co.soramitsu.iroha2.Iroha2Client
+import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
+import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
@@ -57,6 +58,12 @@ class IrohaRunnerExtension : InvocationInterceptor {
                 // inject `AdminIroha2Client` if it is declared in test class
                 setPropertyValue(declaredProperties, testClassInstance) {
                     AdminIroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
+                        .also { utilizedResources.add(it) }
+                }
+
+                // inject `Iroha2AsyncClient` if it is declared in test class
+                setPropertyValue(declaredProperties, testClassInstance) {
+                    Iroha2AsyncClient(container.getApiUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
