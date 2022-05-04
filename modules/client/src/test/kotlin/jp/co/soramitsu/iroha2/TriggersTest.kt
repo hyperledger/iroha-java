@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
@@ -39,6 +38,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.engine.IrohaTest
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -48,9 +49,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class TriggersTest : AbstractTest() {
-
-    lateinit var client: Iroha2Client
+class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)

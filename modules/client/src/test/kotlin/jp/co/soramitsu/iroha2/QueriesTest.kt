@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
@@ -36,9 +37,7 @@ import kotlin.test.assertEquals
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class QueriesTest : AbstractTest() {
-
-    lateinit var client: Iroha2Client
+class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(NewAccountWithMetadata::class)
@@ -320,7 +319,7 @@ class QueriesTest : AbstractTest() {
             .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
     }
 
-//    @Test
+    //    @Test
 //    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)

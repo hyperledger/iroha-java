@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.engine
 
+import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
@@ -11,7 +12,7 @@ import java.lang.reflect.Method
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
 
 /**
  * Starts Iroha2 docker containers
@@ -47,23 +48,29 @@ class IrohaRunnerExtension : InvocationInterceptor {
                 utilizedResources.add(container)
 
                 val testClassInstance = invocationContext.target.get()
-                val declaredProperties = testClassInstance::class.declaredMemberProperties
+                val properties = testClassInstance::class.memberProperties
 
                 // inject `Iroha2Client` if it is declared in test class
-                setPropertyValue(declaredProperties, testClassInstance) {
+                setPropertyValue(properties, testClassInstance) {
                     Iroha2Client(container.getApiUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
                 // inject `AdminIroha2Client` if it is declared in test class
-                setPropertyValue(declaredProperties, testClassInstance) {
+                setPropertyValue(properties, testClassInstance) {
                     AdminIroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
                 // inject `Iroha2AsyncClient` if it is declared in test class
-                setPropertyValue(declaredProperties, testClassInstance) {
+                setPropertyValue(properties, testClassInstance) {
                     Iroha2AsyncClient(container.getApiUrl(), log = true)
+                        .also { utilizedResources.add(it) }
+                }
+
+                // inject `AdminIroha2AsyncClient` if it is declared in test class
+                setPropertyValue(properties, testClassInstance) {
+                    AdminIroha2AsyncClient(container.getApiUrl(), container.getTelemetryUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
@@ -76,7 +83,8 @@ class IrohaRunnerExtension : InvocationInterceptor {
         testClassInstance: Any,
         valueToSet: () -> V
     ) {
-        (declaredProperties.filter { it.returnType.classifier == V::class })
+        declaredProperties
+            .filter { it.returnType.classifier == V::class }
             .filterIsInstance<KMutableProperty1<out Any, V>>()
             .also { check(it.size <= 1) { "Found more than one property with type `${V::class.qualifiedName}` in test class `${testClassInstance::class::qualifiedName}`" } }
             .firstOrNull()
