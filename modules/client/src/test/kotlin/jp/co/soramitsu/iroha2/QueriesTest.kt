@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
+import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
@@ -309,7 +310,17 @@ class QueriesTest : AbstractTest() {
             .also { assertContentEquals(hash, it) }
     }
 
-    //    @Test
+    @Test
+    @WithIroha(NewDomainWithMetadata::class)
+    fun `find domain key value by ID and key`(): Unit = runBlocking {
+        QueryBuilder.findDomainKeyValueByIdAndKey(NewDomainWithMetadata.DOMAIN_ID, NewDomainWithMetadata.KEY)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
+    }
+
+//    @Test
 //    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
@@ -318,6 +329,4 @@ class QueriesTest : AbstractTest() {
             .let { query -> client.sendQuery(query) }
             .also { roles -> assert(roles.isNotEmpty()) }
     }
-
-    // TODO: FindDomainKeyValueByIdAndKey test
 }

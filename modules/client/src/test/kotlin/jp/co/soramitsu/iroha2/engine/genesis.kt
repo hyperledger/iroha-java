@@ -20,6 +20,7 @@ import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 
 /**
  * Default genesis where just one domain and Alice with Bob in it
@@ -133,6 +134,24 @@ open class NewAccountWithMetadata : Genesis(
         val VALUE = "value".asValue()
         val ACCOUNT_ID = AccountId(ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
         val KEYPAIR = generateKeyPair()
+    }
+}
+
+/**
+ * Creates new domain with metadata
+ */
+open class NewDomainWithMetadata : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(
+            domainId = DOMAIN_ID,
+            metadata = mapOf(KEY to VALUE)
+        )
+    )
+) {
+    companion object {
+        val KEY = "key".asName()
+        val VALUE = "value".asValue()
+        val DOMAIN_ID = DomainId("foo_domain".asName())
     }
 }
 
