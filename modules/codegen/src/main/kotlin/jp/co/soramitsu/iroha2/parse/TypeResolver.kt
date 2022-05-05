@@ -70,8 +70,8 @@ object BooleanResolver : Resolver<BooleanType> {
 
 object MapResolver : Resolver<MapType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): MapType? {
-        if (!name.startsWith("BTreeMap<")) return null
-        val wildcards = name.removePrefix("BTreeMap")
+        if (!name.startsWith("Map<")) return null
+        val wildcards = name.removePrefix("Map")
             .removeSurrounding("<", ">")
             .split(',')
             .map { it.trim() }
@@ -103,7 +103,12 @@ object VectorResolver : WrapperResolver<VecType>("Vec") {
     override fun createWrapper(name: String, innerType: TypeNest) = VecType(name, innerType)
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
-        if (!name.startsWith(wrapperName) && !name.startsWith("alloc::vec::Vec")) return null
+        if (!name.startsWith(wrapperName) &&
+            !name.startsWith("alloc::vec::Vec") &&
+            (typeValue as? Map<*, *>)?.get(wrapperName) == null
+        ) {
+            return null
+        }
         val innerType = extractGeneric(name, schemaParser)
         return createWrapper(name, innerType.first())
     }
@@ -149,8 +154,8 @@ object TupleStructResolver : Resolver<TupleStructType> {
         typeValue: Any?,
         schemaParser: SchemaParser
     ): TupleStructType? {
-        return if (typeValue is Map<*, *> && typeValue["TupleStruct"] != null) {
-            val components = (typeValue["TupleStruct"] as Map<String, List<String>>)["types"]!!
+        return if (typeValue is Map<*, *> && typeValue["Tuple"] != null) {
+            val components = (typeValue["Tuple"] as Map<String, List<String>>)["types"]!!
             val children = components.map(schemaParser::createAndGetNest)
             val generics = extractGeneric(name, schemaParser)
             TupleStructType(name, generics, children)
@@ -183,7 +188,7 @@ object StringResolver : Resolver<StringType> {
     }
 }
 
-object CompactResolver : WrapperResolver<CompactType>("iroha_schema::Compact") {
+object CompactResolver : WrapperResolver<CompactType>("Compact") {
     override fun createWrapper(name: String, innerType: TypeNest) = CompactType(name, innerType)
 }
 
