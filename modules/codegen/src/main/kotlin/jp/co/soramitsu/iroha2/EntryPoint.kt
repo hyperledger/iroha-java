@@ -25,7 +25,10 @@ fun main(args: Array<String>) {
 
 fun readSchema(fileName: String): Schema {
     val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
-    return ObjectMapper().readValue(InputStreamReader(resource), object : TypeReference<Map<String, Any>>() {})
+    return ObjectMapper().readValue(
+        InputStreamReader(resource),
+        object : TypeReference<Map<String, Any>>() {}
+    )
 }
 
 fun parseArgs(args: Array<String>): Map<String, String> {

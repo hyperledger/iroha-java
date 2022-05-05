@@ -181,9 +181,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Data(
-                            filter
-                        )
+                        EventFilter.Data(filter)
                     ),
                     metadata
                 )
