@@ -76,18 +76,18 @@ class TriggersTest {
 
         // register trigger
         val filter = EventFilter.Data(
-                FilterOptEntityFilter.BySome(
-                        EntityFilter.ByAssetDefinition(
-                                FilterOptAssetDefinitionFilter.BySome(
-                                        AssetDefinitionFilter(
-                                                FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                                                FilterOptAssetDefinitionEventFilter.BySome(
-                                                        AssetDefinitionEventFilter.ByCreated()
-                                                )
-                                        )
-                                )
+            FilterOptEntityFilter.BySome(
+                EntityFilter.ByAssetDefinition(
+                    FilterOptAssetDefinitionFilter.BySome(
+                        AssetDefinitionFilter(
+                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                            FilterOptAssetDefinitionEventFilter.BySome(
+                                AssetDefinitionEventFilter.ByCreated()
+                            )
                         )
+                    )
                 )
+            )
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID

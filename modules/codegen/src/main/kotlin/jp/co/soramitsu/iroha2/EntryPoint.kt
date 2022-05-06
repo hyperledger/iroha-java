@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jp.co.soramitsu.iroha2.codegen.generator.GeneratorEntryPoint
 import jp.co.soramitsu.iroha2.parse.Schema
 import jp.co.soramitsu.iroha2.parse.SchemaParser
-import java.io.InputStreamReader
 import java.nio.file.Paths
 
 const val OUTPUT_PATH_ARG_NAME = "outputPath"
@@ -28,11 +27,11 @@ fun main(args: Array<String>) {
 
 fun getFilterEventName(name: String): String {
     if (name.contains("data::filters")) {
-        val res = name.substringBefore("<").substringAfterLast("::")
+        val newName = name.substringBefore("<").substringAfterLast("::")
         if (!name.contains("<")) {
-            return res.replace(">", "")
+            return newName.replace(">", "")
         } else {
-            return res + getFilterEventName(name.substringAfter("<"))
+            return newName + getFilterEventName(name.substringAfter("<"))
         }
     }
     val tokens = name.replace(">", "").split("::")
@@ -50,7 +49,7 @@ fun readSchema(fileName: String): Schema {
     return ObjectMapper().readValue(sb.toString(), object : TypeReference<Map<String, Any>>() {})
 }
 
-fun parseLine(line: String):String {
+fun parseLine(line: String): String {
     if (line.contains(schemaFilterPattern)) {
         var tmpLine = line.substringBeforeLast("\"").replace("\"", "").trim()
         if (tmpLine.startsWith(SCHEMA_FILTER_TY)) {
