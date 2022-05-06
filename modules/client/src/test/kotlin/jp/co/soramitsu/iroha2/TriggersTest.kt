@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
@@ -21,6 +22,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptE
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -38,6 +40,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -72,21 +75,23 @@ class TriggersTest {
         assertEquals(100L, prevQuantity)
 
         // register trigger
-        val filter = FilterOptEntityFilter.BySome(
-            EntityFilter.ByAssetDefinition(
-                FilterOptAssetDefinitionFilter.BySome(
-                    AssetDefinitionFilter(
-                        FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                        FilterOptAssetDefinitionEventFilter.BySome(
-                            AssetDefinitionEventFilter.ByCreated()
+        val filter = EventFilter.Data(
+                FilterOptEntityFilter.BySome(
+                        EntityFilter.ByAssetDefinition(
+                                FilterOptAssetDefinitionFilter.BySome(
+                                        AssetDefinitionFilter(
+                                                FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                                                FilterOptAssetDefinitionEventFilter.BySome(
+                                                        AssetDefinitionEventFilter.ByCreated()
+                                                )
+                                        )
+                                )
                         )
-                    )
                 )
-            )
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerDataCreatedEventTrigger(
+            registerEventTrigger(
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
                 Repeats.Indefinitely(),

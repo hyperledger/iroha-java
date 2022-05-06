@@ -165,13 +165,13 @@ object Instructions {
     /**
      * Instruction for data trigger registration
      */
-    fun registerDataCreatedEventTrigger(
+    fun registerEventTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterOptEntityFilter
+        filter: EventFilter
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Trigger(
@@ -181,9 +181,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Data(
-                            filter
-                        )
+                        filter
                     ),
                     metadata
                 )
