@@ -164,33 +164,6 @@ public sealed class FindError : ModelEnum {
     }
 
     /**
-     * 'Role' variant
-     */
-    public data class Role(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.role.Id
-    ) : FindError() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Role>, ScaleWriter<Role> {
-            public const val DISCRIMINANT: Int = 5
-
-            public override fun read(reader: ScaleCodecReader): Role = try {
-                Role(
-                    jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, instance.id)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Block' variant
      */
     public data class Block(
@@ -199,7 +172,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Block>, ScaleWriter<Block> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): Block = try {
                 Block(
@@ -226,7 +199,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 6
 
             public override fun read(reader: ScaleCodecReader): Transaction = try {
                 Transaction(
@@ -253,7 +226,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Context>, ScaleWriter<Context> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 7
 
             public override fun read(reader: ScaleCodecReader): Context = try {
                 Context(
@@ -280,7 +253,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
-            public const val DISCRIMINANT: Int = 9
+            public const val DISCRIMINANT: Int = 8
 
             public override fun read(reader: ScaleCodecReader): Peer = try {
                 Peer(
@@ -307,7 +280,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Trigger>, ScaleWriter<Trigger> {
-            public const val DISCRIMINANT: Int = 10
+            public const val DISCRIMINANT: Int = 9
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
@@ -325,6 +298,33 @@ public sealed class FindError : ModelEnum {
         }
     }
 
+    /**
+     * 'Role' variant
+     */
+    public data class Role(
+        public val id: jp.co.soramitsu.iroha2.generated.datamodel.role.Id
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Role>, ScaleWriter<Role> {
+            public const val DISCRIMINANT: Int = 10
+
+            public override fun read(reader: ScaleCodecReader): Role = try {
+                Role(
+                    jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<FindError>, ScaleWriter<FindError> {
         public override fun read(reader: ScaleCodecReader): FindError = when (
             val discriminant =
@@ -335,12 +335,12 @@ public sealed class FindError : ModelEnum {
             2 -> Account.read(reader)
             3 -> Domain.read(reader)
             4 -> MetadataKey.read(reader)
-            5 -> Role.read(reader)
-            6 -> Block.read(reader)
-            7 -> Transaction.read(reader)
-            8 -> Context.read(reader)
-            9 -> Peer.read(reader)
-            10 -> Trigger.read(reader)
+            5 -> Block.read(reader)
+            6 -> Transaction.read(reader)
+            7 -> Context.read(reader)
+            8 -> Peer.read(reader)
+            9 -> Trigger.read(reader)
+            10 -> Role.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -352,12 +352,12 @@ public sealed class FindError : ModelEnum {
                 2 -> Account.write(writer, instance as Account)
                 3 -> Domain.write(writer, instance as Domain)
                 4 -> MetadataKey.write(writer, instance as MetadataKey)
-                5 -> Role.write(writer, instance as Role)
-                6 -> Block.write(writer, instance as Block)
-                7 -> Transaction.write(writer, instance as Transaction)
-                8 -> Context.write(writer, instance as Context)
-                9 -> Peer.write(writer, instance as Peer)
-                10 -> Trigger.write(writer, instance as Trigger)
+                5 -> Block.write(writer, instance as Block)
+                6 -> Transaction.write(writer, instance as Transaction)
+                7 -> Context.write(writer, instance as Context)
+                8 -> Peer.write(writer, instance as Peer)
+                9 -> Trigger.write(writer, instance as Trigger)
+                10 -> Role.write(writer, instance as Role)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

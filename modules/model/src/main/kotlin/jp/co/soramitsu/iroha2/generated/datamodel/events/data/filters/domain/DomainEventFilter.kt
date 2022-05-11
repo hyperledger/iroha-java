@@ -8,8 +8,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAccountFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOpt
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.account.AccountFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.AssetDefinitionFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -28,7 +29,7 @@ public sealed class DomainEventFilter : ModelEnum {
      * 'ByAccount' variant
      */
     public data class ByAccount(
-        public val filterOptAccountFilter: FilterOptAccountFilter
+        public val filterOpt: FilterOpt<AccountFilter>
     ) : DomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -37,14 +38,14 @@ public sealed class DomainEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAccount = try {
                 ByAccount(
-                    FilterOptAccountFilter.read(reader),
+                    FilterOpt.read(reader) as FilterOpt<AccountFilter>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAccount) = try {
-                FilterOptAccountFilter.write(writer, instance.filterOptAccountFilter)
+                FilterOpt.write(writer, instance.filterOpt)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -55,7 +56,7 @@ public sealed class DomainEventFilter : ModelEnum {
      * 'ByAssetDefinition' variant
      */
     public data class ByAssetDefinition(
-        public val filterOptAssetDefinitionFilter: FilterOptAssetDefinitionFilter
+        public val filterOpt: FilterOpt<AssetDefinitionFilter>
     ) : DomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -64,14 +65,14 @@ public sealed class DomainEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAssetDefinition = try {
                 ByAssetDefinition(
-                    FilterOptAssetDefinitionFilter.read(reader),
+                    FilterOpt.read(reader) as FilterOpt<AssetDefinitionFilter>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAssetDefinition) = try {
-                FilterOptAssetDefinitionFilter.write(writer, instance.filterOptAssetDefinitionFilter)
+                FilterOpt.write(writer, instance.filterOpt)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

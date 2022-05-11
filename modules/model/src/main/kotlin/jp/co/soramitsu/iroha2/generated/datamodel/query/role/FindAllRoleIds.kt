@@ -10,19 +10,19 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * FindAllRoles
+ * FindAllRoleIds
  *
- * Generated from 'iroha_data_model::query::role::FindAllRoles' tuple structure
+ * Generated from 'iroha_data_model::query::role::FindAllRoleIds' tuple structure
  */
-public class FindAllRoles {
-    public companion object : ScaleReader<FindAllRoles>, ScaleWriter<FindAllRoles> {
-        public override fun read(reader: ScaleCodecReader): FindAllRoles = try {
-            FindAllRoles()
+public class FindAllRoleIds {
+    public companion object : ScaleReader<FindAllRoleIds>, ScaleWriter<FindAllRoleIds> {
+        public override fun read(reader: ScaleCodecReader): FindAllRoleIds = try {
+            FindAllRoleIds()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllRoles) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: FindAllRoleIds) = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

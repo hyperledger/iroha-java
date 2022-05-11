@@ -14,7 +14,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.Set
 
 /**
  * Account
@@ -25,10 +24,10 @@ public data class Account(
     public val id: Id,
     public val assets: Map<jp.co.soramitsu.iroha2.generated.datamodel.asset.Id, Asset>,
     public val signatories: List<PublicKey>,
-    public val permissionTokens: Set<PermissionToken>,
+    public val permissionTokens: List<PermissionToken>,
     public val signatureCheckCondition: SignatureCheckCondition,
     public val metadata: Metadata,
-    public val roles: Set<jp.co.soramitsu.iroha2.generated.datamodel.role.Id>
+    public val roles: List<jp.co.soramitsu.iroha2.generated.datamodel.role.Id>
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
         public override fun read(reader: ScaleCodecReader): Account = try {
@@ -40,10 +39,10 @@ public data class Account(
                     { Asset.read(reader) }
                 ),
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
-                reader.readSet(reader.readCompactInt()) { PermissionToken.read(reader) },
+                reader.readVec(reader.readCompactInt()) { PermissionToken.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),
-                reader.readSet(reader.readCompactInt()) { jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader) },
+                reader.readVec(reader.readCompactInt()) { jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

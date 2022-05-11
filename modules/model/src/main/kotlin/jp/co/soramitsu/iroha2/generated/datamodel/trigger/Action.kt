@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.wrapException
 
@@ -21,7 +22,8 @@ public data class Action(
     public val executable: Executable,
     public val repeats: Repeats,
     public val technicalAccount: Id,
-    public val filter: EventFilter
+    public val filter: EventFilter,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Action>, ScaleWriter<Action> {
         public override fun read(reader: ScaleCodecReader): Action = try {
@@ -30,6 +32,7 @@ public data class Action(
                 Repeats.read(reader),
                 Id.read(reader),
                 EventFilter.read(reader),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -40,6 +43,7 @@ public data class Action(
             Repeats.write(writer, instance.repeats)
             Id.write(writer, instance.technicalAccount)
             EventFilter.write(writer, instance.filter)
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

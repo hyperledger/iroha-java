@@ -8,7 +8,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.EntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOpt
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -57,7 +58,7 @@ public sealed class EventFilter : ModelEnum {
      * 'Data' variant
      */
     public data class Data(
-        public val filterOptEntityFilter: FilterOptEntityFilter
+        public val filterOpt: FilterOpt<EntityFilter>
     ) : EventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -66,14 +67,14 @@ public sealed class EventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Data = try {
                 Data(
-                    FilterOptEntityFilter.read(reader),
+                    FilterOpt.read(reader) as FilterOpt<EntityFilter>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Data) = try {
-                FilterOptEntityFilter.write(writer, instance.filterOptEntityFilter)
+                FilterOpt.write(writer, instance.filterOpt)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

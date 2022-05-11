@@ -13,7 +13,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedRejectedT
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
-import kotlin.collections.Set
 
 /**
  * ValidBlock
@@ -24,7 +23,7 @@ public data class ValidBlock(
     public val header: BlockHeader,
     public val rejectedTransactions: List<VersionedRejectedTransaction>,
     public val transactions: List<VersionedValidTransaction>,
-    public val signatures: Set<SignatureOf<ValidBlock>>,
+    public val signatures: List<SignatureOf<ValidBlock>>,
     public val eventRecommendations: List<Event>
 ) {
     public companion object : ScaleReader<ValidBlock>, ScaleWriter<ValidBlock> {
@@ -33,7 +32,7 @@ public data class ValidBlock(
                 BlockHeader.read(reader),
                 reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
-                reader.readSet(reader.readCompactInt()) {
+                reader.readVec(reader.readCompactInt()) {
                     SignatureOf.read(reader) as
                         SignatureOf<ValidBlock>
                 },

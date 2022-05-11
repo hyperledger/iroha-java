@@ -51,6 +51,33 @@ public sealed class AssetDefinitionEvent : ModelEnum {
     }
 
     /**
+     * 'MintabilityChanged' variant
+     */
+    public data class MintabilityChanged(
+        public val definitionId: DefinitionId
+    ) : AssetDefinitionEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<MintabilityChanged>, ScaleWriter<MintabilityChanged> {
+            public const val DISCRIMINANT: Int = 1
+
+            public override fun read(reader: ScaleCodecReader): MintabilityChanged = try {
+                MintabilityChanged(
+                    DefinitionId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: MintabilityChanged) = try {
+                DefinitionId.write(writer, instance.definitionId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Deleted' variant
      */
     public data class Deleted(
@@ -59,7 +86,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
-            public const val DISCRIMINANT: Int = 1
+            public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
@@ -86,7 +113,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataInserted>, ScaleWriter<MetadataInserted> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
@@ -113,7 +140,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataRemoved>, ScaleWriter<MetadataRemoved> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
@@ -137,9 +164,10 @@ public sealed class AssetDefinitionEvent : ModelEnum {
                 reader.readUByte().toInt()
         ) {
             0 -> Created.read(reader)
-            1 -> Deleted.read(reader)
-            2 -> MetadataInserted.read(reader)
-            3 -> MetadataRemoved.read(reader)
+            1 -> MintabilityChanged.read(reader)
+            2 -> Deleted.read(reader)
+            3 -> MetadataInserted.read(reader)
+            4 -> MetadataRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -147,9 +175,10 @@ public sealed class AssetDefinitionEvent : ModelEnum {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)
-                1 -> Deleted.write(writer, instance as Deleted)
-                2 -> MetadataInserted.write(writer, instance as MetadataInserted)
-                3 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
+                1 -> MintabilityChanged.write(writer, instance as MintabilityChanged)
+                2 -> Deleted.write(writer, instance as Deleted)
+                3 -> MetadataInserted.write(writer, instance as MetadataInserted)
+                4 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

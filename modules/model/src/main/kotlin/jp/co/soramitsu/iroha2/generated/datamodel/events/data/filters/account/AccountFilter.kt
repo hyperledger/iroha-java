@@ -7,8 +7,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAccountEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptIdFilterAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOpt
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.IdFilter
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -18,22 +19,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class AccountFilter(
-    public val idFilter: FilterOptIdFilterAccountId,
-    public val eventFilter: FilterOptAccountEventFilter
+    public val idFilter: FilterOpt<IdFilter<Id>>,
+    public val eventFilter: FilterOpt<AccountEventFilter>
 ) {
     public companion object : ScaleReader<AccountFilter>, ScaleWriter<AccountFilter> {
         public override fun read(reader: ScaleCodecReader): AccountFilter = try {
             AccountFilter(
-                FilterOptIdFilterAccountId.read(reader),
-                FilterOptAccountEventFilter.read(reader),
+                FilterOpt.read(reader) as FilterOpt<IdFilter<Id>>,
+                FilterOpt.read(reader) as FilterOpt<AccountEventFilter>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: AccountFilter) = try {
-            FilterOptIdFilterAccountId.write(writer, instance.idFilter)
-            FilterOptAccountEventFilter.write(writer, instance.eventFilter)
+            FilterOpt.write(writer, instance.idFilter)
+            FilterOpt.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

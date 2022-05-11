@@ -160,7 +160,7 @@ open class NewDomainWithMetadata : Genesis(
  */
 open class NewDomain : Genesis(
     rawGenesisBlock(
-        Instructions.registerDomain(DOMAIN_ID, mapOf(), mapOf())
+        Instructions.registerDomain(DOMAIN_ID)
     )
 ) {
     companion object {

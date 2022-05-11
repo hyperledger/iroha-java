@@ -7,8 +7,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptIdFilterAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOpt
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.IdFilter
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -18,22 +19,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class AssetDefinitionFilter(
-    public val idFilter: FilterOptIdFilterAssetDefinitionId,
-    public val eventFilter: FilterOptAssetDefinitionEventFilter
+    public val idFilter: FilterOpt<IdFilter<DefinitionId>>,
+    public val eventFilter: FilterOpt<AssetDefinitionEventFilter>
 ) {
     public companion object : ScaleReader<AssetDefinitionFilter>, ScaleWriter<AssetDefinitionFilter> {
         public override fun read(reader: ScaleCodecReader): AssetDefinitionFilter = try {
             AssetDefinitionFilter(
-                FilterOptIdFilterAssetDefinitionId.read(reader),
-                FilterOptAssetDefinitionEventFilter.read(reader),
+                FilterOpt.read(reader) as FilterOpt<IdFilter<DefinitionId>>,
+                FilterOpt.read(reader) as FilterOpt<AssetDefinitionEventFilter>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionFilter) = try {
-            FilterOptIdFilterAssetDefinitionId.write(writer, instance.idFilter)
-            FilterOptAssetDefinitionEventFilter.write(writer, instance.eventFilter)
+            FilterOpt.write(writer, instance.idFilter)
+            FilterOpt.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

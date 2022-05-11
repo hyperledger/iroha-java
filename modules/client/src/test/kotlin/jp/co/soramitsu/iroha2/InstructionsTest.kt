@@ -20,17 +20,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -42,12 +39,10 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.test.fail
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
-@Execution(ExecutionMode.CONCURRENT)
-@Timeout(40)
 class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
@@ -148,10 +143,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             withTimeout(txTimeout) { d.await() }
         }
 
-        val query = QueryBuilder.findAllAssetsDefinitions()
+        val assetDefinitions = QueryBuilder.findAllAssetsDefinitions()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-        val assetDefinitions = client.sendQuery(query)
+            .let { q -> client.sendQuery(q) }
+
         assertFalse { assetDefinitions.isEmpty() }
         assetDefinitions.find { it.id == DEFAULT_ASSET_DEFINITION_ID }
             ?: fail("Expected query response contains assetDefinition $DEFAULT_ASSET_DEFINITION_ID, but it is not. Response was $assetDefinitions")
@@ -318,9 +314,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         // if keys was burned, then peer should return an error due cannot verify signature
-        assertFails {
-            client.sendQuery(query)
-        }
+        assertFails { client.sendQuery(query) }
     }
 
     @Test
@@ -602,7 +596,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-    //    @Test
+//    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
@@ -615,10 +609,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-    //    @Test
+//    @Test
 //    @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
-        val roleId = Id("USER_METADATA_ACCESS".asName())
+        val roleId = RoleId("USER_METADATA_ACCESS".asName())
 
         client.sendTransaction {
             accountId = BOB_ACCOUNT_ID

@@ -9,7 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.collections.Set
+import kotlin.collections.List
 
 /**
  * Role
@@ -18,13 +18,13 @@ import kotlin.collections.Set
  */
 public data class Role(
     public val id: Id,
-    public val permissions: Set<PermissionToken>
+    public val permissions: List<PermissionToken>
 ) {
     public companion object : ScaleReader<Role>, ScaleWriter<Role> {
         public override fun read(reader: ScaleCodecReader): Role = try {
             Role(
                 Id.read(reader),
-                reader.readSet(reader.readCompactInt()) { PermissionToken.read(reader) },
+                reader.readVec(reader.readCompactInt()) { PermissionToken.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

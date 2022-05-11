@@ -22,18 +22,15 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
@@ -52,18 +49,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter as ExecutableEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
@@ -83,7 +74,7 @@ object Instructions {
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Role(
-                Role(roleId, tokens.toSet())
+                Role(roleId, tokens.toList())
             )
         }
     }
@@ -103,119 +94,119 @@ object Instructions {
         }
     }
 
-    /**
-     * Instruction for time trigger registration
-     */
-    fun registerTimeTrigger(
-        triggerId: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id,
-        isi: List<Instruction>,
-        repeats: Repeats,
-        accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
-        schedule: Schedule,
-        metadata: Metadata
-    ): Instruction {
-        return registerSome {
-            IdentifiableBox.Trigger(
-                Trigger(
-                    triggerId,
-                    Action(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        EventFilter.Time(
-                            TimeEventFilter(
-                                ExecutionTime.Schedule(schedule)
-                            )
-                        )
-                    ),
-                    metadata
-                )
-            )
-        }
-    }
+//    /**
+//     * Instruction for time trigger registration
+//     */
+//    fun registerTimeTrigger(
+//        triggerId: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id,
+//        isi: List<Instruction>,
+//        repeats: Repeats,
+//        accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
+//        schedule: Schedule,
+//        metadata: Metadata
+//    ): Instruction {
+//        return registerSome {
+//            IdentifiableBox.Trigger(
+//                Trigger(
+//                    triggerId,
+//                    Action(
+//                        Executable.Instructions(isi),
+//                        repeats,
+//                        accountId,
+//                        EventFilter.Time(
+//                            TimeEventFilter(
+//                                ExecutionTime.Schedule(schedule)
+//                            )
+//                        )
+//                    ),
+//                    metadata
+//                )
+//            )
+//        }
+//    }
 
-    /**
-     * Instruction for executable trigger registration
-     */
-    fun registerExecutableTrigger(
-        triggerId: TriggerId,
-        isi: List<Instruction>,
-        repeats: Repeats,
-        accountId: AccountId,
-        metadata: Metadata
-    ): Instruction.Register {
-        return registerSome {
-            IdentifiableBox.Trigger(
-                Trigger(
-                    triggerId,
-                    Action(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        EventFilter.ExecuteTrigger(
-                            ExecutableEventFilter(triggerId, accountId)
-                        )
-                    ),
-                    metadata
-                )
-            )
-        }
-    }
+//    /**
+//     * Instruction for executable trigger registration
+//     */
+//    fun registerExecutableTrigger(
+//        triggerId: TriggerId,
+//        isi: List<Instruction>,
+//        repeats: Repeats,
+//        accountId: AccountId,
+//        metadata: Metadata
+//    ): Instruction.Register {
+//        return registerSome {
+//            IdentifiableBox.Trigger(
+//                Trigger(
+//                    triggerId,
+//                    Action(
+//                        Executable.Instructions(isi),
+//                        repeats,
+//                        accountId,
+//                        EventFilter.ExecuteTrigger(
+//                            ExecutableEventFilter(triggerId, accountId)
+//                        )
+//                    ),
+//                    metadata
+//                )
+//            )
+//        }
+//    }
 
-    /**
-     * Instruction for data trigger registration
-     */
-    fun registerDataCreatedEventTrigger(
-        triggerId: TriggerId,
-        isi: List<Instruction>,
-        repeats: Repeats,
-        accountId: AccountId,
-        metadata: Metadata,
-        filter: FilterOptEntityFilter
-    ): Instruction.Register {
-        return registerSome {
-            IdentifiableBox.Trigger(
-                Trigger(
-                    triggerId,
-                    Action(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        EventFilter.Data(filter)
-                    ),
-                    metadata
-                )
-            )
-        }
-    }
+//    /**
+//     * Instruction for data trigger registration
+//     */
+//    fun registerDataCreatedEventTrigger(
+//        triggerId: TriggerId,
+//        isi: List<Instruction>,
+//        repeats: Repeats,
+//        accountId: AccountId,
+//        metadata: Metadata,
+//        filter: FilterOptEntityFilter
+//    ): Instruction.Register {
+//        return registerSome {
+//            IdentifiableBox.Trigger(
+//                Trigger(
+//                    triggerId,
+//                    Action(
+//                        Executable.Instructions(isi),
+//                        repeats,
+//                        accountId,
+//                        EventFilter.Data(filter)
+//                    ),
+//                    metadata
+//                )
+//            )
+//        }
+//    }
 
-    /**
-     * Instruction for pre commit trigger to run after every transaction
-     */
-    fun registerPreCommitTrigger(
-        triggerId: TriggerId,
-        isi: List<Instruction>,
-        repeats: Repeats,
-        accountId: AccountId,
-        metadata: Metadata
-    ): Instruction.Register {
-        return registerSome {
-            IdentifiableBox.Trigger(
-                Trigger(
-                    triggerId,
-                    Action(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        EventFilter.Time(
-                            TimeEventFilter(ExecutionTime.PreCommit())
-                        )
-                    ),
-                    metadata
-                )
-            )
-        }
-    }
+//    /**
+//     * Instruction for pre commit trigger to run after every transaction
+//     */
+//    fun registerPreCommitTrigger(
+//        triggerId: TriggerId,
+//        isi: List<Instruction>,
+//        repeats: Repeats,
+//        accountId: AccountId,
+//        metadata: Metadata
+//    ): Instruction.Register {
+//        return registerSome {
+//            IdentifiableBox.Trigger(
+//                Trigger(
+//                    triggerId,
+//                    Action(
+//                        Executable.Instructions(isi),
+//                        repeats,
+//                        accountId,
+//                        EventFilter.Time(
+//                            TimeEventFilter(ExecutionTime.PreCommit())
+//                        )
+//                    ),
+//                    metadata
+//                )
+//            )
+//        }
+//    }
 
     /**
      * Instruction for asset registration
@@ -224,11 +215,11 @@ object Instructions {
         id: DefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
-        mintable: Boolean = true
+        mintable: Mintable = Mintable.Infinitely()
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.AssetDefinition(
-                AssetDefinition(assetValueType, id, metadata, mintable)
+                AssetDefinition(id, assetValueType, mintable, metadata)
             )
         }
     }
@@ -238,19 +229,15 @@ object Instructions {
      */
     fun registerDomain(
         domainId: DomainId,
-        accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
         metadata: Map<Name, Value> = mapOf(),
         logo: IpfsPath? = null
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Domain(
-                Domain(
+            IdentifiableBox.NewDomain(
+                NewDomain(
                     domainId,
-                    accounts,
-                    assetDefinitions,
-                    Metadata(metadata),
-                    logo
+                    logo,
+                    Metadata(metadata)
                 )
             )
         }
@@ -291,15 +278,6 @@ object Instructions {
                     PublicKey(digestFunction, payload)
                 )
             )
-        }
-    }
-
-    /**
-     * Instruction for world registration
-     */
-    fun registerWorld(): Instruction.Register {
-        return registerSome {
-            IdentifiableBox.World()
         }
     }
 
@@ -648,9 +626,15 @@ object Instructions {
         )
     }
 
-    private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {
+    private inline fun registerSome(
+        idBox: () -> IdentifiableBox
+    ): Instruction.Register {
         return Instruction.Register(
-            RegisterBox(idBox().evaluatesTo())
+            RegisterBox(
+                EvaluatesTo(
+                    Expression.Raw(Value.Identifiable(idBox()))
+                )
+            )
         )
     }
 

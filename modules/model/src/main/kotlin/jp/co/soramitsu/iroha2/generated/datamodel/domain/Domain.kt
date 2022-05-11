@@ -23,8 +23,8 @@ public data class Domain(
     public val id: Id,
     public val accounts: Map<jp.co.soramitsu.iroha2.generated.datamodel.account.Id, Account>,
     public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
-    public val metadata: Metadata,
-    public val logo: IpfsPath?
+    public val logo: IpfsPath?,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = try {
@@ -39,8 +39,8 @@ public data class Domain(
                     reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
-                Metadata.read(reader),
                 reader.readNullable(IpfsPath),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -58,8 +58,8 @@ public data class Domain(
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
-            Metadata.write(writer, instance.metadata)
             writer.writeNullable(IpfsPath, instance.logo)
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

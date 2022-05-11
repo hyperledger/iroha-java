@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * VersionedQueryResult
+ * VersionedPaginatedQueryResult
  *
- * Generated from 'iroha_data_model::query::VersionedQueryResult' enum
+ * Generated from 'iroha_data_model::query::VersionedPaginatedQueryResult' enum
  */
-public sealed class VersionedQueryResult : ModelEnum {
+public sealed class VersionedPaginatedQueryResult : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,8 +26,8 @@ public sealed class VersionedQueryResult : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val queryResult: QueryResult
-    ) : VersionedQueryResult() {
+        public val paginatedQueryResult: PaginatedQueryResult
+    ) : VersionedPaginatedQueryResult() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
@@ -35,30 +35,32 @@ public sealed class VersionedQueryResult : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    QueryResult.read(reader),
+                    PaginatedQueryResult.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                QueryResult.write(writer, instance.queryResult)
+                PaginatedQueryResult.write(writer, instance.paginatedQueryResult)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<VersionedQueryResult>, ScaleWriter<VersionedQueryResult> {
-        public override fun read(reader: ScaleCodecReader): VersionedQueryResult = when (
-            val discriminant =
-                reader.readUByte().toInt()
+    public companion object :
+        ScaleReader<VersionedPaginatedQueryResult>,
+        ScaleWriter<VersionedPaginatedQueryResult> {
+        public override fun read(reader: ScaleCodecReader): VersionedPaginatedQueryResult = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedQueryResult) {
+        public override fun write(writer: ScaleCodecWriter, instance: VersionedPaginatedQueryResult) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)
