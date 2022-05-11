@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
@@ -8,8 +9,10 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
+import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
@@ -22,22 +25,19 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class QueriesTest {
-
-    lateinit var client: Iroha2Client
+class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(NewAccountWithMetadata::class)
@@ -247,10 +247,6 @@ class QueriesTest {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
         }
 
         QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
@@ -300,22 +296,30 @@ class QueriesTest {
             account(ALICE_ACCOUNT_ID)
             registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
-        }.get()
+        }.let { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
 
         QueryBuilder.findTransactionByHash(hash)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .cast<TransactionValue.Transaction>().versionedTransaction
-            .hash()
+            .cast<TransactionValue.Transaction>()
+            .versionedTransaction.hash()
             .also { assertContentEquals(hash, it) }
     }
 
-//    @Test
+    @Test
+    @WithIroha(NewDomainWithMetadata::class)
+    fun `find domain key value by ID and key`(): Unit = runBlocking {
+        QueryBuilder.findDomainKeyValueByIdAndKey(NewDomainWithMetadata.DOMAIN_ID, NewDomainWithMetadata.KEY)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
+    }
+
+    //    @Test
 //    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
@@ -324,6 +328,4 @@ class QueriesTest {
             .let { query -> client.sendQuery(query) }
             .also { roles -> assert(roles.isNotEmpty()) }
     }
-
-    // TODO: FindDomainKeyValueByIdAndKey test
 }

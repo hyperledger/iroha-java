@@ -197,6 +197,16 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
 
         @JvmStatic
+        fun findDomainKeyValueByIdAndKey(id: DomainId, key: String) =
+            findDomainKeyValueByIdAndKey(id, key.asName())
+
+        @JvmStatic
+        fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name) = QueryBuilder(
+            Queries.findDomainKeyValueByIdAndKey(id, key),
+            ValueExtractor
+        )
+
+        @JvmStatic
         fun findAllDomains() = QueryBuilder(Queries.findAllDomains(), DomainsExtractor)
 
         @JvmStatic

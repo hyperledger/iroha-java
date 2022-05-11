@@ -23,6 +23,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
@@ -165,6 +166,15 @@ object Queries {
     fun findRolesByAccountId(accountId: AccountId): QueryBox.FindRolesByAccountId {
         return QueryBox.FindRolesByAccountId(
             FindRolesByAccountId(accountId.evaluatesTo())
+        )
+    }
+
+    fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name): QueryBox.FindDomainKeyValueByIdAndKey {
+        return QueryBox.FindDomainKeyValueByIdAndKey(
+            FindDomainKeyValueByIdAndKey(
+                id.evaluatesTo(),
+                key.evaluatesTo()
+            )
         )
     }
 }

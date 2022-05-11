@@ -12,6 +12,7 @@ buildscript {
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 allprojects {
@@ -25,6 +26,7 @@ subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'maven-publish'
     apply plugin: 'org.jmailen.kotlinter'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
     publishing {
         publications {
@@ -54,14 +56,14 @@ subprojects {
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 11
+            jvmTarget = 1.8
         }
     }
 
     compileTestKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 11
+            jvmTarget = 1.8
         }
     }
 
@@ -72,6 +74,15 @@ subprojects {
         experimentalRules = false
         disabledRules = []
     }
+
+    shadowJar {
+        zip64 = true
+        archiveFileName = "${archiveBaseName.get()}-${archiveVersion.get()}.jar"
+    }
+}
+
+task allShadowJars {
+    subprojects { pr -> allShadowJars.dependsOn("${pr.path}:shadowJar") }
 }
 
 check {

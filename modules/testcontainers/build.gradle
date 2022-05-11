@@ -8,7 +8,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
-
 }
 
 test {

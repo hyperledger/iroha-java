@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
@@ -8,6 +9,7 @@ import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
+import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.core.time.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
@@ -31,7 +33,7 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
@@ -51,9 +53,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)
-class TriggersTest {
-
-    lateinit var client: Iroha2Client
+class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
@@ -101,10 +101,8 @@ class TriggersTest {
             )
             executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // register new asset
@@ -122,10 +120,8 @@ class TriggersTest {
             accountId = ALICE_ACCOUNT_ID
             registerAsset(newAsset, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check new asset is created
@@ -178,10 +174,8 @@ class TriggersTest {
             )
             executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check DEFAULT_ASSET_ID quantity after trigger is run
@@ -202,10 +196,8 @@ class TriggersTest {
             account(ALICE_ACCOUNT_ID)
             transferAsset(DEFAULT_ASSET_ID, 100, bobAssetId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         // check DEFAULT_ASSET_ID quantity after trigger is run
@@ -228,10 +220,8 @@ class TriggersTest {
             )
             executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         assertEquals(101L, readQuantity())
@@ -275,11 +265,9 @@ class TriggersTest {
                 accountId = ALICE_ACCOUNT_ID
                 setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i".asValue())
                 buildSigned(ALICE_KEYPAIR)
-            }.also {
+            }.also { d ->
                 delay(1000)
-                Assertions.assertDoesNotThrow {
-                    it.get(10, TimeUnit.SECONDS)
-                }
+                withTimeout(txTimeout) { d.await() }
             }
         }
     }
@@ -312,10 +300,8 @@ class TriggersTest {
                 )
             )
             buildSigned(ALICE_KEYPAIR)
-        }.also {
-            Assertions.assertDoesNotThrow {
-                it.get(10, TimeUnit.SECONDS)
-            }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
     }
 }

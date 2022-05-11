@@ -6,7 +6,7 @@ enum class CompactMode(val value: Byte) {
     SINGLE(0.toByte()), TWO(1.toByte()), FOUR(2.toByte()), BIGINT(3.toByte());
 
     companion object {
-        private val MAX = BigInteger.TWO.pow(536).subtract(BigInteger.ONE)
+        private val MAX = BigInteger.valueOf(2).pow(536).subtract(BigInteger.ONE)
 
         @JvmStatic
         fun byValue(value: Byte): CompactMode {

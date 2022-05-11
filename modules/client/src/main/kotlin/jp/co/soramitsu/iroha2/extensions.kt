@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import io.ktor.websocket.Frame
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
@@ -39,6 +40,8 @@ fun Int.asValue() = this.toLong().asValue()
 fun Long.asValue() = Value.U32(this)
 
 fun Boolean.asValue() = Value.Bool(this)
+
+fun ByteArray.toFrame(fin: Boolean = true) = Frame.Binary(fin, this)
 
 fun ByteArray.toHex(): String = try {
     Hex.toHexString(this)

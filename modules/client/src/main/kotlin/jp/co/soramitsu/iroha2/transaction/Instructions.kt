@@ -370,10 +370,10 @@ object Instructions {
      */
     fun mintAsset(
         assetId: AssetId,
-        quanity: BigDecimal
+        quantity: BigDecimal
     ): Instruction.Mint {
         return mintSome(
-            Value.Fixed(Fixed(quanity)),
+            Value.Fixed(Fixed(quantity)),
             assetId
         )
     }
