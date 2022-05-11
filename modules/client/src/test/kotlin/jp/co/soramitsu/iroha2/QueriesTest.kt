@@ -17,11 +17,16 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
@@ -227,33 +232,33 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
-//    fun `find transactions by account id`(): Unit = runBlocking {
-//        client.sendTransaction {
-//            account(ALICE_ACCOUNT_ID)
-//            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
-//            buildSigned(ALICE_KEYPAIR)
-//        }
-//
-//        QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
-//            .account(ALICE_ACCOUNT_ID)
-//            .buildSigned(ALICE_KEYPAIR)
-//            .let { query ->
-//                client.sendQuery(query)
-//            }.let { txValues ->
-//                txValues.all { value ->
-//                    value.cast<TransactionValue.Transaction>()
-//                        .versionedTransaction
-//                        .cast<VersionedTransaction.V1>()
-//                        .transaction
-//                        .payload
-//                        .accountId == ALICE_ACCOUNT_ID
-//                }
-//            }.also {
-//                assert(it)
-//            }
-//    }
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `find transactions by account id`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }
+
+        QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.let { txValues ->
+                txValues.all { value ->
+                    value.cast<TransactionValue.Transaction>()
+                        .versionedTransaction
+                        .cast<VersionedTransaction.V1>()
+                        .transaction
+                        .payload
+                        .accountId == ALICE_ACCOUNT_ID
+                }
+            }.also {
+                assert(it)
+            }
+    }
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
@@ -276,25 +281,25 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
-//    fun `find transaction by hash`(): Unit = runBlocking {
-//        val hash = client.sendTransaction {
-//            account(ALICE_ACCOUNT_ID)
-//            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
-//            buildSigned(ALICE_KEYPAIR)
-//        }.let { d ->
-//            withTimeout(txTimeout) { d.await() }
-//        }
-//
-//        QueryBuilder.findTransactionByHash(hash)
-//            .account(ALICE_ACCOUNT_ID)
-//            .buildSigned(ALICE_KEYPAIR)
-//            .let { query -> client.sendQuery(query) }
-//            .cast<TransactionValue.Transaction>()
-//            .versionedTransaction.hash()
-//            .also { assertContentEquals(hash, it) }
-//    }
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `find transaction by hash`(): Unit = runBlocking {
+        val hash = client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.let { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findTransactionByHash(hash)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .cast<TransactionValue.Transaction>()
+            .versionedTransaction.hash()
+            .also { assertContentEquals(hash, it) }
+    }
 
     @Test
     @WithIroha(NewDomainWithMetadata::class)
@@ -306,7 +311,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
     }
 
-    //    @Test
+//    @Test
 //    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)

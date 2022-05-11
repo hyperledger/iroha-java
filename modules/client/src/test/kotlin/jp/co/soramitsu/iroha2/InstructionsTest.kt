@@ -33,7 +33,6 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.security.KeyPair
 import java.security.SecureRandom
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -302,8 +301,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         val signatories = client.sendQuery(query).signatories
+
         assertEquals(2, signatories.size)
-        assertContentEquals(alicePubKey.payload, signatories.first().payload)
+        assertTrue {
+            signatories.any { s ->
+                s.payload.contentEquals(alicePubKey.payload)
+            }
+        }
 
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
