@@ -24,7 +24,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptE
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -42,8 +41,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
