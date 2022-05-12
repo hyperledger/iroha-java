@@ -6,11 +6,13 @@ import jp.co.soramitsu.iroha2.codegen.blueprint.StructBlueprint
 import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.EnumType
+import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.StructType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import java.nio.file.Path
 
 object GeneratorEntryPoint {
+    @OptIn(ExperimentalUnsignedTypes::class)
     fun generate(types: Types, outputPath: Path) {
         types.values.mapNotNull {
             when (it) {
@@ -19,18 +21,21 @@ object GeneratorEntryPoint {
                 is TupleStructType -> TupleStructBlueprint(it)
                 else -> null
             }
-        }.forEach {
-            val typeSpec = when (it) {
-                is StructBlueprint -> StructGenerator.generate(it)
-                is EnumBlueprint -> EnumGenerator.generate(it)
-                is TupleStructBlueprint -> TupleStructGenerator.generate(it)
-                else -> throw RuntimeException("Unexpected blueprint type: ${it::class}")
+        }.forEach { type ->
+            val typeSpec = when (type) {
+                is StructBlueprint -> StructGenerator.generate(type)
+                is EnumBlueprint -> EnumGenerator.generate(type)
+                is TupleStructBlueprint -> TupleStructGenerator.generate(type)
+                else -> throw RuntimeException("Unexpected blueprint type: ${type::class}")
             }
-            FileSpec.builder(it.packageName, it.className)
+            val builder = FileSpec.builder(type.packageName, type.className)
                 .addType(typeSpec)
                 .addComment("\nAuto-generated file. DO NOT EDIT!\n")
-                .build()
-                .writeTo(outputPath)
+
+            if (type.properties.map { it.original as? MapType }.any { it?.sortedByKey == true }) {
+                builder.addImport("jp.co.soramitsu.iroha2", "comparator") // todo
+            }
+            builder.build().writeTo(outputPath)
         }
     }
 }

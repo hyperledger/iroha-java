@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -51,7 +52,9 @@ public data class Account(
         public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
-            instance.assets.forEach { (key, value) ->  
+            instance.assets.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.Id::class.comparator()
+            ).forEach { (key, value) ->
                 jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, key)
                 Asset.write(writer, value)
             }

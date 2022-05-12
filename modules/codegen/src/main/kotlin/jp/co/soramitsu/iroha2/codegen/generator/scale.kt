@@ -135,20 +135,23 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             )
         }
         is MapType -> {
-            val simpleName = (resolveKotlinType(type.key.requireValue()) as ClassName).simpleName
+            val key = (resolveKotlinType(type.key.requireValue()) as ClassName)
+            val keyName = key.takeIf { "Id" in it.simpleName }
+                ?.canonicalName
+                ?: key.simpleName
             if (type.sortedByKey) {
                 CodeBlock.of(
                     "writer.writeCompact(%1L.size)\n" +
-                        "%1L.toSortedMap(%4L::class.comparator()).forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
+                        "%1L.toSortedMap(\n%4L::class.comparator()\n).forEach { (key, value) ->\n\t%2L\n\t%3L\n}",
                     propName,
                     resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
                     resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value")),
-                    CodeBlock.of(simpleName)
+                    CodeBlock.of(keyName)
                 )
             } else {
                 CodeBlock.of(
                     "writer.writeCompact(%1L.size)\n" +
-                        "%1L.forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
+                        "%1L.forEach { (key, value) ->\n\t%2L\n\t%3L\n}",
                     propName,
                     resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
                     resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value"))

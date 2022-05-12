@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.wrapException
@@ -36,7 +37,9 @@ public data class SignaturesOf<T0>(
 
         public override fun write(writer: ScaleCodecWriter, instance: SignaturesOf<out Any>) = try {
             writer.writeCompact(instance.signatures.size)
-            instance.signatures.forEach { (key, value) ->  
+            instance.signatures.toSortedMap(
+                PublicKey::class.comparator()
+            ).forEach { (key, value) ->
                 PublicKey.write(writer, key)
                 SignatureOf.write(writer, value)
             }

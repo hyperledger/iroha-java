@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
@@ -37,7 +38,9 @@ public data class Where(
         public override fun write(writer: ScaleCodecWriter, instance: Where) = try {
             EvaluatesTo.write(writer, instance.expression)
             writer.writeCompact(instance.values.size)
-            instance.values.forEach { (key, value) ->  
+            instance.values.toSortedMap(
+                String::class.comparator()
+            ).forEach { (key, value) ->
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 EvaluatesTo.write(writer, value)
             }

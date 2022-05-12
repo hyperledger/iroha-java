@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -49,12 +50,16 @@ public data class Domain(
         public override fun write(writer: ScaleCodecWriter, instance: Domain) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.accounts.size)
-            instance.accounts.forEach { (key, value) ->  
+            instance.accounts.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.account.Id::class.comparator()
+            ).forEach { (key, value) ->
                 jp.co.soramitsu.iroha2.generated.datamodel.account.Id.write(writer, key)
                 Account.write(writer, value)
             }
             writer.writeCompact(instance.assetDefinitions.size)
-            instance.assetDefinitions.forEach { (key, value) ->  
+            instance.assetDefinitions.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId::class.comparator()
+            ).forEach { (key, value) ->
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
