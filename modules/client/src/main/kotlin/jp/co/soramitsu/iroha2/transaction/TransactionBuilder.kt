@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -143,16 +143,16 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     }
 
     @JvmOverloads
-    fun registerDataCreatedEventTrigger(
+    fun registerEventTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: FilterOptEntityFilter
+        filter: EventFilter
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerDataCreatedEventTrigger(
+            Instructions.registerEventTrigger(
                 triggerId,
                 isi,
                 repeats,

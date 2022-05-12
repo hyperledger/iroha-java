@@ -148,22 +148,22 @@ class SchemaParserTest {
     fun `should parse compact numeric types`() {
         val schemaJson = """
         {
-          "iroha_schema::Compact<u8>": {
+          "Compact<u8>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u16>": {
+          "Compact<u16>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u32>": {
+          "Compact<u32>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u64>": {
+          "Compact<u64>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u128>": {
+          "Compact<u128>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u256>": {
+          "Compact<u256>": {
             "Int": "Compact"
           }
         }
@@ -180,12 +180,12 @@ class SchemaParserTest {
         }
 
         assertEquals(6, types.size)
-        assertAll(types["iroha_schema::Compact<u8>"], U8Type)
-        assertAll(types["iroha_schema::Compact<u16>"], U16Type)
-        assertAll(types["iroha_schema::Compact<u32>"], U32Type)
-        assertAll(types["iroha_schema::Compact<u64>"], U64Type)
-        assertAll(types["iroha_schema::Compact<u128>"], U128Type)
-        assertAll(types["iroha_schema::Compact<u256>"], U256Type)
+        assertAll(types["Compact<u8>"], U8Type)
+        assertAll(types["Compact<u16>"], U16Type)
+        assertAll(types["Compact<u32>"], U32Type)
+        assertAll(types["Compact<u64>"], U64Type)
+        assertAll(types["Compact<u128>"], U128Type)
+        assertAll(types["Compact<u256>"], U256Type)
     }
 
     @Test
@@ -193,7 +193,7 @@ class SchemaParserTest {
         val structName = "foo::bar::Zulu"
         val schemaJson = """
         {
-            "BTreeMap<String, $structName>": {
+            "Map<String, $structName>": {
                 "Map": {
                   "key": "String",
                   "value": "$structName"
@@ -216,11 +216,11 @@ class SchemaParserTest {
         assertEquals(expectedStructType, types[structName])
         assertEquals(
             MapType(
-                "BTreeMap<String, $structName>",
+                "Map<String, $structName>",
                 TypeNest("String", StringType),
                 TypeNest(structName, expectedStructType),
             ),
-            types["BTreeMap<String, $structName>"]
+            types["Map<String, $structName>"]
         )
     }
 
@@ -391,7 +391,7 @@ class SchemaParserTest {
         val schemaJson = """
         {
             "$targetTupleStructName": {
-                "TupleStruct": {
+                "Tuple": {
                     "types": ["$innerStructName"]
                 }
             },

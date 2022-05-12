@@ -16,6 +16,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
@@ -71,13 +72,15 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         assertEquals(100L, prevQuantity)
 
         // register trigger
-        val filter = FilterOptEntityFilter.BySome(
-            EntityFilter.ByAssetDefinition(
-                FilterOptAssetDefinitionFilter.BySome(
-                    AssetDefinitionFilter(
-                        FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                        FilterOptAssetDefinitionEventFilter.BySome(
-                            AssetDefinitionEventFilter.ByCreated()
+        val filter = EventFilter.Data(
+            FilterOptEntityFilter.BySome(
+                EntityFilter.ByAssetDefinition(
+                    FilterOptAssetDefinitionFilter.BySome(
+                        AssetDefinitionFilter(
+                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                            FilterOptAssetDefinitionEventFilter.BySome(
+                                AssetDefinitionEventFilter.ByCreated()
+                            )
                         )
                     )
                 )
@@ -85,7 +88,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerDataCreatedEventTrigger(
+            registerEventTrigger(
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
                 Repeats.Indefinitely(),

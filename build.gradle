@@ -28,6 +28,14 @@ subprojects {
     apply plugin: 'org.jmailen.kotlinter'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
     group = 'jp.co.soramitsu.iroha-java'
     version = 'git rev-parse --short HEAD'.execute().text.trim()
 

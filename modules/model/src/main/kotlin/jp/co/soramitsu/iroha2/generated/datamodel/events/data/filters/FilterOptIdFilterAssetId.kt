@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -49,7 +48,7 @@ public sealed class FilterOptIdFilterAssetId : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val idFilter: IdFilter<Id>
+        public val idFilterAssetId: IdFilterAssetId
     ) : FilterOptIdFilterAssetId() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -58,14 +57,14 @@ public sealed class FilterOptIdFilterAssetId : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    IdFilter.read(reader) as IdFilter<Id>,
+                    IdFilterAssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                IdFilter.write(writer, instance.idFilter)
+                IdFilterAssetId.write(writer, instance.idFilterAssetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
