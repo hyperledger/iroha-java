@@ -301,7 +301,7 @@ open class Iroha2Client(
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
                 Pipeline(
-                    Filter(EntityKind.Transaction(), null, Hash(hash)) // todo status
+                    Filter(EntityKind.Transaction(), null, Hash(hash))
                 )
             )
         )

@@ -44,7 +44,6 @@ val COMPACT_BIG_INT_READER = CompactBigIntReader::class.asClassName()
 val SCALE_CODEC_EX_WRAPPER = MemberName("jp.co.soramitsu.iroha2", "wrapException")
 val TO_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "toFixedPoint")
 val FROM_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "fromFixedPoint")
-val IROHA_DATA_MODEL_NAME = "Name" // iroha_data_model::Name
 
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
@@ -136,17 +135,15 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             )
         }
         is MapType -> {
-            // Any Map<Name, T> will be sorted based on Name.string
-            // Initially required by Metadata ordering issue #206
             val simpleName = (resolveKotlinType(type.key.requireValue()) as ClassName).simpleName
-            if (IROHA_DATA_MODEL_NAME.equals(simpleName)) {
+            if (type.sortedByKey) {
                 CodeBlock.of(
                     "writer.writeCompact(%1L.size)\n" +
-                        "%1L.toSortedMap(Comparator.comparing(%4T::string)).forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
+                        "%1L.toSortedMap(%4L::class.comparator()).forEach { (key, value) ->  \n\t%2L\n\t%3L\n}",
                     propName,
                     resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
                     resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value")),
-                    withoutGenerics(resolveKotlinType(type.key.requireValue())),
+                    CodeBlock.of(simpleName)
                 )
             } else {
                 CodeBlock.of(

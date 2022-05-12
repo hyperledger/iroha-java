@@ -79,7 +79,10 @@ object MapResolver : Resolver<MapType> {
         return MapType(
             name,
             schemaParser.createAndGetNest(wildcards[0]),
-            schemaParser.createAndGetNest(wildcards[1])
+            schemaParser.createAndGetNest(wildcards[1]),
+            ((typeValue as? Map<*, *>)?.get("Map") as? Map<*, *>)
+                ?.get("sorted_by_key") as? Boolean
+                ?: false
         )
     }
 }
