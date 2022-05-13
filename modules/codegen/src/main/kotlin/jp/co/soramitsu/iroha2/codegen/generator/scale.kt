@@ -118,12 +118,35 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
         is VecType -> {
             when (type.innerType.requireValue()) {
                 is U8Type -> CodeBlock.of("writer.writeAsList(%L)", propName)
-                else -> CodeBlock.of(
-                    "writer.writeCompact(%1L.size)\n" +
-                        "%1L.forEach { value -> %2L }",
-                    propName,
-                    resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
-                )
+                else -> {
+                    when (type.sorted) {
+                        true -> {
+                            val innerType = resolveKotlinType(type.innerType.requireValue())
+                            val innerTypeName = run {
+                                (innerType as? ParameterizedTypeName)
+                                    ?.rawType
+                                    ?: (innerType as ClassName)
+                            }.let { className ->
+                                className.takeIf { "Id" in it.simpleName }
+                                    ?.canonicalName
+                                    ?: className.simpleName
+                            }
+                            CodeBlock.of(
+                                "writer.writeCompact(%1L.size)\n" +
+                                    "%1L.sortedWith(%3L::class.comparator()).forEach { value -> %2L }",
+                                propName,
+                                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value")),
+                                innerTypeName
+                            )
+                        }
+                        false -> CodeBlock.of(
+                            "writer.writeCompact(%1L.size)\n" +
+                                "%1L.forEach { value -> %2L }",
+                            propName,
+                            resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
+                        )
+                    }
+                }
             }
         }
         is SetType -> {

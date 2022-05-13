@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.StructType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import java.nio.file.Path
+import jp.co.soramitsu.iroha2.type.IterableType
 
 object GeneratorEntryPoint {
     @OptIn(ExperimentalUnsignedTypes::class)
@@ -32,8 +33,14 @@ object GeneratorEntryPoint {
                 .addType(typeSpec)
                 .addComment("\nAuto-generated file. DO NOT EDIT!\n")
 
-            if (type.properties.map { it.original as? MapType }.any { it?.sortedByKey == true }) {
-                builder.addImport("jp.co.soramitsu.iroha2", "comparator") // todo
+            val isSortedMap = type.properties
+                .map { it.original as? MapType }
+                .any { it?.sortedByKey == true }
+            val isSortedVec = type.properties
+                .map { it.original as? IterableType }
+                .any { it?.sorted == true }
+            if (isSortedMap || isSortedVec) {
+                builder.addImport("jp.co.soramitsu.iroha2", "comparator")
             }
             builder.build().writeTo(outputPath)
         }

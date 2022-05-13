@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.type.I32Type
 import jp.co.soramitsu.iroha2.type.I64Type
 import jp.co.soramitsu.iroha2.type.I8Type
 import jp.co.soramitsu.iroha2.type.IntType
+import jp.co.soramitsu.iroha2.type.IterableType
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
@@ -87,7 +88,7 @@ object MapResolver : Resolver<MapType> {
     }
 }
 
-abstract class WrapperResolver<T : Type>(val wrapperName: String) : Resolver<T> {
+abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolver<T> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
         if (!name.startsWith("$wrapperName<")) return null
         val innerTypeName = name.removeSurrounding("$wrapperName<", ">")
@@ -95,30 +96,55 @@ abstract class WrapperResolver<T : Type>(val wrapperName: String) : Resolver<T> 
         return createWrapper(name, innerType)
     }
 
-    abstract fun createWrapper(name: String, innerType: TypeNest): T
+    abstract fun createWrapper(name: String, innerType: TypeNest, sorted: Boolean = false): T
 }
 
-object OptionResolver : WrapperResolver<OptionType>("Option") {
-    override fun createWrapper(name: String, innerType: TypeNest) = OptionType(name, innerType)
+abstract class IterableResolver<T : IterableType>(
+    override val wrapperName: String
+) : WrapperResolver<T>(wrapperName) {
+
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
+        return super.resolve(name, typeValue, schemaParser)?.also {
+            it.sorted = getSortedProperty(typeValue)
+        }
+    }
+
+    fun getSortedProperty(typeValue: Any?): Boolean {
+        return (typeValue as? Map<*, *>)
+            ?.let { typeValue[wrapperName] as? Map<*, *> }
+            ?.get("sorted") as? Boolean
+            ?: false
+    }
 }
 
-object VectorResolver : WrapperResolver<VecType>("Vec") {
-    override fun createWrapper(name: String, innerType: TypeNest) = VecType(name, innerType)
+object VectorResolver : IterableResolver<VecType>("Vec") {
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = VecType(name, innerType, sorted)
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
-        if (!name.startsWith(wrapperName) &&
-            !name.startsWith("alloc::vec::Vec") &&
-            (typeValue as? Map<*, *>)?.get(wrapperName) == null
+        return when (
+            name.startsWith(wrapperName) ||
+                (typeValue as? Map<*, *>)?.get(wrapperName) != null
         ) {
-            return null
+            true -> createWrapper(
+                name,
+                extractGeneric(name, schemaParser).first(),
+                getSortedProperty(typeValue)
+            )
+            false -> null
         }
-        val innerType = extractGeneric(name, schemaParser)
-        return createWrapper(name, innerType.first())
     }
 }
 
 object SetResolver : WrapperResolver<SetType>("BTreeSet") {
-    override fun createWrapper(name: String, innerType: TypeNest) = SetType(name, innerType)
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = SetType(name, innerType, sorted)
 }
 
 object ArrayResolver : Resolver<ArrayType> {
@@ -130,6 +156,22 @@ object ArrayResolver : Resolver<ArrayType> {
         val groups = REGEX.find(name)?.groupValues ?: return null
         return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
+}
+
+object OptionResolver : WrapperResolver<OptionType>("Option") {
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = OptionType(name, innerType)
+}
+
+object CompactResolver : WrapperResolver<CompactType>("Compact") {
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = CompactType(name, innerType)
 }
 
 object EnumResolver : Resolver<EnumType> {
@@ -189,10 +231,6 @@ object StringResolver : Resolver<StringType> {
             StringType
         } else null
     }
-}
-
-object CompactResolver : WrapperResolver<CompactType>("Compact") {
-    override fun createWrapper(name: String, innerType: TypeNest) = CompactType(name, innerType)
 }
 
 object UIntResolver : Resolver<UIntType> {
@@ -263,3 +301,4 @@ data class TypeNest(val name: String, var value: Type?) {
         return name.hashCode()
     }
 }
+
