@@ -59,13 +59,23 @@ public data class Account(
                 Asset.write(writer, value)
             }
             writer.writeCompact(instance.signatories.size)
-            instance.signatories.forEach { value -> PublicKey.write(writer, value) }
+            instance.signatories.sortedWith(
+                PublicKey::class.comparator()
+            ).forEach { value ->
+                PublicKey.write(writer, value)
+            }
             writer.writeCompact(instance.permissionTokens.size)
-            instance.permissionTokens.forEach { value -> PermissionToken.write(writer, value) }
+            instance.permissionTokens.sortedWith(
+                PermissionToken::class.comparator()
+            ).forEach { value ->
+                PermissionToken.write(writer, value)
+            }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
             writer.writeCompact(instance.roles.size)
-            instance.roles.forEach { value ->
+            instance.roles.sortedWith(
+                jp.co.soramitsu.iroha2.generated.datamodel.role.Id::class.comparator()
+            ).forEach { value ->
                 jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, value)
             }
         } catch (ex: Exception) {

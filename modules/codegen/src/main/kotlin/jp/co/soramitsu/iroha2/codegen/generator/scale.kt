@@ -133,7 +133,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
                             }
                             CodeBlock.of(
                                 "writer.writeCompact(%1L.size)\n" +
-                                    "%1L.sortedWith(%3L::class.comparator()).forEach { value -> %2L }",
+                                    "%1L.sortedWith(\n%3L::class.comparator()\n).forEach { value ->\n%2L\n}",
                                 propName,
                                 resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value")),
                                 innerTypeName

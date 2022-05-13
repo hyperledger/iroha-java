@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedRejectedTransaction
@@ -54,7 +55,11 @@ public data class ValidBlock(
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value -> VersionedValidTransaction.write(writer, value) }
             writer.writeCompact(instance.signatures.size)
-            instance.signatures.forEach { value -> SignatureOf.write(writer, value) }
+            instance.signatures.sortedWith(
+                SignatureOf::class.comparator()
+            ).forEach { value ->
+                SignatureOf.write(writer, value)
+            }
             writer.writeCompact(instance.eventRecommendations.size)
             instance.eventRecommendations.forEach { value -> Event.write(writer, value) }
         } catch (ex: Exception) {

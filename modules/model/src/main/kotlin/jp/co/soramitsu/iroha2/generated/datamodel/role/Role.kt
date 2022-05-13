@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
@@ -33,7 +34,11 @@ public data class Role(
         public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.permissions.size)
-            instance.permissions.forEach { value -> PermissionToken.write(writer, value) }
+            instance.permissions.sortedWith(
+                PermissionToken::class.comparator()
+            ).forEach { value ->
+                PermissionToken.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
