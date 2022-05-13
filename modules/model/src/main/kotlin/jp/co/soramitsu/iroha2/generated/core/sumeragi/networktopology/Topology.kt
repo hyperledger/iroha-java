@@ -37,7 +37,9 @@ public data class Topology(
 
         public override fun write(writer: ScaleCodecWriter, instance: Topology) = try {
             writer.writeCompact(instance.sortedPeers.size)
-            instance.sortedPeers.forEach { value -> Id.write(writer, value) }
+            instance.sortedPeers.forEach { value ->
+                Id.write(writer, value)
+            }
             HashOf.write(writer, instance.atBlock)
             ProofChain.write(writer, instance.viewChangeProofs)
         } catch (ex: Exception) {

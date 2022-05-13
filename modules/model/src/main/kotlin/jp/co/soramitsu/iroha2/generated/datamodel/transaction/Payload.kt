@@ -51,7 +51,7 @@ public data class Payload(
             writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
             instance.metadata.toSortedMap(
-                Name::class.comparator()
+                Name.comparator()
             ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)

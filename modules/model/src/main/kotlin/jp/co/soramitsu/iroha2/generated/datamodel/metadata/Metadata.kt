@@ -33,7 +33,7 @@ public data class Metadata(
         public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
             writer.writeCompact(instance.map.size)
             instance.map.toSortedMap(
-                Name::class.comparator()
+                Name.comparator()
             ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)

@@ -35,7 +35,7 @@ public data class Transaction(
             Payload.write(writer, instance.payload)
             writer.writeCompact(instance.signatures.size)
             instance.signatures.sortedWith(
-                SignatureOf::class.comparator()
+                SignatureOf.comparator()
             ).forEach { value ->
                 SignatureOf.write(writer, value)
             }

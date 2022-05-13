@@ -119,33 +119,20 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             when (type.innerType.requireValue()) {
                 is U8Type -> CodeBlock.of("writer.writeAsList(%L)", propName)
                 else -> {
-                    when (type.sorted) {
+                    val sorted = when (type.sorted) {
                         true -> {
                             val innerType = resolveKotlinType(type.innerType.requireValue())
-                            val innerTypeName = run {
-                                (innerType as? ParameterizedTypeName)
-                                    ?.rawType
-                                    ?: (innerType as ClassName)
-                            }.let { className ->
-                                className.takeIf { "Id" in it.simpleName }
-                                    ?.canonicalName
-                                    ?: className.simpleName
-                            }
-                            CodeBlock.of(
-                                "writer.writeCompact(%1L.size)\n" +
-                                    "%1L.sortedWith(\n%3L::class.comparator()\n).forEach { value ->\n%2L\n}",
-                                propName,
-                                resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value")),
-                                innerTypeName
-                            )
+                            val innerTypeName = innerType.rawTypeName()
+                            CodeBlock.of(".sortedWith(\n%1L.comparator()\n)", innerTypeName)
                         }
-                        false -> CodeBlock.of(
-                            "writer.writeCompact(%1L.size)\n" +
-                                "%1L.forEach { value -> %2L }",
-                            propName,
-                            resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
-                        )
+                        false -> CodeBlock.of("")
                     }
+                    val value = resolveScaleWriteImpl(type.innerType.requireValue(), CodeBlock.of("value"))
+
+                    CodeBlock.of(
+                        "writer.writeCompact(%1L.size)\n%1L%3L.forEach { value ->\n%2L\n}",
+                        propName, value, sorted
+                    )
                 }
             }
         }
@@ -165,7 +152,7 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
             if (type.sortedByKey) {
                 CodeBlock.of(
                     "writer.writeCompact(%1L.size)\n" +
-                        "%1L.toSortedMap(\n%4L::class.comparator()\n).forEach { (key, value) ->\n\t%2L\n\t%3L\n}",
+                        "%1L.toSortedMap(\n%4L.comparator()\n).forEach { (key, value) ->\n\t%2L\n\t%3L\n}",
                     propName,
                     resolveScaleWriteImpl(type.key.requireValue(), CodeBlock.of("key")),
                     resolveScaleWriteImpl(type.value.requireValue(), CodeBlock.of("value")),
@@ -234,4 +221,13 @@ fun withoutGenerics(typeName: TypeName): ClassName {
         is ParameterizedTypeName -> typeName.rawType.topLevelClassName()
         else -> throw RuntimeException("Unexpected type name: $typeName")
     }
+}
+
+fun TypeName.rawTypeName() = run {
+    (this as? ParameterizedTypeName)
+        ?.rawType ?: (this as ClassName)
+}.let { className ->
+    className.takeIf { "Id" in it.simpleName }
+        ?.canonicalName
+        ?: className.simpleName
 }

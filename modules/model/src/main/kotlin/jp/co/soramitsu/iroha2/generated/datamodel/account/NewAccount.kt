@@ -38,7 +38,7 @@ public data class NewAccount(
             Id.write(writer, instance.id)
             writer.writeCompact(instance.signatories.size)
             instance.signatories.sortedWith(
-                PublicKey::class.comparator()
+                PublicKey.comparator()
             ).forEach { value ->
                 PublicKey.write(writer, value)
             }

@@ -39,7 +39,7 @@ public data class Where(
             EvaluatesTo.write(writer, instance.expression)
             writer.writeCompact(instance.values.size)
             instance.values.toSortedMap(
-                String::class.comparator()
+                String.comparator()
             ).forEach { (key, value) ->
                 writer.writeAsList(key.toByteArray(Charsets.UTF_8))
                 EvaluatesTo.write(writer, value)

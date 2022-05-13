@@ -6,11 +6,11 @@ import jp.co.soramitsu.iroha2.codegen.blueprint.StructBlueprint
 import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.EnumType
+import jp.co.soramitsu.iroha2.type.IterableType
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.StructType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import java.nio.file.Path
-import jp.co.soramitsu.iroha2.type.IterableType
 
 object GeneratorEntryPoint {
     @OptIn(ExperimentalUnsignedTypes::class)

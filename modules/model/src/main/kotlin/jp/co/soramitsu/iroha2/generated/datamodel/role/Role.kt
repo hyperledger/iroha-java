@@ -35,7 +35,7 @@ public data class Role(
             Id.write(writer, instance.id)
             writer.writeCompact(instance.permissions.size)
             instance.permissions.sortedWith(
-                PermissionToken::class.comparator()
+                PermissionToken.comparator()
             ).forEach { value ->
                 PermissionToken.write(writer, value)
             }

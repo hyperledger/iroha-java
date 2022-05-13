@@ -60,7 +60,9 @@ public data class BlockHeader(
             HashOf.write(writer, instance.rejectedTransactionsHash)
             ProofChain.write(writer, instance.viewChangeProofs)
             writer.writeCompact(instance.invalidatedBlocksHashes.size)
-            instance.invalidatedBlocksHashes.forEach { value -> HashOf.write(writer, value) }
+            instance.invalidatedBlocksHashes.forEach { value ->
+                HashOf.write(writer, value)
+            }
             writer.writeNullable(Topology, instance.genesisTopology)
         } catch (ex: Exception) {
             throw wrapException(ex)

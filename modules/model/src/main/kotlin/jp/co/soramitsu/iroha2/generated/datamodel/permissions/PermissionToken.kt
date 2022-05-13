@@ -36,7 +36,7 @@ public data class PermissionToken(
             Name.write(writer, instance.name)
             writer.writeCompact(instance.params.size)
             instance.params.toSortedMap(
-                Name::class.comparator()
+                Name.comparator()
             ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)

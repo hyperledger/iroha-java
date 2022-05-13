@@ -51,14 +51,14 @@ public data class Domain(
             Id.write(writer, instance.id)
             writer.writeCompact(instance.accounts.size)
             instance.accounts.toSortedMap(
-                jp.co.soramitsu.iroha2.generated.datamodel.account.Id::class.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.account.Id.comparator()
             ).forEach { (key, value) ->
                 jp.co.soramitsu.iroha2.generated.datamodel.account.Id.write(writer, key)
                 Account.write(writer, value)
             }
             writer.writeCompact(instance.assetDefinitions.size)
             instance.assetDefinitions.toSortedMap(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId::class.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId.comparator()
             ).forEach { (key, value) ->
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)

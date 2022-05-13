@@ -53,20 +53,20 @@ public data class Account(
             Id.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
             instance.assets.toSortedMap(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.Id::class.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.comparator()
             ).forEach { (key, value) ->
                 jp.co.soramitsu.iroha2.generated.datamodel.asset.Id.write(writer, key)
                 Asset.write(writer, value)
             }
             writer.writeCompact(instance.signatories.size)
             instance.signatories.sortedWith(
-                PublicKey::class.comparator()
+                PublicKey.comparator()
             ).forEach { value ->
                 PublicKey.write(writer, value)
             }
             writer.writeCompact(instance.permissionTokens.size)
             instance.permissionTokens.sortedWith(
-                PermissionToken::class.comparator()
+                PermissionToken.comparator()
             ).forEach { value ->
                 PermissionToken.write(writer, value)
             }
@@ -74,7 +74,7 @@ public data class Account(
             Metadata.write(writer, instance.metadata)
             writer.writeCompact(instance.roles.size)
             instance.roles.sortedWith(
-                jp.co.soramitsu.iroha2.generated.datamodel.role.Id::class.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.role.Id.comparator()
             ).forEach { value ->
                 jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, value)
             }

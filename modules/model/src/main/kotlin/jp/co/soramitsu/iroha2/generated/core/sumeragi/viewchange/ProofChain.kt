@@ -29,7 +29,9 @@ public data class ProofChain(
 
         public override fun write(writer: ScaleCodecWriter, instance: ProofChain) = try {
             writer.writeCompact(instance.proofs.size)
-            instance.proofs.forEach { value -> Proof.write(writer, value) }
+            instance.proofs.forEach { value ->
+                Proof.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

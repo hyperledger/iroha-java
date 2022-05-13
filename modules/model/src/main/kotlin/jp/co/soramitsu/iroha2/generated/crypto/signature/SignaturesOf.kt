@@ -38,7 +38,7 @@ public data class SignaturesOf<T0>(
         public override fun write(writer: ScaleCodecWriter, instance: SignaturesOf<out Any>) = try {
             writer.writeCompact(instance.signatures.size)
             instance.signatures.toSortedMap(
-                PublicKey::class.comparator()
+                PublicKey.comparator()
             ).forEach { (key, value) ->
                 PublicKey.write(writer, key)
                 SignatureOf.write(writer, value)
