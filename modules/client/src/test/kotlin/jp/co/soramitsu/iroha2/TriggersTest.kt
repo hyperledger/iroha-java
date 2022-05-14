@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import jp.co.soramitsu.iroha2.generated.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId

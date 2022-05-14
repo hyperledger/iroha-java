@@ -19,7 +19,6 @@ import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -61,6 +60,8 @@ import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter as ExecutableEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
@@ -112,7 +113,7 @@ object Instructions {
         metadata: Metadata
     ): Instruction {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
@@ -123,9 +124,9 @@ object Instructions {
                             TimeEventFilter(
                                 ExecutionTime.Schedule(schedule)
                             )
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
@@ -142,7 +143,7 @@ object Instructions {
         metadata: Metadata
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
@@ -151,9 +152,9 @@ object Instructions {
                         accountId,
                         EventFilter.ExecuteTrigger(
                             ExecutableEventFilter(triggerId, accountId)
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
@@ -171,16 +172,16 @@ object Instructions {
         filter: EventFilter
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        filter
-                    ),
-                    metadata
+                        filter,
+                        metadata
+                    )
                 )
             )
         }
@@ -197,7 +198,7 @@ object Instructions {
         metadata: Metadata
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
@@ -206,9 +207,9 @@ object Instructions {
                         accountId,
                         EventFilter.Time(
                             TimeEventFilter(ExecutionTime.PreCommit())
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
