@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import java.math.BigInteger
 
 /**
@@ -92,6 +93,12 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
         return extractVec(result.result.value) {
             extractIdentifiable(it, IdentifiableBox.Peer::peer)
         }
+    }
+}
+
+object TriggerExtractor : ResultExtractor<Trigger> {
+    override fun extract(result: PaginatedQueryResult): Trigger {
+        return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::trigger)
     }
 }
 

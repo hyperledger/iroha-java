@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
+import jp.co.soramitsu.iroha2.TriggerExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
 import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
@@ -35,6 +36,7 @@ import java.time.Instant
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: ResultExtractor<R>) {
 
@@ -244,6 +246,18 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
         @JvmStatic
         fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
+
+        @JvmStatic
+        fun findTriggerById(id: TriggerId) = QueryBuilder(
+            Queries.findTriggerById(id),
+            TriggerExtractor
+        )
+
+        @JvmStatic
+        fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name) = QueryBuilder(
+            Queries.findTriggerKeyValueByIdAndKey(id, key),
+            ValueExtractor
+        )
     }
 }
 
