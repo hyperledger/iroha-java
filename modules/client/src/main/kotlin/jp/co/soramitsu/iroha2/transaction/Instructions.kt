@@ -31,7 +31,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -165,13 +164,13 @@ object Instructions {
     /**
      * Instruction for data trigger registration
      */
-    fun registerDataCreatedEventTrigger(
+    fun registerEventTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterOptEntityFilter
+        filter: EventFilter
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Trigger(
@@ -181,9 +180,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Data(
-                            filter
-                        )
+                        filter
                     ),
                     metadata
                 )
