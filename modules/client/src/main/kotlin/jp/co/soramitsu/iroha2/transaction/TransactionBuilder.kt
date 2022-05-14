@@ -97,85 +97,85 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
-//    @JvmOverloads
-//    fun registerTimeTrigger(
-//        triggerId: TriggerId,
-//        isi: List<Instruction>,
-//        repeats: Repeats,
-//        accountId: AccountId,
-//        schedule: Schedule,
-//        metadata: Metadata = Metadata(mapOf())
-//    ) = this.apply {
-//        instructions.value.add(
-//            Instructions.registerTimeTrigger(
-//                triggerId,
-//                isi,
-//                repeats,
-//                accountId,
-//                schedule,
-//                metadata
-//            )
-//        )
-//    }
+    @JvmOverloads
+    fun registerTimeTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        schedule: Schedule,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerTimeTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                schedule,
+                metadata
+            )
+        )
+    }
 
-//    @JvmOverloads
-//    fun registerExecutableTrigger(
-//        triggerId: TriggerId,
-//        isi: List<Instruction>,
-//        repeats: Repeats,
-//        accountId: AccountId,
-//        metadata: Metadata = Metadata(mapOf())
-//    ) = this.apply {
-//        instructions.value.add(
-//            Instructions.registerExecutableTrigger(
-//                triggerId,
-//                isi,
-//                repeats,
-//                accountId,
-//                metadata
-//            )
-//        )
-//    }
+    @JvmOverloads
+    fun registerExecutableTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerExecutableTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
 
-//    @JvmOverloads
-//    fun registerDataCreatedEventTrigger(
-//        triggerId: TriggerId,
-//        isi: List<Instruction>,
-//        repeats: Repeats,
-//        accountId: AccountId,
-//        metadata: Metadata = Metadata(mapOf()),
-//        filter: FilterOptEntityFilter
-//    ) = this.apply {
-//        instructions.value.add(
-//            Instructions.registerDataCreatedEventTrigger(
-//                triggerId,
-//                isi,
-//                repeats,
-//                accountId,
-//                metadata,
-//                filter
-//            )
-//        )
-//    }
+    @JvmOverloads
+    fun registerDataCreatedEventTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf()),
+        filter: FilterOptEntityFilter
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerDataCreatedEventTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata,
+                filter
+            )
+        )
+    }
 
-//    @JvmOverloads
-//    fun registerPreCommitTrigger(
-//        triggerId: TriggerId,
-//        isi: List<Instruction>,
-//        repeats: Repeats,
-//        accountId: AccountId,
-//        metadata: Metadata = Metadata(mapOf())
-//    ) = this.apply {
-//        instructions.value.add(
-//            Instructions.registerPreCommitTrigger(
-//                triggerId,
-//                isi,
-//                repeats,
-//                accountId,
-//                metadata
-//            )
-//        )
-//    }
+    @JvmOverloads
+    fun registerPreCommitTrigger(
+        triggerId: TriggerId,
+        isi: List<Instruction>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf())
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerPreCommitTrigger(
+                triggerId,
+                isi,
+                repeats,
+                accountId,
+                metadata
+            )
+        )
+    }
 
     fun grantRole(
         roleId: RoleId,
