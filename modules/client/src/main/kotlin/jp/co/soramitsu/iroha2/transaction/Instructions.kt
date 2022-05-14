@@ -52,6 +52,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
+import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
@@ -73,7 +74,7 @@ object Instructions {
         vararg tokens: PermissionToken
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Role(
+            RegistrableBox.Role(
                 Role(roleId, tokens.toList())
             )
         }
@@ -88,7 +89,7 @@ object Instructions {
         metadata: Metadata = Metadata(mapOf())
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.NewAccount(
+            RegistrableBox.Account(
                 NewAccount(id, signatories, metadata)
             )
         }
@@ -218,7 +219,7 @@ object Instructions {
         mintable: Mintable = Mintable.Infinitely()
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.AssetDefinition(
+            RegistrableBox.AssetDefinition(
                 AssetDefinition(id, assetValueType, mintable, metadata)
             )
         }
@@ -233,7 +234,7 @@ object Instructions {
         logo: IpfsPath? = null
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.NewDomain(
+            RegistrableBox.Domain(
                 NewDomain(
                     domainId,
                     logo,
@@ -252,7 +253,7 @@ object Instructions {
         digestFunction: String = DigestFunction.Ed25519.hashFunName
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Peer(
+            RegistrableBox.Peer(
                 Peer(
                     PeerId(
                         address,
@@ -627,14 +628,10 @@ object Instructions {
     }
 
     private inline fun registerSome(
-        idBox: () -> IdentifiableBox
+        regBox: () -> RegistrableBox
     ): Instruction.Register {
         return Instruction.Register(
-            RegisterBox(
-                EvaluatesTo(
-                    Expression.Raw(Value.Identifiable(idBox()))
-                )
-            )
+            RegisterBox(regBox().evaluatesTo())
         )
     }
 

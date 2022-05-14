@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
@@ -148,6 +149,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is Name -> Value.Name(this)
         is PermissionToken -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
+        is RegistrableBox -> Value.Identifiable(this.toIdentifiableBox())
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->
@@ -160,3 +162,13 @@ fun AccountId.toValueId() = Value.Id(IdBox.AccountId(this))
 fun AssetId.toValueId() = Value.Id(IdBox.AssetId(this))
 
 fun DefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
+
+fun RegistrableBox.toIdentifiableBox() = when (this) {
+    is RegistrableBox.Account -> IdentifiableBox.NewAccount(this.newAccount)
+    is RegistrableBox.Peer -> IdentifiableBox.Peer(this.peer)
+    is RegistrableBox.Asset -> IdentifiableBox.Asset(this.asset)
+    is RegistrableBox.AssetDefinition -> IdentifiableBox.AssetDefinition(this.assetDefinition)
+    is RegistrableBox.Role -> IdentifiableBox.Role(this.role)
+    is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
+    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.trigger)
+}
