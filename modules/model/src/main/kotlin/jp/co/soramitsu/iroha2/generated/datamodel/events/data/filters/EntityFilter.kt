@@ -8,13 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.account.AccountFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.AssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.AssetFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.domain.DomainFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.peer.PeerFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.role.RoleFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.trigger.TriggerFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -33,7 +26,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByPeer' variant
      */
     public data class ByPeer(
-        public val filterOpt: FilterOpt<PeerFilter>
+        public val filterOptPeerFilter: FilterOptPeerFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -42,14 +35,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByPeer = try {
                 ByPeer(
-                    FilterOpt.read(reader) as FilterOpt<PeerFilter>,
+                    FilterOptPeerFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByPeer) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptPeerFilter.write(writer, instance.filterOptPeerFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -60,7 +53,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByDomain' variant
      */
     public data class ByDomain(
-        public val filterOpt: FilterOpt<DomainFilter>
+        public val filterOptDomainFilter: FilterOptDomainFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -69,14 +62,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByDomain = try {
                 ByDomain(
-                    FilterOpt.read(reader) as FilterOpt<DomainFilter>,
+                    FilterOptDomainFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByDomain) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptDomainFilter.write(writer, instance.filterOptDomainFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -87,7 +80,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByAccount' variant
      */
     public data class ByAccount(
-        public val filterOpt: FilterOpt<AccountFilter>
+        public val filterOptAccountFilter: FilterOptAccountFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -96,14 +89,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAccount = try {
                 ByAccount(
-                    FilterOpt.read(reader) as FilterOpt<AccountFilter>,
+                    FilterOptAccountFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAccount) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptAccountFilter.write(writer, instance.filterOptAccountFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -114,7 +107,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByAssetDefinition' variant
      */
     public data class ByAssetDefinition(
-        public val filterOpt: FilterOpt<AssetDefinitionFilter>
+        public val filterOptAssetDefinitionFilter: FilterOptAssetDefinitionFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -123,14 +116,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAssetDefinition = try {
                 ByAssetDefinition(
-                    FilterOpt.read(reader) as FilterOpt<AssetDefinitionFilter>,
+                    FilterOptAssetDefinitionFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAssetDefinition) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptAssetDefinitionFilter.write(writer, instance.filterOptAssetDefinitionFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -141,7 +134,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByAsset' variant
      */
     public data class ByAsset(
-        public val filterOpt: FilterOpt<AssetFilter>
+        public val filterOptAssetFilter: FilterOptAssetFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -150,14 +143,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAsset = try {
                 ByAsset(
-                    FilterOpt.read(reader) as FilterOpt<AssetFilter>,
+                    FilterOptAssetFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAsset) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptAssetFilter.write(writer, instance.filterOptAssetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -168,7 +161,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByTrigger' variant
      */
     public data class ByTrigger(
-        public val filterOpt: FilterOpt<TriggerFilter>
+        public val filterOptTriggerFilter: FilterOptTriggerFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -177,14 +170,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByTrigger = try {
                 ByTrigger(
-                    FilterOpt.read(reader) as FilterOpt<TriggerFilter>,
+                    FilterOptTriggerFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByTrigger) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptTriggerFilter.write(writer, instance.filterOptTriggerFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -195,7 +188,7 @@ public sealed class EntityFilter : ModelEnum {
      * 'ByRole' variant
      */
     public data class ByRole(
-        public val filterOpt: FilterOpt<RoleFilter>
+        public val filterOptRoleFilter: FilterOptRoleFilter
     ) : EntityFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -204,14 +197,14 @@ public sealed class EntityFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByRole = try {
                 ByRole(
-                    FilterOpt.read(reader) as FilterOpt<RoleFilter>,
+                    FilterOptRoleFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByRole) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptRoleFilter.write(writer, instance.filterOptRoleFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

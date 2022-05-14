@@ -10,7 +10,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.generated.core.time.Duration
+import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
-import jp.co.soramitsu.iroha2.generated.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId

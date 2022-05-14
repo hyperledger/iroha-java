@@ -8,8 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOpt
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.asset.AssetFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -28,7 +27,7 @@ public sealed class AccountEventFilter : ModelEnum {
      * 'ByAsset' variant
      */
     public data class ByAsset(
-        public val filterOpt: FilterOpt<AssetFilter>
+        public val filterOptAssetFilter: FilterOptAssetFilter
     ) : AccountEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -37,14 +36,14 @@ public sealed class AccountEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAsset = try {
                 ByAsset(
-                    FilterOpt.read(reader) as FilterOpt<AssetFilter>,
+                    FilterOptAssetFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAsset) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptAssetFilter.write(writer, instance.filterOptAssetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

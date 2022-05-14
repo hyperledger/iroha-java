@@ -45,10 +45,12 @@ fun getFilterEventName(name: String): String {
 fun readSchema(fileName: String): Schema {
     val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
     val sb = StringBuilder()
-    resource.bufferedReader().forEachLine { line -> sb.appendLine(parseLine(line)) }return ObjectMapper().readValue(
+    resource.bufferedReader().forEachLine { line -> sb.appendLine(parseLine(line)) }
+    return ObjectMapper().readValue(
         sb.toString(),
         object : TypeReference<Map<String, Any>>() {}
-    )}
+    )
+}
 
 fun parseLine(line: String): String {
     if (line.contains(schemaFilterPattern)) {
