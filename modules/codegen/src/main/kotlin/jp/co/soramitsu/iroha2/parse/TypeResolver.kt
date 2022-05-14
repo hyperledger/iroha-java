@@ -301,4 +301,3 @@ data class TypeNest(val name: String, var value: Type?) {
         return name.hashCode()
     }
 }
-

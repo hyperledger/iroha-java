@@ -3,7 +3,3 @@ group 'jp.co.soramitsu'
 kotlinter {
     disabledRules = ['no-trailing-spaces']
 }
-
-dependencies {
-    api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
-}
