@@ -21,6 +21,7 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
@@ -29,8 +30,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
@@ -49,17 +51,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
-import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
-import jp.co.soramitsu.iroha2.toValueId
-import java.math.BigDecimal
-import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
+import jp.co.soramitsu.iroha2.toValueId
+import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
@@ -164,13 +162,13 @@ object Instructions {
     /**
      * Instruction for data trigger registration
      */
-    fun registerDataCreatedEventTrigger(
+    fun registerEventTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterOptEntityFilter
+        filter: EventFilter
     ): Instruction.Register {
         return registerSome {
             IdentifiableBox.Trigger(
@@ -180,7 +178,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Data(filter)
+                        filter
                     ),
                     metadata
                 )

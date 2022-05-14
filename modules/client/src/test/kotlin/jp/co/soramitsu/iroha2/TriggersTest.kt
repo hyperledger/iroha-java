@@ -1,44 +1,48 @@
- package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2
 
- import jp.co.soramitsu.iroha2.client.Iroha2Client
- import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
- import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
- import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
- import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
- import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
- import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
- import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
- import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
- import jp.co.soramitsu.iroha2.engine.IrohaTest
- import jp.co.soramitsu.iroha2.engine.WithIroha
- import jp.co.soramitsu.iroha2.generated.Duration
- import jp.co.soramitsu.iroha2.generated.datamodel.Name
- import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
- import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
- import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
- import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
- import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
- import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
- import jp.co.soramitsu.iroha2.query.QueryBuilder
- import jp.co.soramitsu.iroha2.transaction.Instructions
- import kotlinx.coroutines.delay
- import kotlinx.coroutines.runBlocking
- import kotlinx.coroutines.time.withTimeout
- import org.junit.jupiter.api.Test
- import org.junit.jupiter.api.Timeout
- import org.junit.jupiter.api.extension.ExtendWith
- import org.junit.jupiter.api.parallel.Execution
- import org.junit.jupiter.api.parallel.ExecutionMode
- import java.math.BigInteger
- import java.security.KeyPair
- import java.time.Instant
- import kotlin.test.assertEquals
- import kotlin.test.assertNotNull
- import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
- import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
- import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
+import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
+import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
+import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.engine.IrohaTest
+import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.generated.core.time.Duration
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
+import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.Instructions
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Test
+import java.math.BigInteger
+import java.security.KeyPair
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
- class TriggersTest : IrohaTest<Iroha2Client>() {
+class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
@@ -60,13 +64,15 @@
         assertEquals(100L, prevQuantity)
 
         // register trigger
-        val filter = FilterOptEntityFilter.BySome(
-            EntityFilter.ByAssetDefinition(
-                FilterOptAssetDefinitionFilter.BySome(
-                    AssetDefinitionFilter(
-                        FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                        FilterOptAssetDefinitionEventFilter.BySome(
-                            AssetDefinitionEventFilter.ByCreated()
+        val filter = EventFilter.Data(
+            FilterOptEntityFilter.BySome(
+                EntityFilter.ByAssetDefinition(
+                    FilterOptAssetDefinitionFilter.BySome(
+                        AssetDefinitionFilter(
+                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                            FilterOptAssetDefinitionEventFilter.BySome(
+                                AssetDefinitionEventFilter.ByCreated()
+                            )
                         )
                     )
                 )
@@ -74,7 +80,7 @@
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerDataCreatedEventTrigger(
+            registerEventTrigger(
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
                 Repeats.Indefinitely(),
@@ -287,4 +293,4 @@
             withTimeout(txTimeout) { d.await() }
         }
     }
- }
+}
