@@ -77,6 +77,7 @@ object MapResolver : Resolver<MapType> {
             .split(',')
             .map { it.trim() }
         if (wildcards.size != 2) return null
+
         return MapType(
             name,
             schemaParser.createAndGetNest(wildcards[0]),
@@ -99,7 +100,7 @@ abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolve
     abstract fun createWrapper(name: String, innerType: TypeNest, sorted: Boolean = false): T
 }
 
-abstract class IterableResolver<T : IterableType>(
+abstract class SortedWrapperResolver<T : IterableType>(
     override val wrapperName: String
 ) : WrapperResolver<T>(wrapperName) {
 
@@ -117,7 +118,7 @@ abstract class IterableResolver<T : IterableType>(
     }
 }
 
-object VectorResolver : IterableResolver<VecType>("Vec") {
+object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
