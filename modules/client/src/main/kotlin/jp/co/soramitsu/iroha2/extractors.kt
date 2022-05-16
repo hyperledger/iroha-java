@@ -102,6 +102,14 @@ object TriggerExtractor : ResultExtractor<Trigger<*>> {
     }
 }
 
+object TriggersExtractor : ResultExtractor<List<Trigger<*>>> {
+    override fun extract(result: PaginatedQueryResult): List<Trigger<*>> {
+        return extractVec(result.result.value) {
+            extractIdentifiable(it, IdentifiableBox.Trigger::trigger)
+        }
+    }
+}
+
 object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
     override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
         return extractVec(result.result.value) {

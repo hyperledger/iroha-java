@@ -29,6 +29,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissi
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
@@ -193,6 +194,12 @@ object Queries {
     fun findTriggerById(id: TriggerId): QueryBox.FindTriggerById {
         return QueryBox.FindTriggerById(
             FindTriggerById(id.evaluatesTo())
+        )
+    }
+
+    fun findAllActiveTriggerIds(): QueryBox.FindAllActiveTriggerIds {
+        return QueryBox.FindAllActiveTriggerIds(
+            FindAllActiveTriggerIds()
         )
     }
 }
