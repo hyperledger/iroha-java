@@ -9,15 +9,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptEntityFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * EventFilter
+ * FilterBox
  *
- * Generated from 'iroha_data_model::events::EventFilter' enum
+ * Generated from 'iroha_data_model::events::FilterBox' enum
  */
-public sealed class EventFilter : ModelEnum {
+public sealed class FilterBox : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,8 +28,8 @@ public sealed class EventFilter : ModelEnum {
      * 'Pipeline' variant
      */
     public data class Pipeline(
-        public val eventFilter: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter
-    ) : EventFilter() {
+        public val eventFilter: EventFilter
+    ) : FilterBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Pipeline>, ScaleWriter<Pipeline> {
@@ -36,17 +37,14 @@ public sealed class EventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Pipeline = try {
                 Pipeline(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.read(reader),
+                    EventFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Pipeline) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter.write(
-                    writer,
-                    instance.eventFilter
-                )
+                EventFilter.write(writer, instance.eventFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -58,7 +56,7 @@ public sealed class EventFilter : ModelEnum {
      */
     public data class Data(
         public val filterOptEntityFilter: FilterOptEntityFilter
-    ) : EventFilter() {
+    ) : FilterBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Data>, ScaleWriter<Data> {
@@ -85,7 +83,7 @@ public sealed class EventFilter : ModelEnum {
      */
     public data class Time(
         public val eventFilter: jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter
-    ) : EventFilter() {
+    ) : FilterBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Time>, ScaleWriter<Time> {
@@ -116,7 +114,7 @@ public sealed class EventFilter : ModelEnum {
     public data class ExecuteTrigger(
         public val eventFilter:  
             jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter
-    ) : EventFilter() {
+    ) : FilterBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
@@ -141,8 +139,8 @@ public sealed class EventFilter : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-        public override fun read(reader: ScaleCodecReader): EventFilter = when (
+    public companion object : ScaleReader<FilterBox>, ScaleWriter<FilterBox> {
+        public override fun read(reader: ScaleCodecReader): FilterBox = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -153,7 +151,7 @@ public sealed class EventFilter : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EventFilter) {
+        public override fun write(writer: ScaleCodecWriter, instance: FilterBox) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Pipeline.write(writer, instance as Pipeline)

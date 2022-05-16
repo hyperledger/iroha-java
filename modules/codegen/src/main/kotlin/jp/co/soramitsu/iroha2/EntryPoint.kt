@@ -28,10 +28,9 @@ fun main(args: Array<String>) {
 fun getFilterEventName(name: String): String {
     if (name.contains("data::filters")) {
         val newName = name.substringBefore("<").substringAfterLast("::")
-        if (!name.contains("<")) {
-            return newName.replace(">", "")
-        } else {
-            return newName + getFilterEventName(name.substringAfter("<"))
+        return when {
+            !name.contains("<") -> newName.replace(">", "")
+            else -> newName + getFilterEventName(name.substringAfter("<"))
         }
     }
     val tokens = name.replace(">", "").split("::")

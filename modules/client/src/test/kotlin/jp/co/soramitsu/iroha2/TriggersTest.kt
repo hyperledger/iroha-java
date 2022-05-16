@@ -15,7 +15,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
@@ -26,7 +26,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.Asse
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
@@ -64,7 +64,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         assertEquals(100L, prevQuantity)
 
         // register trigger
-        val filter = EventFilter.Data(
+        val filter = FilterBox.Data(
             FilterOptEntityFilter.BySome(
                 EntityFilter.ByAssetDefinition(
                     FilterOptAssetDefinitionFilter.BySome(

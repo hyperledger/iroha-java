@@ -237,6 +237,7 @@ object StringResolver : Resolver<StringType> {
 object UIntResolver : Resolver<UIntType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): UIntType? {
         return when (name) {
+            "AtomicU32Wrapper" -> U32Type
             "u8" -> U8Type
             "u16" -> U16Type
             "u32" -> U32Type

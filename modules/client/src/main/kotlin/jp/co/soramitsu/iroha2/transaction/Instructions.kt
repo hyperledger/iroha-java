@@ -29,7 +29,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -51,9 +51,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
@@ -120,7 +120,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Time(
+                        FilterBox.Time(
                             TimeEventFilter(
                                 ExecutionTime.Schedule(schedule)
                             )
@@ -150,7 +150,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.ExecuteTrigger(
+                        FilterBox.ExecuteTrigger(
                             ExecutableEventFilter(triggerId, accountId)
                         ),
                         metadata
@@ -169,7 +169,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: EventFilter
+        filter: FilterBox
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.Trigger(
@@ -205,7 +205,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Time(
+                        FilterBox.Time(
                             TimeEventFilter(ExecutionTime.PreCommit())
                         ),
                         metadata

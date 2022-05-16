@@ -26,9 +26,9 @@ import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
@@ -300,7 +300,7 @@ open class Iroha2Client(
     private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
-                Pipeline(
+                FilterBox.Pipeline(
                     Filter(EntityKind.Transaction(), null, Hash(hash))
                 )
             )

@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -166,7 +167,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val trigger: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+        public val trigger: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<FilterBox>
     ) : RegistrableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -175,7 +176,8 @@ public sealed class RegistrableBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
-                    jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger.read(reader),
+                    jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger.read(reader) as
+                        jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<FilterBox>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

@@ -96,8 +96,8 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
     }
 }
 
-object TriggerExtractor : ResultExtractor<Trigger> {
-    override fun extract(result: PaginatedQueryResult): Trigger {
+object TriggerExtractor : ResultExtractor<Trigger<*>> {
+    override fun extract(result: PaginatedQueryResult): Trigger<*> {
         return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::trigger)
     }
 }
