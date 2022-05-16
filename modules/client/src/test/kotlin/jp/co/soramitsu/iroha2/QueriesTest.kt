@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.engine.WithExecutableTrigger
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
@@ -28,6 +29,7 @@ import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
@@ -304,11 +306,41 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(NewDomainWithMetadata::class)
     fun `find domain key value by ID and key`(): Unit = runBlocking {
-        QueryBuilder.findDomainKeyValueByIdAndKey(NewDomainWithMetadata.DOMAIN_ID, NewDomainWithMetadata.KEY)
-            .account(ALICE_ACCOUNT_ID)
+        QueryBuilder.findDomainKeyValueByIdAndKey(
+            NewDomainWithMetadata.DOMAIN_ID,
+            NewDomainWithMetadata.KEY
+        ).account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
+    }
+
+    @Test
+    @WithIroha(WithExecutableTrigger::class)
+    fun `find trigger by ID`(): Unit = runBlocking {
+        val triggerId = WithExecutableTrigger.TRIGGER_ID
+
+        QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { trigger ->
+                assertTrue { trigger.id == triggerId }
+            }
+    }
+
+    @Test
+    @WithIroha(WithExecutableTrigger::class)
+    fun `find all active trigger IDs`(): Unit = runBlocking {
+        val triggerId = WithExecutableTrigger.TRIGGER_ID
+
+        QueryBuilder.findAllActiveTriggerIds()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { ids ->
+                assertTrue { ids.all { it == triggerId } }
+            }
     }
 
 //    @Test

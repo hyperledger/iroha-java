@@ -56,7 +56,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
         val assetDefinitions = client.sendQuery(query)
         assertEquals(1, assetDefinitions.size)
-        val asset = assetDefinitions.filter { it.id.name.string == "xor" }.first()
+        val asset = assetDefinitions.first { it.id.name.string == "xor" }
         assertNotNull(asset)
 
         // Check default asset quantity before trigger
@@ -101,38 +101,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         // check new quantity after trigger is run
         val newQuantity = checkDefaultDomainQuantity()
         assertEquals(prevQuantity + 1L, newQuantity)
-    }
-
-    private suspend fun createNewAsset(assetName: String, prevSize: Int) {
-        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            registerAsset(newAsset, AssetValueType.Quantity())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        // check new asset is created
-        val query = QueryBuilder.findAllAssetsDefinitions()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val assetDefinitions = client.sendQuery(query)
-        assertEquals(prevSize + 1, assetDefinitions.size)
-        val asset = assetDefinitions.first { it.id.name.string == assetName }
-        assertNotNull(asset)
-    }
-
-    private suspend fun checkDefaultDomainQuantity(): Long {
-        return QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
     }
 
     @Test
@@ -292,5 +260,37 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
+    }
+
+    private suspend fun createNewAsset(assetName: String, prevSize: Int) {
+        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAsset(newAsset, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        // check new asset is created
+        val query = QueryBuilder.findAllAssetsDefinitions()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val assetDefinitions = client.sendQuery(query)
+        assertEquals(prevSize + 1, assetDefinitions.size)
+        val asset = assetDefinitions.first { it.id.name.string == assetName }
+        assertNotNull(asset)
+    }
+
+    private suspend fun checkDefaultDomainQuantity(): Long {
+        return QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .accounts
+            .filter { it.key.name == ALICE_ACCOUNT_NAME }
+            .map { it.value.assets[DEFAULT_ASSET_ID] }
+            .map { (it?.value as AssetValue.Quantity).u32 }
+            .first()
     }
 }

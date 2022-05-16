@@ -27,6 +27,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
@@ -144,6 +145,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is DomainId -> Value.Id(IdBox.DomainId(this))
         is RoleId -> Value.Id(IdBox.RoleId(this))
+        is TriggerId -> Value.Id(IdBox.TriggerId(this))
         is IdBox -> Value.Id(this)
         is Hash -> Value.Hash(this)
         is Name -> Value.Name(this)

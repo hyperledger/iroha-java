@@ -14,7 +14,7 @@ import jp.co.soramitsu.iroha2.RolesExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
 import jp.co.soramitsu.iroha2.TriggerExtractor
-import jp.co.soramitsu.iroha2.TriggersExtractor
+import jp.co.soramitsu.iroha2.TriggerIdsExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
 import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
@@ -263,7 +263,7 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         @JvmStatic
         fun findAllActiveTriggerIds() = QueryBuilder(
             Queries.findAllActiveTriggerIds(),
-            TriggersExtractor
+            TriggerIdsExtractor
         )
     }
 }

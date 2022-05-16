@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
@@ -14,6 +15,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import java.math.BigInteger
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 /**
  * Extractors are used by **[QueryBuilder]** to extract data from query result
@@ -110,6 +112,14 @@ object TriggersExtractor : ResultExtractor<List<Trigger<*>>> {
     }
 }
 
+object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
+    override fun extract(result: PaginatedQueryResult): List<TriggerId> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.Id::idBox).cast<IdBox.TriggerId>().id
+        }
+    }
+}
+
 object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
     override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
         return extractVec(result.result.value) {
@@ -167,9 +177,13 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
     return when (value) {
         is Value.Identifiable -> when (val box = value.identifiableBox) {
             is I -> downstream(box)
-            else -> throw QueryPayloadExtractionException("Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`")
+            else -> throw QueryPayloadExtractionException(
+                "Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`"
+            )
         }
-        else -> throw QueryPayloadExtractionException("Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`")
+        else -> throw QueryPayloadExtractionException(
+            "Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+        )
     }
 }
 
@@ -181,11 +195,11 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
 inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<R> {
     when (value) {
         is Value.Vec -> {
-            return value.vec.map {
-                downstream(it)
-            }
+            return value.vec.map { downstream(it) }
         }
-        else -> throw QueryPayloadExtractionException("Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`")
+        else -> throw QueryPayloadExtractionException(
+            "Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+        )
     }
 }
 
