@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.wrapException
@@ -34,7 +35,9 @@ public data class PermissionToken(
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
             Name.write(writer, instance.name)
             writer.writeCompact(instance.params.size)
-            instance.params.toSortedMap(Comparator.comparing(Name::string)).forEach { (key, value) ->  
+            instance.params.toSortedMap(
+                Name.comparator()
+            ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

@@ -8,7 +8,12 @@ sealed class Type(open val name: String) {
 
 object BooleanType : Type("bool")
 
-data class MapType(override val name: String, val key: TypeNest, val value: TypeNest) : Type(name) {
+data class MapType(
+    override val name: String,
+    val key: TypeNest,
+    val value: TypeNest,
+    val sortedByKey: Boolean = false
+) : Type(name) {
     override fun notResolvedTypes(): Set<String> {
         val result = mutableSetOf<String>()
         if (key.value == null) {

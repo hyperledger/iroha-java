@@ -1,19 +1,13 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@Execution(ExecutionMode.CONCURRENT)
-@ExtendWith(IrohaRunnerExtension::class)
 @Timeout(30)
 class ClientTest : IrohaTest<AdminIroha2Client>() {
 

@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.core.sumeragi.viewchange.ProofChain
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
 import jp.co.soramitsu.iroha2.wrapException
-import java.math.BigInteger
 import kotlin.collections.List
 
 /**
@@ -22,7 +21,6 @@ import kotlin.collections.List
  */
 public data class Topology(
     public val sortedPeers: List<Id>,
-    public val reshuffleAfterNViewChanges: BigInteger,
     public val atBlock: HashOf<VersionedCommittedBlock>,
     public val viewChangeProofs: ProofChain
 ) {
@@ -30,7 +28,6 @@ public data class Topology(
         public override fun read(reader: ScaleCodecReader): Topology = try {
             Topology(
                 reader.readVec(reader.readCompactInt()) { Id.read(reader) },
-                reader.readUint64(),
                 HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
                 ProofChain.read(reader),
             )
@@ -40,8 +37,9 @@ public data class Topology(
 
         public override fun write(writer: ScaleCodecWriter, instance: Topology) = try {
             writer.writeCompact(instance.sortedPeers.size)
-            instance.sortedPeers.forEach { value -> Id.write(writer, value) }
-            writer.writeUint64(instance.reshuffleAfterNViewChanges)
+            instance.sortedPeers.forEach { value ->
+                Id.write(writer, value)
+            }
             HashOf.write(writer, instance.atBlock)
             ProofChain.write(writer, instance.viewChangeProofs)
         } catch (ex: Exception) {

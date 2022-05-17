@@ -210,7 +210,9 @@ public sealed class Value : ModelEnum {
 
             public override fun write(writer: ScaleCodecWriter, instance: Vec) = try {
                 writer.writeCompact(instance.vec.size)
-                instance.vec.forEach { value -> Value.write(writer, value) }
+                instance.vec.forEach { value ->
+                    Value.write(writer, value)
+                }
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

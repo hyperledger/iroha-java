@@ -16,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::pipeline::Event' regular structure
  */
 public data class Event(
-    public val entityType: EntityType,
+    public val entityKind: EntityKind,
     public val status: Status,
     public val hash: Hash
 ) {
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = try {
             Event(
-                EntityType.read(reader),
+                EntityKind.read(reader),
                 Status.read(reader),
                 Hash.read(reader),
             )
@@ -32,7 +32,7 @@ public data class Event(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Event) = try {
-            EntityType.write(writer, instance.entityType)
+            EntityKind.write(writer, instance.entityKind)
             Status.write(writer, instance.status)
             Hash.write(writer, instance.hash)
         } catch (ex: Exception) {

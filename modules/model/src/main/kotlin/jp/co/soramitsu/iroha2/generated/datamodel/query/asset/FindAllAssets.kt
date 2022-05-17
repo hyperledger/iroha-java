@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 /**
  * FindAllAssets
  *
- * Generated from 'iroha_data_model::query::asset::FindAllAssets' regular structure
+ * Generated from 'iroha_data_model::query::asset::FindAllAssets' tuple structure
  */
 public class FindAllAssets {
     public companion object : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {

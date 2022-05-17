@@ -26,14 +26,14 @@ import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter.Pipeline
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityType.Transaction
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedQueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
@@ -116,7 +116,7 @@ open class Iroha2Client(
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
         }
         return response.body<ByteArray>()
-            .let { VersionedQueryResult.decode(it) }
+            .let { VersionedPaginatedQueryResult.decode(it) }
             .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
@@ -213,7 +213,7 @@ open class Iroha2Client(
         when (val event = eventPublisherMessage.event) {
             is Event.Pipeline -> {
                 val eventInner = event.event
-                if (eventInner.entityType is Transaction && hash.contentEquals(eventInner.hash.array)) {
+                if (eventInner.entityKind is EntityKind.Transaction && hash.contentEquals(eventInner.hash.array)) {
                     when (val status = eventInner.status) {
                         is Status.Committed -> {
                             logger.debug("Transaction {} committed", hexHash)
@@ -300,8 +300,8 @@ open class Iroha2Client(
     private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
-                Pipeline(
-                    Filter(Transaction(), Hash(hash))
+                FilterBox.Pipeline(
+                    Filter(EntityKind.Transaction(), null, Hash(hash))
                 )
             )
         )

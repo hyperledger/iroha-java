@@ -30,9 +30,6 @@ import java.util.concurrent.TimeoutException;
 
 import static jp.co.soramitsu.iroha2.engine.TestConstsKt.*;
 
-@Execution(ExecutionMode.CONCURRENT)
-@ExtendWith(IrohaRunnerExtension.class)
-@Timeout(40)
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test

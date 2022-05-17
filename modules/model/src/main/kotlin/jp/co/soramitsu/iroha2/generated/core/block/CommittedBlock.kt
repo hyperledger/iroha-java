@@ -43,15 +43,16 @@ public data class CommittedBlock(
             BlockHeader.write(writer, instance.header)
             writer.writeCompact(instance.rejectedTransactions.size)
             instance.rejectedTransactions.forEach { value ->
-                VersionedRejectedTransaction.write(
-                    writer,
-                    value
-                )
+                VersionedRejectedTransaction.write(writer, value)
             }
             writer.writeCompact(instance.transactions.size)
-            instance.transactions.forEach { value -> VersionedValidTransaction.write(writer, value) }
+            instance.transactions.forEach { value ->
+                VersionedValidTransaction.write(writer, value)
+            }
             writer.writeCompact(instance.eventRecommendations.size)
-            instance.eventRecommendations.forEach { value -> Event.write(writer, value) }
+            instance.eventRecommendations.forEach { value ->
+                Event.write(writer, value)
+            }
             SignaturesOf.write(writer, instance.signatures)
         } catch (ex: Exception) {
             throw wrapException(ex)

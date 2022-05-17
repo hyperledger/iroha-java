@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -23,8 +24,8 @@ public data class Domain(
     public val id: Id,
     public val accounts: Map<jp.co.soramitsu.iroha2.generated.datamodel.account.Id, Account>,
     public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
-    public val metadata: Metadata,
-    public val logo: IpfsPath?
+    public val logo: IpfsPath?,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
         public override fun read(reader: ScaleCodecReader): Domain = try {
@@ -39,8 +40,8 @@ public data class Domain(
                     reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
-                Metadata.read(reader),
                 reader.readNullable(IpfsPath),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -49,17 +50,21 @@ public data class Domain(
         public override fun write(writer: ScaleCodecWriter, instance: Domain) = try {
             Id.write(writer, instance.id)
             writer.writeCompact(instance.accounts.size)
-            instance.accounts.forEach { (key, value) ->  
+            instance.accounts.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.account.Id.comparator()
+            ).forEach { (key, value) ->
                 jp.co.soramitsu.iroha2.generated.datamodel.account.Id.write(writer, key)
                 Account.write(writer, value)
             }
             writer.writeCompact(instance.assetDefinitions.size)
-            instance.assetDefinitions.forEach { (key, value) ->  
+            instance.assetDefinitions.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId.comparator()
+            ).forEach { (key, value) ->
                 DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
-            Metadata.write(writer, instance.metadata)
             writer.writeNullable(IpfsPath, instance.logo)
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

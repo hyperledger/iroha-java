@@ -18,7 +18,7 @@ import kotlin.ByteArray
  */
 public data class Signature(
     public val publicKey: PublicKey,
-    public val signature: ByteArray
+    public val payload: ByteArray
 ) {
     public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
         public override fun read(reader: ScaleCodecReader): Signature = try {
@@ -32,7 +32,7 @@ public data class Signature(
 
         public override fun write(writer: ScaleCodecWriter, instance: Signature) = try {
             PublicKey.write(writer, instance.publicKey)
-            writer.writeAsList(instance.signature)
+            writer.writeAsList(instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

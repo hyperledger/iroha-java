@@ -24,11 +24,12 @@ class SchemaParser {
     }
 
     fun createAndGetNest(name: String, typeValue: Any? = null): TypeNest {
-        return registry.getOrPut(name) { TypeNest(name, null) }
-            .also {
-                if (it.value == null) {
-                    it.value = resolver.resolve(name, typeValue)
-                }
+        return registry.getOrPut(name) {
+            TypeNest(name, null)
+        }.also {
+            if (it.value == null) {
+                it.value = resolver.resolve(name, typeValue)
             }
+        }
     }
 }

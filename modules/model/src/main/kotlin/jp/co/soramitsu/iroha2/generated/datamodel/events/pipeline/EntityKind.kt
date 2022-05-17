@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * EntityType
+ * EntityKind
  *
- * Generated from 'iroha_data_model::events::pipeline::EntityType' enum
+ * Generated from 'iroha_data_model::events::pipeline::EntityKind' enum
  */
-public sealed class EntityType : ModelEnum {
+public sealed class EntityKind : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -25,7 +25,7 @@ public sealed class EntityType : ModelEnum {
     /**
      * 'Block' variant
      */
-    public class Block : EntityType() {
+    public class Block : EntityKind() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Block>, ScaleWriter<Block> {
@@ -47,7 +47,7 @@ public sealed class EntityType : ModelEnum {
     /**
      * 'Transaction' variant
      */
-    public class Transaction : EntityType() {
+    public class Transaction : EntityKind() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
@@ -66,8 +66,8 @@ public sealed class EntityType : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<EntityType>, ScaleWriter<EntityType> {
-        public override fun read(reader: ScaleCodecReader): EntityType = when (
+    public companion object : ScaleReader<EntityKind>, ScaleWriter<EntityKind> {
+        public override fun read(reader: ScaleCodecReader): EntityKind = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -76,7 +76,7 @@ public sealed class EntityType : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EntityType) {
+        public override fun write(writer: ScaleCodecWriter, instance: EntityKind) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Block.write(writer, instance as Block)
