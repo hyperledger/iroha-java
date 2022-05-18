@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.trigger
+package jp.co.soramitsu.iroha2.generated.datamodel.trigger.action
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -15,7 +15,7 @@ import kotlin.Long
 /**
  * Repeats
  *
- * Generated from 'iroha_data_model::trigger::Repeats' enum
+ * Generated from 'iroha_data_model::trigger::action::Repeats' enum
  */
 public sealed class Repeats : ModelEnum {
     /**

@@ -7,13 +7,13 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedRejectedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
-import kotlin.collections.Set
 
 /**
  * ValidBlock
@@ -24,7 +24,7 @@ public data class ValidBlock(
     public val header: BlockHeader,
     public val rejectedTransactions: List<VersionedRejectedTransaction>,
     public val transactions: List<VersionedValidTransaction>,
-    public val signatures: Set<SignatureOf<ValidBlock>>,
+    public val signatures: List<SignatureOf<ValidBlock>>,
     public val eventRecommendations: List<Event>
 ) {
     public companion object : ScaleReader<ValidBlock>, ScaleWriter<ValidBlock> {
@@ -33,7 +33,7 @@ public data class ValidBlock(
                 BlockHeader.read(reader),
                 reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
-                reader.readSet(reader.readCompactInt()) {
+                reader.readVec(reader.readCompactInt()) {
                     SignatureOf.read(reader) as
                         SignatureOf<ValidBlock>
                 },
@@ -47,17 +47,22 @@ public data class ValidBlock(
             BlockHeader.write(writer, instance.header)
             writer.writeCompact(instance.rejectedTransactions.size)
             instance.rejectedTransactions.forEach { value ->
-                VersionedRejectedTransaction.write(
-                    writer,
-                    value
-                )
+                VersionedRejectedTransaction.write(writer, value)
             }
             writer.writeCompact(instance.transactions.size)
-            instance.transactions.forEach { value -> VersionedValidTransaction.write(writer, value) }
+            instance.transactions.forEach { value ->
+                VersionedValidTransaction.write(writer, value)
+            }
             writer.writeCompact(instance.signatures.size)
-            instance.signatures.forEach { value -> SignatureOf.write(writer, value) }
+            instance.signatures.sortedWith(
+                SignatureOf.comparator()
+            ).forEach { value ->
+                SignatureOf.write(writer, value)
+            }
             writer.writeCompact(instance.eventRecommendations.size)
-            instance.eventRecommendations.forEach { value -> Event.write(writer, value) }
+            instance.eventRecommendations.forEach { value ->
+                Event.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

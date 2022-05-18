@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.sumeragi.networktopology.Topology
 import jp.co.soramitsu.iroha2.generated.core.sumeragi.viewchange.ProofChain
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
-import jp.co.soramitsu.iroha2.generated.datamodel.merkle.MerkleTree
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
@@ -26,8 +25,8 @@ public data class BlockHeader(
     public val consensusEstimation: BigInteger,
     public val height: BigInteger,
     public val previousBlockHash: HashOf<VersionedCommittedBlock>,
-    public val transactionsHash: HashOf<MerkleTree<VersionedTransaction>>,
-    public val rejectedTransactionsHash: HashOf<MerkleTree<VersionedTransaction>>,
+    public val transactionsHash: HashOf<List<VersionedTransaction>>,
+    public val rejectedTransactionsHash: HashOf<List<VersionedTransaction>>,
     public val viewChangeProofs: ProofChain,
     public val invalidatedBlocksHashes: List<HashOf<VersionedValidBlock>>,
     public val genesisTopology: Topology?
@@ -39,8 +38,8 @@ public data class BlockHeader(
                 reader.readUint64(),
                 reader.readUint64(),
                 HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
-                HashOf.read(reader) as HashOf<MerkleTree<VersionedTransaction>>,
-                HashOf.read(reader) as HashOf<MerkleTree<VersionedTransaction>>,
+                HashOf.read(reader) as HashOf<List<VersionedTransaction>>,
+                HashOf.read(reader) as HashOf<List<VersionedTransaction>>,
                 ProofChain.read(reader),
                 reader.readVec(reader.readCompactInt()) {
                     HashOf.read(reader) as
@@ -61,7 +60,9 @@ public data class BlockHeader(
             HashOf.write(writer, instance.rejectedTransactionsHash)
             ProofChain.write(writer, instance.viewChangeProofs)
             writer.writeCompact(instance.invalidatedBlocksHashes.size)
-            instance.invalidatedBlocksHashes.forEach { value -> HashOf.write(writer, value) }
+            instance.invalidatedBlocksHashes.forEach { value ->
+                HashOf.write(writer, value)
+            }
             writer.writeNullable(Topology, instance.genesisTopology)
         } catch (ex: Exception) {
             throw wrapException(ex)

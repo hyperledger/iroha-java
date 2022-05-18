@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 /**
  * FindAllAccounts
  *
- * Generated from 'iroha_data_model::query::account::FindAllAccounts' regular structure
+ * Generated from 'iroha_data_model::query::account::FindAllAccounts' tuple structure
  */
 public class FindAllAccounts {
     public companion object : ScaleReader<FindAllAccounts>, ScaleWriter<FindAllAccounts> {

@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 /**
  * FindAllPeers
  *
- * Generated from 'iroha_data_model::query::peer::FindAllPeers' regular structure
+ * Generated from 'iroha_data_model::query::peer::FindAllPeers' tuple structure
  */
 public class FindAllPeers {
     public companion object : ScaleReader<FindAllPeers>, ScaleWriter<FindAllPeers> {

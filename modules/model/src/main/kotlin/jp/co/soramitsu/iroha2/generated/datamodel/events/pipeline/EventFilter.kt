@@ -16,13 +16,15 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::pipeline::EventFilter' regular structure
  */
 public data class EventFilter(
-    public val entity: EntityType?,
+    public val entityKind: EntityKind?,
+    public val statusKind: StatusKind?,
     public val hash: Hash?
 ) {
     public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
         public override fun read(reader: ScaleCodecReader): EventFilter = try {
             EventFilter(
-                reader.readNullable(EntityType),
+                reader.readNullable(EntityKind),
+                reader.readNullable(StatusKind),
                 reader.readNullable(Hash),
             )
         } catch (ex: Exception) {
@@ -30,7 +32,8 @@ public data class EventFilter(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: EventFilter) = try {
-            writer.writeNullable(EntityType, instance.entity)
+            writer.writeNullable(EntityKind, instance.entityKind)
+            writer.writeNullable(StatusKind, instance.statusKind)
             writer.writeNullable(Hash, instance.hash)
         } catch (ex: Exception) {
             throw wrapException(ex)

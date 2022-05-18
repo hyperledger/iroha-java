@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
@@ -21,6 +22,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 /**
  * Default genesis where just one domain and Alice with Bob in it
@@ -58,6 +60,25 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
     )
 )
+
+/**
+ * Registers executable trigger without instructions
+ */
+open class WithExecutableTrigger : Genesis(
+    rawGenesisBlock(
+        Instructions.registerExecutableTrigger(
+            TRIGGER_ID,
+            listOf(),
+            Repeats.Exactly(1L),
+            ALICE_ACCOUNT_ID,
+            Metadata(mapOf())
+        )
+    )
+) {
+    companion object {
+        val TRIGGER_ID = TriggerId("some_trigger".asName())
+    }
+}
 
 /**
  * Mints 100 XOR for Alice and Bob
@@ -160,7 +181,7 @@ open class NewDomainWithMetadata : Genesis(
  */
 open class NewDomain : Genesis(
     rawGenesisBlock(
-        Instructions.registerDomain(DOMAIN_ID, mapOf(), mapOf())
+        Instructions.registerDomain(DOMAIN_ID)
     )
 ) {
     companion object {
@@ -171,7 +192,7 @@ open class NewDomain : Genesis(
 /**
  * Returns RawGenesisBlock with instructions to init genesis block
  */
-fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
+fun rawGenesisBlock(vararg isi: Instruction): RawGenesisBlock {
     return RawGenesisBlock(
         listOf(
             GenesisTransaction(
@@ -185,7 +206,7 @@ fun rawGenesisBlock(vararg instructions: Instruction): RawGenesisBlock {
                         BOB_ACCOUNT_ID,
                         listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
                     ),
-                    *instructions
+                    *isi
                 )
             )
         )

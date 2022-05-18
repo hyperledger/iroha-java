@@ -19,18 +19,17 @@ import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
+import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
@@ -52,9 +51,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Action
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Repeats
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
@@ -81,8 +80,8 @@ object Instructions {
         vararg tokens: PermissionToken
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Role(
-                Role(roleId, tokens.toSet())
+            RegistrableBox.Role(
+                Role(roleId, tokens.toList())
             )
         }
     }
@@ -96,7 +95,7 @@ object Instructions {
         metadata: Metadata = Metadata(mapOf())
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.NewAccount(
+            RegistrableBox.Account(
                 NewAccount(id, signatories, metadata)
             )
         }
@@ -114,20 +113,20 @@ object Instructions {
         metadata: Metadata
     ): Instruction {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Time(
+                        FilterBox.Time(
                             TimeEventFilter(
                                 ExecutionTime.Schedule(schedule)
                             )
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
@@ -144,18 +143,18 @@ object Instructions {
         metadata: Metadata
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.ExecuteTrigger(
+                        FilterBox.ExecuteTrigger(
                             ExecutableEventFilter(triggerId, accountId)
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
@@ -170,19 +169,19 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: EventFilter
+        filter: FilterBox
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        filter
-                    ),
-                    metadata
+                        filter,
+                        metadata
+                    )
                 )
             )
         }
@@ -199,18 +198,18 @@ object Instructions {
         metadata: Metadata
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Trigger(
+            RegistrableBox.Trigger(
                 Trigger(
                     triggerId,
                     Action(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        EventFilter.Time(
+                        FilterBox.Time(
                             TimeEventFilter(ExecutionTime.PreCommit())
-                        )
-                    ),
-                    metadata
+                        ),
+                        metadata
+                    )
                 )
             )
         }
@@ -223,11 +222,11 @@ object Instructions {
         id: DefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
-        mintable: Boolean = true
+        mintable: Mintable = Mintable.Infinitely()
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.AssetDefinition(
-                AssetDefinition(assetValueType, id, metadata, mintable)
+            RegistrableBox.AssetDefinition(
+                AssetDefinition(id, assetValueType, mintable, metadata)
             )
         }
     }
@@ -237,19 +236,15 @@ object Instructions {
      */
     fun registerDomain(
         domainId: DomainId,
-        accounts: Map<AccountId, Account> = mapOf(),
-        assetDefinitions: Map<DefinitionId, AssetDefinitionEntry> = mapOf(),
         metadata: Map<Name, Value> = mapOf(),
         logo: IpfsPath? = null
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Domain(
-                Domain(
+            RegistrableBox.Domain(
+                NewDomain(
                     domainId,
-                    accounts,
-                    assetDefinitions,
-                    Metadata(metadata),
-                    logo
+                    logo,
+                    Metadata(metadata)
                 )
             )
         }
@@ -264,7 +259,7 @@ object Instructions {
         digestFunction: String = DigestFunction.Ed25519.hashFunName
     ): Instruction.Register {
         return registerSome {
-            IdentifiableBox.Peer(
+            RegistrableBox.Peer(
                 Peer(
                     PeerId(
                         address,
@@ -290,15 +285,6 @@ object Instructions {
                     PublicKey(digestFunction, payload)
                 )
             )
-        }
-    }
-
-    /**
-     * Instruction for world registration
-     */
-    fun registerWorld(): Instruction.Register {
-        return registerSome {
-            IdentifiableBox.World()
         }
     }
 
@@ -647,9 +633,11 @@ object Instructions {
         )
     }
 
-    private inline fun registerSome(idBox: () -> IdentifiableBox): Instruction.Register {
+    private inline fun registerSome(
+        regBox: () -> RegistrableBox
+    ): Instruction.Register {
         return Instruction.Register(
-            RegisterBox(idBox().evaluatesTo())
+            RegisterBox(regBox().evaluatesTo())
         )
     }
 

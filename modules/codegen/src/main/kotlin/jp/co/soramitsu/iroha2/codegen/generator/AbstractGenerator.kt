@@ -94,7 +94,12 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         var result = CodeBlock.builder()
             .add("return try {\n")
             .indent()
-        val codeBlocks = blueprint.properties.map { resolveScaleWriteImpl(it.original, CodeBlock.of("instance.%N", it.name)) }
+        val codeBlocks = blueprint.properties.map {
+            resolveScaleWriteImpl(
+                it.original,
+                CodeBlock.of("instance.%N", it.name)
+            )
+        }
         for (cb in codeBlocks) {
             result = result.add(cb).add("\n")
         }

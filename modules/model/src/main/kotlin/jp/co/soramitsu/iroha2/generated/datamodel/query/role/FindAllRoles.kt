@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 /**
  * FindAllRoles
  *
- * Generated from 'iroha_data_model::query::role::FindAllRoles' regular structure
+ * Generated from 'iroha_data_model::query::role::FindAllRoles' tuple structure
  */
 public class FindAllRoles {
     public companion object : ScaleReader<FindAllRoles>, ScaleWriter<FindAllRoles> {

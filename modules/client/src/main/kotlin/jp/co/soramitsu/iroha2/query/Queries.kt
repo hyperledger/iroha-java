@@ -29,9 +29,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissi
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
+import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 object Queries {
 
@@ -175,6 +179,27 @@ object Queries {
                 id.evaluatesTo(),
                 key.evaluatesTo()
             )
+        )
+    }
+
+    fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name): QueryBox.FindTriggerKeyValueByIdAndKey {
+        return QueryBox.FindTriggerKeyValueByIdAndKey(
+            FindTriggerKeyValueByIdAndKey(
+                id.evaluatesTo(),
+                key.evaluatesTo()
+            )
+        )
+    }
+
+    fun findTriggerById(id: TriggerId): QueryBox.FindTriggerById {
+        return QueryBox.FindTriggerById(
+            FindTriggerById(id.evaluatesTo())
+        )
+    }
+
+    fun findAllActiveTriggerIds(): QueryBox.FindAllActiveTriggerIds {
+        return QueryBox.FindAllActiveTriggerIds(
+            FindAllActiveTriggerIds()
         )
     }
 }

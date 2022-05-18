@@ -8,12 +8,12 @@ import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.engine.WithExecutableTrigger
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
@@ -27,16 +27,10 @@ import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Timeout
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.jupiter.api.parallel.Execution
-import org.junit.jupiter.api.parallel.ExecutionMode
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@Execution(ExecutionMode.CONCURRENT)
-@ExtendWith(IrohaRunnerExtension::class)
-@Timeout(40)
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
@@ -312,14 +306,44 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(NewDomainWithMetadata::class)
     fun `find domain key value by ID and key`(): Unit = runBlocking {
-        QueryBuilder.findDomainKeyValueByIdAndKey(NewDomainWithMetadata.DOMAIN_ID, NewDomainWithMetadata.KEY)
-            .account(ALICE_ACCOUNT_ID)
+        QueryBuilder.findDomainKeyValueByIdAndKey(
+            NewDomainWithMetadata.DOMAIN_ID,
+            NewDomainWithMetadata.KEY
+        ).account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { assertEquals(NewDomainWithMetadata.VALUE, it) }
     }
 
-    //    @Test
+    @Test
+    @WithIroha(WithExecutableTrigger::class)
+    fun `find trigger by ID`(): Unit = runBlocking {
+        val triggerId = WithExecutableTrigger.TRIGGER_ID
+
+        QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { trigger ->
+                assertTrue { trigger.id == triggerId }
+            }
+    }
+
+    @Test
+    @WithIroha(WithExecutableTrigger::class)
+    fun `find all active trigger IDs`(): Unit = runBlocking {
+        val triggerId = WithExecutableTrigger.TRIGGER_ID
+
+        QueryBuilder.findAllActiveTriggerIds()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { ids ->
+                assertTrue { ids.all { it == triggerId } }
+            }
+    }
+
+//    @Test
 //    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)

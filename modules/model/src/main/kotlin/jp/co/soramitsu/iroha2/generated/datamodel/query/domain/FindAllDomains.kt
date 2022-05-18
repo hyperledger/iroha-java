@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 /**
  * FindAllDomains
  *
- * Generated from 'iroha_data_model::query::domain::FindAllDomains' regular structure
+ * Generated from 'iroha_data_model::query::domain::FindAllDomains' tuple structure
  */
 public class FindAllDomains {
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {

@@ -45,7 +45,9 @@ public sealed class Executable : ModelEnum {
 
             public override fun write(writer: ScaleCodecWriter, instance: Instructions) = try {
                 writer.writeCompact(instance.vec.size)
-                instance.vec.forEach { value -> Instruction.write(writer, value) }
+                instance.vec.forEach { value ->
+                    Instruction.write(writer, value)
+                }
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

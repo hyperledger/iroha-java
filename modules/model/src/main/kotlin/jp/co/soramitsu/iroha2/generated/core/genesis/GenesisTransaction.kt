@@ -30,7 +30,9 @@ public data class GenesisTransaction(
 
         public override fun write(writer: ScaleCodecWriter, instance: GenesisTransaction) = try {
             writer.writeCompact(instance.isi.size)
-            instance.isi.forEach { value -> Instruction.write(writer, value) }
+            instance.isi.forEach { value ->
+                Instruction.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

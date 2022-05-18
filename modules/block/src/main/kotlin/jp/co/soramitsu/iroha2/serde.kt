@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
@@ -51,6 +52,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
         module.addDeserializer(Name::class.java, NameDeserializer)
+        module.addDeserializer(Mintable::class.java, MintableDeserializer)
         module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer)
@@ -87,7 +89,7 @@ private fun String.asClass(): Class<*> {
             "kotlin.Int" -> Int::class.java
             else -> null
         }
-    } ?: throw RuntimeException("Class $this not found")
+    } ?: throw DeserializationException("Class $this not found")
 }
 
 private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapper: ObjectMapper): T {
@@ -96,11 +98,11 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
 
     val subtype = T::class.nestedClasses.find { clazz ->
         !clazz.isCompanion && clazz.simpleName == param
-    } ?: throw RuntimeException("Class with constructor($param) not found")
+    } ?: throw DeserializationException("Class with constructor($param) not found")
 
     val argTypeName = subtype.primaryConstructor?.parameters
         ?.firstOrNull()?.type?.toString()
-        ?: throw RuntimeException("Subtype parameter not found by $param")
+        ?: throw DeserializationException("Subtype parameter not found by $param")
 
     val toConvert: JsonNode
     if (T::class.java.isAssignableFrom(Instruction::class.java)) {
@@ -160,7 +162,7 @@ object AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
         return AssetValueType::class.nestedClasses
             .findLast { it.simpleName == text }
             ?.createInstance() as AssetValueType?
-            ?: throw RuntimeException("AssetValueType $text not found")
+            ?: throw DeserializationException("AssetValueType $text not found")
     }
 }
 
@@ -175,6 +177,17 @@ object NameDeserializer : JsonDeserializer<Name>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Name {
         val key = p.readValueAs(String::class.java)
         return Name(key)
+    }
+}
+
+object MintableDeserializer : JsonDeserializer<Mintable>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Mintable {
+        return when (val value = p.readValueAs(String::class.java)) {
+            Mintable.Once::class.simpleName -> Mintable.Once()
+            Mintable.Not::class.simpleName -> Mintable.Not()
+            Mintable.Infinitely::class.simpleName -> Mintable.Infinitely()
+            else -> throw DeserializationException("Unknown Mintable type: $value")
+        }
     }
 }
 
@@ -195,6 +208,8 @@ object AssetIdDeserializer : KeyDeserializer() {
         return JSON_SERDE.readValue(key, AssetId::class.java)
     }
 }
+
+// ==================================================
 
 object NameAsKeySerializer : JsonSerializer<Name>() {
     override fun serialize(value: Name, gen: JsonGenerator, serializers: SerializerProvider) {
@@ -268,6 +283,6 @@ fun serializeNoneOrSingleMemberObject(
             gen.writeObjectField(clazz.simpleName, memberProperties.first().call(objectValue))
             gen.writeEndObject()
         }
-        else -> throw RuntimeException("Expected enum which accept exactly 0 member as tuple")
+        else -> throw SerializationException("Expected enum which accept exactly 0 member as tuple")
     }
 }

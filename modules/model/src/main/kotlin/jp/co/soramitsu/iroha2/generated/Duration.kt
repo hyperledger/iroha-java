@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.core.time
+package jp.co.soramitsu.iroha2.generated
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -14,7 +14,7 @@ import kotlin.Long
 /**
  * Duration
  *
- * Generated from 'core::time::Duration' tuple structure
+ * Generated from 'Duration' tuple structure
  */
 public data class Duration(
     public val u64: BigInteger,

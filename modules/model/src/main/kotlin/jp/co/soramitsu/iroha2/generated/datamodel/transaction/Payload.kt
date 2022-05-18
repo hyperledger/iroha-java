@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
@@ -49,7 +50,9 @@ public data class Payload(
             writer.writeUint64(instance.timeToLiveMs)
             writer.writeNullable(instance.nonce)
             writer.writeCompact(instance.metadata.size)
-            instance.metadata.toSortedMap(Comparator.comparing(Name::string)).forEach { (key, value) ->  
+            instance.metadata.toSortedMap(
+                Name.comparator()
+            ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)
             }

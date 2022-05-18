@@ -29,7 +29,9 @@ public data class RawGenesisBlock(
 
         public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) = try {
             writer.writeCompact(instance.transactions.size)
-            instance.transactions.forEach { value -> GenesisTransaction.write(writer, value) }
+            instance.transactions.forEach { value ->
+                GenesisTransaction.write(writer, value)
+            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
