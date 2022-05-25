@@ -43,6 +43,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class TriggersTest : IrohaTest<Iroha2Client>() {
@@ -302,23 +303,13 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
         val triggerId = TriggerId("wasm_trigger".asName())
 
-        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { assets ->
-                assert(assets.size == 1)
-                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
-                assert(assets.all { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
-            }
-
         val currentTime = Date().time / 1000
         val schedule = Schedule(
             Duration(BigInteger.valueOf(currentTime), 0),
             Duration(BigInteger.valueOf(1L), 0)
         )
         val filter = FilterBox.Time(
-            jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter(
+            TimeEventFilter(
                 ExecutionTime.Schedule(schedule)
             )
         )
@@ -337,7 +328,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
-            delay(1000)
             withTimeout(txTimeout) { d.await() }
         }
 
@@ -347,7 +337,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             setKeyValue(ALICE_ACCOUNT_ID, "test".asName(), "test".asValue())
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
-            delay(1000)
             withTimeout(txTimeout) { d.await() }
         }
         client.sendTransaction {
@@ -355,7 +344,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             setKeyValue(ALICE_ACCOUNT_ID, "test2".asName(), "test2".asValue())
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
-            delay(1000)
             withTimeout(txTimeout) { d.await() }
         }
 
