@@ -22,7 +22,7 @@ public data class UnsupportedVersion(
     public companion object : ScaleReader<UnsupportedVersion>, ScaleWriter<UnsupportedVersion> {
         public override fun read(reader: ScaleCodecReader): UnsupportedVersion = try {
             UnsupportedVersion(
-                reader.readUByte(),
+                reader.readUByte().toShort(),
                 RawVersioned.read(reader),
             )
         } catch (ex: Exception) {
@@ -30,7 +30,7 @@ public data class UnsupportedVersion(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: UnsupportedVersion) = try {
-            writer.writeUByte(instance.version.toShort())
+            writer.writeUByte(instance.version)
             RawVersioned.write(writer, instance.raw)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -162,6 +162,27 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     }
 
     @JvmOverloads
+    fun registerWasmTrigger(
+        triggerId: TriggerId,
+        wasm: ByteArray,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata = Metadata(mapOf()),
+        filter: FilterBox
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerWasmTrigger(
+                triggerId,
+                wasm,
+                repeats,
+                accountId,
+                metadata,
+                filter
+            )
+        )
+    }
+
+    @JvmOverloads
     fun registerPreCommitTrigger(
         triggerId: TriggerId,
         isi: List<Instruction>,
