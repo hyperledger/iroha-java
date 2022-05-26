@@ -51,6 +51,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.WasmSmartContract
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
@@ -182,6 +183,35 @@ object Instructions {
                         filter,
                         metadata
                     )
+                )
+            )
+        }
+    }
+
+    /**
+     * Instruction for wasm trigger registration
+     */
+    fun registerWasmTrigger(
+        triggerId: TriggerId,
+        wasm: ByteArray,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata,
+        filter: FilterBox
+    ): Instruction.Register {
+        return registerSome {
+            RegistrableBox.Trigger(
+                Trigger(
+                    triggerId,
+                    Action(
+                        Executable.Wasm(
+                            WasmSmartContract(wasm)
+                        ),
+                        repeats,
+                        accountId,
+                        filter,
+                        metadata
+                    ),
                 )
             )
         }

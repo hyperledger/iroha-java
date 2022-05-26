@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
@@ -23,6 +24,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptE
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -36,10 +38,12 @@ import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
+import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class TriggersTest : IrohaTest<Iroha2Client>() {
@@ -292,5 +296,66 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .map { it.value.assets[DEFAULT_ASSET_ID] }
             .map { (it?.value as AssetValue.Quantity).u32 }
             .first()
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
+        val triggerId = TriggerId("wasm_trigger".asName())
+
+        val currentTime = Date().time / 1000
+        val schedule = Schedule(
+            Duration(BigInteger.valueOf(currentTime), 0),
+            Duration(BigInteger.valueOf(1L), 0)
+        )
+        val filter = FilterBox.Time(
+            TimeEventFilter(
+                ExecutionTime.Schedule(schedule)
+            )
+        )
+
+        val wasm = this.javaClass.classLoader.getResource("create_nft_for_every_user_smartcontract.wasm").readBytes()
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerWasmTrigger(
+                triggerId,
+                wasm,
+                Repeats.Indefinitely(),
+                ALICE_ACCOUNT_ID,
+                Metadata(mapOf()),
+                filter
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        // send some transactions to keep Iroha2 network busy
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            setKeyValue(ALICE_ACCOUNT_ID, "test".asName(), "test".asValue())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            setKeyValue(ALICE_ACCOUNT_ID, "test2".asName(), "test2".asValue())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assets ->
+                assert(assets.size > 1)
+                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
+                assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
+                assert(assets.any { it.id.definitionId == DefinitionId("nft_number_1_for_alice".asName(), DEFAULT_DOMAIN_ID) })
+            }
     }
 }

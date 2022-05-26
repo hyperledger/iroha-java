@@ -24,14 +24,14 @@ public data class UnsupportedVersionError(
         ScaleWriter<UnsupportedVersionError> {
         public override fun read(reader: ScaleCodecReader): UnsupportedVersionError = try {
             UnsupportedVersionError(
-                reader.readUByte(),
+                reader.readUByte().toShort(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: UnsupportedVersionError) = try {
-            writer.writeUByte(instance.version.toShort())
+            writer.writeUByte(instance.version)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

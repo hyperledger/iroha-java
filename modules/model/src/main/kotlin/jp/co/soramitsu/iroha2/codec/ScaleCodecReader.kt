@@ -98,7 +98,7 @@ class ScaleCodecReader(private val source: ByteArray) {
         }
     }
 
-    fun readUByte(): Short {
+    fun readUByte(): Int {
         return UBYTE.read(this)
     }
 
