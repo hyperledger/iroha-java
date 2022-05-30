@@ -17,6 +17,7 @@ import jp.co.soramitsu.iroha2.query.QueryAndExtractor;
 import jp.co.soramitsu.iroha2.query.QueryBuilder;
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -114,6 +115,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         Assertions.assertEquals(5, ((AssetValue.Quantity) value).getU32());
     }
 
+    @Disabled // https://github.com/hyperledger/iroha/issues/2288
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void updateKeyValueInstructionCommitted() throws Exception {
@@ -156,6 +158,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         );
     }
 
+    @Disabled // https://github.com/hyperledger/iroha/issues/2288
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void setKeyValueInstructionCommitted() throws Exception {

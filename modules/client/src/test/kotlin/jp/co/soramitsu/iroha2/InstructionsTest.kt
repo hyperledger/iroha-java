@@ -29,6 +29,7 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.MathContext
@@ -619,6 +620,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
@@ -629,8 +631,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
+    @Disabled
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
         val payload = "76cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
@@ -642,8 +645,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
+    @Disabled
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
         val roleId = RoleId("USER_METADATA_ACCESS".asName())
 
