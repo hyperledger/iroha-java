@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
@@ -27,6 +28,7 @@ import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.MathContext
@@ -588,6 +590,33 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             }
             assertBalance(counter)
         }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `register asset with metadata`(): Unit = runBlocking {
+        val assetKey = Name("asset_metadata_key")
+        val assetValue = Value.String("some string value")
+        val metadata = Metadata(mapOf(assetKey to assetValue))
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store(), metadata)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetKey)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { value ->
+                Assertions.assertEquals(
+                    value.cast<Value.String>().string,
+                    assetValue.string
+                )
+            }
     }
 
     @Test
