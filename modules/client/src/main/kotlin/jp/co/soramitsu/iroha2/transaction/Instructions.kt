@@ -87,6 +87,7 @@ object Instructions {
     /**
      * Instruction for account registration
      */
+    @JvmOverloads
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
@@ -237,6 +238,7 @@ object Instructions {
     /**
      * Instruction for asset registration
      */
+    @JvmOverloads
     fun registerAsset(
         id: DefinitionId,
         assetValueType: AssetValueType,
@@ -253,6 +255,7 @@ object Instructions {
     /**
      * Instruction for domain registration
      */
+    @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
         metadata: Map<Name, Value> = mapOf(),
@@ -272,6 +275,7 @@ object Instructions {
     /**
      * Instruction for peer registration
      */
+    @JvmOverloads
     fun registerPeer(
         address: String,
         payload: ByteArray,
@@ -292,6 +296,7 @@ object Instructions {
     /**
      * Instruction to unregister peer
      */
+    @JvmOverloads
     fun unregisterPeer(
         address: String,
         payload: ByteArray,

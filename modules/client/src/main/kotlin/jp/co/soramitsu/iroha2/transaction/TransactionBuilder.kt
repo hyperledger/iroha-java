@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
@@ -218,10 +219,13 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         metadata: Metadata = Metadata(mapOf())
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
+    @JvmOverloads
     fun registerAsset(
         id: DefinitionId,
-        assetValueType: AssetValueType
-    ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValueType)) }
+        assetValueType: AssetValueType,
+        metadata: Metadata = Metadata(mapOf()),
+        mintable: Mintable = Mintable.Infinitely()
+    ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValueType, metadata, mintable)) }
 
     fun setKeyValue(
         assetId: AssetId,
