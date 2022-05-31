@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
@@ -33,6 +32,7 @@ import kotlin.random.nextLong
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
@@ -106,7 +106,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         isi: List<Instruction>,
         repeats: Repeats,
         accountId: AccountId,
-        schedule: Schedule,
+        filter: TimeEventFilter,
         metadata: Metadata = Metadata(mapOf())
     ) = this.apply {
         instructions.value.add(
@@ -115,7 +115,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 isi,
                 repeats,
                 accountId,
-                schedule,
+                filter,
                 metadata
             )
         )

@@ -30,8 +30,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
@@ -61,7 +59,6 @@ import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter as ExecutableEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
@@ -106,11 +103,11 @@ object Instructions {
      * Instruction for time trigger registration
      */
     fun registerTimeTrigger(
-        triggerId: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id,
+        triggerId: TriggerId,
         isi: List<Instruction>,
         repeats: Repeats,
-        accountId: jp.co.soramitsu.iroha2.generated.datamodel.account.Id,
-        schedule: Schedule,
+        accountId: AccountId,
+        filter: TimeEventFilter,
         metadata: Metadata
     ): Instruction {
         return registerSome {
@@ -121,11 +118,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        FilterBox.Time(
-                            TimeEventFilter(
-                                ExecutionTime.Schedule(schedule)
-                            )
-                        ),
+                        FilterBox.Time(filter),
                         metadata
                     )
                 )
@@ -151,9 +144,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        FilterBox.ExecuteTrigger(
-                            ExecutableEventFilter(triggerId, accountId)
-                        ),
+                        Filters.executeTrigger(triggerId, accountId),
                         metadata
                     )
                 )
@@ -235,9 +226,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        FilterBox.Time(
-                            TimeEventFilter(ExecutionTime.PreCommit())
-                        ),
+                        Filters.time(EventFilters.timeEventFilter()),
                         metadata
                     )
                 )

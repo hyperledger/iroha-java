@@ -17,19 +17,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.EntityFilters
+import jp.co.soramitsu.iroha2.transaction.EventFilters
+import jp.co.soramitsu.iroha2.transaction.Filters
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -67,19 +64,9 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val prevQuantity = checkDefaultDomainQuantity()
         assertEquals(100L, prevQuantity)
 
-        // register trigger
-        val filter = FilterBox.Data(
-            FilterOptEntityFilter.BySome(
-                EntityFilter.ByAssetDefinition(
-                    FilterOptAssetDefinitionFilter.BySome(
-                        AssetDefinitionFilter(
-                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                            FilterOptAssetDefinitionEventFilter.BySome(
-                                AssetDefinitionEventFilter.ByCreated()
-                            )
-                        )
-                    )
-                )
+        val filter = Filters.data(
+            EntityFilters.byAssetDefinition(
+                eventFilter = AssetDefinitionEventFilter.ByCreated()
             )
         )
         client.sendTransaction {
@@ -255,7 +242,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             this.accountId = accountId
             registerTimeTrigger(
                 triggerId, listOf(instruction), repeats, accountId,
-                Schedule(
+                EventFilters.timeEventFilter(
                     Duration(BigInteger.valueOf(Instant.now().epochSecond), 0L),
                     Duration(BigInteger.valueOf(1L), 0L)
                 )
