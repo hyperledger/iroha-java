@@ -122,8 +122,10 @@ open class Iroha2Client(
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
-            if (page != null) parameter("start", page.start)
-            if (page != null) parameter("limit", page.limit)
+            if (page != null) {
+                parameter("start", page.start)
+                parameter("limit", page.limit)
+            }
         }
         return response.body<ByteArray>()
             .let { VersionedPaginatedQueryResult.decode(it) }
