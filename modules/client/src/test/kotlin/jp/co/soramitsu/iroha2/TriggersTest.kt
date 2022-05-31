@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
@@ -20,14 +19,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.EntityFilters
 import jp.co.soramitsu.iroha2.transaction.EventFilters
 import jp.co.soramitsu.iroha2.transaction.Filters
 import jp.co.soramitsu.iroha2.transaction.Instructions
-import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
@@ -270,34 +267,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                     }
                 )
             }
-    }
-
-    @Test
-    @WithIroha(DefaultGenesis::class)
-    fun `wasm trigger transaction decoding encoding`(): Unit = runBlocking {
-        val filter = Filters.time(
-            EventFilters.timeEventFilter(
-                Duration(BigInteger.valueOf(Instant.now().epochSecond), 0),
-                Duration(BigInteger.valueOf(1L), 0)
-            )
-        )
-        val wasm = this.javaClass.classLoader
-            .getResource("create_nft_for_every_user_smartcontract.wasm")
-            .readBytes()
-
-        TransactionBuilder {
-            accountId = ALICE_ACCOUNT_ID
-            registerWasmTrigger(
-                TriggerId("some_trigger".asName()),
-                wasm,
-                Repeats.Indefinitely(),
-                ALICE_ACCOUNT_ID,
-                Metadata(mapOf()),
-                filter
-            )
-        }.buildSigned()
-            .let { VersionedTransaction.encode(it) }
-            .let { VersionedTransaction.decode(it) }
     }
 
     private suspend fun sendAndWait10Txs() {
