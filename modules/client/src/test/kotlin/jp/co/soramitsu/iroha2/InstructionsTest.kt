@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
+import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
@@ -27,6 +28,8 @@ import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.MathContext
@@ -592,6 +595,34 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(DefaultGenesis::class)
+    fun `register asset with metadata`(): Unit = runBlocking {
+        val assetKey = Name("asset_metadata_key")
+        val assetValue = Value.String("some string value")
+        val metadata = Metadata(mapOf(assetKey to assetValue))
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store(), metadata)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetKey)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { value ->
+                Assertions.assertEquals(
+                    value.cast<Value.String>().string,
+                    assetValue.string
+                )
+            }
+    }
+
+    @Disabled
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
         val payload = "76cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
@@ -600,8 +631,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
+    @Disabled
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
         val address = "127.0.0.1:1338"
         val payload = "76cd895028f2d9d520d6534abd78def38734b658f9400c31b3212ed42a423ee3".fromHex()
@@ -613,8 +645,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-//    @Test
-//    @WithIroha(DefaultGenesis::class)
+    @Disabled
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
         val roleId = RoleId("USER_METADATA_ACCESS".asName())
 

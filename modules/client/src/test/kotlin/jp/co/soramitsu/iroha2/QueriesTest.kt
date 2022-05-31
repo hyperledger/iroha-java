@@ -5,6 +5,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.engine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
@@ -26,6 +27,7 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -343,8 +345,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-//    @Test
-//    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    @Disabled
+    @Test
+    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
     fun `find roles`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)

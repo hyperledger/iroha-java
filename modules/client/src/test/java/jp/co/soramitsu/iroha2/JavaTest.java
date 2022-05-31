@@ -2,27 +2,26 @@ package jp.co.soramitsu.iroha2;
 
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis;
-import jp.co.soramitsu.iroha2.engine.IrohaRunnerExtension;
 import jp.co.soramitsu.iroha2.engine.IrohaTest;
 import jp.co.soramitsu.iroha2.engine.WithIroha;
 import jp.co.soramitsu.iroha2.generated.datamodel.Name;
+import jp.co.soramitsu.iroha2.generated.datamodel.Value;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue;
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType;
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain;
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id;
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata;
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction;
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor;
 import jp.co.soramitsu.iroha2.query.QueryBuilder;
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -114,5 +113,87 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final Account account = future.get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
         final AssetValue value = account.getAssets().get(DEFAULT_ASSET_ID).getValue();
         Assertions.assertEquals(5, ((AssetValue.Quantity) value).getU32());
+    }
+
+    @Disabled // https://github.com/hyperledger/iroha/issues/2288
+    @Test
+    @WithIroha(genesis = DefaultGenesis.class)
+    public void updateKeyValueInstructionCommitted() throws Exception {
+        final Name assetMetadataKey = new Name("asset_metadata_key");
+        final Value.String assetMetadataValue = new Value.String("some string value");
+        final Value.String assetMetadataValue2 = new Value.String("some string value 2");
+        final Metadata metadata = new Metadata(new HashMap<Name, Value>() {{
+            put(assetMetadataKey, assetMetadataValue);
+        }});
+
+        final VersionedTransaction registerAssetTx = TransactionBuilder.Companion
+            .builder()
+            .account(ALICE_ACCOUNT_ID)
+            .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store(), metadata)
+            .buildSigned(ALICE_KEYPAIR);
+        client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
+
+        final VersionedTransaction keyValueTx = TransactionBuilder.Companion
+            .builder()
+            .account(ALICE_ACCOUNT_ID)
+            .setKeyValue(
+                new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
+                    DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
+                ),
+                assetMetadataKey,
+                assetMetadataValue2
+            ).buildSigned(ALICE_KEYPAIR);
+        client.sendTransactionAsync(keyValueTx).get(10, TimeUnit.SECONDS);
+
+        final QueryAndExtractor<Value> assetDefinitionValueQuery = QueryBuilder
+            .findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetMetadataKey)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR);
+        final CompletableFuture<Value> future = client.sendQueryAsync(assetDefinitionValueQuery);
+
+        final Value value = future.get(10, TimeUnit.SECONDS);
+        Assertions.assertEquals(
+            ((Value.String) value).getString(),
+            assetMetadataValue2.getString()
+        );
+    }
+
+    @Disabled // https://github.com/hyperledger/iroha/issues/2288
+    @Test
+    @WithIroha(genesis = DefaultGenesis.class)
+    public void setKeyValueInstructionCommitted() throws Exception {
+        final Value.String assetValue = new Value.String("some string value");
+        final Name assetKey = new Name("asset_metadata_key");
+
+        final VersionedTransaction registerAssetTx = TransactionBuilder.Companion
+            .builder()
+            .account(ALICE_ACCOUNT_ID)
+            .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store())
+            .buildSigned(ALICE_KEYPAIR);
+        client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
+
+        final VersionedTransaction keyValueTx = TransactionBuilder.Companion
+            .builder()
+            .account(ALICE_ACCOUNT_ID)
+            .setKeyValue(
+                new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
+                    DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
+                ),
+                assetKey,
+                assetValue
+            ).buildSigned(ALICE_KEYPAIR);
+        client.sendTransactionAsync(keyValueTx).get(10, TimeUnit.SECONDS);
+
+        final QueryAndExtractor<Value> assetDefinitionValueQuery = QueryBuilder
+            .findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetKey)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR);
+        final CompletableFuture<Value> future = client.sendQueryAsync(assetDefinitionValueQuery);
+
+        final Value value = future.get(10, TimeUnit.SECONDS);
+        Assertions.assertEquals(
+            ((Value.String) value).getString(),
+            assetValue.getString()
+        );
     }
 }
