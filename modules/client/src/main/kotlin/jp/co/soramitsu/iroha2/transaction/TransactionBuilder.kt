@@ -245,6 +245,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         value: Value
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
 
+    fun setKeyValue(
+        definitionId: DefinitionId,
+        key: Name,
+        value: Value
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
+
     fun removeKeyValue(
         assetId: AssetId,
         key: Name,
