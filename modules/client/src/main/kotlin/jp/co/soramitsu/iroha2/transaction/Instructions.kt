@@ -235,6 +235,18 @@ object Instructions {
         }
     }
 
+    fun unregisterTrigger(
+        triggerName: String
+    ): Instruction.Unregister {
+        return unregisterSome {
+            IdBox.TriggerId(
+                TriggerId(
+                    triggerName.asName()
+                )
+            )
+        }
+    }
+
     /**
      * Instruction for asset registration
      */

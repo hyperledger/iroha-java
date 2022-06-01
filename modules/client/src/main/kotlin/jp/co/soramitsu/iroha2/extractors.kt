@@ -21,9 +21,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
  * Extractors are used by **[QueryBuilder]** to extract data from query result
  */
 interface ResultExtractor<T> {
-    fun extract(result: VersionedPaginatedQueryResult): T {
+    fun extract(result: VersionedPaginatedQueryResult): Page<T> {
         return when (result) {
-            is VersionedPaginatedQueryResult.V1 -> extract(result.paginatedQueryResult)
+            is VersionedPaginatedQueryResult.V1 -> {
+                val data = extract(result.paginatedQueryResult)
+                Page(
+                    data,
+                    result.paginatedQueryResult.pagination,
+                    result.paginatedQueryResult.total
+                )
+            }
         }
     }
 

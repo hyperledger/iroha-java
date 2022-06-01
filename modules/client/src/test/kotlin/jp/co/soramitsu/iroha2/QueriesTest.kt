@@ -21,6 +21,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
@@ -343,6 +345,42 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .also { ids ->
                 assertTrue { ids.all { it == triggerId } }
             }
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `find all account with pagination`(): Unit = runBlocking {
+        var page = Pagination(0, 5)
+        var accounts = QueryBuilder.findAllAccounts()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQueryWithPagination(query, page) }
+        assertEquals(3, accounts.data.size)
+        assertEquals(page, accounts.pagination)
+        assertEquals(3, accounts.total.toInt() - 1)
+
+        createAccount("foo")
+        createAccount("bar")
+
+        page = Pagination(3, 5)
+        accounts = QueryBuilder.findAllAccounts()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQueryWithPagination(query, page) }
+        assertEquals(2, accounts.data.size)
+        assertEquals(page, accounts.pagination)
+        assertEquals(5, accounts.total.toInt() - 1)
+    }
+
+    suspend fun createAccount(name: String) {
+        val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAccount(newAccountId, listOf())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
     }
 
     @Disabled

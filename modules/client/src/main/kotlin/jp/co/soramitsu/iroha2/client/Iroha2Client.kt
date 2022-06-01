@@ -15,6 +15,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.ClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -22,6 +23,7 @@ import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
+import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
@@ -31,6 +33,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisher
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
+import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
@@ -109,9 +112,18 @@ open class Iroha2Client(
      * {@see Extractors}
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
+        val page = sendQueryWithPagination(queryAndExtractor, null)
+        return page.data
+    }
+
+    suspend fun <T> sendQueryWithPagination(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
+            if (page != null) {
+                parameter("start", page.start)
+                parameter("limit", page.limit)
+            }
         }
         return response.body<ByteArray>()
             .let { VersionedPaginatedQueryResult.decode(it) }
