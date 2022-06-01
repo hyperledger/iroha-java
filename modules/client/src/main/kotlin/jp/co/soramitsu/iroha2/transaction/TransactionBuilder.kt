@@ -202,6 +202,17 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
+    fun unregisterTrigger(
+        triggerName: String,
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.unregisterTrigger(
+                triggerName
+            )
+        )
+    }
+
     fun grantRole(
         roleId: RoleId,
         accountId: AccountId

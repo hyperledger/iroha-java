@@ -34,6 +34,7 @@ import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPair
@@ -357,5 +358,48 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
                 assert(assets.any { it.id.definitionId == DefinitionId("nft_number_1_for_alice".asName(), DEFAULT_DOMAIN_ID) })
             }
+    }
+
+    @Disabled
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `unregister executable trigger`(): Unit = runBlocking {
+        val triggerName = "executable_trigger"
+        val triggerId = TriggerId(triggerName.asName())
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerExecutableTrigger(
+                triggerId,
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
+                Repeats.Exactly(1L),
+                ALICE_ACCOUNT_ID
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        var trigger = QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertNotNull(trigger)
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterTrigger(
+                triggerName,
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        trigger = QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertNotNull(trigger)
     }
 }
