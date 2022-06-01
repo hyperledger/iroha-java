@@ -342,6 +342,23 @@ object Instructions {
     }
 
     /**
+     * Instruction to set key value at the object
+     */
+    fun setKeyValue(
+        definitionId: DefinitionId,
+        key: Name,
+        value: Value
+    ): Instruction.SetKeyValue {
+        return Instruction.SetKeyValue(
+            SetKeyValueBox(
+                objectId = IdBox.AssetDefinitionId(definitionId).evaluatesTo(),
+                key = key.evaluatesTo(),
+                value = value.evaluatesTo()
+            )
+        )
+    }
+
+    /**
      * Instruction to set key value at the account's metadata
      */
     fun setKeyValue(
