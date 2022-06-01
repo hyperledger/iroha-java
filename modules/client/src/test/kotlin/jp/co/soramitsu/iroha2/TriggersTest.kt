@@ -348,67 +348,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .first()
     }
 
-    @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
-        val triggerId = TriggerId("wasm_trigger".asName())
-
-        val currentTime = Date().time / 1000
-        val schedule = Schedule(
-            Duration(BigInteger.valueOf(currentTime), 0),
-            Duration(BigInteger.valueOf(1L), 0)
-        )
-        val filter = FilterBox.Time(
-            TimeEventFilter(
-                ExecutionTime.Schedule(schedule)
-            )
-        )
-
-        val wasm = this.javaClass.classLoader.getResource("create_nft_for_every_user_smartcontract.wasm").readBytes()
-
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            registerWasmTrigger(
-                triggerId,
-                wasm,
-                Repeats.Indefinitely(),
-                ALICE_ACCOUNT_ID,
-                Metadata(mapOf()),
-                filter
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        // send some transactions to keep Iroha2 network busy
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            setKeyValue(ALICE_ACCOUNT_ID, "test".asName(), "test".asValue())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            setKeyValue(ALICE_ACCOUNT_ID, "test2".asName(), "test2".asValue())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { assets ->
-                assert(assets.size > 1)
-                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
-                assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
-                assert(assets.any { it.id.definitionId == DefinitionId("nft_number_1_for_alice".asName(), DEFAULT_DOMAIN_ID) })
-            }
-    }
-
     @Disabled
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
