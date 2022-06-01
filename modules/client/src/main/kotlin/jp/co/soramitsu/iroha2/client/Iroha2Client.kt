@@ -26,11 +26,9 @@ import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
-import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
@@ -46,6 +44,7 @@ import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
 import jp.co.soramitsu.iroha2.toHex
+import jp.co.soramitsu.iroha2.transaction.Filters
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +59,6 @@ import org.slf4j.LoggerFactory
 import java.net.URL
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as Filter
 
 @Suppress("unused")
 open class Iroha2Client(
@@ -312,8 +310,8 @@ open class Iroha2Client(
     private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
-                FilterBox.Pipeline(
-                    Filter(EntityKind.Transaction(), null, Hash(hash))
+                Filters.pipeline(
+                    EntityKind.Transaction(), null, hash
                 )
             )
         )

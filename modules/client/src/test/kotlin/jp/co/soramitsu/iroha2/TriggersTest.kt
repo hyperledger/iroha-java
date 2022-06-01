@@ -16,20 +16,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.EntityFilters
+import jp.co.soramitsu.iroha2.transaction.EventFilters
+import jp.co.soramitsu.iroha2.transaction.Filters
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -44,7 +38,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class TriggersTest : IrohaTest<Iroha2Client>() {
@@ -68,19 +61,9 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val prevQuantity = checkDefaultDomainQuantity()
         assertEquals(100L, prevQuantity)
 
-        // register trigger
-        val filter = FilterBox.Data(
-            FilterOptEntityFilter.BySome(
-                EntityFilter.ByAssetDefinition(
-                    FilterOptAssetDefinitionFilter.BySome(
-                        AssetDefinitionFilter(
-                            FilterOptIdFilterAssetDefinitionId.AcceptAll(),
-                            FilterOptAssetDefinitionEventFilter.BySome(
-                                AssetDefinitionEventFilter.ByCreated()
-                            )
-                        )
-                    )
-                )
+        val filter = Filters.data(
+            EntityFilters.byAssetDefinition(
+                eventFilter = AssetDefinitionEventFilter.ByCreated()
             )
         )
         client.sendTransaction {
@@ -221,101 +204,21 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         assertEquals(95, readQuantity())
     }
 
-    private suspend fun sendAndWait10Txs() {
-        for (i in 0..10) {
-            client.sendTransaction {
-                accountId = ALICE_ACCOUNT_ID
-                setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i".asValue())
-                buildSigned(ALICE_KEYPAIR)
-            }.also { d ->
-                delay(1000)
-                withTimeout(txTimeout) { d.await() }
-            }
-        }
-    }
-
-    private suspend fun readQuantity(
-        assetId: AssetId = DEFAULT_ASSET_ID,
-        accountId: AccountId = ALICE_ACCOUNT_ID,
-        keyPair: KeyPair = ALICE_KEYPAIR
-    ): Long {
-        return QueryBuilder.findAssetById(assetId)
-            .account(accountId)
-            .buildSigned(keyPair)
-            .let { query -> client.sendQuery(query) }
-            .value.cast<AssetValue.Quantity>().u32
-    }
-
-    private suspend fun sendAndAwaitTimeTrigger(
-        triggerId: TriggerId,
-        repeats: Repeats,
-        instruction: Instruction,
-        accountId: AccountId = ALICE_ACCOUNT_ID,
-    ) {
-        client.sendTransaction {
-            this.accountId = accountId
-            registerTimeTrigger(
-                triggerId, listOf(instruction), repeats, accountId,
-                Schedule(
-                    Duration(BigInteger.valueOf(Instant.now().epochSecond), 0L),
-                    Duration(BigInteger.valueOf(1L), 0L)
-                )
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-    }
-
-    private suspend fun createNewAsset(assetName: String, prevSize: Int) {
-        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            registerAsset(newAsset, AssetValueType.Quantity())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        // check new asset is created
-        val query = QueryBuilder.findAllAssetsDefinitions()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val assetDefinitions = client.sendQuery(query)
-        assertEquals(prevSize + 1, assetDefinitions.size)
-        val asset = assetDefinitions.first { it.id.name.string == assetName }
-        assertNotNull(asset)
-    }
-
-    private suspend fun checkDefaultDomainQuantity(): Long {
-        return QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .accounts
-            .filter { it.key.name == ALICE_ACCOUNT_NAME }
-            .map { it.value.assets[DEFAULT_ASSET_ID] }
-            .map { (it?.value as AssetValue.Quantity).u32 }
-            .first()
-    }
-
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
         val triggerId = TriggerId("wasm_trigger".asName())
 
         val currentTime = Date().time / 1000
-        val schedule = Schedule(
-            Duration(BigInteger.valueOf(currentTime), 0),
-            Duration(BigInteger.valueOf(1L), 0)
-        )
-        val filter = FilterBox.Time(
-            TimeEventFilter(
-                ExecutionTime.Schedule(schedule)
+        val filter = Filters.time(
+            EventFilters.timeEventFilter(
+                Duration(BigInteger.valueOf(currentTime), 0),
+                Duration(BigInteger.valueOf(1L), 0)
             )
         )
-
-        val wasm = this.javaClass.classLoader.getResource("create_nft_for_every_user_smartcontract.wasm").readBytes()
+        val wasm = this.javaClass.classLoader
+            .getResource("create_nft_for_every_user_smartcontract.wasm")
+            .readBytes()
 
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -356,8 +259,93 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 assert(assets.size > 1)
                 assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
                 assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
-                assert(assets.any { it.id.definitionId == DefinitionId("nft_number_1_for_alice".asName(), DEFAULT_DOMAIN_ID) })
+                assert(
+                    assets.any {
+                        it.id.definitionId == DefinitionId(
+                            "nft_number_1_for_alice".asName(),
+                            DEFAULT_DOMAIN_ID
+                        )
+                    }
+                )
             }
+    }
+
+    private suspend fun sendAndWait10Txs() {
+        for (i in 0..10) {
+            client.sendTransaction {
+                accountId = ALICE_ACCOUNT_ID
+                setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i".asValue())
+                buildSigned(ALICE_KEYPAIR)
+            }.also { d ->
+                delay(1000)
+                withTimeout(txTimeout) { d.await() }
+            }
+        }
+    }
+
+    private suspend fun readQuantity(
+        assetId: AssetId = DEFAULT_ASSET_ID,
+        accountId: AccountId = ALICE_ACCOUNT_ID,
+        keyPair: KeyPair = ALICE_KEYPAIR
+    ): Long {
+        return QueryBuilder.findAssetById(assetId)
+            .account(accountId)
+            .buildSigned(keyPair)
+            .let { query -> client.sendQuery(query) }
+            .value.cast<AssetValue.Quantity>().u32
+    }
+
+    private suspend fun sendAndAwaitTimeTrigger(
+        triggerId: TriggerId,
+        repeats: Repeats,
+        instruction: Instruction,
+        accountId: AccountId = ALICE_ACCOUNT_ID,
+    ) {
+        client.sendTransaction {
+            this.accountId = accountId
+            registerTimeTrigger(
+                triggerId, listOf(instruction), repeats, accountId,
+                EventFilters.timeEventFilter(
+                    Duration(BigInteger.valueOf(Instant.now().epochSecond), 0L),
+                    Duration(BigInteger.valueOf(1L), 0L)
+                )
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+    }
+
+    private suspend fun createNewAsset(assetName: String, prevSize: Int) {
+        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAsset(newAsset, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        // check new asset is created
+        val query = QueryBuilder.findAllAssetsDefinitions()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val assetDefinitions = client.sendQuery(query)
+        assertEquals(prevSize + 1, assetDefinitions.size)
+        val asset = assetDefinitions.first { it.id.name.string == assetName }
+        assertNotNull(asset)
+    }
+
+    private suspend fun checkDefaultDomainQuantity(): Long {
+        return QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .accounts
+            .filter { it.key.name == ALICE_ACCOUNT_NAME }
+            .map { it.value.assets[DEFAULT_ASSET_ID] }
+            .map { (it?.value as AssetValue.Quantity).u32 }
+            .first()
     }
 
     @Disabled
