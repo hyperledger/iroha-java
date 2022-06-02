@@ -115,7 +115,6 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         Assertions.assertEquals(5, ((AssetValue.Quantity) value).getU32());
     }
 
-    @Disabled // https://github.com/hyperledger/iroha/issues/2288
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void updateKeyValueInstructionCommitted() throws Exception {
@@ -133,20 +132,22 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
+        final jp.co.soramitsu.iroha2.generated.datamodel.asset.Id assetId =
+            new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
+                DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
+            );
         final VersionedTransaction keyValueTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
             .setKeyValue(
-                new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
-                    DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
-                ),
+                assetId,
                 assetMetadataKey,
                 assetMetadataValue2
             ).buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(keyValueTx).get(10, TimeUnit.SECONDS);
 
         final QueryAndExtractor<Value> assetDefinitionValueQuery = QueryBuilder
-            .findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetMetadataKey)
+            .findAssetKeyValueByIdAndKey(assetId, assetMetadataKey)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR);
         final CompletableFuture<Value> future = client.sendQueryAsync(assetDefinitionValueQuery);
@@ -158,7 +159,6 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         );
     }
 
-    @Disabled // https://github.com/hyperledger/iroha/issues/2288
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void setKeyValueInstructionCommitted() throws Exception {
@@ -176,9 +176,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
             .builder()
             .account(ALICE_ACCOUNT_ID)
             .setKeyValue(
-                new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
-                    DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
-                ),
+                DEFAULT_ASSET_DEFINITION_ID,
                 assetKey,
                 assetValue
             ).buildSigned(ALICE_KEYPAIR);
