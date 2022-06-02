@@ -31,11 +31,13 @@ import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.security.KeyPair
 import java.security.SecureRandom
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -43,6 +45,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
 class InstructionsTest : IrohaTest<Iroha2Client>() {
@@ -51,13 +54,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha(DefaultGenesis::class)
     fun `register domain instruction committed`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            registerDomain(domainId)
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
+        registerDomain(domainId)
 
         QueryBuilder.findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
@@ -620,6 +617,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `double domain registration should fails`(): Unit = runBlocking {
+        val domainId = UUID.randomUUID().toString().asDomainId()
+        registerDomain(domainId)
+        assertThrows<TransactionRejectedException> {
+            runBlocking { registerDomain(domainId) }
+        }
+    }
+
     @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
@@ -754,6 +761,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 mintPublicKey(accountId, pair.public.toIrohaPublicKey())
                 buildSigned(ALICE_KEYPAIR)
             }
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+    }
+
+    private suspend fun registerDomain(domainId: DomainId) {
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerDomain(domainId)
+            buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
