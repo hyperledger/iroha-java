@@ -111,6 +111,37 @@ public sealed class IdentifiableBox : ModelEnum {
     }
 
     /**
+     * 'NewAssetDefinition' variant
+     */
+    public data class NewAssetDefinition(
+        public val newAssetDefinition:  
+            jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
+    ) : IdentifiableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<NewAssetDefinition>, ScaleWriter<NewAssetDefinition> {
+            public const val DISCRIMINANT: Int = 3
+
+            public override fun read(reader: ScaleCodecReader): NewAssetDefinition = try {
+                NewAssetDefinition(
+                    jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: NewAssetDefinition) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition.write(
+                    writer,
+                    instance.newAssetDefinition
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Domain' variant
      */
     public data class Domain(
@@ -119,7 +150,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): Domain = try {
                 Domain(
@@ -146,7 +177,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Account>, ScaleWriter<Account> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): Account = try {
                 Account(
@@ -173,7 +204,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 6
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
@@ -203,7 +234,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 7
 
             public override fun read(reader: ScaleCodecReader): Asset = try {
                 Asset(
@@ -230,7 +261,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Trigger>, ScaleWriter<Trigger> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 8
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
@@ -258,7 +289,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Role>, ScaleWriter<Role> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 9
 
             public override fun read(reader: ScaleCodecReader): Role = try {
                 Role(
@@ -284,12 +315,13 @@ public sealed class IdentifiableBox : ModelEnum {
             0 -> Peer.read(reader)
             1 -> NewDomain.read(reader)
             2 -> NewAccount.read(reader)
-            3 -> Domain.read(reader)
-            4 -> Account.read(reader)
-            5 -> AssetDefinition.read(reader)
-            6 -> Asset.read(reader)
-            7 -> Trigger.read(reader)
-            8 -> Role.read(reader)
+            3 -> NewAssetDefinition.read(reader)
+            4 -> Domain.read(reader)
+            5 -> Account.read(reader)
+            6 -> AssetDefinition.read(reader)
+            7 -> Asset.read(reader)
+            8 -> Trigger.read(reader)
+            9 -> Role.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -299,12 +331,13 @@ public sealed class IdentifiableBox : ModelEnum {
                 0 -> Peer.write(writer, instance as Peer)
                 1 -> NewDomain.write(writer, instance as NewDomain)
                 2 -> NewAccount.write(writer, instance as NewAccount)
-                3 -> Domain.write(writer, instance as Domain)
-                4 -> Account.write(writer, instance as Account)
-                5 -> AssetDefinition.write(writer, instance as AssetDefinition)
-                6 -> Asset.write(writer, instance as Asset)
-                7 -> Trigger.write(writer, instance as Trigger)
-                8 -> Role.write(writer, instance as Role)
+                3 -> NewAssetDefinition.write(writer, instance as NewAssetDefinition)
+                4 -> Domain.write(writer, instance as Domain)
+                5 -> Account.write(writer, instance as Account)
+                6 -> AssetDefinition.write(writer, instance as AssetDefinition)
+                7 -> Asset.write(writer, instance as Asset)
+                8 -> Trigger.write(writer, instance as Trigger)
+                9 -> Role.write(writer, instance as Role)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

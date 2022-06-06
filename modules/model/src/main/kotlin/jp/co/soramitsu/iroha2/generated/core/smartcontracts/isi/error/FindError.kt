@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
@@ -167,7 +168,7 @@ public sealed class FindError : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val parentHashNotFound: ParentHashNotFound
+        public val hashOf: HashOf<VersionedCommittedBlock>
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -176,14 +177,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Block = try {
                 Block(
-                    ParentHashNotFound.read(reader),
+                    HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
-                ParentHashNotFound.write(writer, instance.parentHashNotFound)
+                HashOf.write(writer, instance.hashOf)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

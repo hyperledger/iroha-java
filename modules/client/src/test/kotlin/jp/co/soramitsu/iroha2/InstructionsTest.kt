@@ -671,6 +671,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 )
             )
+            buildSigned(BOB_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
             grantRole(roleId, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->

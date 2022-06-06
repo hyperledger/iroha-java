@@ -27,6 +27,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
@@ -259,7 +260,7 @@ object Instructions {
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.AssetDefinition(
-                AssetDefinition(id, assetValueType, mintable, metadata)
+                NewAssetDefinition(id, assetValueType, mintable, metadata)
             )
         }
     }

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
 import jp.co.soramitsu.iroha2.wrapException
@@ -110,7 +111,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val assetDefinition: jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+        public val newAssetDefinition: NewAssetDefinition
     ) : RegistrableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -119,17 +120,14 @@ public sealed class RegistrableBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
-                    jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition.read(reader),
+                    NewAssetDefinition.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition.write(
-                    writer,
-                    instance.assetDefinition
-                )
+                NewAssetDefinition.write(writer, instance.newAssetDefinition)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
