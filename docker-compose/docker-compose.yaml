@@ -12,6 +12,6 @@ services:
       - "8080:8080"
       - "8180:8180"
     volumes:
-      - "./genesis.json:/genesis.json"
-      - "./config.json:/config.json"
+      - "../modules/testcontainers/src/main/resources/genesis.json:/genesis.json"
+      - "../modules/testcontainers/src/main/resources/config.json:/config.json"
     command: ./iroha --submit-genesis
