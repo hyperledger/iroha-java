@@ -1273,6 +1273,10 @@
         {
           "name": "invalidated_blocks_hashes",
           "ty": "Vec<iroha_crypto::hash::Hash>"
+        },
+        {
+          "name": "current_block_hash",
+          "ty": "iroha_crypto::hash::Hash"
         }
       ]
     }

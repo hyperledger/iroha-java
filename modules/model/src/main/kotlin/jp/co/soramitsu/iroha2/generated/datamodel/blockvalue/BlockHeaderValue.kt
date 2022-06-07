@@ -25,7 +25,8 @@ public data class BlockHeaderValue(
     public val previousBlockHash: Hash,
     public val transactionsHash: HashOf<List<VersionedTransaction>>,
     public val rejectedTransactionsHash: HashOf<List<VersionedTransaction>>,
-    public val invalidatedBlocksHashes: List<Hash>
+    public val invalidatedBlocksHashes: List<Hash>,
+    public val currentBlockHash: Hash
 ) {
     public companion object : ScaleReader<BlockHeaderValue>, ScaleWriter<BlockHeaderValue> {
         public override fun read(reader: ScaleCodecReader): BlockHeaderValue = try {
@@ -36,6 +37,7 @@ public data class BlockHeaderValue(
                 HashOf.read(reader) as HashOf<List<VersionedTransaction>>,
                 HashOf.read(reader) as HashOf<List<VersionedTransaction>>,
                 reader.readVec(reader.readCompactInt()) { Hash.read(reader) },
+                Hash.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -51,6 +53,7 @@ public data class BlockHeaderValue(
             instance.invalidatedBlocksHashes.forEach { value ->
                 Hash.write(writer, value)
             }
+            Hash.write(writer, instance.currentBlockHash)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
