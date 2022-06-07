@@ -2,9 +2,11 @@ package jp.co.soramitsu.iroha2.query
 
 import jp.co.soramitsu.iroha2.AccountExtractor
 import jp.co.soramitsu.iroha2.AccountsExtractor
+import jp.co.soramitsu.iroha2.AssetDefinitionExtractor
 import jp.co.soramitsu.iroha2.AssetDefinitionsExtractor
 import jp.co.soramitsu.iroha2.AssetExtractor
 import jp.co.soramitsu.iroha2.AssetsExtractor
+import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
@@ -13,6 +15,7 @@ import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
+import jp.co.soramitsu.iroha2.TransactionsValueExtractor
 import jp.co.soramitsu.iroha2.TriggerExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
@@ -247,6 +250,24 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
         @JvmStatic
         fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
+
+        @JvmStatic
+        fun findAllTransactions() = QueryBuilder(
+            Queries.findAllTransactions(),
+            TransactionsValueExtractor
+        )
+
+        @JvmStatic
+        fun findAllBlocks() = QueryBuilder(
+            Queries.findAllBlocks(),
+            BlocksValueExtractor
+        )
+
+        @JvmStatic
+        fun findAssetDefinitionById(definitionId: DefinitionId) = QueryBuilder(
+            Queries.findAssetDefinitionById(definitionId),
+            AssetDefinitionExtractor
+        )
 
         @JvmStatic
         fun findTriggerById(id: TriggerId) = QueryBuilder(

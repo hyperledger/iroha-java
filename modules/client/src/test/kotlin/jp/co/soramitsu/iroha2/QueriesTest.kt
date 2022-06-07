@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
@@ -66,7 +67,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(NewAccountWithMetadata::class)
-    fun `find account key value by id and key`(): Unit = runBlocking {
+    fun `find account key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAccountKeyValueByIdAndKey(
             NewAccountWithMetadata.ACCOUNT_ID,
             NewAccountWithMetadata.KEY
@@ -154,7 +155,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(XorAndValAssets::class)
-    fun `find asset quantity by id`(): Unit = runBlocking {
+    fun `find asset quantity by ID`(): Unit = runBlocking {
         val assetId = Id(XorAndValAssets.XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
         QueryBuilder.findAssetQuantityById(assetId)
             .account(ALICE_ACCOUNT_ID)
@@ -168,7 +169,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(StoreAssetWithMetadata::class)
-    fun `find asset key value by id and key`(): Unit = runBlocking {
+    fun `find asset key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetKeyValueByIdAndKey(
             StoreAssetWithMetadata.ASSET_ID,
             StoreAssetWithMetadata.ASSET_KEY
@@ -184,7 +185,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(StoreAssetWithMetadata::class)
-    fun `find asset definition key value by id and key`(): Unit = runBlocking {
+    fun `find asset definition key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(
             StoreAssetWithMetadata.DEFINITION_ID,
             StoreAssetWithMetadata.ASSET_KEY
@@ -195,6 +196,18 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.also {
                 assert(it == StoreAssetWithMetadata.ASSET_VALUE)
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `find asset definition by ID`(): Unit = runBlocking {
+        QueryBuilder.findAssetDefinitionById(DEFAULT_ASSET_DEFINITION_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { assetDefinition ->
+                assertEquals(assetDefinition.id, DEFAULT_ASSET_DEFINITION_ID)
             }
     }
 
@@ -372,7 +385,47 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         assertEquals(5, accounts.total.toInt() - 1)
     }
 
-    suspend fun createAccount(name: String) {
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `find all transactions`(): Unit = runBlocking {
+        repeat(5) {
+            client.sendTransaction {
+                account(ALICE_ACCOUNT_ID)
+                burnAsset(DEFAULT_ASSET_ID, 1)
+                buildSigned(ALICE_KEYPAIR)
+            }.also { d ->
+                withTimeout(txTimeout) { d.await() }
+            }
+        }
+        QueryBuilder.findAllTransactions()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { txs ->
+                assertTrue(txs.size == 6) // 5 + genesis tx
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `find all blocks`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            burnAsset(DEFAULT_ASSET_ID, 1)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+        QueryBuilder.findAllBlocks()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { blocks ->
+                assertTrue(blocks.size == 2)
+            }
+    }
+
+    private suspend fun createAccount(name: String) {
         val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID

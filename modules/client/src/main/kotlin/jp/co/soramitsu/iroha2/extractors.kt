@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
@@ -146,6 +147,22 @@ object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
 object TransactionValueExtractor : ResultExtractor<TransactionValue> {
     override fun extract(result: PaginatedQueryResult): TransactionValue {
         return extractValue(result.result.value, Value.TransactionValue::transactionValue)
+    }
+}
+
+object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
+    override fun extract(result: PaginatedQueryResult): List<TransactionValue> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.TransactionValue::transactionValue)
+        }
+    }
+}
+
+object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
+    override fun extract(result: PaginatedQueryResult): List<BlockValue> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.Block::blockValue)
+        }
     }
 }
 
