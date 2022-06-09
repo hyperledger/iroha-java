@@ -19,6 +19,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
+import java.math.BigInteger
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
@@ -40,6 +41,8 @@ fun String.asValue() = Value.String(this)
 fun Int.asValue() = this.toLong().asValue()
 
 fun Long.asValue() = Value.U32(this)
+
+fun BigInteger.asValue() = Value.U128(this)
 
 fun Boolean.asValue() = Value.Bool(this)
 
