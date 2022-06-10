@@ -1,6 +1,6 @@
 # Admin client
 
-Iroha2Client extension 
+The `admin-client` module contains Iroha2Client extension.
 
 ## Usage
 
@@ -8,4 +8,6 @@ Iroha2Client extension
 val adminIroha2Client = AdminIroha2Client(PEER_URL, TELEMETRY_URL, log = true)
 ```
 
-More examples you can see in [tests](./src/test/kotlin/jp/co/soramitsu/iroha2)
+## Examples
+
+Check [tests](./src/test/kotlin/jp/co/soramitsu/iroha2) for more examples.

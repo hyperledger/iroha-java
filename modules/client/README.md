@@ -1,6 +1,6 @@
 # Client
 
-Kotlin implementation of [Iroha2](https://github.com/hyperledger/iroha/tree/iroha2-dev) library
+The `client` module contains Kotlin implementation of [Hyperledger Iroha2](https://github.com/hyperledger/iroha/tree/iroha2-dev) library.
 
 ## Usage
 
@@ -8,4 +8,6 @@ Kotlin implementation of [Iroha2](https://github.com/hyperledger/iroha/tree/iroh
 val iroha2Client = Iroha2Client(PEER_URL, log = true)
 ```
 
-More examples you can see in [tests](./src/test/kotlin/jp/co/soramitsu/iroha2)
+## Examples
+
+Check [tests](./src/test/kotlin/jp/co/soramitsu/iroha2) to find examples.
