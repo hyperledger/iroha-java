@@ -1,8 +1,7 @@
 package jp.co.soramitsu.iroha2.engine
 
-import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_METADATA
-import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_USER_METADATA
 import jp.co.soramitsu.iroha2.Genesis
+import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
@@ -34,11 +33,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             ),
             PermissionToken(
-                CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             )
         ),
