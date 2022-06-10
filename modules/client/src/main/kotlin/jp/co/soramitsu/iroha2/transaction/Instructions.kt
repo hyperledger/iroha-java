@@ -1,20 +1,9 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.CAN_BURN_ASSET_WITH_DEFINITION
-import jp.co.soramitsu.iroha2.CAN_BURN_USER_ASSETS_TOKEN
-import jp.co.soramitsu.iroha2.CAN_MINT_USER_ASSETS_DEFINITION
-import jp.co.soramitsu.iroha2.CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN
-import jp.co.soramitsu.iroha2.CAN_REGISTER_DOMAINS_TOKEN
-import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION
-import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS
-import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_METADATA
-import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION
-import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_USER_METADATA
-import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN
-import jp.co.soramitsu.iroha2.CAN_TRANSFER_USER_ASSETS_TOKEN
-import jp.co.soramitsu.iroha2.CAN_UNREGISTER_ASSET_WITH_DEFINITION
 import jp.co.soramitsu.iroha2.DigestFunction
+import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
@@ -56,6 +45,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
+import java.math.BigInteger
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
@@ -67,6 +57,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
 val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
 val ASSET_DEFINITION_PARAM_NAME by lazy { "asset_definition_id".asName() }
+val COUNT_PARAM_NAME by lazy { "count".asName() }
+val PERIOD_PARAM_NAME by lazy { "period".asName() }
 
 object Instructions {
 
@@ -460,60 +452,60 @@ object Instructions {
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     /**
-     * Instruction for granting [CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN] permission to an account
+     * Instruction for granting [Permissions.CanSetKeyValueUserAssetsToken] permission to an account
      */
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_SET_KEY_VALUE_USER_ASSETS_TOKEN,
+                name = Permissions.CanSetKeyValueUserAssetsToken.permissionName.asName(),
                 params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS] permission to an account
+     * Instruction for granting [Permissions.CanRemoveKeyValueInUserAssets] permission to an account
      */
     fun grantRemoveKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_REMOVE_KEY_VALUE_IN_USER_ASSETS,
+                name = Permissions.CanRemoveKeyValueInUserAssets.permissionName.asName(),
                 params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_SET_KEY_VALUE_IN_USER_METADATA] permission to an account
+     * Instruction for granting [Permissions.CanSetKeyValueInUserMetadata] permission to an account
      */
     fun grantSetKeyValueMetadata(accountId: AccountId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                name = Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
                 params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_REMOVE_KEY_VALUE_IN_USER_METADATA] permission to an account
+     * Instruction for granting [Permissions.CanRemoveKeyValueInUserMetadata] permission to an account
      */
     fun grantRemoveKeyValueMetadata(accountId: AccountId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                name = Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
                 params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION] permission to an account
+     * Instruction for granting [Permissions.CanSetKeyValueInAssetDefinition] permission to an account
      */
     fun grantSetKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_SET_KEY_VALUE_IN_ASSET_DEFINITION,
+                name = Permissions.CanSetKeyValueInAssetDefinition.permissionName.asName(),
                 params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
@@ -522,12 +514,12 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION] permission to an account
+     * Instruction for granting [Permissions.CanRemoveKeyValueInAssetDefinition] permission to an account
      */
     fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_REMOVE_KEY_VALUE_IN_ASSET_DEFINITION,
+                name = Permissions.CanRemoveKeyValueInAssetDefinition.permissionName.asName(),
                 params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
@@ -536,12 +528,12 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN] permission to an account
+     * Instruction for granting [Permissions.CanMintUserAssetDefinitionsToken] permission to an account
      */
-    fun grantMintUserAssetsDefinitions(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantMintUserAssetDefinitions(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_MINT_USER_ASSET_DEFINITIONS_TOKEN,
+                name = Permissions.CanMintUserAssetDefinitionsToken.permissionName.asName(),
                 params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
@@ -550,26 +542,27 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_MINT_USER_ASSETS_DEFINITION] permission to an account
+     * Instruction for granting [Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod] permission to an account
      */
-    fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantTransferOnlyFixedNumberOfTimesPerPeriod(period: BigInteger, count: Long, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_MINT_USER_ASSETS_DEFINITION,
+                name = Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod.permissionName.asName(),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    PERIOD_PARAM_NAME to period.asValue(),
+                    COUNT_PARAM_NAME to count.asValue()
                 )
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_BURN_ASSET_WITH_DEFINITION] permission to an account
+     * Instruction for granting [Permissions.CanBurnAssetWithDefinition] permission to an account
      */
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_BURN_ASSET_WITH_DEFINITION,
+                name = Permissions.CanBurnAssetWithDefinition.permissionName.asName(),
                 params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
@@ -578,12 +571,12 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_BURN_USER_ASSETS_TOKEN] permission to an account
+     * Instruction for granting [Permissions.CanBurnUserAssetsToken] permission to an account
      */
     fun grantBurnAssets(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_BURN_USER_ASSETS_TOKEN,
+                name = Permissions.CanBurnUserAssetsToken.permissionName.asName(),
                 params = mapOf(
                     ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
                 )
@@ -592,24 +585,24 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_REGISTER_DOMAINS_TOKEN] permission to an account
+     * Instruction for granting [Permissions.CanRegisterDomainsToken] permission to an account
      */
     fun grantRegisterDomains(target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_REGISTER_DOMAINS_TOKEN,
+                name = Permissions.CanRegisterDomainsToken.permissionName.asName(),
                 params = emptyMap()
             )
         }
     }
 
     /**
-     * Instruction for granting [CAN_TRANSFER_USER_ASSETS_TOKEN] permission to an account
+     * Instruction for granting [Permissions.CanTransferUserAssetsToken] permission to an account
      */
     fun grantTransferUserAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_TRANSFER_USER_ASSETS_TOKEN,
+                name = Permissions.CanTransferUserAssetsToken.permissionName.asName(),
                 params = mapOf(
                     ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
                 )
@@ -618,12 +611,12 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [CAN_UNREGISTER_ASSET_WITH_DEFINITION] permission to an account
+     * Instruction for granting [Permissions.CanUnregisterAssetWithDefinition] permission to an account
      */
     fun grantUnregisterAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
-                name = CAN_UNREGISTER_ASSET_WITH_DEFINITION,
+                name = Permissions.CanUnregisterAssetWithDefinition.permissionName.asName(),
                 params = mapOf(
                     ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
                 )
