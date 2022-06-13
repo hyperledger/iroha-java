@@ -60,10 +60,14 @@ val ASSET_DEFINITION_PARAM_NAME by lazy { "asset_definition_id".asName() }
 val COUNT_PARAM_NAME by lazy { "count".asName() }
 val PERIOD_PARAM_NAME by lazy { "period".asName() }
 
+/**
+ * Iroha Special Instructions cover all possible actions within a blockchain
+ * @see [Iroha2 Tutorial on Iroha Special Instructions](https://hyperledger.github.io/iroha-2-docs/guide/advanced/isi.html)
+ */
 object Instructions {
 
     /**
-     * Instruction for role registration
+     * Register a role that has the specified permissions
      */
     fun registerRole(
         roleId: RoleId,
@@ -77,7 +81,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for account registration
+     * Register an account
      */
     @JvmOverloads
     fun registerAccount(
@@ -93,7 +97,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for time trigger registration
+     * Register a time trigger
      */
     fun registerTimeTrigger(
         triggerId: TriggerId,
@@ -120,7 +124,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for executable trigger registration
+     * Register an executable trigger
      */
     fun registerExecutableTrigger(
         triggerId: TriggerId,
@@ -146,7 +150,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for data trigger registration
+     * Register an event trigger
      */
     fun registerEventTrigger(
         triggerId: TriggerId,
@@ -173,7 +177,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for wasm trigger registration
+     * Register a WASM trigger
      */
     fun registerWasmTrigger(
         triggerId: TriggerId,
@@ -202,7 +206,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for pre commit trigger to run after every transaction
+     * Register a pre-commit trigger to run after every transaction
      */
     fun registerPreCommitTrigger(
         triggerId: TriggerId,
@@ -227,6 +231,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Unregister a trigger
+     */
     fun unregisterTrigger(
         triggerName: String
     ): Instruction.Unregister {
@@ -240,7 +247,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for asset registration
+     * Register an asset
      */
     @JvmOverloads
     fun registerAsset(
@@ -257,7 +264,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for domain registration
+     * Register a domain
      */
     @JvmOverloads
     fun registerDomain(
@@ -277,7 +284,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for peer registration
+     * Register a peer
      */
     @JvmOverloads
     fun registerPeer(
@@ -298,7 +305,7 @@ object Instructions {
     }
 
     /**
-     * Instruction to unregister peer
+     * Unregister a peer
      */
     @JvmOverloads
     fun unregisterPeer(
@@ -317,7 +324,7 @@ object Instructions {
     }
 
     /**
-     * Instruction to set key value at the object
+     * Set key/value for a given asset
      */
     fun setKeyValue(
         assetId: AssetId,
@@ -334,7 +341,7 @@ object Instructions {
     }
 
     /**
-     * Instruction to set key value at the object
+     * Set key/value for a given asset definition
      */
     fun setKeyValue(
         definitionId: DefinitionId,
@@ -351,7 +358,7 @@ object Instructions {
     }
 
     /**
-     * Instruction to set key value at the account's metadata
+     * Set key/value in the metadata of a given account
      */
     fun setKeyValue(
         accountId: AccountId,
@@ -368,7 +375,7 @@ object Instructions {
     }
 
     /**
-     * Instruction to remove key value at the object
+     * Remove key/value from a given asset
      */
     fun removeKeyValue(assetId: AssetId, key: Name): Instruction.RemoveKeyValue {
         return Instruction.RemoveKeyValue(
@@ -379,12 +386,15 @@ object Instructions {
         )
     }
 
+    /**
+     * Execute a trigger
+     */
     fun executeTrigger(triggerId: TriggerId): Instruction.ExecuteTrigger {
         return Instruction.ExecuteTrigger(ExecuteTriggerBox(triggerId))
     }
 
     /**
-     * Instruction for mint of an asset with [AssetValueType] is [AssetValueType.Quantity]
+     * Mint an asset of the [AssetValueType.Quantity] asset value type
      */
     fun mintAsset(
         assetId: AssetId,
@@ -397,7 +407,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for mint of an asset with [AssetValueType] is [AssetValueType.Fixed]
+     * Mint an asset of the [AssetValueType.Fixed] asset value type
      */
     fun mintAsset(
         assetId: AssetId,
@@ -410,7 +420,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for mint of a public key
+     * Mint a public key
      */
     fun mintPublicKey(accountId: AccountId, pubKey: PublicKey): Instruction {
         return mintSome(
@@ -420,7 +430,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for burn of an asset with [AssetValueType] is [AssetValueType.Quantity]
+     * Burn an asset of the [AssetValueType.Quantity] asset value type
      */
     fun burnAsset(assetId: AssetId, value: Long): Instruction {
         return burnSome(
@@ -430,7 +440,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for burn of an asset with [AssetValueType] is [AssetValueType.Fixed]
+     * Burn an asset of the [AssetValueType.Fixed] asset value type
      */
     fun burnAsset(assetId: AssetId, value: BigDecimal): Instruction {
         return burnSome(
@@ -440,7 +450,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for burn of a public key
+     * Burn a public key
      */
     fun burnPublicKey(accountId: AccountId, pubKey: PublicKey): Instruction {
         return burnSome(
@@ -452,7 +462,7 @@ object Instructions {
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     /**
-     * Instruction for granting [Permissions.CanSetKeyValueUserAssetsToken] permission to an account
+     * Grant an account the [Permissions.CanSetKeyValueUserAssetsToken] permission
      */
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -464,7 +474,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanRemoveKeyValueInUserAssets] permission to an account
+     * Grant an account the [Permissions.CanRemoveKeyValueInUserAssets] permission
      */
     fun grantRemoveKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -476,7 +486,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanSetKeyValueInUserMetadata] permission to an account
+     * Grant an account the [Permissions.CanSetKeyValueInUserMetadata] permission
      */
     fun grantSetKeyValueMetadata(accountId: AccountId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -488,7 +498,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanRemoveKeyValueInUserMetadata] permission to an account
+     * Grant an account the [Permissions.CanRemoveKeyValueInUserMetadata] permission
      */
     fun grantRemoveKeyValueMetadata(accountId: AccountId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -500,7 +510,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanSetKeyValueInAssetDefinition] permission to an account
+     * Grant an account the [Permissions.CanSetKeyValueInAssetDefinition] permission
      */
     fun grantSetKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -514,7 +524,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanRemoveKeyValueInAssetDefinition] permission to an account
+     * Grant an account the [Permissions.CanRemoveKeyValueInAssetDefinition] permission
      */
     fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -528,7 +538,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanMintUserAssetDefinitionsToken] permission to an account
+     * Grant an account the [Permissions.CanMintUserAssetDefinitionsToken] permission
      */
     fun grantMintUserAssetDefinitions(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -542,7 +552,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod] permission to an account
+     * Grant an account the [Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod] permission
      */
     fun grantTransferOnlyFixedNumberOfTimesPerPeriod(period: BigInteger, count: Long, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -557,7 +567,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanBurnAssetWithDefinition] permission to an account
+     * Grant an account the [Permissions.CanBurnAssetWithDefinition] permission
      */
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -571,7 +581,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanBurnUserAssetsToken] permission to an account
+     * Grant an account the [Permissions.CanBurnUserAssetsToken] permission
      */
     fun grantBurnAssets(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -585,7 +595,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanRegisterDomainsToken] permission to an account
+     * Grant an account the [Permissions.CanRegisterDomainsToken] permission
      */
     fun grantRegisterDomains(target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -597,7 +607,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanTransferUserAssetsToken] permission to an account
+     * Grant an account the [Permissions.CanTransferUserAssetsToken] permission
      */
     fun grantTransferUserAsset(assetId: AssetId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -611,7 +621,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for granting [Permissions.CanUnregisterAssetWithDefinition] permission to an account
+     * Grant an account the [Permissions.CanUnregisterAssetWithDefinition] permission
      */
     fun grantUnregisterAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
@@ -624,6 +634,9 @@ object Instructions {
         }
     }
 
+    /**
+     * Grant an account a given role.
+     */
     fun grantRole(roleId: RoleId, accountId: AccountId): Instruction {
         return Instruction.Grant(
             GrantBox(
@@ -634,7 +647,7 @@ object Instructions {
     }
 
     /**
-     * Instruction for a transfer of an asset from the identifiable source
+     * Transfer an asset from the identifiable source.
      */
     fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId): Instruction {
         return Instruction.Transfer(
@@ -646,6 +659,9 @@ object Instructions {
         )
     }
 
+    /**
+     * Evaluate one instruction if a [condition] is met and another one otherwise.
+     */
     fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction): Instruction {
         return Instruction.If(
             If(condition.evaluatesTo(), then, otherwise)
@@ -653,21 +669,21 @@ object Instructions {
     }
 
     /**
-     * Instruction that includes two instructions
+     * Pair two instructions together.
      */
     fun pair(left: Instruction, right: Instruction): Instruction {
         return Instruction.Pair(Pair(left, right))
     }
 
     /**
-     * Instruction that includes few instructions
+     * Combine multiple [instructions] into a sequence.
      */
     fun sequence(instructions: List<Instruction>): Instruction {
         return Instruction.Sequence(SequenceBox(instructions))
     }
 
     /**
-     * Instruction to fail a transaction
+     * Fail a transaction with a given [message].
      */
     fun fail(message: String): Instruction {
         return Instruction.Fail(FailBox(message))
