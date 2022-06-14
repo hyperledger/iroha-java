@@ -57,7 +57,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
+/**
+ * Filters are used to filter out events
+ */
 object Filters {
+
+    /**
+     * Create a data filter
+     */
     fun data(entityFilter: EntityFilter? = null): FilterBox.Data {
         return FilterBox.Data(
             entityFilter?.let { FilterOptEntityFilter.BySome(it) }
@@ -65,10 +72,16 @@ object Filters {
         )
     }
 
+    /**
+     * Create an [eventFilter]
+     */
     fun time(eventFilter: TimeEventFilter): FilterBox.Time {
         return FilterBox.Time(eventFilter)
     }
 
+    /**
+     * Execute a given trigger based on a specified [authority]
+     */
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId
@@ -78,6 +91,13 @@ object Filters {
         )
     }
 
+    /**
+     * Create an event filter that matches events based on associated [entityKind], [statusKind], [hash],
+     * or any combination of these.
+     *
+     * @see jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.StatusKind
+     * @see jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
+     */
     fun pipeline(
         entityKind: EntityKind? = null,
         statusKind: StatusKind? = null,
@@ -91,8 +111,15 @@ object Filters {
     }
 }
 
+/**
+ * `EntityFilters` match events associated with a given entity
+ * and either return all matching events or additionally apply another filter to them.
+ */
 object EntityFilters {
 
+    /**
+     * Match events associated with asset definition and apply [idFilter] or [eventFilter]
+     */
     fun byAssetDefinition(
         idFilter: IdFilterAssetDefinitionId? = null,
         eventFilter: AssetDefinitionEventFilter? = null
@@ -109,12 +136,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with asset definition
+     */
     fun byAssetDefinition(): EntityFilter.ByAssetDefinition {
         return EntityFilter.ByAssetDefinition(
             FilterOptAssetDefinitionFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with accounts and apply [idFilter] or [eventFilter]
+     */
     fun byAccount(
         idFilter: IdFilterAccountId? = null,
         eventFilter: AccountEventFilter? = null
@@ -131,12 +164,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with accounts
+     */
     fun byAccount(): EntityFilter.ByAccount {
         return EntityFilter.ByAccount(
             FilterOptAccountFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with assets and apply [idFilter] or [eventFilter]
+     */
     fun byAsset(
         idFilter: IdFilterAssetId? = null,
         eventFilter: AssetEventFilter? = null
@@ -153,12 +192,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with assets
+     */
     fun byAsset(): EntityFilter.ByAsset {
         return EntityFilter.ByAsset(
             FilterOptAssetFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with triggers and apply [idFilter] or [eventFilter]
+     */
     fun byTrigger(
         idFilter: IdFilterTriggerId? = null,
         eventFilter: TriggerEventFilter? = null
@@ -175,12 +220,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with triggers
+     */
     fun byTrigger(): EntityFilter.ByTrigger {
         return EntityFilter.ByTrigger(
             FilterOptTriggerFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with domains and apply [idFilter] or [eventFilter]
+     */
     fun byDomain(
         idFilter: IdFilterDomainId? = null,
         eventFilter: DomainEventFilter? = null
@@ -197,12 +248,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with domains
+     */
     fun byDomain(): EntityFilter.ByDomain {
         return EntityFilter.ByDomain(
             FilterOptDomainFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with peers and apply [idFilter] or [eventFilter]
+     */
     fun byPeer(
         idFilter: IdFilterPeerId? = null,
         eventFilter: PeerEventFilter? = null
@@ -219,12 +276,18 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with peers
+     */
     fun byPeer(): EntityFilter.ByPeer {
         return EntityFilter.ByPeer(
             FilterOptPeerFilter.AcceptAll()
         )
     }
 
+    /**
+     * Match events associated with roles and apply [idFilter] or [eventFilter]
+     */
     fun byRole(
         idFilter: IdFilterRoleId? = null,
         eventFilter: RoleEventFilter? = null
@@ -241,6 +304,9 @@ object EntityFilters {
         )
     }
 
+    /**
+     * Match events associated with roles
+     */
     fun byRole(): EntityFilter.ByRole {
         return EntityFilter.ByRole(
             FilterOptRoleFilter.AcceptAll()
@@ -248,7 +314,14 @@ object EntityFilters {
     }
 }
 
+/**
+ * Timed filters
+ */
 object EventFilters {
+
+    /**
+     * Create a filter with a timed execution
+     */
     fun timeEventFilter(
         start: Duration,
         period: Duration? = null
@@ -260,6 +333,9 @@ object EventFilters {
         )
     }
 
+    /**
+     * Create a pre-commit filter
+     */
     fun timeEventFilter(): TimeEventFilter {
         return TimeEventFilter(
             ExecutionTime.PreCommit()
