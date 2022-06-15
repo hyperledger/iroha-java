@@ -118,7 +118,8 @@ object Filters {
 object EntityFilters {
 
     /**
-     * Match events associated with asset definition and apply [idFilter] or [eventFilter]
+     * Match events associated with asset definition and apply another filter referenced by
+     * its [id][IdFilterAssetDefinitionId] or [event type][AssetDefinitionEventFilter]
      */
     fun byAssetDefinition(
         idFilter: IdFilterAssetDefinitionId? = null,
@@ -146,7 +147,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with accounts and apply [idFilter] or [eventFilter]
+     * Match events associated with accounts and apply another filter referenced by
+     * its [id][IdFilterAccountId] or [event type][AccountEventFilter]
      */
     fun byAccount(
         idFilter: IdFilterAccountId? = null,
@@ -174,7 +176,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with assets and apply [idFilter] or [eventFilter]
+     * Match events associated with assets and apply another filter referenced by
+     * its [id][IdFilterAssetId] or [event type][AssetEventFilter]
      */
     fun byAsset(
         idFilter: IdFilterAssetId? = null,
@@ -202,7 +205,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with triggers and apply [idFilter] or [eventFilter]
+     * Match events associated with triggers and apply another filter referenced by
+     * its [id][IdFilterTriggerId] or [event type][TriggerEventFilter]
      */
     fun byTrigger(
         idFilter: IdFilterTriggerId? = null,
@@ -230,7 +234,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with domains and apply [idFilter] or [eventFilter]
+     * Match events associated with domains and apply another filter referenced by
+     * its [id][IdFilterDomainId] or [event type][DomainEventFilter]
      */
     fun byDomain(
         idFilter: IdFilterDomainId? = null,
@@ -258,7 +263,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with peers and apply [idFilter] or [eventFilter]
+     * Match events associated with peers and apply another filter referenced by
+     * its [id][IdFilterPeerId] or [event type][PeerEventFilter]
      */
     fun byPeer(
         idFilter: IdFilterPeerId? = null,
@@ -286,7 +292,8 @@ object EntityFilters {
     }
 
     /**
-     * Match events associated with roles and apply [idFilter] or [eventFilter]
+     * Match events associated with roles and apply another filter referenced by
+     * its [id][IdFilterRoleId] or [event type][RoleEventFilter]
      */
     fun byRole(
         idFilter: IdFilterRoleId? = null,
