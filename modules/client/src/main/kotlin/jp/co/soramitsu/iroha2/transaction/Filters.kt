@@ -73,7 +73,7 @@ object Filters {
     }
 
     /**
-     * Create an [eventFilter]
+     * Create a [time based event filter][TimeEventFilter]
      */
     fun time(eventFilter: TimeEventFilter): FilterBox.Time {
         return FilterBox.Time(eventFilter)
