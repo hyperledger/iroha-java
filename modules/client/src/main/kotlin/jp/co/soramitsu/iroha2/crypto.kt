@@ -19,9 +19,9 @@ enum class DigestFunction(val hashFunName: String, val index: Int) {
 }
 
 /**
- * Generate Ed25519 keypair
+ * Generate Ed25519 key-pair
  *
- * @throws CryptoException
+ * @throws CryptoException if key-pair cannot be generated
  */
 @JvmOverloads
 fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
@@ -36,21 +36,21 @@ fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
             EdDSAPrivateKey(privKey)
         )
     } catch (ex: Exception) {
-        throw CryptoException("Cannot generate key pair", ex)
+        throw CryptoException("Cannot generate a key pair", ex)
     }
 }
 
 /**
- * Creates ED25519 keypair key from hex of the public and private key
+ * Create ED25519 key-pair from given hex of the public and private key
  *
- * @throws CryptoException if keypair cannot be created
+ * @throws CryptoException if key-pair cannot be created
  */
 @JvmOverloads
 fun keyPairFromHex(publicKeyHex: String, privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     KeyPair(publicKeyFromHex(publicKeyHex, spec), privateKeyFromHex(privateKeyHex, spec))
 
 /**
- * Creates ED25519 private key from hex
+ * Create ED25519 private key from a given hex
  *
  * @throws CryptoException if key cannot be created from hex
  */
@@ -59,11 +59,11 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
     try {
         EdDSAPrivateKey(EdDSAPrivateKeySpec(privateKeyHex.fromHex(), spec))
     } catch (ex: Exception) {
-        throw CryptoException("Cannot create private key from hex `$privateKeyHex`", ex)
+        throw CryptoException("Cannot create a private key from hex `$privateKeyHex`", ex)
     }
 
 /**
- * Creates ED25519 public key from hex
+ * Create ED25519 public key from a given hex
  *
  * @throws CryptoException if key cannot be created from hex
  */
@@ -72,19 +72,19 @@ fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SP
     try {
         EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.fromHex(), spec))
     } catch (ex: Exception) {
-        throw CryptoException("Cannot create public key from hex `$publicKeyHex`", ex)
+        throw CryptoException("Cannot create a public key from hex `$publicKeyHex`", ex)
     }
 
 /**
- * Returns encoded representation of the key that may be different from `java.security.Key.getEncoded()`
+ * Return encoded representation of the key, which may be different from `java.security.Key.getEncoded()`.
  *
- * Motivation: this method returns encoded bytes of the ED keys same as in Iroha1 java-lib and logical replacement of
+ * Motivation: this method returns encoded bytes of the ED keys (same as in Iroha1 java-lib) and logical replacement of
  * `java.security.Key.getEncoded()` for such keys.
- * By default, keys in `net.i2p.crypto:eddsa are encoded in X.509 format
+ * By default, keys in `net.i2p.crypto:eddsa` are encoded in `X.509` format.
  *
  * @see java.security.Key.getEncoded
  * @see java.security.Key.getFormat
- * @return bytes encoding of the key. Can be empty if encoding is not supported
+ * @return bytes Encoding of the key (empty if encoding is not supported)
  */
 fun Key.bytes(): ByteArray {
     return when (this) {
