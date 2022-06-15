@@ -62,7 +62,6 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Iroha2 Client
- * 
  */
 @Suppress("unused")
 open class Iroha2Client(
