@@ -23,4 +23,4 @@ opt-level = "z"     # Optimize for size vs speed with "s"/"z"(removes vectorizat
 codegen-units = 1   # Further reduces binary size but increases compilation time
 
 [dependencies]
-iroha_wasm = { git = "https://github.com/hyperledger/iroha/", rev="20e4238", features = ["debug"] }
+iroha_wasm = { git = "https://github.com/hyperledger/iroha/", branch="iroha2-dev", features = ["debug"] }

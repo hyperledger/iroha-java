@@ -27,6 +27,8 @@ import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
@@ -42,7 +44,11 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
-class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: ResultExtractor<R>) {
+class QueryBuilder<R>(
+    private val query: QueryBox,
+    private val resultExtractor: ResultExtractor<R>,
+    private val queryFilter: PredicateBox? = null
+) {
 
     private var accountId: AccountId? = null
     private var creationTimeMillis: BigInteger? = null
@@ -59,10 +65,12 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         this.apply { this.creationTime(BigInteger.valueOf(creationTimeMillis)) }
 
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
+        val filter = queryFilter ?: PredicateBox.Raw(Predicate.Pass())
         val payload = Payload(
             creationTimeMillis ?: fallbackCreationTime(),
             query,
-            checkNotNull(accountId) { "Account Id of the sender is mandatory" }
+            checkNotNull(accountId) { "Account Id of the sender is mandatory" },
+            filter
         )
         val encodedPayload = Payload.encode(payload)
         val signature = Signature(
@@ -80,9 +88,10 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
 
     companion object {
         @JvmStatic
-        fun findAllAccounts() = QueryBuilder(
+        fun findAllAccounts(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllAccounts(),
-            AccountsExtractor
+            AccountsExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -96,45 +105,45 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             findAccountKeyValueByIdAndKey(accountId, key.asName())
 
         @JvmStatic
-        fun findAccountsByName(name: Name) = QueryBuilder(
+        fun findAccountsByName(name: Name, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAccountsByName(name),
-            AccountsExtractor
+            AccountsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAccountsByName(name: String) = findAccountsByName(name.asName())
-
-        @JvmStatic
-        fun findAccountsByDomainId(domainId: DomainId) = QueryBuilder(
+        fun findAccountsByDomainId(domainId: DomainId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAccountsByDomainId(domainId),
-            AccountsExtractor
+            AccountsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAllAssets() = QueryBuilder(
+        fun findAllAssets(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllAssets(),
-            AssetsExtractor
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions() = QueryBuilder(
+        fun findAllAssetsDefinitions(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllAssetsDefinitions(),
-            AssetDefinitionsExtractor
+            AssetDefinitionsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAssetsByName(name: Name) = QueryBuilder(
+        fun findAssetsByName(name: Name, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAssetsByName(name),
-            AssetsExtractor
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAssetsByName(name: String) = findAssetsByName(name.asName())
-
-        @JvmStatic
-        fun findAssetsByAccountId(accountId: AccountId) = QueryBuilder(
+        fun findAssetsByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAssetsByAccountId(accountId),
-            AssetsExtractor
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -150,9 +159,10 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         )
 
         @JvmStatic
-        fun findAssetsByDomainId(domainId: DomainId) = QueryBuilder(
+        fun findAssetsByDomainId(domainId: DomainId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAssetsByDomainId(domainId),
-            AssetsExtractor
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -162,18 +172,21 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = QueryBuilder(
+        fun findAllAssetsDefinitions(assetDefinition: DefinitionId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
-            AssetDefinitionsExtractor
+            AssetDefinitionsExtractor,
+            queryFilter
         )
 
         @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
             domainId: DomainId,
-            assetDefinition: DefinitionId
+            assetDefinition: DefinitionId,
+            queryFilter: PredicateBox? = null
         ) = QueryBuilder(
             Queries.findAssetsByDomainIdAndAssetDefinitionId(domainId, assetDefinition),
-            AssetsExtractor
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -213,30 +226,33 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         )
 
         @JvmStatic
-        fun findAllDomains() = QueryBuilder(Queries.findAllDomains(), DomainsExtractor)
+        fun findAllDomains(queryFilter: PredicateBox? = null) = QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
 
         @JvmStatic
         fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
 
         @JvmStatic
-        fun findAllPeers() = QueryBuilder(Queries.findAllPeers(), PeersExtractor)
+        fun findAllPeers(queryFilter: PredicateBox? = null) = QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
 
         @JvmStatic
-        fun findTransactionsByAccountId(accountId: AccountId) = QueryBuilder(
+        fun findTransactionsByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findTransactionsByAccountId(accountId),
-            TransactionValuesExtractor
+            TransactionValuesExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBuilder(
+        fun findPermissionTokensByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findPermissionTokensByAccountId(accountId),
-            PermissionTokensExtractor
+            PermissionTokensExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findRolesByAccountId(accountId: AccountId) = QueryBuilder(
+        fun findRolesByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findRolesByAccountId(accountId),
-            RolesExtractor
+            RolesExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -252,15 +268,17 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
 
         @JvmStatic
-        fun findAllTransactions() = QueryBuilder(
+        fun findAllTransactions(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllTransactions(),
-            TransactionsValueExtractor
+            TransactionsValueExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAllBlocks() = QueryBuilder(
+        fun findAllBlocks(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllBlocks(),
-            BlocksValueExtractor
+            BlocksValueExtractor,
+            queryFilter
         )
 
         @JvmStatic
@@ -282,9 +300,10 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         )
 
         @JvmStatic
-        fun findAllActiveTriggerIds() = QueryBuilder(
+        fun findAllActiveTriggerIds(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllActiveTriggerIds(),
-            TriggerIdsExtractor
+            TriggerIdsExtractor,
+            queryFilter
         )
     }
 }

@@ -24,33 +24,6 @@ public sealed class IdentifiableBox : ModelEnum {
     public abstract fun discriminant(): Int
 
     /**
-     * 'Peer' variant
-     */
-    public data class Peer(
-        public val peer: jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-    ) : IdentifiableBox() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
-            public const val DISCRIMINANT: Int = 0
-
-            public override fun read(reader: ScaleCodecReader): Peer = try {
-                Peer(
-                    jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.write(writer, instance.peer)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'NewDomain' variant
      */
     public data class NewDomain(
@@ -59,7 +32,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<NewDomain>, ScaleWriter<NewDomain> {
-            public const val DISCRIMINANT: Int = 1
+            public const val DISCRIMINANT: Int = 0
 
             public override fun read(reader: ScaleCodecReader): NewDomain = try {
                 NewDomain(
@@ -89,7 +62,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): NewAccount = try {
                 NewAccount(
@@ -120,7 +93,7 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<NewAssetDefinition>, ScaleWriter<NewAssetDefinition> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): NewAssetDefinition = try {
                 NewAssetDefinition(
@@ -135,6 +108,33 @@ public sealed class IdentifiableBox : ModelEnum {
                     writer,
                     instance.newAssetDefinition
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Peer' variant
+     */
+    public data class Peer(
+        public val peer: jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
+    ) : IdentifiableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
+            public const val DISCRIMINANT: Int = 3
+
+            public override fun read(reader: ScaleCodecReader): Peer = try {
+                Peer(
+                    jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer.write(writer, instance.peer)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -312,10 +312,10 @@ public sealed class IdentifiableBox : ModelEnum {
             val discriminant =
                 reader.readUByte().toInt()
         ) {
-            0 -> Peer.read(reader)
-            1 -> NewDomain.read(reader)
-            2 -> NewAccount.read(reader)
-            3 -> NewAssetDefinition.read(reader)
+            0 -> NewDomain.read(reader)
+            1 -> NewAccount.read(reader)
+            2 -> NewAssetDefinition.read(reader)
+            3 -> Peer.read(reader)
             4 -> Domain.read(reader)
             5 -> Account.read(reader)
             6 -> AssetDefinition.read(reader)
@@ -328,10 +328,10 @@ public sealed class IdentifiableBox : ModelEnum {
         public override fun write(writer: ScaleCodecWriter, instance: IdentifiableBox) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Peer.write(writer, instance as Peer)
-                1 -> NewDomain.write(writer, instance as NewDomain)
-                2 -> NewAccount.write(writer, instance as NewAccount)
-                3 -> NewAssetDefinition.write(writer, instance as NewAssetDefinition)
+                0 -> NewDomain.write(writer, instance as NewDomain)
+                1 -> NewAccount.write(writer, instance as NewAccount)
+                2 -> NewAssetDefinition.write(writer, instance as NewAssetDefinition)
+                3 -> Peer.write(writer, instance as Peer)
                 4 -> Domain.write(writer, instance as Domain)
                 5 -> Account.write(writer, instance as Account)
                 6 -> AssetDefinition.write(writer, instance as AssetDefinition)
