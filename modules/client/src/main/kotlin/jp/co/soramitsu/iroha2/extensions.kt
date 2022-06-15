@@ -79,7 +79,7 @@ fun PrivateKey.sign(message: ByteArray): ByteArray = try {
 }
 
 /**
- * Verify the [signature] against the [[message] and the given public key
+ * Verify the [signature] against the [message] and the given public key
  *
  * Note: the message must not be prehashed
  */
