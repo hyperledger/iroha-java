@@ -127,7 +127,7 @@ private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapp
 }
 
 /**
- * Deserializer for Iroha Special Instructions
+ * Deserializer for [Iroha Special Instructions][Instruction]
  */
 object InstructionDeserializer : JsonDeserializer<Instruction>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Instruction {
@@ -219,7 +219,7 @@ object MintableDeserializer : JsonDeserializer<Mintable>() {
 }
 
 /**
- * Deserializer for asset definition ID
+ * Deserializer for [asset definition ID][DefinitionId]
  */
 object DefinitionIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
@@ -228,7 +228,7 @@ object DefinitionIdDeserializer : KeyDeserializer() {
 }
 
 /**
- * Deserializer for account ID
+ * Deserializer for [account ID][AccountId]
  */
 object AccountIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AccountId? {
@@ -237,7 +237,7 @@ object AccountIdDeserializer : KeyDeserializer() {
 }
 
 /**
- * Deserializer for asset ID
+ * Deserializer for [asset ID][AssetId]
  */
 object AssetIdDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String, ctxt: DeserializationContext?): AssetId? {
