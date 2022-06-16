@@ -8,6 +8,9 @@ import jp.co.soramitsu.iroha2.codec.and
 import jp.co.soramitsu.iroha2.codec.shr
 import java.math.BigInteger
 
+/**
+ * [Compact mode][CompactMode] SCALE reader for Big Integers
+ */
 class CompactBigIntReader : ScaleReader<BigInteger> {
     override fun read(reader: ScaleCodecReader): BigInteger {
         val type = reader.readUByte()

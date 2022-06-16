@@ -6,6 +6,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import java.math.BigInteger
 
+/**
+ * [Compact mode][CompactMode] SCALE writer for unsigned Long Integers
+ */
 class CompactULongWriter : ScaleWriter<Long> {
     override fun write(wrt: ScaleCodecWriter, value: Long) {
         val mode = forNumber(value)
