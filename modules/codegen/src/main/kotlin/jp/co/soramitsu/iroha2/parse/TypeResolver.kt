@@ -52,7 +52,7 @@ class TypeResolver(private val schemaParser: SchemaParser) {
     )
 
     /**
-     * Resolve the type based on a given [name]. 
+     * Resolve the type based on a given [name].
      *
      * @param name The name to resolve
      * @param typeValue The type to try and resolve the [name] to
@@ -123,8 +123,8 @@ abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolve
     }
 
     /**
-    * Create a wrapper type for [innerType]
-    */
+     * Create a wrapper type for [innerType]
+     */
     abstract fun createWrapper(name: String, innerType: TypeNest, sorted: Boolean = false): T
 }
 

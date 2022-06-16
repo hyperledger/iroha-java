@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2.type
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
 /**
- * Basic class for wrapper types. The `WrapperType` data type wraps [another type][innerType]. 
+ * Basic class for wrapper types. The `WrapperType` data type wraps [another type][innerType].
  */
 abstract class WrapperType(override val name: String, open val innerType: TypeNest) : Type(name) {
     override fun notResolvedTypes() = if (innerType.value == null) {
