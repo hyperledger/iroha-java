@@ -15,6 +15,9 @@ const val SCHEMA_FILTER_TY = "ty:"
 val schemaFilterPattern = "data::filters::(.+)<".toRegex()
 val schemaFilterRegex = "\"iroha_data_model::events::data::filters(.+)\"".toRegex()
 
+/**
+ * Generate an entry point from the provided [arguments][args]
+ */
 fun main(args: Array<String>) {
     val argsMap = parseArgs(args)
     val outputPath = Paths.get(tryExtractArg(argsMap, OUTPUT_PATH_ARG_NAME))
@@ -25,6 +28,9 @@ fun main(args: Array<String>) {
     GeneratorEntryPoint.generate(parseResult, outputPath)
 }
 
+/**
+ * @return filter event name
+ */
 fun getFilterEventName(name: String): String {
     if (name.contains("data::filters")) {
         val newName = name.substringBefore("<").substringAfterLast("::")
@@ -41,6 +47,9 @@ fun getFilterEventName(name: String): String {
     return sb.toString()
 }
 
+/**
+ * Read Iroha2 schema from a given [file][fileName]
+ */
 fun readSchema(fileName: String): Schema {
     val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
     val sb = StringBuilder()
@@ -51,6 +60,9 @@ fun readSchema(fileName: String): Schema {
     )
 }
 
+/**
+ * Parse a single [line] of Iroha2 schema
+ */
 fun parseLine(line: String): String {
     if (line.contains(schemaFilterPattern)) {
         var tmpLine = line.substringBeforeLast("\"").replace("\"", "").trim()
@@ -68,12 +80,18 @@ fun getDelimiter(name: String): String {
     return name.substringBefore("<").substringAfterLast("::")
 }
 
+/**
+ * Parse the [arguments][args]
+ */
 fun parseArgs(args: Array<String>): Map<String, String> {
     return args.map { it.split("=") }
         .onEach { if (it.size != 2) throw RuntimeException("Incorrect format: expected format argumentKey=argumentValue") }
         .associateBy({ it[0] }, { it[1] })
 }
 
+/**
+ * Extract a specified [argumnt][argName] from all [arguments][args]
+ */
 fun tryExtractArg(args: Map<String, String>, argName: String): String {
     return args[argName] ?: throw RuntimeException("Property '$argName' must be specified")
 }
