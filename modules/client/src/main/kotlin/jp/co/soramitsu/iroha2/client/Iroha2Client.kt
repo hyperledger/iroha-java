@@ -26,9 +26,9 @@ import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
-import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
@@ -220,9 +220,9 @@ open class Iroha2Client(
         hash: ByteArray,
         hexHash: String
     ): ByteArray? {
-        when (val event = eventPublisherMessage.event) {
-            is Event.Pipeline -> {
-                val eventInner = event.event
+        when (val event = eventPublisherMessage.eventsEvent) {
+            is EventsEvent.Pipeline -> {
+                val eventInner = event.pipelineEvent
                 if (eventInner.entityKind is EntityKind.Transaction && hash.contentEquals(eventInner.hash.array)) {
                     when (val status = eventInner.status) {
                         is Status.Committed -> {
@@ -242,7 +242,7 @@ open class Iroha2Client(
                 return null
             }
             else -> throw WebSocketProtocolException(
-                "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
+                "Expected message with type ${EventsEvent.Pipeline::class.qualifiedName}, " +
                     "but was ${event::class.qualifiedName}"
             )
         }

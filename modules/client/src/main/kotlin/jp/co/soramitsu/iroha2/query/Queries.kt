@@ -3,7 +3,10 @@ package jp.co.soramitsu.iroha2.query
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
@@ -32,10 +35,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransact
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 
 object Queries {
 
@@ -86,7 +86,7 @@ object Queries {
         return QueryBox.FindAssetsByAccountId(FindAssetsByAccountId(accountId.evaluatesTo()))
     }
 
-    fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
+    fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
         return QueryBox.FindAssetsByAssetDefinitionId(
             FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
         )
@@ -94,7 +94,7 @@ object Queries {
 
     fun findAssetsByDomainIdAndAssetDefinitionId(
         domainId: DomainId,
-        assetDefinition: DefinitionId
+        assetDefinition: AssetDefinitionId
     ): QueryBox.FindAssetsByDomainIdAndAssetDefinitionId {
         return QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
             FindAssetsByDomainIdAndAssetDefinitionId(
@@ -126,7 +126,7 @@ object Queries {
     }
 
     fun findAssetDefinitionKeyValueByIdAndKey(
-        assetDefinition: DefinitionId,
+        assetDefinition: AssetDefinitionId,
         key: Name
     ): QueryBox.FindAssetDefinitionKeyValueByIdAndKey {
         return QueryBox.FindAssetDefinitionKeyValueByIdAndKey(

@@ -10,17 +10,17 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * Event
+ * TimeEvent
  *
- * Generated from 'iroha_data_model::events::time::Event' regular structure
+ * Generated from 'iroha_data_model::events::time::TimeEvent' regular structure
  */
-public data class Event(
+public data class TimeEvent(
     public val prevInterval: Interval?,
     public val interval: Interval
 ) {
-    public companion object : ScaleReader<Event>, ScaleWriter<Event> {
-        public override fun read(reader: ScaleCodecReader): Event = try {
-            Event(
+    public companion object : ScaleReader<TimeEvent>, ScaleWriter<TimeEvent> {
+        public override fun read(reader: ScaleCodecReader): TimeEvent = try {
+            TimeEvent(
                 reader.readNullable(Interval),
                 Interval.read(reader),
             )
@@ -28,7 +28,7 @@ public data class Event(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Event) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: TimeEvent) = try {
             writer.writeNullable(Interval, instance.prevInterval)
             Interval.write(writer, instance.interval)
         } catch (ex: Exception) {

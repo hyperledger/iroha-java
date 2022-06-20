@@ -22,8 +22,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
@@ -33,8 +35,6 @@ import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
 
 /**
  * This Json mapper configured to serialize and deserialize `Genesis block` in format compatible with Iroha 2 peer
@@ -53,7 +53,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
         module.addDeserializer(Name::class.java, NameDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
-        module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer)
+        module.addKeyDeserializer(AssetDefinitionId::class.java, DefinitionIdDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer)
 
@@ -192,8 +192,8 @@ object MintableDeserializer : JsonDeserializer<Mintable>() {
 }
 
 object DefinitionIdDeserializer : KeyDeserializer() {
-    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
-        return JSON_SERDE.readValue(key, DefinitionId::class.java)
+    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AssetDefinitionId? {
+        return JSON_SERDE.readValue(key, AssetDefinitionId::class.java)
     }
 }
 

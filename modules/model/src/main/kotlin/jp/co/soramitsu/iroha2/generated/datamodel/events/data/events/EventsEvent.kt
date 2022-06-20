@@ -19,11 +19,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * Event
+ * EventsEvent
  *
- * Generated from 'iroha_data_model::events::data::events::Event' enum
+ * Generated from 'iroha_data_model::events::data::events::EventsEvent' enum
  */
-public sealed class Event : ModelEnum {
+public sealed class EventsEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -34,7 +34,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Peer(
         public val peerEvent: PeerEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
@@ -61,7 +61,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Domain(
         public val domainEvent: DomainEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
@@ -88,7 +88,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Account(
         public val accountEvent: AccountEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Account>, ScaleWriter<Account> {
@@ -115,7 +115,7 @@ public sealed class Event : ModelEnum {
      */
     public data class AssetDefinition(
         public val assetDefinitionEvent: AssetDefinitionEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
@@ -142,7 +142,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Asset(
         public val assetEvent: AssetEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
@@ -169,7 +169,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Trigger(
         public val triggerEvent: TriggerEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Trigger>, ScaleWriter<Trigger> {
@@ -196,7 +196,7 @@ public sealed class Event : ModelEnum {
      */
     public data class Role(
         public val roleEvent: RoleEvent
-    ) : Event() {
+    ) : EventsEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Role>, ScaleWriter<Role> {
@@ -218,8 +218,8 @@ public sealed class Event : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<Event>, ScaleWriter<Event> {
-        public override fun read(reader: ScaleCodecReader): Event = when (
+    public companion object : ScaleReader<EventsEvent>, ScaleWriter<EventsEvent> {
+        public override fun read(reader: ScaleCodecReader): EventsEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -233,7 +233,7 @@ public sealed class Event : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Event) {
+        public override fun write(writer: ScaleCodecWriter, instance: EventsEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Peer.write(writer, instance as Peer)

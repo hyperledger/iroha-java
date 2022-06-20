@@ -16,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::domain::NewDomain' regular structure
  */
 public data class NewDomain(
-    public val id: Id,
+    public val id: DomainId,
     public val logo: IpfsPath?,
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<NewDomain>, ScaleWriter<NewDomain> {
         public override fun read(reader: ScaleCodecReader): NewDomain = try {
             NewDomain(
-                Id.read(reader),
+                DomainId.read(reader),
                 reader.readNullable(IpfsPath),
                 Metadata.read(reader),
             )
@@ -32,7 +32,7 @@ public data class NewDomain(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: NewDomain) = try {
-            Id.write(writer, instance.id)
+            DomainId.write(writer, instance.id)
             writer.writeNullable(IpfsPath, instance.logo)
             Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {

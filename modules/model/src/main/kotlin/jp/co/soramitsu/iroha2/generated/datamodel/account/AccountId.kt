@@ -8,30 +8,31 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * Id
+ * AccountId
  *
- * Generated from 'iroha_data_model::account::Id' regular structure
+ * Generated from 'iroha_data_model::account::AccountId' regular structure
  */
-public data class Id(
+public data class AccountId(
     public val name: Name,
-    public val domainId: jp.co.soramitsu.iroha2.generated.datamodel.domain.Id
+    public val domainId: DomainId
 ) {
-    public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-        public override fun read(reader: ScaleCodecReader): Id = try {
-            Id(
+    public companion object : ScaleReader<AccountId>, ScaleWriter<AccountId> {
+        public override fun read(reader: ScaleCodecReader): AccountId = try {
+            AccountId(
                 Name.read(reader),
-                jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.read(reader),
+                DomainId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Id) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: AccountId) = try {
             Name.write(writer, instance.name)
-            jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.write(writer, instance.domainId)
+            DomainId.write(writer, instance.domainId)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

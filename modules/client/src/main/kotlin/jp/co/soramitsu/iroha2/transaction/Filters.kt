@@ -2,7 +2,8 @@ package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAccountEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAccountFilter
@@ -47,33 +48,32 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.role.RoleE
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.role.RoleFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.trigger.TriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.trigger.TriggerFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.PipelineEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.StatusKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.EventFilter as ExecuteTriggerEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EventFilter as PipelineEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 
 object Filters {
-    fun data(entityFilter: EntityFilter? = null): FilterBox.Data {
-        return FilterBox.Data(
+    fun data(entityFilter: EntityFilter? = null): EventsFilterBox.Data {
+        return EventsFilterBox.Data(
             entityFilter?.let { FilterOptEntityFilter.BySome(it) }
                 ?: FilterOptEntityFilter.AcceptAll()
         )
     }
 
-    fun time(eventFilter: TimeEventFilter): FilterBox.Time {
-        return FilterBox.Time(eventFilter)
+    fun time(eventFilter: TimeEventFilter): EventsFilterBox.Time {
+        return EventsFilterBox.Time(eventFilter)
     }
 
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId
-    ): FilterBox.ExecuteTrigger {
-        return FilterBox.ExecuteTrigger(
+    ): EventsFilterBox.ExecuteTrigger {
+        return EventsFilterBox.ExecuteTrigger(
             ExecuteTriggerEventFilter(triggerId, authority)
         )
     }
@@ -82,8 +82,8 @@ object Filters {
         entityKind: EntityKind? = null,
         statusKind: StatusKind? = null,
         hash: ByteArray? = null
-    ): FilterBox.Pipeline {
-        return FilterBox.Pipeline(
+    ): EventsFilterBox.Pipeline {
+        return EventsFilterBox.Pipeline(
             PipelineEventFilter(
                 entityKind, statusKind, hash?.let { Hash(it) }
             )

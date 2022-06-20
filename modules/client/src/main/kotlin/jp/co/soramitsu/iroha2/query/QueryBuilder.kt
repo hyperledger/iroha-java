@@ -23,21 +23,21 @@ import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: ResultExtractor<R>) {
 
@@ -153,13 +153,13 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         )
 
         @JvmStatic
-        fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = QueryBuilder(
+        fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
             AssetsExtractor
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions(assetDefinition: DefinitionId) = QueryBuilder(
+        fun findAllAssetsDefinitions(assetDefinition: AssetDefinitionId) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
             AssetDefinitionsExtractor
         )
@@ -167,7 +167,7 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
         @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
             domainId: DomainId,
-            assetDefinition: DefinitionId
+            assetDefinition: AssetDefinitionId
         ) = QueryBuilder(
             Queries.findAssetsByDomainIdAndAssetDefinitionId(domainId, assetDefinition),
             AssetsExtractor
@@ -190,13 +190,13 @@ class QueryBuilder<R>(private val query: QueryBox, private val resultExtractor: 
             findAssetKeyValueByIdAndKey(assetId, key.asName())
 
         @JvmStatic
-        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: Name) = QueryBuilder(
+        fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: Name) = QueryBuilder(
             Queries.findAssetDefinitionKeyValueByIdAndKey(id, key),
             ValueExtractor
         )
 
         @JvmStatic
-        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: String) =
+        fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: String) =
             findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
 
         @JvmStatic

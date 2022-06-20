@@ -11,18 +11,18 @@ import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * EventFilter
+ * PipelineEventFilter
  *
- * Generated from 'iroha_data_model::events::pipeline::EventFilter' regular structure
+ * Generated from 'iroha_data_model::events::pipeline::PipelineEventFilter' regular structure
  */
-public data class EventFilter(
+public data class PipelineEventFilter(
     public val entityKind: EntityKind?,
     public val statusKind: StatusKind?,
     public val hash: Hash?
 ) {
-    public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-        public override fun read(reader: ScaleCodecReader): EventFilter = try {
-            EventFilter(
+    public companion object : ScaleReader<PipelineEventFilter>, ScaleWriter<PipelineEventFilter> {
+        public override fun read(reader: ScaleCodecReader): PipelineEventFilter = try {
+            PipelineEventFilter(
                 reader.readNullable(EntityKind),
                 reader.readNullable(StatusKind),
                 reader.readNullable(Hash),
@@ -31,7 +31,7 @@ public data class EventFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EventFilter) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: PipelineEventFilter) = try {
             writer.writeNullable(EntityKind, instance.entityKind)
             writer.writeNullable(StatusKind, instance.statusKind)
             writer.writeNullable(Hash, instance.hash)

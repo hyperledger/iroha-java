@@ -48,7 +48,7 @@ public sealed class EventPublisherMessage : ModelEnum {
      * 'Event' variant
      */
     public data class Event(
-        public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.Event
+        public val eventsEvent: EventsEvent
     ) : EventPublisherMessage() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -57,14 +57,14 @@ public sealed class EventPublisherMessage : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Event = try {
                 Event(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.Event.read(reader),
+                    EventsEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Event) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.Event.write(writer, instance.event)
+                EventsEvent.write(writer, instance.eventsEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
