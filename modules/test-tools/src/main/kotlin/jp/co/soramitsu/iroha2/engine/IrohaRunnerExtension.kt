@@ -15,7 +15,7 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 
 /**
- * Starts Iroha2 docker containers
+ * Runner for Iroha2 Docker containers
  */
 class IrohaRunnerExtension : InvocationInterceptor {
 

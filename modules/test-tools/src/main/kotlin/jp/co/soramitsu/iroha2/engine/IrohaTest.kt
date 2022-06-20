@@ -7,6 +7,9 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import java.time.Duration
 
+/**
+ * Iroha2 Test
+ */
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(40)

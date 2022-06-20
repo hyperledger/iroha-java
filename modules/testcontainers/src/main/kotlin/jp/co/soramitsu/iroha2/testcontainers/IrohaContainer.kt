@@ -20,6 +20,12 @@ import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
 import kotlin.io.path.createTempFile
 
+/**
+ * Docker container for Iroha
+ *
+ * @constructor Creates Iroha container with given configurations
+ */
+
 open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
