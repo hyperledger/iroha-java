@@ -16,6 +16,9 @@ class SchemaReader {
 
     private val repeated = mutableMapOf<String, Int>()
 
+    /**
+     * Read Iroha2 schema from a given [file][fileName]
+     */
     fun readSchema(fileName: String): Schema {
         val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
         val sb = StringBuilder()
@@ -36,6 +39,9 @@ class SchemaReader {
         )
     }
 
+    /**
+     * Parse a single [line] of Iroha2 schema
+     */
     private fun parseLine(line: String, repeatedRegex: Regex): String {
         return when {
             line.contains(dataFilterRegex) -> parseDataFilterLine(line)
@@ -73,6 +79,9 @@ class SchemaReader {
         }
     }
 
+    /**
+     * Count repeated model names of Iroha2 schema
+     */
     private fun countRepeated(line: String) {
         if (line.contains("\"$DATA_MODEL_PATTERN(.+)\": \\{".toRegex())) {
             val parts = line.split("::")
@@ -88,6 +97,9 @@ class SchemaReader {
         return name.substringBefore("<").substringAfterLast("::")
     }
 
+    /**
+     * @return filter event name
+     */
     private fun getFilterEventName(name: String): String {
         if (name.contains("data::filters")) {
             val newName = name.substringBefore("<").substringAfterLast("::")

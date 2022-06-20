@@ -53,13 +53,6 @@ import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
 val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
