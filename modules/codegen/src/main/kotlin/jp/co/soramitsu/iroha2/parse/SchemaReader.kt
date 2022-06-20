@@ -7,7 +7,8 @@ import kotlin.streams.toList
 class SchemaReader {
     companion object {
         private const val SCHEMA_FILTER_TY = "ty:"
-        private const val REPEATED_PATTERN = "iroha_data_model::(.+)::"
+        private const val DATA_MODEL_PATTERN = "iroha_data_model::(.+)::"
+        private const val MIN_NUMBER_OF_REPEATS_TO_RENAME = 2
 
         private val dataFilterRegex = "data::filters::(.+)<".toRegex()
         private val eventDataFilterRegex = "\"iroha_data_model::events::data::filters(.+)\"".toRegex()
@@ -21,12 +22,12 @@ class SchemaReader {
         val lines = resource.bufferedReader().lines().toList()
 
         lines.forEach { countRepeated(it) }
-        repeated.entries.removeIf { it.value <= 2 } // todo <= 1
+        repeated.entries.removeIf { it.value <= MIN_NUMBER_OF_REPEATS_TO_RENAME }
 
         val repeatedRegex = repeated.keys
             .map { it.split("::").last().replace("\": {") }
             .let { classes -> "(${classes.joinToString("|")})" }
-            .let { classes -> "$REPEATED_PATTERN$classes\\W".toRegex() }
+            .let { classes -> "$DATA_MODEL_PATTERN$classes\\W".toRegex() }
         lines.forEach { sb.appendLine(parseLine(it, repeatedRegex)) }
 
         return ObjectMapper().readValue(
@@ -36,38 +37,45 @@ class SchemaReader {
     }
 
     private fun parseLine(line: String, repeatedRegex: Regex): String {
-        if (line.contains(dataFilterRegex)) {
-            var tmpLine = line.substringBeforeLast("\"").replace("\"").trim()
-            if (tmpLine.startsWith(SCHEMA_FILTER_TY)) {
-                tmpLine = tmpLine.substring(SCHEMA_FILTER_TY.length + 1)
-            }
-            val newFilterName = getFilterEventName(tmpLine)
-            val newLine = "\"" + tmpLine.substringBefore(getDelimiter(line)) + newFilterName + "\""
-
-            return line.replace(eventDataFilterRegex, newLine)
-        } else if (line.contains(repeatedRegex)) {
-            val extracted = repeatedRegex.find(line)?.value
-                ?: return line
-
-            val lineParts = extracted.split("::")
-            val className = lineParts[lineParts.size - 1] // todo safely
-            val prefix = lineParts[lineParts.size - 2]
-                .split('_').joinToString("") { part ->
-                    part.replaceFirstChar { it.uppercaseChar() }
-                }
-
-            return extracted.replace(
-                className, "$prefix$className"
-            ).let { modified ->
-                line.replace(extracted, modified)
-            }
+        return when {
+            line.contains(dataFilterRegex) -> parseDataFilterLine(line)
+            line.contains(repeatedRegex) -> parseRepeatedLine(line, repeatedRegex)
+            else -> line
         }
+    }
 
-        return line
+    private fun parseDataFilterLine(line: String): String {
+        var tmpLine = line.substringBeforeLast("\"").replace("\"").trim()
+        if (tmpLine.startsWith(SCHEMA_FILTER_TY)) {
+            tmpLine = tmpLine.substring(SCHEMA_FILTER_TY.length + 1)
+        }
+        val newFilterName = getFilterEventName(tmpLine)
+        val newLine = "\"" + tmpLine.substringBefore(getDelimiter(line)) + newFilterName + "\""
+
+        return line.replace(eventDataFilterRegex, newLine)
+    }
+
+    private fun parseRepeatedLine(line: String, repeatedRegex: Regex): String {
+        val extracted = repeatedRegex.find(line)?.value
+            ?: return line
+        val lineParts = extracted.split("::")
+            .takeIf { it.size > 1 }
+            ?: return line
+
+        val className = lineParts[lineParts.size - 1].replace(">")
+        val prefix = lineParts[lineParts.size - 2]
+            .split('_')
+            .joinToString("") { p -> p.replaceFirstChar { it.uppercaseChar() } }
+
+        return when (prefix == className || prefix == "${className.replace("\\W".toRegex())}s") {
+            true -> line
+            false -> extracted.replace(className, "$prefix$className") // todo
+                .let { line.replace(extracted, it) }
+        }
     }
 
     private fun countRepeated(line: String) {
-        if (line.contains("\"iroha_data_model::(.+)::(.+)\": \\{".toRegex())) { // todo
+        if (line.contains("\"$DATA_MODEL_PATTERN(.+)\": \\{".toRegex())) {
             val parts = line.split("::")
             if (parts.size <= 1) return
 
@@ -98,4 +106,6 @@ class SchemaReader {
     }
 
     private fun String.replace(oldValue: String) = this.replace(oldValue, "")
+
+    private fun String.replace(regex: Regex) = this.replace(regex, "")
 }

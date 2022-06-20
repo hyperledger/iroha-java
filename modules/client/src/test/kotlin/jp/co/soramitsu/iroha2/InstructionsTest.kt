@@ -43,10 +43,10 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 
 class InstructionsTest : IrohaTest<Iroha2Client>() {
 

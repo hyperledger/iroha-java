@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignaturesOf
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedRejectedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.wrapException
@@ -23,7 +23,7 @@ public data class CommittedBlock(
     public val header: BlockHeader,
     public val rejectedTransactions: List<VersionedRejectedTransaction>,
     public val transactions: List<VersionedValidTransaction>,
-    public val eventRecommendations: List<EventsEvent>,
+    public val eventRecommendations: List<Event>,
     public val signatures: SignaturesOf<CommittedBlock>
 ) {
     public companion object : ScaleReader<CommittedBlock>, ScaleWriter<CommittedBlock> {
@@ -32,7 +32,7 @@ public data class CommittedBlock(
                 BlockHeader.read(reader),
                 reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
-                reader.readVec(reader.readCompactInt()) { EventsEvent.read(reader) },
+                reader.readVec(reader.readCompactInt()) { Event.read(reader) },
                 SignaturesOf.read(reader) as SignaturesOf<CommittedBlock>,
             )
         } catch (ex: Exception) {
@@ -51,7 +51,7 @@ public data class CommittedBlock(
             }
             writer.writeCompact(instance.eventRecommendations.size)
             instance.eventRecommendations.forEach { value ->
-                EventsEvent.write(writer, value)
+                Event.write(writer, value)
             }
             SignaturesOf.write(writer, instance.signatures)
         } catch (ex: Exception) {
