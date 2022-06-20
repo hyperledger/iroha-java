@@ -12,6 +12,9 @@ import jp.co.soramitsu.iroha2.type.StructType
 import jp.co.soramitsu.iroha2.type.TupleStructType
 import java.nio.file.Path
 
+/**
+ * Generator for the entry point
+ */
 object GeneratorEntryPoint {
     @OptIn(ExperimentalUnsignedTypes::class)
     fun generate(types: Types, outputPath: Path) {

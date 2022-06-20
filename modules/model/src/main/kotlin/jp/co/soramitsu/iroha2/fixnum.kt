@@ -39,7 +39,7 @@ val POWERS_OF_10: Array<Long> by lazy {
 }
 
 /**
- * Convert fixed point number to [BigDecimal]
+ * Convert a fixed-point number to [BigDecimal]
  *
  * @see https://github.com/loyd/fixnum/blob/77860b04eb53a2e001b3b97fe3601833e18b01b9/src/lib.rs#L581
  */
@@ -52,7 +52,7 @@ fun BigInteger.fromFixedPoint(scale: Int = DEFAULT_SCALE): BigDecimal = try {
 }
 
 /**
- * Convert [BigDecimal] to fixed point number
+ * Convert [BigDecimal] to a fixed-point number
  *
  * @see https://github.com/loyd/fixnum/blob/77860b04eb53a2e001b3b97fe3601833e18b01b9/src/lib.rs#L688
  */

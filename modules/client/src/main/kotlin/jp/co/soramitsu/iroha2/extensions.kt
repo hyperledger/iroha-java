@@ -19,6 +19,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransacti
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
+import java.math.BigInteger
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
@@ -41,6 +42,8 @@ fun Int.asValue() = this.toLong().asValue()
 
 fun Long.asValue() = Value.U32(this)
 
+fun BigInteger.asValue() = Value.U128(this)
+
 fun Boolean.asValue() = Value.Bool(this)
 
 fun ByteArray.toFrame(fin: Boolean = true) = Frame.Binary(fin, this)
@@ -57,12 +60,15 @@ fun String.fromHex(): ByteArray = try {
     throw HexCodecException("Cannot decode from hex string `$this`", ex)
 }
 
+/**
+ * Convert a public key to an Iroha public key
+ */
 fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.generated.crypto.PublicKey {
     return jp.co.soramitsu.iroha2.generated.crypto.PublicKey(DigestFunction.Ed25519.hashFunName, this.bytes())
 }
 
 /**
- * Sign the message by given private key
+ * Sign the [message] using the given private key
  *
  * Note: the message must not be prehashed
  */
@@ -76,7 +82,7 @@ fun PrivateKey.sign(message: ByteArray): ByteArray = try {
 }
 
 /**
- * Verify the signature against the message and public key
+ * Verify the [signature] against the [message] and the given public key
  *
  * Note: the message must not be prehashed
  */
@@ -91,6 +97,9 @@ fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean = try {
 
 fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
 
+/**
+ * Hash the given versioned transaction (`VersionedTransaction.V1`)
+ */
 fun VersionedTransaction.V1.hash(): ByteArray {
     return this.transaction
         .payload
@@ -98,12 +107,15 @@ fun VersionedTransaction.V1.hash(): ByteArray {
         .hash()
 }
 
+/**
+ * Hash the given versioned transaction. Maintains only `VersionedTransaction.V1`
+ */
 fun VersionedTransaction.hash() = when (this) {
     is VersionedTransaction.V1 -> this.hash()
 }
 
 /**
- * Append signatures to transaction. Maintains only VersionedTransaction.V1
+ * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
  */
 fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
     return when (this) {
@@ -128,13 +140,16 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
     }
 }
 
+/**
+ * Cast to another type
+ */
 inline fun <reified B> Any.cast(): B {
     return this as? B
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
 }
 
 /**
- * Wrap object in EvaluatesTo
+ * Wrap an object in `EvaluatesTo`
  */
 inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
     return when (this) {

@@ -60,6 +60,9 @@ import java.net.URL
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Iroha2 Client
+ */
 @Suppress("unused")
 open class Iroha2Client(
     open var peerUrl: URL,
@@ -108,7 +111,7 @@ open class Iroha2Client(
     override fun close() = client.close()
 
     /**
-     * Sends request to Iroha2 and extract payload.
+     * Send a request to Iroha2 and extract payload.
      * {@see Extractors}
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
@@ -116,6 +119,9 @@ open class Iroha2Client(
         return page.data
     }
 
+    /**
+     * Send a request to Iroha2 and extract paginated payload
+     */
     suspend fun <T> sendQueryWithPagination(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
@@ -131,11 +137,10 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends transaction to Iroha peer
+     * Send a transaction to an Iroha peer without waiting for the final transaction status (committed or rejected).
      *
-     * The method only sends transaction to peer and do not await it final committing status. It means when peer
-     * response with 2xx status code the peer only accepted transaction and the transaction passed stateless
-     * validation. Further, state of the transaction is not tracked.
+     * With this method, the state of the transaction is not tracked after the peer responses with 2xx status code,
+     * which means that the peer accepted the transaction and the transaction passed the stateless validation.
      */
     suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
@@ -149,7 +154,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends transaction to Iroha peer and wait until it will be committed or rejected.
+     * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     suspend fun sendTransaction(
         transaction: TransactionBuilder.() -> VersionedTransaction
@@ -165,6 +170,9 @@ open class Iroha2Client(
         }
     }
 
+    /**
+     * Subscribe to track the transaction status
+     */
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
 
     /**
@@ -249,7 +257,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Sends message to peer event was accepted
+     * Send a message to a peer saying that the event was accepted
      */
     private suspend fun accepted(webSocket: ClientWebSocketSession) {
         val eventReceived = VersionedEventSubscriberMessage.V1(
@@ -259,7 +267,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Extract rejection reason
+     * Extract the rejection reason
      */
     private fun RejectionReason.message(): String {
         return when (this) {
@@ -283,7 +291,7 @@ open class Iroha2Client(
     }
 
     /**
-     * Reads message from the frame
+     * Read the message from the frame
      */
     private inline fun <reified T : EventPublisherMessage> readMessage(frame: Frame): T {
         return when (frame) {

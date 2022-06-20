@@ -13,7 +13,11 @@ import com.squareup.kotlinpoet.WildcardTypeName
 import jp.co.soramitsu.iroha2.codegen.blueprint.Blueprint
 import jp.co.soramitsu.iroha2.type.CompositeType
 
+/**
+ * Basic generator for all kinds of [blueprints][Blueprint]
+ */
 abstract class AbstractGenerator<T : Blueprint<*>> {
+
     fun generate(blueprint: T): TypeSpec = pipelineClass(blueprint)
 
     open fun pipelineClass(blueprint: T): TypeSpec {

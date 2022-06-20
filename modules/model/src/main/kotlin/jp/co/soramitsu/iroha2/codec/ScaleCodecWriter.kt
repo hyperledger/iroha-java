@@ -16,6 +16,9 @@ import java.io.IOException
 import java.io.OutputStream
 import java.math.BigInteger
 
+/**
+ * SCALE codec writer
+ */
 class ScaleCodecWriter(private val out: OutputStream) : Closeable {
 
     fun writeByteArray(value: ByteArray) {
@@ -28,7 +31,8 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
     }
 
     /**
-     * Write the byte into output stream as-is directly, the input is supposed to be already encoded
+     * Write the byte into output stream as-is directly.
+     * The input is supposed to be already encoded.
      *
      * @param b byte to write
      * @throws IOException if failed to write
@@ -50,7 +54,8 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
     }
 
     /**
-     * Write the bytes into output stream as-is directly, the input is supposed to be already encoded
+     * Write the bytes into output stream as-is directly with the given [offset].
+     * The input is supposed to be already encoded.
      */
     fun directWrite(bytes: ByteArray, offset: Int, length: Int) {
         out.write(bytes, offset, length)

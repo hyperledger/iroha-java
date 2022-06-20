@@ -1,10 +1,10 @@
-# Testcontainers-iroha
+# Test Containers for Iroha2
 
-Testcontainers image for single Iroha2 peer and Iroha2 network
+The `testcontainers` module contains the Docker image for a single Iroha2 peer and Iroha2 network.
 
-# Usage
+## Usage
 
-## Single Peer
+In a single peer test, [IrohaRunnerExtension](../client/src/test/kotlin/jp/co/soramitsu/iroha2/engine/IrohaRunnerExtension.kt) calls [IrohaContainer](./src/main/kotlin/jp/co/soramitsu/iroha2/testcontainers/IrohaContainer.kt) that starts Iroha2 Docker containers:
 
 ```java
 @org.junit.jupiter.api.extension.ExtendWith(IrohaRunnerExtension::class)
@@ -18,9 +18,13 @@ class SinglePeerTest {
 }
 ```
 
-[IrohaRunnerExtension](../client/src/test/kotlin/jp/co/soramitsu/iroha2/engine/IrohaRunnerExtension.kt) calls [IrohaContainer](./src/main/kotlin/jp/co/soramitsu/iroha2/testcontainers/IrohaContainer.kt) that starts Iroha2 docker containers. 
-Also, you can modify Iroha2 config with [IrohaConfig](./src/main/kotlin/jp/co/soramitsu/iroha2/testcontainers/IrohaConfig.kt)
+You can modify Iroha2 configurations with [IrohaConfig](./src/main/kotlin/jp/co/soramitsu/iroha2/testcontainers/IrohaConfig.kt).
 
-Example of [genesis.json](./src/main/resources/genesis.json)
+## Examples
 
-More tests you can see [here](../client/src/test/kotlin/jp/co/soramitsu/iroha2)
+- [genesis.json](./src/main/resources/genesis.json)
+- [config.json](./src/main/resources/config.json)
+
+## More Tests
+
+You can find more tests [in the `client` module](../client/src/test/kotlin/jp/co/soramitsu/iroha2).

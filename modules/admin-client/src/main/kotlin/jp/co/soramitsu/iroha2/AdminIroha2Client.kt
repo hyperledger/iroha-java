@@ -10,7 +10,7 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client
 import java.net.URL
 
 /**
- * Enhancement of [Iroha2Client] for peer's monitoring and configuration support
+ * Enhancement of [Iroha2Client] for monitoring peers and configuration support
  */
 @Suppress("unused")
 open class AdminIroha2Client(
@@ -25,7 +25,7 @@ open class AdminIroha2Client(
 ) : Iroha2Client(peerUrl, log) {
 
     /**
-     * Sends metrics request
+     * Send metrics request
      */
     suspend fun metrics(): String {
         return client
@@ -34,7 +34,7 @@ open class AdminIroha2Client(
     }
 
     /**
-     * Sends health check request
+     * Send health check request
      */
     suspend fun health(): Int {
         return client
@@ -43,7 +43,7 @@ open class AdminIroha2Client(
     }
 
     /**
-     * Sends status check request
+     * Send status check request
      */
     suspend fun status(): PeerStatus {
         return client
@@ -59,7 +59,7 @@ open class AdminIroha2Client(
     }
 
     /**
-     * Request description of some configuration property
+     * Request description of a configuration property
      */
     suspend fun describeConfig(fieldValue: Collection<String>): String {
         if (fieldValue.isEmpty()) {
