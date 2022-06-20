@@ -8,6 +8,9 @@ import jp.co.soramitsu.iroha2.codec.and
 import jp.co.soramitsu.iroha2.codec.shl
 import jp.co.soramitsu.iroha2.codec.shr
 
+/**
+ * [Compact mode][CompactMode] SCALE reader for unsigned Integers
+ */
 class CompactUIntReader : ScaleReader<Int> {
     /**
      * @param reader reader with the encoded data

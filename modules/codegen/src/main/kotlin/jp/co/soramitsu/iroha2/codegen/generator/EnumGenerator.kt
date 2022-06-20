@@ -7,6 +7,9 @@ import com.squareup.kotlinpoet.TypeSpec
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumBlueprint
 
+/**
+ * Generator for [EnumBlueprint]
+ */
 object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
 
     override fun implKDoc(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {

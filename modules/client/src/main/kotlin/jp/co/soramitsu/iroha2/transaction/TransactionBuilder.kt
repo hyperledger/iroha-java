@@ -322,7 +322,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         this.apply { instructions.value.add(Instructions.grantSetKeyValueMetadata(accountId, target)) }
 
     fun grantMintUserAssetsDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantMintUserAssetsDefinition(assetDefinitionId, target)) }
+        this.apply { instructions.value.add(Instructions.grantMintUserAssetDefinitions(assetDefinitionId, target)) }
 
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: AssetDefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }

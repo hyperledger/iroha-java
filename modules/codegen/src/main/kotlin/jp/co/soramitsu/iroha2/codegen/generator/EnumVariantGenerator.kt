@@ -10,6 +10,9 @@ import com.squareup.kotlinpoet.TypeSpec
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumVariantBlueprint
 import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 
+/**
+ * Generator for [EnumVariantBlueprint]
+ */
 object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
     override fun implKDoc(blueprint: EnumVariantBlueprint, clazz: TypeSpec.Builder) {

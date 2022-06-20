@@ -3,6 +3,9 @@ package jp.co.soramitsu.iroha2.codec.writer
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 
+/**
+ * SCALE codec writer for Boolean values
+ */
 class BoolWriter : ScaleWriter<Boolean> {
     override fun write(wrt: ScaleCodecWriter, value: Boolean) {
         when (value) {
@@ -12,6 +15,9 @@ class BoolWriter : ScaleWriter<Boolean> {
     }
 }
 
+/**
+ * SCALE codec writer for Nullable Boolean values
+ */
 class BoolNullableWriter : ScaleWriter<Boolean?> {
     override fun write(writer: ScaleCodecWriter, instance: Boolean?) {
         when (instance) {

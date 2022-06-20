@@ -663,11 +663,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerRole(
                 roleId,
                 PermissionToken(
-                    CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                    Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 ),
                 PermissionToken(
-                    CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                    Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 )
             )

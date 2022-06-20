@@ -5,6 +5,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import java.math.BigInteger
 
+/**
+ * SCALE codec writer for Java Big Integers to encode them as unsigned integer SCALE values
+ */
 open class UIntWriter(private val bit: Int) : ScaleWriter<BigInteger> {
     override fun write(writer: ScaleCodecWriter, instance: BigInteger) {
         require(instance >= BigInteger.ZERO) { "Negative values are not supported: $instance" }
@@ -17,6 +20,9 @@ open class UIntWriter(private val bit: Int) : ScaleWriter<BigInteger> {
     }
 }
 
+/**
+ * SCALE codec writer for Java Integers to encode them as unsigned 16-bit integer SCALE values
+ */
 class UInt16Writer : ScaleWriter<Int> {
     override fun write(wrt: ScaleCodecWriter, value: Int) {
         require(value >= 0) { "Negative values are not supported: $value" }
@@ -25,6 +31,9 @@ class UInt16Writer : ScaleWriter<Int> {
     }
 }
 
+/**
+ * SCALE codec writer for Java Long Integers to encode them as unsigned 32-bit integer SCALE values
+ */
 class UInt32Writer : ScaleWriter<Long> {
     override fun write(wrt: ScaleCodecWriter, value: Long) {
         require(value >= 0) { "Negative values are not supported: $value" }

@@ -23,16 +23,16 @@ class ScaleCodecReader(private val source: ByteArray) {
     private var pos = 0
 
     /**
-     * @return true if has more elements
+     * @return true if there are still elements to read
      */
     operator fun hasNext(): Boolean {
         return pos < source.size
     }
 
     /**
-     * Move reader position forward (or backward for negative value)
+     * Move the reader's position forward (or backward for negative value)
      *
-     * @param len amount to bytes to skip
+     * @param len the number of bytes to skip
      */
     fun skip(len: Int) {
         require(!(len < 0 && abs(len) > pos)) { "Position cannot be negative: $pos $len" }
@@ -40,7 +40,7 @@ class ScaleCodecReader(private val source: ByteArray) {
     }
 
     /**
-     * Specify a new position
+     * Specify a new position for the reader
      *
      * @param pos position
      */
@@ -51,7 +51,7 @@ class ScaleCodecReader(private val source: ByteArray) {
     }
 
     /**
-     * @return a next single byte from reader
+     * Read the next byte
      */
     fun readByte(): Byte {
         if (!hasNext()) {
@@ -67,6 +67,9 @@ class ScaleCodecReader(private val source: ByteArray) {
         return scaleReader.read(this)
     }
 
+    /**
+     * Read Nullable Boolean
+     */
     fun readNullable(_long: Long.Companion): Long? {
         return when (readBoolean()) {
             true -> readUint32()
@@ -98,59 +101,101 @@ class ScaleCodecReader(private val source: ByteArray) {
         }
     }
 
+    /**
+     * Read Java Integer encoded as unsigned byte SCALE value
+     */
     fun readUByte(): Int {
         return UBYTE.read(this)
     }
 
+    /**
+     * Read Java Integer encoded as unsigned 16-bit integer SCALE value
+     */
     fun readUint16(): Int {
         return UINT16.read(this)
     }
 
+    /**
+     * Read Java Long Integer encoded as unsigned 32-bit integer SCALE value
+     */
     fun readUint32(): Long {
         return UINT32.read(this)
     }
 
+    /**
+     * Read Java Big Integer encoded as unsigned 64-bit integer SCALE value
+     */
     fun readUint64(): BigInteger {
         return UINT64.read(this)
     }
 
+    /**
+     * Read Java Big Integer encoded as unsigned 128-bit integer SCALE value
+     */
     fun readUint128(): BigInteger {
         return UINT128.read(this)
     }
 
+    /**
+     * Read Java Big Integer encoded as unsigned 256-bit integer SCALE value
+     */
     fun readUint256(): BigInteger {
         return UINT256.read(this)
     }
 
+    /**
+     * Read Java Integer encoded as 32-bit integer SCALE value
+     */
     fun readInt32(): Int {
         return INT32.read(this)
     }
 
+    /**
+     * Read a Java Long Integer encoded as 64-bit integer SCALE value
+     */
     fun readInt64(): Long {
         return INT64.read(this)
     }
 
+    /**
+     * Read a Java Big Integer encoded as 128-bit integer SCALE value
+     */
     fun readInt128(): BigInteger {
         return INT128.read(this)
     }
 
+    /**
+     * Read a Java Big Integer encoded as 256-bit integer SCALE value
+     */
     fun readInt256(): BigInteger {
         return INT256.read(this)
     }
 
+    /**
+     * Read an unsigned integer
+     */
     fun readCompactInt(): Int {
         return COMPACT_UINT.read(this)
     }
 
+    /**
+     * Read a Boolean value
+     */
     fun readBoolean(): Boolean {
         return BOOL.read(this)
     }
 
+    /**
+     * Read a byte array
+     */
     fun readByteArray(): ByteArray {
         val len = readCompactInt()
         return readByteArray(len)
     }
 
+    /**
+     * Read a byte array of a specified [length][len]
+     */
     fun readByteArray(len: Int): ByteArray {
         val result = ByteArray(len)
         System.arraycopy(source, pos, result, 0, result.size)
@@ -158,6 +203,9 @@ class ScaleCodecReader(private val source: ByteArray) {
         return result
     }
 
+    /**
+     * Read a set
+     */
     fun <T> readSet(size: Int, supplier: () -> T): MutableSet<T> {
         val set = HashSet<T>(capacity(size))
         for (index in 0 until size) {
@@ -166,6 +214,9 @@ class ScaleCodecReader(private val source: ByteArray) {
         return set
     }
 
+    /**
+     * Read a map
+     */
     fun <K, V> readMap(size: Int, key: () -> K, value: () -> V): MutableMap<K, V> {
         val map = HashMap<K, V>(capacity(size))
         for (index in 0 until size) {
@@ -174,14 +225,17 @@ class ScaleCodecReader(private val source: ByteArray) {
         return map
     }
 
+    /**
+     * Read a vector of a specified [size]
+     */
     fun <T> readVec(size: Int, supplier: () -> T): List<T> {
         return List(size) { supplier() }
     }
 
     /**
-     * Read string, encoded as UTF-8 bytes
+     * Read a string encoded as UTF-8 bytes
      *
-     * @return string value
+     * @return String value
      */
     fun readString(): String {
         return String(readByteArray())

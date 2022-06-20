@@ -3,6 +3,9 @@ package jp.co.soramitsu.iroha2.codegen.generator
 import com.squareup.kotlinpoet.TypeSpec
 import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 
+/**
+ * Generator for [TupleStructBlueprint]
+ */
 object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
     override fun implKDoc(
         blueprint: TupleStructBlueprint,

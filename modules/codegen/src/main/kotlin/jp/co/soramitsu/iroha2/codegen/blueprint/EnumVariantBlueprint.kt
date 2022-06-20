@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.codegen.resolveKotlinType
 import jp.co.soramitsu.iroha2.type.EnumType
 
 /**
- * Blueprint of the enum variant
+ * Blueprint for [enum variant][EnumType.Variant]
  */
 class EnumVariantBlueprint(val discriminant: Int, val parentBlueprint: EnumBlueprint, source: EnumType.Variant) : Blueprint<EnumType.Variant>(source) {
     override val className = defineClassName(source.name)
