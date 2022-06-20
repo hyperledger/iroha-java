@@ -69,8 +69,7 @@ class SchemaReader {
 
         return when (prefix == className || prefix == "${className.replace("\\W".toRegex())}s") {
             true -> line
-            false -> extracted.replace(className, "$prefix$className") // todo
-                .let { line.replace(extracted, it) }
+            false -> line.replace(className, "$prefix$className")
         }
     }
 
