@@ -3,7 +3,7 @@ package jp.co.soramitsu.iroha2.parse
 import jp.co.soramitsu.iroha2.type.Type
 
 typealias Types = Map<String, Type>
-typealias Schema = MutableMap<String, Any>
+typealias Schema = Map<String, Any>
 
 class SchemaParser {
 
@@ -11,10 +11,6 @@ class SchemaParser {
     private val resolver = TypeResolver(this)
 
     fun parse(schema: Schema): Types {
-//        val replace = "iroha_data_model::domain::Id"
-//        val replaceTo = "iroha_data_model::domain::DomainId"
-//        schema[replaceTo] = schema[replace]!!
-
         val preprocessed = schema
             .map { (name, typeValue) -> createAndGetNest(name, typeValue) }
             .associateBy { it.name }
