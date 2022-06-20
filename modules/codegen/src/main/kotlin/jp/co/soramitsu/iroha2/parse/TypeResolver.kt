@@ -29,6 +29,9 @@ import jp.co.soramitsu.iroha2.type.U8Type
 import jp.co.soramitsu.iroha2.type.UIntType
 import jp.co.soramitsu.iroha2.type.VecType
 
+/**
+ * TypeResolver is used to resolve Iroha2 types using Iroha2 schema parser.
+ */
 class TypeResolver(private val schemaParser: SchemaParser) {
 
     private val resolvers = listOf<Resolver<*>>(
@@ -48,6 +51,12 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         FixedPointResolver,
     )
 
+    /**
+     * Resolve the type based on a given [name].
+     *
+     * @param name The name to resolve
+     * @param typeValue The type to try and resolve the [name] to
+     */
     fun resolve(name: String, typeValue: Any?): Type? {
         val candidates = resolvers
             .asSequence()
@@ -57,10 +66,20 @@ class TypeResolver(private val schemaParser: SchemaParser) {
     }
 }
 
+/**
+ * Basic resolver for all kinds of types.
+ *
+ * @param name The name to resolve
+ * @param typeValue The type to try and resolve the [name] to
+ * @param schemaParser The schema parser to use
+ */
 interface Resolver<T : Type> {
     fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T?
 }
 
+/**
+ * Resolver for [BooleanType]
+ */
 object BooleanResolver : Resolver<BooleanType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): BooleanType? {
         return if (name == "bool") {
@@ -69,6 +88,9 @@ object BooleanResolver : Resolver<BooleanType> {
     }
 }
 
+/**
+ * Resolver for [MapType]
+ */
 object MapResolver : Resolver<MapType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): MapType? {
         if (!name.startsWith("Map<")) return null
@@ -89,6 +111,9 @@ object MapResolver : Resolver<MapType> {
     }
 }
 
+/**
+ * Basic resolver for wrapped types
+ */
 abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolver<T> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
         if (!name.startsWith("$wrapperName<")) return null
@@ -97,9 +122,15 @@ abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolve
         return createWrapper(name, innerType)
     }
 
+    /**
+     * Create a wrapper type for [innerType]
+     */
     abstract fun createWrapper(name: String, innerType: TypeNest, sorted: Boolean = false): T
 }
 
+/**
+ * Basic resolver for iterable types
+ */
 abstract class SortedWrapperResolver<T : IterableType>(
     override val wrapperName: String
 ) : WrapperResolver<T>(wrapperName) {
@@ -118,6 +149,9 @@ abstract class SortedWrapperResolver<T : IterableType>(
     }
 }
 
+/**
+ * Resolver for [VecType]
+ */
 object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
     override fun createWrapper(
         name: String,
@@ -140,6 +174,9 @@ object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
     }
 }
 
+/**
+ * Resolver for [SetType]
+ */
 object SetResolver : WrapperResolver<SetType>("BTreeSet") {
     override fun createWrapper(
         name: String,
@@ -148,6 +185,9 @@ object SetResolver : WrapperResolver<SetType>("BTreeSet") {
     ) = SetType(name, innerType, sorted)
 }
 
+/**
+ * Resolver for [ArrayType]
+ */
 object ArrayResolver : Resolver<ArrayType> {
 
     private val REGEX by lazy { "\\[(\\S+); (\\d+)\\]".toRegex() }
@@ -159,6 +199,9 @@ object ArrayResolver : Resolver<ArrayType> {
     }
 }
 
+/**
+ * Resolver for [OptionType]
+ */
 object OptionResolver : WrapperResolver<OptionType>("Option") {
     override fun createWrapper(
         name: String,
@@ -167,6 +210,9 @@ object OptionResolver : WrapperResolver<OptionType>("Option") {
     ) = OptionType(name, innerType)
 }
 
+/**
+ * Resolver for [CompactType]
+ */
 object CompactResolver : WrapperResolver<CompactType>("Compact") {
     override fun createWrapper(
         name: String,
@@ -175,6 +221,9 @@ object CompactResolver : WrapperResolver<CompactType>("Compact") {
     ) = CompactType(name, innerType)
 }
 
+/**
+ * Resolver for [EnumType]
+ */
 object EnumResolver : Resolver<EnumType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): EnumType? {
         return if (typeValue is Map<*, *> && typeValue["Enum"] != null) {
@@ -194,6 +243,9 @@ object EnumResolver : Resolver<EnumType> {
     }
 }
 
+/**
+ * Resolver for [TupleStructType]
+ */
 object TupleStructResolver : Resolver<TupleStructType> {
     override fun resolve(
         name: String,
@@ -209,6 +261,9 @@ object TupleStructResolver : Resolver<TupleStructType> {
     }
 }
 
+/**
+ * Resolver for [StructType]
+ */
 object StructResolver : Resolver<StructType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StructType? {
         return if (typeValue is Map<*, *> && typeValue["Struct"] != null) {
@@ -226,6 +281,9 @@ object StructResolver : Resolver<StructType> {
     }
 }
 
+/**
+ * Resolver for [StringType]
+ */
 object StringResolver : Resolver<StringType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StringType? {
         return if (name.endsWith("String")) {
@@ -234,6 +292,9 @@ object StringResolver : Resolver<StringType> {
     }
 }
 
+/**
+ * Resolver for [UIntType]
+ */
 object UIntResolver : Resolver<UIntType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): UIntType? {
         return when (name) {
@@ -249,6 +310,9 @@ object UIntResolver : Resolver<UIntType> {
     }
 }
 
+/**
+ * Resolver for [IntType]
+ */
 object IntResolver : Resolver<IntType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): IntType? {
         return when (name) {
@@ -263,6 +327,9 @@ object IntResolver : Resolver<IntType> {
     }
 }
 
+/**
+ * Resolver for [FixedPointType]
+ */
 object FixedPointResolver : Resolver<FixedPointType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): FixedPointType? {
         return if (name.startsWith("FixedPoint<") && typeValue is Map<*, *>) {
@@ -274,6 +341,9 @@ object FixedPointResolver : Resolver<FixedPointType> {
     }
 }
 
+/**
+ * `TypeNest` contains [the name of the type][name] and [the type it resolves to][value]
+ */
 data class TypeNest(val name: String, var value: Type?) {
 
     private var resolutionInProgress: Boolean = false
