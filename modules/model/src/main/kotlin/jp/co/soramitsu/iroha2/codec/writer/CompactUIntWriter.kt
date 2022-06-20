@@ -5,6 +5,9 @@ import jp.co.soramitsu.iroha2.codec.CompactMode.Companion.forNumber
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 
+/**
+ * [Compact mode][CompactMode] SCALE writer for unsigned Integers
+ */
 class CompactUIntWriter : ScaleWriter<Int> {
     override fun write(writer: ScaleCodecWriter, instance: Int) {
         val mode = forNumber(instance)
