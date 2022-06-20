@@ -7,12 +7,12 @@ import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
 /**
- * Init block
+ * Genesis block is used to initialise a blockchain
  */
 open class Genesis(open val genesisBlock: RawGenesisBlock) {
 
     /**
-     * Writes to genesis file
+     * Write genesis to file
      */
     fun writeToFile(path: Path) = Files.write(
         path,
@@ -22,13 +22,13 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     )
 
     /**
-     * Represents genesis as JSON
+     * Represent genesis as JSON
      */
     fun asJson() = JSON_SERDE.writeValueAsString(this.genesisBlock)
 
     companion object {
         /**
-         * Returns empty genesis
+         * Return empty genesis
          */
         fun getEmpty() = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf()))))
     }
