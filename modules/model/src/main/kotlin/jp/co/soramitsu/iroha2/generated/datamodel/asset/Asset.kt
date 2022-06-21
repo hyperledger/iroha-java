@@ -15,13 +15,13 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::asset::Asset' regular structure
  */
 public data class Asset(
-    public val id: Id,
+    public val id: AssetId,
     public val `value`: AssetValue
 ) {
     public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
         public override fun read(reader: ScaleCodecReader): Asset = try {
             Asset(
-                Id.read(reader),
+                AssetId.read(reader),
                 AssetValue.read(reader),
             )
         } catch (ex: Exception) {
@@ -29,7 +29,7 @@ public data class Asset(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Asset) = try {
-            Id.write(writer, instance.id)
+            AssetId.write(writer, instance.id)
             AssetValue.write(writer, instance.`value`)
         } catch (ex: Exception) {
             throw wrapException(ex)

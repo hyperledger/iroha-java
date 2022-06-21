@@ -19,8 +19,9 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
@@ -155,7 +155,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(XorAndValAssets::class)
     fun `find asset quantity by id`(): Unit = runBlocking {
-        val assetId = Id(XorAndValAssets.XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
+        val assetId = AssetId(XorAndValAssets.XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
         QueryBuilder.findAssetQuantityById(assetId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -280,7 +280,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                         ?.cast<Value.Id>()
                         ?.idBox
                         ?.cast<IdBox.AssetDefinitionId>()
-                        ?.definitionId == DEFAULT_ASSET_DEFINITION_ID
+                        ?.assetDefinitionId == DEFAULT_ASSET_DEFINITION_ID
                 }
             }.also {
                 assert(it)

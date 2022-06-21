@@ -15,19 +15,19 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::peer::Peer' regular structure
  */
 public data class Peer(
-    public val id: Id
+    public val id: PeerId
 ) {
     public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
         public override fun read(reader: ScaleCodecReader): Peer = try {
             Peer(
-                Id.read(reader),
+                PeerId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
-            Id.write(writer, instance.id)
+            PeerId.write(writer, instance.id)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

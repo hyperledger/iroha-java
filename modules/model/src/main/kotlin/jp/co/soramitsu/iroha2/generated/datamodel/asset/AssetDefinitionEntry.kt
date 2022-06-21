@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,13 +17,13 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AssetDefinitionEntry(
     public val definition: AssetDefinition,
-    public val registeredBy: Id
+    public val registeredBy: AccountId
 ) {
     public companion object : ScaleReader<AssetDefinitionEntry>, ScaleWriter<AssetDefinitionEntry> {
         public override fun read(reader: ScaleCodecReader): AssetDefinitionEntry = try {
             AssetDefinitionEntry(
                 AssetDefinition.read(reader),
-                Id.read(reader),
+                AccountId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class AssetDefinitionEntry(
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionEntry) = try {
             AssetDefinition.write(writer, instance.definition)
-            Id.write(writer, instance.registeredBy)
+            AccountId.write(writer, instance.registeredBy)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

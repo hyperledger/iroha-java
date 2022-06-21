@@ -9,7 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -19,7 +19,7 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class FindTriggerKeyValueByIdAndKey(
-    public val id: EvaluatesTo<Id>,
+    public val id: EvaluatesTo<TriggerId>,
     public val key: EvaluatesTo<Name>
 ) {
     public companion object :
@@ -27,7 +27,7 @@ public data class FindTriggerKeyValueByIdAndKey(
         ScaleWriter<FindTriggerKeyValueByIdAndKey> {
         public override fun read(reader: ScaleCodecReader): FindTriggerKeyValueByIdAndKey = try {
             FindTriggerKeyValueByIdAndKey(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<TriggerId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {

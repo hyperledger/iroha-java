@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
 
@@ -17,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::query::asset::FindAssetsByAccountId' regular structure
  */
 public data class FindAssetsByAccountId(
-    public val accountId: EvaluatesTo<Id>
+    public val accountId: EvaluatesTo<AccountId>
 ) {
     public companion object : ScaleReader<FindAssetsByAccountId>, ScaleWriter<FindAssetsByAccountId> {
         public override fun read(reader: ScaleCodecReader): FindAssetsByAccountId = try {
             FindAssetsByAccountId(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

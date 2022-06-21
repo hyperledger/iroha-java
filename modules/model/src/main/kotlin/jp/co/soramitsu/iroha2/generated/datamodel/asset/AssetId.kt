@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters
+package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -11,23 +11,26 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * IdFilterAccountId
+ * AssetId
  *
- * Generated from 'iroha_data_model::events::data::filters::IdFilterAccountId' tuple structure
+ * Generated from 'iroha_data_model::asset::AssetId' regular structure
  */
-public data class IdFilterAccountId(
+public data class AssetId(
+    public val definitionId: AssetDefinitionId,
     public val accountId: AccountId
 ) {
-    public companion object : ScaleReader<IdFilterAccountId>, ScaleWriter<IdFilterAccountId> {
-        public override fun read(reader: ScaleCodecReader): IdFilterAccountId = try {
-            IdFilterAccountId(
+    public companion object : ScaleReader<AssetId>, ScaleWriter<AssetId> {
+        public override fun read(reader: ScaleCodecReader): AssetId = try {
+            AssetId(
+                AssetDefinitionId.read(reader),
                 AccountId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: IdFilterAccountId) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: AssetId) = try {
+            AssetDefinitionId.write(writer, instance.definitionId)
             AccountId.write(writer, instance.accountId)
         } catch (ex: Exception) {
             throw wrapException(ex)

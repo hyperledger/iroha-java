@@ -11,23 +11,23 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * Id
+ * RoleId
  *
- * Generated from 'iroha_data_model::role::Id' regular structure
+ * Generated from 'iroha_data_model::role::RoleId' regular structure
  */
-public data class Id(
+public data class RoleId(
     public val name: Name
 ) {
-    public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-        public override fun read(reader: ScaleCodecReader): Id = try {
-            Id(
+    public companion object : ScaleReader<RoleId>, ScaleWriter<RoleId> {
+        public override fun read(reader: ScaleCodecReader): RoleId = try {
+            RoleId(
                 Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Id) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: RoleId) = try {
             Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)

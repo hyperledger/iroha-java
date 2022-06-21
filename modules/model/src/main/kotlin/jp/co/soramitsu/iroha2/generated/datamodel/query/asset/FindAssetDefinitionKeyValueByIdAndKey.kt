@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
 
@@ -19,7 +19,7 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class FindAssetDefinitionKeyValueByIdAndKey(
-    public val id: EvaluatesTo<DefinitionId>,
+    public val id: EvaluatesTo<AssetDefinitionId>,
     public val key: EvaluatesTo<Name>
 ) {
     public companion object :
@@ -27,7 +27,7 @@ public data class FindAssetDefinitionKeyValueByIdAndKey(
         ScaleWriter<FindAssetDefinitionKeyValueByIdAndKey> {
         public override fun read(reader: ScaleCodecReader): FindAssetDefinitionKeyValueByIdAndKey = try {
             FindAssetDefinitionKeyValueByIdAndKey(
-                EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {
