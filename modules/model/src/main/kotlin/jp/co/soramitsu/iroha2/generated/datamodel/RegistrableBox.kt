@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -193,7 +194,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'Role' variant
      */
     public data class Role(
-        public val role: jp.co.soramitsu.iroha2.generated.datamodel.role.Role
+        public val newRole: NewRole
     ) : RegistrableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -202,14 +203,14 @@ public sealed class RegistrableBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Role = try {
                 Role(
-                    jp.co.soramitsu.iroha2.generated.datamodel.role.Role.read(reader),
+                    NewRole.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.role.Role.write(writer, instance.role)
+                NewRole.write(writer, instance.newRole)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
