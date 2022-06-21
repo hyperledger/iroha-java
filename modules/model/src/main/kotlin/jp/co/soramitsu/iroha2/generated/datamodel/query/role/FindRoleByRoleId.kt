@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::query::role::FindRoleByRoleId' regular structure
  */
 public data class FindRoleByRoleId(
-    public val id: EvaluatesTo<Id>
+    public val id: EvaluatesTo<RoleId>
 ) {
     public companion object : ScaleReader<FindRoleByRoleId>, ScaleWriter<FindRoleByRoleId> {
         public override fun read(reader: ScaleCodecReader): FindRoleByRoleId = try {
             FindRoleByRoleId(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<RoleId>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

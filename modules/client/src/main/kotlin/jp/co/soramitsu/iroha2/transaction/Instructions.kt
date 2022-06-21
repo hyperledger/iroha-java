@@ -11,14 +11,18 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.FailBox
@@ -35,24 +39,20 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
+import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.WasmSmartContract
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.EventFilter as TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id as PeerId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
 val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
@@ -115,7 +115,7 @@ object Instructions {
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
-                        FilterBox.Time(filter),
+                        EventsFilterBox.Time(filter),
                         metadata
                     )
                 )
@@ -158,7 +158,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox
+        filter: EventsFilterBox
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.Trigger(
@@ -185,7 +185,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox
+        filter: EventsFilterBox
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.Trigger(
@@ -251,7 +251,7 @@ object Instructions {
      */
     @JvmOverloads
     fun registerAsset(
-        id: DefinitionId,
+        id: AssetDefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
@@ -344,7 +344,7 @@ object Instructions {
      * Set key/value for a given asset definition
      */
     fun setKeyValue(
-        definitionId: DefinitionId,
+        definitionId: AssetDefinitionId,
         key: Name,
         value: Value
     ): Instruction.SetKeyValue {
@@ -512,7 +512,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanSetKeyValueInAssetDefinition] permission
      */
-    fun grantSetKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantSetKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = Permissions.CanSetKeyValueInAssetDefinition.permissionName.asName(),
@@ -526,7 +526,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanRemoveKeyValueInAssetDefinition] permission
      */
-    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = Permissions.CanRemoveKeyValueInAssetDefinition.permissionName.asName(),
@@ -540,7 +540,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanMintUserAssetDefinitionsToken] permission
      */
-    fun grantMintUserAssetDefinitions(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantMintUserAssetDefinitions(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = Permissions.CanMintUserAssetDefinitionsToken.permissionName.asName(),
@@ -569,7 +569,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanBurnAssetWithDefinition] permission
      */
-    fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantBurnAssetWithDefinitionId(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = Permissions.CanBurnAssetWithDefinition.permissionName.asName(),
@@ -623,7 +623,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanUnregisterAssetWithDefinition] permission
      */
-    fun grantUnregisterAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantUnregisterAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             PermissionToken(
                 name = Permissions.CanUnregisterAssetWithDefinition.permissionName.asName(),

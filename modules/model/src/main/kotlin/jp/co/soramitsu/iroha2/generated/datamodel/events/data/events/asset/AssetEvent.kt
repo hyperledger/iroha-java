@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -27,7 +27,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +36,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -54,7 +54,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -63,14 +63,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -81,7 +81,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Added' variant
      */
     public data class Added(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -90,14 +90,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Added = try {
                 Added(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Added) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -108,7 +108,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Removed' variant
      */
     public data class Removed(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -117,14 +117,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Removed = try {
                 Removed(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Removed) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -135,7 +135,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -144,14 +144,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -162,7 +162,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val id: Id
+        public val assetId: AssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -171,14 +171,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

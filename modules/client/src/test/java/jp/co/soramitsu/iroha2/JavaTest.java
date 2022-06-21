@@ -7,17 +7,18 @@ import jp.co.soramitsu.iroha2.engine.WithIroha;
 import jp.co.soramitsu.iroha2.generated.datamodel.Name;
 import jp.co.soramitsu.iroha2.generated.datamodel.Value;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId;
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId;
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue;
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType;
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain;
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id;
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId;
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata;
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction;
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor;
 import jp.co.soramitsu.iroha2.query.QueryBuilder;
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void registerDomainInstructionCommitted() throws ExecutionException, InterruptedException, TimeoutException {
-        final Id domainId = new Id(new Name("new_domain_name"));
+        final DomainId domainId = new DomainId(new Name("new_domain_name"));
         final VersionedTransaction transaction = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
@@ -68,7 +69,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(genesis = DefaultGenesis.class)
     public void registerAccountInstructionCommitted() throws Exception {
-        final jp.co.soramitsu.iroha2.generated.datamodel.account.Id accountId = new jp.co.soramitsu.iroha2.generated.datamodel.account.Id(
+        final AccountId accountId = new AccountId(
             new Name("new_account"),
             DEFAULT_DOMAIN_ID
         );
@@ -132,10 +133,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
-        final jp.co.soramitsu.iroha2.generated.datamodel.asset.Id assetId =
-            new jp.co.soramitsu.iroha2.generated.datamodel.asset.Id(
-                DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID
-            );
+        final AssetId assetId = new AssetId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID);
         final VersionedTransaction keyValueTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)

@@ -11,23 +11,23 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * Id
+ * TriggerId
  *
- * Generated from 'iroha_data_model::trigger::Id' regular structure
+ * Generated from 'iroha_data_model::trigger::TriggerId' regular structure
  */
-public data class Id(
+public data class TriggerId(
     public val name: Name
 ) {
-    public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-        public override fun read(reader: ScaleCodecReader): Id = try {
-            Id(
+    public companion object : ScaleReader<TriggerId>, ScaleWriter<TriggerId> {
+        public override fun read(reader: ScaleCodecReader): TriggerId = try {
+            TriggerId(
                 Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Id) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: TriggerId) = try {
             Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)

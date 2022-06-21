@@ -230,7 +230,7 @@ open class Iroha2Client(
     ): ByteArray? {
         when (val event = eventPublisherMessage.event) {
             is Event.Pipeline -> {
-                val eventInner = event.event
+                val eventInner = event.pipelineEvent
                 if (eventInner.entityKind is EntityKind.Transaction && hash.contentEquals(eventInner.hash.array)) {
                     when (val status = eventInner.status) {
                         is Status.Committed -> {

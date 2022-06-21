@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -16,19 +16,19 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::data::filters::IdFilterPeerId' tuple structure
  */
 public data class IdFilterPeerId(
-    public val id: Id
+    public val peerId: PeerId
 ) {
     public companion object : ScaleReader<IdFilterPeerId>, ScaleWriter<IdFilterPeerId> {
         public override fun read(reader: ScaleCodecReader): IdFilterPeerId = try {
             IdFilterPeerId(
-                Id.read(reader),
+                PeerId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: IdFilterPeerId) = try {
-            Id.write(writer, instance.id)
+            PeerId.write(writer, instance.peerId)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

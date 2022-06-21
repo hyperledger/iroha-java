@@ -10,7 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Long
@@ -22,7 +22,7 @@ import kotlin.collections.Map
  * Generated from 'iroha_data_model::transaction::Payload' regular structure
  */
 public data class Payload(
-    public val accountId: Id,
+    public val accountId: AccountId,
     public val instructions: Executable,
     public val creationTime: BigInteger,
     public val timeToLiveMs: BigInteger,
@@ -32,7 +32,7 @@ public data class Payload(
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = try {
             Payload(
-                Id.read(reader),
+                AccountId.read(reader),
                 Executable.read(reader),
                 reader.readUint64(),
                 reader.readUint64(),
@@ -44,7 +44,7 @@ public data class Payload(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Payload) = try {
-            Id.write(writer, instance.accountId)
+            AccountId.write(writer, instance.accountId)
             Executable.write(writer, instance.instructions)
             writer.writeUint64(instance.creationTime)
             writer.writeUint64(instance.timeToLiveMs)

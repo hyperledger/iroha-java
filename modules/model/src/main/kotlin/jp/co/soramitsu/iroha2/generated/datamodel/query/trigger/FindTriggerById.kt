@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::query::trigger::FindTriggerById' regular structure
  */
 public data class FindTriggerById(
-    public val id: EvaluatesTo<Id>
+    public val id: EvaluatesTo<TriggerId>
 ) {
     public companion object : ScaleReader<FindTriggerById>, ScaleWriter<FindTriggerById> {
         public override fun read(reader: ScaleCodecReader): FindTriggerById = try {
             FindTriggerById(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<TriggerId>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

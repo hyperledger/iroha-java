@@ -8,6 +8,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.ExecuteTriggerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.PipelineEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEvent
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -26,7 +29,7 @@ public sealed class Event : ModelEnum {
      * 'Pipeline' variant
      */
     public data class Pipeline(
-        public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event
+        public val pipelineEvent: PipelineEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,17 +38,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Pipeline = try {
                 Pipeline(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.read(reader),
+                    PipelineEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Pipeline) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Event.write(
-                    writer,
-                    instance.event
-                )
+                PipelineEvent.write(writer, instance.pipelineEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -86,7 +86,7 @@ public sealed class Event : ModelEnum {
      * 'Time' variant
      */
     public data class Time(
-        public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event
+        public val timeEvent: TimeEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -95,14 +95,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Time = try {
                 Time(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event.read(reader),
+                    TimeEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Time) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.time.Event.write(writer, instance.event)
+                TimeEvent.write(writer, instance.timeEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -113,7 +113,7 @@ public sealed class Event : ModelEnum {
      * 'ExecuteTrigger' variant
      */
     public data class ExecuteTrigger(
-        public val event: jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.Event
+        public val executeTriggerEvent: ExecuteTriggerEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -122,17 +122,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
                 ExecuteTrigger(
-                    jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.Event.read(reader),
+                    ExecuteTriggerEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.Event.write(
-                    writer,
-                    instance.event
-                )
+                ExecuteTriggerEvent.write(writer, instance.executeTriggerEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

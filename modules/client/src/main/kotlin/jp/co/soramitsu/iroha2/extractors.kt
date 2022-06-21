@@ -14,8 +14,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryR
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 /**
  * Extractors are used by [QueryBuilder] to extract data from query results
@@ -161,7 +161,7 @@ object TriggersExtractor : ResultExtractor<List<Trigger<*>>> {
 object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
     override fun extract(result: PaginatedQueryResult): List<TriggerId> {
         return extractVec(result.result.value) {
-            extractValue(it, Value.Id::idBox).cast<IdBox.TriggerId>().id
+            extractValue(it, Value.Id::idBox).cast<IdBox.TriggerId>().triggerId
         }
     }
 }

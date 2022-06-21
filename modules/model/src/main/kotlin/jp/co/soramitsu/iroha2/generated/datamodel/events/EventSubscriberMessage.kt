@@ -26,7 +26,7 @@ public sealed class EventSubscriberMessage : ModelEnum {
      * 'SubscriptionRequest' variant
      */
     public data class SubscriptionRequest(
-        public val filterBox: FilterBox
+        public val eventsFilterBox: EventsFilterBox
     ) : EventSubscriberMessage() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +35,14 @@ public sealed class EventSubscriberMessage : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): SubscriptionRequest = try {
                 SubscriptionRequest(
-                    FilterBox.read(reader),
+                    EventsFilterBox.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: SubscriptionRequest) = try {
-                FilterBox.write(writer, instance.filterBox)
+                EventsFilterBox.write(writer, instance.eventsFilterBox)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
