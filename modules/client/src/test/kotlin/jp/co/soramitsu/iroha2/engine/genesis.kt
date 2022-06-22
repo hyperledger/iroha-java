@@ -1,44 +1,46 @@
 package jp.co.soramitsu.iroha2.engine
 
-import jp.co.soramitsu.iroha2.CAN_REMOVE_KEY_VALUE_IN_USER_METADATA
-import jp.co.soramitsu.iroha2.CAN_SET_KEY_VALUE_IN_USER_METADATA
 import jp.co.soramitsu.iroha2.Genesis
+import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id as TriggerId
 
 /**
- * Default genesis where just one domain and Alice with Bob in it
+ * Create a default genesis where there is just one domain with only Alice and Bob in it
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
+/**
+ * Give Alice access to Bob's metadata
+ */
 open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
     rawGenesisBlock(
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             ),
             PermissionToken(
-                CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             )
         ),
@@ -51,7 +53,7 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
 }
 
 /**
- * Gives to Alice has 100 XOR and permission to burn
+ * Give Alice 100 XOR and the permission to burn them
  */
 open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
@@ -62,7 +64,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
 )
 
 /**
- * Registers executable trigger without instructions
+ * Register an executable trigger without instructions
  */
 open class WithExecutableTrigger : Genesis(
     rawGenesisBlock(
@@ -81,7 +83,7 @@ open class WithExecutableTrigger : Genesis(
 }
 
 /**
- * Mints 100 XOR for Alice and Bob
+ * Mint 100 XOR for Alice and Bob
  */
 open class AliceAndBobEachHave100Xor : Genesis(
     rawGenesisBlock(
@@ -96,7 +98,7 @@ open class AliceAndBobEachHave100Xor : Genesis(
 }
 
 /**
- * Creates Store asset with metadata
+ * Create a Store asset with metadata
  */
 open class StoreAssetWithMetadata : Genesis(
     rawGenesisBlock(
@@ -111,13 +113,13 @@ open class StoreAssetWithMetadata : Genesis(
     companion object {
         val ASSET_KEY = "key".asName()
         val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 }
 
 /**
- * Creates XOR and VAL assets with 1 token for each and metadata
+ * Create XOR and VAL assets with one token for each and metadata
  */
 open class XorAndValAssets : Genesis(
     rawGenesisBlock(
@@ -131,13 +133,13 @@ open class XorAndValAssets : Genesis(
     companion object {
         const val XOR_QUANTITY = 1L
         const val VAL_QUANTITY = 1L
-        val XOR_DEFINITION_ID = DefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
-        val VAL_DEFINITION_ID = DefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
+        val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+        val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
 /**
- * Creates new account with metadata
+ * Create a new account with metadata
  */
 open class NewAccountWithMetadata : Genesis(
     rawGenesisBlock(
@@ -159,7 +161,7 @@ open class NewAccountWithMetadata : Genesis(
 }
 
 /**
- * Creates new domain with metadata
+ * Create a new domain with metadata
  */
 open class NewDomainWithMetadata : Genesis(
     rawGenesisBlock(
@@ -177,7 +179,7 @@ open class NewDomainWithMetadata : Genesis(
 }
 
 /**
- * Creates new domain
+ * Create a new domain
  */
 open class NewDomain : Genesis(
     rawGenesisBlock(
@@ -190,7 +192,7 @@ open class NewDomain : Genesis(
 }
 
 /**
- * Returns RawGenesisBlock with instructions to init genesis block
+ * Return [RawGenesisBlock] with instructions to init genesis block
  */
 fun rawGenesisBlock(vararg isi: Instruction): RawGenesisBlock {
     return RawGenesisBlock(

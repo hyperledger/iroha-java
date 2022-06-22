@@ -16,11 +16,15 @@ import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.Instructions
@@ -42,10 +46,6 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Id as DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
 class InstructionsTest : IrohaTest<Iroha2Client>() {
 
@@ -662,11 +662,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerRole(
                 roleId,
                 PermissionToken(
-                    CAN_SET_KEY_VALUE_IN_USER_METADATA,
+                    Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 ),
                 PermissionToken(
-                    CAN_REMOVE_KEY_VALUE_IN_USER_METADATA,
+                    Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 )
             )

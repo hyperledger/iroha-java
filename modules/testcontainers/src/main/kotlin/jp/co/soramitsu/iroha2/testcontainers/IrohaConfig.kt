@@ -8,6 +8,9 @@ import org.testcontainers.containers.output.OutputFrame
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import java.util.function.Consumer
 
+/**
+ * Iroha configuration
+ */
 class IrohaConfig(
     var networkToJoin: Network = newNetwork(),
     var logConsumer: Consumer<OutputFrame> = Slf4jLogConsumer(getLogger(IrohaContainer::class.java)),

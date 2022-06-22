@@ -18,13 +18,13 @@ import kotlin.collections.List
  * Generated from 'iroha_data_model::role::Role' regular structure
  */
 public data class Role(
-    public val id: Id,
+    public val id: RoleId,
     public val permissions: List<PermissionToken>
 ) {
     public companion object : ScaleReader<Role>, ScaleWriter<Role> {
         public override fun read(reader: ScaleCodecReader): Role = try {
             Role(
-                Id.read(reader),
+                RoleId.read(reader),
                 reader.readVec(reader.readCompactInt()) { PermissionToken.read(reader) },
             )
         } catch (ex: Exception) {
@@ -32,7 +32,7 @@ public data class Role(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
-            Id.write(writer, instance.id)
+            RoleId.write(writer, instance.id)
             writer.writeCompact(instance.permissions.size)
             instance.permissions.sortedWith(
                 PermissionToken.comparator()

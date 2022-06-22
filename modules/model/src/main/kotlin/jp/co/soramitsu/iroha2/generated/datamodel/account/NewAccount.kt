@@ -19,14 +19,14 @@ import kotlin.collections.List
  * Generated from 'iroha_data_model::account::NewAccount' regular structure
  */
 public data class NewAccount(
-    public val id: Id,
+    public val id: AccountId,
     public val signatories: List<PublicKey>,
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
         public override fun read(reader: ScaleCodecReader): NewAccount = try {
             NewAccount(
-                Id.read(reader),
+                AccountId.read(reader),
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
                 Metadata.read(reader),
             )
@@ -35,7 +35,7 @@ public data class NewAccount(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: NewAccount) = try {
-            Id.write(writer, instance.id)
+            AccountId.write(writer, instance.id)
             writer.writeCompact(instance.signatories.size)
             instance.signatories.sortedWith(
                 PublicKey.comparator()

@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -27,7 +27,7 @@ public sealed class RoleEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val id: Id
+        public val roleId: RoleId
     ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +36,14 @@ public sealed class RoleEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    Id.read(reader),
+                    RoleId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                Id.write(writer, instance.id)
+                RoleId.write(writer, instance.roleId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -54,7 +54,7 @@ public sealed class RoleEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val id: Id
+        public val roleId: RoleId
     ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -63,14 +63,14 @@ public sealed class RoleEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    Id.read(reader),
+                    RoleId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                Id.write(writer, instance.id)
+                RoleId.write(writer, instance.roleId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

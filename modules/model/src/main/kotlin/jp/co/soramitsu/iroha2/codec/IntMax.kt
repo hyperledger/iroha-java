@@ -2,6 +2,9 @@ package jp.co.soramitsu.iroha2.codec
 
 import java.math.BigInteger
 
+/**
+ * The largest values for Integer types
+ */
 enum class IntMax(val max: BigInteger) {
     U64(BigInteger.valueOf(2).pow(64) - BigInteger.ONE),
     U128(BigInteger.valueOf(2).pow(128) - BigInteger.ONE),
@@ -29,6 +32,9 @@ enum class IntMax(val max: BigInteger) {
     }
 }
 
+/**
+ * The smallest values for signed Integer types
+ */
 enum class IntMin(val min: BigInteger) {
     I128(-BigInteger.valueOf(2).pow(127)),
     I256(-BigInteger.valueOf(2).pow(255));

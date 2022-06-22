@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
 
@@ -19,7 +19,7 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class FindAccountKeyValueByIdAndKey(
-    public val id: EvaluatesTo<Id>,
+    public val id: EvaluatesTo<AccountId>,
     public val key: EvaluatesTo<Name>
 ) {
     public companion object :
@@ -27,7 +27,7 @@ public data class FindAccountKeyValueByIdAndKey(
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
         public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
             FindAccountKeyValueByIdAndKey(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
         } catch (ex: Exception) {

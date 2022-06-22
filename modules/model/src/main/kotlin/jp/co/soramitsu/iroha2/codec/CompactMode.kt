@@ -2,6 +2,9 @@ package jp.co.soramitsu.iroha2.codec
 
 import java.math.BigInteger
 
+/**
+ * Compact mode for SCALE codec writers and readers
+ */
 enum class CompactMode(val value: Byte) {
     SINGLE(0.toByte()), TWO(1.toByte()), FOUR(2.toByte()), BIGINT(3.toByte());
 

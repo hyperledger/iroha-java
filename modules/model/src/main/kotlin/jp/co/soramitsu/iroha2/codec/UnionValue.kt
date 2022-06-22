@@ -2,6 +2,9 @@ package jp.co.soramitsu.iroha2.codec
 
 import java.util.Objects
 
+/**
+ * `UnionValue` type is [enumeration][index] with assigned [value]
+ */
 class UnionValue<T>(index: Int, value: T) {
     val index: Int
     val value: T

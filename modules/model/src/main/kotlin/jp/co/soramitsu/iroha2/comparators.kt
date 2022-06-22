@@ -3,27 +3,42 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import kotlin.reflect.KClass
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId as AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Id as RoleId
 
+/**
+ * Compare strings
+ */
 @JvmName("StringComparator")
 fun String.Companion.comparator() = compareBy<String> { it }
 
+/**
+ * Compare Names
+ */
 @JvmName("NameComparator")
 fun Name.Companion.comparator() = compareBy<Name> { it.string }
 
+/**
+ * Compare account IDs
+ */
 @JvmName("AccountIdComparator")
 fun AccountId.Companion.comparator() = compareBy<AccountId> { it.name.string }
     .thenBy { it.domainId.name.string }
 
+/**
+ * Compare asset definition IDs
+ */
 @JvmName("AssetDefinitionIdComparator")
 fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
     .thenBy { it.domainId.name.string }
 
+/**
+ * Compare asset IDs
+ */
 @JvmName("AssetIdComparator")
 fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
     AssetDefinitionId.comparator().compare(
@@ -33,14 +48,23 @@ fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
     AccountId.comparator().compare(o1.accountId, o2.accountId)
 }
 
+/**
+ * Compare role IDs
+ */
 @JvmName("RoleIdComparator")
 fun RoleId.Companion.comparator() = compareBy<RoleId> { it.name.string }
 
+/**
+ * Compare public keys
+ */
 @JvmName("PublicKeyComparator")
 fun PublicKey.Companion.comparator() = Comparator<PublicKey> { o1, o2 ->
     ByteArray::class.comparator().compare(o1.payload, o2.payload)
 }
 
+/**
+ * Compare signatures
+ */
 @JvmName("SignatureOfComparator")
 fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
     PublicKey.comparator().compare(
@@ -52,6 +76,9 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
     )
 }
 
+/**
+ * Compare permission tokens
+ */
 @JvmName("PermissionTokenComparator")
 fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
     it.name.string
@@ -81,4 +108,7 @@ private fun KClass<ByteArray>.comparator() = Comparator<ByteArray> { o1, o2 ->
     return@Comparator 0
 }
 
+/**
+ * Throw if an exception occurs during comparison
+ */
 class ComparisonException(message: String) : RuntimeException(message)

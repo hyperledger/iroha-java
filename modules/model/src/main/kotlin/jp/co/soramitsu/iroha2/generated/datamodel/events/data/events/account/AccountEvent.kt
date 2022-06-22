@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetEvent
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -55,7 +55,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -64,14 +64,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -82,7 +82,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -91,14 +91,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -109,7 +109,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'AuthenticationAdded' variant
      */
     public data class AuthenticationAdded(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -118,14 +118,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AuthenticationAdded = try {
                 AuthenticationAdded(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AuthenticationAdded) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -136,7 +136,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'AuthenticationRemoved' variant
      */
     public data class AuthenticationRemoved(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -145,14 +145,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AuthenticationRemoved = try {
                 AuthenticationRemoved(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AuthenticationRemoved) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -163,7 +163,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'PermissionAdded' variant
      */
     public data class PermissionAdded(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -172,14 +172,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): PermissionAdded = try {
                 PermissionAdded(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: PermissionAdded) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -190,7 +190,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'PermissionRemoved' variant
      */
     public data class PermissionRemoved(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -199,14 +199,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): PermissionRemoved = try {
                 PermissionRemoved(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: PermissionRemoved) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -271,7 +271,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -280,14 +280,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -298,7 +298,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -307,14 +307,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

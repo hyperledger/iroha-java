@@ -32,6 +32,9 @@ import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.reflect.KClass
 
+/**
+ * Resolve Kotlin [types][type]
+ */
 fun resolveKotlinType(type: Type): TypeName {
     return when (type) {
         is CompositeType -> {
@@ -84,9 +87,15 @@ fun resolveKotlinType(type: Type): TypeName {
     }
 }
 
+/**
+ * Check if the given [type] is one of the [built-in Kotlin types][builtinKotlinTypes]
+ */
 fun lookUpInBuiltInTypes(type: Type): TypeName = builtinKotlinTypes[type::class]
     ?: throw RuntimeException("unexpected type: $type")
 
+/**
+ * Define the package name for the given [class][className] and [type]
+ */
 fun definePackageName(className: String, type: Type): String {
     return "jp.co.soramitsu.iroha2.generated." + type.name.substringBeforeLast(className)
         .removeSuffix("::")
@@ -95,6 +104,9 @@ fun definePackageName(className: String, type: Type): String {
         .replace("_", "")
 }
 
+/**
+ * Define the class name for the given [type][typeName]
+ */
 fun defineClassName(typeName: String) = typeName.substringBefore('<')
     .substringAfterLast("::")
 

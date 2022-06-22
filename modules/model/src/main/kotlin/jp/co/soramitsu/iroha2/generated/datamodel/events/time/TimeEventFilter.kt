@@ -10,23 +10,23 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * EventFilter
+ * TimeEventFilter
  *
- * Generated from 'iroha_data_model::events::time::EventFilter' tuple structure
+ * Generated from 'iroha_data_model::events::time::TimeEventFilter' tuple structure
  */
-public data class EventFilter(
+public data class TimeEventFilter(
     public val executionTime: ExecutionTime
 ) {
-    public companion object : ScaleReader<EventFilter>, ScaleWriter<EventFilter> {
-        public override fun read(reader: ScaleCodecReader): EventFilter = try {
-            EventFilter(
+    public companion object : ScaleReader<TimeEventFilter>, ScaleWriter<TimeEventFilter> {
+        public override fun read(reader: ScaleCodecReader): TimeEventFilter = try {
+            TimeEventFilter(
                 ExecutionTime.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EventFilter) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: TimeEventFilter) = try {
             ExecutionTime.write(writer, instance.executionTime)
         } catch (ex: Exception) {
             throw wrapException(ex)

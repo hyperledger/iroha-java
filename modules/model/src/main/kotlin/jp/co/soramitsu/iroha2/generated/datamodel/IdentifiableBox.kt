@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -283,7 +283,7 @@ public sealed class IdentifiableBox : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val trigger: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<FilterBox>
+        public val trigger: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<EventsFilterBox>
     ) : IdentifiableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -293,7 +293,7 @@ public sealed class IdentifiableBox : ModelEnum {
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
                     jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger.read(reader) as
-                        jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<FilterBox>,
+                        jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger<EventsFilterBox>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

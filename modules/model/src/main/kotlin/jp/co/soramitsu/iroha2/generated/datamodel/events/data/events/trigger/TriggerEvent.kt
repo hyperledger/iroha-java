@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -27,7 +27,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val id: Id
+        public val triggerId: TriggerId
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +36,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    Id.read(reader),
+                    TriggerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                Id.write(writer, instance.id)
+                TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -54,7 +54,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val id: Id
+        public val triggerId: TriggerId
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -63,14 +63,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    Id.read(reader),
+                    TriggerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                Id.write(writer, instance.id)
+                TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -81,7 +81,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Extended' variant
      */
     public data class Extended(
-        public val id: Id
+        public val triggerId: TriggerId
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -90,14 +90,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Extended = try {
                 Extended(
-                    Id.read(reader),
+                    TriggerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Extended) = try {
-                Id.write(writer, instance.id)
+                TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -108,7 +108,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Shortened' variant
      */
     public data class Shortened(
-        public val id: Id
+        public val triggerId: TriggerId
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -117,14 +117,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Shortened = try {
                 Shortened(
-                    Id.read(reader),
+                    TriggerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Shortened) = try {
-                Id.write(writer, instance.id)
+                TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

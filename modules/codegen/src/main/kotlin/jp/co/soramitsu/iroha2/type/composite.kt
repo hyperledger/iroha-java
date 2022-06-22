@@ -2,14 +2,23 @@ package jp.co.soramitsu.iroha2.type
 
 import jp.co.soramitsu.iroha2.parse.TypeNest
 
+/**
+ * Basic class for different composite types
+ */
 abstract class CompositeType(override val name: String, open val generics: List<TypeNest>) : Type(name)
 
+/**
+ * `EnumType` composite type
+ */
 data class EnumType(
     override val name: String,
     override val generics: List<TypeNest>,
     val variants: List<Variant>
 ) : CompositeType(name, generics) {
 
+    /**
+     * Variant of a enum type
+     */
     data class Variant(val name: String, val discriminant: Int, val type: TypeNest?)
 
     private var resolutionInProgress: Boolean = false
@@ -27,6 +36,9 @@ data class EnumType(
     }
 }
 
+/**
+ * `TupleStructType` composite type
+ */
 data class TupleStructType(
     override val name: String,
     override val generics: List<TypeNest>,
@@ -39,6 +51,9 @@ data class TupleStructType(
     }
 }
 
+/**
+ * `StructType` composite type
+ */
 data class StructType(
     override val name: String,
     override val generics: List<TypeNest>,

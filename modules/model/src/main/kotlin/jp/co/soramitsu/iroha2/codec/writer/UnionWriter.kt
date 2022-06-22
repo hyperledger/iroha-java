@@ -4,6 +4,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.codec.UnionValue
 
+/**
+ * SCALE codec writer for [UnionValue]
+ */
 class UnionWriter<T>(mapping: List<ScaleWriter<out T>>) : ScaleWriter<UnionValue<T>> {
     private val mapping: MutableList<ScaleWriter<T>>
 

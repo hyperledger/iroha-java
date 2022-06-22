@@ -45,6 +45,9 @@ val SCALE_CODEC_EX_WRAPPER = MemberName("jp.co.soramitsu.iroha2", "wrapException
 val TO_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "toFixedPoint")
 val FROM_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "fromFixedPoint")
 
+/**
+ * Resolve Scale Reader for a given [type]
+ */
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
         is ArrayType -> CodeBlock.of("reader.readByteArray(%L)", type.size)
@@ -78,6 +81,9 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
     }
 }
 
+/**
+ * Resolve Scale Writer for a given [type]
+ */
 fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
     return when (type) {
         is ArrayType -> CodeBlock.of("writer.writeByteArray(%L)", propName)
@@ -104,6 +110,9 @@ fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
     }
 }
 
+/**
+ * @return the class name for a given [type][typeName]
+ */
 fun withoutGenerics(typeName: TypeName): ClassName {
     return when (typeName) {
         is ClassName -> typeName.topLevelClassName()

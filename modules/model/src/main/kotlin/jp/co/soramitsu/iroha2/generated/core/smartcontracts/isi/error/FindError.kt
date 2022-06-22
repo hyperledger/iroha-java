@@ -11,9 +11,14 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
@@ -33,7 +38,7 @@ public sealed class FindError : ModelEnum {
      * 'Asset' variant
      */
     public data class Asset(
-        public val id: Id
+        public val assetId: AssetId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -42,14 +47,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Asset = try {
                 Asset(
-                    Id.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Asset) = try {
-                Id.write(writer, instance.id)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -60,7 +65,7 @@ public sealed class FindError : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val definitionId: DefinitionId
+        public val assetDefinitionId: AssetDefinitionId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -69,14 +74,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
-                    DefinitionId.read(reader),
+                    AssetDefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                DefinitionId.write(writer, instance.definitionId)
+                AssetDefinitionId.write(writer, instance.assetDefinitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -87,7 +92,7 @@ public sealed class FindError : ModelEnum {
      * 'Account' variant
      */
     public data class Account(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+        public val accountId: AccountId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -96,14 +101,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Account = try {
                 Account(
-                    jp.co.soramitsu.iroha2.generated.datamodel.account.Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.account.Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -114,7 +119,7 @@ public sealed class FindError : ModelEnum {
      * 'Domain' variant
      */
     public data class Domain(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.domain.Id
+        public val domainId: DomainId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -123,14 +128,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Domain = try {
                 Domain(
-                    jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.read(reader),
+                    DomainId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Domain) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.domain.Id.write(writer, instance.id)
+                DomainId.write(writer, instance.domainId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -249,7 +254,7 @@ public sealed class FindError : ModelEnum {
      * 'Peer' variant
      */
     public data class Peer(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.peer.Id
+        public val peerId: PeerId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -258,14 +263,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Peer = try {
                 Peer(
-                    jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.read(reader),
+                    PeerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.peer.Id.write(writer, instance.id)
+                PeerId.write(writer, instance.peerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -276,7 +281,7 @@ public sealed class FindError : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id
+        public val triggerId: TriggerId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -285,14 +290,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
-                    jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id.read(reader),
+                    TriggerId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Trigger) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.trigger.Id.write(writer, instance.id)
+                TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -303,7 +308,7 @@ public sealed class FindError : ModelEnum {
      * 'Role' variant
      */
     public data class Role(
-        public val id: jp.co.soramitsu.iroha2.generated.datamodel.role.Id
+        public val roleId: RoleId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -312,14 +317,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Role = try {
                 Role(
-                    jp.co.soramitsu.iroha2.generated.datamodel.role.Id.read(reader),
+                    RoleId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.role.Id.write(writer, instance.id)
+                RoleId.write(writer, instance.roleId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
