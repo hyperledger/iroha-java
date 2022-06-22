@@ -29,7 +29,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
@@ -627,7 +626,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    @Disabled
+//    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
@@ -638,7 +637,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-    @Disabled
+//    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
@@ -652,7 +651,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-    @Disabled
+//    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {

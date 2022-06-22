@@ -56,6 +56,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
+import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id as AssetId
@@ -637,8 +638,8 @@ object Instructions {
     fun grantRole(roleId: RoleId, accountId: AccountId): Instruction {
         return Instruction.Grant(
             GrantBox(
-                destinationId = IdBox.RoleId(roleId).evaluatesTo(),
-                `object` = accountId.evaluatesTo().cast()
+                destinationId = accountId.evaluatesTo().cast(),
+                `object` = IdBox.RoleId(roleId).evaluatesTo().cast()
             )
         )
     }
