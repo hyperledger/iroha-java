@@ -9,9 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
 import jp.co.soramitsu.iroha2.codec.writer.CompactULongWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 

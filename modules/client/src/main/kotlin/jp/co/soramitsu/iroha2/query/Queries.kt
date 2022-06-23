@@ -290,7 +290,7 @@ object Queries {
         )
     }
 
-    fun findAssetDefinitionById(definitionId: DefinitionId): QueryBox.FindAssetDefinitionById {
+    fun findAssetDefinitionById(definitionId: AssetDefinitionId): QueryBox.FindAssetDefinitionById {
         return QueryBox.FindAssetDefinitionById(
             FindAssetDefinitionById(definitionId.evaluatesTo())
         )

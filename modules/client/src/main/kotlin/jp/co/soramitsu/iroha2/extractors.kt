@@ -198,7 +198,6 @@ object TransactionValueExtractor : ResultExtractor<TransactionValue> {
     }
 }
 
-
 object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
     override fun extract(result: PaginatedQueryResult): List<TransactionValue> {
         return extractVec(result.result.value) {

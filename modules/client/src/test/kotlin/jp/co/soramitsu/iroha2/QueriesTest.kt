@@ -38,13 +38,12 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id as AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as PredicateValue
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha(NewAccountWithMetadata::class)
+    @WithIroha(StoreAssetWithMetadata::class)
     fun `find all accounts`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)

@@ -30,7 +30,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
@@ -283,7 +282,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAssetDefinitionById(definitionId: DefinitionId) = QueryBuilder(
+        fun findAssetDefinitionById(definitionId: AssetDefinitionId) = QueryBuilder(
             Queries.findAssetDefinitionById(definitionId),
             AssetDefinitionExtractor
         )

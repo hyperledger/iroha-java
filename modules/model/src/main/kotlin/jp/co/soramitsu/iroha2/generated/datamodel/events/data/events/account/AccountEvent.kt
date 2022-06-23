@@ -217,7 +217,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'RoleRevoked' variant
      */
     public data class RoleRevoked(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -226,14 +226,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): RoleRevoked = try {
                 RoleRevoked(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: RoleRevoked) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -244,7 +244,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'RoleGranted' variant
      */
     public data class RoleGranted(
-        public val id: Id
+        public val accountId: AccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -253,14 +253,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): RoleGranted = try {
                 RoleGranted(
-                    Id.read(reader),
+                    AccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: RoleGranted) = try {
-                Id.write(writer, instance.id)
+                AccountId.write(writer, instance.accountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

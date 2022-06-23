@@ -11,9 +11,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.events.FilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
