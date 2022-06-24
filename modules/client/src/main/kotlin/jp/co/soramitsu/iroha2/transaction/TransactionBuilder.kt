@@ -213,6 +213,17 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
+    fun unregisterAccount(
+        id: AccountId
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.unregisterAccount(
+                id
+            )
+        )
+    }
+
     fun grantRole(
         roleId: RoleId,
         accountId: AccountId

@@ -43,7 +43,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha(StoreAssetWithMetadata::class)
+    @WithIroha(NewAccountWithMetadata::class)
     fun `find all accounts`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)

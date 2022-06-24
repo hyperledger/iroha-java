@@ -251,6 +251,19 @@ object Instructions {
     }
 
     /**
+     * Unregister an account
+     */
+    fun unregisterAccount(
+        id: AccountId
+    ): Instruction.Unregister {
+        return unregisterSome {
+            IdBox.AccountId(
+                id
+            )
+        }
+    }
+
+    /**
      * Register an asset
      */
     @JvmOverloads

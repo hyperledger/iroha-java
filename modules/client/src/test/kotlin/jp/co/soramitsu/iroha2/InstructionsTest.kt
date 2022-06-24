@@ -33,6 +33,7 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
@@ -79,6 +80,40 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { account -> assertEquals(account.id, newAccountId) }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `register and unregister account instruction committed`(): Unit = runBlocking {
+        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAccount(newAccountId, listOf())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAccountById(newAccountId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id, newAccountId) }
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterAccount(newAccountId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        assertThrows<IrohaClientException> {
+            runBlocking { QueryBuilder.findAccountById(newAccountId)
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query) } }
+        }
     }
 
     @Test
