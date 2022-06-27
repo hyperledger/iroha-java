@@ -84,6 +84,42 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(DefaultGenesis::class)
+    fun `register and unregister account instruction committed`(): Unit = runBlocking {
+        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerAccount(newAccountId, listOf())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAccountById(newAccountId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id, newAccountId) }
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterAccount(newAccountId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAccountById(newAccountId)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register account with metadata instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         val addressKey = "address".asName()
@@ -627,7 +663,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    @Disabled
+//    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register peer instruction committed`(): Unit = runBlocking {
@@ -638,7 +674,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertTrue(isPeerAvailable(address, payload))
     }
 
-    @Disabled
+//    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `unregister peer instruction committed`(): Unit = runBlocking {
@@ -671,6 +707,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 )
             )
+            buildSigned(BOB_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
             grantRole(roleId, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->

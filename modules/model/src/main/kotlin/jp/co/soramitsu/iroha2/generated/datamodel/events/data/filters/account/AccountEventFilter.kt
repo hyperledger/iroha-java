@@ -185,13 +185,57 @@ public sealed class AccountEventFilter : ModelEnum {
     }
 
     /**
+     * 'ByRoleRevoked' variant
+     */
+    public class ByRoleRevoked : AccountEventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ByRoleRevoked>, ScaleWriter<ByRoleRevoked> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): ByRoleRevoked = try {
+                ByRoleRevoked()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByRoleRevoked) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'ByRoleGranted' variant
+     */
+    public class ByRoleGranted : AccountEventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ByRoleGranted>, ScaleWriter<ByRoleGranted> {
+            public const val DISCRIMINANT: Int = 8
+
+            public override fun read(reader: ScaleCodecReader): ByRoleGranted = try {
+                ByRoleGranted()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByRoleGranted) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'ByMetadataInserted' variant
      */
     public class ByMetadataInserted : AccountEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByMetadataInserted>, ScaleWriter<ByMetadataInserted> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 9
 
             public override fun read(reader: ScaleCodecReader): ByMetadataInserted = try {
                 ByMetadataInserted()
@@ -213,7 +257,7 @@ public sealed class AccountEventFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByMetadataRemoved>, ScaleWriter<ByMetadataRemoved> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 10
 
             public override fun read(reader: ScaleCodecReader): ByMetadataRemoved = try {
                 ByMetadataRemoved()
@@ -240,8 +284,10 @@ public sealed class AccountEventFilter : ModelEnum {
             4 -> ByAuthenticationRemoved.read(reader)
             5 -> ByPermissionAdded.read(reader)
             6 -> ByPermissionRemoved.read(reader)
-            7 -> ByMetadataInserted.read(reader)
-            8 -> ByMetadataRemoved.read(reader)
+            7 -> ByRoleRevoked.read(reader)
+            8 -> ByRoleGranted.read(reader)
+            9 -> ByMetadataInserted.read(reader)
+            10 -> ByMetadataRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -255,8 +301,10 @@ public sealed class AccountEventFilter : ModelEnum {
                 4 -> ByAuthenticationRemoved.write(writer, instance as ByAuthenticationRemoved)
                 5 -> ByPermissionAdded.write(writer, instance as ByPermissionAdded)
                 6 -> ByPermissionRemoved.write(writer, instance as ByPermissionRemoved)
-                7 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
-                8 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
+                7 -> ByRoleRevoked.write(writer, instance as ByRoleRevoked)
+                8 -> ByRoleGranted.write(writer, instance as ByRoleGranted)
+                9 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
+                10 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

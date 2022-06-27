@@ -18,6 +18,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
@@ -41,6 +42,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
@@ -75,7 +77,9 @@ object Instructions {
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.Role(
-                Role(roleId, tokens.toList())
+                NewRole(
+                    Role(roleId, tokens.toList())
+                )
             )
         }
     }
@@ -247,6 +251,19 @@ object Instructions {
     }
 
     /**
+     * Unregister an account
+     */
+    fun unregisterAccount(
+        id: AccountId
+    ): Instruction.Unregister {
+        return unregisterSome {
+            IdBox.AccountId(
+                id
+            )
+        }
+    }
+
+    /**
      * Register an asset
      */
     @JvmOverloads
@@ -258,7 +275,7 @@ object Instructions {
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.AssetDefinition(
-                AssetDefinition(id, assetValueType, mintable, metadata)
+                NewAssetDefinition(id, assetValueType, mintable, metadata)
             )
         }
     }
@@ -640,8 +657,8 @@ object Instructions {
     fun grantRole(roleId: RoleId, accountId: AccountId): Instruction {
         return Instruction.Grant(
             GrantBox(
-                destinationId = IdBox.RoleId(roleId).evaluatesTo(),
-                `object` = accountId.evaluatesTo().cast()
+                destinationId = accountId.evaluatesTo().cast(),
+                `object` = IdBox.RoleId(roleId).evaluatesTo().cast()
             )
         )
     }

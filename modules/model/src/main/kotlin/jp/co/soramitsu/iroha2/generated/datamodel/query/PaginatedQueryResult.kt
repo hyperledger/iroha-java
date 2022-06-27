@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 
@@ -18,6 +19,7 @@ import java.math.BigInteger
  */
 public data class PaginatedQueryResult(
     public val result: QueryResult,
+    public val filter: PredicateBox,
     public val pagination: Pagination,
     public val total: BigInteger
 ) {
@@ -25,6 +27,7 @@ public data class PaginatedQueryResult(
         public override fun read(reader: ScaleCodecReader): PaginatedQueryResult = try {
             PaginatedQueryResult(
                 QueryResult.read(reader),
+                PredicateBox.read(reader),
                 Pagination.read(reader),
                 reader.readUint64(),
             )
@@ -34,6 +37,7 @@ public data class PaginatedQueryResult(
 
         public override fun write(writer: ScaleCodecWriter, instance: PaginatedQueryResult) = try {
             QueryResult.write(writer, instance.result)
+            PredicateBox.write(writer, instance.filter)
             Pagination.write(writer, instance.pagination)
             writer.writeUint64(instance.total)
         } catch (ex: Exception) {

@@ -1,4 +1,7 @@
 //! Smartcontract which creates new nft for every user
+//!
+//! This module isn't included in the build-tree,
+//! but instead it is being built by a `client/build.rs`
 
 #![no_std]
 #![no_main]
@@ -11,7 +14,7 @@ use core::str::FromStr;
 
 use iroha_wasm::{data_model::prelude::*, DebugUnwrapExt, Execute};
 
-#[iroha_wasm::iroha_wasm]
+#[iroha_wasm::entrypoint]
 fn smartcontract_entry_point(_account_id: AccountId) {
     let query = QueryBox::FindAllAccounts(FindAllAccounts {});
     let accounts: Vec<Account> = query.execute().try_into().dbg_unwrap();
@@ -34,8 +37,7 @@ fn smartcontract_entry_point(_account_id: AccountId) {
         let nft_id = generate_new_nft_id(account.id());
         let nft_definition = AssetDefinition::store(nft_id.clone())
             .mintable_once()
-            .with_metadata(metadata)
-            .build();
+            .with_metadata(metadata);
         let account_nft_id = <Asset as Identifiable>::Id::new(nft_id, account.id().clone());
 
         Instruction::Register(RegisterBox::new(nft_definition)).execute();

@@ -184,8 +184,8 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Account -> IdentifiableBox.NewAccount(this.newAccount)
     is RegistrableBox.Peer -> IdentifiableBox.Peer(this.peer)
     is RegistrableBox.Asset -> IdentifiableBox.Asset(this.asset)
-    is RegistrableBox.AssetDefinition -> IdentifiableBox.AssetDefinition(this.assetDefinition)
-    is RegistrableBox.Role -> IdentifiableBox.Role(this.role)
+    is RegistrableBox.AssetDefinition -> IdentifiableBox.NewAssetDefinition(this.newAssetDefinition)
+    is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.trigger)
 }

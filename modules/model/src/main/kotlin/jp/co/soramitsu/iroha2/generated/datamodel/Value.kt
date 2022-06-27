@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
@@ -476,6 +477,33 @@ public sealed class Value : ModelEnum {
         }
     }
 
+    /**
+     * 'Block' variant
+     */
+    public data class Block(
+        public val blockValue: BlockValue
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Block>, ScaleWriter<Block> {
+            public const val DISCRIMINANT: Int = 16
+
+            public override fun read(reader: ScaleCodecReader): Block = try {
+                Block(
+                    BlockValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
+                BlockValue.write(writer, instance.blockValue)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Value>, ScaleWriter<Value> {
         public override fun read(reader: ScaleCodecReader): Value = when (
             val discriminant =
@@ -497,6 +525,7 @@ public sealed class Value : ModelEnum {
             13 -> TransactionValue.read(reader)
             14 -> PermissionToken.read(reader)
             15 -> Hash.read(reader)
+            16 -> Block.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -519,6 +548,7 @@ public sealed class Value : ModelEnum {
                 13 -> TransactionValue.write(writer, instance as TransactionValue)
                 14 -> PermissionToken.write(writer, instance as PermissionToken)
                 15 -> Hash.write(writer, instance as Hash)
+                16 -> Block.write(writer, instance as Block)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

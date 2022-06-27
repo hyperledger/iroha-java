@@ -21,7 +21,7 @@ class CompactUIntReader : ScaleReader<Int> {
         val i = reader.readUByte()
         val mode = byValue((i and 3).toByte())
         if (mode === CompactMode.SINGLE) {
-            return i.toInt() shr 2
+            return i shr 2
         }
         if (mode === CompactMode.TWO) {
             return ((i shr 2) + (reader.readUByte() shl 6))
