@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  iroha:
+    image: hyperledger/iroha2:stable
+    environment:
+      RUST_BACKTRACE: full
+      MAX_LOG_LEVEL: INFO
+      IROHA2_GENESIS_PATH: genesis.json
+      IROHA2_CONFIG_PATH: config.json
+    ports:
+      - "8080:8080"
+      - "8180:8180"
+    volumes:
+      - "../modules/testcontainers/src/main/resources/genesis.json:/genesis.json"
+      - "../modules/testcontainers/src/main/resources/config.json:/config.json"
+    command: ./iroha --submit-genesis
