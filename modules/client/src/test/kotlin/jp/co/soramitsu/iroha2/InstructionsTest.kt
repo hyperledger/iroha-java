@@ -109,10 +109,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         assertThrows<IrohaClientException> {
-            runBlocking { QueryBuilder.findAccountById(newAccountId)
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
-                .let { query -> client.sendQuery(query) } }
+            runBlocking {
+                QueryBuilder.findAccountById(newAccountId)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query) }
+            }
         }
     }
 
@@ -686,7 +688,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertFalse(isPeerAvailable(address, payload))
     }
 
-//    @Disabled
+    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {

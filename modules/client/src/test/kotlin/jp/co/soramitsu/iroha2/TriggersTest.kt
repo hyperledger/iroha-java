@@ -204,7 +204,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         assertEquals(95, readQuantity())
     }
 
-    @Disabled
     @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
