@@ -4,11 +4,22 @@ import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.findFreePorts
+import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.testcontainers.IrohaConfig
 import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
+import org.testcontainers.containers.Network
 import java.lang.reflect.Method
+import java.security.KeyPair
+import java.util.Collections
+import kotlin.concurrent.thread
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
@@ -23,7 +34,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
         extensionContext: ExtensionContext
-    ) {
+    ) = runBlocking {
         // init container and client if annotation was passed on test method
         val resources = initIfRequested(invocationContext)
         try {
@@ -35,43 +46,54 @@ class IrohaRunnerExtension : InvocationInterceptor {
         }
     }
 
-    private fun initIfRequested(invocationContext: ReflectiveInvocationContext<Method>): List<AutoCloseable> {
-        return invocationContext
+    private suspend fun initIfRequested(
+        invocationContext: ReflectiveInvocationContext<Method>
+    ): List<AutoCloseable> = coroutineScope {
+        invocationContext
             .executable
-            .declaredAnnotations.filterIsInstance<WithIroha>()
-            .firstOrNull()
-            ?.let {
+            .declaredAnnotations
+            .filterIsInstance<WithIroha>()
+            .firstOrNull()?.let { withIroha ->
                 val utilizedResources = mutableListOf<AutoCloseable>()
-                // start container
-                val container = IrohaContainer { genesis = it.genesis.createInstance() }
-                container.start()
-                utilizedResources.add(container)
+
+                // start containers
+                val containers = createContainers(withIroha)
+                utilizedResources.addAll(containers)
 
                 val testClassInstance = invocationContext.target.get()
                 val properties = testClassInstance::class.memberProperties
 
+                // inject `List<IrohaContainer>` if it is declared in test class
+                setPropertyValue(properties, testClassInstance) { containers }
+
                 // inject `Iroha2Client` if it is declared in test class
                 setPropertyValue(properties, testClassInstance) {
-                    Iroha2Client(container.getApiUrl(), log = true)
+                    Iroha2Client(containers.first().getApiUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
                 // inject `AdminIroha2Client` if it is declared in test class
                 setPropertyValue(properties, testClassInstance) {
-                    AdminIroha2Client(container.getApiUrl(), container.getTelemetryUrl(), log = true)
-                        .also { utilizedResources.add(it) }
+                    AdminIroha2Client(
+                        containers.first().getApiUrl(),
+                        containers.first().getTelemetryUrl(),
+                        log = true
+                    ).also { utilizedResources.add(it) }
                 }
 
                 // inject `Iroha2AsyncClient` if it is declared in test class
                 setPropertyValue(properties, testClassInstance) {
-                    Iroha2AsyncClient(container.getApiUrl(), log = true)
+                    Iroha2AsyncClient(containers.first().getApiUrl(), log = true)
                         .also { utilizedResources.add(it) }
                 }
 
                 // inject `AdminIroha2AsyncClient` if it is declared in test class
                 setPropertyValue(properties, testClassInstance) {
-                    AdminIroha2AsyncClient(container.getApiUrl(), container.getTelemetryUrl(), log = true)
-                        .also { utilizedResources.add(it) }
+                    AdminIroha2AsyncClient(
+                        containers.first().getApiUrl(),
+                        containers.first().getTelemetryUrl(),
+                        log = true
+                    ).also { utilizedResources.add(it) }
                 }
 
                 utilizedResources
@@ -91,4 +113,47 @@ class IrohaRunnerExtension : InvocationInterceptor {
             ?.setter
             ?.call(testClassInstance, valueToSet())
     }
+
+    private suspend fun createContainers(
+        withIroha: WithIroha
+    ): List<IrohaContainer> = coroutineScope {
+        val network = Network.newNetwork()
+
+        val keyPairs = mutableListOf<KeyPair>()
+        val portsList = mutableListOf<List<Int>>()
+        repeat(withIroha.amount) {
+            keyPairs.add(generateKeyPair())
+            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
+        }
+
+        val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
+            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
+            kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
+        }
+
+        val threads = mutableListOf<Thread>()
+        val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
+        repeat(withIroha.amount) { n ->
+            thread(start = true) {
+                val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
+                val container = IrohaContainer {
+                    networkToJoin = network
+                    genesis = withIroha.genesis.createInstance()
+                    alias = IrohaContainer.NETWORK_ALIAS + p2pPort
+                    keyPair = keyPairs[n]
+                    trustedPeers = peerIds
+                    ports = portsList[n]
+                }
+                container.start()
+                containers.add(container)
+            }.also { threads.add(it) }
+        }
+        threads.forEach { it.join() }
+
+        containers
+    }
+
+    private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
+        "$host:$port", this.public.toIrohaPublicKey()
+    )
 }
