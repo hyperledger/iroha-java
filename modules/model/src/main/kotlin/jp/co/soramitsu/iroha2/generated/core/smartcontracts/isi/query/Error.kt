@@ -52,33 +52,6 @@ public sealed class Error : ModelEnum {
     }
 
     /**
-     * 'Version' variant
-     */
-    public data class Version(
-        public val unsupportedVersionError: UnsupportedVersionError
-    ) : Error() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Version>, ScaleWriter<Version> {
-            public const val DISCRIMINANT: Int = 1
-
-            public override fun read(reader: ScaleCodecReader): Version = try {
-                Version(
-                    UnsupportedVersionError.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Version) = try {
-                UnsupportedVersionError.write(writer, instance.unsupportedVersionError)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Signature' variant
      */
     public data class Signature(
@@ -87,7 +60,7 @@ public sealed class Error : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): Signature = try {
                 Signature(
@@ -114,7 +87,7 @@ public sealed class Error : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Permission>, ScaleWriter<Permission> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Permission = try {
                 Permission(
@@ -141,7 +114,7 @@ public sealed class Error : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Evaluate>, ScaleWriter<Evaluate> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): Evaluate = try {
                 Evaluate(
@@ -168,7 +141,7 @@ public sealed class Error : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Find>, ScaleWriter<Find> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): Find = try {
                 Find(
@@ -195,7 +168,7 @@ public sealed class Error : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Conversion>, ScaleWriter<Conversion> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): Conversion = try {
                 Conversion(
@@ -219,12 +192,11 @@ public sealed class Error : ModelEnum {
                 reader.readUByte().toInt()
         ) {
             0 -> Decode.read(reader)
-            1 -> Version.read(reader)
-            2 -> Signature.read(reader)
-            3 -> Permission.read(reader)
-            4 -> Evaluate.read(reader)
-            5 -> Find.read(reader)
-            6 -> Conversion.read(reader)
+            1 -> Signature.read(reader)
+            2 -> Permission.read(reader)
+            3 -> Evaluate.read(reader)
+            4 -> Find.read(reader)
+            5 -> Conversion.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -232,12 +204,11 @@ public sealed class Error : ModelEnum {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Decode.write(writer, instance as Decode)
-                1 -> Version.write(writer, instance as Version)
-                2 -> Signature.write(writer, instance as Signature)
-                3 -> Permission.write(writer, instance as Permission)
-                4 -> Evaluate.write(writer, instance as Evaluate)
-                5 -> Find.write(writer, instance as Find)
-                6 -> Conversion.write(writer, instance as Conversion)
+                1 -> Signature.write(writer, instance as Signature)
+                2 -> Permission.write(writer, instance as Permission)
+                3 -> Evaluate.write(writer, instance as Evaluate)
+                4 -> Find.write(writer, instance as Find)
+                5 -> Conversion.write(writer, instance as Conversion)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

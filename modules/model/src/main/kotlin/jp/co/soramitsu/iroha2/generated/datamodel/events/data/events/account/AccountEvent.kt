@@ -214,6 +214,60 @@ public sealed class AccountEvent : ModelEnum {
     }
 
     /**
+     * 'RoleRevoked' variant
+     */
+    public data class RoleRevoked(
+        public val accountId: AccountId
+    ) : AccountEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<RoleRevoked>, ScaleWriter<RoleRevoked> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): RoleRevoked = try {
+                RoleRevoked(
+                    AccountId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: RoleRevoked) = try {
+                AccountId.write(writer, instance.accountId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'RoleGranted' variant
+     */
+    public data class RoleGranted(
+        public val accountId: AccountId
+    ) : AccountEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<RoleGranted>, ScaleWriter<RoleGranted> {
+            public const val DISCRIMINANT: Int = 8
+
+            public override fun read(reader: ScaleCodecReader): RoleGranted = try {
+                RoleGranted(
+                    AccountId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: RoleGranted) = try {
+                AccountId.write(writer, instance.accountId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
@@ -222,7 +276,7 @@ public sealed class AccountEvent : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataInserted>, ScaleWriter<MetadataInserted> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 9
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
@@ -249,7 +303,7 @@ public sealed class AccountEvent : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataRemoved>, ScaleWriter<MetadataRemoved> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 10
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
@@ -279,8 +333,10 @@ public sealed class AccountEvent : ModelEnum {
             4 -> AuthenticationRemoved.read(reader)
             5 -> PermissionAdded.read(reader)
             6 -> PermissionRemoved.read(reader)
-            7 -> MetadataInserted.read(reader)
-            8 -> MetadataRemoved.read(reader)
+            7 -> RoleRevoked.read(reader)
+            8 -> RoleGranted.read(reader)
+            9 -> MetadataInserted.read(reader)
+            10 -> MetadataRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -294,8 +350,10 @@ public sealed class AccountEvent : ModelEnum {
                 4 -> AuthenticationRemoved.write(writer, instance as AuthenticationRemoved)
                 5 -> PermissionAdded.write(writer, instance as PermissionAdded)
                 6 -> PermissionRemoved.write(writer, instance as PermissionRemoved)
-                7 -> MetadataInserted.write(writer, instance as MetadataInserted)
-                8 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
+                7 -> RoleRevoked.write(writer, instance as RoleRevoked)
+                8 -> RoleGranted.write(writer, instance as RoleGranted)
+                9 -> MetadataInserted.write(writer, instance as MetadataInserted)
+                10 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

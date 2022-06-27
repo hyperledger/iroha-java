@@ -16,6 +16,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetById
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetDefinitionKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetQuantityById
@@ -24,12 +25,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetD
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.block.FindAllBlocks
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindAllTransactions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionsByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
@@ -284,6 +287,24 @@ object Queries {
     fun findAllActiveTriggerIds(): QueryBox.FindAllActiveTriggerIds {
         return QueryBox.FindAllActiveTriggerIds(
             FindAllActiveTriggerIds()
+        )
+    }
+
+    fun findAssetDefinitionById(definitionId: AssetDefinitionId): QueryBox.FindAssetDefinitionById {
+        return QueryBox.FindAssetDefinitionById(
+            FindAssetDefinitionById(definitionId.evaluatesTo())
+        )
+    }
+
+    fun findAllBlocks(): QueryBox.FindAllBlocks {
+        return QueryBox.FindAllBlocks(
+            FindAllBlocks()
+        )
+    }
+
+    fun findAllTransactions(): QueryBox.FindAllTransactions {
+        return QueryBox.FindAllTransactions(
+            FindAllTransactions()
         )
     }
 }

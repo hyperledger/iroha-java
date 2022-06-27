@@ -13,7 +13,7 @@ import java.time.Duration
  */
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(40)
+@Timeout(400)
 abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(10)
 ) {
