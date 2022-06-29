@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.Network.newNetwork
@@ -24,7 +25,12 @@ class IrohaConfig(
     var imageTag: String = IrohaContainer.DEFAULT_IMAGE_TAG,
     var alias: String = IrohaContainer.NETWORK_ALIAS + DEFAULT_P2P_PORT,
     var keyPair: KeyPair = generateKeyPair(),
-    var trustedPeers: List<PeerId> = listOf(),
+    var trustedPeers: List<PeerId> = listOf(
+        PeerId(
+            "$alias:$DEFAULT_P2P_PORT",
+            keyPair.public.toIrohaPublicKey()
+        )
+    ),
     var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,

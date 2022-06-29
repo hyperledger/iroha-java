@@ -14,7 +14,7 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     /**
      * Write genesis to file
      */
-    fun writeToFile(path: Path) = Files.write(
+    fun writeToFile(path: Path): Path = Files.write(
         path,
         asJson().toByteArray(Charsets.UTF_8),
         StandardOpenOption.TRUNCATE_EXISTING,
@@ -24,7 +24,7 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     /**
      * Represent genesis as JSON
      */
-    fun asJson() = JSON_SERDE.writeValueAsString(this.genesisBlock)
+    fun asJson(): String = JSON_SERDE.writeValueAsString(this.genesisBlock)
 
     companion object {
         /**
