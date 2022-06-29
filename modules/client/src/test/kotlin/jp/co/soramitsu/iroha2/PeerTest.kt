@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
-        private const val PEER_AMOUNT = 3
+        private const val PEER_AMOUNT = 4
     }
 
     @Test
@@ -45,7 +45,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class, amount = 2) // TODO: should work with amount >= 3
+    @WithIroha(DefaultGenesis::class, amount = PEER_AMOUNT)
     fun `unregister peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]

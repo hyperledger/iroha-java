@@ -27,7 +27,8 @@ class IrohaConfig(
     var trustedPeers: List<PeerId> = listOf(),
     var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
     var shouldCloseNetwork: Boolean = true,
-    var waitStrategy: Boolean = true
+    var waitStrategy: Boolean = true,
+    var submitGenesis: Boolean = true
 ) {
     companion object {
         const val P2P_PORT_IDX = 0

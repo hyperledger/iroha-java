@@ -69,8 +69,13 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withCopyFileToContainer(
                 MountableFile.forClasspathResource(DEFAULT_CONFIG_FILE_NAME),
                 DEFAULT_CONFIG_FILE_NAME
-            )
-            .withCommand(PEER_START_COMMAND)
+            ).also { container ->
+                val command = when (config.submitGenesis) {
+                    true -> "$PEER_START_COMMAND --submit-genesis"
+                    false -> PEER_START_COMMAND
+                }
+                container.withCommand(command)
+            }
             .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
             .also { container ->
                 if (config.waitStrategy) {
@@ -137,7 +142,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         const val IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
-        const val PEER_START_COMMAND = "./iroha --submit-genesis"
+        const val PEER_START_COMMAND = "./iroha"
 
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }

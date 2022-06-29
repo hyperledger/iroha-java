@@ -143,6 +143,8 @@ class IrohaRunnerExtension : InvocationInterceptor {
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds
                     ports = portsList[n]
+                    // only first peer should have --submit-genesis in peer start command
+                    submitGenesis = n == 0
                 }
                 container.start()
                 containers.add(container)
