@@ -100,7 +100,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     fun getTelemetryUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_TELEMETRY_PORT), "")
 
-    //TODO: move env variables to IrohaConfig
+    // TODO: move env variables to IrohaConfig
     companion object {
         const val NETWORK_ALIAS = "iroha"
         val DEFAULT_IMAGE_TAG = System.getenv("IROHA_JAVA_IMAGE_TAG") ?: "stable"
