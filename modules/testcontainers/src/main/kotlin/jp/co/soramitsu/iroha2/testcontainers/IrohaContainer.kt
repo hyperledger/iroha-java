@@ -49,7 +49,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 DEFAULT_CONFIG_FILE_NAME
             )
             .withCommand(PEER_START_COMMAND)
-            .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
+            .withImagePullPolicy(
+                if (IMAGE_PULL_POLICY == "aged")
+                    PullPolicy.ageBased(Duration.ofMinutes(10))
+                else
+                    PullPolicy.defaultPolicy()
+            )
             .waitingFor(
                 // await genesis was applied and seen in status
                 HttpWaitStrategy()
@@ -95,10 +100,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     fun getTelemetryUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_TELEMETRY_PORT), "")
 
+    // TODO: move env variables to IrohaConfig
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable"
-        const val IMAGE_NAME = "hyperledger/iroha2"
+        val DEFAULT_IMAGE_TAG = System.getenv("IROHA_JAVA_IMAGE_TAG") ?: "stable"
+        val IMAGE_NAME = System.getenv("IROHA_JAVA_IMAGE_NAME") ?: "hyperledger/iroha2"
+        val IMAGE_PULL_POLICY = System.getenv("IROHA_JAVA_IMAGE_PULL_POLICY") ?: "aged"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val PEER_START_COMMAND = "./iroha --submit-genesis"
