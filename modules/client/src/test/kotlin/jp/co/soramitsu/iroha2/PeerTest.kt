@@ -6,7 +6,6 @@ import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testcontainers.IrohaConfig
@@ -14,14 +13,15 @@ import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
 import kotlin.reflect.full.createInstance
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@Timeout(100)
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
@@ -38,7 +38,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, address, alias, payload, ports).use {
+        startNewContainer(keyPair, alias, ports).use {
             registerPeer(address, payload)
             assertTrue(isPeerAvailable(address, payload))
         }
@@ -54,7 +54,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, address, alias, payload, ports).use {
+        startNewContainer(keyPair, alias, ports).use {
             registerPeer(address, payload)
             assertTrue(isPeerAvailable(address, payload))
 
@@ -65,7 +65,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    @Disabled // https://github.com/hyperledger/iroha/issues/2385
     @Test
     @WithIroha(DefaultGenesis::class, amount = PEER_AMOUNT)
     fun `registered peer should return consistent data`(): Unit = runBlocking {
@@ -76,27 +75,34 @@ class PeerTest : IrohaTest<Iroha2Client>() {
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, address, alias, payload, ports).use { container ->
+        startNewContainer(keyPair, alias, ports).use { container ->
             registerPeer(address, payload)
+
+            delay(5000)
 
             val peersCount = QueryBuilder.findAllPeers()
                 .account(ALICE_ACCOUNT_ID)
                 .buildSigned(ALICE_KEYPAIR)
                 .let { client.sendQuery(it) }
                 .size
-            QueryBuilder.findAllPeers()
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
-                .let { Iroha2Client(container.getApiUrl()).sendQuery(it) }
-                .also { peers -> assertEquals(peers.size, peersCount) }
+
+            repeat(5) {
+                runCatching {
+                    QueryBuilder.findAllPeers()
+                        .account(ALICE_ACCOUNT_ID)
+                        .buildSigned(ALICE_KEYPAIR)
+                        .let { Iroha2Client(container.getApiUrl()).sendQuery(it) }
+                        .also { peers -> assertEquals(peers.size, peersCount) }
+                        .also { return@repeat }
+                }
+                delay(2000)
+            }
         }
     }
 
     private fun startNewContainer(
         keyPair: KeyPair,
-        address: String,
         alias: String,
-        payload: ByteArray,
         ports: List<Int>
     ): IrohaContainer {
         return IrohaContainer {
@@ -108,7 +114,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             this.genesis = DefaultGenesis::class.createInstance()
             this.trustedPeers = containers
                 .map { it.extractPeerId() }
-                .plus(PeerId(address, PublicKey(DigestFunction.Ed25519.hashFunName, payload)))
         }.also { it.start() }
     }
 
