@@ -76,7 +76,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 }
                 container.withCommand(command)
             }
-            .withImagePullPolicy(PullPolicy.ageBased(Duration.ofMinutes(10)))
+            .withImagePullPolicy(
+                if (IMAGE_PULL_POLICY == "aged")
+                    PullPolicy.ageBased(Duration.ofMinutes(10))
+                else
+                    PullPolicy.defaultPolicy()
+            )
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
@@ -136,10 +141,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 
+    // TODO: move env variables to IrohaConfig
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable"
-        const val IMAGE_NAME = "hyperledger/iroha2"
+        val DEFAULT_IMAGE_TAG = System.getenv("IROHA_JAVA_IMAGE_TAG") ?: "stable"
+        val IMAGE_NAME = System.getenv("IROHA_JAVA_IMAGE_NAME") ?: "hyperledger/iroha2"
+        val IMAGE_PULL_POLICY = System.getenv("IROHA_JAVA_IMAGE_PULL_POLICY") ?: "aged"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val PEER_START_COMMAND = "./iroha"
