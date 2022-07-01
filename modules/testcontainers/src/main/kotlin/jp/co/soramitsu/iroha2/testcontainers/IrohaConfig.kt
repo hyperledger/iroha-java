@@ -12,7 +12,10 @@ import org.testcontainers.containers.Network
 import org.testcontainers.containers.Network.newNetwork
 import org.testcontainers.containers.output.OutputFrame
 import org.testcontainers.containers.output.Slf4jLogConsumer
+import org.testcontainers.images.ImagePullPolicy
+import org.testcontainers.images.PullPolicy
 import java.security.KeyPair
+import java.time.Duration
 import java.util.function.Consumer
 
 /**
@@ -23,6 +26,8 @@ class IrohaConfig(
     var logConsumer: Consumer<OutputFrame> = Slf4jLogConsumer(getLogger(IrohaContainer::class.java)),
     var genesis: Genesis = Genesis.getEmpty(),
     var imageTag: String = IrohaContainer.DEFAULT_IMAGE_TAG,
+    var imageName: String = IrohaContainer.DEFAULT_IMAGE_NAME,
+    var pullPolicy: ImagePullPolicy = PullPolicy.ageBased(Duration.ofMinutes(10)),
     var alias: String = IrohaContainer.NETWORK_ALIAS + DEFAULT_P2P_PORT,
     var keyPair: KeyPair = generateKeyPair(),
     var trustedPeers: List<PeerId> = listOf(

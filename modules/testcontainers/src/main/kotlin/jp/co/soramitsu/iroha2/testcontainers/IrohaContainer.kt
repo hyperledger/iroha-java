@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
-import org.testcontainers.images.PullPolicy
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile
 import org.testcontainers.utility.MountableFile.forHostPath
@@ -33,7 +32,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
 
     constructor(config: IrohaConfig) : super(
-        DockerImageName.parse("$IMAGE_NAME:${config.imageTag}")
+        DockerImageName.parse("${config.imageName}:${config.imageTag}")
     ) {
         val publicKey = config.keyPair.public.bytes().toHex()
         val privateKey = config.keyPair.private.bytes().toHex()
@@ -76,12 +75,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 }
                 container.withCommand(command)
             }
-            .withImagePullPolicy(
-                if (IMAGE_PULL_POLICY == "aged")
-                    PullPolicy.ageBased(Duration.ofMinutes(10))
-                else
-                    PullPolicy.defaultPolicy()
-            )
+            .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
@@ -144,9 +138,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     // TODO: move env variables to IrohaConfig
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        val DEFAULT_IMAGE_TAG = System.getenv("IROHA_JAVA_IMAGE_TAG") ?: "stable"
-        val IMAGE_NAME = System.getenv("IROHA_JAVA_IMAGE_NAME") ?: "hyperledger/iroha2"
-        val IMAGE_PULL_POLICY = System.getenv("IROHA_JAVA_IMAGE_PULL_POLICY") ?: "aged"
+        const val DEFAULT_IMAGE_TAG = "stable"
+        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val PEER_START_COMMAND = "./iroha"
