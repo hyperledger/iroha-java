@@ -264,6 +264,19 @@ object Instructions {
     }
 
     /**
+     * Unregister a domain
+     */
+    fun unregisterDomain(
+        id: DomainId
+    ): Instruction.Unregister {
+        return unregisterSome {
+            IdBox.DomainId(
+                id
+            )
+        }
+    }
+
+    /**
      * Register an asset
      */
     @JvmOverloads

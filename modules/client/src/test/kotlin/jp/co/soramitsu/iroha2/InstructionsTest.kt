@@ -119,6 +119,42 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(DefaultGenesis::class)
+    fun `register and unregister domain instruction committed`(): Unit = runBlocking {
+        val newDomainId = DomainId("foo".asName())
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerDomain(newDomainId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findDomainById(newDomainId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { domain -> assertEquals(newDomainId, domain.id) }
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterDomain(newDomainId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findDomainById(newDomainId)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
     fun `register account with metadata instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         val addressKey = "address".asName()
