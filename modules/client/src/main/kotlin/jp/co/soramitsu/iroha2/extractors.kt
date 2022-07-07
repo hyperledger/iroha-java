@@ -213,6 +213,7 @@ object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
         }
     }
 }
+
 /**
  * Extract `Value.U32` from a query [result]
  */

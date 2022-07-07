@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.smartcontracts.isi.error.FindError
+import jp.co.soramitsu.iroha2.generated.core.smartcontracts.isi.permissions.error.DenialReason
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
@@ -82,7 +83,7 @@ public sealed class Error : ModelEnum {
      * 'Permission' variant
      */
     public data class Permission(
-        public val string: String
+        public val denialReason: DenialReason
     ) : Error() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -91,14 +92,14 @@ public sealed class Error : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Permission = try {
                 Permission(
-                    reader.readString(),
+                    DenialReason.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Permission) = try {
-                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
+                DenialReason.write(writer, instance.denialReason)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

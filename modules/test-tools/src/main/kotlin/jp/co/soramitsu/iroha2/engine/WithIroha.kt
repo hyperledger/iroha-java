@@ -12,7 +12,10 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Test
 @Inherited
-annotation class WithIroha(val genesis: KClass<out Genesis> = EmptyGenesis::class)
+annotation class WithIroha(
+    val genesis: KClass<out Genesis> = EmptyGenesis::class,
+    val amount: Int = 1
+)
 
 /**
  * Empty genesis with no instructions
