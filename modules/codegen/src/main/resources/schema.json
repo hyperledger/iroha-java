@@ -467,6 +467,62 @@
       ]
     }
   },
+  "iroha_core::smartcontracts::isi::error::Mismatch<iroha_core::smartcontracts::isi::permissions::ValidatorType>": {
+    "Struct": {
+      "declarations": [
+        {
+          "name": "expected",
+          "ty": "iroha_core::smartcontracts::isi::permissions::ValidatorType"
+        },
+        {
+          "name": "actual",
+          "ty": "iroha_core::smartcontracts::isi::permissions::ValidatorType"
+        }
+      ]
+    }
+  },
+  "iroha_core::smartcontracts::isi::permissions::ValidatorType": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "Instruction",
+          "discriminant": 0,
+          "ty": null
+        },
+        {
+          "name": "Query",
+          "discriminant": 1,
+          "ty": null
+        },
+        {
+          "name": "Expression",
+          "discriminant": 2,
+          "ty": null
+        }
+      ]
+    }
+  },
+  "iroha_core::smartcontracts::isi::permissions::error::DenialReason": {
+    "Enum": {
+      "variants": [
+        {
+          "name": "ValidatorTypeMismatch",
+          "discriminant": 0,
+          "ty": "iroha_core::smartcontracts::isi::error::Mismatch<iroha_core::smartcontracts::isi::permissions::ValidatorType>"
+        },
+        {
+          "name": "Custom",
+          "discriminant": 1,
+          "ty": "String"
+        },
+        {
+          "name": "NoValidatorsProvided",
+          "discriminant": 2,
+          "ty": null
+        }
+      ]
+    }
+  },
   "iroha_core::smartcontracts::isi::query::Error": {
     "Enum": {
       "variants": [
@@ -483,7 +539,7 @@
         {
           "name": "Permission",
           "discriminant": 2,
-          "ty": "String"
+          "ty": "iroha_core::smartcontracts::isi::permissions::error::DenialReason"
         },
         {
           "name": "Evaluate",

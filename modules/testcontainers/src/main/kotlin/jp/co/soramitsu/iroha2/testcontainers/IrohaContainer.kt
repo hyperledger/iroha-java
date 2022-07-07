@@ -1,13 +1,14 @@
 package jp.co.soramitsu.iroha2.testcontainers
 
-import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
+import com.github.dockerjava.api.model.ExposedPort
+import com.github.dockerjava.api.model.PortBinding
+import com.github.dockerjava.api.model.Ports
 import jp.co.soramitsu.iroha2.JSON_SERDE
+import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
+import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
-import org.testcontainers.images.PullPolicy
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile
 import org.testcontainers.utility.MountableFile.forHostPath
@@ -31,14 +32,34 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
 
     constructor(config: IrohaConfig) : super(
-        DockerImageName.parse("$IMAGE_NAME:${config.imageTag}")
+        DockerImageName.parse("${config.imageName}:${config.imageTag}")
     ) {
+        val publicKey = config.keyPair.public.bytes().toHex()
+        val privateKey = config.keyPair.private.bytes().toHex()
+
+        this.p2pPort = config.ports[IrohaConfig.P2P_PORT_IDX]
+        this.apiPort = config.ports[IrohaConfig.API_PORT_IDX]
+        this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
+
         this.config = config
         this.withNetwork(config.networkToJoin)
-            .withEnv(ENV_IROHA2_GENESIS_PATH.first, ENV_IROHA2_GENESIS_PATH.second)
-            .withEnv(ENV_IROHA2_CONFIG_PATH.first, ENV_IROHA2_CONFIG_PATH.second)
-            .withExposedPorts(DEFAULT_API_PORT, DEFAULT_P2P_PORT, DEFAULT_TELEMETRY_PORT)
-            .withNetworkAliases(NETWORK_ALIAS)
+            .withEnv("IROHA2_GENESIS_PATH", DEFAULT_GENESIS_FILE_NAME)
+            .withEnv("IROHA2_CONFIG_PATH", DEFAULT_CONFIG_FILE_NAME)
+            .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
+            .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
+            .withEnv("IROHA_PRIVATE_KEY", "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}")
+            .withEnv("TORII_P2P_ADDR", "${config.alias}:$p2pPort")
+            .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
+            .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
+            .withExposedPorts(p2pPort, apiPort, telemetryPort)
+            .withCreateContainerCmdModifier {
+                it.hostConfig!!.withPortBindings(
+                    PortBinding(Ports.Binding.bindPort(p2pPort), ExposedPort(p2pPort)),
+                    PortBinding(Ports.Binding.bindPort(apiPort), ExposedPort(apiPort)),
+                    PortBinding(Ports.Binding.bindPort(telemetryPort), ExposedPort(telemetryPort))
+                )
+            }
+            .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
                 forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
@@ -47,26 +68,34 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withCopyFileToContainer(
                 MountableFile.forClasspathResource(DEFAULT_CONFIG_FILE_NAME),
                 DEFAULT_CONFIG_FILE_NAME
-            )
-            .withCommand(PEER_START_COMMAND)
-            .withImagePullPolicy(
-                if (IMAGE_PULL_POLICY == "aged")
-                    PullPolicy.ageBased(Duration.ofMinutes(10))
-                else
-                    PullPolicy.defaultPolicy()
-            )
-            .waitingFor(
-                // await genesis was applied and seen in status
-                HttpWaitStrategy()
-                    .forStatusCode(200)
-                    .forPort(DEFAULT_TELEMETRY_PORT)
-                    .forPath(STATUS_ENDPOINT)
-                    .forResponsePredicate { JSON_SERDE.readTree(it).get("blocks")?.doubleValue()?.equals(1.0) ?: false }
-                    .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
-            )
+            ).also { container ->
+                val command = when (config.submitGenesis) {
+                    true -> "$PEER_START_COMMAND --submit-genesis"
+                    false -> PEER_START_COMMAND
+                }
+                container.withCommand(command)
+            }
+            .withImagePullPolicy(config.pullPolicy)
+            .also { container ->
+                if (config.waitStrategy) {
+                    container.waitingFor(
+                        // await genesis was applied and seen in status
+                        HttpWaitStrategy()
+                            .forStatusCode(200)
+                            .forPort(telemetryPort)
+                            .forPath(STATUS_ENDPOINT)
+                            .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
+                            .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
+                    )
+                }
+            }
     }
 
-    private val config: IrohaConfig
+    val config: IrohaConfig
+
+    private val p2pPort: Int
+    private val apiPort: Int
+    private val telemetryPort: Int
 
     private val genesisFileLocation: Lazy<Path> = lazy {
         createTempFile("genesis-", randomUUID().toString())
@@ -91,27 +120,29 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         try {
             Files.deleteIfExists(genesisFileLocation.value)
         } catch (ex: IOException) {
-            logger().warn("Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex")
+            logger().warn(
+                "Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex"
+            )
         }
         logger().debug("Iroha container stopped")
     }
 
-    fun getApiUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_API_PORT), "")
+    fun getP2pUrl(): URL = URL("http", containerIpAddress, p2pPort, "")
 
-    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, this.getMappedPort(DEFAULT_TELEMETRY_PORT), "")
+    fun getApiUrl(): URL = URL("http", containerIpAddress, apiPort, "")
+
+    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, telemetryPort, "")
+
+    private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 
     // TODO: move env variables to IrohaConfig
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        val DEFAULT_IMAGE_TAG = System.getenv("IROHA_JAVA_IMAGE_TAG") ?: "stable"
-        val IMAGE_NAME = System.getenv("IROHA_JAVA_IMAGE_NAME") ?: "hyperledger/iroha2"
-        val IMAGE_PULL_POLICY = System.getenv("IROHA_JAVA_IMAGE_PULL_POLICY") ?: "aged"
+        const val DEFAULT_IMAGE_TAG = "stable"
+        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
-        const val PEER_START_COMMAND = "./iroha --submit-genesis"
-
-        val ENV_IROHA2_GENESIS_PATH = "IROHA2_GENESIS_PATH" to DEFAULT_GENESIS_FILE_NAME
-        val ENV_IROHA2_CONFIG_PATH = "IROHA2_CONFIG_PATH" to DEFAULT_CONFIG_FILE_NAME
+        const val PEER_START_COMMAND = "./iroha"
 
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }
