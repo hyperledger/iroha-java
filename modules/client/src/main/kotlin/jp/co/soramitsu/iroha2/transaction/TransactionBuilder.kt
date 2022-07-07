@@ -224,6 +224,17 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
+    fun unregisterDomain(
+        id: DomainId
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.unregisterDomain(
+                id
+            )
+        )
+    }
+
     fun grantRole(
         roleId: RoleId,
         accountId: AccountId
