@@ -14,7 +14,6 @@ import jp.co.soramitsu.iroha2.engine.DefaultGenesis
 import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
@@ -23,6 +22,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
@@ -33,7 +33,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
@@ -543,7 +542,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             sequence(
                 Instructions.burnAsset(DEFAULT_ASSET_ID, 10),
                 Instructions.burnAsset(DEFAULT_ASSET_ID, 20),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 30),
+                Instructions.burnAsset(DEFAULT_ASSET_ID, 30)
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
@@ -698,22 +697,21 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register and grant role to account`(): Unit = runBlocking {
         val roleId = RoleId("USER_METADATA_ACCESS".asName())
 
         client.sendTransaction {
-            accountId = BOB_ACCOUNT_ID
+            account(BOB_ACCOUNT_ID)
             registerRole(
                 roleId,
                 PermissionToken(
-                    Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
+                    Permissions.CanSetKeyValueInUserMetadata.type,
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 ),
                 PermissionToken(
-                    Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
+                    Permissions.CanRemoveKeyValueInUserMetadata.type,
                     mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
                 )
             )
@@ -723,12 +721,28 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         client.sendTransaction {
-            accountId = BOB_ACCOUNT_ID
+            account(BOB_ACCOUNT_ID)
             grantRole(roleId, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
+
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            setKeyValue(BOB_ACCOUNT_ID, "key2".asName(), "value2".asValue())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { bob ->
+                assertTrue(bob.metadata.map.containsValue("value2".asValue()))
+            }
     }
 
     private suspend fun getAccountAmount(
