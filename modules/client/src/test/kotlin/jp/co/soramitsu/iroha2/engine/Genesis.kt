@@ -36,11 +36,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                Permissions.CanSetKeyValueInUserMetadata.permissionName.asName(),
+                Permissions.CanSetKeyValueInUserMetadata.type,
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             ),
             PermissionToken(
-                Permissions.CanRemoveKeyValueInUserMetadata.permissionName.asName(),
+                Permissions.CanRemoveKeyValueInUserMetadata.type,
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             )
         ),
@@ -202,11 +202,11 @@ fun rawGenesisBlock(vararg isi: Instruction): RawGenesisBlock {
                     Instructions.registerDomain(DEFAULT_DOMAIN_ID),
                     Instructions.registerAccount(
                         ALICE_ACCOUNT_ID,
-                        listOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
+                        listOf(ALICE_KEYPAIR.public.toIrohaPublicKey())
                     ),
                     Instructions.registerAccount(
                         BOB_ACCOUNT_ID,
-                        listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
+                        listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
                     ),
                     *isi
                 )

@@ -140,7 +140,7 @@ public sealed class Value : ModelEnum {
      * 'Name' variant
      */
     public data class Name(
-        public val name: jp.co.soramitsu.iroha2.generated.datamodel.Name
+        public val name: jp.co.soramitsu.iroha2.generated.datamodel.name.Name
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -149,14 +149,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Name = try {
                 Name(
-                    jp.co.soramitsu.iroha2.generated.datamodel.Name.read(reader),
+                    jp.co.soramitsu.iroha2.generated.datamodel.name.Name.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Name) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.Name.write(writer, instance.name)
+                jp.co.soramitsu.iroha2.generated.datamodel.name.Name.write(writer, instance.name)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

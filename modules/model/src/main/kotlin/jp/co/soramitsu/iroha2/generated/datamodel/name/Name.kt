@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel
+package jp.co.soramitsu.iroha2.generated.datamodel.name
 
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
@@ -13,7 +13,7 @@ import kotlin.String
 /**
  * Name
  *
- * Generated from 'iroha_data_model::Name' tuple structure
+ * Generated from 'iroha_data_model::name::Name' tuple structure
  */
 public data class Name(
     public val string: String

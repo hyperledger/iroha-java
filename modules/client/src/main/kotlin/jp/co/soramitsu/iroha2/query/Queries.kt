@@ -2,11 +2,11 @@ package jp.co.soramitsu.iroha2.query
 
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
@@ -31,6 +31,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoleIds
+import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoles
+import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRoleByRoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindRolesByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindAllTransactions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransactionByHash
@@ -38,6 +41,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransact
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 
 /**
@@ -240,12 +244,35 @@ object Queries {
     }
 
     /**
-     * Return all of the role IDs that are attached to the given [AccountId].
+     * Return all the role IDs that are attached to the given [AccountId].
      */
     fun findRolesByAccountId(accountId: AccountId): QueryBox.FindRolesByAccountId {
         return QueryBox.FindRolesByAccountId(
             FindRolesByAccountId(accountId.evaluatesTo())
         )
+    }
+
+    /**
+     * Return all roles.
+     */
+    fun findAllRoles(): QueryBox.FindAllRoles {
+        return QueryBox.FindAllRoles(FindAllRoles())
+    }
+
+    /**
+     * Return role by [RoleId].
+     */
+    fun findRoleByRoleId(roleId: RoleId): QueryBox.FindRoleByRoleId {
+        return QueryBox.FindRoleByRoleId(
+            FindRoleByRoleId(roleId.evaluatesTo())
+        )
+    }
+
+    /**
+     * Return all the role IDs.
+     */
+    fun findAllRoleIds(): QueryBox.FindAllRoleIds {
+        return QueryBox.FindAllRoleIds(FindAllRoleIds())
     }
 
     /**

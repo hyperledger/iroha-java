@@ -6,7 +6,6 @@ import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
@@ -19,6 +18,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
@@ -204,7 +204,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     @JvmOverloads
     fun unregisterTrigger(
-        triggerName: String,
+        triggerName: String
     ) = this.apply {
         instructions.value.add(
             Instructions.unregisterTrigger(
@@ -286,7 +286,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun removeKeyValue(
         assetId: AssetId,
-        key: Name,
+        key: Name
     ) = this.apply { instructions.value.add(Instructions.removeKeyValue(assetId, key)) }
 
     fun removeKeyValue(

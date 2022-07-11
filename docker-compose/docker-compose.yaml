@@ -2,8 +2,14 @@ version: "3"
 
 services:
   iroha:
-    image: hyperledger/iroha2:stable
+    image: hyperledger/iroha2:lts@sha256:3d2c5a7715b238bb7a33a0989ef7d3db7a7c8d3ba74a1e1ef54c353a5edbca7d
     environment:
+      TORII_P2P_ADDR: iroha:1337
+      TORII_API_URL: iroha:8080
+      TORII_TELEMETRY_URL: iroha:8180
+      IROHA_PUBLIC_KEY: "ed01201c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"
+      IROHA_PRIVATE_KEY: '{"digest_function": "ed25519", "payload": "282ed9f3cf92811c3818dbc4ae594ed59dc1a2f78e4241e31924e101d6b1fb831c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"}'
+      SUMERAGI_TRUSTED_PEERS: '[{"address":"iroha:1337", "public_key": "ed01201c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"}]'
       RUST_BACKTRACE: full
       MAX_LOG_LEVEL: INFO
       IROHA2_GENESIS_PATH: genesis.json

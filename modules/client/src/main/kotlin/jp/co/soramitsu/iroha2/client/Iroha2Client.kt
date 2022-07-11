@@ -78,6 +78,7 @@ open class Iroha2Client(
         const val WS_ENDPOINT = "/events"
         const val HEALTH_ENDPOINT = "/health"
         const val STATUS_ENDPOINT = "/status"
+        const val SCHEMA_ENDPOINT = "/schema"
         const val METRICS_ENDPOINT = "/metrics"
         const val CONFIGURATION_ENDPOINT = "/configuration"
     }
@@ -319,7 +320,9 @@ open class Iroha2Client(
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
                 Filters.pipeline(
-                    EntityKind.Transaction(), null, hash
+                    EntityKind.Transaction(),
+                    null,
+                    hash
                 )
             )
         )
@@ -330,10 +333,12 @@ open class Iroha2Client(
             val pairs: Map<String, Long> =
                 p.readValueAs(object : TypeReference<Map<String, Long>>() {})
             val seconds = pairs["secs"] ?: throw JsonMappingException.from(
-                p, "Expected `secs` item for duration deserialization"
+                p,
+                "Expected `secs` item for duration deserialization"
             )
             val nanos = pairs["nanos"] ?: throw JsonMappingException.from(
-                p, "Expected `nanos` item for duration deserialization"
+                p,
+                "Expected `nanos` item for duration deserialization"
             )
             return Duration.ofSeconds(seconds, nanos)
         }
