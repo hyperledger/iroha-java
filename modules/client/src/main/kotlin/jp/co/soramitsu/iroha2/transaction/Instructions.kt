@@ -417,6 +417,23 @@ object Instructions {
     }
 
     /**
+     * Set key/value in the metadata of a given domain
+     */
+    fun setKeyValue(
+        domainId: DomainId,
+        key: Name,
+        value: Value
+    ): Instruction.SetKeyValue {
+        return Instruction.SetKeyValue(
+            SetKeyValueBox(
+                objectId = IdBox.DomainId(domainId).evaluatesTo(),
+                key = key.evaluatesTo(),
+                value = value.evaluatesTo()
+            )
+        )
+    }
+
+    /**
      * Execute a trigger
      */
     fun executeTrigger(triggerId: TriggerId): Instruction.ExecuteTrigger {
