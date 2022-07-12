@@ -10,6 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
+import io.ktor.client.plugins.auth.providers.basic
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.ClientWebSocketSession
@@ -62,11 +65,14 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Iroha2 Client
+ *
+ * @param credentials <username>:<password>
  */
 @Suppress("unused")
 open class Iroha2Client(
     open var peerUrl: URL,
     open val log: Boolean = false,
+    open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
     open val eventReadMaxAttempts: Int = 10,
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
@@ -98,6 +104,15 @@ open class Iroha2Client(
                             addDeserializer(Duration::class.java, DurationDeserializer)
                         }
                     )
+                }
+            }
+            credentials?.split(":")?.takeIf { it.size == 2 }?.let { pair ->
+                install(Auth) {
+                    basic {
+                        credentials {
+                            BasicAuthCredentials(pair[0], pair[1])
+                        }
+                    }
                 }
             }
             HttpResponseValidator {
@@ -319,7 +334,9 @@ open class Iroha2Client(
         return VersionedEventSubscriberMessage.V1(
             EventSubscriberMessage.SubscriptionRequest(
                 Filters.pipeline(
-                    EntityKind.Transaction(), null, hash
+                    EntityKind.Transaction(),
+                    null,
+                    hash
                 )
             )
         )
@@ -330,10 +347,12 @@ open class Iroha2Client(
             val pairs: Map<String, Long> =
                 p.readValueAs(object : TypeReference<Map<String, Long>>() {})
             val seconds = pairs["secs"] ?: throw JsonMappingException.from(
-                p, "Expected `secs` item for duration deserialization"
+                p,
+                "Expected `secs` item for duration deserialization"
             )
             val nanos = pairs["nanos"] ?: throw JsonMappingException.from(
-                p, "Expected `nanos` item for duration deserialization"
+                p,
+                "Expected `nanos` item for duration deserialization"
             )
             return Duration.ofSeconds(seconds, nanos)
         }
