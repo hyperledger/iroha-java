@@ -12,8 +12,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
@@ -289,6 +291,15 @@ object Instructions {
             RegistrableBox.AssetDefinition(
                 NewAssetDefinition(id, assetValueType, mintable, metadata)
             )
+        }
+    }
+
+    /**
+     * Register an asset
+     */
+    fun registerAsset(id: AssetId, assetValue: AssetValue): Instruction.Register {
+        return registerSome {
+            RegistrableBox.Asset(Asset(id, assetValue))
         }
     }
 
