@@ -27,13 +27,6 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha
-    fun schema(): Unit = runBlocking {
-        val schema = client.schema()
-        println(schema)
-    }
-
-    @Test
-    @WithIroha
     fun metrics(): Unit = runBlocking {
         val metrics = client.metrics()
         assert(metrics.isNotEmpty())
