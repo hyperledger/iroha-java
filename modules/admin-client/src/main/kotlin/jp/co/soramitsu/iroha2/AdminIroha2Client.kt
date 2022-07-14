@@ -53,6 +53,15 @@ open class AdminIroha2Client(
     }
 
     /**
+     * Send status check request
+     */
+    suspend fun schema(): String {
+        return client
+            .get("$peerUrl$SCHEMA_ENDPOINT")
+            .body()
+    }
+
+    /**
      * Request current configuration of the peer
      */
     suspend fun getConfigs(): Map<String, *> {

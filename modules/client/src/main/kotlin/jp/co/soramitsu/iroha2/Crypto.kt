@@ -1,4 +1,5 @@
 @file:JvmName("CryptoUtils")
+
 package jp.co.soramitsu.iroha2
 
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
@@ -12,7 +13,8 @@ import java.security.Key
 import java.security.KeyPair
 import java.security.SecureRandom
 
-@JvmField val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
+@JvmField
+val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
 
 enum class DigestFunction(val hashFunName: String, val index: Int) {
     Ed25519("ed25519", 0xed)

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import java.math.BigInteger
 import kotlin.Int
 
 /**
@@ -208,6 +209,33 @@ public sealed class Error : ModelEnum {
         }
     }
 
+    /**
+     * 'ExtraBytesLeft' variant
+     */
+    public data class ExtraBytesLeft(
+        public val u64: BigInteger
+    ) : Error() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ExtraBytesLeft>, ScaleWriter<ExtraBytesLeft> {
+            public const val DISCRIMINANT: Int = 8
+
+            public override fun read(reader: ScaleCodecReader): ExtraBytesLeft = try {
+                ExtraBytesLeft(
+                    reader.readUint64(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ExtraBytesLeft) = try {
+                writer.writeUint64(instance.u64)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Error>, ScaleWriter<Error> {
         public override fun read(reader: ScaleCodecReader): Error = when (
             val discriminant =
@@ -221,6 +249,7 @@ public sealed class Error : ModelEnum {
             5 -> ParityScale.read(reader)
             6 -> ParseInt.read(reader)
             7 -> UnsupportedVersion.read(reader)
+            8 -> ExtraBytesLeft.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -235,6 +264,7 @@ public sealed class Error : ModelEnum {
                 5 -> ParityScale.write(writer, instance as ParityScale)
                 6 -> ParseInt.write(writer, instance as ParseInt)
                 7 -> UnsupportedVersion.write(writer, instance as UnsupportedVersion)
+                8 -> ExtraBytesLeft.write(writer, instance as ExtraBytesLeft)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

@@ -4,7 +4,7 @@ import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
 import jp.co.soramitsu.iroha2.engine.DefaultGenesis;
 import jp.co.soramitsu.iroha2.engine.IrohaTest;
 import jp.co.soramitsu.iroha2.engine.WithIroha;
-import jp.co.soramitsu.iroha2.generated.datamodel.Name;
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name;
 import jp.co.soramitsu.iroha2.generated.datamodel.Value;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId;

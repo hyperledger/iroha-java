@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
@@ -247,7 +248,27 @@ object ValueExtractor : ResultExtractor<Value> {
 object RolesExtractor : ResultExtractor<List<Role>> {
     override fun extract(result: PaginatedQueryResult): List<Role> {
         return extractVec(result.result.value) {
-            extractValue(it, IdentifiableBox.Role::role)
+            extractIdentifiable(it, IdentifiableBox.Role::role)
+        }
+    }
+}
+
+/**
+ * Extract a role from a query [result]
+ */
+object RoleExtractor : ResultExtractor<Role> {
+    override fun extract(result: PaginatedQueryResult): Role {
+        return extractIdentifiable(result.result.value, IdentifiableBox.Role::role)
+    }
+}
+
+/**
+ * Extract a list of role IDs from a query [result]
+ */
+object RoleIdsExtractor : ResultExtractor<List<RoleId>> {
+    override fun extract(result: PaginatedQueryResult): List<RoleId> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.Id::idBox).cast<IdBox.RoleId>().roleId
         }
     }
 }

@@ -33,8 +33,8 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -501,6 +501,62 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Test
+    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    fun `find all role IDs`(): Unit = runBlocking {
+        QueryBuilder.findAllRoleIds()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { ids ->
+                assertContains(
+                    ids,
+                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+                )
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    fun `find roles by account ID`(): Unit = runBlocking {
+        QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { ids ->
+                assertContains(
+                    ids,
+                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+                )
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    fun `find all roles`(): Unit = runBlocking {
+        QueryBuilder.findAllRoles()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { roles ->
+                assertContains(
+                    roles.map { it.id },
+                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+                )
+            }
+    }
+
+    @Test
+    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    fun `find role by ID`(): Unit = runBlocking {
+        val roleId = AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+        QueryBuilder.findRoleByRoleId(roleId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { role -> assertEquals(role.id, roleId) }
+    }
+
     private suspend fun createAccount(name: String) {
         val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
@@ -510,16 +566,5 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
-    }
-
-    @Disabled
-    @Test
-    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
-    fun `find roles`(): Unit = runBlocking {
-        QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { roles -> assert(roles.isNotEmpty()) }
     }
 }

@@ -12,6 +12,8 @@ import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
 import jp.co.soramitsu.iroha2.PermissionTokensExtractor
 import jp.co.soramitsu.iroha2.ResultExtractor
+import jp.co.soramitsu.iroha2.RoleExtractor
+import jp.co.soramitsu.iroha2.RoleIdsExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
@@ -25,17 +27,18 @@ import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.query.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
 import jp.co.soramitsu.iroha2.generated.datamodel.query.SignedQueryRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
@@ -172,11 +175,12 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions(assetDefinition: AssetDefinitionId, queryFilter: PredicateBox? = null) = QueryBuilder(
-            Queries.findAssetsByAssetDefinitionId(assetDefinition),
-            AssetDefinitionsExtractor,
-            queryFilter
-        )
+        fun findAllAssetsDefinitions(assetDefinition: AssetDefinitionId, queryFilter: PredicateBox? = null) =
+            QueryBuilder(
+                Queries.findAssetsByAssetDefinitionId(assetDefinition),
+                AssetDefinitionsExtractor,
+                queryFilter
+            )
 
         @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
@@ -226,13 +230,15 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAllDomains(queryFilter: PredicateBox? = null) = QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
+        fun findAllDomains(queryFilter: PredicateBox? = null) =
+            QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
 
         @JvmStatic
         fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
 
         @JvmStatic
-        fun findAllPeers(queryFilter: PredicateBox? = null) = QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
+        fun findAllPeers(queryFilter: PredicateBox? = null) =
+            QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
 
         @JvmStatic
         fun findTransactionsByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
@@ -251,7 +257,28 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findRolesByAccountId(accountId: AccountId, queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findRolesByAccountId(accountId),
+            RoleIdsExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findAllRoleIds(queryFilter: PredicateBox? = null) = QueryBuilder(
+            Queries.findAllRoleIds(),
+            RoleIdsExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findAllRoles(queryFilter: PredicateBox? = null) = QueryBuilder(
+            Queries.findAllRoles(),
             RolesExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findRoleByRoleId(roleId: RoleId, queryFilter: PredicateBox? = null) = QueryBuilder(
+            Queries.findRoleByRoleId(roleId),
+            RoleExtractor,
             queryFilter
         )
 
