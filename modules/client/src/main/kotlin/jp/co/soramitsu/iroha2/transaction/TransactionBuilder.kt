@@ -284,6 +284,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         value: Value
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
 
+    fun setKeyValue(
+        domainId: DomainId,
+        key: Name,
+        value: Value
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(domainId, key, value)) }
+
     fun removeKeyValue(
         assetId: AssetId,
         key: Name,
