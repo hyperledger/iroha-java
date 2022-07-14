@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.engine.IrohaTest
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
@@ -21,6 +20,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -299,12 +299,15 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         triggerId: TriggerId,
         repeats: Repeats,
         instruction: Instruction,
-        accountId: AccountId = ALICE_ACCOUNT_ID,
+        accountId: AccountId = ALICE_ACCOUNT_ID
     ) {
         client.sendTransaction {
             this.accountId = accountId
             registerTimeTrigger(
-                triggerId, listOf(instruction), repeats, accountId,
+                triggerId,
+                listOf(instruction),
+                repeats,
+                accountId,
                 EventFilters.timeEventFilter(
                     Duration(BigInteger.valueOf(Instant.now().epochSecond), 0L),
                     Duration(BigInteger.valueOf(1L), 0L)
@@ -377,7 +380,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             unregisterTrigger(
-                triggerName,
+                triggerName
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->

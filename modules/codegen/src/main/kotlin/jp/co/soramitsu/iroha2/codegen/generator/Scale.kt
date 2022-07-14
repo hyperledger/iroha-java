@@ -228,7 +228,9 @@ private fun VecType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
 
             CodeBlock.of(
                 "writer.writeCompact(%1L.size)\n%1L%3L.forEach { value ->\n%2L\n}",
-                propName, value, sorted
+                propName,
+                value,
+                sorted
             )
         }
     }

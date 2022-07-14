@@ -21,8 +21,9 @@ open class AdminIroha2Client(
         DEFAULT_TELEMETRY_PORT,
         peerUrl.file
     ),
-    log: Boolean = false
-) : Iroha2Client(peerUrl, log) {
+    log: Boolean = false,
+    credentials: String? = null
+) : Iroha2Client(peerUrl, log, credentials) {
 
     /**
      * Send metrics request
@@ -48,6 +49,15 @@ open class AdminIroha2Client(
     suspend fun status(): PeerStatus {
         return client
             .get("$telemetryUrl$STATUS_ENDPOINT")
+            .body()
+    }
+
+    /**
+     * Send status check request
+     */
+    suspend fun schema(): String {
+        return client
+            .get("$peerUrl$SCHEMA_ENDPOINT")
             .body()
     }
 

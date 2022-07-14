@@ -15,17 +15,19 @@ import java.util.concurrent.CompletableFuture
 class Iroha2AsyncClient @JvmOverloads constructor(
     peerUrl: URL,
     log: Boolean = false,
+    credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,
     eventReadMaxAttempts: Int = 10
-) : Iroha2Client(peerUrl, log, eventReadTimeoutInMills, eventReadMaxAttempts) {
+) : Iroha2Client(peerUrl, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
 
     @JvmOverloads
     constructor(
         peerUrl: String,
         log: Boolean = false,
+        credentials: String? = null,
         eventReadTimeoutInMills: Long = 250,
         eventReadMaxAttempts: Int = 10
-    ) : this(URL(peerUrl), log, eventReadTimeoutInMills, eventReadMaxAttempts)
+    ) : this(URL(peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
 
     /**
      * Send a request to Iroha2 and extract payload.

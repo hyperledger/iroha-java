@@ -20,7 +20,6 @@ import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
@@ -31,6 +30,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -319,7 +319,7 @@ object EnumerationSerializer : JsonSerializer<ModelEnum>() {
  */
 fun serializeNoneOrSingleMemberObject(
     gen: JsonGenerator,
-    objectValue: Any,
+    objectValue: Any
 ) {
     val clazz = objectValue::class
     val memberProperties = clazz.memberProperties
