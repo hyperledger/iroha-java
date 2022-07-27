@@ -55,7 +55,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.StatusKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as QueryPredicate
 
 /**
  * Filters are used to filter out events
@@ -346,6 +349,27 @@ object EventFilters {
     fun timeEventFilter(): TimeEventFilter {
         return TimeEventFilter(
             ExecutionTime.PreCommit()
+        )
+    }
+}
+
+/**
+ * Query filters
+ */
+object QueryFilters {
+
+    /**
+     * Create a starts with filter
+     */
+    fun startsWithFilter(
+        id: String
+    ): PredicateBox.Raw {
+        return PredicateBox.Raw(
+            Predicate.Identifiable(
+                QueryPredicate.StartsWith(
+                    id
+                )
+            )
         )
     }
 }

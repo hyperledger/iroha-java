@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
+import jp.co.soramitsu.iroha2.transaction.QueryFilters
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
@@ -105,13 +106,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `find accounts by name with filter`(): Unit = runBlocking {
-        val filter = PredicateBox.Raw(
-            Predicate.Identifiable(
-                PredicateValue.StartsWith(
-                    "alice"
-                )
-            )
-        )
+        val filter = QueryFilters.startsWithFilter("alice")
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -285,11 +280,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(NewDomain::class)
     fun `find all domains with filter`(): Unit = runBlocking {
-        val filter = PredicateBox.Raw(
-            Predicate.Identifiable(
-                PredicateValue.StartsWith("wonder")
-            )
-        )
+        val filter = QueryFilters.startsWithFilter("wonder")
         QueryBuilder.findAllDomains(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
