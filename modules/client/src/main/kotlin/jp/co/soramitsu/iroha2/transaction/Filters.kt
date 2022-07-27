@@ -361,7 +361,7 @@ object QueryFilters {
     /**
      * Create a starts with filter
      */
-    fun startsWithFilter(
+    fun startsWith(
         id: String
     ): PredicateBox.Raw {
         return PredicateBox.Raw(

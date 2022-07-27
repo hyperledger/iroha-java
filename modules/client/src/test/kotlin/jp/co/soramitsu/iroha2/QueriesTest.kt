@@ -106,7 +106,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `find accounts by name with filter`(): Unit = runBlocking {
-        val filter = QueryFilters.startsWithFilter("alice")
+        val filter = QueryFilters.startsWith("alice")
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -280,7 +280,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(NewDomain::class)
     fun `find all domains with filter`(): Unit = runBlocking {
-        val filter = QueryFilters.startsWithFilter("wonder")
+        val filter = QueryFilters.startsWith("wonder")
         QueryBuilder.findAllDomains(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
