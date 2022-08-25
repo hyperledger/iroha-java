@@ -2,6 +2,9 @@ package jp.co.soramitsu.iroha2.engine
 
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
+import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.findFreePorts
@@ -123,7 +126,11 @@ class IrohaRunnerExtension : InvocationInterceptor {
         val portsList = mutableListOf<List<Int>>()
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
-            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
+            val ports = when (withIroha.amount) {
+                1 -> listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT)
+                else -> findFreePorts(3)
+            }
+            portsList.add(ports)
         }
 
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
@@ -156,6 +163,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
     }
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
-        "$host:$port", this.public.toIrohaPublicKey()
+        "$host:$port",
+        this.public.toIrohaPublicKey()
     )
 }
