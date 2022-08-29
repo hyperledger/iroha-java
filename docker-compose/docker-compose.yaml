@@ -2,7 +2,7 @@ version: "3"
 
 services:
   iroha:
-    image: hyperledger/iroha2:lts@sha256:3d2c5a7715b238bb7a33a0989ef7d3db7a7c8d3ba74a1e1ef54c353a5edbca7d
+    image: hyperledger/iroha2:lts@sha256:4072d09bee376c8fcbc586d35ea25624738694ce2c37aa0db60c9998c613048b
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
