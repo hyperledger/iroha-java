@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.utility.DockerImageName
-import org.testcontainers.utility.MountableFile
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
