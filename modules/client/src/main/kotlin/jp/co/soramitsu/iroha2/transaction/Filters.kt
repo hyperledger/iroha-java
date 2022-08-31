@@ -4,50 +4,22 @@ import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.account.AccountEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.account.AccountFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.domain.DomainEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.domain.DomainFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.peer.PeerEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.peer.PeerFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.role.RoleEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.role.RoleFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.trigger.TriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.trigger.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.EntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAccountEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAccountFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptAssetFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptDomainEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptDomainFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEntityFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterAssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterDomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterPeerId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterRoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptIdFilterTriggerId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptPeerEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptPeerFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptRoleEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptRoleFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptTriggerEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptTriggerFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterAccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterAssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterDomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterPeerId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterRoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.IdFilterTriggerId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.account.AccountEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.account.AccountFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.domain.DomainEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.domain.DomainFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.peer.PeerEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.peer.PeerFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.role.RoleEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.role.RoleFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.trigger.TriggerEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.trigger.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.executetrigger.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.PipelineEventFilter
@@ -58,6 +30,34 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAccountAccountEventFilter as FilterOptAccountEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAccountAccountFilter as FilterOptAccountFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAssetAssetDefinitionEventFilter as FilterOptAssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAssetAssetDefinitionFilter as FilterOptAssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAssetAssetEventFilter as FilterOptAssetEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsAssetAssetFilter as FilterOptAssetFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsDomainDomainEventFilter as FilterOptDomainEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsDomainDomainFilter as FilterOptDomainFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsPeerPeerEventFilter as FilterOptPeerEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsPeerPeerFilter as FilterOptPeerFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsRoleRoleEventFilter as FilterOptRoleEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsRoleRoleFilter as FilterOptRoleFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsTriggerTriggerEventFilter as FilterOptTriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptEventsDataEventsTriggerTriggerFilter as FilterOptTriggerFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsAccountAccountEvent as FilterOptAccountEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsAssetAssetDefinitionEvent as FilterOptAssetDefinitionEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsAssetAssetEvent as FilterOptAssetEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsDomainDomainEvent as FilterOptDomainEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsPeerPeerEvent as FilterOptPeerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsRoleRoleEvent as FilterOptRoleEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.FilterOptOriginFilterEventsDataEventsTriggerTriggerEvent as FilterOptTriggerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsAccountAccountEvent as AccountEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsAssetAssetDefinitionEvent as AssetDefinitionEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsAssetAssetEvent as AssetEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsDomainDomainEvent as DomainEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsPeerPeerEvent as PeerEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsRoleRoleEvent as RoleEventOriginFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.OriginFilterEventsDataEventsTriggerTriggerEvent as TriggerEventOriginFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as QueryPredicate
 
 /**
@@ -108,7 +108,9 @@ object Filters {
     ): EventsFilterBox.Pipeline {
         return EventsFilterBox.Pipeline(
             PipelineEventFilter(
-                entityKind, statusKind, hash?.let { Hash(it) }
+                entityKind,
+                statusKind,
+                hash?.let { Hash(it) }
             )
         )
     }
@@ -122,17 +124,17 @@ object EntityFilters {
 
     /**
      * Match events associated with asset definition and apply another filter referenced by
-     * its [id][IdFilterAssetDefinitionId] or [event type][AssetDefinitionEventFilter]
+     * its [id][AssetDefinitionEventOriginFilter] or [event type][AssetDefinitionEventFilter]
      */
     fun byAssetDefinition(
-        idFilter: IdFilterAssetDefinitionId? = null,
+        originFilter: AssetDefinitionEventOriginFilter? = null,
         eventFilter: AssetDefinitionEventFilter? = null
     ): EntityFilter.ByAssetDefinition {
         return EntityFilter.ByAssetDefinition(
             FilterOptAssetDefinitionFilter.BySome(
                 AssetDefinitionFilter(
-                    idFilter?.let { FilterOptIdFilterAssetDefinitionId.BySome(it) }
-                        ?: FilterOptIdFilterAssetDefinitionId.AcceptAll(),
+                    originFilter?.let { FilterOptAssetDefinitionEvent.BySome(it) }
+                        ?: FilterOptAssetDefinitionEvent.AcceptAll(),
                     eventFilter?.let { FilterOptAssetDefinitionEventFilter.BySome(it) }
                         ?: FilterOptAssetDefinitionEventFilter.AcceptAll()
                 )
@@ -151,17 +153,17 @@ object EntityFilters {
 
     /**
      * Match events associated with accounts and apply another filter referenced by
-     * its [id][IdFilterAccountId] or [event type][AccountEventFilter]
+     * its [id][AccountEventOriginFilter] or [event type][AccountEventFilter]
      */
     fun byAccount(
-        idFilter: IdFilterAccountId? = null,
+        idFilter: AccountEventOriginFilter? = null,
         eventFilter: AccountEventFilter? = null
     ): EntityFilter.ByAccount {
         return EntityFilter.ByAccount(
             FilterOptAccountFilter.BySome(
                 AccountFilter(
-                    idFilter?.let { FilterOptIdFilterAccountId.BySome(it) }
-                        ?: FilterOptIdFilterAccountId.AcceptAll(),
+                    idFilter?.let { FilterOptAccountEvent.BySome(it) }
+                        ?: FilterOptAccountEvent.AcceptAll(),
                     eventFilter?.let { FilterOptAccountEventFilter.BySome(it) }
                         ?: FilterOptAccountEventFilter.AcceptAll()
                 )
@@ -180,17 +182,17 @@ object EntityFilters {
 
     /**
      * Match events associated with assets and apply another filter referenced by
-     * its [id][IdFilterAssetId] or [event type][AssetEventFilter]
+     * its [id][AssetEventOriginFilter] or [event type][AssetEventFilter]
      */
     fun byAsset(
-        idFilter: IdFilterAssetId? = null,
+        assetFilter: AssetEventOriginFilter? = null,
         eventFilter: AssetEventFilter? = null
     ): EntityFilter.ByAsset {
         return EntityFilter.ByAsset(
             FilterOptAssetFilter.BySome(
                 AssetFilter(
-                    idFilter?.let { FilterOptIdFilterAssetId.BySome(it) }
-                        ?: FilterOptIdFilterAssetId.AcceptAll(),
+                    assetFilter?.let { FilterOptAssetEvent.BySome(it) }
+                        ?: FilterOptAssetEvent.AcceptAll(),
                     eventFilter?.let { FilterOptAssetEventFilter.BySome(it) }
                         ?: FilterOptAssetEventFilter.AcceptAll()
                 )
@@ -209,17 +211,17 @@ object EntityFilters {
 
     /**
      * Match events associated with triggers and apply another filter referenced by
-     * its [id][IdFilterTriggerId] or [event type][TriggerEventFilter]
+     * its [id][TriggerEventOriginFilter] or [event type][TriggerEventFilter]
      */
     fun byTrigger(
-        idFilter: IdFilterTriggerId? = null,
+        idFilter: TriggerEventOriginFilter? = null,
         eventFilter: TriggerEventFilter? = null
     ): EntityFilter.ByTrigger {
         return EntityFilter.ByTrigger(
             FilterOptTriggerFilter.BySome(
                 TriggerFilter(
-                    idFilter?.let { FilterOptIdFilterTriggerId.BySome(it) }
-                        ?: FilterOptIdFilterTriggerId.AcceptAll(),
+                    idFilter?.let { FilterOptTriggerEvent.BySome(it) }
+                        ?: FilterOptTriggerEvent.AcceptAll(),
                     eventFilter?.let { FilterOptTriggerEventFilter.BySome(it) }
                         ?: FilterOptTriggerEventFilter.AcceptAll()
                 )
@@ -238,17 +240,17 @@ object EntityFilters {
 
     /**
      * Match events associated with domains and apply another filter referenced by
-     * its [id][IdFilterDomainId] or [event type][DomainEventFilter]
+     * its [id][DomainEventOriginFilter] or [event type][DomainEventFilter]
      */
     fun byDomain(
-        idFilter: IdFilterDomainId? = null,
+        originFilter: DomainEventOriginFilter? = null,
         eventFilter: DomainEventFilter? = null
     ): EntityFilter.ByDomain {
         return EntityFilter.ByDomain(
             FilterOptDomainFilter.BySome(
                 DomainFilter(
-                    idFilter?.let { FilterOptIdFilterDomainId.BySome(it) }
-                        ?: FilterOptIdFilterDomainId.AcceptAll(),
+                    originFilter?.let { FilterOptDomainEvent.BySome(it) }
+                        ?: FilterOptDomainEvent.AcceptAll(),
                     eventFilter?.let { FilterOptDomainEventFilter.BySome(it) }
                         ?: FilterOptDomainEventFilter.AcceptAll()
                 )
@@ -267,17 +269,17 @@ object EntityFilters {
 
     /**
      * Match events associated with peers and apply another filter referenced by
-     * its [id][IdFilterPeerId] or [event type][PeerEventFilter]
+     * its [id][PeerEventOriginFilter] or [event type][PeerEventFilter]
      */
     fun byPeer(
-        idFilter: IdFilterPeerId? = null,
+        originFilter: PeerEventOriginFilter? = null,
         eventFilter: PeerEventFilter? = null
     ): EntityFilter.ByPeer {
         return EntityFilter.ByPeer(
             FilterOptPeerFilter.BySome(
                 PeerFilter(
-                    idFilter?.let { FilterOptIdFilterPeerId.BySome(it) }
-                        ?: FilterOptIdFilterPeerId.AcceptAll(),
+                    originFilter?.let { FilterOptPeerEvent.BySome(it) }
+                        ?: FilterOptPeerEvent.AcceptAll(),
                     eventFilter?.let { FilterOptPeerEventFilter.BySome(it) }
                         ?: FilterOptPeerEventFilter.AcceptAll()
                 )
@@ -296,17 +298,17 @@ object EntityFilters {
 
     /**
      * Match events associated with roles and apply another filter referenced by
-     * its [id][IdFilterRoleId] or [event type][RoleEventFilter]
+     * its [id][RoleEventOriginFilter] or [event type][RoleEventFilter]
      */
     fun byRole(
-        idFilter: IdFilterRoleId? = null,
+        originFilter: RoleEventOriginFilter? = null,
         eventFilter: RoleEventFilter? = null
     ): EntityFilter.ByRole {
         return EntityFilter.ByRole(
             FilterOptRoleFilter.BySome(
                 RoleFilter(
-                    idFilter?.let { FilterOptIdFilterRoleId.BySome(it) }
-                        ?: FilterOptIdFilterRoleId.AcceptAll(),
+                    originFilter?.let { FilterOptRoleEvent.BySome(it) }
+                        ?: FilterOptRoleEvent.AcceptAll(),
                     eventFilter?.let { FilterOptRoleEventFilter.BySome(it) }
                         ?: FilterOptRoleEventFilter.AcceptAll()
                 )

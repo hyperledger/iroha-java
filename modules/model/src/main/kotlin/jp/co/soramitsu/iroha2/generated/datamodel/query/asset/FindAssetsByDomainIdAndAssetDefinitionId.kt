@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.wrapException
@@ -20,7 +20,7 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class FindAssetsByDomainIdAndAssetDefinitionId(
     public val domainId: EvaluatesTo<DomainId>,
-    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>
+    public val assetDefinitionId: EvaluatesTo<DefinitionId>
 ) {
     public companion object :
         ScaleReader<FindAssetsByDomainIdAndAssetDefinitionId>,
@@ -29,7 +29,7 @@ public data class FindAssetsByDomainIdAndAssetDefinitionId(
             try {
                 FindAssetsByDomainIdAndAssetDefinitionId(
                     EvaluatesTo.read(reader) as EvaluatesTo<DomainId>,
-                    EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
+                    EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

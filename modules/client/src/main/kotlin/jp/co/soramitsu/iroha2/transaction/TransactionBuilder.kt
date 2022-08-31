@@ -8,10 +8,10 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
@@ -255,7 +255,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     @JvmOverloads
     fun registerAsset(
-        id: AssetDefinitionId,
+        id: DefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
@@ -285,7 +285,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
 
     fun setKeyValue(
-        definitionId: AssetDefinitionId,
+        definitionId: DefinitionId,
         key: Name,
         value: Value
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
@@ -355,10 +355,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantSetKeyValueAccount(accountId: AccountId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueMetadata(accountId, target)) }
 
-    fun grantMintUserAssetsDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId) =
+    fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantMintUserAssetDefinitions(assetDefinitionId, target)) }
 
-    fun grantBurnAssetWithDefinitionId(assetDefinitionId: AssetDefinitionId, target: AccountId) =
+    fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
 
     fun burnAsset(assetId: AssetId, value: Long) = this.apply {

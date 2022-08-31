@@ -29,7 +29,7 @@ public data class BlockHeader(
     public val rejectedTransactionsHash: HashOf<List<VersionedTransaction>>,
     public val viewChangeProofs: ProofChain,
     public val invalidatedBlocksHashes: List<HashOf<VersionedValidBlock>>,
-    public val genesisTopology: Topology?
+    public val genesisTopology: Topology? = null
 ) {
     public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
         public override fun read(reader: ScaleCodecReader): BlockHeader = try {

@@ -19,7 +19,7 @@ import kotlin.Boolean
 public data class If(
     public val condition: EvaluatesTo<Boolean>,
     public val then: Instruction,
-    public val otherwise: Instruction?
+    public val otherwise: Instruction? = null
 ) {
     public companion object : ScaleReader<If>, ScaleWriter<If> {
         public override fun read(reader: ScaleCodecReader): If = try {

@@ -28,8 +28,8 @@ import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
@@ -169,13 +169,13 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId) = QueryBuilder(
+        fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId) = QueryBuilder(
             Queries.findAssetsByAssetDefinitionId(assetDefinition),
             AssetsExtractor
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions(assetDefinition: AssetDefinitionId, queryFilter: PredicateBox? = null) =
+        fun findAllAssetsDefinitions(assetDefinition: DefinitionId, queryFilter: PredicateBox? = null) =
             QueryBuilder(
                 Queries.findAssetsByAssetDefinitionId(assetDefinition),
                 AssetDefinitionsExtractor,
@@ -185,7 +185,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
             domainId: DomainId,
-            assetDefinition: AssetDefinitionId,
+            assetDefinition: DefinitionId,
             queryFilter: PredicateBox? = null
         ) = QueryBuilder(
             Queries.findAssetsByDomainIdAndAssetDefinitionId(domainId, assetDefinition),
@@ -210,13 +210,13 @@ class QueryBuilder<R>(
             findAssetKeyValueByIdAndKey(assetId, key.asName())
 
         @JvmStatic
-        fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: Name) = QueryBuilder(
+        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: Name) = QueryBuilder(
             Queries.findAssetDefinitionKeyValueByIdAndKey(id, key),
             ValueExtractor
         )
 
         @JvmStatic
-        fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: String) =
+        fun findAssetDefinitionKeyValueByIdAndKey(id: DefinitionId, key: String) =
             findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
 
         @JvmStatic
@@ -309,7 +309,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAssetDefinitionById(definitionId: AssetDefinitionId) = QueryBuilder(
+        fun findAssetDefinitionById(definitionId: DefinitionId) = QueryBuilder(
             Queries.findAssetDefinitionById(definitionId),
             AssetDefinitionExtractor
         )

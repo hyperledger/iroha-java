@@ -43,8 +43,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
         this.config = config
         this.withNetwork(config.networkToJoin)
-            .withEnv("IROHA2_GENESIS_PATH", DEFAULT_GENESIS_FILE_NAME)
-            .withEnv("IROHA2_CONFIG_PATH", DEFAULT_CONFIG_FILE_NAME)
+//            .withEnv("IROHA2_GENESIS_PATH", DEFAULT_GENESIS_FILE_NAME)
+//            .withEnv("IROHA2_CONFIG_PATH", DEFAULT_CONFIG_FILE_NAME)
+            .withEnv("KURA_BLOCK_STORE_PATH", "/storage")
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
             .withEnv("IROHA_PRIVATE_KEY", "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}")
@@ -52,7 +53,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
             .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
             .withEnv("WSV_WASM_RUNTIME_CONFIG", "{\"FUEL_LIMIT\":20000000, \"MAX_MEMORY\": 524288000}")
-            .withEnv("RUST_BACKTRACE", "full")
             .withExposedPorts(p2pPort, apiPort, telemetryPort)
             .withCreateContainerCmdModifier {
                 it.hostConfig!!.withPortBindings(
@@ -65,12 +65,21 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
                 forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
-                DEFAULT_GENESIS_FILE_NAME
+                "genesis"
             )
             .withCopyFileToContainer(
-                MountableFile.forClasspathResource(DEFAULT_CONFIG_FILE_NAME),
-                DEFAULT_CONFIG_FILE_NAME
-            ).also { container ->
+                forHostPath("/Users/andrejkostucenko/IdeaProjects/iroha-java-fork/modules/testcontainers/src/main/resources"),
+                "config"
+            ) // TODO
+//            .withCopyFileToContainer(
+//                forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
+//                DEFAULT_GENESIS_FILE_NAME
+//            )
+//            .withCopyFileToContainer(
+//                forClasspathResource(DEFAULT_CONFIG_FILE_NAME),
+//                DEFAULT_CONFIG_FILE_NAME
+//            )
+            .also { container ->
                 val command = when (config.submitGenesis) {
                     true -> "$PEER_START_COMMAND --submit-genesis"
                     false -> PEER_START_COMMAND
@@ -139,11 +148,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "lts@sha256:4072d09bee376c8fcbc586d35ea25624738694ce2c37aa0db60c9998c613048b"
+        const val DEFAULT_IMAGE_TAG = "dev"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
-        const val PEER_START_COMMAND = "./iroha"
+        const val PEER_START_COMMAND = "iroha"
 
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }

@@ -360,7 +360,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                         ?.cast<Value.Id>()
                         ?.idBox
                         ?.cast<IdBox.AssetDefinitionId>()
-                        ?.assetDefinitionId == DEFAULT_ASSET_DEFINITION_ID
+                        ?.definitionId == DEFAULT_ASSET_DEFINITION_ID
                 }
             }.also {
                 assert(it)

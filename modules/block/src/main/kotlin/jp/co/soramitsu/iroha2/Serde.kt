@@ -22,9 +22,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
@@ -53,7 +53,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
         module.addDeserializer(Name::class.java, NameDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
-        module.addKeyDeserializer(AssetDefinitionId::class.java, DefinitionIdDeserializer)
+        module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer)
 
@@ -222,8 +222,8 @@ object MintableDeserializer : JsonDeserializer<Mintable>() {
  * Deserializer for [asset definition ID][DefinitionId]
  */
 object DefinitionIdDeserializer : KeyDeserializer() {
-    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AssetDefinitionId? {
-        return JSON_SERDE.readValue(key, AssetDefinitionId::class.java)
+    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
+        return JSON_SERDE.readValue(key, DefinitionId::class.java)
     }
 }
 
@@ -330,6 +330,7 @@ fun serializeNoneOrSingleMemberObject(
             gen.writeObjectField(clazz.simpleName, memberProperties.first().call(objectValue))
             gen.writeEndObject()
         }
+
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
 }

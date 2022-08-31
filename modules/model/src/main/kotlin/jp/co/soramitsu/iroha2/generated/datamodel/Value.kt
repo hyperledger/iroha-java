@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
 import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
@@ -167,7 +168,7 @@ public sealed class Value : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val fixed: jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
+        public val fixed: jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -176,14 +177,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Fixed = try {
                 Fixed(
-                    jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.read(reader),
+                    jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
-                jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.write(writer, instance.fixed)
+                jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.write(writer, instance.fixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -420,6 +421,39 @@ public sealed class Value : ModelEnum {
     }
 
     /**
+     * 'TransactionQueryResult' variant
+     */
+    public data class TransactionQueryResult(
+        public val transactionQueryResult:  
+            jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<TransactionQueryResult>,
+            ScaleWriter<TransactionQueryResult> {
+            public const val DISCRIMINANT: Int = 14
+
+            public override fun read(reader: ScaleCodecReader): TransactionQueryResult = try {
+                TransactionQueryResult(
+                    jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: TransactionQueryResult) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult.write(
+                    writer,
+                    instance.transactionQueryResult
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'PermissionToken' variant
      */
     public data class PermissionToken(
@@ -429,7 +463,7 @@ public sealed class Value : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
-            public const val DISCRIMINANT: Int = 14
+            public const val DISCRIMINANT: Int = 15
 
             public override fun read(reader: ScaleCodecReader): PermissionToken = try {
                 PermissionToken(
@@ -459,7 +493,7 @@ public sealed class Value : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
-            public const val DISCRIMINANT: Int = 15
+            public const val DISCRIMINANT: Int = 16
 
             public override fun read(reader: ScaleCodecReader): Hash = try {
                 Hash(
@@ -486,7 +520,7 @@ public sealed class Value : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Block>, ScaleWriter<Block> {
-            public const val DISCRIMINANT: Int = 16
+            public const val DISCRIMINANT: Int = 17
 
             public override fun read(reader: ScaleCodecReader): Block = try {
                 Block(
@@ -498,6 +532,33 @@ public sealed class Value : ModelEnum {
 
             public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
                 BlockValue.write(writer, instance.blockValue)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'BlockHeader' variant
+     */
+    public data class BlockHeader(
+        public val blockHeaderValue: BlockHeaderValue
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
+            public const val DISCRIMINANT: Int = 18
+
+            public override fun read(reader: ScaleCodecReader): BlockHeader = try {
+                BlockHeader(
+                    BlockHeaderValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: BlockHeader) = try {
+                BlockHeaderValue.write(writer, instance.blockHeaderValue)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -523,9 +584,11 @@ public sealed class Value : ModelEnum {
             11 -> Parameter.read(reader)
             12 -> SignatureCheckCondition.read(reader)
             13 -> TransactionValue.read(reader)
-            14 -> PermissionToken.read(reader)
-            15 -> Hash.read(reader)
-            16 -> Block.read(reader)
+            14 -> TransactionQueryResult.read(reader)
+            15 -> PermissionToken.read(reader)
+            16 -> Hash.read(reader)
+            17 -> Block.read(reader)
+            18 -> BlockHeader.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -546,9 +609,11 @@ public sealed class Value : ModelEnum {
                 11 -> Parameter.write(writer, instance as Parameter)
                 12 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
                 13 -> TransactionValue.write(writer, instance as TransactionValue)
-                14 -> PermissionToken.write(writer, instance as PermissionToken)
-                15 -> Hash.write(writer, instance as Hash)
-                16 -> Block.write(writer, instance as Block)
+                14 -> TransactionQueryResult.write(writer, instance as TransactionQueryResult)
+                15 -> PermissionToken.write(writer, instance as PermissionToken)
+                16 -> Hash.write(writer, instance as Hash)
+                17 -> Block.write(writer, instance as Block)
+                18 -> BlockHeader.write(writer, instance as BlockHeader)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

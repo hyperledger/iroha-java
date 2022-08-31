@@ -13,11 +13,11 @@ import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.events.data.filters.asset.AssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
@@ -261,7 +261,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
                 assert(
                     assets.any {
-                        it.id.definitionId == AssetDefinitionId(
+                        it.id.definitionId == DefinitionId(
                             "nft_number_1_for_alice".asName(),
                             DEFAULT_DOMAIN_ID
                         )
@@ -320,7 +320,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     private suspend fun createNewAsset(assetName: String, prevSize: Int) {
-        val newAsset = AssetDefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
+        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerAsset(newAsset, AssetValueType.Quantity())

@@ -3,8 +3,8 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
@@ -33,7 +33,7 @@ fun AccountId.Companion.comparator() = compareBy<AccountId> { it.name.string }
  * Compare asset definition IDs
  */
 @JvmName("AssetDefinitionIdComparator")
-fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
+fun DefinitionId.Companion.comparator() = compareBy<DefinitionId> { it.name.string }
     .thenBy { it.domainId.name.string }
 
 /**
@@ -41,7 +41,7 @@ fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it
  */
 @JvmName("AssetIdComparator")
 fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
-    AssetDefinitionId.comparator().compare(
+    DefinitionId.comparator().compare(
         o1.definitionId,
         o2.definitionId
     )
@@ -84,7 +84,7 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
  */
 @JvmName("PermissionTokenComparator")
 fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
-    it.name.string
+    it.definitionId.name.string
 }.thenComparator { o1, o2 ->
     val keys1 = o1.params.map { it.key.string }
     val keys2 = o2.params.map { it.key.string }

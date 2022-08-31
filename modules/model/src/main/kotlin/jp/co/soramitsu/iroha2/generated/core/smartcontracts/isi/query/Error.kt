@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.smartcontracts.isi.error.FindError
-import jp.co.soramitsu.iroha2.generated.core.smartcontracts.isi.permissions.error.DenialReason
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
@@ -83,7 +82,7 @@ public sealed class Error : ModelEnum {
      * 'Permission' variant
      */
     public data class Permission(
-        public val denialReason: DenialReason
+        public val string: String
     ) : Error() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -92,14 +91,14 @@ public sealed class Error : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Permission = try {
                 Permission(
-                    DenialReason.read(reader),
+                    reader.readString(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Permission) = try {
-                DenialReason.write(writer, instance.denialReason)
+                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -187,6 +186,28 @@ public sealed class Error : ModelEnum {
         }
     }
 
+    /**
+     * 'Unauthorized' variant
+     */
+    public class Unauthorized : Error() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Unauthorized>, ScaleWriter<Unauthorized> {
+            public const val DISCRIMINANT: Int = 6
+
+            public override fun read(reader: ScaleCodecReader): Unauthorized = try {
+                Unauthorized()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Unauthorized) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Error>, ScaleWriter<Error> {
         public override fun read(reader: ScaleCodecReader): Error = when (
             val discriminant =
@@ -198,6 +219,7 @@ public sealed class Error : ModelEnum {
             3 -> Evaluate.read(reader)
             4 -> Find.read(reader)
             5 -> Conversion.read(reader)
+            6 -> Unauthorized.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -210,6 +232,7 @@ public sealed class Error : ModelEnum {
                 3 -> Evaluate.write(writer, instance as Evaluate)
                 4 -> Find.write(writer, instance as Find)
                 5 -> Conversion.write(writer, instance as Conversion)
+                6 -> Unauthorized.write(writer, instance as Unauthorized)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

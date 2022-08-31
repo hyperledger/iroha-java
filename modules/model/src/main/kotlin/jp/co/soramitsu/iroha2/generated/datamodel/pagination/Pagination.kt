@@ -16,8 +16,8 @@ import kotlin.Long
  * Generated from 'iroha_data_model::pagination::Pagination' regular structure
  */
 public data class Pagination(
-    public val start: Long?,
-    public val limit: Long?
+    public val start: Long? = null,
+    public val limit: Long? = null
 ) {
     public companion object : ScaleReader<Pagination>, ScaleWriter<Pagination> {
         public override fun read(reader: ScaleCodecReader): Pagination = try {

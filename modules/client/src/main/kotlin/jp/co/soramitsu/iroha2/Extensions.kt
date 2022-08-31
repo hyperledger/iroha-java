@@ -9,8 +9,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
@@ -156,7 +156,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is String -> Value.String(this)
         is Boolean -> Value.Bool(this)
         is AssetId -> Value.Id(IdBox.AssetId(this))
-        is AssetDefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+        is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is DomainId -> Value.Id(IdBox.DomainId(this))
         is RoleId -> Value.Id(IdBox.RoleId(this))
@@ -178,7 +178,7 @@ fun AccountId.toValueId() = Value.Id(IdBox.AccountId(this))
 
 fun AssetId.toValueId() = Value.Id(IdBox.AssetId(this))
 
-fun AssetDefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
+fun DefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
 
 fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Account -> IdentifiableBox.NewAccount(this.newAccount)
@@ -188,6 +188,9 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.trigger)
+    is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
+        this.permissionTokenDefinition
+    )
 }
 
 fun <T> T.asValue() = when (this) {

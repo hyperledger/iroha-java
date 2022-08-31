@@ -82,8 +82,7 @@ public sealed class Range : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val semiInterval:  
-            SemiInterval<jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed>
+        public val semiInterval: SemiInterval<jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed>
     ) : Range() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -93,7 +92,7 @@ public sealed class Range : ModelEnum {
             public override fun read(reader: ScaleCodecReader): Fixed = try {
                 Fixed(
                     SemiInterval.read(reader) as
-                        SemiInterval<jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed>,
+                        SemiInterval<jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

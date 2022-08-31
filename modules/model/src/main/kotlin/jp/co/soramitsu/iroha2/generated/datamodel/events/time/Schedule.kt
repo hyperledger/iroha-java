@@ -17,7 +17,7 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Schedule(
     public val start: Duration,
-    public val period: Duration?
+    public val period: Duration? = null
 ) {
     public companion object : ScaleReader<Schedule>, ScaleWriter<Schedule> {
         public override fun read(reader: ScaleCodecReader): Schedule = try {

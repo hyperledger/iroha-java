@@ -16,9 +16,9 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::pipeline::PipelineEventFilter' regular structure
  */
 public data class PipelineEventFilter(
-    public val entityKind: EntityKind?,
-    public val statusKind: StatusKind?,
-    public val hash: Hash?
+    public val entityKind: EntityKind? = null,
+    public val statusKind: StatusKind? = null,
+    public val hash: Hash? = null
 ) {
     public companion object : ScaleReader<PipelineEventFilter>, ScaleWriter<PipelineEventFilter> {
         public override fun read(reader: ScaleCodecReader): PipelineEventFilter = try {

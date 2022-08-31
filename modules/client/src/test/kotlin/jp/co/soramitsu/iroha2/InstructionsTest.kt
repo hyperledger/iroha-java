@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -253,6 +254,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             is AssetValue.Store -> {
                 assertEquals("bar", (value.metadata.map["foo".asName()]?.cast<Value.String>())?.string)
             }
+
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
     }
@@ -367,13 +369,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
-
-        // check permission
-        val permissionQuery = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val permissionTokens = client.sendQuery(permissionQuery).permissionTokens
-        assertEquals(1, permissionTokens.size)
 
         // add\update salt value in Bob's account metadata
         val salt = "ABCDEFG".asValue()
@@ -585,11 +580,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerRole(
                 roleId,
                 PermissionToken(
-                    Permissions.CanSetKeyValueUserAssetsToken.type,
+                    PermissionsId(Permissions.CanSetKeyValueUserAssetsToken.type),
                     mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
                 ),
                 PermissionToken(
-                    Permissions.CanRemoveKeyValueInUserAssets.type,
+                    PermissionsId(Permissions.CanRemoveKeyValueInUserAssets.type),
                     mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
                 )
             )

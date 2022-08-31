@@ -14,7 +14,6 @@
   },
   "KURA": {
     "BLOCKS_PER_STORAGE_FILE": 1000,
-    "BLOCK_STORE_PATH": "./blocks",
     "INIT_MODE": "strict",
     "MAILBOX": 100
   },

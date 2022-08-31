@@ -8,13 +8,14 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetDefinitionEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain.DomainEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.peer.PeerEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.RoleEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.trigger.TriggerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountAccountEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetAssetDefinitionEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetAssetEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain.DomainDomainEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.peer.PeerPeerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.permissiontoken.PermissionTokenEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.RoleRoleEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.trigger.TriggerTriggerEvent
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -33,7 +34,7 @@ public sealed class Event : ModelEnum {
      * 'Peer' variant
      */
     public data class Peer(
-        public val peerEvent: PeerEvent
+        public val peerPeerEvent: PeerPeerEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -42,14 +43,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Peer = try {
                 Peer(
-                    PeerEvent.read(reader),
+                    PeerPeerEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
-                PeerEvent.write(writer, instance.peerEvent)
+                PeerPeerEvent.write(writer, instance.peerPeerEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -60,7 +61,7 @@ public sealed class Event : ModelEnum {
      * 'Domain' variant
      */
     public data class Domain(
-        public val domainEvent: DomainEvent
+        public val domainDomainEvent: DomainDomainEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -69,14 +70,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Domain = try {
                 Domain(
-                    DomainEvent.read(reader),
+                    DomainDomainEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Domain) = try {
-                DomainEvent.write(writer, instance.domainEvent)
+                DomainDomainEvent.write(writer, instance.domainDomainEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -87,7 +88,7 @@ public sealed class Event : ModelEnum {
      * 'Account' variant
      */
     public data class Account(
-        public val accountEvent: AccountEvent
+        public val accountAccountEvent: AccountAccountEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -96,14 +97,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Account = try {
                 Account(
-                    AccountEvent.read(reader),
+                    AccountAccountEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
-                AccountEvent.write(writer, instance.accountEvent)
+                AccountAccountEvent.write(writer, instance.accountAccountEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -114,7 +115,7 @@ public sealed class Event : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val assetDefinitionEvent: AssetDefinitionEvent
+        public val assetAssetDefinitionEvent: AssetAssetDefinitionEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -123,14 +124,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
-                    AssetDefinitionEvent.read(reader),
+                    AssetAssetDefinitionEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                AssetDefinitionEvent.write(writer, instance.assetDefinitionEvent)
+                AssetAssetDefinitionEvent.write(writer, instance.assetAssetDefinitionEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -141,7 +142,7 @@ public sealed class Event : ModelEnum {
      * 'Asset' variant
      */
     public data class Asset(
-        public val assetEvent: AssetEvent
+        public val assetAssetEvent: AssetAssetEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -150,14 +151,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Asset = try {
                 Asset(
-                    AssetEvent.read(reader),
+                    AssetAssetEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Asset) = try {
-                AssetEvent.write(writer, instance.assetEvent)
+                AssetAssetEvent.write(writer, instance.assetAssetEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -168,7 +169,7 @@ public sealed class Event : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val triggerEvent: TriggerEvent
+        public val triggerTriggerEvent: TriggerTriggerEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -177,14 +178,14 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
-                    TriggerEvent.read(reader),
+                    TriggerTriggerEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Trigger) = try {
-                TriggerEvent.write(writer, instance.triggerEvent)
+                TriggerTriggerEvent.write(writer, instance.triggerTriggerEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -195,7 +196,7 @@ public sealed class Event : ModelEnum {
      * 'Role' variant
      */
     public data class Role(
-        public val roleEvent: RoleEvent
+        public val roleRoleEvent: RoleRoleEvent
     ) : Event() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -204,14 +205,41 @@ public sealed class Event : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Role = try {
                 Role(
-                    RoleEvent.read(reader),
+                    RoleRoleEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
-                RoleEvent.write(writer, instance.roleEvent)
+                RoleRoleEvent.write(writer, instance.roleRoleEvent)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'PermissionToken' variant
+     */
+    public data class PermissionToken(
+        public val permissionTokenEvent: PermissionTokenEvent
+    ) : Event() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): PermissionToken = try {
+                PermissionToken(
+                    PermissionTokenEvent.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
+                PermissionTokenEvent.write(writer, instance.permissionTokenEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -230,6 +258,7 @@ public sealed class Event : ModelEnum {
             4 -> Asset.read(reader)
             5 -> Trigger.read(reader)
             6 -> Role.read(reader)
+            7 -> PermissionToken.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -243,6 +272,7 @@ public sealed class Event : ModelEnum {
                 4 -> Asset.write(writer, instance as Asset)
                 5 -> Trigger.write(writer, instance as Trigger)
                 6 -> Role.write(writer, instance as Role)
+                7 -> PermissionToken.write(writer, instance as PermissionToken)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

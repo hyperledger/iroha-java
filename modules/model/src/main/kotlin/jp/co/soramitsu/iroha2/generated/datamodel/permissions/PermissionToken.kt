@@ -19,13 +19,13 @@ import kotlin.collections.Map
  * Generated from 'iroha_data_model::permissions::PermissionToken' regular structure
  */
 public data class PermissionToken(
-    public val name: Name,
+    public val definitionId: PermissionsId,
     public val params: Map<Name, Value>
 ) {
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
         public override fun read(reader: ScaleCodecReader): PermissionToken = try {
             PermissionToken(
-                Name.read(reader),
+                PermissionsId.read(reader),
                 reader.readMap(reader.readCompactInt(), { Name.read(reader) }, { Value.read(reader) }),
             )
         } catch (ex: Exception) {
@@ -33,7 +33,7 @@ public data class PermissionToken(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
-            Name.write(writer, instance.name)
+            PermissionsId.write(writer, instance.definitionId)
             writer.writeCompact(instance.params.size)
             instance.params.toSortedMap(
                 Name.comparator()

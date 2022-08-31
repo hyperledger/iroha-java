@@ -217,6 +217,39 @@ public sealed class RegistrableBox : ModelEnum {
         }
     }
 
+    /**
+     * 'PermissionTokenDefinition' variant
+     */
+    public data class PermissionTokenDefinition(
+        public val permissionTokenDefinition:  
+            jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition
+    ) : RegistrableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<PermissionTokenDefinition>,
+            ScaleWriter<PermissionTokenDefinition> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): PermissionTokenDefinition = try {
+                PermissionTokenDefinition(
+                    jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenDefinition) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition.write(
+                    writer,
+                    instance.permissionTokenDefinition
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<RegistrableBox>, ScaleWriter<RegistrableBox> {
         public override fun read(reader: ScaleCodecReader): RegistrableBox = when (
             val discriminant =
@@ -229,6 +262,7 @@ public sealed class RegistrableBox : ModelEnum {
             4 -> Asset.read(reader)
             5 -> Trigger.read(reader)
             6 -> Role.read(reader)
+            7 -> PermissionTokenDefinition.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -242,6 +276,7 @@ public sealed class RegistrableBox : ModelEnum {
                 4 -> Asset.write(writer, instance as Asset)
                 5 -> Trigger.write(writer, instance as Trigger)
                 6 -> Role.write(writer, instance as Role)
+                7 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

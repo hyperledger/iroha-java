@@ -9,13 +9,14 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
@@ -36,11 +37,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                Permissions.CanSetKeyValueInUserMetadata.type,
+                PermissionsId(Permissions.CanSetKeyValueInUserMetadata.type),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             ),
             PermissionToken(
-                Permissions.CanRemoveKeyValueInUserMetadata.type,
+                PermissionsId(Permissions.CanRemoveKeyValueInUserMetadata.type),
                 mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
             )
         ),
@@ -113,7 +114,7 @@ open class StoreAssetWithMetadata : Genesis(
     companion object {
         val ASSET_KEY = "key".asName()
         val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 }
@@ -133,8 +134,8 @@ open class XorAndValAssets : Genesis(
     companion object {
         const val XOR_QUANTITY = 1L
         const val VAL_QUANTITY = 1L
-        val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
-        val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
+        val XOR_DEFINITION_ID = DefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+        val VAL_DEFINITION_ID = DefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
