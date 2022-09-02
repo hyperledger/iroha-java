@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
@@ -207,6 +208,14 @@ object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
     }
 }
 
+object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryResult>> {
+    override fun extract(result: PaginatedQueryResult): List<TransactionQueryResult> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.TransactionQueryResult::transactionQueryResult)
+        }
+    }
+}
+
 object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
     override fun extract(result: PaginatedQueryResult): List<BlockValue> {
         return extractVec(result.result.value) {
@@ -286,6 +295,7 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
                 "Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`"
             )
         }
+
         else -> throw QueryPayloadExtractionException(
             "Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
         )
@@ -302,6 +312,7 @@ inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<
         is Value.Vec -> {
             return value.vec.map { downstream(it) }
         }
+
         else -> throw QueryPayloadExtractionException(
             "Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
         )

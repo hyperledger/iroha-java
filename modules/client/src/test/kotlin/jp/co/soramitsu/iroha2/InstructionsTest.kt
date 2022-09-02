@@ -236,6 +236,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             registerAsset(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
@@ -364,6 +365,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         // grant permission to Alice to change Bob's account metadata
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
+            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type)
             grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->

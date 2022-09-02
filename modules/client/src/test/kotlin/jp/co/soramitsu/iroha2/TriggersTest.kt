@@ -76,7 +76,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Metadata(mapOf()),
                 filter
             )
-            executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
@@ -117,7 +116,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Repeats.Indefinitely(),
                 ALICE_ACCOUNT_ID
             )
-            executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }

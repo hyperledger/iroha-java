@@ -34,6 +34,8 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  */
 open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
     rawGenesisBlock(
+        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type),
+        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type),
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
@@ -60,6 +62,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
+        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type),
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
     )
 )

@@ -320,6 +320,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
+    fun registerPermissionToken(name: Name) = this.apply {
+        instructions.value.add(
+            Instructions.registerPermissionToken(name)
+        )
+    }
+
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,

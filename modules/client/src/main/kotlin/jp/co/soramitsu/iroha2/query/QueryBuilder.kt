@@ -15,9 +15,9 @@ import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
 import jp.co.soramitsu.iroha2.RoleIdsExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
+import jp.co.soramitsu.iroha2.TransactionQueryResultExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
-import jp.co.soramitsu.iroha2.TransactionsValueExtractor
 import jp.co.soramitsu.iroha2.TriggerExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
@@ -297,7 +297,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAllTransactions(queryFilter: PredicateBox? = null) = QueryBuilder(
             Queries.findAllTransactions(),
-            TransactionsValueExtractor,
+            TransactionQueryResultExtractor,
             queryFilter
         )
 

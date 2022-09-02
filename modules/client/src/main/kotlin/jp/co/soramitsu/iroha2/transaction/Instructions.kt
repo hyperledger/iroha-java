@@ -43,6 +43,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
@@ -100,6 +101,21 @@ object Instructions {
                 NewAccount(id, signatories, metadata)
             )
         }
+    }
+
+    /**
+     * Register a permission token
+     */
+    fun registerPermissionToken(permissionsId: PermissionsId): Instruction.Register {
+        return registerSome {
+            RegistrableBox.PermissionTokenDefinition(
+                PermissionTokenDefinition(permissionsId)
+            )
+        }
+    }
+
+    fun registerPermissionToken(name: Name): Instruction.Register {
+        return registerPermissionToken(PermissionsId(name))
     }
 
     /**

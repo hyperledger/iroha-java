@@ -9,16 +9,15 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
+import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
-import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
-import kotlin.io.path.createTempFile
 
 /**
  * Docker container for Iroha
@@ -42,8 +41,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
         this.config = config
         this.withNetwork(config.networkToJoin)
-//            .withEnv("IROHA2_GENESIS_PATH", DEFAULT_GENESIS_FILE_NAME)
-//            .withEnv("IROHA2_CONFIG_PATH", DEFAULT_CONFIG_FILE_NAME)
             .withEnv("KURA_BLOCK_STORE_PATH", "/storage")
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
@@ -63,22 +60,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
-                forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
-                "genesis"
-            )
-            .withCopyFileToContainer(
-                forHostPath("/Users/andrejkostucenko/IdeaProjects/iroha-java-fork/modules/testcontainers/src/main/resources"),
-                "config"
-            ) // TODO
-//            .withCopyFileToContainer(
-//                forHostPath(config.genesis.writeToFile(genesisFileLocation.value)),
-//                DEFAULT_GENESIS_FILE_NAME
-//            )
-//            .withCopyFileToContainer(
-//                forClasspathResource(DEFAULT_CONFIG_FILE_NAME),
-//                DEFAULT_CONFIG_FILE_NAME
-//            )
-            .also { container ->
+                forHostPath(configDirLocation.value),
+                "/$DEFAULT_CONFIG_DIR"
+            ).also {
+                config.genesis.writeToFile(genesisFileLocation.value)
+                getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
+                    configFileLocation.value.toFile().writeBytes(content)
+                }
+            }.also { container ->
                 val command = when (config.submitGenesis) {
                     true -> "$PEER_START_COMMAND --submit-genesis"
                     false -> PEER_START_COMMAND
@@ -108,7 +97,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val telemetryPort: Int
 
     private val genesisFileLocation: Lazy<Path> = lazy {
-        createTempFile("genesis-", randomUUID().toString())
+        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
+    }
+
+    private val configFileLocation: Lazy<Path> = lazy {
+        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
+    }
+
+    private val configDirLocation: Lazy<Path> = lazy {
+        createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
     }
 
     override fun start() {
@@ -128,7 +125,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             network.close()
         }
         try {
-            Files.deleteIfExists(genesisFileLocation.value)
+            configDirLocation.value.toFile().deleteRecursively()
         } catch (ex: IOException) {
             logger().warn(
                 "Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex"
@@ -151,6 +148,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
+        const val DEFAULT_CONFIG_DIR = "config"
         const val PEER_START_COMMAND = "iroha"
 
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
