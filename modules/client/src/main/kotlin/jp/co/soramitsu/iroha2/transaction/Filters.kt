@@ -376,15 +376,15 @@ object QueryFilters {
     /**
      * Create a filter for multiple matches
      */
-    fun Or(
-        ids: List<String>
+    fun or(
+        values: List<String>
     ): PredicateBox.Or {
         return PredicateBox.Or(
-            ids.map { id ->
+            values.map { value ->
                 PredicateBox.Raw(
                     Predicate.Identifiable(
                         QueryPredicate.Is(
-                            id
+                            value
                         )
                     )
                 )
