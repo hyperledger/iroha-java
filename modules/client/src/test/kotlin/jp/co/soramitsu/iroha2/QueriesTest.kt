@@ -553,7 +553,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(AliceWithTestAssets::class)
     fun `find asset definitions with or filter`(): Unit = runBlocking {
-        val filter = QueryFilters.Or(listOf("${TEST_ASSET_DEFINITION_ID.name.string}#${TEST_ASSET_DEFINITION_ID.domainId.name.string}"))
+        val filter = QueryFilters.or(listOf("${TEST_ASSET_DEFINITION_ID.name.string}#${TEST_ASSET_DEFINITION_ID.domainId.name.string}"))
         QueryBuilder.findAllAssetsDefinitions(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
