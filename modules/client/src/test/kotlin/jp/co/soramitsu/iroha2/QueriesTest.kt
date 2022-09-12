@@ -26,7 +26,9 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Container
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -34,6 +36,7 @@ import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -248,6 +251,34 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.also {
                 assert(it == StoreAssetWithMetadata.ASSET_VALUE)
+            }
+    }
+
+    @Test
+    @WithIroha(StoreAssetWithMetadata::class)
+    @Disabled // https://github.com/hyperledger/iroha/issues/2697
+    fun `find asset by metadata filters`(): Unit = runBlocking {
+        val filter = PredicateBox.Raw(
+            Predicate.Container(
+                Container.ValueOfKey(
+                    ValueOfKey(
+                        StoreAssetWithMetadata.ASSET_KEY,
+                        Predicate.Identifiable(
+                            jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.Is(
+                                StoreAssetWithMetadata.ASSET_VALUE.string
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        QueryBuilder.findAllAssets(filter)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also {
+                assert(it.isNotEmpty())
             }
     }
 
