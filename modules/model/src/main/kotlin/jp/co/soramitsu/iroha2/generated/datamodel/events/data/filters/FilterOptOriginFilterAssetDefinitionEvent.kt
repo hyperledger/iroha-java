@@ -8,17 +8,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.peer.PeerEventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptEventsDataEventsPeerPeerEventFilter
+ * FilterOptOriginFilterAssetDefinitionEvent
  *
  * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptEventsDataEventsPeerPeerEventFilter' enum
+ * 'iroha_data_model::events::data::filters::FilterOptOriginFilterAssetDefinitionEvent' enum
  */
-public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
+public sealed class FilterOptOriginFilterAssetDefinitionEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +26,7 @@ public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptEventsDataEventsPeerPeerEventFilter() {
+    public class AcceptAll : FilterOptOriginFilterAssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,8 +49,8 @@ public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val peerEventFilter: PeerEventFilter
-    ) : FilterOptEventsDataEventsPeerPeerEventFilter() {
+        public val originFilterAssetDefinitionEvent: OriginFilterAssetDefinitionEvent
+    ) : FilterOptOriginFilterAssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,14 +58,14 @@ public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    PeerEventFilter.read(reader),
+                    OriginFilterAssetDefinitionEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                PeerEventFilter.write(writer, instance.peerEventFilter)
+                OriginFilterAssetDefinitionEvent.write(writer, instance.originFilterAssetDefinitionEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,9 +73,9 @@ public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<FilterOptEventsDataEventsPeerPeerEventFilter>,
-        ScaleWriter<FilterOptEventsDataEventsPeerPeerEventFilter> {
-        public override fun read(reader: ScaleCodecReader): FilterOptEventsDataEventsPeerPeerEventFilter =
+        ScaleReader<FilterOptOriginFilterAssetDefinitionEvent>,
+        ScaleWriter<FilterOptOriginFilterAssetDefinitionEvent> {
+        public override fun read(reader: ScaleCodecReader): FilterOptOriginFilterAssetDefinitionEvent =
             when (val discriminant = reader.readUByte().toInt()) {
                 0 -> AcceptAll.read(reader)
                 1 -> BySome.read(reader)
@@ -85,7 +84,7 @@ public sealed class FilterOptEventsDataEventsPeerPeerEventFilter : ModelEnum {
 
         public override fun write(
             writer: ScaleCodecWriter,
-            instance: FilterOptEventsDataEventsPeerPeerEventFilter
+            instance: FilterOptOriginFilterAssetDefinitionEvent
         ) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {

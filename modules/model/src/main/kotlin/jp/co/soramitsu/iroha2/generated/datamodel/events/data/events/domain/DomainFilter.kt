@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptEventsDataEventsDomainDomainEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptOriginFilterEventsDataEventsDomainDomainEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptDomainEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptOriginFilterDomainEvent
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,22 +17,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::data::events::domain::DomainFilter' regular structure
  */
 public data class DomainFilter(
-    public val originFilter: FilterOptOriginFilterEventsDataEventsDomainDomainEvent,
-    public val eventFilter: FilterOptEventsDataEventsDomainDomainEventFilter
+    public val originFilter: FilterOptOriginFilterDomainEvent,
+    public val eventFilter: FilterOptDomainEventFilter
 ) {
     public companion object : ScaleReader<DomainFilter>, ScaleWriter<DomainFilter> {
         public override fun read(reader: ScaleCodecReader): DomainFilter = try {
             DomainFilter(
-                FilterOptOriginFilterEventsDataEventsDomainDomainEvent.read(reader),
-                FilterOptEventsDataEventsDomainDomainEventFilter.read(reader),
+                FilterOptOriginFilterDomainEvent.read(reader),
+                FilterOptDomainEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: DomainFilter) = try {
-            FilterOptOriginFilterEventsDataEventsDomainDomainEvent.write(writer, instance.originFilter)
-            FilterOptEventsDataEventsDomainDomainEventFilter.write(writer, instance.eventFilter)
+            FilterOptOriginFilterDomainEvent.write(writer, instance.originFilter)
+            FilterOptDomainEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

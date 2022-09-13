@@ -8,16 +8,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain.DomainEventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptOriginFilterEventsDataEventsAssetAssetEvent
+ * FilterOptDomainEventFilter
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptOriginFilterEventsDataEventsAssetAssetEvent' enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptDomainEventFilter' enum
  */
-public sealed class FilterOptOriginFilterEventsDataEventsAssetAssetEvent : ModelEnum {
+public sealed class FilterOptDomainEventFilter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,7 +26,7 @@ public sealed class FilterOptOriginFilterEventsDataEventsAssetAssetEvent : Model
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptOriginFilterEventsDataEventsAssetAssetEvent() {
+    public class AcceptAll : FilterOptDomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -49,9 +49,8 @@ public sealed class FilterOptOriginFilterEventsDataEventsAssetAssetEvent : Model
      * 'BySome' variant
      */
     public data class BySome(
-        public val originFilterEventsDataEventsAssetAssetEvent:  
-            OriginFilterEventsDataEventsAssetAssetEvent
-    ) : FilterOptOriginFilterEventsDataEventsAssetAssetEvent() {
+        public val domainEventFilter: DomainEventFilter
+    ) : FilterOptDomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,17 +58,14 @@ public sealed class FilterOptOriginFilterEventsDataEventsAssetAssetEvent : Model
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    OriginFilterEventsDataEventsAssetAssetEvent.read(reader),
+                    DomainEventFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                OriginFilterEventsDataEventsAssetAssetEvent.write(
-                    writer,
-                    instance.originFilterEventsDataEventsAssetAssetEvent
-                )
+                DomainEventFilter.write(writer, instance.domainEventFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -77,22 +73,18 @@ public sealed class FilterOptOriginFilterEventsDataEventsAssetAssetEvent : Model
     }
 
     public companion object :
-        ScaleReader<FilterOptOriginFilterEventsDataEventsAssetAssetEvent>,
-        ScaleWriter<FilterOptOriginFilterEventsDataEventsAssetAssetEvent> {
-        public override fun read(reader: ScaleCodecReader):
-            FilterOptOriginFilterEventsDataEventsAssetAssetEvent = when (
-            val discriminant =
-                reader.readUByte().toInt()
+        ScaleReader<FilterOptDomainEventFilter>,
+        ScaleWriter<FilterOptDomainEventFilter> {
+        public override fun read(reader: ScaleCodecReader): FilterOptDomainEventFilter = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: FilterOptOriginFilterEventsDataEventsAssetAssetEvent
-        ) {
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptDomainEventFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

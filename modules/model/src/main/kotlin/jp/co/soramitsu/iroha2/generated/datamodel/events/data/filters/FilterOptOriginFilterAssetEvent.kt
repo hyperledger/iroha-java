@@ -8,17 +8,15 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptEventsDataEventsAssetAssetFilter
+ * FilterOptOriginFilterAssetEvent
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptEventsDataEventsAssetAssetFilter' enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptOriginFilterAssetEvent' enum
  */
-public sealed class FilterOptEventsDataEventsAssetAssetFilter : ModelEnum {
+public sealed class FilterOptOriginFilterAssetEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +25,7 @@ public sealed class FilterOptEventsDataEventsAssetAssetFilter : ModelEnum {
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptEventsDataEventsAssetAssetFilter() {
+    public class AcceptAll : FilterOptOriginFilterAssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,8 +48,8 @@ public sealed class FilterOptEventsDataEventsAssetAssetFilter : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val assetFilter: AssetFilter
-    ) : FilterOptEventsDataEventsAssetAssetFilter() {
+        public val originFilterAssetEvent: OriginFilterAssetEvent
+    ) : FilterOptOriginFilterAssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,14 +57,14 @@ public sealed class FilterOptEventsDataEventsAssetAssetFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    AssetFilter.read(reader),
+                    OriginFilterAssetEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                AssetFilter.write(writer, instance.assetFilter)
+                OriginFilterAssetEvent.write(writer, instance.originFilterAssetEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,19 +72,18 @@ public sealed class FilterOptEventsDataEventsAssetAssetFilter : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<FilterOptEventsDataEventsAssetAssetFilter>,
-        ScaleWriter<FilterOptEventsDataEventsAssetAssetFilter> {
-        public override fun read(reader: ScaleCodecReader): FilterOptEventsDataEventsAssetAssetFilter =
-            when (val discriminant = reader.readUByte().toInt()) {
-                0 -> AcceptAll.read(reader)
-                1 -> BySome.read(reader)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
-
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: FilterOptEventsDataEventsAssetAssetFilter
+        ScaleReader<FilterOptOriginFilterAssetEvent>,
+        ScaleWriter<FilterOptOriginFilterAssetEvent> {
+        public override fun read(reader: ScaleCodecReader): FilterOptOriginFilterAssetEvent = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
+            0 -> AcceptAll.read(reader)
+            1 -> BySome.read(reader)
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+        }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptOriginFilterAssetEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

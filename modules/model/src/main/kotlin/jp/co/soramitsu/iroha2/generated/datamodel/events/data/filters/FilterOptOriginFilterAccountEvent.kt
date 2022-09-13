@@ -8,17 +8,15 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptEventsDataEventsAccountAccountFilter
+ * FilterOptOriginFilterAccountEvent
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptEventsDataEventsAccountAccountFilter' enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptOriginFilterAccountEvent' enum
  */
-public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
+public sealed class FilterOptOriginFilterAccountEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +25,7 @@ public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptEventsDataEventsAccountAccountFilter() {
+    public class AcceptAll : FilterOptOriginFilterAccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,8 +48,8 @@ public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val accountFilter: AccountFilter
-    ) : FilterOptEventsDataEventsAccountAccountFilter() {
+        public val originFilterAccountEvent: OriginFilterAccountEvent
+    ) : FilterOptOriginFilterAccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,14 +57,14 @@ public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    AccountFilter.read(reader),
+                    OriginFilterAccountEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                AccountFilter.write(writer, instance.accountFilter)
+                OriginFilterAccountEvent.write(writer, instance.originFilterAccountEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,12 +72,11 @@ public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<FilterOptEventsDataEventsAccountAccountFilter>,
-        ScaleWriter<FilterOptEventsDataEventsAccountAccountFilter> {
-        public override fun read(reader: ScaleCodecReader):
-            FilterOptEventsDataEventsAccountAccountFilter = when (
-            val discriminant =
-                reader.readUByte().toInt()
+        ScaleReader<FilterOptOriginFilterAccountEvent>,
+        ScaleWriter<FilterOptOriginFilterAccountEvent> {
+        public override fun read(reader: ScaleCodecReader): FilterOptOriginFilterAccountEvent = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)
@@ -88,7 +85,7 @@ public sealed class FilterOptEventsDataEventsAccountAccountFilter : ModelEnum {
 
         public override fun write(
             writer: ScaleCodecWriter,
-            instance: FilterOptEventsDataEventsAccountAccountFilter
+            instance: FilterOptOriginFilterAccountEvent
         ) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {

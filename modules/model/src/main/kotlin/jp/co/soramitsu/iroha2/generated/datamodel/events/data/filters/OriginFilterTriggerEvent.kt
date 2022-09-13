@@ -11,31 +11,26 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * OriginFilterEventsDataEventsTriggerTriggerEvent
+ * OriginFilterTriggerEvent
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::OriginFilterEventsDataEventsTriggerTriggerEvent' tuple
+ * Generated from 'iroha_data_model::events::data::filters::OriginFilterTriggerEvent' tuple
  * structure
  */
-public data class OriginFilterEventsDataEventsTriggerTriggerEvent(
+public data class OriginFilterTriggerEvent(
     public val triggerId: TriggerId
 ) {
     public companion object :
-        ScaleReader<OriginFilterEventsDataEventsTriggerTriggerEvent>,
-        ScaleWriter<OriginFilterEventsDataEventsTriggerTriggerEvent> {
-        public override fun read(reader: ScaleCodecReader):
-            OriginFilterEventsDataEventsTriggerTriggerEvent = try {
-            OriginFilterEventsDataEventsTriggerTriggerEvent(
+        ScaleReader<OriginFilterTriggerEvent>,
+        ScaleWriter<OriginFilterTriggerEvent> {
+        public override fun read(reader: ScaleCodecReader): OriginFilterTriggerEvent = try {
+            OriginFilterTriggerEvent(
                 TriggerId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: OriginFilterEventsDataEventsTriggerTriggerEvent
-        ) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: OriginFilterTriggerEvent) = try {
             TriggerId.write(writer, instance.triggerId)
         } catch (ex: Exception) {
             throw wrapException(ex)

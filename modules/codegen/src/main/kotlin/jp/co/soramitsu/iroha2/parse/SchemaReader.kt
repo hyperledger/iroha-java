@@ -108,11 +108,18 @@ class SchemaReader {
                 else -> newName + getFilterEventName(name.substringAfter("<"))
             }
         }
-        val tokens = name.replace(">").split("::")
+
         val sb = StringBuilder()
-        for (i in 1 until tokens.size) {
-            sb.append(tokens[i].replaceFirstChar { tokens[i].first().uppercaseChar() })
-        }
+        var lastToken: String? = null
+        name.replace(">")
+            .split("::")
+            .takeLast(2)
+            .forEach { token ->
+                if (lastToken != null && !token.startsWith(lastToken!!)) {
+                    sb.append(token.replaceFirstChar { token.first().uppercaseChar() })
+                }
+                lastToken = token
+            }
         return sb.toString()
     }
 

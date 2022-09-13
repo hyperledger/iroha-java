@@ -8,17 +8,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptOriginFilterEventsDataEventsDomainDomainEvent
+ * FilterOptAssetFilter
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptOriginFilterEventsDataEventsDomainDomainEvent'
- * enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptAssetFilter' enum
  */
-public sealed class FilterOptOriginFilterEventsDataEventsDomainDomainEvent : ModelEnum {
+public sealed class FilterOptAssetFilter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +26,7 @@ public sealed class FilterOptOriginFilterEventsDataEventsDomainDomainEvent : Mod
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptOriginFilterEventsDataEventsDomainDomainEvent() {
+    public class AcceptAll : FilterOptAssetFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,9 +49,8 @@ public sealed class FilterOptOriginFilterEventsDataEventsDomainDomainEvent : Mod
      * 'BySome' variant
      */
     public data class BySome(
-        public val originFilterEventsDataEventsDomainDomainEvent:  
-            OriginFilterEventsDataEventsDomainDomainEvent
-    ) : FilterOptOriginFilterEventsDataEventsDomainDomainEvent() {
+        public val assetFilter: AssetFilter
+    ) : FilterOptAssetFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -60,28 +58,22 @@ public sealed class FilterOptOriginFilterEventsDataEventsDomainDomainEvent : Mod
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    OriginFilterEventsDataEventsDomainDomainEvent.read(reader),
+                    AssetFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                OriginFilterEventsDataEventsDomainDomainEvent.write(
-                    writer,
-                    instance.originFilterEventsDataEventsDomainDomainEvent
-                )
+                AssetFilter.write(writer, instance.assetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object :
-        ScaleReader<FilterOptOriginFilterEventsDataEventsDomainDomainEvent>,
-        ScaleWriter<FilterOptOriginFilterEventsDataEventsDomainDomainEvent> {
-        public override fun read(reader: ScaleCodecReader):
-            FilterOptOriginFilterEventsDataEventsDomainDomainEvent = when (
+    public companion object : ScaleReader<FilterOptAssetFilter>, ScaleWriter<FilterOptAssetFilter> {
+        public override fun read(reader: ScaleCodecReader): FilterOptAssetFilter = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -90,10 +82,7 @@ public sealed class FilterOptOriginFilterEventsDataEventsDomainDomainEvent : Mod
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: FilterOptOriginFilterEventsDataEventsDomainDomainEvent
-        ) {
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptAssetFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

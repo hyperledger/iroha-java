@@ -12,12 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptOriginFilterEventsDataEventsRoleRoleEvent
+ * FilterOptOriginFilterDomainEvent
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptOriginFilterEventsDataEventsRoleRoleEvent' enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptOriginFilterDomainEvent' enum
  */
-public sealed class FilterOptOriginFilterEventsDataEventsRoleRoleEvent : ModelEnum {
+public sealed class FilterOptOriginFilterDomainEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,7 +25,7 @@ public sealed class FilterOptOriginFilterEventsDataEventsRoleRoleEvent : ModelEn
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptOriginFilterEventsDataEventsRoleRoleEvent() {
+    public class AcceptAll : FilterOptOriginFilterDomainEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -49,8 +48,8 @@ public sealed class FilterOptOriginFilterEventsDataEventsRoleRoleEvent : ModelEn
      * 'BySome' variant
      */
     public data class BySome(
-        public val originFilterEventsDataEventsRoleRoleEvent: OriginFilterEventsDataEventsRoleRoleEvent
-    ) : FilterOptOriginFilterEventsDataEventsRoleRoleEvent() {
+        public val originFilterDomainEvent: OriginFilterDomainEvent
+    ) : FilterOptOriginFilterDomainEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -58,17 +57,14 @@ public sealed class FilterOptOriginFilterEventsDataEventsRoleRoleEvent : ModelEn
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    OriginFilterEventsDataEventsRoleRoleEvent.read(reader),
+                    OriginFilterDomainEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                OriginFilterEventsDataEventsRoleRoleEvent.write(
-                    writer,
-                    instance.originFilterEventsDataEventsRoleRoleEvent
-                )
+                OriginFilterDomainEvent.write(writer, instance.originFilterDomainEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -76,22 +72,18 @@ public sealed class FilterOptOriginFilterEventsDataEventsRoleRoleEvent : ModelEn
     }
 
     public companion object :
-        ScaleReader<FilterOptOriginFilterEventsDataEventsRoleRoleEvent>,
-        ScaleWriter<FilterOptOriginFilterEventsDataEventsRoleRoleEvent> {
-        public override fun read(reader: ScaleCodecReader):
-            FilterOptOriginFilterEventsDataEventsRoleRoleEvent = when (
-            val discriminant =
-                reader.readUByte().toInt()
+        ScaleReader<FilterOptOriginFilterDomainEvent>,
+        ScaleWriter<FilterOptOriginFilterDomainEvent> {
+        public override fun read(reader: ScaleCodecReader): FilterOptOriginFilterDomainEvent = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: FilterOptOriginFilterEventsDataEventsRoleRoleEvent
-        ) {
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptOriginFilterDomainEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

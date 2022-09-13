@@ -11,31 +11,26 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * OriginFilterEventsDataEventsAccountAccountEvent
+ * OriginFilterAccountEvent
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::OriginFilterEventsDataEventsAccountAccountEvent' tuple
+ * Generated from 'iroha_data_model::events::data::filters::OriginFilterAccountEvent' tuple
  * structure
  */
-public data class OriginFilterEventsDataEventsAccountAccountEvent(
+public data class OriginFilterAccountEvent(
     public val accountId: AccountId
 ) {
     public companion object :
-        ScaleReader<OriginFilterEventsDataEventsAccountAccountEvent>,
-        ScaleWriter<OriginFilterEventsDataEventsAccountAccountEvent> {
-        public override fun read(reader: ScaleCodecReader):
-            OriginFilterEventsDataEventsAccountAccountEvent = try {
-            OriginFilterEventsDataEventsAccountAccountEvent(
+        ScaleReader<OriginFilterAccountEvent>,
+        ScaleWriter<OriginFilterAccountEvent> {
+        public override fun read(reader: ScaleCodecReader): OriginFilterAccountEvent = try {
+            OriginFilterAccountEvent(
                 AccountId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: OriginFilterEventsDataEventsAccountAccountEvent
-        ) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: OriginFilterAccountEvent) = try {
             AccountId.write(writer, instance.accountId)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -8,17 +8,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.RoleFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountEventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptEventsDataEventsRoleRoleFilter
+ * FilterOptAccountEventFilter
  *
- * Generated from 'iroha_data_model::events::data::filters::FilterOptEventsDataEventsRoleRoleFilter'
- * enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptAccountEventFilter' enum
  */
-public sealed class FilterOptEventsDataEventsRoleRoleFilter : ModelEnum {
+public sealed class FilterOptAccountEventFilter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +26,7 @@ public sealed class FilterOptEventsDataEventsRoleRoleFilter : ModelEnum {
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptEventsDataEventsRoleRoleFilter() {
+    public class AcceptAll : FilterOptAccountEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,8 +49,8 @@ public sealed class FilterOptEventsDataEventsRoleRoleFilter : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val roleFilter: RoleFilter
-    ) : FilterOptEventsDataEventsRoleRoleFilter() {
+        public val accountEventFilter: AccountEventFilter
+    ) : FilterOptAccountEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,14 +58,14 @@ public sealed class FilterOptEventsDataEventsRoleRoleFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    RoleFilter.read(reader),
+                    AccountEventFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                RoleFilter.write(writer, instance.roleFilter)
+                AccountEventFilter.write(writer, instance.accountEventFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,19 +73,18 @@ public sealed class FilterOptEventsDataEventsRoleRoleFilter : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<FilterOptEventsDataEventsRoleRoleFilter>,
-        ScaleWriter<FilterOptEventsDataEventsRoleRoleFilter> {
-        public override fun read(reader: ScaleCodecReader): FilterOptEventsDataEventsRoleRoleFilter =
-            when (val discriminant = reader.readUByte().toInt()) {
-                0 -> AcceptAll.read(reader)
-                1 -> BySome.read(reader)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
-
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: FilterOptEventsDataEventsRoleRoleFilter
+        ScaleReader<FilterOptAccountEventFilter>,
+        ScaleWriter<FilterOptAccountEventFilter> {
+        public override fun read(reader: ScaleCodecReader): FilterOptAccountEventFilter = when (
+            val
+            discriminant = reader.readUByte().toInt()
         ) {
+            0 -> AcceptAll.read(reader)
+            1 -> BySome.read(reader)
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+        }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptAccountEventFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

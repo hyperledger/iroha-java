@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptEventsDataEventsAssetAssetDefinitionEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptOriginFilterEventsDataEventsAssetAssetDefinitionEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetDefinitionEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptOriginFilterAssetDefinitionEvent
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -18,25 +18,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class AssetDefinitionFilter(
-    public val originFilter: FilterOptOriginFilterEventsDataEventsAssetAssetDefinitionEvent,
-    public val eventFilter: FilterOptEventsDataEventsAssetAssetDefinitionEventFilter
+    public val originFilter: FilterOptOriginFilterAssetDefinitionEvent,
+    public val eventFilter: FilterOptAssetDefinitionEventFilter
 ) {
     public companion object : ScaleReader<AssetDefinitionFilter>, ScaleWriter<AssetDefinitionFilter> {
         public override fun read(reader: ScaleCodecReader): AssetDefinitionFilter = try {
             AssetDefinitionFilter(
-                FilterOptOriginFilterEventsDataEventsAssetAssetDefinitionEvent.read(reader),
-                FilterOptEventsDataEventsAssetAssetDefinitionEventFilter.read(reader),
+                FilterOptOriginFilterAssetDefinitionEvent.read(reader),
+                FilterOptAssetDefinitionEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionFilter) = try {
-            FilterOptOriginFilterEventsDataEventsAssetAssetDefinitionEvent.write(
-                writer,
-                instance.originFilter
-            )
-            FilterOptEventsDataEventsAssetAssetDefinitionEventFilter.write(writer, instance.eventFilter)
+            FilterOptOriginFilterAssetDefinitionEvent.write(writer, instance.originFilter)
+            FilterOptAssetDefinitionEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

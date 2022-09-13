@@ -8,17 +8,17 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetDefinitionFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * FilterOptEventsDataEventsAssetAssetDefinitionFilter
+ * FilterOptAssetDefinitionEventFilter
  *
- * Generated from
- * 'iroha_data_model::events::data::filters::FilterOptEventsDataEventsAssetAssetDefinitionFilter' enum
+ * Generated from 'iroha_data_model::events::data::filters::FilterOptAssetDefinitionEventFilter'
+ * enum
  */
-public sealed class FilterOptEventsDataEventsAssetAssetDefinitionFilter : ModelEnum {
+public sealed class FilterOptAssetDefinitionEventFilter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,7 +27,7 @@ public sealed class FilterOptEventsDataEventsAssetAssetDefinitionFilter : ModelE
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOptEventsDataEventsAssetAssetDefinitionFilter() {
+    public class AcceptAll : FilterOptAssetDefinitionEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -50,8 +50,8 @@ public sealed class FilterOptEventsDataEventsAssetAssetDefinitionFilter : ModelE
      * 'BySome' variant
      */
     public data class BySome(
-        public val assetDefinitionFilter: AssetDefinitionFilter
-    ) : FilterOptEventsDataEventsAssetAssetDefinitionFilter() {
+        public val assetDefinitionEventFilter: AssetDefinitionEventFilter
+    ) : FilterOptAssetDefinitionEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -59,14 +59,14 @@ public sealed class FilterOptEventsDataEventsAssetAssetDefinitionFilter : ModelE
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    AssetDefinitionFilter.read(reader),
+                    AssetDefinitionEventFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                AssetDefinitionFilter.write(writer, instance.assetDefinitionFilter)
+                AssetDefinitionEventFilter.write(writer, instance.assetDefinitionEventFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,21 +74,18 @@ public sealed class FilterOptEventsDataEventsAssetAssetDefinitionFilter : ModelE
     }
 
     public companion object :
-        ScaleReader<FilterOptEventsDataEventsAssetAssetDefinitionFilter>,
-        ScaleWriter<FilterOptEventsDataEventsAssetAssetDefinitionFilter> {
-        public override fun read(reader: ScaleCodecReader):
-            FilterOptEventsDataEventsAssetAssetDefinitionFilter = when (
-            val discriminant =
-                reader.readUByte().toInt()
-        ) {
-            0 -> AcceptAll.read(reader)
-            1 -> BySome.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+        ScaleReader<FilterOptAssetDefinitionEventFilter>,
+        ScaleWriter<FilterOptAssetDefinitionEventFilter> {
+        public override fun read(reader: ScaleCodecReader): FilterOptAssetDefinitionEventFilter =
+            when (val discriminant = reader.readUByte().toInt()) {
+                0 -> AcceptAll.read(reader)
+                1 -> BySome.read(reader)
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+            }
 
         public override fun write(
             writer: ScaleCodecWriter,
-            instance: FilterOptEventsDataEventsAssetAssetDefinitionFilter
+            instance: FilterOptAssetDefinitionEventFilter
         ) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
