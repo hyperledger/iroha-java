@@ -1,26 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
-import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
-import jp.co.soramitsu.iroha2.engine.AliceHasRoleWithAccessToBobsMetadata
-import jp.co.soramitsu.iroha2.engine.AliceWithTestAssets
-import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_NAME
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaTest
-import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
-import jp.co.soramitsu.iroha2.engine.NewDomain
-import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
-import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
-import jp.co.soramitsu.iroha2.engine.TEST_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.WithExecutableTrigger
-import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
@@ -34,6 +14,25 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
+import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
+import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
+import jp.co.soramitsu.iroha2.testengine.NewDomain
+import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
+import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
+import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
 import kotlinx.coroutines.runBlocking
@@ -584,7 +583,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(AliceWithTestAssets::class)
     fun `find asset definitions with or filter`(): Unit = runBlocking {
-        val filter = QueryFilters.or(listOf("${TEST_ASSET_DEFINITION_ID.name.string}#${TEST_ASSET_DEFINITION_ID.domainId.name.string}"))
+        val definitionId = AliceWithTestAssets.TEST_ASSET_DEFINITION_ID
+        val filter =
+            QueryFilters.or(listOf("${definitionId.name.string}#${definitionId.domainId.name.string}"))
         QueryBuilder.findAllAssetsDefinitions(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -592,7 +593,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.also { assets ->
                 assertEquals(1, assets.size)
-                assertEquals(TEST_ASSET_DEFINITION_ID, assets[0].id)
+                assertEquals(definitionId, assets[0].id)
             }
     }
 

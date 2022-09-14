@@ -73,9 +73,14 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
 open class AliceWithTestAssets : Genesis(
     rawGenesisBlock(
         Instructions.registerAsset(TEST_ASSET_DEFINITION_ID, AssetValueType.Store()),
-        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID2, AssetValueType.Store()),
+        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID2, AssetValueType.Store())
     )
-)
+) {
+    companion object {
+        val TEST_ASSET_DEFINITION_ID = DefinitionId("test".asName(), DEFAULT_DOMAIN_ID)
+        val TEST_ASSET_DEFINITION_ID2 = DefinitionId("test2".asName(), DEFAULT_DOMAIN_ID)
+    }
+}
 
 /**
  * Register an executable trigger without instructions
