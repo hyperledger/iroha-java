@@ -109,18 +109,7 @@ class SchemaReader {
             }
         }
 
-        val sb = StringBuilder()
-        var lastToken: String? = null
-        name.replace(">")
-            .split("::")
-            .takeLast(2)
-            .forEach { token ->
-                if (lastToken != null && !token.startsWith(lastToken!!)) {
-                    sb.append(token.replaceFirstChar { token.first().uppercaseChar() })
-                }
-                lastToken = token
-            }
-        return sb.toString()
+        return name.replace(">").split("::").last()
     }
 
     private fun String.replace(oldValue: String) = this.replace(oldValue, "")
