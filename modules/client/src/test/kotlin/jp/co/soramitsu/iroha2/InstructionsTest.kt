@@ -1,19 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
-import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
-import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.BOB_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaTest
-import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
-import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
@@ -28,6 +15,19 @@ import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.transaction.ASSET_ID_TOKEN_PARAM_NAME
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
@@ -215,6 +215,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 assertEquals(pair2.second.bool, value.metadata.map[pair2.first]?.cast<Value.Bool>()?.bool)
                 assertEquals(pair3.second.u32, (value.metadata.map[pair3.first]?.cast<Value.U32>())?.u32)
             }
+
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
 

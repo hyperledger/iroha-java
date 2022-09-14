@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.engine
+package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction

@@ -1,16 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
-import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.AliceAndBobEachHave100Xor
-import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.engine.IrohaTest
-import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
@@ -24,6 +14,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.EntityFilters
 import jp.co.soramitsu.iroha2.transaction.EventFilters
 import jp.co.soramitsu.iroha2.transaction.Filters

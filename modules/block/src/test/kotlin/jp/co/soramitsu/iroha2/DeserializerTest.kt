@@ -7,7 +7,7 @@ import java.io.File
 class DeserializerTest {
     @Test
     fun `should deserialize genesis block`() {
-        val json = File("../testcontainers/src/main/resources/genesis.json")
+        val json = File("../test-tools/src/main/resources/genesis.json")
         val node = JSON_SERDE.readTree(json)
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 

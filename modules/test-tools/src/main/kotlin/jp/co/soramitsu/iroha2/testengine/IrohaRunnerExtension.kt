@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.engine
+package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
@@ -7,8 +7,6 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.findFreePorts
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
-import jp.co.soramitsu.iroha2.testcontainers.IrohaConfig
-import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking

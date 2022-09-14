@@ -18,5 +18,5 @@ services:
     init: true
     command: iroha --submit-genesis
     volumes:
-      - "../modules/testcontainers/src/main/resources:/config"
-      - "../modules/testcontainers/src/main/resources:/genesis"
+      - "../modules/test-tools/src/main/resources:/config"
+      - "../modules/test-tools/src/main/resources:/genesis"

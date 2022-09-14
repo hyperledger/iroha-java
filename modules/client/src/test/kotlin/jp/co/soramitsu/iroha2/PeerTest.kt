@@ -1,15 +1,15 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaTest
-import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
-import jp.co.soramitsu.iroha2.testcontainers.IrohaConfig
-import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IrohaConfig
+import jp.co.soramitsu.iroha2.testengine.IrohaContainer
+import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
@@ -149,7 +149,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun registerPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR,
+        keyPair: KeyPair = ALICE_KEYPAIR
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)

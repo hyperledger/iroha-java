@@ -1,9 +1,9 @@
 package jp.co.soramitsu.iroha2;
 
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis;
-import jp.co.soramitsu.iroha2.engine.IrohaTest;
-import jp.co.soramitsu.iroha2.engine.WithIroha;
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis;
+import jp.co.soramitsu.iroha2.testengine.IrohaTest;
+import jp.co.soramitsu.iroha2.testengine.WithIroha;
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name;
 import jp.co.soramitsu.iroha2.generated.datamodel.Value;
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static jp.co.soramitsu.iroha2.engine.TestConstsKt.*;
+import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.*;
 
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 

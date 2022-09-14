@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testengine
 
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.PortBinding

@@ -1,7 +1,6 @@
-package jp.co.soramitsu.iroha2.engine
+package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.testcontainers.IrohaContainer
 import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution

@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT

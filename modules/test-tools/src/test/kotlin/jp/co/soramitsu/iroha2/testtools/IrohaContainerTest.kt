@@ -1,5 +1,6 @@
-package jp.co.soramitsu.iroha2.testcontainers
+package jp.co.soramitsu.iroha2.testtools
 
+import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
 import kotlin.test.assertFalse
