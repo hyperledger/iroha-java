@@ -565,6 +565,60 @@ public sealed class Value : ModelEnum {
         }
     }
 
+    /**
+     * 'Ipv4Addr' variant
+     */
+    public data class Ipv4Addr(
+        public val ipv4Addr: jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv4Addr>, ScaleWriter<Ipv4Addr> {
+            public const val DISCRIMINANT: Int = 19
+
+            public override fun read(reader: ScaleCodecReader): Ipv4Addr = try {
+                Ipv4Addr(
+                    jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv4Addr) = try {
+                jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr.write(writer, instance.ipv4Addr)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Ipv6Addr' variant
+     */
+    public data class Ipv6Addr(
+        public val ipv6Addr: jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv6Addr>, ScaleWriter<Ipv6Addr> {
+            public const val DISCRIMINANT: Int = 20
+
+            public override fun read(reader: ScaleCodecReader): Ipv6Addr = try {
+                Ipv6Addr(
+                    jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv6Addr) = try {
+                jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr.write(writer, instance.ipv6Addr)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Value>, ScaleWriter<Value> {
         public override fun read(reader: ScaleCodecReader): Value = when (
             val discriminant =
@@ -589,6 +643,8 @@ public sealed class Value : ModelEnum {
             16 -> Hash.read(reader)
             17 -> Block.read(reader)
             18 -> BlockHeader.read(reader)
+            19 -> Ipv4Addr.read(reader)
+            20 -> Ipv6Addr.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -614,6 +670,8 @@ public sealed class Value : ModelEnum {
                 16 -> Hash.write(writer, instance as Hash)
                 17 -> Block.write(writer, instance as Block)
                 18 -> BlockHeader.write(writer, instance as BlockHeader)
+                19 -> Ipv4Addr.write(writer, instance as Ipv4Addr)
+                20 -> Ipv6Addr.write(writer, instance as Ipv6Addr)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

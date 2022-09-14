@@ -567,10 +567,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    // https://github.com/hyperledger/iroha/issues/2477
-    @Disabled
     @Test
     @WithIroha(DefaultGenesis::class)
+    @Disabled // https://github.com/hyperledger/iroha/issues/2477
     fun `register and grant role to account`(): Unit = runBlocking {
         val assetId = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {

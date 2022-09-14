@@ -156,6 +156,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
     }
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
-        "$host:$port", this.public.toIrohaPublicKey()
+        "$host:$port",
+        this.public.toIrohaPublicKey()
     )
 }

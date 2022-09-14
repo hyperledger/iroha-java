@@ -14,11 +14,11 @@ import kotlin.Int
 import kotlin.Long
 
 /**
- * Range
+ * SemiRange
  *
- * Generated from 'iroha_data_model::predicate::numerical::Range' enum
+ * Generated from 'iroha_data_model::predicate::numerical::SemiRange' enum
  */
-public sealed class Range : ModelEnum {
+public sealed class SemiRange : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -29,7 +29,7 @@ public sealed class Range : ModelEnum {
      */
     public data class U32(
         public val semiInterval: SemiInterval<Long>
-    ) : Range() {
+    ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<U32>, ScaleWriter<U32> {
@@ -56,7 +56,7 @@ public sealed class Range : ModelEnum {
      */
     public data class U128(
         public val semiInterval: SemiInterval<BigInteger>
-    ) : Range() {
+    ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<U128>, ScaleWriter<U128> {
@@ -83,7 +83,7 @@ public sealed class Range : ModelEnum {
      */
     public data class Fixed(
         public val semiInterval: SemiInterval<jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed>
-    ) : Range() {
+    ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
@@ -106,8 +106,8 @@ public sealed class Range : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<Range>, ScaleWriter<Range> {
-        public override fun read(reader: ScaleCodecReader): Range = when (
+    public companion object : ScaleReader<SemiRange>, ScaleWriter<SemiRange> {
+        public override fun read(reader: ScaleCodecReader): SemiRange = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -117,7 +117,7 @@ public sealed class Range : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Range) {
+        public override fun write(writer: ScaleCodecWriter, instance: SemiRange) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> U32.write(writer, instance as U32)

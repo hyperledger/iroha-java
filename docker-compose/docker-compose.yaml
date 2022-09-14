@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha:
-    image: hyperledger/iroha2:dev
+    image: hyperledger/iroha2:stable
     environment:
       KURA_BLOCK_STORE_PATH: /storage
       TORII_P2P_ADDR: iroha:1337

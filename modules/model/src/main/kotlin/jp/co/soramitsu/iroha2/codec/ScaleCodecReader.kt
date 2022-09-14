@@ -226,6 +226,13 @@ class ScaleCodecReader(private val source: ByteArray) {
     }
 
     /**
+     * Read an array of a specified [size]
+     */
+    inline fun <reified T> readArray(size: Int, supplier: () -> T): Array<T> {
+        return Array(size) { supplier() }
+    }
+
+    /**
      * Read a vector of a specified [size]
      */
     fun <T> readVec(size: Int, supplier: () -> T): List<T> {
