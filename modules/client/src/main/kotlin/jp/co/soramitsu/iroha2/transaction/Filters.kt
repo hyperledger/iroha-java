@@ -375,4 +375,23 @@ object QueryFilters {
             )
         )
     }
+
+    /**
+     * Create a filter for multiple matches
+     */
+    fun or(
+        values: List<String>
+    ): PredicateBox.Or {
+        return PredicateBox.Or(
+            values.map { value ->
+                PredicateBox.Raw(
+                    Predicate.Identifiable(
+                        QueryPredicate.Is(
+                            value
+                        )
+                    )
+                )
+            }.toList()
+        )
+    }
 }

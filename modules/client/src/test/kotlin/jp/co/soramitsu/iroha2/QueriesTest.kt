@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.engine.AliceHasRoleWithAccessToBobsMetadata
+import jp.co.soramitsu.iroha2.engine.AliceWithTestAssets
 import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
@@ -16,6 +17,7 @@ import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.engine.NewDomain
 import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.engine.TEST_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.engine.WithExecutableTrigger
 import jp.co.soramitsu.iroha2.engine.WithIroha
 import jp.co.soramitsu.iroha2.engine.XorAndValAssets
@@ -577,6 +579,21 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { role -> assertEquals(role.id, roleId) }
+    }
+
+    @Test
+    @WithIroha(AliceWithTestAssets::class)
+    fun `find asset definitions with or filter`(): Unit = runBlocking {
+        val filter = QueryFilters.or(listOf("${TEST_ASSET_DEFINITION_ID.name.string}#${TEST_ASSET_DEFINITION_ID.domainId.name.string}"))
+        QueryBuilder.findAllAssetsDefinitions(filter)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { assets ->
+                assertEquals(1, assets.size)
+                assertEquals(TEST_ASSET_DEFINITION_ID, assets[0].id)
+            }
     }
 
     private suspend fun createAccount(name: String) {

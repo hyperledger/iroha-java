@@ -68,6 +68,16 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
 )
 
 /**
+ * Give Alice test assets
+ */
+open class AliceWithTestAssets : Genesis(
+    rawGenesisBlock(
+        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID, AssetValueType.Store()),
+        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID2, AssetValueType.Store()),
+    )
+)
+
+/**
  * Register an executable trigger without instructions
  */
 open class WithExecutableTrigger : Genesis(
