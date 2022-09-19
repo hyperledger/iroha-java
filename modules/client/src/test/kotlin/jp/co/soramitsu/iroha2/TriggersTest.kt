@@ -321,7 +321,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerAsset(newAsset, AssetValueType.Quantity())
+            registerAssetDefinition(newAsset, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }

@@ -60,7 +60,7 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
  */
 open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
-        Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type),
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
@@ -72,8 +72,8 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
  */
 open class AliceWithTestAssets : Genesis(
     rawGenesisBlock(
-        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID, AssetValueType.Store()),
-        Instructions.registerAsset(TEST_ASSET_DEFINITION_ID2, AssetValueType.Store())
+        Instructions.registerAssetDefinition(TEST_ASSET_DEFINITION_ID, AssetValueType.Store()),
+        Instructions.registerAssetDefinition(TEST_ASSET_DEFINITION_ID2, AssetValueType.Store())
     )
 ) {
     companion object {
@@ -106,7 +106,7 @@ open class WithExecutableTrigger : Genesis(
  */
 open class AliceAndBobEachHave100Xor : Genesis(
     rawGenesisBlock(
-        Instructions.registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.mintAsset(BOB_ASSET_ID, 100)
     )
@@ -121,7 +121,7 @@ open class AliceAndBobEachHave100Xor : Genesis(
  */
 open class StoreAssetWithMetadata : Genesis(
     rawGenesisBlock(
-        Instructions.registerAsset(
+        Instructions.registerAssetDefinition(
             DEFINITION_ID,
             AssetValueType.Store(),
             Metadata(mapOf(ASSET_KEY to ASSET_VALUE))
@@ -142,10 +142,10 @@ open class StoreAssetWithMetadata : Genesis(
  */
 open class XorAndValAssets : Genesis(
     rawGenesisBlock(
-        Instructions.registerAsset(XOR_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.registerAssetDefinition(XOR_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID), XOR_QUANTITY),
 
-        Instructions.registerAsset(VAL_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.registerAssetDefinition(VAL_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(AssetId(VAL_DEFINITION_ID, ALICE_ACCOUNT_ID), VAL_QUANTITY)
     )
 ) {

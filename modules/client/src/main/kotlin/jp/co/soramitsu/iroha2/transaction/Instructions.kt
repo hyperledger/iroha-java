@@ -289,7 +289,7 @@ object Instructions {
      * Register an asset
      */
     @JvmOverloads
-    fun registerAsset(
+    fun registerAssetDefinition(
         id: DefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),

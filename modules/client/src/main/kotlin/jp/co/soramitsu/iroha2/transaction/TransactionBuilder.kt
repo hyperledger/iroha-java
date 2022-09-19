@@ -254,12 +254,16 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
     @JvmOverloads
-    fun registerAsset(
+    fun registerAssetDefinition(
         id: DefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
-    ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValueType, metadata, mintable)) }
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerAssetDefinition(id, assetValueType, metadata, mintable)
+        )
+    }
 
     fun registerAsset(
         id: AssetId,

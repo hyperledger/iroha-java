@@ -128,17 +128,16 @@ open class Iroha2Client(
 
     /**
      * Send a request to Iroha2 and extract payload.
-     * {@see Extractors}
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
-        val page = sendQueryWithPagination(queryAndExtractor, null)
+        val page = sendQuery(queryAndExtractor, null)
         return page.data
     }
 
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
-    suspend fun <T> sendQueryWithPagination(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
+    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))

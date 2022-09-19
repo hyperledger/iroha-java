@@ -35,7 +35,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
@@ -176,7 +175,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha(DefaultGenesis::class)
     fun `register asset instruction committed`(): Unit = runBlocking {
         client.tx {
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
         }
         val assetDefinitions = QueryBuilder.findAllAssetsDefinitions()
             .account(ALICE_ACCOUNT_ID)
@@ -196,7 +195,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val pair3 = "key3".asName() to 12345.asValue()
 
         client.tx {
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
             setKeyValue(DEFAULT_ASSET_ID, pair1.first, pair1.second)
             setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
             setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
@@ -235,7 +234,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
         // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
         client.tx {
-            registerAsset(aliceAssetId.definitionId, AssetValueType.Store())
+            registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
             registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
@@ -265,7 +264,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha(DefaultGenesis::class)
     fun `mint asset instruction committed`(): Unit = runBlocking {
         client.tx {
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             mintAsset(DEFAULT_ASSET_ID, 5)
         }
 
@@ -486,7 +485,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
-        client.tx { registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed()) }
+        client.tx { registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed()) }
 
         // counter to track all changes in balance
         var counter = BigDecimal.ZERO
@@ -543,7 +542,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val metadata = Metadata(mapOf(assetKey to assetValue))
 
         client.tx {
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store(), metadata)
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store(), metadata)
         }
 
         QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(DEFAULT_ASSET_DEFINITION_ID, assetKey)
@@ -570,15 +569,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha(DefaultGenesis::class)
-    @Disabled // https://github.com/hyperledger/iroha/issues/2477
     fun `register and grant role to account`(): Unit = runBlocking {
         val assetId = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
         }
 
         val roleId = RoleId("BOB_ASSET_ACCESS".asName())
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type)
+            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type)
             registerRole(
                 roleId,
                 PermissionToken(
@@ -590,12 +590,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
                 )
             )
-        }
-
-        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             grantRole(roleId, ALICE_ACCOUNT_ID)
-        }
-        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
             setKeyValue(assetId, "key".asName(), "value".asValue())
         }
 

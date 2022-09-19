@@ -95,7 +95,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final VersionedTransaction registerAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
-            .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
+            .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
@@ -129,7 +129,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final VersionedTransaction registerAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
-            .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store(), metadata)
+            .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store(), metadata)
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
@@ -166,7 +166,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final VersionedTransaction registerAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
-            .registerAsset(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store())
+            .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store())
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
