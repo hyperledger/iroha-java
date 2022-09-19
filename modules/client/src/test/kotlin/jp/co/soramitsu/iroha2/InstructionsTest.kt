@@ -264,10 +264,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `mint asset instruction committed`(): Unit = runBlocking {
-        // currently Iroha2 does not support registering an asset and minting the asset in the same transaction,
-        // so below 2 separate transaction created
-        client.tx { registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()) }
-        client.tx { mintAsset(DEFAULT_ASSET_ID, 5) }
+        client.tx {
+            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            mintAsset(DEFAULT_ASSET_ID, 5)
+        }
 
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
