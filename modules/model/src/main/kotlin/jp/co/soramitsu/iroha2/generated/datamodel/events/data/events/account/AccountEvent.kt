@@ -9,16 +9,16 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetAssetEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetEvent
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * AccountAccountEvent
+ * AccountEvent
  *
- * Generated from 'iroha_data_model::events::data::events::account::AccountAccountEvent' enum
+ * Generated from 'iroha_data_model::events::data::events::account::AccountEvent' enum
  */
-public sealed class AccountAccountEvent : ModelEnum {
+public sealed class AccountEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,8 +28,8 @@ public sealed class AccountAccountEvent : ModelEnum {
      * 'Asset' variant
      */
     public data class Asset(
-        public val assetAssetEvent: AssetAssetEvent
-    ) : AccountAccountEvent() {
+        public val assetEvent: AssetEvent
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
@@ -37,14 +37,14 @@ public sealed class AccountAccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Asset = try {
                 Asset(
-                    AssetAssetEvent.read(reader),
+                    AssetEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Asset) = try {
-                AssetAssetEvent.write(writer, instance.assetAssetEvent)
+                AssetEvent.write(writer, instance.assetEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -56,7 +56,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class Created(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Created>, ScaleWriter<Created> {
@@ -83,7 +83,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class Deleted(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
@@ -110,7 +110,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class AuthenticationAdded(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AuthenticationAdded>, ScaleWriter<AuthenticationAdded> {
@@ -137,7 +137,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class AuthenticationRemoved(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AuthenticationRemoved>, ScaleWriter<AuthenticationRemoved> {
@@ -164,7 +164,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class PermissionAdded(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PermissionAdded>, ScaleWriter<PermissionAdded> {
@@ -191,7 +191,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class PermissionRemoved(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PermissionRemoved>, ScaleWriter<PermissionRemoved> {
@@ -218,7 +218,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class RoleRevoked(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<RoleRevoked>, ScaleWriter<RoleRevoked> {
@@ -245,7 +245,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class RoleGranted(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<RoleGranted>, ScaleWriter<RoleGranted> {
@@ -272,7 +272,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class MetadataInserted(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataInserted>, ScaleWriter<MetadataInserted> {
@@ -299,7 +299,7 @@ public sealed class AccountAccountEvent : ModelEnum {
      */
     public data class MetadataRemoved(
         public val accountId: AccountId
-    ) : AccountAccountEvent() {
+    ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataRemoved>, ScaleWriter<MetadataRemoved> {
@@ -321,8 +321,8 @@ public sealed class AccountAccountEvent : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<AccountAccountEvent>, ScaleWriter<AccountAccountEvent> {
-        public override fun read(reader: ScaleCodecReader): AccountAccountEvent = when (
+    public companion object : ScaleReader<AccountEvent>, ScaleWriter<AccountEvent> {
+        public override fun read(reader: ScaleCodecReader): AccountEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -340,7 +340,7 @@ public sealed class AccountAccountEvent : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AccountAccountEvent) {
+        public override fun write(writer: ScaleCodecWriter, instance: AccountEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Asset.write(writer, instance as Asset)

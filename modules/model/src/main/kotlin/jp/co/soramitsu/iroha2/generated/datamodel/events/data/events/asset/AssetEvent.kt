@@ -1,105 +1,49 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain
+package jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountAccountEvent
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetAssetDefinitionEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * DomainDomainEvent
+ * AssetEvent
  *
- * Generated from 'iroha_data_model::events::data::events::domain::DomainDomainEvent' enum
+ * Generated from 'iroha_data_model::events::data::events::asset::AssetEvent' enum
  */
-public sealed class DomainDomainEvent : ModelEnum {
+public sealed class AssetEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
 
     /**
-     * 'Account' variant
-     */
-    public data class Account(
-        public val accountAccountEvent: AccountAccountEvent
-    ) : DomainDomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Account>, ScaleWriter<Account> {
-            public const val DISCRIMINANT: Int = 0
-
-            public override fun read(reader: ScaleCodecReader): Account = try {
-                Account(
-                    AccountAccountEvent.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
-                AccountAccountEvent.write(writer, instance.accountAccountEvent)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
-     * 'AssetDefinition' variant
-     */
-    public data class AssetDefinition(
-        public val assetAssetDefinitionEvent: AssetAssetDefinitionEvent
-    ) : DomainDomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-            public const val DISCRIMINANT: Int = 1
-
-            public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
-                AssetDefinition(
-                    AssetAssetDefinitionEvent.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                AssetAssetDefinitionEvent.write(writer, instance.assetAssetDefinitionEvent)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Created' variant
      */
     public data class Created(
-        public val domainId: DomainId
-    ) : DomainDomainEvent() {
+        public val assetId: AssetId
+    ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Created>, ScaleWriter<Created> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 0
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    DomainId.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                DomainId.write(writer, instance.domainId)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -110,23 +54,77 @@ public sealed class DomainDomainEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val domainId: DomainId
-    ) : DomainDomainEvent() {
+        public val assetId: AssetId
+    ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    DomainId.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                DomainId.write(writer, instance.domainId)
+                AssetId.write(writer, instance.assetId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Added' variant
+     */
+    public data class Added(
+        public val assetId: AssetId
+    ) : AssetEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Added>, ScaleWriter<Added> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): Added = try {
+                Added(
+                    AssetId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Added) = try {
+                AssetId.write(writer, instance.assetId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Removed' variant
+     */
+    public data class Removed(
+        public val assetId: AssetId
+    ) : AssetEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Removed>, ScaleWriter<Removed> {
+            public const val DISCRIMINANT: Int = 3
+
+            public override fun read(reader: ScaleCodecReader): Removed = try {
+                Removed(
+                    AssetId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Removed) = try {
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -137,8 +135,8 @@ public sealed class DomainDomainEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val domainId: DomainId
-    ) : DomainDomainEvent() {
+        public val assetId: AssetId
+    ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataInserted>, ScaleWriter<MetadataInserted> {
@@ -146,14 +144,14 @@ public sealed class DomainDomainEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    DomainId.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                DomainId.write(writer, instance.domainId)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -164,8 +162,8 @@ public sealed class DomainDomainEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val domainId: DomainId
-    ) : DomainDomainEvent() {
+        public val assetId: AssetId
+    ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<MetadataRemoved>, ScaleWriter<MetadataRemoved> {
@@ -173,41 +171,41 @@ public sealed class DomainDomainEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    DomainId.read(reader),
+                    AssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                DomainId.write(writer, instance.domainId)
+                AssetId.write(writer, instance.assetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<DomainDomainEvent>, ScaleWriter<DomainDomainEvent> {
-        public override fun read(reader: ScaleCodecReader): DomainDomainEvent = when (
+    public companion object : ScaleReader<AssetEvent>, ScaleWriter<AssetEvent> {
+        public override fun read(reader: ScaleCodecReader): AssetEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
-            0 -> Account.read(reader)
-            1 -> AssetDefinition.read(reader)
-            2 -> Created.read(reader)
-            3 -> Deleted.read(reader)
+            0 -> Created.read(reader)
+            1 -> Deleted.read(reader)
+            2 -> Added.read(reader)
+            3 -> Removed.read(reader)
             4 -> MetadataInserted.read(reader)
             5 -> MetadataRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: DomainDomainEvent) {
+        public override fun write(writer: ScaleCodecWriter, instance: AssetEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Account.write(writer, instance as Account)
-                1 -> AssetDefinition.write(writer, instance as AssetDefinition)
-                2 -> Created.write(writer, instance as Created)
-                3 -> Deleted.write(writer, instance as Deleted)
+                0 -> Created.write(writer, instance as Created)
+                1 -> Deleted.write(writer, instance as Deleted)
+                2 -> Added.write(writer, instance as Added)
+                3 -> Removed.write(writer, instance as Removed)
                 4 -> MetadataInserted.write(writer, instance as MetadataInserted)
                 5 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

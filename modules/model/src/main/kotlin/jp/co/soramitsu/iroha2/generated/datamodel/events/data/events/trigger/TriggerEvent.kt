@@ -13,11 +13,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * TriggerTriggerEvent
+ * TriggerEvent
  *
- * Generated from 'iroha_data_model::events::data::events::trigger::TriggerTriggerEvent' enum
+ * Generated from 'iroha_data_model::events::data::events::trigger::TriggerEvent' enum
  */
-public sealed class TriggerTriggerEvent : ModelEnum {
+public sealed class TriggerEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,7 +28,7 @@ public sealed class TriggerTriggerEvent : ModelEnum {
      */
     public data class Created(
         public val triggerId: TriggerId
-    ) : TriggerTriggerEvent() {
+    ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Created>, ScaleWriter<Created> {
@@ -55,7 +55,7 @@ public sealed class TriggerTriggerEvent : ModelEnum {
      */
     public data class Deleted(
         public val triggerId: TriggerId
-    ) : TriggerTriggerEvent() {
+    ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
@@ -82,7 +82,7 @@ public sealed class TriggerTriggerEvent : ModelEnum {
      */
     public data class Extended(
         public val triggerId: TriggerId
-    ) : TriggerTriggerEvent() {
+    ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Extended>, ScaleWriter<Extended> {
@@ -109,7 +109,7 @@ public sealed class TriggerTriggerEvent : ModelEnum {
      */
     public data class Shortened(
         public val triggerId: TriggerId
-    ) : TriggerTriggerEvent() {
+    ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Shortened>, ScaleWriter<Shortened> {
@@ -131,8 +131,8 @@ public sealed class TriggerTriggerEvent : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<TriggerTriggerEvent>, ScaleWriter<TriggerTriggerEvent> {
-        public override fun read(reader: ScaleCodecReader): TriggerTriggerEvent = when (
+    public companion object : ScaleReader<TriggerEvent>, ScaleWriter<TriggerEvent> {
+        public override fun read(reader: ScaleCodecReader): TriggerEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -143,7 +143,7 @@ public sealed class TriggerTriggerEvent : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TriggerTriggerEvent) {
+        public override fun write(writer: ScaleCodecWriter, instance: TriggerEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)

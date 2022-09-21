@@ -73,7 +73,7 @@ class SchemaReader {
             .split('_')
             .joinToString("") { p -> p.replaceFirstChar { it.uppercaseChar() } }
 
-        return when (prefix == className || prefix == "${className.replace("\\W".toRegex())}s") {
+        return when (className.startsWith(prefix) || prefix == "${className.replace("\\W".toRegex())}s") {
             true -> line
             false -> line.replace(className, "$prefix$className")
         }

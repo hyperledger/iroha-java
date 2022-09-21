@@ -13,11 +13,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * PeerPeerEvent
+ * PeerEvent
  *
- * Generated from 'iroha_data_model::events::data::events::peer::PeerPeerEvent' enum
+ * Generated from 'iroha_data_model::events::data::events::peer::PeerEvent' enum
  */
-public sealed class PeerPeerEvent : ModelEnum {
+public sealed class PeerEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,7 +28,7 @@ public sealed class PeerPeerEvent : ModelEnum {
      */
     public data class Added(
         public val peerId: PeerId
-    ) : PeerPeerEvent() {
+    ) : PeerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Added>, ScaleWriter<Added> {
@@ -55,7 +55,7 @@ public sealed class PeerPeerEvent : ModelEnum {
      */
     public data class Removed(
         public val peerId: PeerId
-    ) : PeerPeerEvent() {
+    ) : PeerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Removed>, ScaleWriter<Removed> {
@@ -77,8 +77,8 @@ public sealed class PeerPeerEvent : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<PeerPeerEvent>, ScaleWriter<PeerPeerEvent> {
-        public override fun read(reader: ScaleCodecReader): PeerPeerEvent = when (
+    public companion object : ScaleReader<PeerEvent>, ScaleWriter<PeerEvent> {
+        public override fun read(reader: ScaleCodecReader): PeerEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -87,7 +87,7 @@ public sealed class PeerPeerEvent : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PeerPeerEvent) {
+        public override fun write(writer: ScaleCodecWriter, instance: PeerEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Added.write(writer, instance as Added)

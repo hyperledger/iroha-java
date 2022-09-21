@@ -13,11 +13,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * RoleRoleEvent
+ * RoleEvent
  *
- * Generated from 'iroha_data_model::events::data::events::role::RoleRoleEvent' enum
+ * Generated from 'iroha_data_model::events::data::events::role::RoleEvent' enum
  */
-public sealed class RoleRoleEvent : ModelEnum {
+public sealed class RoleEvent : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,7 +28,7 @@ public sealed class RoleRoleEvent : ModelEnum {
      */
     public data class Created(
         public val roleId: RoleId
-    ) : RoleRoleEvent() {
+    ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Created>, ScaleWriter<Created> {
@@ -55,7 +55,7 @@ public sealed class RoleRoleEvent : ModelEnum {
      */
     public data class Deleted(
         public val roleId: RoleId
-    ) : RoleRoleEvent() {
+    ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
@@ -83,7 +83,7 @@ public sealed class RoleRoleEvent : ModelEnum {
     public data class PermissionRemoved(
         public val permissionRemoved:  
             jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.PermissionRemoved
-    ) : RoleRoleEvent() {
+    ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PermissionRemoved>, ScaleWriter<PermissionRemoved> {
@@ -108,8 +108,8 @@ public sealed class RoleRoleEvent : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<RoleRoleEvent>, ScaleWriter<RoleRoleEvent> {
-        public override fun read(reader: ScaleCodecReader): RoleRoleEvent = when (
+    public companion object : ScaleReader<RoleEvent>, ScaleWriter<RoleEvent> {
+        public override fun read(reader: ScaleCodecReader): RoleEvent = when (
             val discriminant =
                 reader.readUByte().toInt()
         ) {
@@ -119,7 +119,7 @@ public sealed class RoleRoleEvent : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RoleRoleEvent) {
+        public override fun write(writer: ScaleCodecWriter, instance: RoleEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)
