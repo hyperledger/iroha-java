@@ -1,7 +1,6 @@
-group 'jp.co.soramitsu'
-
 dependencies {
     api project(":block")
+
     api "org.testcontainers:testcontainers:$testContainersVer"
     api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     implementation "ch.qos.logback:logback-classic:$logbackVer"

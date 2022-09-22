@@ -1,7 +1,6 @@
-group 'jp.co.soramitsu'
-
 dependencies {
     implementation project(":model")
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonKotlinVer"
 

@@ -1,5 +1,3 @@
-group 'jp.co.soramitsu'
-
 dependencies {
     api project(":client")
     api project(":admin-client")

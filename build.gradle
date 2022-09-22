@@ -10,9 +10,10 @@ buildscript {
 }
 
 plugins {
+    id 'java-library'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'maven-publish'
 }
 
 allprojects {
@@ -23,20 +24,20 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'org.jmailen.kotlinter'
-    apply plugin: 'com.github.johnrengelman.shadow'
 
     publishing {
         publications {
-            mavenJava(MavenPublication) {
+            maven(MavenPublication) {
                 from components.java
             }
         }
     }
 
-    group = 'jp.co.soramitsu.iroha-java'
+    group = 'jp.co.soramitsu.iroha2-java'
     version = 'git rev-parse --short HEAD'.execute().text.trim()
 
     test {
@@ -74,15 +75,6 @@ subprojects {
         experimentalRules = false
         disabledRules = []
     }
-
-    shadowJar {
-        zip64 = true
-        archiveFileName = "${archiveBaseName.get()}-${archiveVersion.get()}.jar"
-    }
-}
-
-task allShadowJars {
-    subprojects { pr -> allShadowJars.dependsOn("${pr.path}:shadowJar") }
 }
 
 check {
