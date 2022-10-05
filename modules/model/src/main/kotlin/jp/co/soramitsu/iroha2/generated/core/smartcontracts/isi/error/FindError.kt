@@ -16,9 +16,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.ValidatorId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -201,7 +202,7 @@ public sealed class FindError : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val hashOf: HashOf<VersionedTransaction>
+        public val hashOf: HashOf<VersionedSignedTransaction>
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -210,7 +211,7 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Transaction = try {
                 Transaction(
-                    HashOf.read(reader) as HashOf<VersionedTransaction>,
+                    HashOf.read(reader) as HashOf<VersionedSignedTransaction>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -336,7 +337,7 @@ public sealed class FindError : ModelEnum {
      * 'PermissionTokenDefinition' variant
      */
     public data class PermissionTokenDefinition(
-        public val permissionsId: PermissionsId
+        public val tokenId: TokenId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -347,14 +348,41 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): PermissionTokenDefinition = try {
                 PermissionTokenDefinition(
-                    PermissionsId.read(reader),
+                    TokenId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenDefinition) = try {
-                PermissionsId.write(writer, instance.permissionsId)
+                TokenId.write(writer, instance.tokenId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Validator' variant
+     */
+    public data class Validator(
+        public val validatorId: ValidatorId
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Validator>, ScaleWriter<Validator> {
+            public const val DISCRIMINANT: Int = 12
+
+            public override fun read(reader: ScaleCodecReader): Validator = try {
+                Validator(
+                    ValidatorId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Validator) = try {
+                ValidatorId.write(writer, instance.validatorId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -378,6 +406,7 @@ public sealed class FindError : ModelEnum {
             9 -> Trigger.read(reader)
             10 -> Role.read(reader)
             11 -> PermissionTokenDefinition.read(reader)
+            12 -> Validator.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -396,6 +425,7 @@ public sealed class FindError : ModelEnum {
                 9 -> Trigger.write(writer, instance as Trigger)
                 10 -> Role.write(writer, instance as Role)
                 11 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
+                12 -> Validator.write(writer, instance as Validator)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

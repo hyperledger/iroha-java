@@ -10,10 +10,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
@@ -149,9 +149,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             account(ALICE_ACCOUNT_ID)
             registerAccount(newAccountId, listOf(), metadata)
         }.buildSigned()
-            .let { VersionedTransaction.encode(it) }
+            .let { VersionedSignedTransaction.encode(it) }
 
-        val decodedTx = encodedTx.let { VersionedTransaction.decode(it) }
+        val decodedTx = encodedTx.let { VersionedSignedTransaction.decode(it) }
         val signedTx = decodedTx.appendSignatures(ALICE_KEYPAIR)
 
         client.sendTransaction { signedTx }.also { d ->
@@ -236,7 +236,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type)
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, "asset_id")
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
@@ -365,7 +365,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         // grant permission to Alice to change Bob's account metadata
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
-            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type)
+            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, "account_id")
             grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
@@ -577,16 +577,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
         val roleId = RoleId("BOB_ASSET_ACCESS".asName())
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type)
-            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type)
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, "asset_id")
+            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, "asset_id")
             registerRole(
                 roleId,
-                PermissionToken(
-                    PermissionsId(Permissions.CanSetKeyValueUserAssetsToken.type),
+                Token(
+                    TokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
                     mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
                 ),
-                PermissionToken(
-                    PermissionsId(Permissions.CanRemoveKeyValueInUserAssets.type),
+                Token(
+                    TokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
                     mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
                 )
             )

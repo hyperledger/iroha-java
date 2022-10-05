@@ -9,7 +9,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
@@ -172,10 +172,10 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
 /**
  * Extract a list of permission tokens from a query [result]
  */
-object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
-    override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
+object PermissionTokensExtractor : ResultExtractor<List<Token>> {
+    override fun extract(result: PaginatedQueryResult): List<Token> {
         return extractVec(result.result.value) {
-            extractValue(it, Value.PermissionToken::permissionToken)
+            extractValue(it, Value.PermissionToken::token)
         }
     }
 }

@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Container
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
@@ -367,9 +367,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }.let { txValues ->
                 txValues.all { value ->
                     value.cast<TransactionValue.Transaction>()
-                        .versionedTransaction
-                        .cast<VersionedTransaction.V1>()
-                        .transaction
+                        .versionedSignedTransaction
+                        .cast<VersionedSignedTransaction.V1>()
+                        .signedTransaction
                         .payload
                         .accountId == ALICE_ACCOUNT_ID
                 }
@@ -415,7 +415,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .cast<TransactionValue.Transaction>()
-            .versionedTransaction.hash()
+            .versionedSignedTransaction.hash()
             .also { assertContentEquals(hash, it) }
     }
 

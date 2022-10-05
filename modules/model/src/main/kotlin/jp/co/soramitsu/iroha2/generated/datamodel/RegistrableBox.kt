@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
 import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -221,8 +222,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'PermissionTokenDefinition' variant
      */
     public data class PermissionTokenDefinition(
-        public val permissionTokenDefinition:  
-            jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition
+        public val definition: Definition
     ) : RegistrableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -233,16 +233,43 @@ public sealed class RegistrableBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): PermissionTokenDefinition = try {
                 PermissionTokenDefinition(
-                    jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition.read(reader),
+                    Definition.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenDefinition) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionTokenDefinition.write(
+                Definition.write(writer, instance.definition)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Validator' variant
+     */
+    public data class Validator(
+        public val validator: jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator
+    ) : RegistrableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Validator>, ScaleWriter<Validator> {
+            public const val DISCRIMINANT: Int = 8
+
+            public override fun read(reader: ScaleCodecReader): Validator = try {
+                Validator(
+                    jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Validator) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator.write(
                     writer,
-                    instance.permissionTokenDefinition
+                    instance.validator
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -263,6 +290,7 @@ public sealed class RegistrableBox : ModelEnum {
             5 -> Trigger.read(reader)
             6 -> Role.read(reader)
             7 -> PermissionTokenDefinition.read(reader)
+            8 -> Validator.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -277,6 +305,7 @@ public sealed class RegistrableBox : ModelEnum {
                 5 -> Trigger.write(writer, instance as Trigger)
                 6 -> Role.write(writer, instance as Role)
                 7 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
+                8 -> Validator.write(writer, instance as Validator)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

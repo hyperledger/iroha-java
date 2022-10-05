@@ -6,7 +6,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import kotlin.reflect.KClass
 
@@ -83,7 +83,7 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
  * Compare permission tokens
  */
 @JvmName("PermissionTokenComparator")
-fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
+fun Token.Companion.comparator() = compareBy<Token> {
     it.definitionId.name.string
 }.thenComparator { o1, o2 ->
     val keys1 = o1.params.map { it.key.string }

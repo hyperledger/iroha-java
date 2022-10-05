@@ -26,7 +26,7 @@ public sealed class TransactionValue : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val versionedTransaction: VersionedTransaction
+        public val versionedSignedTransaction: VersionedSignedTransaction
     ) : TransactionValue() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +35,14 @@ public sealed class TransactionValue : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Transaction = try {
                 Transaction(
-                    VersionedTransaction.read(reader),
+                    VersionedSignedTransaction.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
-                VersionedTransaction.write(writer, instance.versionedTransaction)
+                VersionedSignedTransaction.write(writer, instance.versionedSignedTransaction)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

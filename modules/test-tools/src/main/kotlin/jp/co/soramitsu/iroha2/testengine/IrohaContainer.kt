@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
+import org.testcontainers.images.PullPolicy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
@@ -74,7 +75,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 }
                 container.withCommand(command)
             }
-            .withImagePullPolicy(config.pullPolicy)
+            .withImagePullPolicy(PullPolicy.defaultPolicy())
+//            .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
@@ -144,8 +146,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable"
-        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_IMAGE_TAG = "dev"
+        const val DEFAULT_IMAGE_NAME = "7272721/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"

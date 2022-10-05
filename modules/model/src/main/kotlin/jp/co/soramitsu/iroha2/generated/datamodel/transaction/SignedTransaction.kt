@@ -13,17 +13,17 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 
 /**
- * Transaction
+ * SignedTransaction
  *
- * Generated from 'iroha_data_model::transaction::Transaction' regular structure
+ * Generated from 'iroha_data_model::transaction::SignedTransaction' regular structure
  */
-public data class Transaction(
+public data class SignedTransaction(
     public val payload: Payload,
     public val signatures: List<SignatureOf<Payload>>
 ) {
-    public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
-        public override fun read(reader: ScaleCodecReader): Transaction = try {
-            Transaction(
+    public companion object : ScaleReader<SignedTransaction>, ScaleWriter<SignedTransaction> {
+        public override fun read(reader: ScaleCodecReader): SignedTransaction = try {
+            SignedTransaction(
                 Payload.read(reader),
                 reader.readVec(reader.readCompactInt()) { SignatureOf.read(reader) as SignatureOf<Payload> },
             )
@@ -31,7 +31,7 @@ public data class Transaction(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: SignedTransaction) = try {
             Payload.write(writer, instance.payload)
             writer.writeCompact(instance.signatures.size)
             instance.signatures.sortedWith(

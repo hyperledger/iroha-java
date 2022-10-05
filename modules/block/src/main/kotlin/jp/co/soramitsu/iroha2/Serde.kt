@@ -26,11 +26,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
+import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -53,12 +58,24 @@ val JSON_SERDE by lazy {
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
         module.addDeserializer(Name::class.java, NameDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
-        module.addKeyDeserializer(DefinitionId::class.java, DefinitionIdDeserializer)
-        module.addKeyDeserializer(AccountId::class.java, AccountIdDeserializer)
-        module.addKeyDeserializer(AssetId::class.java, AssetIdDeserializer)
+        module.addDeserializer(DomainId::class.java, DomainIdDeserializer)
+        module.addDeserializer(AccountId::class.java, AccountIdDeserializer)
+        module.addDeserializer(DefinitionId::class.java, AssetDefinitionIdDeserializer)
+        module.addDeserializer(AssetId::class.java, AssetIdDeserializer)
+        module.addKeyDeserializer(DefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
+        module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
+        module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
+        module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
 
         // serializers
         module.addKeySerializer(Name::class.java, NameAsKeySerializer)
+        module.addSerializer(DomainId::class.java, DomainIdSerializer)
+        module.addSerializer(TokenId::class.java, TokenIdSerializer)
+        module.addSerializer(DefinitionId::class.java, AssetDefinitionIdSerializer)
+        module.addSerializer(AccountId::class.java, AccountIdSerializer)
+        module.addSerializer(AssetId::class.java, AssetIdSerializer)
+        module.addSerializer(RoleId::class.java, RoleIdSerializer)
+        module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
         module.addSerializer(Name::class.java, NameSerializer)
         module.addSerializer(UInt::class.java, UIntSerializer)
         module.addSerializer(PublicKey::class.java, PublicKeySerializer)
@@ -78,18 +95,6 @@ val JSON_SERDE by lazy {
         mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
     }
-}
-
-private fun String.asClass(): Class<*> {
-    return runCatching {
-        Class.forName(this)
-    }.getOrNull() ?: run {
-        when (this) {
-            "kotlin.Long" -> Long::class.java
-            "kotlin.Int" -> Int::class.java
-            else -> null
-        }
-    } ?: throw DeserializationException("Class $this not found")
 }
 
 private inline fun <reified T : ModelEnum> sealedDeserialize(p: JsonParser, mapper: ObjectMapper): T {
@@ -219,9 +224,45 @@ object MintableDeserializer : JsonDeserializer<Mintable>() {
 }
 
 /**
+ * Deserializer for [asset ID][AssetId]
+ */
+object AssetIdDeserializer : JsonDeserializer<AssetId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetId {
+        return p.readValueAs(String::class.java).asAssetId()
+    }
+}
+
+/**
  * Deserializer for [asset definition ID][DefinitionId]
  */
-object DefinitionIdDeserializer : KeyDeserializer() {
+object AssetDefinitionIdDeserializer : JsonDeserializer<DefinitionId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): DefinitionId {
+        return p.readValueAs(String::class.java).asAssetDefinitionId()
+    }
+}
+
+/**
+ * Deserializer for [account ID][AccountId]
+ */
+object AccountIdDeserializer : JsonDeserializer<AccountId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AccountId {
+        return p.readValueAs(String::class.java).asAccountId()
+    }
+}
+
+/**
+ * Deserializer for [domain ID][DomainId]
+ */
+object DomainIdDeserializer : JsonDeserializer<DomainId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): DomainId {
+        return p.readValueAs(String::class.java).asDomainId()
+    }
+}
+
+/**
+ * Deserializer for [asset definition ID][DefinitionId]
+ */
+object AssetDefinitionIdKeyDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
         return JSON_SERDE.readValue(key, DefinitionId::class.java)
     }
@@ -230,7 +271,7 @@ object DefinitionIdDeserializer : KeyDeserializer() {
 /**
  * Deserializer for [account ID][AccountId]
  */
-object AccountIdDeserializer : KeyDeserializer() {
+object AccountIdKeyDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AccountId? {
         return JSON_SERDE.readValue(key, AccountId::class.java)
     }
@@ -239,13 +280,85 @@ object AccountIdDeserializer : KeyDeserializer() {
 /**
  * Deserializer for [asset ID][AssetId]
  */
-object AssetIdDeserializer : KeyDeserializer() {
+object AssetIdKeyDeserializer : KeyDeserializer() {
     override fun deserializeKey(key: String, ctxt: DeserializationContext?): AssetId? {
         return JSON_SERDE.readValue(key, AssetId::class.java)
     }
 }
 
+/**
+ * Deserializer for [domain ID][DomainId]
+ */
+object DomainIdKeyDeserializer : KeyDeserializer() {
+    override fun deserializeKey(key: String, ctxt: DeserializationContext?): DomainId? {
+        return JSON_SERDE.readValue(key, DomainId::class.java)
+    }
+}
+
 // ==================================================
+
+/**
+ * Serializer for [DefinitionId]
+ */
+object AssetDefinitionIdSerializer : JsonSerializer<DefinitionId>() {
+    override fun serialize(value: DefinitionId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [AssetId]
+ */
+object AssetIdSerializer : JsonSerializer<AssetId>() {
+    override fun serialize(value: AssetId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [AccountId]
+ */
+object AccountIdSerializer : JsonSerializer<AccountId>() {
+    override fun serialize(value: AccountId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [DomainId]
+ */
+object DomainIdSerializer : JsonSerializer<DomainId>() {
+    override fun serialize(value: DomainId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [TokenId]
+ */
+object TokenIdSerializer : JsonSerializer<TokenId>() {
+    override fun serialize(value: TokenId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [RoleId]
+ */
+object RoleIdSerializer : JsonSerializer<RoleId>() {
+    override fun serialize(value: RoleId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [TriggerId]
+ */
+object TriggerIdSerializer : JsonSerializer<TriggerId>() {
+    override fun serialize(value: TriggerId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
 
 /**
  * Serializer for [Name] as key
@@ -300,16 +413,62 @@ object MetadataSerializer : JsonSerializer<Metadata>() {
  * Custom serializer for [EvaluatesTo]
  */
 object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>>() {
-    override fun serialize(value: EvaluatesTo<*>, gen: JsonGenerator, serializers: SerializerProvider) =
-        serializeNoneOrSingleMemberObject(gen, value.expression)
+    override fun serialize(value: EvaluatesTo<*>, gen: JsonGenerator, serializers: SerializerProvider) {
+        serializeEvaluatesTo(gen, value)
+    }
 }
 
 /**
  * Custom serializer for Iroha2 enumeration types
  */
 object EnumerationSerializer : JsonSerializer<ModelEnum>() {
-    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) =
-        serializeNoneOrSingleMemberObject(gen, value)
+    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is Instruction.Register -> serializeRegister(gen, value)
+            is Expression.Raw -> serializeExpressionRaw(gen, value)
+            else -> serializeNoneOrSingleMemberObject(gen, value)
+        }
+    }
+}
+
+fun serializeExpressionRaw(gen: JsonGenerator, value: Expression.Raw) {
+    val clazz = value::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> gen.writeObject(memberProperties.first().call(value))
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
+
+fun serializeRegister(gen: JsonGenerator, value: Instruction.Register) {
+    val clazz = value::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> {
+            gen.writeStartObject()
+            gen.writeObjectField(
+                clazz.simpleName,
+                memberProperties.first().call(value)
+                    ?.cast<RegisterBox>()
+                    ?.`object`?.expression
+            )
+            gen.writeEndObject()
+        }
+
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
+
+fun serializeEvaluatesTo(gen: JsonGenerator, value: EvaluatesTo<*>) {
+    val clazz = value::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> gen.writeObject(memberProperties.first().call(value))
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
 }
 
 /**
@@ -317,20 +476,29 @@ object EnumerationSerializer : JsonSerializer<ModelEnum>() {
  *
  * @throws SerializationException
  */
-fun serializeNoneOrSingleMemberObject(
-    gen: JsonGenerator,
-    objectValue: Any
-) {
-    val clazz = objectValue::class
+fun serializeNoneOrSingleMemberObject(gen: JsonGenerator, value: Any) {
+    val clazz = value::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
         0 -> gen.writeString(clazz.simpleName)
         1 -> {
             gen.writeStartObject()
-            gen.writeObjectField(clazz.simpleName, memberProperties.first().call(objectValue))
+            gen.writeObjectField(clazz.simpleName, memberProperties.first().call(value))
             gen.writeEndObject()
         }
 
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
+}
+
+private fun String.asClass(): Class<*> {
+    return runCatching {
+        Class.forName(this)
+    }.getOrNull() ?: run {
+        when (this) {
+            "kotlin.Long" -> Long::class.java
+            "kotlin.Int" -> Int::class.java
+            else -> null
+        }
+    } ?: throw DeserializationException("Class $this not found")
 }

@@ -20,12 +20,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.sign
@@ -79,7 +79,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toBigInteger()) }
 
-    fun buildSigned(vararg keyPairs: KeyPair): VersionedTransaction {
+    fun buildSigned(vararg keyPairs: KeyPair): VersionedSignedTransaction {
         val payload = Payload(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             Executable.Instructions(instructions.value),
@@ -97,8 +97,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             ).asSignatureOf<Payload>()
         }.toList()
 
-        return VersionedTransaction.V1(
-            Transaction(payload, signatures)
+        return VersionedSignedTransaction.V1(
+            SignedTransaction(payload, signatures)
         )
     }
 
@@ -225,7 +225,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
-    @JvmOverloads
     fun unregisterDomain(
         id: DomainId
     ) = this.apply {
@@ -243,7 +242,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerRole(
         id: RoleId,
-        vararg tokens: PermissionToken
+        vararg tokens: Token
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
     @JvmOverloads
@@ -324,9 +323,9 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
-    fun registerPermissionToken(name: Name) = this.apply {
+    fun registerPermissionToken(name: Name, idKey: String) = this.apply {
         instructions.value.add(
-            Instructions.registerPermissionToken(name)
+            Instructions.registerPermissionToken(name, idKey)
         )
     }
 

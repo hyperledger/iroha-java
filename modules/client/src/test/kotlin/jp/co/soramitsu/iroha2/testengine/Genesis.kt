@@ -15,13 +15,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionsId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
-import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
 
 /**
@@ -34,17 +33,17 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  */
 open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
     rawGenesisBlock(
-        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type),
-        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type),
+        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, "account_id"),
+        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type, "account_id"),
         Instructions.registerRole(
             ROLE_ID,
-            PermissionToken(
-                PermissionsId(Permissions.CanSetKeyValueInUserMetadata.type),
-                mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+            Token(
+                TokenId(Permissions.CanSetKeyValueInUserMetadata.type),
+                mapOf("account_id".asName() to ALICE_ACCOUNT_ID.asValue())
             ),
-            PermissionToken(
-                PermissionsId(Permissions.CanRemoveKeyValueInUserMetadata.type),
-                mapOf("account_id".asName() to BOB_ACCOUNT_ID.toValueId())
+            Token(
+                TokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
+                mapOf("account_id".asName() to ALICE_ACCOUNT_ID.asValue())
             )
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID)
@@ -62,7 +61,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
-        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type),
+        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, "asset_definition_id"),
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
     )
 )

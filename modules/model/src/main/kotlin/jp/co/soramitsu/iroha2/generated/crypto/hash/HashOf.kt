@@ -13,8 +13,9 @@ import kotlin.Any
 /**
  * HashOf
  *
- * Generated from 'iroha_crypto::hash::HashOf<iroha_data_model::transaction::VersionedTransaction>'
- * tuple structure
+ * Generated from
+ * 'iroha_crypto::hash::HashOf<iroha_data_model::transaction::VersionedSignedTransaction>' tuple
+ * structure
  */
 public data class HashOf<T0>(
     public val hash: Hash
