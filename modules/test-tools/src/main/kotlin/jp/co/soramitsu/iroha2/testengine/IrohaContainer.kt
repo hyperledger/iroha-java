@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
-import org.testcontainers.images.PullPolicy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
@@ -46,6 +45,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
             .withEnv("IROHA_PRIVATE_KEY", "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}")
+            .withEnv("IROHA_GENESIS_ACCOUNT_PUBLIC_KEY", "ed0120$publicKey")
+            .withEnv(
+                "IROHA_GENESIS_ACCOUNT_PRIVATE_KEY",
+                "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}"
+            )
             .withEnv("TORII_P2P_ADDR", "${config.alias}:$p2pPort")
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
             .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
@@ -75,8 +79,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 }
                 container.withCommand(command)
             }
-            .withImagePullPolicy(PullPolicy.defaultPolicy())
-//            .withImagePullPolicy(config.pullPolicy)
+            .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
@@ -146,8 +149,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "dev"
-        const val DEFAULT_IMAGE_NAME = "7272721/iroha2"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-cec1058155d50b41e1e61dbb029287d72b304a8d"
+        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"

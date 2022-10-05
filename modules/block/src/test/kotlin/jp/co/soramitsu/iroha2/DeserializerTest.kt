@@ -1,9 +1,11 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
+@Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/hyperledger/iroha-java/268
 class DeserializerTest {
     @Test
     fun `should deserialize genesis block`() {
