@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha:
-    image: hyperledger/iroha2:dev-nightly-cec1058155d50b41e1e61dbb029287d72b304a8d
+    image: hyperledger/iroha2:dev-nightly-e81bb4bb176133e4fc4952f0b452c23ba7a4f67e
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
