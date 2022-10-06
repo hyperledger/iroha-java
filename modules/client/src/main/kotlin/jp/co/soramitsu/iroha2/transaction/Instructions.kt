@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.DigestFunction
+import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
@@ -116,6 +117,10 @@ object Instructions {
                 Definition(permissionsId, params)
             )
         }
+    }
+
+    fun registerPermissionToken(name: Name, idKey: IdKey): Instruction.Register {
+        return registerPermissionToken(name, idKey.type)
     }
 
     fun registerPermissionToken(name: Name, idKey: String): Instruction.Register {

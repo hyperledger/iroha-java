@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
+import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
@@ -33,8 +34,8 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  */
 open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
     rawGenesisBlock(
-        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, "account_id"),
-        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type, "account_id"),
+        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type, IdKey.AccountId),
         Instructions.registerRole(
             ROLE_ID,
             Token(
@@ -61,7 +62,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
-        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, "asset_definition_id"),
+        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId),
         Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
     )
 )

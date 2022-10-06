@@ -17,3 +17,9 @@ enum class Permissions(val type: Name) {
     CanUnregisterAssetWithDefinition("can_unregister_asset_with_definition".asName()),
     CanTransferOnlyFixedNumberOfTimesPerPeriod("can_transfer_only_fixed_number_of_times_per_period".asName()),
 }
+
+enum class IdKey(val type: String) {
+    AccountId("account_id"),
+    AssetId("asset_id"),
+    AssetDefinitionId("asset_definition_id")
+}

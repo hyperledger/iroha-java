@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.DigestFunction
+import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
@@ -322,6 +323,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetId: AssetId,
         quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
+
+    fun registerPermissionToken(name: Name, idKey: IdKey) = this.apply {
+        registerPermissionToken(name, idKey.type)
+    }
 
     fun registerPermissionToken(name: Name, idKey: String) = this.apply {
         instructions.value.add(

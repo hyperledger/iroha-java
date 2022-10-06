@@ -236,7 +236,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, "asset_id")
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
         // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
@@ -365,7 +365,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         // grant permission to Alice to change Bob's account metadata
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
-            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, "account_id")
+            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, IdKey.AccountId)
             grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
@@ -577,8 +577,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
         val roleId = RoleId("BOB_ASSET_ACCESS".asName())
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, "asset_id")
-            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, "asset_id")
+            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
+            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId)
             registerRole(
                 roleId,
                 Token(
