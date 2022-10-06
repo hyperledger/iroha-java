@@ -228,7 +228,7 @@ fun <T> T.asValue() = when (this) {
     else -> throw RuntimeException("Unsupported type")
 }
 
-fun AssetId.asString() = this.definitionId.name.string + ASSET_ID_DELIMITER + this.accountId.asString()
+fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
 
 fun DefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
 
