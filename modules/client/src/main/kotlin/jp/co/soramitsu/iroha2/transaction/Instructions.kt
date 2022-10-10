@@ -61,9 +61,6 @@ import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import java.math.BigInteger
 
-val ACCOUNT_ID_TOKEN_PARAM_NAME by lazy { "account_id".asName() }
-val ASSET_ID_TOKEN_PARAM_NAME by lazy { "asset_id".asName() }
-val ASSET_DEFINITION_PARAM_NAME by lazy { "asset_definition_id".asName() }
 val COUNT_PARAM_NAME by lazy { "count".asName() }
 val PERIOD_PARAM_NAME by lazy { "period".asName() }
 
@@ -545,7 +542,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
+                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
             )
         }
     }
@@ -557,7 +554,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
-                params = mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
+                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
             )
         }
     }
@@ -569,7 +566,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanSetKeyValueInUserMetadata.type),
-                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
+                params = mapOf(IdKey.AccountId.type.asName() to accountId.toValueId())
             )
         }
     }
@@ -581,7 +578,7 @@ object Instructions {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
-                params = mapOf(ACCOUNT_ID_TOKEN_PARAM_NAME to accountId.toValueId())
+                params = mapOf(IdKey.AccountId.type.asName() to accountId.toValueId())
             )
         }
     }
@@ -594,7 +591,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanSetKeyValueInAssetDefinition.type),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -608,7 +605,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanRemoveKeyValueInAssetDefinition.type),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -622,7 +619,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanMintUserAssetDefinitionsToken.type),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -651,7 +648,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanBurnAssetWithDefinition.type),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
                 )
             )
         }
@@ -665,7 +662,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanBurnUserAssetsToken.type),
                 params = mapOf(
-                    ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
+                    IdKey.AssetId.type.asName() to assetId.toValueId()
                 )
             )
         }
@@ -691,7 +688,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanTransferUserAssetsToken.type),
                 params = mapOf(
-                    ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId()
+                    IdKey.AssetId.type.asName() to assetId.toValueId()
                 )
             )
         }
@@ -705,7 +702,7 @@ object Instructions {
             Token(
                 definitionId = TokenId(Permissions.CanUnregisterAssetWithDefinition.type),
                 params = mapOf(
-                    ASSET_DEFINITION_PARAM_NAME to assetDefinitionId.toValueId()
+                    IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
                 )
             )
         }

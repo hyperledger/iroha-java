@@ -40,11 +40,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
             ROLE_ID,
             Token(
                 TokenId(Permissions.CanSetKeyValueInUserMetadata.type),
-                mapOf("account_id".asName() to ALICE_ACCOUNT_ID.asValue())
+                mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             ),
             Token(
                 TokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
-                mapOf("account_id".asName() to ALICE_ACCOUNT_ID.asValue())
+                mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             )
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID)

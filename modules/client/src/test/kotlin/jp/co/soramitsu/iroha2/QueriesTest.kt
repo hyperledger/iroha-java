@@ -33,7 +33,6 @@ import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
-import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
@@ -388,7 +387,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.let { tokens ->
                 tokens.any {
-                    it.params[ASSET_DEFINITION_PARAM_NAME]
+                    it.params[IdKey.AssetDefinitionId.type.asName()]
                         ?.cast<Value.Id>()
                         ?.idBox
                         ?.cast<IdBox.AssetDefinitionId>()

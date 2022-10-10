@@ -28,7 +28,6 @@ import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import jp.co.soramitsu.iroha2.transaction.ASSET_ID_TOKEN_PARAM_NAME
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
@@ -583,11 +582,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 roleId,
                 Token(
                     TokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                    mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
+                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
                 ),
                 Token(
                     TokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
-                    mapOf(ASSET_ID_TOKEN_PARAM_NAME to assetId.toValueId())
+                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
                 )
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
