@@ -7,9 +7,7 @@ import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
-import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
@@ -20,8 +18,6 @@ import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
-
-private val logger = LoggerFactory.getLogger(IrohaContainer::class.java)
 
 /**
  * Docker container for Iroha
@@ -83,7 +79,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 container.withCommand(command)
             }
             .withImagePullPolicy(config.pullPolicy)
-            .withLogConsumer(Slf4jLogConsumer(logger))
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
@@ -153,8 +148,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "lts-b783f10fa7de26ed1fdd4c526bd162f8636f1a65"
-        const val DEFAULT_IMAGE_NAME = "docker.soramitsu.co.jp/iroha2/iroha2"
+        const val DEFAULT_IMAGE_TAG = "lts@sha256:4b61b866e15039989e689e3403986ebb207628c36d956d2dc99078e19764e212"
+        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"
