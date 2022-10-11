@@ -34,7 +34,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
 
     constructor(config: IrohaConfig) : super(
-        DockerImageName.parse("${config.imageName}@${config.imageTag}")
+        DockerImageName.parse("${config.imageName}:${config.imageTag}")
     ) {
         val publicKey = config.keyPair.public.bytes().toHex()
         val privateKey = config.keyPair.private.bytes().toHex()
@@ -153,7 +153,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "sha256:4b61b866e15039989e689e3403986ebb207628c36d956d2dc99078e19764e212"
+        const val DEFAULT_IMAGE_TAG = "lts-b783f10fa7de26ed1fdd4c526bd162f8636f1a65"
         const val DEFAULT_IMAGE_NAME = "docker.soramitsu.co.jp/iroha2/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
