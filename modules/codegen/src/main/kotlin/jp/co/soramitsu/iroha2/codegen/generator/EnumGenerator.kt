@@ -62,7 +62,6 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
         return codeBlock.add("}").build()
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     override fun implSuperClasses(blueprint: EnumBlueprint, clazz: TypeSpec.Builder) {
         super.implSuperClasses(blueprint, clazz)
         clazz.addSuperinterface(ModelEnum::class)

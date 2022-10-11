@@ -26,7 +26,7 @@ public data class Payload(
     public val instructions: Executable,
     public val creationTime: BigInteger,
     public val timeToLiveMs: BigInteger,
-    public val nonce: Long?,
+    public val nonce: Long? = null,
     public val metadata: Map<Name, Value>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {

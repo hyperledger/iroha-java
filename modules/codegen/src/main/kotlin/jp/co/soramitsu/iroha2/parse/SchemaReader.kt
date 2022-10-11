@@ -73,7 +73,7 @@ class SchemaReader {
             .split('_')
             .joinToString("") { p -> p.replaceFirstChar { it.uppercaseChar() } }
 
-        return when (prefix == className || prefix == "${className.replace("\\W".toRegex())}s") {
+        return when (className.startsWith(prefix) || prefix == "${className.replace("\\W".toRegex())}s") {
             true -> line
             false -> line.replace(className, "$prefix$className")
         }
@@ -108,12 +108,8 @@ class SchemaReader {
                 else -> newName + getFilterEventName(name.substringAfter("<"))
             }
         }
-        val tokens = name.replace(">").split("::")
-        val sb = StringBuilder()
-        for (i in 1 until tokens.size) {
-            sb.append(tokens[i].replaceFirstChar { tokens[i].first().uppercaseChar() })
-        }
-        return sb.toString()
+
+        return name.replace(">").split("::").last()
     }
 
     private fun String.replace(oldValue: String) = this.replace(oldValue, "")

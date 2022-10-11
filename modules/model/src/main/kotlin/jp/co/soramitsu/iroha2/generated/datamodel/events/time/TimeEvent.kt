@@ -15,7 +15,7 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::events::time::TimeEvent' regular structure
  */
 public data class TimeEvent(
-    public val prevInterval: Interval?,
+    public val prevInterval: Interval? = null,
     public val interval: Interval
 ) {
     public companion object : ScaleReader<TimeEvent>, ScaleWriter<TimeEvent> {

@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.role.RoleEventFilter
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.RoleEventFilter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 

@@ -1,8 +1,8 @@
-version: "3"
+version: "3.8"
 
 services:
   iroha:
-    image: hyperledger/iroha2:lts@sha256:4072d09bee376c8fcbc586d35ea25624738694ce2c37aa0db60c9998c613048b
+    image: hyperledger/iroha2:lts@sha256:4b61b866e15039989e689e3403986ebb207628c36d956d2dc99078e19764e212
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
@@ -10,14 +10,13 @@ services:
       IROHA_PUBLIC_KEY: "ed01201c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"
       IROHA_PRIVATE_KEY: '{"digest_function": "ed25519", "payload": "282ed9f3cf92811c3818dbc4ae594ed59dc1a2f78e4241e31924e101d6b1fb831c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"}'
       SUMERAGI_TRUSTED_PEERS: '[{"address":"iroha:1337", "public_key": "ed01201c61faf8fe94e253b93114240394f79a607b7fa55f9e5a41ebec74b88055768b"}]'
-      RUST_BACKTRACE: full
-      MAX_LOG_LEVEL: INFO
-      IROHA2_GENESIS_PATH: genesis.json
-      IROHA2_CONFIG_PATH: config.json
+      IROHA_GENESIS_ACCOUNT_PUBLIC_KEY: 'ed01203f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255'
+      IROHA_GENESIS_ACCOUNT_PRIVATE_KEY: '{ "digest_function": "ed25519", "payload": "038ae16b219da35aa036335ed0a43c28a2cc737150112c78a7b8034b9d99c9023f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255" }'
     ports:
+      - "1337:1337"
       - "8080:8080"
       - "8180:8180"
+    init: true
+    command: iroha --submit-genesis
     volumes:
-      - "../modules/testcontainers/src/main/resources/genesis.json:/genesis.json"
-      - "../modules/testcontainers/src/main/resources/config.json:/config.json"
-    command: ./iroha --submit-genesis
+      - "../modules/test-tools/src/main/resources:/config"

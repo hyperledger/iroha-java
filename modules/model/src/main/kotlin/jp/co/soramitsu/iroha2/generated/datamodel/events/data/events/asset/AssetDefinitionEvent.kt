@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -27,7 +27,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +36,14 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -54,7 +54,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'MintabilityChanged' variant
      */
     public data class MintabilityChanged(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -63,14 +63,14 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MintabilityChanged = try {
                 MintabilityChanged(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MintabilityChanged) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -81,7 +81,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -90,14 +90,14 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Deleted = try {
                 Deleted(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -108,7 +108,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -117,14 +117,14 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -135,7 +135,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -144,14 +144,14 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
@@ -27,7 +26,6 @@ public data class Account(
     public val id: AccountId,
     public val assets: Map<AssetId, Asset>,
     public val signatories: List<PublicKey>,
-    public val permissionTokens: List<PermissionToken>,
     public val signatureCheckCondition: SignatureCheckCondition,
     public val metadata: Metadata,
     public val roles: List<RoleId>
@@ -38,7 +36,6 @@ public data class Account(
                 AccountId.read(reader),
                 reader.readMap(reader.readCompactInt(), { AssetId.read(reader) }, { Asset.read(reader) }),
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
-                reader.readVec(reader.readCompactInt()) { PermissionToken.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),
                 reader.readVec(reader.readCompactInt()) { RoleId.read(reader) },
@@ -61,12 +58,6 @@ public data class Account(
                 PublicKey.comparator()
             ).forEach { value ->
                 PublicKey.write(writer, value)
-            }
-            writer.writeCompact(instance.permissionTokens.size)
-            instance.permissionTokens.sortedWith(
-                PermissionToken.comparator()
-            ).forEach { value ->
-                PermissionToken.write(writer, value)
             }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)

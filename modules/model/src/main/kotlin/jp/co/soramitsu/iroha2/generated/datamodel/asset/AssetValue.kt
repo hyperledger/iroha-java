@@ -83,7 +83,7 @@ public sealed class AssetValue : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val fixed: jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed
+        public val fixed: jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
     ) : AssetValue() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -92,14 +92,14 @@ public sealed class AssetValue : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Fixed = try {
                 Fixed(
-                    jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.read(reader),
+                    jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
-                jp.co.soramitsu.iroha2.generated.dataprimitives.fixed.Fixed.write(writer, instance.fixed)
+                jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.write(writer, instance.fixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
