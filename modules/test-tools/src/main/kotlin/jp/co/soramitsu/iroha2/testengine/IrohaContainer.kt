@@ -7,7 +7,9 @@ import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
+import org.slf4j.LoggerFactory
 import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
@@ -18,6 +20,8 @@ import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.absolute
+
+private val logger = LoggerFactory.getLogger(IrohaContainer::class.java)
 
 /**
  * Docker container for Iroha
@@ -79,6 +83,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 container.withCommand(command)
             }
             .withImagePullPolicy(config.pullPolicy)
+            .withLogConsumer(Slf4jLogConsumer(logger))
             .also { container ->
                 if (config.waitStrategy) {
                     container.waitingFor(
