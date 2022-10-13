@@ -17,7 +17,7 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class NewDomain(
     public val id: DomainId,
-    public val logo: IpfsPath?,
+    public val logo: IpfsPath? = null,
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<NewDomain>, ScaleWriter<NewDomain> {

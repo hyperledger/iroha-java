@@ -11,13 +11,15 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.ValidatorId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -65,7 +67,7 @@ public sealed class FindError : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val assetDefinitionId: AssetDefinitionId
+        public val definitionId: DefinitionId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -74,14 +76,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
-                    AssetDefinitionId.read(reader),
+                    DefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                AssetDefinitionId.write(writer, instance.assetDefinitionId)
+                DefinitionId.write(writer, instance.definitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -200,7 +202,7 @@ public sealed class FindError : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val hashOf: HashOf<VersionedTransaction>
+        public val hashOf: HashOf<VersionedSignedTransaction>
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -209,7 +211,7 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Transaction = try {
                 Transaction(
-                    HashOf.read(reader) as HashOf<VersionedTransaction>,
+                    HashOf.read(reader) as HashOf<VersionedSignedTransaction>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -331,6 +333,62 @@ public sealed class FindError : ModelEnum {
         }
     }
 
+    /**
+     * 'PermissionTokenDefinition' variant
+     */
+    public data class PermissionTokenDefinition(
+        public val tokenId: TokenId
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<PermissionTokenDefinition>,
+            ScaleWriter<PermissionTokenDefinition> {
+            public const val DISCRIMINANT: Int = 11
+
+            public override fun read(reader: ScaleCodecReader): PermissionTokenDefinition = try {
+                PermissionTokenDefinition(
+                    TokenId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenDefinition) = try {
+                TokenId.write(writer, instance.tokenId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Validator' variant
+     */
+    public data class Validator(
+        public val validatorId: ValidatorId
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Validator>, ScaleWriter<Validator> {
+            public const val DISCRIMINANT: Int = 12
+
+            public override fun read(reader: ScaleCodecReader): Validator = try {
+                Validator(
+                    ValidatorId.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Validator) = try {
+                ValidatorId.write(writer, instance.validatorId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<FindError>, ScaleWriter<FindError> {
         public override fun read(reader: ScaleCodecReader): FindError = when (
             val discriminant =
@@ -347,6 +405,8 @@ public sealed class FindError : ModelEnum {
             8 -> Peer.read(reader)
             9 -> Trigger.read(reader)
             10 -> Role.read(reader)
+            11 -> PermissionTokenDefinition.read(reader)
+            12 -> Validator.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -364,6 +424,8 @@ public sealed class FindError : ModelEnum {
                 8 -> Peer.write(writer, instance as Peer)
                 9 -> Trigger.write(writer, instance as Trigger)
                 10 -> Role.write(writer, instance as Role)
+                11 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
+                12 -> Validator.write(writer, instance as Validator)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

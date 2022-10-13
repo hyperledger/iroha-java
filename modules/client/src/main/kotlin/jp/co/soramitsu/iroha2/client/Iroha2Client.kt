@@ -42,7 +42,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequ
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
@@ -128,17 +128,16 @@ open class Iroha2Client(
 
     /**
      * Send a request to Iroha2 and extract payload.
-     * {@see Extractors}
      */
     suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
-        val page = sendQueryWithPagination(queryAndExtractor, null)
+        val page = sendQuery(queryAndExtractor, null)
         return page.data
     }
 
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
-    suspend fun <T> sendQueryWithPagination(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
+    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
@@ -158,12 +157,12 @@ open class Iroha2Client(
      * With this method, the state of the transaction is not tracked after the peer responses with 2xx status code,
      * which means that the peer accepted the transaction and the transaction passed the stateless validation.
      */
-    suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedTransaction): ByteArray {
+    suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedSignedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
         val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
-            setBody(VersionedTransaction.encode(signedTransaction))
+            setBody(VersionedSignedTransaction.encode(signedTransaction))
         }
         response.body<Unit>()
         return hash
@@ -173,7 +172,7 @@ open class Iroha2Client(
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     suspend fun sendTransaction(
-        transaction: TransactionBuilder.() -> VersionedTransaction
+        transaction: TransactionBuilder.() -> VersionedSignedTransaction
     ): CompletableDeferred<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
 
@@ -253,11 +252,13 @@ open class Iroha2Client(
                             logger.debug("Transaction {} committed", hexHash)
                             return hash
                         }
+
                         is Status.Rejected -> {
                             val reason = status.rejectionReason.message()
                             logger.error("Transaction {} was rejected by reason: `{}`", hexHash, reason)
                             throw TransactionRejectedException("Transaction rejected with reason '$reason'")
                         }
+
                         is Status.Validating -> {
                             logger.debug("Transaction {} is validating", hexHash)
                         }
@@ -265,6 +266,7 @@ open class Iroha2Client(
                 }
                 return null
             }
+
             else -> throw WebSocketProtocolException(
                 "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
                     "but was ${event::class.qualifiedName}"
@@ -290,16 +292,20 @@ open class Iroha2Client(
             is RejectionReason.Block -> when (this.blockRejectionReason) {
                 is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
             }
+
             is RejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
                 is TransactionRejectionReason.InstructionExecution -> {
                     val details = reason.instructionExecutionFail
                     "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
                 }
+
                 is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
                 is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                     "Genesis account can sign only transactions in the genesis block"
+
                 is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
                     reason.unsatisfiedSignatureConditionFail.reason
+
                 is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
                 is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.string
             }
@@ -320,11 +326,13 @@ open class Iroha2Client(
                                 "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
                             )
                     }
+
                     else -> throw WebSocketProtocolException(
                         "Expected `${VersionedEventSubscriberMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
                     )
                 }
             }
+
             else -> throw WebSocketProtocolException(
                 "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`"
             )

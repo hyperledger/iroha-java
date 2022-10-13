@@ -1,3 +1,4 @@
 build/
 .idea/
 .gradle/
+/test-smart-contract/target/

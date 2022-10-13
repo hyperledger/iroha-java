@@ -135,6 +135,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         for ((name, type) in blueprint.properties) {
             constructorBuilder.addParameter(
                 ParameterSpec.builder(name, type)
+                    .let { it.takeIf { type.isNullable }?.defaultValue("null") ?: it }
                     .build()
             )
             clazz.addProperty(

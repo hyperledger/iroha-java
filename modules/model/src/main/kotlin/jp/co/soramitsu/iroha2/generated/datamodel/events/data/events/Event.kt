@@ -13,6 +13,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.Ass
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain.DomainEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.peer.PeerEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.permission.PermissionTokenEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.permission.PermissionValidatorEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.RoleEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.trigger.TriggerEvent
 import jp.co.soramitsu.iroha2.wrapException
@@ -218,6 +220,60 @@ public sealed class Event : ModelEnum {
         }
     }
 
+    /**
+     * 'PermissionToken' variant
+     */
+    public data class PermissionToken(
+        public val permissionTokenEvent: PermissionTokenEvent
+    ) : Event() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): PermissionToken = try {
+                PermissionToken(
+                    PermissionTokenEvent.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
+                PermissionTokenEvent.write(writer, instance.permissionTokenEvent)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'PermissionValidator' variant
+     */
+    public data class PermissionValidator(
+        public val permissionValidatorEvent: PermissionValidatorEvent
+    ) : Event() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PermissionValidator>, ScaleWriter<PermissionValidator> {
+            public const val DISCRIMINANT: Int = 8
+
+            public override fun read(reader: ScaleCodecReader): PermissionValidator = try {
+                PermissionValidator(
+                    PermissionValidatorEvent.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionValidator) = try {
+                PermissionValidatorEvent.write(writer, instance.permissionValidatorEvent)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = when (
             val discriminant =
@@ -230,6 +286,8 @@ public sealed class Event : ModelEnum {
             4 -> Asset.read(reader)
             5 -> Trigger.read(reader)
             6 -> Role.read(reader)
+            7 -> PermissionToken.read(reader)
+            8 -> PermissionValidator.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -243,6 +301,8 @@ public sealed class Event : ModelEnum {
                 4 -> Asset.write(writer, instance as Asset)
                 5 -> Trigger.write(writer, instance as Trigger)
                 6 -> Role.write(writer, instance as Role)
+                7 -> PermissionToken.write(writer, instance as PermissionToken)
+                8 -> PermissionValidator.write(writer, instance as PermissionValidator)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

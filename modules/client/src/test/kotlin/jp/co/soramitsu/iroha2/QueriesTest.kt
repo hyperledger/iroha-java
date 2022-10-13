@@ -1,26 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.engine.ALICE_ACCOUNT_NAME
-import jp.co.soramitsu.iroha2.engine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.engine.AliceHas100XorAndPermissionToBurn
-import jp.co.soramitsu.iroha2.engine.AliceHasRoleWithAccessToBobsMetadata
-import jp.co.soramitsu.iroha2.engine.AliceWithTestAssets
-import jp.co.soramitsu.iroha2.engine.BOB_ACCOUNT_NAME
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_ASSET_ID
-import jp.co.soramitsu.iroha2.engine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.engine.DefaultGenesis
-import jp.co.soramitsu.iroha2.engine.IrohaTest
-import jp.co.soramitsu.iroha2.engine.NewAccountWithMetadata
-import jp.co.soramitsu.iroha2.engine.NewDomain
-import jp.co.soramitsu.iroha2.engine.NewDomainWithMetadata
-import jp.co.soramitsu.iroha2.engine.StoreAssetWithMetadata
-import jp.co.soramitsu.iroha2.engine.TEST_ASSET_DEFINITION_ID
-import jp.co.soramitsu.iroha2.engine.WithExecutableTrigger
-import jp.co.soramitsu.iroha2.engine.WithIroha
-import jp.co.soramitsu.iroha2.engine.XorAndValAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
@@ -28,14 +8,35 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Container
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
-import jp.co.soramitsu.iroha2.transaction.ASSET_DEFINITION_PARAM_NAME
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
+import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
+import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
+import jp.co.soramitsu.iroha2.testengine.NewDomain
+import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
+import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
+import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -254,6 +255,34 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @WithIroha(StoreAssetWithMetadata::class)
+    @Disabled // https://github.com/hyperledger/iroha/issues/2697
+    fun `find asset by metadata filters`(): Unit = runBlocking {
+        val filter = PredicateBox.Raw(
+            Predicate.Container(
+                Container.ValueOfKey(
+                    ValueOfKey(
+                        StoreAssetWithMetadata.ASSET_KEY,
+                        Predicate.Identifiable(
+                            jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.Is(
+                                StoreAssetWithMetadata.ASSET_VALUE.string
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        QueryBuilder.findAllAssets(filter)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also {
+                assert(it.isNotEmpty())
+            }
+    }
+
+    @Test
     @WithIroha(AliceHas100XorAndPermissionToBurn::class)
     fun `find asset definition by ID`(): Unit = runBlocking {
         QueryBuilder.findAssetDefinitionById(DEFAULT_ASSET_DEFINITION_ID)
@@ -325,7 +354,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     fun `find transactions by account id`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
         }
 
@@ -337,9 +366,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }.let { txValues ->
                 txValues.all { value ->
                     value.cast<TransactionValue.Transaction>()
-                        .versionedTransaction
-                        .cast<VersionedTransaction.V1>()
-                        .transaction
+                        .versionedSignedTransaction
+                        .cast<VersionedSignedTransaction.V1>()
+                        .signedTransaction
                         .payload
                         .accountId == ALICE_ACCOUNT_ID
                 }
@@ -358,11 +387,11 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.let { tokens ->
                 tokens.any {
-                    it.params[ASSET_DEFINITION_PARAM_NAME]
+                    it.params[IdKey.AssetDefinitionId.type.asName()]
                         ?.cast<Value.Id>()
                         ?.idBox
                         ?.cast<IdBox.AssetDefinitionId>()
-                        ?.assetDefinitionId == DEFAULT_ASSET_DEFINITION_ID
+                        ?.definitionId == DEFAULT_ASSET_DEFINITION_ID
                 }
             }.also {
                 assert(it)
@@ -374,7 +403,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     fun `find transaction by hash`(): Unit = runBlocking {
         val hash = client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            registerAsset(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
         }.let { d ->
             withTimeout(txTimeout) { d.await() }
@@ -385,7 +414,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .cast<TransactionValue.Transaction>()
-            .versionedTransaction.hash()
+            .versionedSignedTransaction.hash()
             .also { assertContentEquals(hash, it) }
     }
 
@@ -436,7 +465,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         var accounts = QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQueryWithPagination(query, page) }
+            .let { query -> client.sendQuery(query, page) }
         assertEquals(3, accounts.data.size)
         assertEquals(page, accounts.pagination)
         assertEquals(3, accounts.total.toInt())
@@ -448,7 +477,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         accounts = QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQueryWithPagination(query, page) }
+            .let { query -> client.sendQuery(query, page) }
         assertEquals(2, accounts.data.size)
         assertEquals(page, accounts.pagination)
         assertEquals(5, accounts.total.toInt())
@@ -553,7 +582,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha(AliceWithTestAssets::class)
     fun `find asset definitions with or filter`(): Unit = runBlocking {
-        val filter = QueryFilters.or(listOf("${TEST_ASSET_DEFINITION_ID.name.string}#${TEST_ASSET_DEFINITION_ID.domainId.name.string}"))
+        val definitionId = AliceWithTestAssets.TEST_ASSET_DEFINITION_ID
+        val filter =
+            QueryFilters.or(listOf("${definitionId.name.string}#${definitionId.domainId.name.string}"))
         QueryBuilder.findAllAssetsDefinitions(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -561,7 +592,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.also { assets ->
                 assertEquals(1, assets.size)
-                assertEquals(TEST_ASSET_DEFINITION_ID, assets[0].id)
+                assertEquals(definitionId, assets[0].id)
             }
     }
 
