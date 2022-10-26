@@ -50,11 +50,20 @@ import kotlin.test.assertTrue
 
 class InstructionsTest : IrohaTest<Iroha2Client>() {
 
+    /**
+     * Using for docs generation
+     */
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register domain instruction committed`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
-        client.tx { registerDomain(domainId) }
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerDomain(domainId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
 
         QueryBuilder.findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
@@ -63,11 +72,20 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .also { result -> assertEquals(result.id, domainId) }
     }
 
+    /**
+     * Using for docs generation
+     */
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
-        client.tx { registerAccount(newAccountId, listOf()) }
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAccount(newAccountId, listOf())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
 
         QueryBuilder.findAccountById(newAccountId)
             .account(ALICE_ACCOUNT_ID)
@@ -170,11 +188,18 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(cityValue, accountMetadata.map[cityKey])
     }
 
+    /**
+     * Using for docs generation
+     */
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `register asset instruction committed`(): Unit = runBlocking {
-        client.tx {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
         val assetDefinitions = QueryBuilder.findAllAssetsDefinitions()
             .account(ALICE_ACCOUNT_ID)
@@ -259,12 +284,19 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
+    /**
+     * Using for docs generation
+     */
     @Test
     @WithIroha(DefaultGenesis::class)
     fun `mint asset instruction committed`(): Unit = runBlocking {
-        client.tx {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             mintAsset(DEFAULT_ASSET_ID, 5)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
         }
 
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
@@ -272,7 +304,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { result ->
-                assertEquals(5, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+                assertEquals(5, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
             }
     }
 
