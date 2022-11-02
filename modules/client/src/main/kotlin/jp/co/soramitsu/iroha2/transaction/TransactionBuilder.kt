@@ -220,9 +220,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         id: AccountId
     ) = this.apply {
         instructions.value.add(
-            Instructions.unregisterAccount(
-                id
-            )
+            Instructions.unregisterAccount(id)
         )
     }
 
@@ -230,9 +228,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         id: DomainId
     ) = this.apply {
         instructions.value.add(
-            Instructions.unregisterDomain(
-                id
-            )
+            Instructions.unregisterDomain(id)
         )
     }
 
