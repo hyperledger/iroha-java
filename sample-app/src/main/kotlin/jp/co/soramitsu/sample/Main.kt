@@ -1,6 +1,5 @@
 package jp.co.soramitsu.sample
 
-import jp.co.soramitsu.iroha2.asAssetDefinitionId
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asString
@@ -31,7 +30,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     helper.registerAssetDefinition(assetDefinition, AssetValueType.Store())
         .also { println("ASSET DEFINITION $assetDefinition CREATED") }
 
-    val asset = "${assetDefinition.asAssetDefinitionId().name.string}##$account"
+    val asset = "$assetDefinition#$account"
     helper.registerAsset(asset, AssetValue.Store(Metadata(mapOf())))
         .also { println("ASSET $asset CREATED") }
 
