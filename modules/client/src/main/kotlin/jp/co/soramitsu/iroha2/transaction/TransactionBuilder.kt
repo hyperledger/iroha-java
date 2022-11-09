@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.DigestFunction
 import jp.co.soramitsu.iroha2.IdKey
+import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
@@ -204,29 +205,23 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
-    @JvmOverloads
-    fun unregisterTrigger(
-        triggerName: String
-    ) = this.apply {
+    fun unregisterAsset(id: AssetId) = this.apply {
+        instructions.value.add(Instructions.unregisterAsset(id))
+    }
+
+    fun unregisterTrigger(triggerName: String) = this.apply {
         instructions.value.add(
-            Instructions.unregisterTrigger(
-                triggerName
-            )
+            Instructions.unregisterTrigger(triggerName)
         )
     }
 
-    @JvmOverloads
-    fun unregisterAccount(
-        id: AccountId
-    ) = this.apply {
+    fun unregisterAccount(id: AccountId) = this.apply {
         instructions.value.add(
             Instructions.unregisterAccount(id)
         )
     }
 
-    fun unregisterDomain(
-        id: DomainId
-    ) = this.apply {
+    fun unregisterDomain(id: DomainId) = this.apply {
         instructions.value.add(
             Instructions.unregisterDomain(id)
         )
@@ -320,6 +315,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
+    fun registerPermissionToken(permission: Permissions, idKey: IdKey) = this.apply {
+        instructions.value.add(
+            Instructions.registerPermissionToken(permission, idKey)
+        )
+    }
+
     fun registerPermissionToken(name: Name, idKey: IdKey) = this.apply {
         registerPermissionToken(name, idKey.type)
     }
@@ -362,14 +363,45 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
 
-    fun grantSetKeyValueAccount(accountId: AccountId, target: AccountId) =
+    fun grantRemoveKeyValueAsset(assetId: AssetId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.grantRemoveKeyValueAsset(assetId, target)) }
+
+    fun grantSetKeyValueMetadata(accountId: AccountId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueMetadata(accountId, target)) }
 
-    fun grantMintUserAssetsDefinition(assetDefinitionId: DefinitionId, target: AccountId) =
+    fun grantMintUserAssetDefinitions(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantMintUserAssetDefinitions(assetDefinitionId, target)) }
 
     fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
+
+    fun grantSetKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantSetKeyValueAssetDefinition(assetDefinitionId, target))
+    }
+
+    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantRemoveKeyValueAssetDefinition(assetDefinitionId, target))
+    }
+
+    fun grantTransferOnlyFixedNumberOfTimesPerPeriod(period: BigInteger, count: Long, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantTransferOnlyFixedNumberOfTimesPerPeriod(period, count, target))
+    }
+
+    fun grantBurnAssets(assetId: AssetId, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantBurnAssets(assetId, target))
+    }
+
+    fun grantRegisterDomains(target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantRegisterDomains(target))
+    }
+
+    fun grantTransferUserAsset(assetId: AssetId, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantTransferUserAsset(assetId, target))
+    }
+
+    fun grantUnregisterAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantUnregisterAssetDefinition(assetDefinitionId, target))
+    }
 
     fun burnAsset(assetId: AssetId, value: Long) = this.apply {
         instructions.value.add(Instructions.burnAsset(assetId, value))
