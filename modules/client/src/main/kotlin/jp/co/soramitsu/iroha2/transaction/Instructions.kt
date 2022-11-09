@@ -116,6 +116,10 @@ object Instructions {
         }
     }
 
+    fun registerPermissionToken(permission: Permissions, idKey: IdKey): Instruction.Register {
+        return registerPermissionToken(permission.type, idKey.type)
+    }
+
     fun registerPermissionToken(name: Name, idKey: IdKey): Instruction.Register {
         return registerPermissionToken(name, idKey.type)
     }
@@ -277,21 +281,24 @@ object Instructions {
     }
 
     /**
+     * Unregister an asset
+     */
+    fun unregisterAsset(id: AssetId): Instruction.Unregister {
+        return unregisterSome { IdBox.AssetId(id) }
+    }
+
+    /**
      * Unregister an account
      */
     fun unregisterAccount(id: AccountId): Instruction.Unregister {
-        return unregisterSome {
-            IdBox.AccountId(id)
-        }
+        return unregisterSome { IdBox.AccountId(id) }
     }
 
     /**
      * Unregister a domain
      */
     fun unregisterDomain(id: DomainId): Instruction.Unregister {
-        return unregisterSome {
-            IdBox.DomainId(id)
-        }
+        return unregisterSome { IdBox.DomainId(id) }
     }
 
     /**
@@ -331,11 +338,7 @@ object Instructions {
     ): Instruction.Register {
         return registerSome {
             RegistrableBox.Domain(
-                NewDomain(
-                    domainId,
-                    logo,
-                    Metadata(metadata)
-                )
+                NewDomain(domainId, logo, Metadata(metadata))
             )
         }
     }
@@ -372,10 +375,7 @@ object Instructions {
     ): Instruction.Unregister {
         return unregisterSome {
             IdBox.PeerId(
-                PeerId(
-                    address,
-                    PublicKey(digestFunction, payload)
-                )
+                PeerId(address, PublicKey(digestFunction, payload))
             )
         }
     }
@@ -474,10 +474,7 @@ object Instructions {
         assetId: AssetId,
         quantity: Long
     ): Instruction.Mint {
-        return mintSome(
-            Value.U32(quantity),
-            assetId
-        )
+        return mintSome(Value.U32(quantity), assetId)
     }
 
     /**
@@ -487,10 +484,7 @@ object Instructions {
         assetId: AssetId,
         quantity: BigDecimal
     ): Instruction.Mint {
-        return mintSome(
-            Value.Fixed(Fixed(quantity)),
-            assetId
-        )
+        return mintSome(Value.Fixed(Fixed(quantity)), assetId)
     }
 
     /**
