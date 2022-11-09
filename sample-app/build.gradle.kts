@@ -10,12 +10,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-//    maven {
-//        url = uri("https://nexus.iroha.tech/repository/maven-soramitsu/")
-//        metadataSources {
-//            artifact()
-//        }
-//    }
     maven(url = "https://jitpack.io")
 }
 
@@ -28,10 +22,6 @@ dependencies {
     api("com.github.hyperledger.iroha-java:admin-client:$iroha2Ver")
     implementation("com.github.hyperledger.iroha-java:model:$iroha2Ver")
     implementation("com.github.hyperledger.iroha-java:block:$iroha2Ver")
-
-//    api("jp.co.soramitsu.iroha2-java:admin-client:$iroha2Ver")
-//    api("jp.co.soramitsu.iroha2-java:model:$iroha2Ver")
-//    api("jp.co.soramitsu.iroha2-java:block:$iroha2Ver")
 
     implementation("net.i2p.crypto:eddsa:0.3.0")
     implementation("org.bouncycastle:bcprov-jdk15on:1.65")
