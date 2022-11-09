@@ -1,13 +1,17 @@
 package jp.co.soramitsu.sample
 
 import jp.co.soramitsu.iroha2.AdminIroha2Client
+import jp.co.soramitsu.iroha2.IdKey
+import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asAssetDefinitionId
 import jp.co.soramitsu.iroha2.asAssetId
 import jp.co.soramitsu.iroha2.asDomainId
+import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
@@ -15,6 +19,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
+import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.withTimeout
 import java.net.URL
 import java.security.KeyPair
@@ -29,7 +34,12 @@ class Helper(
 
     private val client = AdminIroha2Client(URL(peerUrl), URL(telemetryUrl), log = true)
 
-    suspend fun registerDomain(id: String, metadata: Map<Name, Value> = mapOf()) {
+    suspend fun registerDomain(
+        id: String,
+        metadata: Map<Name, Value> = mapOf(),
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
         client.sendTransaction {
             account(admin)
             this.registerDomain(id.asDomainId(), metadata)
@@ -42,7 +52,9 @@ class Helper(
     suspend fun registerAccount(
         id: String,
         signatories: List<PublicKey>,
-        metadata: Map<Name, Value> = mapOf()
+        metadata: Map<Name, Value> = mapOf(),
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
     ) {
         client.sendTransaction {
             account(admin)
@@ -57,7 +69,9 @@ class Helper(
         id: String,
         type: AssetValueType = AssetValueType.Store(),
         metadata: Map<Name, Value> = mapOf(),
-        mintable: Mintable = Mintable.Infinitely()
+        mintable: Mintable = Mintable.Infinitely(),
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
     ) {
         client.sendTransaction {
             account(admin)
@@ -68,7 +82,12 @@ class Helper(
         }
     }
 
-    suspend fun registerAsset(id: String, value: AssetValue) {
+    suspend fun registerAsset(
+        id: String,
+        value: AssetValue,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
         client.sendTransaction {
             account(admin)
             this.registerAsset(id.asAssetId(), value)
@@ -76,6 +95,59 @@ class Helper(
         }.also {
             withTimeout(timeout) { it.await() }
         }
+    }
+
+    suspend fun transferAsset(
+        from: String,
+        value: Long,
+        to: String,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+            this.transferAsset(from.asAssetId(), value, to.asAssetId())
+            buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
+        }
+    }
+
+    suspend fun unregisterAsser(
+        id: AssetId,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+//            this.unregisterAccount()
+            buildSigned(keyPair)
+        }
+    }
+
+    suspend fun grantTransferUserAsset(
+        assetId: String,
+        target: AccountId,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+            registerPermissionToken(Permissions.CanTransferUserAssetsToken.type, IdKey.AssetId)
+            Instructions.grantTransferUserAsset(assetId.asAssetId(), target) // todo
+            buildSigned(keyPair)
+        }
+    }
+
+    suspend fun getAccountAmount(accountId: String, assetId: String): Long {
+        return QueryBuilder.findAccountById(accountId.asAccountId())
+            .account(admin)
+            .buildSigned(keyPair)
+            .let { query ->
+                client.sendQuery(query).assets[assetId.asAssetId()]?.value
+            }.let { value ->
+                value?.cast<AssetValue.Quantity>()?.u32
+            } ?: throw RuntimeException("NOT FOUND")
     }
 
     suspend fun findAllDomains(queryFilter: PredicateBox? = null) = QueryBuilder

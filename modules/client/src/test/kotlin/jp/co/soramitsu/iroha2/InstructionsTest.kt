@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
@@ -110,6 +111,32 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertThrows<IrohaClientException> {
             runBlocking {
                 QueryBuilder.findAccountById(newAccountId)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
+    @Test
+    @WithIroha(DefaultGenesis::class)
+    fun `register and unregister asset instruction committed`(): Unit = runBlocking {
+        val definitionId = DefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
+        client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
+
+        val assetId = AssetId(definitionId, ALICE_ACCOUNT_ID)
+        client.tx { registerAsset(assetId, AssetValue.Quantity(0)) }
+
+        QueryBuilder.findAssetById(assetId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { asset -> assertEquals(asset.id, assetId) }
+
+        client.tx { unregisterAsset(assetId) }
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAssetById(assetId)
                     .account(ALICE_ACCOUNT_ID)
                     .buildSigned(ALICE_KEYPAIR)
                     .let { query -> client.sendQuery(query) }
@@ -397,7 +424,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
             registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, IdKey.AccountId)
-            grantSetKeyValueAccount(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
+            grantSetKeyValueMetadata(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
