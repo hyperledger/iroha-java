@@ -46,10 +46,17 @@ fun String.asAssetDefinitionId() = this.split(ASSET_ID_DELIMITER).takeIf {
 } ?: throw IllegalArgumentException("Incorrect asset definition ID: $this")
 
 fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
-    it.size == 2
+    it.size == 3
 }?.let { parts ->
-    parts[1].asAccountId().let { accountId ->
-        AssetId(DefinitionId(parts[0].asName(), accountId.domainId), accountId)
+    parts[2].asAccountId().let { accountId ->
+        val domainId = parts[1].takeIf { it.isNotBlank() }?.asDomainId()
+        AssetId(
+            DefinitionId(
+                parts[0].asName(),
+                domainId ?: accountId.domainId
+            ),
+            accountId
+        )
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
