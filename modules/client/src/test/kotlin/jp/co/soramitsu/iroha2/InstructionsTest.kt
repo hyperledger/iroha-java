@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
@@ -452,8 +453,29 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(100, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
         client.tx { transferAsset(aliceAssetId, 40, bobAssetId) }
+        assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(140, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
-        // check balance after transfer
+        client.tx(account = BOB_ACCOUNT_ID, keyPair = BOB_KEYPAIR) {
+            transferAsset(bobAssetId, 40, aliceAssetId)
+        }
+        assertEquals(100, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
+        assertEquals(100, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
+
+        val joeDomain = "joe_domain".asDomainId()
+        client.tx { registerDomain(joeDomain) }
+
+        val joeId = AccountId("joe".asName(), joeDomain)
+        val joeKeyPair = generateKeyPair()
+        registerAccount(joeId, joeKeyPair.public.toIrohaPublicKey())
+
+        client.tx {
+            registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId)
+            grantTransferUserAsset(aliceAssetId, joeId)
+        }
+        client.tx(account = joeId, keyPair = joeKeyPair) {
+            transferAsset(aliceAssetId, 40, bobAssetId)
+        }
         assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
         assertEquals(140, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
     }
@@ -664,6 +686,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                         .containsValue("value".asValue())
                 )
             }
+    }
+
+    private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
+        client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAccount(id, listOf(publicKey))
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
     }
 
     private suspend fun getAccountAmount(

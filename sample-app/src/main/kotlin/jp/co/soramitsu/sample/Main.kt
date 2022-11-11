@@ -62,4 +62,13 @@ fun main(args: Array<String>): Unit = runBlocking {
         .also { println("$joe TRANSFERRED FROM $joeAsset TO $carlAsset: 10") }
     helper.getAccountAmount(joe, joeAsset).also { println("$joeAsset BALANCE: $it") }
     helper.getAccountAmount(carl, carlAsset).also { println("$carlAsset BALANCE: $it") }
+
+    helper.grantTransferUserAsset(joeAsset, admin, joe.asAccountId(), joeKeyPair)
+    helper.transferAsset(joeAsset, 10, carlAsset, admin, adminKeyPair)
+        .also { println("${admin.asString()} TRANSFERRED FROM $joeAsset TO $carlAsset: 10") }
+
+    helper.grantBurnAssets(joeAsset, admin, joe.asAccountId(), joeKeyPair)
+    helper.unregisterAsset(joeAsset).also { println("ASSET $joeAsset UNREGISTERED") }
+    helper.unregisterAccount(joe).also { println("ACCOUNT $joe UNREGISTERED") }
+    helper.unregisterDomain(domain).also { println("DOMAIN $domain UNREGISTERED") }
 }

@@ -11,7 +11,6 @@ import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
@@ -19,7 +18,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
-import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.withTimeout
 import java.net.URL
 import java.security.KeyPair
@@ -113,15 +111,61 @@ class Helper(
         }
     }
 
-    suspend fun unregisterAsser(
-        id: AssetId,
+    suspend fun unregisterDomain(
+        id: String,
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair
     ) {
         client.sendTransaction {
             account(admin)
-//            this.unregisterAccount()
+            unregisterDomain(id.asDomainId())
             buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
+        }
+    }
+
+    suspend fun unregisterAccount(
+        id: String,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+            unregisterAccount(id.asAccountId())
+            buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
+        }
+    }
+
+    suspend fun unregisterAsset(
+        id: String,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+            unregisterAsset(id.asAssetId())
+            buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
+        }
+    }
+
+    suspend fun grantBurnAssets(
+        assetId: String,
+        target: AccountId,
+        admin: AccountId = this.admin,
+        keyPair: KeyPair = this.keyPair
+    ) {
+        client.sendTransaction {
+            account(admin)
+            registerPermissionToken(Permissions.CanBurnUserAssetsToken.type, IdKey.AssetId)
+            grantBurnAssets(assetId.asAssetId(), target)
+            buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
         }
     }
 
@@ -134,8 +178,10 @@ class Helper(
         client.sendTransaction {
             account(admin)
             registerPermissionToken(Permissions.CanTransferUserAssetsToken.type, IdKey.AssetId)
-            Instructions.grantTransferUserAsset(assetId.asAssetId(), target) // todo
+            grantTransferUserAsset(assetId.asAssetId(), target)
             buildSigned(keyPair)
+        }.also {
+            withTimeout(timeout) { it.await() }
         }
     }
 
@@ -182,6 +228,12 @@ class Helper(
 
     suspend fun findAssetById(id: String) = QueryBuilder
         .findAssetById(id.asAssetId())
+        .account(admin)
+        .buildSigned(keyPair)
+        .let { client.sendQuery(it) }
+
+    suspend fun findAllTransactions() = QueryBuilder
+        .findAllTransactions()
         .account(admin)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
