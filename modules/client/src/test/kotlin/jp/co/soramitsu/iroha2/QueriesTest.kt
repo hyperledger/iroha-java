@@ -42,7 +42,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as PredicateValue
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as QueryPredicate
 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
@@ -67,16 +67,12 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             listOf(
                 PredicateBox.Raw(
                     Predicate.Identifiable(
-                        PredicateValue.Is(
-                            "alice@wonderland"
-                        )
+                        QueryPredicate.Is("alice@wonderland")
                     )
                 ),
                 PredicateBox.Raw(
                     Predicate.Identifiable(
-                        PredicateValue.Is(
-                            "bob@wonderland"
-                        )
+                        QueryPredicate.Is("bob@wonderland")
                     )
                 )
             )
@@ -583,8 +579,11 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @WithIroha(AliceWithTestAssets::class)
     fun `find asset definitions with or filter`(): Unit = runBlocking {
         val definitionId = AliceWithTestAssets.TEST_ASSET_DEFINITION_ID
-        val filter =
-            QueryFilters.or(listOf("${definitionId.name.string}#${definitionId.domainId.name.string}"))
+        val filter = QueryFilters.or(
+            QueryPredicate.Is(
+                "${definitionId.name.string}#${definitionId.domainId.name.string}"
+            )
+        )
         QueryBuilder.findAllAssetsDefinitions(filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

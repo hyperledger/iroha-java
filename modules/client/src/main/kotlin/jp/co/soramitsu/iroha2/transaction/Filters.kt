@@ -400,7 +400,7 @@ object QueryFilters {
     /**
      * Filter for multiple matches (OR)
      */
-    fun or(predicates: List<QueryPredicate>): PredicateBox.Or {
+    fun or(vararg predicates: QueryPredicate): PredicateBox.Or {
         return PredicateBox.Or(
             predicates.map { predicate ->
                 PredicateBox.Raw(Predicate.Identifiable(predicate))
@@ -411,7 +411,7 @@ object QueryFilters {
     /**
      * Filter for multiple matches (AND)
      */
-    fun and(predicates: List<QueryPredicate>): PredicateBox.And {
+    fun and(vararg predicates: QueryPredicate): PredicateBox.And {
         return PredicateBox.And(
             predicates.map { predicate ->
                 PredicateBox.Raw(Predicate.Identifiable(predicate))
