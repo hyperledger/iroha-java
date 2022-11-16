@@ -270,6 +270,17 @@ object Instructions {
      * Unregister a trigger
      */
     fun unregisterTrigger(
+        id: TriggerId
+    ): Instruction.Unregister {
+        return unregisterSome {
+            IdBox.TriggerId(id)
+        }
+    }
+
+    /**
+     * Unregister a trigger
+     */
+    fun unregisterTrigger(
         triggerName: String,
         domainId: DomainId? = null
     ): Instruction.Unregister {

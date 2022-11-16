@@ -362,35 +362,59 @@ object EventFilters {
 object QueryFilters {
 
     /**
-     * Create a starts with filter
+     * Starts with filter
      */
-    fun startsWith(
-        id: String
-    ): PredicateBox.Raw {
+    fun startsWith(prefix: String): PredicateBox.Raw {
         return PredicateBox.Raw(
-            Predicate.Identifiable(
-                QueryPredicate.StartsWith(
-                    id
-                )
-            )
+            Predicate.Identifiable(QueryPredicate.StartsWith(prefix))
         )
     }
 
     /**
-     * Create a filter for multiple matches
+     * Ends with filter
      */
-    fun or(
-        values: List<String>
-    ): PredicateBox.Or {
+    fun endsWith(suffix: String): PredicateBox.Raw {
+        return PredicateBox.Raw(
+            Predicate.Identifiable(QueryPredicate.EndsWith(suffix))
+        )
+    }
+
+    /**
+     * Contains filter
+     */
+    fun contains(value: String): PredicateBox.Raw {
+        return PredicateBox.Raw(
+            Predicate.Identifiable(QueryPredicate.Contains(value))
+        )
+    }
+
+    /**
+     * Is filter
+     */
+    fun `is`(value: String): PredicateBox.Raw {
+        return PredicateBox.Raw(
+            Predicate.Identifiable(QueryPredicate.Is(value))
+        )
+    }
+
+    /**
+     * Filter for multiple matches (OR)
+     */
+    fun or(vararg predicates: QueryPredicate): PredicateBox.Or {
         return PredicateBox.Or(
-            values.map { value ->
-                PredicateBox.Raw(
-                    Predicate.Identifiable(
-                        QueryPredicate.Is(
-                            value
-                        )
-                    )
-                )
+            predicates.map { predicate ->
+                PredicateBox.Raw(Predicate.Identifiable(predicate))
+            }.toList()
+        )
+    }
+
+    /**
+     * Filter for multiple matches (AND)
+     */
+    fun and(vararg predicates: QueryPredicate): PredicateBox.And {
+        return PredicateBox.And(
+            predicates.map { predicate ->
+                PredicateBox.Raw(Predicate.Identifiable(predicate))
             }.toList()
         )
     }

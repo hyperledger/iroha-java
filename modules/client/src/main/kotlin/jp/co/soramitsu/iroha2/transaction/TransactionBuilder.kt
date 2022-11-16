@@ -209,9 +209,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.unregisterAsset(id))
     }
 
-    fun unregisterTrigger(triggerName: String) = this.apply {
+    fun unregisterTrigger(id: TriggerId) = this.apply {
         instructions.value.add(
-            Instructions.unregisterTrigger(triggerName)
+            Instructions.unregisterTrigger(id)
+        )
+    }
+
+    fun unregisterTrigger(triggerName: String, domainId: DomainId? = null) = this.apply {
+        instructions.value.add(
+            Instructions.unregisterTrigger(triggerName, domainId)
         )
     }
 

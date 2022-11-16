@@ -31,8 +31,8 @@ import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Instant
@@ -268,8 +268,45 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Test
+    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    fun `unregister executable trigger`(): Unit = runBlocking {
+        val triggerName = "executable_trigger"
+        val triggerId = TriggerId(triggerName.asName())
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerExecutableTrigger(
+                triggerId,
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
+                Repeats.Exactly(1L),
+                ALICE_ACCOUNT_ID
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterTrigger(triggerName)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findTriggerById(triggerId)
+                    .account(ALICE_ACCOUNT_ID)
+                    .buildSigned(ALICE_KEYPAIR)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
     private suspend fun sendAndWait10Txs() {
-        for (i in 0..10) {
+        repeat(10) { i ->
             client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
                 setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i".asValue())
@@ -347,48 +384,5 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .map { it.value.assets[DEFAULT_ASSET_ID] }
             .map { (it?.value as AssetValue.Quantity).u32 }
             .first()
-    }
-
-    @Disabled
-    @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
-    fun `unregister executable trigger`(): Unit = runBlocking {
-        val triggerName = "executable_trigger"
-        val triggerId = TriggerId(triggerName.asName())
-
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            registerExecutableTrigger(
-                triggerId,
-                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
-                Repeats.Exactly(1L),
-                ALICE_ACCOUNT_ID
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        var trigger = QueryBuilder.findTriggerById(triggerId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-        assertNotNull(trigger)
-
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            unregisterTrigger(
-                triggerName
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        trigger = QueryBuilder.findTriggerById(triggerId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-        assertNotNull(trigger)
     }
 }
