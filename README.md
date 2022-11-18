@@ -11,6 +11,10 @@ The repository contains the client library of [Hyperledger Iroha2](https://githu
 - [x] [block](./modules/block) with genesis classes and some generated serializers and deserializers for data models
 - [x] [test-tools](./modules/test-tools/) to create tests for Iroha2
 
+## Iroha version
+
+Docker image: [hyperledger/iroha2](https://hub.docker.com/r/hyperledger/iroha2/tags):lts@sha256:4b61b866e15039989e689e3403986ebb207628c36d956d2dc99078e19764e212
+
 ## Get Started
 
 Check out [Hyperledger Iroha2 Tutorial](https://hyperledger.github.io/iroha-2-docs/) that introduces you to Iroha2 concepts and features and also provides you with a step-by-step guide for Kotlin/Java.
