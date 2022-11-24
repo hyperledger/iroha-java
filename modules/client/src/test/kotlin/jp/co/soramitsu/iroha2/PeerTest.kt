@@ -16,6 +16,7 @@ import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
+import java.time.Duration
 import kotlin.reflect.full.createInstance
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -142,7 +143,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             unregisterPeer(address, payload)
             buildSigned(keyPair)
         }.also { d ->
-            withTimeout(txTimeout) { d.await() }
+            withTimeout(txTimeout.plus(Duration.ofSeconds(20))) { d.await() }
         }
     }
 
@@ -156,7 +157,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             registerPeer(address, payload)
             buildSigned(keyPair)
         }.also { d ->
-            withTimeout(txTimeout) { d.await() }
+            withTimeout(txTimeout.plus(Duration.ofSeconds(20))) { d.await() }
         }
     }
 
