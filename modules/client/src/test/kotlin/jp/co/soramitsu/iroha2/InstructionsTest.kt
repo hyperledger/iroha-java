@@ -56,7 +56,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
      * Using for docs generation
      */
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register domain instruction committed`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
@@ -78,7 +78,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
      * Using for docs generation
      */
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
@@ -97,7 +97,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register and unregister account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAccount(newAccountId, listOf()) }
@@ -120,7 +120,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register and unregister asset instruction committed`(): Unit = runBlocking {
         val definitionId = DefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
@@ -146,7 +146,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register and unregister domain instruction committed`(): Unit = runBlocking {
         val newDomainId = DomainId("foo".asName())
         client.tx { registerDomain(newDomainId) }
@@ -170,7 +170,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register account with metadata instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         val addressKey = "address".asName()
@@ -220,7 +220,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
      * Using for docs generation
      */
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register asset instruction committed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -240,7 +240,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `store asset instruction committed`(): Unit = runBlocking {
         val pair1 = "key1".asName() to "bar".asValue()
         val pair2 = "key2".asName() to true.asValue()
@@ -280,7 +280,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
@@ -316,7 +316,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
      * Using for docs generation
      */
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `mint asset instruction committed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -337,24 +337,24 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `burn asset instruction committed`(): Unit = runBlocking {
         // check balance before burn
         val query = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
         var result = client.sendQuery(query)
-        assertEquals(100, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(100, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
 
         client.tx { burnAsset(DEFAULT_ASSET_ID, 50) }
 
         // check balance after burn
         result = client.sendQuery(query)
-        assertEquals(50, (result.assets[DEFAULT_ASSET_ID]?.value as? AssetValue.Quantity)?.u32)
+        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `burn public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
         mintPublicKey(ALICE_ACCOUNT_ID)
@@ -379,7 +379,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `burn and mint public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
         mintPublicKey(BOB_ACCOUNT_ID)
@@ -417,7 +417,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `change user account metadata`(): Unit = runBlocking {
         val saltKey = "salt"
 
@@ -444,7 +444,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceAndBobEachHave100Xor::class)
+    @WithIroha([AliceAndBobEachHave100Xor::class])
     fun `transfer asset instruction committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
         val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
@@ -481,7 +481,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
         val toBurn = 80L
         val initAliceAmount = getAccountAmount()
@@ -496,7 +496,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `pair instruction committed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -513,7 +513,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `instruction sequence committed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -531,7 +531,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `instruction failed`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -545,7 +545,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(StoreAssetWithMetadata::class)
+    @WithIroha([StoreAssetWithMetadata::class])
     fun `remove asset instruction committed`(): Unit = runBlocking {
         val assetId = StoreAssetWithMetadata.ASSET_ID
         val assetKey = StoreAssetWithMetadata.ASSET_KEY
@@ -563,7 +563,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
         client.tx { registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed()) }
 
@@ -615,7 +615,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register asset with metadata`(): Unit = runBlocking {
         val assetKey = Name("asset_metadata_key")
         val assetValue = Value.String("some string value")
@@ -638,7 +638,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `double domain registration should fails`(): Unit = runBlocking {
         val domainId = UUID.randomUUID().toString().asDomainId()
         client.tx { registerDomain(domainId) }
@@ -648,7 +648,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `register and grant role to account`(): Unit = runBlocking {
         val assetId = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
@@ -686,6 +686,32 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                         .containsValue("value".asValue())
                 )
             }
+    }
+
+    @Test
+    @WithIroha(
+        [
+            DefaultGenesis::class,
+            AliceHas100XorAndPermissionToBurn::class,
+            StoreAssetWithMetadata::class
+        ]
+    )
+    fun `multiple genesis`(): Unit = runBlocking {
+        val asset = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .assets[DEFAULT_ASSET_ID]
+        assertEquals(100, asset?.value?.cast<AssetValue.Quantity>()?.u32)
+
+        val assetId = StoreAssetWithMetadata.ASSET_ID
+        val assetKey = StoreAssetWithMetadata.ASSET_KEY
+
+        val assetBefore = getAsset(assetId)
+        assertEquals(
+            StoreAssetWithMetadata.ASSET_VALUE,
+            assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
+        )
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {

@@ -32,7 +32,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class, amount = PEER_AMOUNT)
+    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `register peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -48,7 +48,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class, amount = PEER_AMOUNT)
+    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `unregister peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -69,7 +69,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class, amount = PEER_AMOUNT)
+    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `registered peer should return consistent data`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
