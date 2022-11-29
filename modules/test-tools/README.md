@@ -30,6 +30,8 @@ class Test : IrohaTest<AdminIroha2Client>() {
     @Test
     @WithIroha([SomeGenesis::class, OtherGenesis::class])
     fun `miltiple genesis sources test`(): Unit = runBlocking {
+        // In this case genesis will be composed of the
+        // unique instructions of SomeGenesis and OtherGenesis
     }
 
     @Test
