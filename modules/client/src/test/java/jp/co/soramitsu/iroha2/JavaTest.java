@@ -33,7 +33,7 @@ import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.*;
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void instructionFailed() {
         final VersionedSignedTransaction transaction = TransactionBuilder.Companion
             .builder()
@@ -47,7 +47,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     }
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void registerDomainInstructionCommitted() throws ExecutionException, InterruptedException, TimeoutException {
         final DomainId domainId = new DomainId(new Name("new_domain_name"));
         final VersionedSignedTransaction transaction = TransactionBuilder.Companion
@@ -67,7 +67,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     }
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void registerAccountInstructionCommitted() throws Exception {
         final AccountId accountId = new AccountId(
             new Name("new_account"),
@@ -90,7 +90,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     }
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void mintAssetInstructionCommitted() throws Exception {
         final VersionedSignedTransaction registerAssetTx = TransactionBuilder.Companion
             .builder()
@@ -117,7 +117,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     }
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void updateKeyValueInstructionCommitted() throws Exception {
         final Name assetMetadataKey = new Name("asset_metadata_key");
         final Value.String assetMetadataValue = new Value.String("some string value");
@@ -158,7 +158,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     }
 
     @Test
-    @WithIroha(genesis = DefaultGenesis.class)
+    @WithIroha(sources = DefaultGenesis.class)
     public void setKeyValueInstructionCommitted() throws Exception {
         final Value.String assetValue = new Value.String("some string value");
         final Name assetKey = new Name("asset_metadata_key");

@@ -21,11 +21,28 @@ class Test : IrohaTest<AdminIroha2Client>() {
     lateinit var client: AdminIroha2Client
 
     @Test // this annotation is needed for proper test suite detection by IDE
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `awesome test`(): Unit = runBlocking {
         val health = client.health()
         assert(health == 200)
-    }   
+    }
+
+    @Test
+    @WithIroha([SomeGenesis::class, OtherGenesis::class])
+    fun `miltiple genesis sources test`(): Unit = runBlocking {
+        // In this case genesis will be composed of the
+        // unique instructions of SomeGenesis and OtherGenesis
+    }
+
+    @Test
+    @WithIroha
+    fun `empty genesis test`(): Unit = runBlocking {
+    }
+
+    @Test
+    @WithIroha(amount = 4)
+    fun `empty genesis with 4 peers test`(): Unit = runBlocking {
+    }
 }
 ```
 

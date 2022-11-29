@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
+import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.findFreePorts
@@ -136,7 +137,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
                     networkToJoin = network
-                    genesis = withIroha.genesis.createInstance()
+                    genesis = withIroha.sources.map { it.createInstance() }.toSingle()
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds

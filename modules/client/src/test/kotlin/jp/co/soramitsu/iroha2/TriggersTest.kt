@@ -43,7 +43,7 @@ import kotlin.test.assertNotNull
 class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `data created trigger`(): Unit = runBlocking {
         val triggerId = TriggerId("data_trigger".asName())
         val newAssetName = "token1"
@@ -91,7 +91,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
         val triggerId = TriggerId("pre_commit_trigger".asName())
         val newAssetName = "token1"
@@ -149,7 +149,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `executable trigger`(): Unit = runBlocking {
         val triggerId = TriggerId("executable_trigger".asName())
 
@@ -171,7 +171,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `endless time trigger`(): Unit = runBlocking {
         val triggerId = TriggerId(Name("endless_time_trigger"))
 
@@ -187,7 +187,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `time trigger execution repeats few times`(): Unit = runBlocking {
         val triggerId = TriggerId(Name("time_trigger"))
 
@@ -203,7 +203,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
         val triggerId = TriggerId("wasm_trigger".asName())
 
@@ -269,7 +269,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `unregister executable trigger`(): Unit = runBlocking {
         val triggerName = "executable_trigger"
         val triggerId = TriggerId(triggerName.asName())

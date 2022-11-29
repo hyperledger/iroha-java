@@ -47,7 +47,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as 
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha(NewAccountWithMetadata::class)
+    @WithIroha([NewAccountWithMetadata::class])
     fun `find all accounts`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
@@ -61,7 +61,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(NewAccountWithMetadata::class)
+    @WithIroha([NewAccountWithMetadata::class])
     fun `find all accounts with filter`(): Unit = runBlocking {
         val filter = PredicateBox.Or(
             listOf(
@@ -90,7 +90,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find accounts by name`(): Unit = runBlocking {
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
             .account(ALICE_ACCOUNT_ID)
@@ -103,7 +103,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find accounts by name with filter`(): Unit = runBlocking {
         val filter = QueryFilters.startsWith("alice")
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
@@ -117,7 +117,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(NewAccountWithMetadata::class)
+    @WithIroha([NewAccountWithMetadata::class])
     fun `find account key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAccountKeyValueByIdAndKey(
             NewAccountWithMetadata.ACCOUNT_ID,
@@ -133,7 +133,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find accounts by domain ID`(): Unit = runBlocking {
         QueryBuilder.findAccountsByDomainId(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -146,7 +146,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(XorAndValAssets::class)
+    @WithIroha([XorAndValAssets::class])
     fun `find all assets`(): Unit = runBlocking {
         QueryBuilder.findAllAssets()
             .account(ALICE_ACCOUNT_ID)
@@ -160,7 +160,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(XorAndValAssets::class)
+    @WithIroha([XorAndValAssets::class])
     fun `find assets by name`(): Unit = runBlocking {
         QueryBuilder.findAssetsByName(XorAndValAssets.XOR_DEFINITION_ID.name)
             .account(ALICE_ACCOUNT_ID)
@@ -173,7 +173,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(XorAndValAssets::class)
+    @WithIroha([XorAndValAssets::class])
     fun `find assets by account id`(): Unit = runBlocking {
         QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -188,7 +188,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(XorAndValAssets::class)
+    @WithIroha([XorAndValAssets::class])
     fun `find assets by domain name and asset definition id`(): Unit = runBlocking {
         QueryBuilder.findAssetsByDomainIdAndAssetDefinitionId(
             DEFAULT_DOMAIN_ID,
@@ -205,7 +205,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(XorAndValAssets::class)
+    @WithIroha([XorAndValAssets::class])
     fun `find asset quantity by id`(): Unit = runBlocking {
         val assetId = AssetId(XorAndValAssets.XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
         QueryBuilder.findAssetQuantityById(assetId)
@@ -219,7 +219,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(StoreAssetWithMetadata::class)
+    @WithIroha([StoreAssetWithMetadata::class])
     fun `find asset key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetKeyValueByIdAndKey(
             StoreAssetWithMetadata.ASSET_ID,
@@ -235,7 +235,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(StoreAssetWithMetadata::class)
+    @WithIroha([StoreAssetWithMetadata::class])
     fun `find asset definition key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(
             StoreAssetWithMetadata.DEFINITION_ID,
@@ -251,7 +251,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(StoreAssetWithMetadata::class)
+    @WithIroha([StoreAssetWithMetadata::class])
     @Disabled // https://github.com/hyperledger/iroha/issues/2697
     fun `find asset by metadata filters`(): Unit = runBlocking {
         val filter = PredicateBox.Raw(
@@ -279,7 +279,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find asset definition by ID`(): Unit = runBlocking {
         QueryBuilder.findAssetDefinitionById(DEFAULT_ASSET_DEFINITION_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -291,7 +291,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(NewDomain::class)
+    @WithIroha([NewDomain::class])
     fun `find all domains`(): Unit = runBlocking {
         QueryBuilder.findAllDomains()
             .account(ALICE_ACCOUNT_ID)
@@ -305,7 +305,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(NewDomain::class)
+    @WithIroha([NewDomain::class])
     fun `find all domains with filter`(): Unit = runBlocking {
         val filter = QueryFilters.startsWith("wonder")
         QueryBuilder.findAllDomains(filter)
@@ -320,7 +320,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find domain by ID`(): Unit = runBlocking {
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -333,7 +333,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find all peers`(): Unit = runBlocking {
         QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -346,7 +346,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find transactions by account id`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -374,7 +374,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find permission tokens by account id`(): Unit = runBlocking {
         QueryBuilder.findPermissionTokensByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -395,7 +395,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(DefaultGenesis::class)
+    @WithIroha([DefaultGenesis::class])
     fun `find transaction by hash`(): Unit = runBlocking {
         val hash = client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -415,7 +415,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(NewDomainWithMetadata::class)
+    @WithIroha([NewDomainWithMetadata::class])
     fun `find domain key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findDomainKeyValueByIdAndKey(
             NewDomainWithMetadata.DOMAIN_ID,
@@ -427,7 +427,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(WithExecutableTrigger::class)
+    @WithIroha([WithExecutableTrigger::class])
     fun `find trigger by ID`(): Unit = runBlocking {
         val triggerId = WithExecutableTrigger.TRIGGER_ID
 
@@ -441,7 +441,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(WithExecutableTrigger::class)
+    @WithIroha([WithExecutableTrigger::class])
     fun `find all active trigger IDs`(): Unit = runBlocking {
         val triggerId = WithExecutableTrigger.TRIGGER_ID
 
@@ -455,7 +455,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find all account with pagination`(): Unit = runBlocking {
         var page = Pagination(0, 5)
         var accounts = QueryBuilder.findAllAccounts()
@@ -480,7 +480,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find all transactions`(): Unit = runBlocking {
         repeat(5) {
             client.sendTransaction {
@@ -501,7 +501,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHas100XorAndPermissionToBurn::class)
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find all blocks`(): Unit = runBlocking {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -520,7 +520,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
     fun `find all role IDs`(): Unit = runBlocking {
         QueryBuilder.findAllRoleIds()
             .account(ALICE_ACCOUNT_ID)
@@ -535,7 +535,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
     fun `find roles by account ID`(): Unit = runBlocking {
         QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
@@ -550,7 +550,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
     fun `find all roles`(): Unit = runBlocking {
         QueryBuilder.findAllRoles()
             .account(ALICE_ACCOUNT_ID)
@@ -565,7 +565,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceHasRoleWithAccessToBobsMetadata::class)
+    @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
     fun `find role by ID`(): Unit = runBlocking {
         val roleId = AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
         QueryBuilder.findRoleByRoleId(roleId)
@@ -576,7 +576,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha(AliceWithTestAssets::class)
+    @WithIroha([AliceWithTestAssets::class])
     fun `find asset definitions with or filter`(): Unit = runBlocking {
         val definitionId = AliceWithTestAssets.TEST_ASSET_DEFINITION_ID
         val filter = QueryFilters.or(
