@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 @Test
 @Inherited
 annotation class WithIroha(
-    val blocks: Array<KClass<out Genesis>> = [EmptyGenesis::class],
+    val sources: Array<KClass<out Genesis>> = [EmptyGenesis::class],
     val amount: Int = 1
 )
 

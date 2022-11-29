@@ -137,7 +137,7 @@ class IrohaRunnerExtension : InvocationInterceptor {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
                     networkToJoin = network
-                    genesis = withIroha.blocks.map { it.createInstance() }.toSingle()
+                    genesis = withIroha.sources.map { it.createInstance() }.toSingle()
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds
