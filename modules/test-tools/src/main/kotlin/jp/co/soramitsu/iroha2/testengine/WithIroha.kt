@@ -7,6 +7,12 @@ import org.junit.jupiter.api.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
 
+/**
+ * A test marked with this annotation awaits Iroha's deployment
+ *
+ * @param sources Genesis will be composed of the sources unique instructions
+ * @param amount Number of peers
+ */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
