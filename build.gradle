@@ -35,6 +35,17 @@ subprojects {
                 from components.java
             }
         }
+
+        repositories {
+            maven {
+                name = "iroha2-java-soramitsu"
+                url = "https://nexus.iroha.tech/repository/maven-soramitsu/"
+                credentials {
+                    username = System.getenv("NEXUS_USER")
+                    password = System.getenv("NEXUS_PASS")
+                }
+            }
+        }
     }
 
     group = 'jp.co.soramitsu.iroha2-java'
