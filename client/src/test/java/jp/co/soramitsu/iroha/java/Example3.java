@@ -31,7 +31,7 @@ public class Example3 {
     }
 
     private static final String usd = String.format("%s#%s", usdName, bankDomain);
-
+    private static final FieldValidator.Config config = FieldValidator.defaultConfig;
     /**
      * <pre>
      * Our initial state consists of:
@@ -46,7 +46,7 @@ public class Example3 {
                 // first transaction
                 .addTransaction(
                         // transactions in genesis block can have no creator
-                        Transaction.builder(null)
+                        Transaction.builder(null, config)
                                 // by default peer is listening on port 10001
                                 .addPeer("0.0.0.0:10001", peerKeypair.getPublic())
                                 // create default "user" role
@@ -73,7 +73,7 @@ public class Example3 {
                 )
                 // we want to increase user_a balance by 100 usd
                 .addTransaction(
-                        Transaction.builder(user("user_a"))
+                        Transaction.builder(user("user_a"), config)
                                 .addAssetQuantity(usd, new BigDecimal("100"))
                                 .build()
                                 .build()
@@ -94,7 +94,7 @@ public class Example3 {
 
     public static long getAccountTransactionsExample(IrohaAPI api, String userId, KeyPair keyPair) {
         // build protobuf query, sign it
-        val q = Query.builder(userId,1).getAccountTransactions(userId, 5,null, null, null, null, 2, 2).buildSigned(keyPair);
+        val q = Query.builder(userId,1, config).getAccountTransactions(userId, 5,null, null, null, null, 2, 2).buildSigned(keyPair);
         // make query and get it results
         val res = api.query(q);
         System.out.println("Query GetAccountTransactions response:");
@@ -108,14 +108,14 @@ public class Example3 {
                 .setNanos(firstTime.getNano()).build();
         Timestamp lastTxTime = Timestamp.newBuilder().setSeconds(lastTime.getEpochSecond())
                 .setNanos(lastTime.getNano()).build();
-        val q = Query.builder(userId,1).getAccountAssetTransactions(userId, "usd#bank", 5, null, null, firstTxTime,lastTxTime, null, null).buildSigned(keyPair);
+        val q = Query.builder(userId,1, config).getAccountAssetTransactions(userId, "usd#bank", 5, null, null, firstTxTime,lastTxTime, null, null).buildSigned(keyPair);
         // make query and get it results
         val res = api.query(q);
         System.out.println("Query GetAccountAssetTransactions response:");
         System.out.println(res.getTransactionsPageResponse());
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         // for simplicity, we will create Iroha peer in place
         IrohaContainer iroha = new IrohaContainer()
                 .withPeerConfig(getPeerConfig());
@@ -127,7 +127,7 @@ public class Example3 {
         IrohaAPI api = new IrohaAPI(iroha.getToriiAddress());
 
         // transfer 100 usd from user_a to user_b
-        val tx = Transaction.builder("user_a@bank")
+        val tx = Transaction.builder("user_a@bank", config)
                 .transferAsset("user_a@bank", "user_b@bank", usd, "For pizza", "10")
                 .sign(useraKeypair)
                 .build();
@@ -135,11 +135,11 @@ public class Example3 {
         // here you can specify any kind of handlers on transaction statuses
         val observer = TransactionStatusObserver.builder()
                 // executed when stateless or stateful validation is failed
-                .onTransactionFailed(t -> System.out.println(String.format(
-                        "transaction %s failed with msg: %s",
+                .onTransactionFailed(t -> System.out.printf(
+                        "transaction %s failed with msg: %s%n",
                         t.getTxHash(),
                         t.getErrOrCmdName()
-                )))
+                ))
                 // executed when got any exception in handlers or grpc
                 .onError(e -> System.out.println("Failed with exception: " + e))
                 // executed when we receive "committed" status

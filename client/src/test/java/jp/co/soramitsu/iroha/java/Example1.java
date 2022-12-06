@@ -30,6 +30,8 @@ public class Example1 {
 
   private static final String usd = String.format("%s#%s", usdName, bankDomain);
 
+  private static final FieldValidator.Config config = FieldValidator.defaultConfig;
+
   /**
    * <pre>
    * Our initial state cosists of:
@@ -44,7 +46,7 @@ public class Example1 {
         // first transaction
         .addTransaction(
             // transactions in genesis block can have no creator
-            Transaction.builder(null)
+            Transaction.builder(null, config)
                 // by default peer is listening on port 10001
                 .addPeer("0.0.0.0:10001", peerKeypair.getPublic())
                 // create default "user" role
@@ -69,7 +71,7 @@ public class Example1 {
         )
         // we want to increase user_a balance by 100 usd
         .addTransaction(
-            Transaction.builder(user("user_a"))
+            Transaction.builder(user("user_a"), config)
                 .addAssetQuantity(usd, new BigDecimal("100"))
                 .build()
                 .build()
@@ -93,7 +95,7 @@ public class Example1 {
    */
   public static int getBalance(IrohaAPI api, String userId, KeyPair keyPair) {
     // build protobuf query, sign it
-    val q = Query.builder(userId, 1)
+    val q = Query.builder(userId, 1, config)
         .getAccountAssets(userId)
         .buildSigned(keyPair);
 
@@ -127,7 +129,7 @@ public class Example1 {
     IrohaAPI api = new IrohaAPI(iroha.getToriiAddress());
 
     // transfer 100 usd from user_a to user_b
-    val tx = Transaction.builder("user_a@bank")
+    val tx = Transaction.builder("user_a@bank", config)
         .transferAsset("user_a@bank", "user_b@bank", usd, "For pizza", "10")
         .sign(useraKeypair)
         .build();
@@ -136,11 +138,11 @@ public class Example1 {
     // here you can specify any kind of handlers on transaction statuses
     val observer = TransactionStatusObserver.builder()
         // executed when stateless or stateful validation is failed
-        .onTransactionFailed(t -> System.out.println(String.format(
-            "transaction %s failed with msg: %s",
+        .onTransactionFailed(t -> System.out.printf(
+                "transaction %s failed with msg: %s%n",
             t.getTxHash(),
             t.getErrOrCmdName()
-        )))
+        ))
         // executed when got any exception in handlers or grpc
         .onError(e -> System.out.println("Failed with exception: " + e))
         // executed when we receive "committed" status

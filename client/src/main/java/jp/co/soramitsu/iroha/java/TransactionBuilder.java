@@ -43,6 +43,7 @@ public class TransactionBuilder {
 
   // Ed25519/Sha3 is default signature
   private SignatureBuilder signatureBuilder;
+  private final FieldValidator.Config config;
   private FieldValidator validator;
   private Transaction tx;
 
@@ -59,41 +60,43 @@ public class TransactionBuilder {
 
     setQuorum(1 /* default value */);
 
-    this.validator = new FieldValidator();
+    this.validator = new FieldValidator(this.config);
   }
 
   /**
    * Both fields are required, therefore we can not create builder without them. However, in genesis
    * block they can be null.
    */
-  public TransactionBuilder(String accountId, Instant time) {
-    init(accountId, time.toEpochMilli(), Ed25519Sha3SignatureBuilder.getInstance());
+  public TransactionBuilder(String accountId, Instant time, FieldValidator.Config config) {
+    this(accountId, time.toEpochMilli(), Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public TransactionBuilder(String accountId, Date time) {
-    init(accountId, time.getTime(), Ed25519Sha3SignatureBuilder.getInstance());
+  public TransactionBuilder(String accountId, Date time, FieldValidator.Config config) {
+    this(accountId, time.getTime(), Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public TransactionBuilder(String accountId, Long time) {
-    init(accountId, time, Ed25519Sha3SignatureBuilder.getInstance());
+  public TransactionBuilder(String accountId, Long time, FieldValidator.Config config) {
+    this(accountId, time, Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public TransactionBuilder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
-    init(accountId, time.toEpochMilli(), signatureBuilder);
+  public TransactionBuilder(String accountId, Instant time, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this(accountId, time.toEpochMilli(), signatureBuilder, config);
   }
 
-  public TransactionBuilder(String accountId, Date time, SignatureBuilder signatureBuilder) {
-    init(accountId, time.getTime(), signatureBuilder);
+  public TransactionBuilder(String accountId, Date time, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this(accountId, time.getTime(), signatureBuilder, config);
   }
 
-  public TransactionBuilder(String accountId, Long time, SignatureBuilder signatureBuilder) {
+  public TransactionBuilder(String accountId, Long time, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this.config = config;
     init(accountId, time, signatureBuilder);
   }
 
   /* default */
-  TransactionBuilder(Transaction transaction) {
+  TransactionBuilder(Transaction transaction, FieldValidator.Config config) {
     signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
     tx = transaction;
+    this.config = config;
   }
 
   public TransactionBuilder disableValidation() {

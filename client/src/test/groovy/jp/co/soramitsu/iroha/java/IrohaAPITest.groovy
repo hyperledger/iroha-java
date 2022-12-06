@@ -28,7 +28,7 @@ class IrohaAPITest extends Specification {
         def api = iroha.getApi()
 
         when: "send valid transaction"
-        def valid = Transaction.builder(defaultAccountId)
+        def valid = Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                 .createAccount("zzpppzp", defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
                 .build()
@@ -49,7 +49,7 @@ class IrohaAPITest extends Specification {
 
         when: "send stateless invalid transaction"
         // invalid account name in create account
-        def statelessInvalid = Transaction.builder(defaultAccountId)
+        def statelessInvalid = Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                 .disableValidation()
                 .createAccount("...", defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
@@ -72,7 +72,7 @@ class IrohaAPITest extends Specification {
 
         when: "send stateful invalid transaction"
         // unknown creator
-        def statefulInvalid = Transaction.builder("random@account")
+        def statefulInvalid = Transaction.builder("random@account", FieldValidator.defaultConfig)
                 .createAccount("x", defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
                 .build()
@@ -95,7 +95,7 @@ class IrohaAPITest extends Specification {
                 .map(String.&valueOf)
                 .map(
                 { String name ->
-                    return Transaction.builder(defaultAccountId)
+                    return Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                             .createAccount(name, defaultDomainName, defaultKeyPair.getPublic())
                             .sign(defaultKeyPair)
                             .build()

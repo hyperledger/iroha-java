@@ -56,7 +56,7 @@ class IrohaContainerTest extends Specification {
         and: "immediately send transaction"
         def api = new IrohaAPI(ir.getToriiAddress())
         def s = new TestObserver<>()
-        api.transaction(Transaction.builder("test@test")
+        api.transaction(Transaction.builder("test@test", FieldValidator.defaultConfig)
                 .createDomain("dom", GenesisBlockBuilder.defaultRoleName)
                 .sign(GenesisBlockBuilder.defaultKeyPair)
                 .build()

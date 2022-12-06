@@ -34,14 +34,14 @@ class CommandsTest extends Specification {
     }
 
     static def setDetail(Account account, String key, String value) {
-        return builder(account.id)
+        return builder(account.id, FieldValidator.defaultConfig)
                 .setAccountDetail(account.id, key, value)
                 .sign(account.keyPair)
                 .build()
     }
 
     static def createAccount(Account a) {
-        return Transaction.builder(defaultAccountId)
+        return builder(defaultAccountId, FieldValidator.defaultConfig)
                 .createAccount(a.id, a.keyPair.public)
                 .sign(defaultKeyPair)
                 .build()
@@ -77,10 +77,10 @@ class CommandsTest extends Specification {
     @Unroll
     def "compareAndSet command: key=#key, value=#value, oldValue=#oldValue, checkEmpty=#checkEmpty"() {
         given:
-        def qapi = new QueryAPI(api, account)
+        def qapi = new QueryAPI(api, account, FieldValidator.defaultConfig)
 
         when:
-        def tx = Transaction.builder(account.getId())
+        def tx = builder(account.getId(), FieldValidator.defaultConfig)
                 .compareAndSetAccountDetail(account.getId(), key, value, oldValue, checkEmpty)
                 .sign(account.keyPair)
                 .build()
@@ -110,14 +110,14 @@ class CommandsTest extends Specification {
     @Unroll
     def "callEngine command deploy contract: caller=#caller, input=input"() {
         given:
-        def qapi = new QueryAPI(api, account)
+        def qapi = new QueryAPI(api, account, FieldValidator.defaultConfig)
 
         when:
-        def tx = Transaction.builder(account.getId())
+        def tx = builder(account.getId(), FieldValidator.defaultConfig)
                 .callEngine(caller, null, input)
                 .sign(account.keyPair)
                 .build()
-        def hash = Utils.hash(tx);
+        def hash = Utils.hash(tx)
         def transaction_observer = new TestTransactionStatusObserver()
         api.transaction(tx).blockingSubscribe(transaction_observer)
 
@@ -143,24 +143,24 @@ class CommandsTest extends Specification {
     @Unroll
     def "callEngine command call contract: caller=#caller, input=input"() {
         given:
-        def qapi = new QueryAPI(api, account)
+        def qapi = new QueryAPI(api, account, FieldValidator.defaultConfig)
 
         // deploy contract
-        def deploy_tx = Transaction.builder(account.getId())
+        def deploy_tx = builder(account.getId(), FieldValidator.defaultConfig)
                 .callEngine(account.getId(), null, evm_binary_code)
                 .sign(account.keyPair)
                 .build()
-        def deploy_hash = Utils.hash(deploy_tx);
+        def deploy_hash = Utils.hash(deploy_tx)
         api.transaction(deploy_tx).blockingSubscribe()
         def deploy_receipt = qapi.getEngineReceipts(Utils.toHex(deploy_hash))
         def callee = deploy_receipt.getEngineReceipts(0).contractAddress
 
         when:
-        def tx = Transaction.builder(account.getId())
+        def tx = builder(account.getId(), FieldValidator.defaultConfig)
                 .callEngine(caller, callee, input)
                 .sign(account.keyPair)
                 .build()
-        def hash = Utils.hash(tx);
+        def hash = Utils.hash(tx)
         def transaction_observer = new TestTransactionStatusObserver()
         api.transaction(tx).blockingSubscribe(transaction_observer)
 

@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha.testcontainers
 
+import jp.co.soramitsu.iroha.java.FieldValidator
 import jp.co.soramitsu.iroha.java.IrohaAPI
 import jp.co.soramitsu.iroha.java.QueryAPI
 import jp.co.soramitsu.iroha.java.Transaction
@@ -31,7 +32,7 @@ class IrohaTlsTest extends Specification {
 
     static IrohaConfig irohaConfig = IrohaConfig.builder()
             .torii_tls_params(new ToriiTlsConfig())
-            .build();
+            .build()
 
     static peerConfig = PeerConfig.builder()
             .irohaConfig(irohaConfig)
@@ -59,12 +60,12 @@ class IrohaTlsTest extends Specification {
     @Unroll
     def "run Iroha with secure TLS connection"() {
         given:
-        def qapi = new QueryAPI(api, defaultAccount)
+        def qapi = new QueryAPI(api, defaultAccount, FieldValidator.defaultConfig)
         def key = "key"
         def value = "value"
 
         when:
-        def tx = Transaction.builder(defaultAccount.getId())
+        def tx = Transaction.builder(defaultAccount.getId(), FieldValidator.defaultConfig)
                 .setAccountDetail(defaultAccount.getId(), key, value)
                 .sign(defaultAccount.keyPair)
                 .build()

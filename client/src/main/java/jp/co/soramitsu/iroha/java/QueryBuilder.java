@@ -3,7 +3,6 @@ package jp.co.soramitsu.iroha.java;
 import static jp.co.soramitsu.iroha.java.Utils.nonNull;
 
 import com.google.protobuf.Timestamp;
-import com.google.protobuf.TimestampOrBuilder;
 import iroha.protocol.Primitive.AccountDetailRecordId;
 import iroha.protocol.Queries;
 import iroha.protocol.Queries.Field;
@@ -37,7 +36,6 @@ import lombok.Value;
 import lombok.val;
 
 public class QueryBuilder {
-
   public class Ordering {
 
     List<Sequence> fieldOrdering = new ArrayList<>();
@@ -74,6 +72,7 @@ public class QueryBuilder {
 
   private SignatureBuilder signatureBuilder;
 
+  private final FieldValidator.Config config;
   private FieldValidator validator;
 
   private QueryPayloadMeta.Builder meta = QueryPayloadMeta.newBuilder();
@@ -91,32 +90,33 @@ public class QueryBuilder {
     enableValidation();
   }
 
-  public QueryBuilder(String accountId, Instant time, long counter) {
-    init(accountId, time.toEpochMilli(), counter, Ed25519Sha3SignatureBuilder.getInstance());
+  public QueryBuilder(String accountId, Instant time, long counter, FieldValidator.Config config) {
+    this(accountId, time.toEpochMilli(), counter, Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public QueryBuilder(String accountId, Date time, long counter) {
-    init(accountId, time.getTime(), counter, Ed25519Sha3SignatureBuilder.getInstance());
+  public QueryBuilder(String accountId, Date time, long counter, FieldValidator.Config config) {
+    this(accountId, time.getTime(), counter, Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public QueryBuilder(String accountId, Long time, long counter) {
-    init(accountId, time, counter, Ed25519Sha3SignatureBuilder.getInstance());
+  public QueryBuilder(String accountId, Long time, long counter, FieldValidator.Config config) {
+    this(accountId, time, counter, Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public QueryBuilder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder) {
-    init(accountId, time.toEpochMilli(), counter, signatureBuilder);
+  public QueryBuilder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this(accountId, time.toEpochMilli(), counter, signatureBuilder, config);
   }
 
-  public QueryBuilder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder) {
-    init(accountId, time.getTime(), counter, signatureBuilder);
+  public QueryBuilder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this(accountId, time.getTime(), counter, signatureBuilder, config);
   }
 
-  public QueryBuilder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
+  public QueryBuilder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this.config = config;
     init(accountId, time, counter, signatureBuilder);
   }
 
   public QueryBuilder enableValidation() {
-    this.validator = new FieldValidator();
+    this.validator = new FieldValidator(this.config);
     return this;
   }
 

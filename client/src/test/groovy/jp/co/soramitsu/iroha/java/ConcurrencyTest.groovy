@@ -45,14 +45,14 @@ class ConcurrencyTest extends Specification {
     }
 
     static def getTx(int n) {
-        return Transaction.builder(defaultAccountId)
+        return Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                 .createAccount("${n}", defaultDomainName, defaultKeyPair.public)
                 .sign(defaultKeyPair)
                 .build()
     }
 
     def subscribeForBlocks() {
-        def bq = BlocksQuery.builder(defaultAccountId, 1)
+        def bq = BlocksQuery.builder(defaultAccountId, 1, FieldValidator.defaultConfig)
                 .buildSigned(defaultKeyPair)
 
         return api.blocksQuery(bq)

@@ -76,7 +76,7 @@ class TransactionStatusObserverTest extends Specification {
         def api = iroha.getApi()
 
         when:
-        def tx = Transaction.builder(defaultAccountId)
+        def tx = Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                 .createAccount('z', defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
                 .build()
@@ -113,7 +113,7 @@ class TransactionStatusObserverTest extends Specification {
         def api = iroha.getApi()
 
         when:
-        def tx = Transaction.builder(defaultAccountId)
+        def tx = Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
                 .createAccount('z', defaultDomainName, defaultKeyPair.getPublic())
                 .sign(defaultKeyPair)
                 .build()

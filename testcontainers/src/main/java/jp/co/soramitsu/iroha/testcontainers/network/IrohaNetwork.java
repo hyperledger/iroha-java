@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3;
+import jp.co.soramitsu.iroha.java.FieldValidator;
 import jp.co.soramitsu.iroha.java.IrohaAPI;
 import jp.co.soramitsu.iroha.java.Transaction;
 import jp.co.soramitsu.iroha.testcontainers.IrohaContainer;
@@ -69,7 +70,7 @@ public class IrohaNetwork extends FailureDetectingExternalResource implements St
 
       // add this peer to genesis block
       genesisBlockBuilder.addTransaction(
-          Transaction.builder(null)
+          Transaction.builder(null, FieldValidator.defaultConfig)
               .addPeer(address, kp.getPublic())
               .build()
               .build()

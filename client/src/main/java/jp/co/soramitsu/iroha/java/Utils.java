@@ -180,30 +180,30 @@ public class Utils {
    * Create Ordered Batch of transactions created by single user from iterable
    */
   public static Iterable<TransactionOuterClass.Transaction> createTxOrderedBatch(
-      Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair) {
-    return createBatch(list, BatchType.ORDERED, keyPair);
+          Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair, FieldValidator.Config config) {
+    return createBatch(list, BatchType.ORDERED, keyPair, config);
   }
 
   /**
    * Create unsigned Ordered Batch of any transactions from iterable
    */
-  public static Iterable<Transaction> createTxUnsignedOrderedBatch(Iterable<Transaction> list) {
-    return createBatch(list, BatchType.ORDERED);
+  public static Iterable<Transaction> createTxUnsignedOrderedBatch(Iterable<Transaction> list, FieldValidator.Config config) {
+    return createBatch(list, BatchType.ORDERED, config);
   }
 
   /**
    * Create Atomic Batch of transactions created by single user from iterable
    */
   public static Iterable<TransactionOuterClass.Transaction> createTxAtomicBatch(
-      Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair) {
-    return createBatch(list, BatchType.ATOMIC, keyPair);
+          Iterable<TransactionOuterClass.Transaction> list, KeyPair keyPair, FieldValidator.Config config) {
+    return createBatch(list, BatchType.ATOMIC, keyPair, config);
   }
 
   /**
    * Create unsigned Atomic Batch of any signed transactions from iterable
    */
-  public static Iterable<Transaction> createTxUnsignedAtomicBatch(Iterable<Transaction> list) {
-    return createBatch(list, BatchType.ATOMIC);
+  public static Iterable<Transaction> createTxUnsignedAtomicBatch(Iterable<Transaction> list, FieldValidator.Config config) {
+    return createBatch(list, BatchType.ATOMIC, config);
   }
 
   /**
@@ -257,12 +257,12 @@ public class Utils {
   }
 
   private static Iterable<TransactionOuterClass.Transaction> createBatch(
-      Iterable<TransactionOuterClass.Transaction> list, BatchType batchType, KeyPair keyPair) {
+          Iterable<TransactionOuterClass.Transaction> list, BatchType batchType, KeyPair keyPair, FieldValidator.Config config) {
     final Iterable<String> batchHashes = getProtoBatchHashesHex(list);
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> Transaction
             .parseFrom(tx)
-            .makeMutable()
+            .makeMutable(config)
             .setBatchMeta(batchType, batchHashes)
             .sign(keyPair)
             .build()
@@ -277,11 +277,11 @@ public class Utils {
   }
 
   private static Iterable<Transaction> createBatch(Iterable<Transaction> list,
-      BatchType batchType) {
+                                                   BatchType batchType, FieldValidator.Config config) {
     final Iterable<String> batchHashes = getBatchHashesHex(list);
     return StreamSupport.stream(list.spliterator(), false)
         .map(tx -> tx
-            .makeMutable()
+            .makeMutable(config)
             .setBatchMeta(batchType, batchHashes)
             .build()
         )

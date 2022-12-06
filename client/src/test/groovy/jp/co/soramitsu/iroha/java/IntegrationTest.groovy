@@ -22,6 +22,7 @@ class IntegrationTest extends Specification {
     static final def defaultDomain = "test"
     static final def defaultKeypair = GenesisBlockBuilder.defaultKeyPair
     static final def defaultAccountId = String.format("%s@%s", defaultAccount, defaultDomain)
+    static final validatorConfig = FieldValidator.defaultConfig
 
     static IrohaContainer iroha = new IrohaContainer()
 
@@ -30,7 +31,7 @@ class IntegrationTest extends Specification {
     static PeerConfig config = PeerConfig.builder()
             .genesisBlock(
             new GenesisBlockBuilder()
-                    .addTransaction(Transaction.builder((String) null, Instant.now())
+                    .addTransaction(Transaction.builder((String) null, Instant.now(), FieldValidator.defaultConfig)
                     .addPeer("0.0.0.0:10001", defaultKeypair.getPublic() as PublicKey)
                     .createRole(
                     defaultRole,
@@ -58,7 +59,7 @@ class IntegrationTest extends Specification {
 
     def "big integration test"() {
         when: "subscribe on new blocks"
-        def bq = BlocksQuery.builder(defaultAccountId, Instant.now(), 1L)
+        def bq = BlocksQuery.builder(defaultAccountId, Instant.now(), 1L, validatorConfig)
                 .buildSigned(defaultKeypair)
 
         def t1 = new TestObserver<QryResponses.BlockQueryResponse>()
@@ -78,7 +79,7 @@ class IntegrationTest extends Specification {
         def account = "account1"
         def domain = "domain"
         def role = "role"
-        def tx = Transaction.builder(defaultAccountId, Instant.now())
+        def tx = Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                 .createRole("${role}", [Primitive.RolePermission.can_add_peer])
                 .createAccount("${account}", defaultDomain, defaultKeypair.getPublic())
                 .createDomain("${domain}", defaultRole)
@@ -118,7 +119,7 @@ class IntegrationTest extends Specification {
         status.txStatus == Endpoint.TxStatus.COMMITTED
 
         when: "query account"
-        def qapi = new QueryAPI(api, defaultAccountId, defaultKeypair)
+        def qapi = new QueryAPI(api, defaultAccountId, defaultKeypair, validatorConfig)
         def res = qapi.getAccount(defaultAccountId)
 
         then:
@@ -128,21 +129,21 @@ class IntegrationTest extends Specification {
         def anotherAccount = "a"
         def anotherAccountId = "${anotherAccount}@${defaultDomain}"
         def atomicBatch = [
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .createAccount(anotherAccount, defaultDomain, defaultKeypair.getPublic())
                         .sign(defaultKeypair)
                         .build(),
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .appendRole(anotherAccountId, role)
                         .sign(defaultKeypair)
                         .build(),
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .setAccountDetail(anotherAccountId, "key", "value1")
                         .sign(defaultKeypair)
                         .build()
         ]
 
-        def trueBatch = Utils.createTxAtomicBatch(atomicBatch, defaultKeypair)
+        def trueBatch = Utils.createTxAtomicBatch(atomicBatch, defaultKeypair, validatorConfig)
         api.transactionListSync(trueBatch)
         Thread.sleep(10000)
 
@@ -158,21 +159,21 @@ class IntegrationTest extends Specification {
         anotherAccount = "b"
         anotherAccountId = "${anotherAccount}@${defaultDomain}"
         def orderedBatch = [
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .createAccount(anotherAccount, defaultDomain, defaultKeypair.getPublic())
                         .sign(defaultKeypair)
                         .build(),
                 // invalid tx, intentionally
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .appendRole(anotherAccountId, "unknownrole")
                         .build().build(),
-                Transaction.builder(defaultAccountId, Instant.now())
+                Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                         .setAccountDetail(anotherAccountId, "key", "value2")
                         .sign(defaultKeypair)
                         .build()
         ]
 
-        trueBatch = Utils.createTxOrderedBatch(orderedBatch, defaultKeypair)
+        trueBatch = Utils.createTxOrderedBatch(orderedBatch, defaultKeypair, validatorConfig)
         api.transactionListSync(trueBatch)
         Thread.sleep(10000)
 
@@ -244,7 +245,7 @@ class IntegrationTest extends Specification {
 
         accountKey == Utils.toHex(defaultKeypair.public.encoded).toLowerCase()
 
-        def pendingTx = Transaction.builder(defaultAccountId, Instant.now())
+        def pendingTx = Transaction.builder(defaultAccountId, Instant.now(), validatorConfig)
                 .createAccount(anotherAccount, defaultDomain, defaultKeypair.getPublic())
                 .setQuorum(2)
                 .sign(defaultKeypair)

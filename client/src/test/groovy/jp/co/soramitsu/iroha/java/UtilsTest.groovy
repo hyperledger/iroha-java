@@ -10,7 +10,7 @@ class UtilsTest extends Specification {
 
     def "hash works as expected"() {
         given:
-        Transaction tx = Transaction.builder("a@a", Instant.ofEpochMilli(0))
+        Transaction tx = Transaction.builder("a@a", Instant.ofEpochMilli(0), FieldValidator.defaultConfig)
                 .createAsset("asset", "domain", 3)
                 .build()
 

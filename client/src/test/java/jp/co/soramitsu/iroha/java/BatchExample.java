@@ -17,11 +17,11 @@ public class BatchExample {
   private static WaitForTerminalStatus waiter = new WaitForTerminalStatus();
 
   private static TransactionStatusObserver statusObserver = TransactionStatusObserver.builder()
-      .onTransactionFailed(t -> System.out.println(String.format(
-          "transaction %s failed with msg: %s",
+      .onTransactionFailed(t -> System.out.printf(
+              "transaction %s failed with msg: %s%n",
           t.getTxHash(),
           t.getErrOrCmdName()
-      )))
+      ))
       // executed when got any exception in handlers or grpc
       .onError(e -> System.out.println("Failed with exception: " + e))
       // executed when we receive "committed" status
@@ -38,14 +38,15 @@ public class BatchExample {
     irohaContainer.start();
     IrohaAPI irohaAPI = irohaContainer.getApi();
 
+    val config = FieldValidator.defaultConfig;
     // create 1st transactions
-    val tx1 = Transaction.builder(defaultAccountId)
+    val tx1 = Transaction.builder(defaultAccountId, config)
         .setAccountDetail(defaultAccountId, "key1", "value1")
         .sign(defaultKeyPair)
         .build();
 
     // create 2nd transactions
-    val tx2 = Transaction.builder(defaultAccountId)
+    val tx2 = Transaction.builder(defaultAccountId, config)
         .setAccountDetail(defaultAccountId, "key2", "value2")
         .sign(defaultKeyPair)
         .build();
@@ -56,7 +57,7 @@ public class BatchExample {
     lst.add(tx2);
 
     // convert list to batch
-    val atomicBatch = Utils.createTxAtomicBatch(lst, defaultKeyPair);
+    val atomicBatch = Utils.createTxAtomicBatch(lst, defaultKeyPair, config);
 
     // send
     irohaAPI.transactionListSync(atomicBatch);
@@ -69,7 +70,7 @@ public class BatchExample {
     }
 
     // build protobuf query, sign it
-    val q = Query.builder(defaultAccountId, 1)
+    val q = Query.builder(defaultAccountId, 1, config)
         .getAccountDetail(defaultAccountId, null, null)
         .buildSigned(defaultKeyPair);
 

@@ -26,6 +26,8 @@ class QueryApiTest extends Specification {
                             .genesisBlock(getGenesisBlock())
                             .build())
 
+    static config = FieldValidator.defaultConfig
+
     def setupSpec() {
         iroha.start()
         api = iroha.getApi()
@@ -36,14 +38,14 @@ class QueryApiTest extends Specification {
     }
 
     static def setDetail(Account account, String key, String value) {
-        return builder(account.id)
+        return builder(account.id, config)
                 .setAccountDetail(account.id, key, value)
                 .sign(account.keyPair)
                 .build()
     }
 
     static def createAccount(Account a) {
-        return builder(defaultAccountId)
+        return builder(defaultAccountId, config)
                 .createAccount(a.id, a.keyPair.public)
                 .sign(defaultKeyPair)
                 .build()
@@ -71,7 +73,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "getPeer query: issuer=#issuer.id"() {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         def response = qapi.getPeers()
@@ -89,7 +91,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "getRoles query"() {
         given:
-        def qapi = new QueryAPI(api, A)
+        def qapi = new QueryAPI(api, A, config)
 
         when:
         def response = qapi.getRoles()
@@ -102,7 +104,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "getRolePermissions query"() {
       given:
-      def qapi = new QueryAPI(api, A)
+      def qapi = new QueryAPI(api, A, config)
 
       when:
       def response = qapi.getRolePermissions(defaultRoleName)
@@ -114,7 +116,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "all getAccountDetail: issuer=#issuer.id, accountId=#accountId, writer=#writer, key=#key"() {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         def actual_value = qapi.getAccountDetails(accountId, writer, key, 10).getDetail()
@@ -140,7 +142,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "getAccountDetail pagination test: accountId=#accountId, writer=#writer, key=#key, nextWriter=#nextWriter, nextKet=#nextKey"() {
         given:
-        def qapi = new QueryAPI(api, A)
+        def qapi = new QueryAPI(api, A, config)
 
         when:
         def res = qapi.getAccountDetails(accountId, writer, key, 1, nextWriter, nextKey)
@@ -162,7 +164,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "exception in @Deprecated getAccountDetails"(Account issuer, String accountId, String writer, String key) {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         qapi.getAccountDetails(accountId, writer, key, 1)
@@ -177,7 +179,7 @@ class QueryApiTest extends Specification {
 
     def "validation exception in getAccountDetails"(Account issuer, String accountId, String writer, String key, Integer pageSize) {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         qapi.getAccountDetails(accountId, writer, key, pageSize)
@@ -194,7 +196,7 @@ class QueryApiTest extends Specification {
 
     def "exception in getAccountDetails"(Account issuer, String accountId, String writer, String key, Integer pageSize) {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         qapi.getAccountDetails(accountId, writer, key, pageSize)
@@ -210,7 +212,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "validation exception in getAccount"(Account issuer, String accountId) {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         qapi.getAccount(accountId)
@@ -226,7 +228,7 @@ class QueryApiTest extends Specification {
     @Unroll
     def "exception in getAccount"(Account issuer, String accountId) {
         given:
-        def qapi = new QueryAPI(api, issuer)
+        def qapi = new QueryAPI(api, issuer, config)
 
         when:
         qapi.getAccount(accountId)
