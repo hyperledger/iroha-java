@@ -88,9 +88,9 @@ public class Transaction
     return Utils.toHex(getReducedHash());
   }
 
-  public TransactionBuilder makeMutable() {
+  public TransactionBuilder makeMutable(FieldValidator.Config config) {
     tx.clearSignatures();
-    return new TransactionBuilder(this);
+    return new TransactionBuilder(this, config);
   }
 
   public static Transaction parseFrom(TransactionOuterClass.Transaction input) {
@@ -102,35 +102,35 @@ public class Transaction
     return new Transaction(proto);
   }
 
-  public static TransactionBuilder builder(String accountId, Long date) {
-    return new TransactionBuilder(accountId, date);
+  public static TransactionBuilder builder(String accountId, Long date, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, date, config);
   }
 
-  public static TransactionBuilder builder(String accountId, Date date) {
-    return new TransactionBuilder(accountId, date);
+  public static TransactionBuilder builder(String accountId, Date date, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, date, config);
   }
 
-  public static TransactionBuilder builder(String accountId, Instant time) {
-    return new TransactionBuilder(accountId, time);
+  public static TransactionBuilder builder(String accountId, Instant time, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, time, config);
   }
 
-  public static TransactionBuilder builder(String accountId) {
-    return builder(accountId, System.currentTimeMillis());
+  public static TransactionBuilder builder(String accountId, FieldValidator.Config config) {
+    return builder(accountId, System.currentTimeMillis(), config);
   }
 
-  public static TransactionBuilder builder(String accountId, Long date, SignatureBuilder signatureBuilder) {
-    return new TransactionBuilder(accountId, date, signatureBuilder);
+  public static TransactionBuilder builder(String accountId, Long date, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, date, signatureBuilder, config);
   }
 
-  public static TransactionBuilder builder(String accountId, Date date, SignatureBuilder signatureBuilder) {
-    return new TransactionBuilder(accountId, date, signatureBuilder);
+  public static TransactionBuilder builder(String accountId, Date date, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, date, signatureBuilder, config);
   }
 
-  public static TransactionBuilder builder(String accountId, Instant time, SignatureBuilder signatureBuilder) {
-    return new TransactionBuilder(accountId, time, signatureBuilder);
+  public static TransactionBuilder builder(String accountId, Instant time, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new TransactionBuilder(accountId, time, signatureBuilder, config);
   }
 
-  public static TransactionBuilder builder(String accountId, SignatureBuilder signatureBuilder) {
-    return builder(accountId, System.currentTimeMillis(), signatureBuilder);
+  public static TransactionBuilder builder(String accountId, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return builder(accountId, System.currentTimeMillis(), signatureBuilder, config);
   }
 }

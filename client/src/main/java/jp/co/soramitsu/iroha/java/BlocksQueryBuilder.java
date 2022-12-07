@@ -10,7 +10,7 @@ import java.util.Date;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3.CryptoException;
 
 public class BlocksQueryBuilder {
-
+  private final FieldValidator.Config config;
   private FieldValidator validator;
 
   private QueryPayloadMeta.Builder meta = QueryPayloadMeta.newBuilder();
@@ -25,20 +25,21 @@ public class BlocksQueryBuilder {
     setCounter(counter);
   }
 
-  public BlocksQueryBuilder(String accountId, Instant time, long counter) {
-    init(accountId, time.toEpochMilli(), counter);
+  public BlocksQueryBuilder(String accountId, Instant time, long counter, FieldValidator.Config config) {
+    this(accountId, time.toEpochMilli(), counter, config);
   }
 
-  public BlocksQueryBuilder(String accountId, Date time, long counter) {
-    init(accountId, time.getTime(), counter);
+  public BlocksQueryBuilder(String accountId, Date time, long counter, FieldValidator.Config config) {
+    this(accountId, time.getTime(), counter, config);
   }
 
-  public BlocksQueryBuilder(String accountId, Long time, long counter) {
+  public BlocksQueryBuilder(String accountId, Long time, long counter, FieldValidator.Config config) {
+    this.config = config;
     init(accountId, time, counter);
   }
 
   public BlocksQueryBuilder enableValidation() {
-    this.validator = new FieldValidator();
+    this.validator = new FieldValidator(this.config);
     return this;
   }
 

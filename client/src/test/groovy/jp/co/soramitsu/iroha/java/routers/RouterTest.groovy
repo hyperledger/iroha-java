@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha.java.routers
 
 
 import iroha.protocol.TransactionOuterClass
+import jp.co.soramitsu.iroha.java.FieldValidator
 import jp.co.soramitsu.iroha.java.Transaction
 import jp.co.soramitsu.iroha.java.detail.router.Router
 import spock.lang.Specification
@@ -79,7 +80,7 @@ class RouterTest extends Specification {
 
         where:
         tx << [
-                Transaction.builder(null)
+                Transaction.builder(null, FieldValidator.defaultConfig)
                         .disableValidation()
                         .addPeer("127.0.0.1:123", defaultKeyPair.public)
                         .addPeer("1.1.1.1:11111", defaultKeyPair.public)

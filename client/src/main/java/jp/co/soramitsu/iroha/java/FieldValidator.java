@@ -14,6 +14,20 @@ import lombok.val;
  * Stateless validator for transaction and query fields.
  */
 public class FieldValidator {
+  private final int maxDescriptionLength;
+
+  static final class Config {
+    int maxDescriptionLength;
+    Config(int maxDescriptionLength) {
+        this.maxDescriptionLength = maxDescriptionLength;
+    }
+  }
+
+  public static final Config defaultConfig = new Config(64);
+
+  FieldValidator(Config config){
+    this.maxDescriptionLength = config.maxDescriptionLength;
+  }
 
   public void checkAmount(@NonNull String amount) {
     BigDecimal am;
@@ -154,7 +168,7 @@ public class FieldValidator {
     }
   }
 
-  public void checkPublicKey(@NonNull byte[] peerKey) {
+  public void checkPublicKey(byte[] peerKey) {
     if (peerKey.length != 32 && peerKey.length != 35) {
       throw new ValidationException(PUBKEY, "Public key must be 32 or 35 bytes length, got '%d'",
           peerKey.length);
@@ -205,9 +219,9 @@ public class FieldValidator {
     }
 
     int len = description.length();
-    if (len > 64) {
-      throw new ValidationException(DESCRIPTION, "Max length is 64, given string length is '%d'",
-          len);
+    if (len > this.maxDescriptionLength) {
+      throw new ValidationException(DESCRIPTION, String.format("Max length is '%d', given string length is '%d'",
+          this.maxDescriptionLength, len));
     }
   }
 

@@ -35,36 +35,29 @@ public class QueryAPI {
   private String accountId;
   @NonNull
   private KeyPair keyPair;
-
+  @NonNull
+  private final FieldValidator.Config config;
   // default signature builder
   private SignatureBuilder signatureBuilder;
 
-  public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair) {
-    this.api = api;
-    this.accountId = accountId;
-    this.keyPair = keyPair;
-    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
+  public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair, FieldValidator.Config config) {
+    this(api, accountId, keyPair, Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair, SignatureBuilder signatureBuilder) {
+  public QueryAPI(IrohaAPI api, String accountId, KeyPair keyPair, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
     this.api = api;
     this.accountId = accountId;
     this.keyPair = keyPair;
     this.signatureBuilder = signatureBuilder;
+    this.config = config;
   }
 
-  public QueryAPI(IrohaAPI api, Account account) {
-    this.api = api;
-    this.accountId = account.getId();
-    this.keyPair = account.getKeyPair();
-    signatureBuilder = Ed25519Sha3SignatureBuilder.getInstance();
+  public QueryAPI(IrohaAPI api, Account account, FieldValidator.Config config) {
+    this(api, account.getId(), account.getKeyPair(), Ed25519Sha3SignatureBuilder.getInstance(), config);
   }
 
-  public QueryAPI(IrohaAPI api, Account account, SignatureBuilder signatureBuilder) {
-    this.api = api;
-    this.accountId = account.getId();
-    this.keyPair = account.getKeyPair();
-    this.signatureBuilder = signatureBuilder;
+  public QueryAPI(IrohaAPI api, Account account, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    this(api, account.getId(), account.getKeyPair(), signatureBuilder, config);
   }
 
   private static AtomicInteger counter = new AtomicInteger(1);
@@ -77,7 +70,7 @@ public class QueryAPI {
   }
 
   public EngineReceiptsResponse getEngineReceipts(String txHash) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
             .getEngineReceipts(txHash)
             .buildSigned(keyPair);
 
@@ -89,7 +82,7 @@ public class QueryAPI {
   }
 
   public PeersResponse getPeers() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getPeers()
         .buildSigned(keyPair);
 
@@ -111,7 +104,7 @@ public class QueryAPI {
       String writer,
       String key
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAccountDetail(accountId, writer, key)
         .buildSigned(keyPair);
 
@@ -132,7 +125,7 @@ public class QueryAPI {
       String accountDetailRecordIdWriter,
       String accountDetailRecordIdKey
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAccountDetail(
             accountId,
             writer,
@@ -160,7 +153,7 @@ public class QueryAPI {
   }
 
   public AccountResponse getAccount(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAccount(accountId)
         .buildSigned(keyPair);
 
@@ -172,7 +165,7 @@ public class QueryAPI {
   }
 
   public BlockResponse getBlock(Long height) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getBlock(height)
         .buildSigned(keyPair);
 
@@ -190,7 +183,7 @@ public class QueryAPI {
                                                          Timestamp lastTxTime,
                                                          Integer firstTxHeight,
                                                          Integer lastTxHeight) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
             .getAccountTransactions(accountId, pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             .buildSigned(keyPair);
 
@@ -243,7 +236,7 @@ public class QueryAPI {
                                                               Integer firstTxHeight,
                                                               Integer lastTxHeight) {
 
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
             .getAccountAssetTransactions(accountId, assetId, pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             .buildSigned(keyPair);
 
@@ -283,7 +276,7 @@ public class QueryAPI {
   }
 
   public TransactionsResponse getTransactions(Iterable<String> hashes) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getTransactions(hashes)
         .buildSigned(keyPair);
 
@@ -295,7 +288,7 @@ public class QueryAPI {
   }
 
   public AssetResponse getAssetInfo(String assetId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAssetInfo(assetId)
         .buildSigned(keyPair);
 
@@ -313,7 +306,7 @@ public class QueryAPI {
    */
   @Deprecated
   public AccountAssetResponse getAccountAssets(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAccountAssets(accountId)
         .buildSigned(keyPair);
 
@@ -329,7 +322,7 @@ public class QueryAPI {
       Integer pageSize,
       String firstAssetId
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getAccountAssets(accountId, pageSize, firstAssetId)
         .buildSigned(keyPair);
 
@@ -348,7 +341,7 @@ public class QueryAPI {
   }
 
   public SignatoriesResponse getSignatories(String accountId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getSignatories(accountId)
         .buildSigned(keyPair);
 
@@ -366,7 +359,7 @@ public class QueryAPI {
    */
   @Deprecated
   public TransactionsResponse getPendingTransactions() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getPendingTransactions()
         .buildSigned(keyPair);
 
@@ -386,7 +379,7 @@ public class QueryAPI {
           Integer firstTxHeight,
           Integer lastTxHeight
   ) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
             .getPendingTransactions(pageSize, firstHashHex, ordering, firstTxTime, lastTxTime, firstTxHeight, lastTxHeight)
             .buildSigned(keyPair);
 
@@ -426,7 +419,7 @@ public class QueryAPI {
   }
 
   public RolesResponse getRoles() {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getRoles()
         .buildSigned(keyPair);
 
@@ -438,7 +431,7 @@ public class QueryAPI {
   }
 
   public RolePermissionsResponse getRolePermissions(String roleId) {
-    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder)
+    val q = Query.builder(this.accountId, counter.getAndIncrement(), signatureBuilder, this.config)
         .getRolePermissions(roleId)
         .buildSigned(keyPair);
 

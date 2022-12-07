@@ -17,7 +17,7 @@ import static jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder.de
 class Ed25519Sha2Test extends Specification {
 
     static Account account = Account.createWithEd25519Sha2("a@test")
-
+    static config = FieldValidator.defaultConfig
     static IrohaAPI api
     static def iroha = new IrohaContainer()
             .withIrohaDockerImage(IrohaContainer.defaultIrohaDockerImageWithURSA)
@@ -36,7 +36,7 @@ class Ed25519Sha2Test extends Specification {
     }
 
     static def createAccount(Account a) {
-        return Transaction.builder(defaultAccountId)
+        return Transaction.builder(defaultAccountId, config)
                 .createAccount("a", defaultDomainName, a.getHexPublicKey())
                 .sign(defaultKeyPair)
                 .build()
@@ -51,10 +51,10 @@ class Ed25519Sha2Test extends Specification {
     @Unroll
     def "setAccountDetail and getAccountDetail by Ed25519 crypto"() {
         given:
-        def qapi = new QueryAPI(api, account, new Ed25519Sha2SignatureBuilder())
+        def qapi = new QueryAPI(api, account, new Ed25519Sha2SignatureBuilder(), config)
 
         when: "send tx with Iroha builtin Ed25519/Sha3 with default builder without specifying SignatureBuilder"
-        def tx = Transaction.builder(defaultAccountId,)
+        def tx = Transaction.builder(defaultAccountId, config)
                 .setAccountDetail(defaultAccountId, "key", "value")
                 .sign(defaultKeyPair)
                 .build()
@@ -65,7 +65,7 @@ class Ed25519Sha2Test extends Specification {
         transaction_observer.assertAllTransactionsCommitted()
 
         when: "create account with Ed25519/Sha2 pubkey"
-        tx = Transaction.builder(defaultAccountId, new Ed25519Sha3SignatureBuilder())
+        tx = Transaction.builder(defaultAccountId, new Ed25519Sha3SignatureBuilder(), FieldValidator.defaultConfig)
                 .createAccount("a", defaultDomainName, account.getHexPublicKey())
                 .sign(defaultKeyPair)
                 .build()
@@ -76,7 +76,7 @@ class Ed25519Sha2Test extends Specification {
         transaction_observer.assertAllTransactionsCommitted()
 
         when: "send tx from account with Ed25519/Sha2 pubkey"
-        tx = Transaction.builder(account.getId(), new Ed25519Sha2SignatureBuilder())
+        tx = Transaction.builder(account.getId(), new Ed25519Sha2SignatureBuilder(), config)
                 .setAccountDetail(account.getId(), "key", "value")
                 .sign(account.keyPair)
                 .build()
@@ -87,7 +87,7 @@ class Ed25519Sha2Test extends Specification {
         transaction_observer.assertAllTransactionsCommitted()
 
         when: "query with Ed25519/Sha3 as default SignatureBuilder"
-        def defaultQueryApi = new QueryAPI(api, defaultAccountId, defaultKeyPair)
+        def defaultQueryApi = new QueryAPI(api, defaultAccountId, defaultKeyPair, config)
         def actual_value = defaultQueryApi.getAccountDetails(account.getId(), account.getId(), "key", 1).getDetail()
 
         then:

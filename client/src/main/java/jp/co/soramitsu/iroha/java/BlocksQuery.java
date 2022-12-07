@@ -52,19 +52,19 @@ public class BlocksQuery
     return q.build();
   }
 
-  public static BlocksQueryBuilder builder(String accountId, Instant time, long counter) {
-    return new BlocksQueryBuilder(accountId, time, counter);
+  public static BlocksQueryBuilder builder(String accountId, Instant time, long counter, FieldValidator.Config config) {
+    return new BlocksQueryBuilder(accountId, time, counter, config);
   }
 
-  public static BlocksQueryBuilder builder(String accountId, Date time, long counter) {
-    return new BlocksQueryBuilder(accountId, time, counter);
+  public static BlocksQueryBuilder builder(String accountId, Date time, long counter, FieldValidator.Config config) {
+    return new BlocksQueryBuilder(accountId, time, counter, config);
   }
 
-  public static BlocksQueryBuilder builder(String accountId, Long time, long counter) {
-    return new BlocksQueryBuilder(accountId, time, counter);
+  public static BlocksQueryBuilder builder(String accountId, Long time, long counter, FieldValidator.Config config) {
+    return new BlocksQueryBuilder(accountId, time, counter, config);
   }
 
-  public static BlocksQueryBuilder builder(String accountId, long counter) {
-    return builder(accountId, System.currentTimeMillis(), counter);
+  public static BlocksQueryBuilder builder(String accountId, long counter, FieldValidator.Config config) {
+    return builder(accountId, System.currentTimeMillis(), counter, config);
   }
 }

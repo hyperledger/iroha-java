@@ -63,35 +63,35 @@ public class Query
     return q.build();
   }
 
-  public static QueryBuilder builder(String accountId, Long time, long counter) {
-    return new QueryBuilder(accountId, time, counter);
+  public static QueryBuilder builder(String accountId, Long time, long counter, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, config);
   }
 
-  public static QueryBuilder builder(String accountId, Date time, long counter) {
-    return new QueryBuilder(accountId, time, counter);
+  public static QueryBuilder builder(String accountId, Date time, long counter, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, config);
   }
 
-  public static QueryBuilder builder(String accountId, Instant time, long counter) {
-    return new QueryBuilder(accountId, time, counter);
+  public static QueryBuilder builder(String accountId, Instant time, long counter, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, config);
   }
 
-  public static QueryBuilder builder(String accountId, long counter) {
-    return new QueryBuilder(accountId, Instant.now(), counter);
+  public static QueryBuilder builder(String accountId, long counter, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, Instant.now(), counter, config);
   }
 
-  public static QueryBuilder builder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder) {
-    return new QueryBuilder(accountId, time, counter, signatureBuilder);
+  public static QueryBuilder builder(String accountId, Long time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, signatureBuilder, config);
   }
 
-  public static QueryBuilder builder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder) {
-    return new QueryBuilder(accountId, time, counter, signatureBuilder);
+  public static QueryBuilder builder(String accountId, Date time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, signatureBuilder, config);
   }
 
-  public static QueryBuilder builder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder) {
-    return new QueryBuilder(accountId, time, counter, signatureBuilder);
+  public static QueryBuilder builder(String accountId, Instant time, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, time, counter, signatureBuilder, config);
   }
 
-  public static QueryBuilder builder(String accountId, long counter, SignatureBuilder signatureBuilder) {
-    return new QueryBuilder(accountId, Instant.now(), counter, signatureBuilder);
+  public static QueryBuilder builder(String accountId, long counter, SignatureBuilder signatureBuilder, FieldValidator.Config config) {
+    return new QueryBuilder(accountId, Instant.now(), counter, signatureBuilder, config);
   }
 }

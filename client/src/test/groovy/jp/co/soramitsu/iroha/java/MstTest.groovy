@@ -20,6 +20,7 @@ class MstTest extends Specification {
     static def keyPairA = crypto.generateKeypair()
     static def keyPairB = crypto.generateKeypair()
     static def mstAccountId = "mst@test"
+    static final config = FieldValidator.defaultConfig
 
     static def getPeerConfig() {
         return PeerConfig.builder()
@@ -32,7 +33,7 @@ class MstTest extends Specification {
         return new GenesisBlockBuilder()
                 .addDefaultTransaction()
                 .addTransaction(
-                Transaction.builder(null)
+                Transaction.builder(null, config)
                         .createAccount(mstAccountId, keyPairA.getPublic())
                         .addSignatory(mstAccountId, keyPairB.getPublic())
                         .setAccountQuorum(mstAccountId, 2)
@@ -51,7 +52,7 @@ class MstTest extends Specification {
 
     def tx() {
         int i = counter.getAndIncrement()
-        return Transaction.builder(mstAccountId)
+        return Transaction.builder(mstAccountId, config)
                 .createAsset("usd${i}", defaultDomainName, 2)
                 .build()
     }

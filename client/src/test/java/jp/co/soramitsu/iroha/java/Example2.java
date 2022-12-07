@@ -30,7 +30,7 @@ public class Example2 {
     IrohaAPI api = iroha.getApi();
 
     // create a transaction
-    val tx = Transaction.builder(defaultAccountId)
+    val tx = Transaction.builder(defaultAccountId, FieldValidator.defaultConfig)
         .createAccount("0", defaultDomainName, defaultKeyPair.getPublic())
         .createAsset("usd", defaultDomainName, 2)
         .createRole("role", Collections.singletonList(RolePermission.can_add_asset_qty))
@@ -44,23 +44,19 @@ public class Example2 {
     // handle CREATE_ACCOUNT command
     cmdRouter.handle(CommandCase.CREATE_ACCOUNT, cmd -> {
       CreateAccount c = cmd.getCreateAccount();
-      System.out.println(
-          String.format("[create account] name=%s domain=%s publickey=%s",
-              c.getAccountName(),
-              c.getDomainId(),
-              c.getPublicKey())
-      );
+      System.out.printf("[create account] name=%s domain=%s publickey=%s%n",
+          c.getAccountName(),
+          c.getDomainId(),
+          c.getPublicKey());
     });
 
     // handle CREATE_ASSET
     cmdRouter.handle(CommandCase.CREATE_ASSET, cmd -> {
       CreateAsset c = cmd.getCreateAsset();
-      System.out.println(
-          String.format("[create asset] name=%s domain=%s precision=%d",
-              c.getAssetName(),
-              c.getDomainId(),
-              c.getPrecision())
-      );
+      System.out.printf("[create asset] name=%s domain=%s precision=%d%n",
+          c.getAssetName(),
+          c.getDomainId(),
+          c.getPrecision());
     });
 
     val observer = TransactionStatusObserver.builder()

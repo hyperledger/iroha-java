@@ -17,6 +17,7 @@ class GetAccountTransactions extends Specification {
     static final def defaultAccount = "test"
     static final def defaultDomain = "test"
     static final def defaultAccountId = String.format("%s@%s", defaultAccount, defaultDomain)
+    static final config = FieldValidator.defaultConfig
     static Account A = Account.create("a@test")
     static Date now = new Date()
     static tx1 = setDetail(A, "key1", "Avalue1", now.getTime() + 1)
@@ -41,14 +42,14 @@ class GetAccountTransactions extends Specification {
     }
 
     static def createAccount(Account a) {
-        return builder(defaultAccountId)
+        return builder(defaultAccountId, config)
                 .createAccount(a.id, a.keyPair.public)
                 .sign(defaultKeyPair)
                 .build()
     }
 
     static def setDetail(Account account, String key, String value, Long createdTime) {
-        return builder(account.id)
+        return builder(account.id, config)
                 .setAccountDetail(account.id, key, value)
                 .setCreatedTime(createdTime)
                 .sign(account.keyPair)
@@ -69,7 +70,7 @@ class GetAccountTransactions extends Specification {
     @Unroll
     def "getAccountTransactions"() {
         given:
-        def qapi = new QueryAPI(api, A)
+        def qapi = new QueryAPI(api, A, config)
 
         when: "get account transactions without ordering returns txs in order of creation (tx1, tx2, tx3, tx4)"
         def response = qapi.getAccountTransactions(A.id, 100)

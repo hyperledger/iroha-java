@@ -9,7 +9,7 @@ import static jp.co.soramitsu.iroha.java.ValidationException.Type.*
 
 class FieldValidatorTest extends Specification {
 
-    def fv = new FieldValidator()
+    def fv = new FieldValidator(FieldValidator.defaultConfig)
 
 
     def "valid data is valid"() {

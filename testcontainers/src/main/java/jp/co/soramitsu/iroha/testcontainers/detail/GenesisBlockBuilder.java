@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import jp.co.soramitsu.crypto.ed25519.Ed25519Sha3;
+import jp.co.soramitsu.iroha.java.FieldValidator;
 import jp.co.soramitsu.iroha.java.Transaction;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -40,7 +41,7 @@ public class GenesisBlockBuilder {
 
   public GenesisBlockBuilder addDefaultPeer() {
     return this.addTransaction(
-        Transaction.builder(null)
+        Transaction.builder(null, FieldValidator.defaultConfig)
             .addPeer("0.0.0.0:10001", defaultKeyPair.getPublic().getEncoded())
             .build()
             .build()
@@ -63,7 +64,7 @@ public class GenesisBlockBuilder {
    * (false)
    */
   public GenesisBlockBuilder addDefaultTransaction(boolean withDefaultPeer) {
-    val builder = Transaction.builder(null);
+    val builder = Transaction.builder(null, FieldValidator.defaultConfig);
 
     if (withDefaultPeer) {
       // for multi-peer environment it is possible to disable default peer inclusion

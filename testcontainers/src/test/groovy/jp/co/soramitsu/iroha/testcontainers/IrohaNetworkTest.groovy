@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha.testcontainers
 
 import io.reactivex.observers.TestObserver
+import jp.co.soramitsu.iroha.java.FieldValidator
 import jp.co.soramitsu.iroha.java.Transaction
 import jp.co.soramitsu.iroha.testcontainers.detail.GenesisBlockBuilder
 import jp.co.soramitsu.iroha.testcontainers.network.IrohaNetwork
@@ -30,7 +31,7 @@ class IrohaNetworkTest extends Specification {
         })
 
         when: "valid tx is created"
-        def tx = Transaction.builder("bogdan@test")
+        def tx = Transaction.builder("bogdan@test", FieldValidator.defaultConfig)
                 .setAccountDetail("bogdan@test", "key", "value")
                 .sign(kp)
                 .build()
