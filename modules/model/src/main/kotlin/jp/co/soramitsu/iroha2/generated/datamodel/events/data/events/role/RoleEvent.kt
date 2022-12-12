@@ -77,6 +77,37 @@ public sealed class RoleEvent : ModelEnum {
         }
     }
 
+    /**
+     * 'PermissionRemoved' variant
+     */
+    public data class PermissionRemoved(
+        public val permissionRemoved:  
+            jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.PermissionRemoved
+    ) : RoleEvent() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PermissionRemoved>, ScaleWriter<PermissionRemoved> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): PermissionRemoved = try {
+                PermissionRemoved(
+                    jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.PermissionRemoved.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionRemoved) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.role.PermissionRemoved.write(
+                    writer,
+                    instance.permissionRemoved
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<RoleEvent>, ScaleWriter<RoleEvent> {
         public override fun read(reader: ScaleCodecReader): RoleEvent = when (
             val discriminant =
@@ -84,6 +115,7 @@ public sealed class RoleEvent : ModelEnum {
         ) {
             0 -> Created.read(reader)
             1 -> Deleted.read(reader)
+            2 -> PermissionRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -92,6 +124,7 @@ public sealed class RoleEvent : ModelEnum {
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)
                 1 -> Deleted.write(writer, instance as Deleted)
+                2 -> PermissionRemoved.write(writer, instance as PermissionRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

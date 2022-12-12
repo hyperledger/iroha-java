@@ -11,7 +11,7 @@ import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.Map
@@ -24,8 +24,8 @@ import kotlin.collections.Map
 public data class Domain(
     public val id: DomainId,
     public val accounts: Map<AccountId, Account>,
-    public val assetDefinitions: Map<AssetDefinitionId, AssetDefinitionEntry>,
-    public val logo: IpfsPath?,
+    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
+    public val logo: IpfsPath? = null,
     public val metadata: Metadata
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
@@ -34,7 +34,7 @@ public data class Domain(
                 DomainId.read(reader),
                 reader.readMap(reader.readCompactInt(), { AccountId.read(reader) }, { Account.read(reader) }),
                 reader.readMap(
-                    reader.readCompactInt(), { AssetDefinitionId.read(reader) },
+                    reader.readCompactInt(), { DefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
                 reader.readNullable(IpfsPath),
@@ -55,9 +55,9 @@ public data class Domain(
             }
             writer.writeCompact(instance.assetDefinitions.size)
             instance.assetDefinitions.toSortedMap(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId.comparator()
             ).forEach { (key, value) ->
-                AssetDefinitionId.write(writer, key)
+                DefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
             }
             writer.writeNullable(IpfsPath, instance.logo)

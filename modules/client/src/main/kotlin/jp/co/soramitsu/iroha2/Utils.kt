@@ -19,7 +19,8 @@ suspend fun findFreePorts(
         }
     }
 
-    return lock.takeIf { it }
-        ?.let { mutex.withLock { find() } }
-        ?: find()
+    return when (lock) {
+        true -> mutex.withLock { find() }
+        false -> find()
+    }
 }

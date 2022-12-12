@@ -50,7 +50,7 @@ val FROM_FIXED_POINT = MemberName("jp.co.soramitsu.iroha2", "fromFixedPoint")
  */
 fun resolveScaleReadImpl(type: Type): CodeBlock {
     return when (type) {
-        is ArrayType -> CodeBlock.of("reader.readByteArray(%L)", type.size)
+        is ArrayType -> type.scaleReadImpl()
         is VecType -> type.scaleReadImpl()
         is SetType -> CodeBlock.of(
             "reader.readSet(reader.readCompactInt()) {%L}",
@@ -86,12 +86,12 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
  */
 fun resolveScaleWriteImpl(type: Type, propName: CodeBlock): CodeBlock {
     return when (type) {
-        is ArrayType -> CodeBlock.of("writer.writeByteArray(%L)", propName)
+        is ArrayType -> type.scaleWriteImpl(propName)
         is VecType -> type.scaleWriteImpl(propName)
         is SetType -> type.scaleWriteImpl(propName)
         is MapType -> type.scaleWriteImpl(propName)
         is U8Type -> CodeBlock.of("writer.writeUByte(%L)", propName)
-        is U16Type -> CodeBlock.of("writer.writeUint16(%L.toInt())", propName)
+        is U16Type -> CodeBlock.of("writer.writeUint16(%L)", propName)
         is U32Type -> CodeBlock.of("writer.writeUint32(%L)", propName)
         is U64Type -> CodeBlock.of("writer.writeUint64(%L)", propName)
         is U128Type -> CodeBlock.of("writer.writeUint128(%L)", propName)
@@ -118,6 +118,17 @@ fun withoutGenerics(typeName: TypeName): ClassName {
         is ClassName -> typeName.topLevelClassName()
         is ParameterizedTypeName -> typeName.rawType.topLevelClassName()
         else -> throw RuntimeException("Unexpected type name: $typeName")
+    }
+}
+
+private fun ArrayType.scaleReadImpl(): CodeBlock {
+    return when (this.innerType.requireValue()) {
+        is U8Type -> CodeBlock.of("reader.readByteArray(%L)", this.size)
+        else -> CodeBlock.of(
+            "reader.readArray(%L) {%L}",
+            this.size,
+            resolveScaleReadImpl(this.innerType.requireValue())
+        )
     }
 }
 
@@ -209,6 +220,20 @@ private fun OptionType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
             withoutGenerics(resolveKotlinType(this)),
             propName
         )
+    }
+}
+
+private fun ArrayType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
+    return when (this.innerType.requireValue()) {
+        is U8Type -> CodeBlock.of("writer.writeByteArray(%L)", propName)
+        else -> {
+            val value = resolveScaleWriteImpl(this.innerType.requireValue(), CodeBlock.of("value"))
+            CodeBlock.of(
+                "%1L.forEach { value ->\n%2L\n}",
+                propName,
+                value
+            )
+        }
     }
 }
 

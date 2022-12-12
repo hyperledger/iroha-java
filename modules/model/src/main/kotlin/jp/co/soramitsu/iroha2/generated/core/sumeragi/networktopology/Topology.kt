@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.core.sumeragi.viewchange.ProofChain
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.wrapException
@@ -21,15 +20,13 @@ import kotlin.collections.List
  */
 public data class Topology(
     public val sortedPeers: List<PeerId>,
-    public val atBlock: HashOf<VersionedCommittedBlock>,
-    public val viewChangeProofs: ProofChain
+    public val atBlock: HashOf<VersionedCommittedBlock>
 ) {
     public companion object : ScaleReader<Topology>, ScaleWriter<Topology> {
         public override fun read(reader: ScaleCodecReader): Topology = try {
             Topology(
                 reader.readVec(reader.readCompactInt()) { PeerId.read(reader) },
                 HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
-                ProofChain.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -41,7 +38,6 @@ public data class Topology(
                 PeerId.write(writer, value)
             }
             HashOf.write(writer, instance.atBlock)
-            ProofChain.write(writer, instance.viewChangeProofs)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

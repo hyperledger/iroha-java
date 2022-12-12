@@ -9,17 +9,18 @@ import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Transaction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -31,6 +32,33 @@ import java.security.PrivateKey
 import java.security.PublicKey
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
+
+fun String.asAccountId() = this.split(ACCOUNT_ID_DELIMITER).takeIf {
+    it.size == 2
+}?.let { parts ->
+    AccountId(parts[0].asName(), parts[1].asDomainId())
+} ?: throw IllegalArgumentException("Incorrect account ID: $this")
+
+fun String.asAssetDefinitionId() = this.split(ASSET_ID_DELIMITER).takeIf {
+    it.size == 2
+}?.let { parts ->
+    DefinitionId(parts[0].asName(), parts[1].asDomainId())
+} ?: throw IllegalArgumentException("Incorrect asset definition ID: $this")
+
+fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
+    it.size == 3
+}?.let { parts ->
+    parts[2].asAccountId().let { accountId ->
+        val domainId = parts[1].takeIf { it.isNotBlank() }?.asDomainId()
+        AssetId(
+            DefinitionId(
+                parts[0].asName(),
+                domainId ?: accountId.domainId
+            ),
+            accountId
+        )
+    }
+} ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
 fun String.asDomainId() = DomainId(Name(this))
 
@@ -45,6 +73,8 @@ fun Long.asValue() = Value.U32(this)
 fun BigInteger.asValue() = Value.U128(this)
 
 fun Boolean.asValue() = Value.Bool(this)
+
+fun AccountId.asValue() = Value.Id(IdBox.AccountId(this))
 
 fun ByteArray.toFrame(fin: Boolean = true) = Frame.Binary(fin, this)
 
@@ -100,8 +130,8 @@ fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
 /**
  * Hash the given versioned transaction (`VersionedTransaction.V1`)
  */
-fun VersionedTransaction.V1.hash(): ByteArray {
-    return this.transaction
+fun VersionedSignedTransaction.V1.hash(): ByteArray {
+    return this.signedTransaction
         .payload
         .let { Payload.encode(it) }
         .hash()
@@ -110,17 +140,17 @@ fun VersionedTransaction.V1.hash(): ByteArray {
 /**
  * Hash the given versioned transaction. Maintains only `VersionedTransaction.V1`
  */
-fun VersionedTransaction.hash() = when (this) {
-    is VersionedTransaction.V1 -> this.hash()
+fun VersionedSignedTransaction.hash() = when (this) {
+    is VersionedSignedTransaction.V1 -> this.hash()
 }
 
 /**
  * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
  */
-fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTransaction {
+fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedSignedTransaction {
     return when (this) {
-        is VersionedTransaction.V1 -> {
-            val encodedPayload = transaction
+        is VersionedSignedTransaction.V1 -> {
+            val encodedPayload = signedTransaction
                 .payload
                 .let { Payload.encode(it) }
             val signatures = keypairs.map {
@@ -130,10 +160,10 @@ fun VersionedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedTr
                 ).asSignatureOf<Payload>()
             }.toSet()
 
-            VersionedTransaction.V1(
-                Transaction(
-                    transaction.payload,
-                    transaction.signatures.plus(signatures)
+            VersionedSignedTransaction.V1(
+                SignedTransaction(
+                    signedTransaction.payload,
+                    signedTransaction.signatures.plus(signatures)
                 )
             )
         }
@@ -156,7 +186,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is String -> Value.String(this)
         is Boolean -> Value.Bool(this)
         is AssetId -> Value.Id(IdBox.AssetId(this))
-        is AssetDefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+        is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is DomainId -> Value.Id(IdBox.DomainId(this))
         is RoleId -> Value.Id(IdBox.RoleId(this))
@@ -164,7 +194,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is IdBox -> Value.Id(this)
         is Hash -> Value.Hash(this)
         is Name -> Value.Name(this)
-        is PermissionToken -> Value.PermissionToken(this)
+        is Token -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
         is RegistrableBox -> Value.Identifiable(this.toIdentifiableBox())
         is Value -> this
@@ -178,7 +208,7 @@ fun AccountId.toValueId() = Value.Id(IdBox.AccountId(this))
 
 fun AssetId.toValueId() = Value.Id(IdBox.AssetId(this))
 
-fun AssetDefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
+fun DefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
 
 fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Account -> IdentifiableBox.NewAccount(this.newAccount)
@@ -188,6 +218,11 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.trigger)
+    is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
+        this.definition
+    )
+
+    is RegistrableBox.Validator -> IdentifiableBox.Validator(this.validator)
 }
 
 fun <T> T.asValue() = when (this) {
@@ -196,5 +231,23 @@ fun <T> T.asValue() = when (this) {
     is Int -> this.asValue()
     is BigInteger -> this.asValue()
     is Boolean -> this.asValue()
+    is AccountId -> this.asValue()
     else -> throw RuntimeException("Unsupported type")
+}
+
+fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
+
+fun DefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
+
+fun AccountId.asString() = this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string
+
+fun DomainId.asString() = this.name.string
+
+fun TokenId.asString() = this.name.string
+
+fun RoleId.asString() = this.name.string
+
+fun TriggerId.asString() = when (this.domainId) {
+    null -> this.name.string
+    else -> this.name.string + TRIGGER_ID_DELIMITER + this.domainId!!.name.string
 }

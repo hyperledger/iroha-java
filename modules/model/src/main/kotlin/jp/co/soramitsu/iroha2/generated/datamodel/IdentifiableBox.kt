@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -334,6 +335,65 @@ public sealed class IdentifiableBox : ModelEnum {
         }
     }
 
+    /**
+     * 'PermissionTokenDefinition' variant
+     */
+    public data class PermissionTokenDefinition(
+        public val definition: Definition
+    ) : IdentifiableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<PermissionTokenDefinition>,
+            ScaleWriter<PermissionTokenDefinition> {
+            public const val DISCRIMINANT: Int = 11
+
+            public override fun read(reader: ScaleCodecReader): PermissionTokenDefinition = try {
+                PermissionTokenDefinition(
+                    Definition.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenDefinition) = try {
+                Definition.write(writer, instance.definition)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Validator' variant
+     */
+    public data class Validator(
+        public val validator: jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator
+    ) : IdentifiableBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Validator>, ScaleWriter<Validator> {
+            public const val DISCRIMINANT: Int = 12
+
+            public override fun read(reader: ScaleCodecReader): Validator = try {
+                Validator(
+                    jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Validator) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator.write(
+                    writer,
+                    instance.validator
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<IdentifiableBox>, ScaleWriter<IdentifiableBox> {
         public override fun read(reader: ScaleCodecReader): IdentifiableBox = when (
             val discriminant =
@@ -350,6 +410,8 @@ public sealed class IdentifiableBox : ModelEnum {
             8 -> Asset.read(reader)
             9 -> Trigger.read(reader)
             10 -> Role.read(reader)
+            11 -> PermissionTokenDefinition.read(reader)
+            12 -> Validator.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -367,6 +429,8 @@ public sealed class IdentifiableBox : ModelEnum {
                 8 -> Asset.write(writer, instance as Asset)
                 9 -> Trigger.write(writer, instance as Trigger)
                 10 -> Role.write(writer, instance as Role)
+                11 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
+                12 -> Validator.write(writer, instance as Validator)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

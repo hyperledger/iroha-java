@@ -9,11 +9,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-import jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
@@ -171,10 +172,10 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
 /**
  * Extract a list of permission tokens from a query [result]
  */
-object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
-    override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
+object PermissionTokensExtractor : ResultExtractor<List<Token>> {
+    override fun extract(result: PaginatedQueryResult): List<Token> {
         return extractVec(result.result.value) {
-            extractValue(it, Value.PermissionToken::permissionToken)
+            extractValue(it, Value.PermissionToken::token)
         }
     }
 }
@@ -203,6 +204,14 @@ object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
     override fun extract(result: PaginatedQueryResult): List<TransactionValue> {
         return extractVec(result.result.value) {
             extractValue(it, Value.TransactionValue::transactionValue)
+        }
+    }
+}
+
+object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryResult>> {
+    override fun extract(result: PaginatedQueryResult): List<TransactionQueryResult> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.TransactionQueryResult::transactionQueryResult)
         }
     }
 }
@@ -286,6 +295,7 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
                 "Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`"
             )
         }
+
         else -> throw QueryPayloadExtractionException(
             "Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
         )
@@ -302,6 +312,7 @@ inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<
         is Value.Vec -> {
             return value.vec.map { downstream(it) }
         }
+
         else -> throw QueryPayloadExtractionException(
             "Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
         )

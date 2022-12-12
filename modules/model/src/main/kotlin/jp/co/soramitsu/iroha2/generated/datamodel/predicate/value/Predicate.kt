@@ -8,8 +8,10 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.Range
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.ipaddr.Ipv4Predicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.ipaddr.Ipv6Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiInterval
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiRange
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
@@ -119,7 +121,7 @@ public sealed class Predicate : ModelEnum {
      * 'Numerical' variant
      */
     public data class Numerical(
-        public val range: Range
+        public val semiRange: SemiRange
     ) : Predicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -128,14 +130,14 @@ public sealed class Predicate : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Numerical = try {
                 Numerical(
-                    Range.read(reader),
+                    SemiRange.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Numerical) = try {
-                Range.write(writer, instance.range)
+                SemiRange.write(writer, instance.semiRange)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -170,13 +172,67 @@ public sealed class Predicate : ModelEnum {
     }
 
     /**
+     * 'Ipv4Addr' variant
+     */
+    public data class Ipv4Addr(
+        public val ipv4Predicate: Ipv4Predicate
+    ) : Predicate() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv4Addr>, ScaleWriter<Ipv4Addr> {
+            public const val DISCRIMINANT: Int = 5
+
+            public override fun read(reader: ScaleCodecReader): Ipv4Addr = try {
+                Ipv4Addr(
+                    Ipv4Predicate.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv4Addr) = try {
+                Ipv4Predicate.write(writer, instance.ipv4Predicate)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Ipv6Addr' variant
+     */
+    public data class Ipv6Addr(
+        public val ipv6Predicate: Ipv6Predicate
+    ) : Predicate() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv6Addr>, ScaleWriter<Ipv6Addr> {
+            public const val DISCRIMINANT: Int = 6
+
+            public override fun read(reader: ScaleCodecReader): Ipv6Addr = try {
+                Ipv6Addr(
+                    Ipv6Predicate.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv6Addr) = try {
+                Ipv6Predicate.write(writer, instance.ipv6Predicate)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Pass' variant
      */
     public class Pass : Predicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Pass>, ScaleWriter<Pass> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 7
 
             public override fun read(reader: ScaleCodecReader): Pass = try {
                 Pass()
@@ -201,7 +257,9 @@ public sealed class Predicate : ModelEnum {
             2 -> Display.read(reader)
             3 -> Numerical.read(reader)
             4 -> TimeStamp.read(reader)
-            5 -> Pass.read(reader)
+            5 -> Ipv4Addr.read(reader)
+            6 -> Ipv6Addr.read(reader)
+            7 -> Pass.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -213,7 +271,9 @@ public sealed class Predicate : ModelEnum {
                 2 -> Display.write(writer, instance as Display)
                 3 -> Numerical.write(writer, instance as Numerical)
                 4 -> TimeStamp.write(writer, instance as TimeStamp)
-                5 -> Pass.write(writer, instance as Pass)
+                5 -> Ipv4Addr.write(writer, instance as Ipv4Addr)
+                6 -> Ipv6Addr.write(writer, instance as Ipv6Addr)
+                7 -> Pass.write(writer, instance as Pass)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

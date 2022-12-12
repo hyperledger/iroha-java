@@ -22,9 +22,7 @@ class StructBlueprint(type: StructType) : TypeBasedBlueprint<StructType>(type) {
     /**
      * Create property name by converting from snake case to camel case
      */
-    private fun convertToCamelCase(
-        name: String,
-    ): String {
+    private fun convertToCamelCase(name: String): String {
         val tokenizer = StringTokenizer(name, "_")
         return if (tokenizer.hasMoreTokens()) {
             val resultBuilder = StringBuilder(tokenizer.nextToken())
