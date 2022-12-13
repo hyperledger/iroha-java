@@ -1,6 +1,6 @@
-group 'jp.co.soramitsu'
-
 dependencies {
+    api project(":model")
+
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
@@ -12,16 +12,14 @@ dependencies {
     api "com.github.multiformats:java-multihash:$multihashVersion"
     
     //http client
-    implementation "io.ktor:ktor-client-core:$ktorVer"
-    implementation "io.ktor:ktor-client-cio:$ktorVer"
-    implementation "io.ktor:ktor-client-websockets:$ktorVer"
-    implementation "io.ktor:ktor-client-logging:$ktorVer"
-    implementation "io.ktor:ktor-client-jackson:$ktorVer"
-    implementation "io.ktor:ktor-client-content-negotiation:$ktorVer"
-    implementation "io.ktor:ktor-serialization-jackson:$ktorVer"
-    implementation "io.ktor:ktor-client-auth:$ktorVer"
+    api "io.ktor:ktor-client-core:$ktorVer"
+    api "io.ktor:ktor-client-cio:$ktorVer"
+    api "io.ktor:ktor-client-websockets:$ktorVer"
+    api "io.ktor:ktor-client-logging:$ktorVer"
+    api "io.ktor:ktor-client-jackson:$ktorVer"
+    api "io.ktor:ktor-client-content-negotiation:$ktorVer"
+    api "io.ktor:ktor-serialization-jackson:$ktorVer"
+    api "io.ktor:ktor-client-auth:$ktorVer"
 
-    api project(":model")
-
-    testImplementation project(":test-tools")
+    testApi project(":test-tools")
 }

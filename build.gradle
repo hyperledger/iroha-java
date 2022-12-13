@@ -10,8 +10,10 @@ buildscript {
 }
 
 plugins {
+    id 'java-library'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
+    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
@@ -23,20 +25,32 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'org.jmailen.kotlinter'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     publishing {
         publications {
-            mavenJava(MavenPublication) {
+            maven(MavenPublication) {
                 from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                name = "iroha2-java-soramitsu"
+                url = "https://nexus.iroha.tech/repository/maven-soramitsu/"
+                credentials {
+                    username = System.getenv("NEXUS_USER")
+                    password = System.getenv("NEXUS_PASS")
+                }
             }
         }
     }
 
-    group = 'jp.co.soramitsu.iroha-java'
+    group = 'jp.co.soramitsu.iroha2-java'
     version = 'git rev-parse --short HEAD'.execute().text.trim()
 
     test {

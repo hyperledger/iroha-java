@@ -1,14 +1,11 @@
-group 'jp.co.soramitsu'
-
 dependencies {
+    api project(":model")
+    api project(":client")
+
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVer"
-    implementation "io.ktor:ktor-client-jackson:$ktorVer"
 
-    api project(":model")
-    api project(":client")
-
-    testImplementation project(":test-tools")
+    testApi project(":test-tools")
 }
