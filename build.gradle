@@ -93,6 +93,10 @@ subprojects {
         zip64 = true
         archiveFileName = "${archiveBaseName.get()}-${archiveVersion.get()}.jar"
     }
+
+    // uncomment to produce shadowJar build by default
+    // it is disabled by default to publish original version by CI, not a fat jar
+    tasks.shadowJar.enabled = false
 }
 
 task allShadowJars {
