@@ -54,7 +54,7 @@ public sealed class VersionedBlockSubscriberMessage : ModelEnum {
         ScaleWriter<VersionedBlockSubscriberMessage> {
         public override fun read(reader: ScaleCodecReader): VersionedBlockSubscriberMessage = when (
             val
-            discriminant = reader.readUByte().toInt()
+            discriminant = reader.readUByte()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

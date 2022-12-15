@@ -141,7 +141,7 @@ public sealed class PredicateBox : ModelEnum {
     public companion object : ScaleReader<PredicateBox>, ScaleWriter<PredicateBox> {
         public override fun read(reader: ScaleCodecReader): PredicateBox = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> And.read(reader)
             1 -> Or.read(reader)

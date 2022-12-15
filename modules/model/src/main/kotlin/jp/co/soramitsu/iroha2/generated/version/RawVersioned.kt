@@ -81,7 +81,7 @@ public sealed class RawVersioned : ModelEnum {
     public companion object : ScaleReader<RawVersioned>, ScaleWriter<RawVersioned> {
         public override fun read(reader: ScaleCodecReader): RawVersioned = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Json.read(reader)
             1 -> ScaleBytes.read(reader)

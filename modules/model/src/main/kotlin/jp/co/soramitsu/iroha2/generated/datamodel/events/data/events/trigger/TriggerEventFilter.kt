@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,22 @@ public sealed class TriggerEventFilter : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is ByCreated -> ByCreated.equals(this, other)
+        is ByDeleted -> ByDeleted.equals(this, other)
+        is ByExtended -> ByExtended.equals(this, other)
+        is ByShortened -> ByShortened.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is ByCreated -> ByCreated.hashCode()
+        is ByDeleted -> ByDeleted.hashCode()
+        is ByExtended -> ByExtended.hashCode()
+        is ByShortened -> ByShortened.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'ByCreated' variant
@@ -41,6 +59,13 @@ public sealed class TriggerEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -63,6 +88,13 @@ public sealed class TriggerEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -85,6 +117,13 @@ public sealed class TriggerEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByExtended, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -107,13 +146,20 @@ public sealed class TriggerEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByShortened, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<TriggerEventFilter>, ScaleWriter<TriggerEventFilter> {
         public override fun read(reader: ScaleCodecReader): TriggerEventFilter = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByDeleted.read(reader)

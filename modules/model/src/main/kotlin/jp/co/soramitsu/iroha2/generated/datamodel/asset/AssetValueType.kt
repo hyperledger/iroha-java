@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,22 @@ public sealed class AssetValueType : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Quantity -> Quantity.equals(this, other)
+        is BigQuantity -> BigQuantity.equals(this, other)
+        is Fixed -> Fixed.equals(this, other)
+        is Store -> Store.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Quantity -> Quantity.hashCode()
+        is BigQuantity -> BigQuantity.hashCode()
+        is Fixed -> Fixed.hashCode()
+        is Store -> Store.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Quantity' variant
@@ -41,6 +59,13 @@ public sealed class AssetValueType : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Quantity, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -63,6 +88,13 @@ public sealed class AssetValueType : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: BigQuantity, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -85,6 +117,13 @@ public sealed class AssetValueType : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Fixed, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -107,13 +146,20 @@ public sealed class AssetValueType : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Store, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
         public override fun read(reader: ScaleCodecReader): AssetValueType = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Quantity.read(reader)
             1 -> BigQuantity.read(reader)

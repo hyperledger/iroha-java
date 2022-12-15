@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,20 @@ public sealed class Mintable : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Infinitely -> Infinitely.equals(this, other)
+        is Once -> Once.equals(this, other)
+        is Not -> Not.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Infinitely -> Infinitely.hashCode()
+        is Once -> Once.hashCode()
+        is Not -> Not.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Infinitely' variant
@@ -41,6 +57,13 @@ public sealed class Mintable : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Infinitely, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -63,6 +86,13 @@ public sealed class Mintable : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Once, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -85,13 +115,20 @@ public sealed class Mintable : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Not, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<Mintable>, ScaleWriter<Mintable> {
         public override fun read(reader: ScaleCodecReader): Mintable = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Infinitely.read(reader)
             1 -> Once.read(reader)

@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.smartcontracts.isi.error.FindError
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 
@@ -23,6 +25,16 @@ public sealed class Error : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Unauthorized -> Unauthorized.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Unauthorized -> Unauthorized.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Decode' variant
@@ -205,13 +217,20 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Unauthorized, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<Error>, ScaleWriter<Error> {
         public override fun read(reader: ScaleCodecReader): Error = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Decode.read(reader)
             1 -> Signature.read(reader)

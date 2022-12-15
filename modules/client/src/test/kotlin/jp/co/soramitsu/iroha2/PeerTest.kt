@@ -13,7 +13,6 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -24,7 +23,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @Timeout(100)
-@Disabled
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
@@ -115,8 +113,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             this.alias = alias
             this.networkToJoin = containers.first().network
             this.genesis = DefaultGenesis::class.createInstance()
-            this.trustedPeers = containers
-                .map { it.extractPeerId() }
+            this.trustedPeers = containers.map { it.extractPeerId() }
         }.also { it.start() }
     }
 

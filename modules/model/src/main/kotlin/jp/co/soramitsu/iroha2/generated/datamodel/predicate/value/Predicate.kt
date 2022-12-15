@@ -14,6 +14,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiInterv
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiRange
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -26,6 +28,16 @@ public sealed class Predicate : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Pass -> Pass.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Pass -> Pass.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Identifiable' variant
@@ -244,13 +256,20 @@ public sealed class Predicate : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Pass, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<Predicate>, ScaleWriter<Predicate> {
         public override fun read(reader: ScaleCodecReader): Predicate = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Identifiable.read(reader)
             1 -> Container.read(reader)

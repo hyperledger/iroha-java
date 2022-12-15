@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,26 @@ public sealed class AssetEventFilter : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is ByCreated -> ByCreated.equals(this, other)
+        is ByDeleted -> ByDeleted.equals(this, other)
+        is ByAdded -> ByAdded.equals(this, other)
+        is ByRemoved -> ByRemoved.equals(this, other)
+        is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
+        is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is ByCreated -> ByCreated.hashCode()
+        is ByDeleted -> ByDeleted.hashCode()
+        is ByAdded -> ByAdded.hashCode()
+        is ByRemoved -> ByRemoved.hashCode()
+        is ByMetadataInserted -> ByMetadataInserted.hashCode()
+        is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'ByCreated' variant
@@ -41,6 +63,13 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -63,6 +92,13 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -85,6 +121,13 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByAdded, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -107,6 +150,13 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -129,6 +179,13 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataInserted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -151,13 +208,20 @@ public sealed class AssetEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
     public companion object : ScaleReader<AssetEventFilter>, ScaleWriter<AssetEventFilter> {
         public override fun read(reader: ScaleCodecReader): AssetEventFilter = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByDeleted.read(reader)

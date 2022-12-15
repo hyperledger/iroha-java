@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 import kotlin.Long
 
@@ -22,6 +24,16 @@ public sealed class Repeats : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Indefinitely -> Indefinitely.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Indefinitely -> Indefinitely.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Indefinitely' variant
@@ -42,6 +54,13 @@ public sealed class Repeats : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Indefinitely, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -75,7 +94,7 @@ public sealed class Repeats : ModelEnum {
     public companion object : ScaleReader<Repeats>, ScaleWriter<Repeats> {
         public override fun read(reader: ScaleCodecReader): Repeats = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Indefinitely.read(reader)
             1 -> Exactly.read(reader)

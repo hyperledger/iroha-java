@@ -283,7 +283,7 @@ public sealed class IdBox : ModelEnum {
     public companion object : ScaleReader<IdBox>, ScaleWriter<IdBox> {
         public override fun read(reader: ScaleCodecReader): IdBox = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> DomainId.read(reader)
             1 -> AccountId.read(reader)

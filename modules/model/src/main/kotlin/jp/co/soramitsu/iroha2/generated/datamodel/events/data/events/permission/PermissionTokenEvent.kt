@@ -80,7 +80,7 @@ public sealed class PermissionTokenEvent : ModelEnum {
     public companion object : ScaleReader<PermissionTokenEvent>, ScaleWriter<PermissionTokenEvent> {
         public override fun read(reader: ScaleCodecReader): PermissionTokenEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> DefinitionCreated.read(reader)
             1 -> DefinitionDeleted.read(reader)

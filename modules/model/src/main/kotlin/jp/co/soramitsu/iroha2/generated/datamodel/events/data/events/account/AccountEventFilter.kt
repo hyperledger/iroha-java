@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetFilter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -22,6 +24,34 @@ public sealed class AccountEventFilter : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is ByCreated -> ByCreated.equals(this, other)
+        is ByDeleted -> ByDeleted.equals(this, other)
+        is ByAuthenticationAdded -> ByAuthenticationAdded.equals(this, other)
+        is ByAuthenticationRemoved -> ByAuthenticationRemoved.equals(this, other)
+        is ByPermissionAdded -> ByPermissionAdded.equals(this, other)
+        is ByPermissionRemoved -> ByPermissionRemoved.equals(this, other)
+        is ByRoleRevoked -> ByRoleRevoked.equals(this, other)
+        is ByRoleGranted -> ByRoleGranted.equals(this, other)
+        is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
+        is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is ByCreated -> ByCreated.hashCode()
+        is ByDeleted -> ByDeleted.hashCode()
+        is ByAuthenticationAdded -> ByAuthenticationAdded.hashCode()
+        is ByAuthenticationRemoved -> ByAuthenticationRemoved.hashCode()
+        is ByPermissionAdded -> ByPermissionAdded.hashCode()
+        is ByPermissionRemoved -> ByPermissionRemoved.hashCode()
+        is ByRoleRevoked -> ByRoleRevoked.hashCode()
+        is ByRoleGranted -> ByRoleGranted.hashCode()
+        is ByMetadataInserted -> ByMetadataInserted.hashCode()
+        is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'ByCreated' variant
@@ -42,6 +72,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -64,6 +101,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -86,6 +130,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByAuthenticationAdded, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -110,6 +161,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByAuthenticationRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -132,6 +190,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByPermissionAdded, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -154,6 +219,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByPermissionRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -176,6 +248,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByRoleRevoked, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -198,6 +277,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByRoleGranted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -220,6 +306,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataInserted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -242,6 +335,13 @@ public sealed class AccountEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = 1
         }
     }
 
@@ -275,7 +375,7 @@ public sealed class AccountEventFilter : ModelEnum {
     public companion object : ScaleReader<AccountEventFilter>, ScaleWriter<AccountEventFilter> {
         public override fun read(reader: ScaleCodecReader): AccountEventFilter = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByDeleted.read(reader)

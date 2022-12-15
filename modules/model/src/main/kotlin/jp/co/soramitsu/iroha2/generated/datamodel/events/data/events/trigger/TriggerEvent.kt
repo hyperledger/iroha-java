@@ -134,7 +134,7 @@ public sealed class TriggerEvent : ModelEnum {
     public companion object : ScaleReader<TriggerEvent>, ScaleWriter<TriggerEvent> {
         public override fun read(reader: ScaleCodecReader): TriggerEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Created.read(reader)
             1 -> Deleted.read(reader)

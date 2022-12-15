@@ -1245,7 +1245,7 @@ public sealed class QueryBox : ModelEnum {
     public companion object : ScaleReader<QueryBox>, ScaleWriter<QueryBox> {
         public override fun read(reader: ScaleCodecReader): QueryBox = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> FindAllAccounts.read(reader)
             1 -> FindAccountById.read(reader)

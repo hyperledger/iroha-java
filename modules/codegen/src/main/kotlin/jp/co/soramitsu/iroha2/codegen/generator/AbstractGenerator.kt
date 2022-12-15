@@ -7,6 +7,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
@@ -17,6 +18,10 @@ import jp.co.soramitsu.iroha2.type.CompositeType
  * Basic generator for all kinds of [blueprints][Blueprint]
  */
 abstract class AbstractGenerator<T : Blueprint<*>> {
+
+    companion object {
+        val ANY_TYPE = ClassName("kotlin", "Any")
+    }
 
     fun generate(blueprint: T): TypeSpec = pipelineClass(blueprint)
 
@@ -48,31 +53,26 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     }
 
     open fun implCompanions(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
-        val thisType = if (blueprint.source is CompositeType && blueprint.source.generics.isNotEmpty()) {
-            ClassName(blueprint.packageName, blueprint.className)
-                .parameterizedBy(WildcardTypeName.producerOf(ClassName("kotlin", "Any")))
-        } else {
-            ClassName(blueprint.packageName, blueprint.className)
+        val thisType = ClassName(
+            blueprint.packageName,
+            blueprint.className
+        ).let { className ->
+            when (blueprint.source is CompositeType && blueprint.source.generics.isNotEmpty()) {
+                true -> className.parameterizedBy(WildcardTypeName.producerOf(ANY_TYPE))
+                false -> className
+            }
         }
-        return TypeSpec.companionObjectBuilder()
+
+        val builder = TypeSpec.companionObjectBuilder()
             .addSuperinterface(SCALE_READER.parameterizedBy(thisType))
             .addSuperinterface(SCALE_WRITER.parameterizedBy(thisType))
-            .addFunction(
-                FunSpec.builder("read")
-                    .addParameter(ParameterSpec.builder("reader", SCALE_CODEC_READER).build())
-                    .addCode(scaleReaderCode(blueprint))
-                    .addModifiers(KModifier.OVERRIDE)
-                    .returns(thisType)
-                    .build()
-            )
-            .addFunction(
-                FunSpec.builder("write")
-                    .addParameter(ParameterSpec.builder("writer", SCALE_CODEC_WRITER).build())
-                    .addParameter(ParameterSpec.builder("instance", thisType).build())
-                    .addCode(scaleWriterCode(blueprint))
-                    .addModifiers(KModifier.OVERRIDE)
-                    .build()
-            )
+            .addFunction(readFun(thisType, blueprint))
+            .addFunction(writeFun(thisType, blueprint))
+
+        return when (blueprint.properties.isEmpty() && KModifier.SEALED !in clazz.modifiers) {
+            true -> builder.addFunction(variantEqualsFun(blueprint)).addFunction(variantHashcodeFun())
+            false -> builder
+        }
     }
 
     open fun scaleReaderCode(blueprint: T): CodeBlock {
@@ -150,4 +150,42 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implKDoc(blueprint: T, clazz: TypeSpec.Builder) {
         clazz.addKdoc(blueprint.className)
     }
+
+    private fun writeFun(type: TypeName, blueprint: T) =
+        FunSpec.builder("write")
+            .addParameter(ParameterSpec.builder("writer", SCALE_CODEC_WRITER).build())
+            .addParameter(ParameterSpec.builder("instance", type).build())
+            .addCode(scaleWriterCode(blueprint))
+            .addModifiers(KModifier.OVERRIDE)
+            .build()
+
+    private fun readFun(type: TypeName, blueprint: T) =
+        FunSpec.builder("read")
+            .addParameter(ParameterSpec.builder("reader", SCALE_CODEC_READER).build())
+            .addCode(scaleReaderCode(blueprint))
+            .addModifiers(KModifier.OVERRIDE)
+            .returns(type)
+            .build()
+
+    private fun variantEqualsFun(blueprint: T): FunSpec {
+        val variantType = ClassName(blueprint.packageName, blueprint.className)
+        val code = """return when (o2) {
+            null -> false
+            else -> o2::class == o1::class
+        }
+        """.trimIndent()
+
+        return FunSpec.builder("equals")
+            .addParameter(ParameterSpec.builder("o1", variantType).build())
+            .addParameter(ParameterSpec.builder("o2", ANY_TYPE.copy(nullable = true)).build())
+            .addCode(code)
+            .returns(Boolean::class)
+            .build()
+    }
+
+    private fun variantHashcodeFun() = FunSpec.builder("hashCode")
+        .addCode("return 1")
+        .addModifiers(KModifier.OVERRIDE)
+        .returns(Int::class)
+        .build()
 }
