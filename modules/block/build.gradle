@@ -1,10 +1,9 @@
-group 'jp.co.soramitsu'
-
 dependencies {
     api project(":client")
-    implementation "com.github.multiformats:java-multihash:$multihashVersion"
+
     api "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonKotlinVer"
-    implementation "com.google.crypto.tink:tink:$googleTinkVer"
+    api "com.google.crypto.tink:tink:$googleTinkVer"
+
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }

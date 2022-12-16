@@ -1,5 +1,3 @@
-group 'jp.co.soramitsu'
-
 kotlinter {
     disabledRules = ['no-trailing-spaces']
 }
