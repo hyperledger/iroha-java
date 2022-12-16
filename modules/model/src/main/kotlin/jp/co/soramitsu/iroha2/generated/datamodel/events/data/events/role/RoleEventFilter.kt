@@ -63,7 +63,8 @@ public sealed class RoleEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -92,7 +93,8 @@ public sealed class RoleEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -121,7 +123,8 @@ public sealed class RoleEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByPermissionRemoved".hashCode()
         }
     }
 

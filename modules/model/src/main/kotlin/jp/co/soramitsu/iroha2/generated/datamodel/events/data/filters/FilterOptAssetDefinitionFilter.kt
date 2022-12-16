@@ -60,7 +60,8 @@ public sealed class FilterOptAssetDefinitionFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.filters.FilterOptAssetDefinitionFilter.AcceptAll".hashCode()
         }
     }
 

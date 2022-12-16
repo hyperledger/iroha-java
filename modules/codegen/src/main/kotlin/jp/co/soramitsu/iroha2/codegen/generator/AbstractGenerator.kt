@@ -70,7 +70,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             .addFunction(writeFun(thisType, blueprint))
 
         return when (blueprint.properties.isEmpty() && KModifier.SEALED !in clazz.modifiers) {
-            true -> builder.addFunction(variantEqualsFun(blueprint)).addFunction(variantHashcodeFun())
+            true -> builder.addFunction(variantEqualsFun(blueprint)).addFunction(variantHashcodeFun(blueprint))
             false -> builder
         }
     }
@@ -183,9 +183,13 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             .build()
     }
 
-    private fun variantHashcodeFun() = FunSpec.builder("hashCode")
-        .addCode("return 1")
-        .addModifiers(KModifier.OVERRIDE)
-        .returns(Int::class)
-        .build()
+    private fun variantHashcodeFun(blueprint: T): FunSpec {
+        val code = "return \"${blueprint.packageName}.${blueprint.className}\".hashCode()"
+            .replace("jp.co.soramitsu.iroha2.generated.", "")
+        return FunSpec.builder("hashCode")
+            .addCode(code)
+            .addModifiers(KModifier.OVERRIDE)
+            .returns(Int::class)
+            .build()
+    }
 }

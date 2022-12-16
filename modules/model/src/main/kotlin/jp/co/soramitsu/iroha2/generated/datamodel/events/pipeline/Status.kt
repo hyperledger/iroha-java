@@ -62,7 +62,7 @@ public sealed class Status : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.events.pipeline.Status.Validating".hashCode()
         }
     }
 
@@ -118,7 +118,7 @@ public sealed class Status : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.events.pipeline.Status.Committed".hashCode()
         }
     }
 

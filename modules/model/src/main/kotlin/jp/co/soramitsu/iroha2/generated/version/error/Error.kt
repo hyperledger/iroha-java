@@ -72,7 +72,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.NotVersioned".hashCode()
         }
     }
 
@@ -101,7 +101,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.UnsupportedJsonEncode".hashCode()
         }
     }
 
@@ -130,7 +130,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.ExpectedJson".hashCode()
         }
     }
 
@@ -161,7 +161,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.UnsupportedScaleEncode".hashCode()
         }
     }
 
@@ -190,7 +190,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.Serde".hashCode()
         }
     }
 
@@ -219,7 +219,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.ParityScale".hashCode()
         }
     }
 
@@ -248,7 +248,7 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "version.error.Error.ParseInt".hashCode()
         }
     }
 

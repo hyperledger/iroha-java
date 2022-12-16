@@ -78,7 +78,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -107,7 +108,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -136,7 +138,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByAuthenticationAdded".hashCode()
         }
     }
 
@@ -167,7 +170,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByAuthenticationRemoved".hashCode()
         }
     }
 
@@ -196,7 +200,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByPermissionAdded".hashCode()
         }
     }
 
@@ -225,7 +230,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByPermissionRemoved".hashCode()
         }
     }
 
@@ -254,7 +260,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByRoleRevoked".hashCode()
         }
     }
 
@@ -283,7 +290,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByRoleGranted".hashCode()
         }
     }
 
@@ -312,7 +320,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByMetadataInserted".hashCode()
         }
     }
 
@@ -341,7 +350,8 @@ public sealed class AccountEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.account.AccountEventFilter.ByMetadataRemoved".hashCode()
         }
     }
 

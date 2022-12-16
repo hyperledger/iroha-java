@@ -65,7 +65,8 @@ public sealed class TriggerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.trigger.TriggerEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -94,7 +95,8 @@ public sealed class TriggerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.trigger.TriggerEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -123,7 +125,8 @@ public sealed class TriggerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.trigger.TriggerEventFilter.ByExtended".hashCode()
         }
     }
 
@@ -152,7 +155,8 @@ public sealed class TriggerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.trigger.TriggerEventFilter.ByShortened".hashCode()
         }
     }
 

@@ -65,7 +65,7 @@ public sealed class AssetValueType : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.asset.AssetValueType.Quantity".hashCode()
         }
     }
 
@@ -94,7 +94,7 @@ public sealed class AssetValueType : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.asset.AssetValueType.BigQuantity".hashCode()
         }
     }
 
@@ -123,7 +123,7 @@ public sealed class AssetValueType : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.asset.AssetValueType.Fixed".hashCode()
         }
     }
 
@@ -152,7 +152,7 @@ public sealed class AssetValueType : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.asset.AssetValueType.Store".hashCode()
         }
     }
 

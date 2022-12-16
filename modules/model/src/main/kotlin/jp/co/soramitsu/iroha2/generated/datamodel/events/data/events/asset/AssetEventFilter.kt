@@ -69,7 +69,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -98,7 +99,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -127,7 +129,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByAdded".hashCode()
         }
     }
 
@@ -156,7 +159,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByRemoved".hashCode()
         }
     }
 
@@ -185,7 +189,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByMetadataInserted".hashCode()
         }
     }
 
@@ -214,7 +219,8 @@ public sealed class AssetEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetEventFilter.ByMetadataRemoved".hashCode()
         }
     }
 

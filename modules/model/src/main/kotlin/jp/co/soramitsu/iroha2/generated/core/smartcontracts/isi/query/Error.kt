@@ -223,7 +223,8 @@ public sealed class Error : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "core.smartcontracts.isi.query.Error.Unauthorized".hashCode()
         }
     }
 

@@ -39,6 +39,7 @@ public class FindAllPermissionTokenDefinitions {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = 1
+        public override fun hashCode(): Int =
+            "datamodel.query.permissions.FindAllPermissionTokenDefinitions".hashCode()
     }
 }

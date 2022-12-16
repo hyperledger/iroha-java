@@ -99,7 +99,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.U32".hashCode()
         }
     }
 
@@ -128,7 +128,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.U128".hashCode()
         }
     }
 
@@ -157,7 +157,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Bool".hashCode()
         }
     }
 
@@ -186,7 +186,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.String".hashCode()
         }
     }
 
@@ -215,7 +215,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Name".hashCode()
         }
     }
 
@@ -244,7 +244,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Fixed".hashCode()
         }
     }
 
@@ -273,7 +273,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Vec".hashCode()
         }
     }
 
@@ -302,7 +302,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.LimitedMetadata".hashCode()
         }
     }
 
@@ -331,7 +331,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Id".hashCode()
         }
     }
 
@@ -360,7 +360,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Identifiable".hashCode()
         }
     }
 
@@ -389,7 +389,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.PublicKey".hashCode()
         }
     }
 
@@ -418,7 +418,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Parameter".hashCode()
         }
     }
 
@@ -449,7 +449,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.SignatureCheckCondition".hashCode()
         }
     }
 
@@ -478,7 +478,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.TransactionValue".hashCode()
         }
     }
 
@@ -509,7 +509,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.TransactionQueryResult".hashCode()
         }
     }
 
@@ -538,7 +538,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.PermissionToken".hashCode()
         }
     }
 
@@ -567,7 +567,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Hash".hashCode()
         }
     }
 
@@ -596,7 +596,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Block".hashCode()
         }
     }
 
@@ -625,7 +625,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.BlockHeader".hashCode()
         }
     }
 
@@ -654,7 +654,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Ipv4Addr".hashCode()
         }
     }
 
@@ -683,7 +683,7 @@ public sealed class ValueKind : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.ValueKind.Ipv6Addr".hashCode()
         }
     }
 

@@ -67,7 +67,8 @@ public sealed class DomainEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -96,7 +97,8 @@ public sealed class DomainEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -125,7 +127,8 @@ public sealed class DomainEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByMetadataInserted".hashCode()
         }
     }
 
@@ -154,7 +157,8 @@ public sealed class DomainEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByMetadataRemoved".hashCode()
         }
     }
 

@@ -61,7 +61,8 @@ public sealed class PeerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.peer.PeerEventFilter.ByAdded".hashCode()
         }
     }
 
@@ -90,7 +91,8 @@ public sealed class PeerEventFilter : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.peer.PeerEventFilter.ByRemoved".hashCode()
         }
     }
 

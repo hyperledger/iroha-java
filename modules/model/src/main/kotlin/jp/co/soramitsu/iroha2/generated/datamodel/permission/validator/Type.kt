@@ -65,7 +65,8 @@ public sealed class Type : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Transaction".hashCode()
         }
     }
 
@@ -94,7 +95,8 @@ public sealed class Type : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Instruction".hashCode()
         }
     }
 
@@ -123,7 +125,7 @@ public sealed class Type : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int = "datamodel.permission.validator.Type.Query".hashCode()
         }
     }
 
@@ -152,7 +154,8 @@ public sealed class Type : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = 1
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Expression".hashCode()
         }
     }
 
