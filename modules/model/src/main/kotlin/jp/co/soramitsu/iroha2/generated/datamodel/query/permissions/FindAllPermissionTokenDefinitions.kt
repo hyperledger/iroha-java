@@ -8,6 +8,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
+import kotlin.Int
 
 /**
  * FindAllPermissionTokenDefinitions
@@ -30,5 +33,13 @@ public class FindAllPermissionTokenDefinitions {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+        public fun equals(o1: FindAllPermissionTokenDefinitions, o2: Any?): Boolean = when (o2) {
+            null -> false
+            else -> o2::class == o1::class
+        }
+
+        public override fun hashCode(): Int =
+            "datamodel.query.permissions.FindAllPermissionTokenDefinitions".hashCode()
     }
 }

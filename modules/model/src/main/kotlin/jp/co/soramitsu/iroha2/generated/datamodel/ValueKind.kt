@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,56 @@ public sealed class ValueKind : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is U32 -> U32.equals(this, other)
+        is U128 -> U128.equals(this, other)
+        is Bool -> Bool.equals(this, other)
+        is String -> String.equals(this, other)
+        is Name -> Name.equals(this, other)
+        is Fixed -> Fixed.equals(this, other)
+        is Vec -> Vec.equals(this, other)
+        is LimitedMetadata -> LimitedMetadata.equals(this, other)
+        is Id -> Id.equals(this, other)
+        is Identifiable -> Identifiable.equals(this, other)
+        is PublicKey -> PublicKey.equals(this, other)
+        is Parameter -> Parameter.equals(this, other)
+        is SignatureCheckCondition -> SignatureCheckCondition.equals(this, other)
+        is TransactionValue -> TransactionValue.equals(this, other)
+        is TransactionQueryResult -> TransactionQueryResult.equals(this, other)
+        is PermissionToken -> PermissionToken.equals(this, other)
+        is Hash -> Hash.equals(this, other)
+        is Block -> Block.equals(this, other)
+        is BlockHeader -> BlockHeader.equals(this, other)
+        is Ipv4Addr -> Ipv4Addr.equals(this, other)
+        is Ipv6Addr -> Ipv6Addr.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is U32 -> U32.hashCode()
+        is U128 -> U128.hashCode()
+        is Bool -> Bool.hashCode()
+        is String -> String.hashCode()
+        is Name -> Name.hashCode()
+        is Fixed -> Fixed.hashCode()
+        is Vec -> Vec.hashCode()
+        is LimitedMetadata -> LimitedMetadata.hashCode()
+        is Id -> Id.hashCode()
+        is Identifiable -> Identifiable.hashCode()
+        is PublicKey -> PublicKey.hashCode()
+        is Parameter -> Parameter.hashCode()
+        is SignatureCheckCondition -> SignatureCheckCondition.hashCode()
+        is TransactionValue -> TransactionValue.hashCode()
+        is TransactionQueryResult -> TransactionQueryResult.hashCode()
+        is PermissionToken -> PermissionToken.hashCode()
+        is Hash -> Hash.hashCode()
+        is Block -> Block.hashCode()
+        is BlockHeader -> BlockHeader.hashCode()
+        is Ipv4Addr -> Ipv4Addr.hashCode()
+        is Ipv6Addr -> Ipv6Addr.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'U32' variant
@@ -41,6 +93,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: U32, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.U32".hashCode()
         }
     }
 
@@ -63,6 +122,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: U128, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.U128".hashCode()
         }
     }
 
@@ -85,6 +151,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Bool, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Bool".hashCode()
         }
     }
 
@@ -107,6 +180,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: String, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.String".hashCode()
         }
     }
 
@@ -129,6 +209,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Name, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Name".hashCode()
         }
     }
 
@@ -151,6 +238,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Fixed, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Fixed".hashCode()
         }
     }
 
@@ -173,6 +267,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Vec, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Vec".hashCode()
         }
     }
 
@@ -195,6 +296,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: LimitedMetadata, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.LimitedMetadata".hashCode()
         }
     }
 
@@ -217,6 +325,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Id, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Id".hashCode()
         }
     }
 
@@ -239,6 +354,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Identifiable, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Identifiable".hashCode()
         }
     }
 
@@ -261,6 +383,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: PublicKey, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.PublicKey".hashCode()
         }
     }
 
@@ -283,6 +412,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Parameter, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Parameter".hashCode()
         }
     }
 
@@ -307,6 +443,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: SignatureCheckCondition, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.SignatureCheckCondition".hashCode()
         }
     }
 
@@ -329,6 +472,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: TransactionValue, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.TransactionValue".hashCode()
         }
     }
 
@@ -353,6 +503,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: TransactionQueryResult, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.TransactionQueryResult".hashCode()
         }
     }
 
@@ -375,6 +532,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: PermissionToken, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.PermissionToken".hashCode()
         }
     }
 
@@ -397,6 +561,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Hash, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Hash".hashCode()
         }
     }
 
@@ -419,6 +590,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Block, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Block".hashCode()
         }
     }
 
@@ -441,6 +619,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: BlockHeader, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.BlockHeader".hashCode()
         }
     }
 
@@ -463,6 +648,13 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Ipv4Addr, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Ipv4Addr".hashCode()
         }
     }
 
@@ -485,13 +677,20 @@ public sealed class ValueKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Ipv6Addr, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.ValueKind.Ipv6Addr".hashCode()
         }
     }
 
     public companion object : ScaleReader<ValueKind>, ScaleWriter<ValueKind> {
         public override fun read(reader: ScaleCodecReader): ValueKind = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> U32.read(reader)
             1 -> U128.read(reader)

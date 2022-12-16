@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -22,6 +24,18 @@ public sealed class Status : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Validating -> Validating.equals(this, other)
+        is Committed -> Committed.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Validating -> Validating.hashCode()
+        is Committed -> Committed.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Validating' variant
@@ -42,6 +56,13 @@ public sealed class Status : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Validating, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.events.pipeline.Status.Validating".hashCode()
         }
     }
 
@@ -91,13 +112,20 @@ public sealed class Status : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Committed, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.events.pipeline.Status.Committed".hashCode()
         }
     }
 
     public companion object : ScaleReader<Status>, ScaleWriter<Status> {
         public override fun read(reader: ScaleCodecReader): Status = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Validating.read(reader)
             1 -> Rejected.read(reader)

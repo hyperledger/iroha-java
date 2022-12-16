@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,16 @@ public sealed class EventSubscriberMessage : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is EventReceived -> EventReceived.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is EventReceived -> EventReceived.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'SubscriptionRequest' variant
@@ -68,13 +80,21 @@ public sealed class EventSubscriberMessage : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: EventReceived, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.EventSubscriberMessage.EventReceived".hashCode()
         }
     }
 
     public companion object : ScaleReader<EventSubscriberMessage>, ScaleWriter<EventSubscriberMessage> {
         public override fun read(reader: ScaleCodecReader): EventSubscriberMessage = when (
             val
-            discriminant = reader.readUByte().toInt()
+            discriminant = reader.readUByte()
         ) {
             0 -> SubscriptionRequest.read(reader)
             1 -> EventReceived.read(reader)

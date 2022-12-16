@@ -167,7 +167,7 @@ public sealed class Container : ModelEnum {
     public companion object : ScaleReader<Container>, ScaleWriter<Container> {
         public override fun read(reader: ScaleCodecReader): Container = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Any.read(reader)
             1 -> All.read(reader)

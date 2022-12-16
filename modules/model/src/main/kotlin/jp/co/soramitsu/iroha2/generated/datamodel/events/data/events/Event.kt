@@ -277,7 +277,7 @@ public sealed class Event : ModelEnum {
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Peer.read(reader)
             1 -> Domain.read(reader)

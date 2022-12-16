@@ -619,7 +619,7 @@ public sealed class Value : ModelEnum {
     public companion object : ScaleReader<Value>, ScaleWriter<Value> {
         public override fun read(reader: ScaleCodecReader): Value = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> U32.read(reader)
             1 -> U128.read(reader)

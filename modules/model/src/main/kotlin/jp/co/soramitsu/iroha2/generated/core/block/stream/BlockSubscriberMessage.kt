@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -22,6 +24,16 @@ public sealed class BlockSubscriberMessage : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is BlockReceived -> BlockReceived.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is BlockReceived -> BlockReceived.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'SubscriptionRequest' variant
@@ -69,13 +81,21 @@ public sealed class BlockSubscriberMessage : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: BlockReceived, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "core.block.stream.BlockSubscriberMessage.BlockReceived".hashCode()
         }
     }
 
     public companion object : ScaleReader<BlockSubscriberMessage>, ScaleWriter<BlockSubscriberMessage> {
         public override fun read(reader: ScaleCodecReader): BlockSubscriberMessage = when (
             val
-            discriminant = reader.readUByte().toInt()
+            discriminant = reader.readUByte()
         ) {
             0 -> SubscriptionRequest.read(reader)
             1 -> BlockReceived.read(reader)

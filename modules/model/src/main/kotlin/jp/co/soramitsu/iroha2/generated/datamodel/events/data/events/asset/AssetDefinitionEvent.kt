@@ -161,7 +161,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
     public companion object : ScaleReader<AssetDefinitionEvent>, ScaleWriter<AssetDefinitionEvent> {
         public override fun read(reader: ScaleCodecReader): AssetDefinitionEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Created.read(reader)
             1 -> MintabilityChanged.read(reader)

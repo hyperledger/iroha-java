@@ -111,7 +111,7 @@ public sealed class RoleEvent : ModelEnum {
     public companion object : ScaleReader<RoleEvent>, ScaleWriter<RoleEvent> {
         public override fun read(reader: ScaleCodecReader): RoleEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Created.read(reader)
             1 -> Deleted.read(reader)

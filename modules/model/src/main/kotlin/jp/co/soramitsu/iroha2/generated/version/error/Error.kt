@@ -10,6 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -22,6 +24,28 @@ public sealed class Error : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is NotVersioned -> NotVersioned.equals(this, other)
+        is UnsupportedJsonEncode -> UnsupportedJsonEncode.equals(this, other)
+        is ExpectedJson -> ExpectedJson.equals(this, other)
+        is UnsupportedScaleEncode -> UnsupportedScaleEncode.equals(this, other)
+        is Serde -> Serde.equals(this, other)
+        is ParityScale -> ParityScale.equals(this, other)
+        is ParseInt -> ParseInt.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is NotVersioned -> NotVersioned.hashCode()
+        is UnsupportedJsonEncode -> UnsupportedJsonEncode.hashCode()
+        is ExpectedJson -> ExpectedJson.hashCode()
+        is UnsupportedScaleEncode -> UnsupportedScaleEncode.hashCode()
+        is Serde -> Serde.hashCode()
+        is ParityScale -> ParityScale.hashCode()
+        is ParseInt -> ParseInt.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'NotVersioned' variant
@@ -42,6 +66,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: NotVersioned, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.NotVersioned".hashCode()
         }
     }
 
@@ -64,6 +95,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: UnsupportedJsonEncode, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.UnsupportedJsonEncode".hashCode()
         }
     }
 
@@ -86,6 +124,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ExpectedJson, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.ExpectedJson".hashCode()
         }
     }
 
@@ -110,6 +155,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: UnsupportedScaleEncode, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.UnsupportedScaleEncode".hashCode()
         }
     }
 
@@ -132,6 +184,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Serde, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.Serde".hashCode()
         }
     }
 
@@ -154,6 +213,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ParityScale, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.ParityScale".hashCode()
         }
     }
 
@@ -176,6 +242,13 @@ public sealed class Error : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ParseInt, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "version.error.Error.ParseInt".hashCode()
         }
     }
 
@@ -239,7 +312,7 @@ public sealed class Error : ModelEnum {
     public companion object : ScaleReader<Error>, ScaleWriter<Error> {
         public override fun read(reader: ScaleCodecReader): Error = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> NotVersioned.read(reader)
             1 -> UnsupportedJsonEncode.read(reader)
