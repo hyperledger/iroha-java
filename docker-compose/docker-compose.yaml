@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha:
-    image: docker.soramitsu.co.jp/iroha2/iroha2:lts-fe7ea9119291dade862d99d8b8456eea994d83be
+    image: hyperledger/iroha2:lts@sha256:73cea62f49a0d1a7b4999da3923bdb389a85462e7b6d3a81e8d484e6cd7cd6e4
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
@@ -21,7 +21,7 @@ services:
     command: iroha --submit-genesis
 
   iroha1:
-    image: docker.soramitsu.co.jp/iroha2/iroha2:lts-fe7ea9119291dade862d99d8b8456eea994d83be
+    image: hyperledger/iroha2:lts@sha256:73cea62f49a0d1a7b4999da3923bdb389a85462e7b6d3a81e8d484e6cd7cd6e4
     environment:
       TORII_P2P_ADDR: iroha1:1338
       TORII_API_URL: iroha1:8081
@@ -39,7 +39,7 @@ services:
       - "../modules/test-tools/src/main/resources:/config"
 
   iroha2:
-    image: docker.soramitsu.co.jp/iroha2/iroha2:lts-fe7ea9119291dade862d99d8b8456eea994d83be
+    image: hyperledger/iroha2:lts@sha256:73cea62f49a0d1a7b4999da3923bdb389a85462e7b6d3a81e8d484e6cd7cd6e4
     environment:
       TORII_P2P_ADDR: iroha2:1339
       TORII_API_URL: iroha2:8082
@@ -57,7 +57,7 @@ services:
       - "../modules/test-tools/src/main/resources:/config"
 
   iroha3:
-    image: docker.soramitsu.co.jp/iroha2/iroha2:lts-fe7ea9119291dade862d99d8b8456eea994d83be
+    image: hyperledger/iroha2:lts@sha256:73cea62f49a0d1a7b4999da3923bdb389a85462e7b6d3a81e8d484e6cd7cd6e4
     environment:
       TORII_P2P_ADDR: iroha3:1340
       TORII_API_URL: iroha3:8083
