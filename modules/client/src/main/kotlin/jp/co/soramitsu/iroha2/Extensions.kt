@@ -14,6 +14,8 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
@@ -251,3 +253,20 @@ fun TriggerId.asString() = when (this.domainId) {
     null -> this.name.string
     else -> this.name.string + TRIGGER_ID_DELIMITER + this.domainId!!.name.string
 }
+
+fun Metadata.merge(extra: Metadata) = Metadata(
+    this.map.toMutableMap().also { it.putAll(extra.map) }
+)
+
+fun Instruction.Register.extractIdentifiableBox() = this
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+
+fun Iterable<Instruction>.extractIdentifiableBoxes() = this.asSequence()
+    .filterIsInstance<Instruction.Register>()
+    .map { it.registerBox.`object`.expression }
+    .filterIsInstance<Expression.Raw>()
+    .map { it.value }
+    .filterIsInstance<Value.Identifiable>()
+    .map { it.identifiableBox }.toList()
