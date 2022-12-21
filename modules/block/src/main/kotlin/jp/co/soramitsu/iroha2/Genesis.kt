@@ -37,6 +37,12 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     fun asJson(): String = JSON_SERDE.writeValueAsString(this.genesisBlock)
 
     companion object {
+
+        /**
+         * Return empty genesis
+         */
+        fun getEmpty() = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf()))))
+
         /**
          * List of genesis blocks to single block with unique instructions
          */
@@ -49,14 +55,10 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
             return Genesis(RawGenesisBlock(listOf(GenesisTransaction(uniqueIsi.mergeMetadata()))))
         }
 
-        /**
-         * Return empty genesis
-         */
-        fun getEmpty() = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf()))))
-
         private fun MutableSet<Instruction>.mergeMetadata(): List<Instruction> {
             val metadataMap = mutableMapOf<Any, Metadata>()
 
+            // only for Instruction.Register
             this.extractIdentifiableBoxes().forEach { idBox ->
                 metadataMap.putMergedMetadata(idBox)
             }
@@ -64,12 +66,30 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
                 toReplace.forEach { isi -> this.remove(isi) }
 
                 val idBox = toReplace.first().extractIdentifiableBox()
-                val registrableBox = idBox.toRegisterBox(metadata)
+                val registrableBox = idBox?.toRegisterBox(metadata)
+                    ?: throw RuntimeException("IdentifiableBox shouldn't be null")
                 this.add(Instruction.Register(RegisterBox(registrableBox.evaluatesTo())))
             }
 
-            return this.sortedWith(compareBy { it !is Instruction.Register })
+            return this.sorted()
         }
+
+        private fun MutableSet<Instruction>.sorted() = this.sortedWith(
+            compareByDescending { instruction ->
+                when (instruction) {
+                    is Instruction.Register -> when (instruction.extractIdentifiableBox()) {
+                        is IdentifiableBox.NewDomain -> 6
+                        is IdentifiableBox.NewAccount -> 5
+                        is IdentifiableBox.NewAssetDefinition -> 4
+                        is IdentifiableBox.PermissionTokenDefinition -> 3
+                        is IdentifiableBox.NewRole -> 2
+                        else -> 1
+                    }
+
+                    else -> -1
+                }
+            }
+        )
 
         private fun IdentifiableBox.toRegisterBox(metadata: Metadata) = when (this) {
             is IdentifiableBox.NewAccount -> RegistrableBox.Account(

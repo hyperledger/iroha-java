@@ -21,6 +21,8 @@ import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
+import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
@@ -28,8 +30,12 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
+import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
+import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
+import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
@@ -693,17 +699,17 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         [
             DefaultGenesis::class,
             AliceHas100XorAndPermissionToBurn::class,
-            StoreAssetWithMetadata::class
+            StoreAssetWithMetadata::class,
+            AliceHasRoleWithAccessToBobsMetadata::class,
+            AliceWithTestAssets::class,
+            AliceAndBobEachHave100Xor::class,
+            XorAndValAssets::class,
+            NewAccountWithMetadata::class,
+            NewDomainWithMetadata::class,
+            RubbishToTestMultipleGenesis::class
         ]
     )
     fun `multiple genesis`(): Unit = runBlocking {
-        val asset = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { client.sendQuery(it) }
-            .assets[DEFAULT_ASSET_ID]
-        assertEquals(100, asset?.value?.cast<AssetValue.Quantity>()?.u32)
-
         val assetId = StoreAssetWithMetadata.ASSET_ID
         val assetKey = StoreAssetWithMetadata.ASSET_KEY
 
@@ -712,6 +718,39 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             StoreAssetWithMetadata.ASSET_VALUE,
             assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
         )
+
+        QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { alice ->
+                assertEquals(
+                    alice.metadata.map[RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asValue()
+                )
+            }
+
+        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { bob ->
+                assertEquals(
+                    bob.metadata.map[RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asValue()
+                )
+            }
+
+        QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { domain ->
+                assertEquals(
+                    domain.metadata.map[RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asValue()
+                )
+            }
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {

@@ -258,10 +258,11 @@ fun Metadata.merge(extra: Metadata) = Metadata(
     this.map.toMutableMap().also { it.putAll(extra.map) }
 )
 
-fun Instruction.Register.extractIdentifiableBox() = this
-    .registerBox.`object`.expression
-    .cast<Expression.Raw>().value
-    .cast<Value.Identifiable>().identifiableBox
+fun Instruction.Register.extractIdentifiableBox() = runCatching {
+    this.registerBox.`object`.expression
+        .cast<Expression.Raw>().value
+        .cast<Value.Identifiable>().identifiableBox
+}.getOrNull()
 
 fun Iterable<Instruction>.extractIdentifiableBoxes() = this.asSequence()
     .filterIsInstance<Instruction.Register>()

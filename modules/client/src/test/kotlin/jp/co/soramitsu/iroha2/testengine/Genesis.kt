@@ -23,6 +23,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
 
 /**
  * Create a default genesis where there is just one domain with only Alice and Bob in it
@@ -207,6 +208,31 @@ open class NewDomain : Genesis(
 ) {
     companion object {
         val DOMAIN_ID = "foo_domain".asDomainId()
+    }
+}
+
+/**
+ * Specific genesis to test multiple genesis case
+ */
+open class RubbishToTestMultipleGenesis : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(DEFAULT_DOMAIN_ID, mapOf(DOMAIN_KEY_VALUE.asName() to DOMAIN_KEY_VALUE.asValue())),
+        Instructions.registerAccount(
+            ALICE_ACCOUNT_ID,
+            listOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
+            Metadata(mapOf(ALICE_KEY_VALUE.asName() to ALICE_KEY_VALUE.asValue()))
+        ),
+        Instructions.registerAccount(
+            BOB_ACCOUNT_ID,
+            listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
+            Metadata(mapOf(BOB_KEY_VALUE.asName() to BOB_KEY_VALUE.asValue()))
+        )
+    )
+) {
+    companion object {
+        val DOMAIN_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
+        val ALICE_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
+        val BOB_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
     }
 }
 
