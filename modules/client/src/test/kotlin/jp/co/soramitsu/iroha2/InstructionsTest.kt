@@ -355,6 +355,25 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    fun `burn other user asset`(): Unit = runBlocking {
+        client.tx {
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            mintAsset(DEFAULT_ASSET_ID, 100)
+            registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId)
+            grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
+        }
+
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { burnAsset(DEFAULT_ASSET_ID, 50) }
+
+        val result = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
     fun `burn public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
         mintPublicKey(ALICE_ACCOUNT_ID)
