@@ -113,9 +113,19 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
         }
 
         private fun MutableMap<Any, Metadata>.putMergedMetadata(idBox: IdentifiableBox) {
-            fun MutableMap<Any, Metadata>.putOrMerge(id: Any, metadata: Metadata) = when (this[id]) {
+            fun MutableMap<Any, Metadata>.putOrMerge(
+                id: Any,
+                metadata: Metadata
+            ) = when (val value = this[id]) {
                 null -> this[id] = metadata
-                else -> this[id] = this[id]!!.merge(metadata)
+                else -> {
+                    metadata.map.forEach { (k, v) ->
+                        if (value.map.containsKey(k) && value.map[k] != v) {
+                            throw IrohaSdkException("Value for this key is already set in metadata")
+                        }
+                    }
+                    this[id] = this[id]!!.merge(metadata)
+                }
             }
 
             when (idBox) {
