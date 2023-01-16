@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
@@ -30,53 +31,60 @@ import kotlin.reflect.full.memberProperties
 /**
  * Runner for Iroha2 Docker containers
  */
-class IrohaRunnerExtension : InvocationInterceptor {
+class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
+
+    private val resources: MutableMap<String, List<AutoCloseable>> = Collections.synchronizedMap(mutableMapOf())
+
+    override fun beforeEach(context: ExtensionContext) = runBlocking {
+        // init container and client if annotation was passed on test method
+        val testId = context.testId()
+        resources[testId] = initIfRequested(context)
+    }
 
     override fun interceptTestMethod(
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
         extensionContext: ExtensionContext
     ) = runBlocking {
-        // init container and client if annotation was passed on test method
-        val resources = initIfRequested(invocationContext)
+        val testId = extensionContext.testId()
         try {
             // invoke actual test method
             super.interceptTestMethod(invocation, invocationContext, extensionContext)
         } finally {
             // stop container and client if they were created
-            resources.forEach { it.close() }
+            resources[testId]?.forEach { it.close() }
         }
     }
 
     private suspend fun initIfRequested(
-        invocationContext: ReflectiveInvocationContext<Method>
+        extensionContext: ExtensionContext
     ): List<AutoCloseable> = coroutineScope {
-        val withIroha = invocationContext
-            .executable.declaredAnnotations
-            .filterIsInstance<WithIroha>()
+        val withIroha = extensionContext.element.get()
+            .annotations.filterIsInstance<WithIroha>()
             .firstOrNull() ?: return@coroutineScope emptyList()
 
-        val network = invocationContext.target.get().cast<IrohaTest<Iroha2Client>>().network
+        val testInstance = extensionContext.testInstance.get()
+        val network = testInstance.cast<IrohaTest<*>>().network
+
         val utilizedResources = mutableListOf<AutoCloseable>()
 
         // start containers
         val containers = createContainers(withIroha, network)
         utilizedResources.addAll(containers)
 
-        val testClassInstance = invocationContext.target.get()
-        val properties = testClassInstance::class.memberProperties
+        val properties = testInstance::class.memberProperties
 
         // inject `List<IrohaContainer>` if it is declared in test class
-        setPropertyValue(properties, testClassInstance) { containers }
+        setPropertyValue(properties, testInstance) { containers }
 
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testClassInstance) {
+        setPropertyValue(properties, testInstance) {
             Iroha2Client(containers.first().getApiUrl(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
-        setPropertyValue(properties, testClassInstance) {
+        setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
                 containers.first().getApiUrl(),
                 containers.first().getTelemetryUrl(),
@@ -85,13 +93,13 @@ class IrohaRunnerExtension : InvocationInterceptor {
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testClassInstance) {
+        setPropertyValue(properties, testInstance) {
             Iroha2AsyncClient(containers.first().getApiUrl(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testClassInstance) {
+        setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
                 containers.first().getApiUrl(),
                 containers.first().getTelemetryUrl(),
@@ -110,8 +118,14 @@ class IrohaRunnerExtension : InvocationInterceptor {
         declaredProperties
             .filter { it.returnType.classifier == V::class }
             .filterIsInstance<KMutableProperty1<out Any, V>>()
-            .also { check(it.size <= 1) { "Found more than one property with type `${V::class.qualifiedName}` in test class `${testClassInstance::class::qualifiedName}`" } }
-            .firstOrNull()
+            .also {
+                check(it.size <= 1) {
+                    """
+                        "Found more than one property with type `${V::class.qualifiedName}`
+                         in test class `${testClassInstance::class::qualifiedName}`"
+                    """.trimIndent()
+                }
+            }.firstOrNull()
             ?.setter
             ?.call(testClassInstance, valueToSet())
     }
@@ -161,4 +175,6 @@ class IrohaRunnerExtension : InvocationInterceptor {
         "$host:$port",
         this.public.toIrohaPublicKey()
     )
+
+    private fun ExtensionContext.testId() = "${this.testClass.get().name}_${this.testMethod.get().name}"
 }

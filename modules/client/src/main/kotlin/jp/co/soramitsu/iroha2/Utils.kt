@@ -13,7 +13,9 @@ suspend fun findFreePorts(
 ): List<Int> {
     fun find() = (0 until amount).map {
         try {
-            ServerSocket(0).use { it.localPort }
+            val socket = ServerSocket(0)
+            socket.soTimeout = 300 // seconds
+            socket.use { it.localPort }
         } catch (e: IOException) {
             throw e
         }
