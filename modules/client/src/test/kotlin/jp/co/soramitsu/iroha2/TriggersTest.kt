@@ -234,21 +234,15 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         }
 
         // send some transactions to keep Iroha2 network busy
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            setKeyValue(ALICE_ACCOUNT_ID, "test".asName(), "test".asValue())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
+        repeat(2) { i ->
+            client.sendTransaction {
+                accountId = ALICE_ACCOUNT_ID
+                setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i".asValue())
+                buildSigned(ALICE_KEYPAIR)
+            }.also { d ->
+                withTimeout(txTimeout) { d.await() }
+            }
         }
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            setKeyValue(ALICE_ACCOUNT_ID, "test2".asName(), "test2".asValue())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
         QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
