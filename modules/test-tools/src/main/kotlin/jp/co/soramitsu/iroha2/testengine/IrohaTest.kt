@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
+import org.testcontainers.containers.Network
 import java.time.Duration
 
 /**
@@ -14,7 +15,8 @@ import java.time.Duration
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(60)
 abstract class IrohaTest<T : Iroha2Client>(
-    val txTimeout: Duration = Duration.ofSeconds(10)
+    val txTimeout: Duration = Duration.ofSeconds(10),
+    val network: Network = Network.newNetwork()
 ) {
     lateinit var client: T
     lateinit var containers: List<IrohaContainer>
