@@ -6,11 +6,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Container
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
+import jp.co.soramitsu.iroha2.generated.datamodel.sorting.Sorting
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -38,6 +41,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
+import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -455,6 +460,59 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `pagination plus sorting by metadata key`(): Unit = runBlocking {
+        val key = RandomStringUtils.random(5).asName()
+
+        createAccount("new_000", mapOf(key to 1.asValue()))
+        createAccount("new_111", mapOf(key to 0.asValue()))
+        createAccount("new_222", mapOf(key to 2.asValue()))
+
+        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
+            .let { accounts ->
+                assertEquals(0.asValue(), accounts.data[0].metadata.map[key])
+                assertEquals(1.asValue(), accounts.data[1].metadata.map[key])
+                assertEquals(2.asValue(), accounts.data[2].metadata.map[key])
+            }
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `pagination works correct after inserting some new accounts`(): Unit = runBlocking {
+        createAccount("new_000", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_111", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_222", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_333", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_444", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+
+        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query, Pagination(0, 3), Sorting("ts".asName())) }
+            .let { accounts -> assertEquals(3, accounts.data.size) } // todo
+
+        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query, Pagination(3, 3)) }
+            .let { accounts -> assertEquals(2, accounts.data.size) } // todo
+
+        createAccount("new_555", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_666", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_777", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        createAccount("new_888", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+
+        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query, Pagination(6, 3)) }
+            .let { accounts -> assertEquals(3, accounts.data.size) } // todo
+    }
+
+    @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `find all account with pagination`(): Unit = runBlocking {
         var page = Pagination(0, 5)
@@ -595,11 +653,14 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-    private suspend fun createAccount(name: String) {
+    private suspend fun createAccount(
+        name: String,
+        metadata: Map<Name, Value> = mapOf()
+    ) {
         val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
-            registerAccount(newAccountId, listOf())
+            registerAccount(newAccountId, listOf(), Metadata(metadata))
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }

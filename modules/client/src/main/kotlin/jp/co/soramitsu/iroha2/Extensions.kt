@@ -70,7 +70,7 @@ fun String.asValue() = Value.String(this)
 
 fun Int.asValue() = this.toLong().asValue()
 
-fun Long.asValue() = Value.U32(this)
+fun Long.asValue() = Value.U128(BigInteger.valueOf(this))
 
 fun BigInteger.asValue() = Value.U128(this)
 

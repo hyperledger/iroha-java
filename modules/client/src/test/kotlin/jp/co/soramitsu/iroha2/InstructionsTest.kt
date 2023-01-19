@@ -270,7 +270,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             is AssetValue.Store -> {
                 assertEquals(pair1.second.string, value.metadata.map[pair1.first]?.cast<Value.String>()?.string)
                 assertEquals(pair2.second.bool, value.metadata.map[pair2.first]?.cast<Value.Bool>()?.bool)
-                assertEquals(pair3.second.u32, (value.metadata.map[pair3.first]?.cast<Value.U32>())?.u32)
+                assertEquals(pair3.second.u128, (value.metadata.map[pair3.first]?.cast<Value.U128>())?.u128)
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
