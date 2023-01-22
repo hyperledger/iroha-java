@@ -34,6 +34,7 @@ interface ResultExtractor<T> {
                     result.paginatedQueryResult.total
                 )
             }
+            else -> throw IrohaSdkException("Unexpected type ${result::class}")
         }
     }
 
