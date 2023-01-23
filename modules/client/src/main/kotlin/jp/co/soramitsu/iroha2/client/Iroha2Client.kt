@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
@@ -29,6 +30,7 @@ import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
+import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
@@ -117,8 +119,12 @@ open class Iroha2Client(
                 }
             }
             HttpResponseValidator {
-                handleResponseException { exception ->
-                    throw IrohaClientException(cause = exception)
+                handleResponseExceptionWithRequest { exception, _ ->
+                    val status = exception
+                        .takeIf { it is ClientRequestException }
+                        ?.cast<ClientRequestException>()
+                        ?.response?.status
+                    throw IrohaClientException(cause = exception, status = status)
                 }
             }
         }
