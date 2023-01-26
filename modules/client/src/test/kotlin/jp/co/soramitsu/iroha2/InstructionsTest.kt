@@ -42,12 +42,12 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
-import java.security.KeyPair
 import java.security.SecureRandom
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -56,7 +56,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class InstructionsTest : IrohaTest<Iroha2Client>() {
+class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID, testKeyPair = ALICE_KEYPAIR) {
 
     /**
      * Using for docs generation
@@ -361,6 +361,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
@@ -368,7 +369,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId)
             grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
         }
-
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { burnAsset(DEFAULT_ASSET_ID, 50) }
 
         val result = QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
@@ -822,20 +822,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     private suspend fun mintPublicKey(accountId: AccountId) {
         client.tx {
             mintPublicKey(accountId, generateKeyPair().public.toIrohaPublicKey())
-        }
-    }
-
-    private suspend fun Iroha2Client.tx(
-        account: AccountId = ALICE_ACCOUNT_ID,
-        keyPair: KeyPair = ALICE_KEYPAIR,
-        builder: TransactionBuilder.() -> Unit = {}
-    ) {
-        this.sendTransaction {
-            account(account)
-            builder(this)
-            buildSigned(keyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
         }
     }
 }

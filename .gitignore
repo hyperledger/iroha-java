@@ -2,3 +2,5 @@ build/
 .idea/
 .gradle/
 */*/out
+test-smart-contract/target
+test-smart-contract/Cargo.lock
