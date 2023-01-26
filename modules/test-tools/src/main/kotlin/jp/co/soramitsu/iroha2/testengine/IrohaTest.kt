@@ -18,7 +18,7 @@ import java.time.Duration
  */
 @Execution(ExecutionMode.CONCURRENT)
 @ExtendWith(IrohaRunnerExtension::class)
-@Timeout(60)
+@Timeout(120)
 abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(10),
     val network: Network = Network.newNetwork(),

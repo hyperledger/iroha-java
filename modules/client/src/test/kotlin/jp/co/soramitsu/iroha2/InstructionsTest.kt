@@ -361,7 +361,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Disabled
+    @Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
