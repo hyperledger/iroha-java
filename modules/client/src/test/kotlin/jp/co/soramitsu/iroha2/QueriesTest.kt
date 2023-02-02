@@ -482,34 +482,55 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `pagination works correct after inserting some new accounts`(): Unit = runBlocking {
-        createAccount("new_000", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_111", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_222", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_333", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_444", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        val key = "ts".asName()
+
+        val metadata0 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_000", mapOf(key to metadata0))
+        val metadata1 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_111", mapOf(key to metadata1))
+        val metadata2 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_222", mapOf(key to metadata2))
+        val metadata3 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_333", mapOf(key to metadata3))
+        val metadata4 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_444", mapOf(key to metadata4))
 
         QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, Pagination(0, 3), Sorting("ts".asName())) }
-            .let { accounts -> assertEquals(3, accounts.data.size) } // todo
+            .let { query -> client.sendQuery(query, Pagination(0, 3), Sorting(key)) }
+            .let { accounts ->
+                assertEquals(3, accounts.data.size)
+                assertEquals(metadata2, accounts.data[2].metadata.map[key])
+            }
 
         QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query, Pagination(3, 3)) }
-            .let { accounts -> assertEquals(2, accounts.data.size) } // todo
+            .let { accounts ->
+                assertEquals(2, accounts.data.size)
+                assertEquals(metadata4, accounts.data[1].metadata.map[key])
+            }
 
-        createAccount("new_555", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_666", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_777", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
-        createAccount("new_888", mapOf("ts".asName() to Instant.now().toEpochMilli().asValue()))
+        val metadata5 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_555", mapOf(key to metadata5))
+        val metadata6 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_666", mapOf(key to metadata6))
+        val metadata7 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_777", mapOf(key to metadata7))
+        val metadata8 = Instant.now().toEpochMilli().asValue()
+        createAccount("new_888", mapOf(key to metadata8))
 
         QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query, Pagination(6, 3)) }
-            .let { accounts -> assertEquals(3, accounts.data.size) } // todo
+            .let { accounts ->
+                assertEquals(3, accounts.data.size)
+                assertEquals(metadata6, accounts.data[0].metadata.map[key])
+                assertEquals(metadata8, accounts.data[2].metadata.map[key])
+            }
     }
 
     @Test
