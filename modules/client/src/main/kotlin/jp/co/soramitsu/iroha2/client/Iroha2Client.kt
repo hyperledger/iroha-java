@@ -151,7 +151,7 @@ open class Iroha2Client(
                 parameter("limit", it.limit)
             }
             sorting?.also {
-                parameter("sort_by_metadata_key", it.sortByMetadataKey)
+                parameter("sort_by_metadata_key", it.sortByMetadataKey?.string)
             }
         }
         return response.body<ByteArray>()
