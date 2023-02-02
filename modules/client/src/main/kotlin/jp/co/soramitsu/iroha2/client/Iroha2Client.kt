@@ -41,6 +41,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
+import jp.co.soramitsu.iroha2.generated.datamodel.sorting.Sorting
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
@@ -143,13 +144,20 @@ open class Iroha2Client(
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
-    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
+    suspend fun <T> sendQuery(
+        queryAndExtractor: QueryAndExtractor<T>,
+        page: Pagination? = null,
+        sorting: Sorting? = null
+    ): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
             setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
-            if (page != null) {
-                parameter("start", page.start)
-                parameter("limit", page.limit)
+            page?.also {
+                parameter("start", it.start)
+                parameter("limit", it.limit)
+            }
+            sorting?.also {
+                parameter("sort_by_metadata_key", it.sortByMetadataKey?.string)
             }
         }
         return response.body<ByteArray>()
