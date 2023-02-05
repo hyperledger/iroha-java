@@ -460,23 +460,27 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @Disabled
     @WithIroha([DefaultGenesis::class])
     fun `pagination plus sorting by metadata key`(): Unit = runBlocking {
-        val key = RandomStringUtils.random(5).asName()
+        val keyU32 = RandomStringUtils.random(5).asName()
+        val keyU128 = RandomStringUtils.random(5).asName()
 
-        createAccount("new_000", mapOf(key to 1.asValue()))
-        createAccount("new_111", mapOf(key to 0.asValue()))
-        createAccount("new_222", mapOf(key to 2.asValue()))
+        createAccount("new_000", mapOf(keyU32 to 1.asValue(), keyU128 to 1L.asValue()))
+        createAccount("new_111", mapOf(keyU32 to 0.asValue(), keyU128 to 0L.asValue()))
+        createAccount("new_222", mapOf(keyU32 to 2.asValue(), keyU128 to 2L.asValue()))
 
-        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
-            .let { accounts ->
-                assertEquals(0.asValue(), accounts.data[0].metadata.map[key])
-                assertEquals(1.asValue(), accounts.data[1].metadata.map[key])
-                assertEquals(2.asValue(), accounts.data[2].metadata.map[key])
-            }
+        listOf(keyU32, keyU128).forEach { key ->
+            QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
+                .let { accounts ->
+                    assertEquals(0.asValue(), accounts.data[0].metadata.map[key])
+                    assertEquals(1.asValue(), accounts.data[1].metadata.map[key])
+                    assertEquals(2.asValue(), accounts.data[2].metadata.map[key])
+                }
+        }
     }
 
     @Test

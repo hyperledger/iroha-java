@@ -68,7 +68,7 @@ fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
-fun Int.asValue() = this.toLong().asValue()
+fun Int.asValue() = Value.U32(this.toLong())
 
 fun Long.asValue() = Value.U128(BigInteger.valueOf(this))
 
