@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -26,7 +25,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readBytes
-import java.io.File
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
