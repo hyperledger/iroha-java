@@ -9,8 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 import kotlin.collections.Map
 
 /**
@@ -20,13 +20,13 @@ import kotlin.collections.Map
  */
 public data class Where(
     public val expression: EvaluatesTo<Value>,
-    public val values: Map<String, EvaluatesTo<Value>>
+    public val values: Map<Name, EvaluatesTo<Value>>
 ) {
     public companion object : ScaleReader<Where>, ScaleWriter<Where> {
         public override fun read(reader: ScaleCodecReader): Where = try {
             Where(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
-                reader.readMap(reader.readCompactInt(), { reader.readString() }, {
+                reader.readMap(reader.readCompactInt(), { Name.read(reader) }, {
                     EvaluatesTo.read(reader) as
                         EvaluatesTo<Value>
                 }),
@@ -39,9 +39,9 @@ public data class Where(
             EvaluatesTo.write(writer, instance.expression)
             writer.writeCompact(instance.values.size)
             instance.values.toSortedMap(
-                String.comparator()
+                Name.comparator()
             ).forEach { (key, value) ->
-                writer.writeAsList(key.toByteArray(Charsets.UTF_8))
+                Name.write(writer, key)
                 EvaluatesTo.write(writer, value)
             }
         } catch (ex: Exception) {

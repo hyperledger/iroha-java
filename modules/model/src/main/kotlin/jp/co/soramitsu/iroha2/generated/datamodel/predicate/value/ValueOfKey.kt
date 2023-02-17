@@ -17,13 +17,13 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class ValueOfKey(
     public val key: Name,
-    public val predicate: Predicate
+    public val predicate: ValuePredicate
 ) {
     public companion object : ScaleReader<ValueOfKey>, ScaleWriter<ValueOfKey> {
         public override fun read(reader: ScaleCodecReader): ValueOfKey = try {
             ValueOfKey(
                 Name.read(reader),
-                Predicate.read(reader),
+                ValuePredicate.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class ValueOfKey(
 
         public override fun write(writer: ScaleCodecWriter, instance: ValueOfKey) = try {
             Name.write(writer, instance.key)
-            Predicate.write(writer, instance.predicate)
+            ValuePredicate.write(writer, instance.predicate)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

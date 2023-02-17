@@ -30,6 +30,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.equals(this, other)
         is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
         is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        is ByTotalQuantityChanged -> ByTotalQuantityChanged.equals(this, other)
         else -> super.equals(other)
     }
 
@@ -39,6 +40,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.hashCode()
         is ByMetadataInserted -> ByMetadataInserted.hashCode()
         is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        is ByTotalQuantityChanged -> ByTotalQuantityChanged.hashCode()
         else -> super.hashCode()
     }
 
@@ -192,6 +194,38 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         }
     }
 
+    /**
+     * 'ByTotalQuantityChanged' variant
+     */
+    public class ByTotalQuantityChanged : AssetDefinitionEventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<ByTotalQuantityChanged>,
+            ScaleWriter<ByTotalQuantityChanged> {
+            public const val DISCRIMINANT: Int = 5
+
+            public override fun read(reader: ScaleCodecReader): ByTotalQuantityChanged = try {
+                ByTotalQuantityChanged()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByTotalQuantityChanged) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(o1: ByTotalQuantityChanged, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetDefinitionEventFilter.ByTotalQuantityChanged".hashCode()
+        }
+    }
+
     public companion object :
         ScaleReader<AssetDefinitionEventFilter>,
         ScaleWriter<AssetDefinitionEventFilter> {
@@ -204,6 +238,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
             2 -> ByDeleted.read(reader)
             3 -> ByMetadataInserted.read(reader)
             4 -> ByMetadataRemoved.read(reader)
+            5 -> ByTotalQuantityChanged.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -215,6 +250,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
                 2 -> ByDeleted.write(writer, instance as ByDeleted)
                 3 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
                 4 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
+                5 -> ByTotalQuantityChanged.write(writer, instance as ByTotalQuantityChanged)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

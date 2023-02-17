@@ -8,10 +8,11 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionEntry
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.Map
@@ -24,7 +25,8 @@ import kotlin.collections.Map
 public data class Domain(
     public val id: DomainId,
     public val accounts: Map<AccountId, Account>,
-    public val assetDefinitions: Map<DefinitionId, AssetDefinitionEntry>,
+    public val assetDefinitions: Map<AssetDefinitionId, AssetDefinitionEntry>,
+    public val assetTotalQuantities: Map<AssetDefinitionId, NumericValue>,
     public val logo: IpfsPath? = null,
     public val metadata: Metadata
 ) {
@@ -34,10 +36,14 @@ public data class Domain(
                 DomainId.read(reader),
                 reader.readMap(reader.readCompactInt(), { AccountId.read(reader) }, { Account.read(reader) }),
                 reader.readMap(
-                    reader.readCompactInt(), { DefinitionId.read(reader) },
+                    reader.readCompactInt(), { AssetDefinitionId.read(reader) },
                     { AssetDefinitionEntry.read(reader) }
                 ),
-                reader.readNullable(IpfsPath),
+                reader.readMap(
+                    reader.readCompactInt(), { AssetDefinitionId.read(reader) },
+                    { NumericValue.read(reader) }
+                ),
+                reader.readNullable(IpfsPath) as IpfsPath?,
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {
@@ -55,10 +61,17 @@ public data class Domain(
             }
             writer.writeCompact(instance.assetDefinitions.size)
             instance.assetDefinitions.toSortedMap(
-                jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId.comparator()
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId.comparator()
             ).forEach { (key, value) ->
-                DefinitionId.write(writer, key)
+                AssetDefinitionId.write(writer, key)
                 AssetDefinitionEntry.write(writer, value)
+            }
+            writer.writeCompact(instance.assetTotalQuantities.size)
+            instance.assetTotalQuantities.toSortedMap(
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId.comparator()
+            ).forEach { (key, value) ->
+                AssetDefinitionId.write(writer, key)
+                NumericValue.write(writer, value)
             }
             writer.writeNullable(IpfsPath, instance.logo)
             Metadata.write(writer, instance.metadata)

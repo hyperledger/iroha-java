@@ -67,16 +67,6 @@ class ScaleCodecReader(private val source: ByteArray) {
         return scaleReader.read(this)
     }
 
-    /**
-     * Read Nullable Boolean
-     */
-    fun readNullable(_long: Long.Companion): Long? {
-        return when (readBoolean()) {
-            true -> readUint32()
-            else -> null
-        }
-    }
-
     fun <T> readNullable(scaleReader: ScaleReader<T>): T? {
         if (scaleReader is BoolReader || scaleReader is BoolNullableReader) {
             return BOOL_NULLABLE.read(this) as T?

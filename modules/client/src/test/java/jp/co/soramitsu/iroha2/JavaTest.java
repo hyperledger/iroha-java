@@ -102,7 +102,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final VersionedSignedTransaction mintAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
-            .mintAsset(DEFAULT_ASSET_ID, 5L)
+            .mintAsset(DEFAULT_ASSET_ID, 5)
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(mintAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 

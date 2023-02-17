@@ -15,10 +15,10 @@ import jp.co.soramitsu.iroha2.generated.datamodel.ValueKind
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
@@ -56,7 +56,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Action
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
-import jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -317,7 +316,7 @@ object Instructions {
      */
     @JvmOverloads
     fun registerAssetDefinition(
-        id: DefinitionId,
+        id: AssetDefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
@@ -412,7 +411,7 @@ object Instructions {
      * Set key/value for a given asset definition
      */
     fun setKeyValue(
-        definitionId: DefinitionId,
+        definitionId: AssetDefinitionId,
         key: Name,
         value: Value
     ): Instruction.SetKeyValue {
@@ -483,9 +482,9 @@ object Instructions {
      */
     fun mintAsset(
         assetId: AssetId,
-        quantity: Long
+        quantity: Int
     ): Instruction.Mint {
-        return mintSome(Value.U32(quantity), assetId)
+        return mintSome(quantity.asValue(), assetId)
     }
 
     /**
@@ -495,7 +494,7 @@ object Instructions {
         assetId: AssetId,
         quantity: BigDecimal
     ): Instruction.Mint {
-        return mintSome(Value.Fixed(Fixed(quantity)), assetId)
+        return mintSome(quantity.asValue(), assetId)
     }
 
     /**
@@ -511,21 +510,15 @@ object Instructions {
     /**
      * Burn an asset of the [AssetValueType.Quantity] asset value type
      */
-    fun burnAsset(assetId: AssetId, value: Long): Instruction {
-        return burnSome(
-            Value.U32(value),
-            IdBox.AssetId(assetId)
-        )
-    }
+    fun burnAsset(assetId: AssetId, value: Int): Instruction {
+        return burnSome(value.asValue(), IdBox.AssetId(assetId))
+    } // todo try u128
 
     /**
      * Burn an asset of the [AssetValueType.Fixed] asset value type
      */
     fun burnAsset(assetId: AssetId, value: BigDecimal): Instruction {
-        return burnSome(
-            Value.Fixed(Fixed(value)),
-            IdBox.AssetId(assetId)
-        )
+        return burnSome(value.asValue(), IdBox.AssetId(assetId))
     }
 
     /**
@@ -591,7 +584,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanSetKeyValueInAssetDefinition] permission
      */
-    fun grantSetKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantSetKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanSetKeyValueInAssetDefinition.type),
@@ -605,7 +598,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanRemoveKeyValueInAssetDefinition] permission
      */
-    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanRemoveKeyValueInAssetDefinition.type),
@@ -619,7 +612,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanMintUserAssetDefinitionsToken] permission
      */
-    fun grantMintUserAssetDefinitions(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantMintUserAssetDefinitions(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanMintUserAssetDefinitionsToken.type),
@@ -648,7 +641,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanBurnAssetWithDefinition] permission
      */
-    fun grantBurnAssetWithDefinitionId(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantBurnAssetWithDefinitionId(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanBurnAssetWithDefinition.type),
@@ -702,7 +695,7 @@ object Instructions {
     /**
      * Grant an account the [Permissions.CanUnregisterAssetWithDefinition] permission
      */
-    fun grantUnregisterAssetDefinition(assetDefinitionId: DefinitionId, target: AccountId): Instruction {
+    fun grantUnregisterAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId): Instruction {
         return grantSome(IdBox.AccountId(target)) {
             Token(
                 definitionId = TokenId(Permissions.CanUnregisterAssetWithDefinition.type),
@@ -732,7 +725,7 @@ object Instructions {
         return Instruction.Transfer(
             TransferBox(
                 sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
-                `object` = Value.U32(value).evaluatesTo(),
+                `object` = value.asValue().evaluatesTo(),
                 destinationId = IdBox.AssetId(destinationId).evaluatesTo()
             )
         )

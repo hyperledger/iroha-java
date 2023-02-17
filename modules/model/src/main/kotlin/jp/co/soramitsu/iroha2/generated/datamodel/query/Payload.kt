@@ -10,7 +10,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.codec.reader.CompactBigIntReader
 import jp.co.soramitsu.iroha2.codec.writer.CompactULongWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.`value`.ValuePredicate
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 
@@ -23,7 +24,7 @@ public data class Payload(
     public val timestampMs: BigInteger,
     public val query: QueryBox,
     public val accountId: AccountId,
-    public val filter: PredicateBox
+    public val filter: GenericValuePredicateBox<ValuePredicate>
 ) {
     public companion object : ScaleReader<Payload>, ScaleWriter<Payload> {
         public override fun read(reader: ScaleCodecReader): Payload = try {
@@ -31,7 +32,7 @@ public data class Payload(
                 reader.read(CompactBigIntReader()),
                 QueryBox.read(reader),
                 AccountId.read(reader),
-                PredicateBox.read(reader),
+                GenericValuePredicateBox.read(reader) as GenericValuePredicateBox<ValuePredicate>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -41,7 +42,7 @@ public data class Payload(
             writer.write(CompactULongWriter(), instance.timestampMs.toLong())
             QueryBox.write(writer, instance.query)
             AccountId.write(writer, instance.accountId)
-            PredicateBox.write(writer, instance.filter)
+            GenericValuePredicateBox.write(writer, instance.filter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

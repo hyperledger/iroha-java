@@ -1,16 +1,17 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.websocket.Frame
+import io.ktor.websocket.Frame // todo from orillion + await(10)
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
@@ -24,9 +25,11 @@ import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
+import jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.MessageDigest
@@ -44,7 +47,7 @@ fun String.asAccountId() = this.split(ACCOUNT_ID_DELIMITER).takeIf {
 fun String.asAssetDefinitionId() = this.split(ASSET_ID_DELIMITER).takeIf {
     it.size == 2
 }?.let { parts ->
-    DefinitionId(parts[0].asName(), parts[1].asDomainId())
+    AssetDefinitionId(parts[0].asName(), parts[1].asDomainId())
 } ?: throw IllegalArgumentException("Incorrect asset definition ID: $this")
 
 fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
@@ -53,7 +56,7 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     parts[2].asAccountId().let { accountId ->
         val domainId = parts[1].takeIf { it.isNotBlank() }?.asDomainId()
         AssetId(
-            DefinitionId(
+            AssetDefinitionId(
                 parts[0].asName(),
                 domainId ?: accountId.domainId
             ),
@@ -68,11 +71,13 @@ fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
-fun Int.asValue() = Value.U32(this.toLong())
+fun Int.asValue() = Value.Numeric(NumericValue.U32(this.toLong()))
 
-fun Long.asValue() = Value.U128(BigInteger.valueOf(this))
+fun Long.asValue() = Value.Numeric(NumericValue.U128(BigInteger.valueOf(this)))
 
-fun BigInteger.asValue() = Value.U128(this)
+fun BigInteger.asValue() = Value.Numeric(NumericValue.U128(this))
+
+fun BigDecimal.asValue() = Value.Numeric(NumericValue.Fixed(Fixed(this)))
 
 fun Boolean.asValue() = Value.Bool(this)
 
@@ -188,7 +193,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is String -> Value.String(this)
         is Boolean -> Value.Bool(this)
         is AssetId -> Value.Id(IdBox.AssetId(this))
-        is DefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
+        is AssetDefinitionId -> Value.Id(IdBox.AssetDefinitionId(this))
         is AccountId -> Value.Id(IdBox.AccountId(this))
         is DomainId -> Value.Id(IdBox.DomainId(this))
         is RoleId -> Value.Id(IdBox.RoleId(this))
@@ -210,7 +215,7 @@ fun AccountId.toValueId() = Value.Id(IdBox.AccountId(this))
 
 fun AssetId.toValueId() = Value.Id(IdBox.AssetId(this))
 
-fun DefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
+fun AssetDefinitionId.toValueId() = Value.Id(IdBox.AssetDefinitionId(this))
 
 fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Account -> IdentifiableBox.NewAccount(this.newAccount)
@@ -232,6 +237,7 @@ fun <T> T.asValue() = when (this) {
     is Long -> this.asValue()
     is Int -> this.asValue()
     is BigInteger -> this.asValue()
+    is BigDecimal -> this.asValue()
     is Boolean -> this.asValue()
     is AccountId -> this.asValue()
     else -> throw RuntimeException("Unsupported type")
@@ -239,7 +245,7 @@ fun <T> T.asValue() = when (this) {
 
 fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
 
-fun DefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
+fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
 
 fun AccountId.asString() = this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string
 

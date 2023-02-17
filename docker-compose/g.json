@@ -1,0 +1,39 @@
+{
+  "transactions": [
+    {
+      "isi": [
+        {
+          "Register": {
+            "NewDomain": {
+              "id": "wonderland",
+              "logo": null,
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAccount": {
+              "id": "alice@wonderland",
+              "signatories": [
+                "ed0120ba0b2654a7627d0cc329696bd74cc44efe3a4fb4d66c5f23b63edbb90dfd1dba"
+              ],
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAccount": {
+              "id": "bob@wonderland",
+              "signatories": [
+                "ed01200ed33bcc5336aa7cd558576409d848bbec38387f82f0907119e0215fcb9e24fe"
+              ],
+              "metadata": {}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

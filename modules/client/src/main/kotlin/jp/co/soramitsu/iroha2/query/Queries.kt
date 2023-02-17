@@ -3,8 +3,8 @@ package jp.co.soramitsu.iroha2.query
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
@@ -129,7 +129,7 @@ object Queries {
     /**
      * Search for all of the assets that have the given [DefinitionID].
      */
-    fun findAssetsByAssetDefinitionId(assetDefinition: DefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
+    fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
         return QueryBox.FindAssetsByAssetDefinitionId(
             FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
         )
@@ -140,7 +140,7 @@ object Queries {
      */
     fun findAssetsByDomainIdAndAssetDefinitionId(
         domainId: DomainId,
-        assetDefinition: DefinitionId
+        assetDefinition: AssetDefinitionId
     ): QueryBox.FindAssetsByDomainIdAndAssetDefinitionId {
         return QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
             FindAssetsByDomainIdAndAssetDefinitionId(
@@ -184,7 +184,7 @@ object Queries {
      * Return the value keyed by the given [Name] in the metadata of the asset definition corresponding to the given [DefinitionId].
      */
     fun findAssetDefinitionKeyValueByIdAndKey(
-        assetDefinition: DefinitionId,
+        assetDefinition: AssetDefinitionId,
         key: Name
     ): QueryBox.FindAssetDefinitionKeyValueByIdAndKey {
         return QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
@@ -317,7 +317,7 @@ object Queries {
         )
     }
 
-    fun findAssetDefinitionById(definitionId: DefinitionId): QueryBox.FindAssetDefinitionById {
+    fun findAssetDefinitionById(definitionId: AssetDefinitionId): QueryBox.FindAssetDefinitionById {
         return QueryBox.FindAssetDefinitionById(
             FindAssetDefinitionById(definitionId.evaluatesTo())
         )

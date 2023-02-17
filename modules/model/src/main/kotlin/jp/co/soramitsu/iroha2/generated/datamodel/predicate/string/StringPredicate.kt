@@ -13,11 +13,11 @@ import kotlin.Int
 import kotlin.String
 
 /**
- * Predicate
+ * StringPredicate
  *
- * Generated from 'iroha_data_model::predicate::string::Predicate' enum
+ * Generated from 'iroha_data_model::predicate::string::StringPredicate' enum
  */
-public sealed class Predicate : ModelEnum {
+public sealed class StringPredicate : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,7 +28,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Contains(
         public val string: String
-    ) : Predicate() {
+    ) : StringPredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Contains>, ScaleWriter<Contains> {
@@ -55,7 +55,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class StartsWith(
         public val string: String
-    ) : Predicate() {
+    ) : StringPredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<StartsWith>, ScaleWriter<StartsWith> {
@@ -82,7 +82,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class EndsWith(
         public val string: String
-    ) : Predicate() {
+    ) : StringPredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<EndsWith>, ScaleWriter<EndsWith> {
@@ -109,7 +109,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Is(
         public val string: String
-    ) : Predicate() {
+    ) : StringPredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Is>, ScaleWriter<Is> {
@@ -131,8 +131,8 @@ public sealed class Predicate : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<Predicate>, ScaleWriter<Predicate> {
-        public override fun read(reader: ScaleCodecReader): Predicate = when (
+    public companion object : ScaleReader<StringPredicate>, ScaleWriter<StringPredicate> {
+        public override fun read(reader: ScaleCodecReader): StringPredicate = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -143,7 +143,7 @@ public sealed class Predicate : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Predicate) {
+        public override fun write(writer: ScaleCodecWriter, instance: StringPredicate) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Contains.write(writer, instance as Contains)

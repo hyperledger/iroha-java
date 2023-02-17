@@ -26,7 +26,7 @@ public data class If(
             If(
                 EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 Instruction.read(reader),
-                reader.readNullable(Instruction),
+                reader.readNullable(Instruction) as Instruction?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

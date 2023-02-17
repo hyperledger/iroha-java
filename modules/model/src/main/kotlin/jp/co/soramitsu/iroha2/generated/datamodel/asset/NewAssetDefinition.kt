@@ -16,7 +16,7 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'iroha_data_model::asset::NewAssetDefinition' regular structure
  */
 public data class NewAssetDefinition(
-    public val id: DefinitionId,
+    public val id: AssetDefinitionId,
     public val valueType: AssetValueType,
     public val mintable: Mintable,
     public val metadata: Metadata
@@ -24,7 +24,7 @@ public data class NewAssetDefinition(
     public companion object : ScaleReader<NewAssetDefinition>, ScaleWriter<NewAssetDefinition> {
         public override fun read(reader: ScaleCodecReader): NewAssetDefinition = try {
             NewAssetDefinition(
-                DefinitionId.read(reader),
+                AssetDefinitionId.read(reader),
                 AssetValueType.read(reader),
                 Mintable.read(reader),
                 Metadata.read(reader),
@@ -34,7 +34,7 @@ public data class NewAssetDefinition(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: NewAssetDefinition) = try {
-            DefinitionId.write(writer, instance.id)
+            AssetDefinitionId.write(writer, instance.id)
             AssetValueType.write(writer, instance.valueType)
             Mintable.write(writer, instance.mintable)
             Metadata.write(writer, instance.metadata)

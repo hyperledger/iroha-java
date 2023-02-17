@@ -20,16 +20,20 @@ import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
@@ -60,9 +64,9 @@ val JSON_SERDE by lazy {
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
         module.addDeserializer(DomainId::class.java, DomainIdDeserializer)
         module.addDeserializer(AccountId::class.java, AccountIdDeserializer)
-        module.addDeserializer(DefinitionId::class.java, AssetDefinitionIdDeserializer)
+        module.addDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdDeserializer)
         module.addDeserializer(AssetId::class.java, AssetIdDeserializer)
-        module.addKeyDeserializer(DefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
+        module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
         module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
@@ -71,7 +75,7 @@ val JSON_SERDE by lazy {
         module.addKeySerializer(Name::class.java, NameAsKeySerializer)
         module.addSerializer(DomainId::class.java, DomainIdSerializer)
         module.addSerializer(TokenId::class.java, TokenIdSerializer)
-        module.addSerializer(DefinitionId::class.java, AssetDefinitionIdSerializer)
+        module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
@@ -82,6 +86,7 @@ val JSON_SERDE by lazy {
         module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
         module.addSerializer(EvaluatesTo::class.java, EvaluatesToSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
+        module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
 
         mapper.registerModule(module)
 
@@ -233,10 +238,10 @@ object AssetIdDeserializer : JsonDeserializer<AssetId>() {
 }
 
 /**
- * Deserializer for [asset definition ID][DefinitionId]
+ * Deserializer for [asset definition ID][AssetDefinitionId]
  */
-object AssetDefinitionIdDeserializer : JsonDeserializer<DefinitionId>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): DefinitionId {
+object AssetDefinitionIdDeserializer : JsonDeserializer<AssetDefinitionId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetDefinitionId {
         return p.readValueAs(String::class.java).asAssetDefinitionId()
     }
 }
@@ -260,11 +265,11 @@ object DomainIdDeserializer : JsonDeserializer<DomainId>() {
 }
 
 /**
- * Deserializer for [asset definition ID][DefinitionId]
+ * Deserializer for [asset definition ID][AssetDefinitionId]
  */
 object AssetDefinitionIdKeyDeserializer : KeyDeserializer() {
-    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): DefinitionId? {
-        return JSON_SERDE.readValue(key, DefinitionId::class.java)
+    override fun deserializeKey(key: String?, ctxt: DeserializationContext?): AssetDefinitionId? {
+        return JSON_SERDE.readValue(key, AssetDefinitionId::class.java)
     }
 }
 
@@ -298,10 +303,10 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 // ==================================================
 
 /**
- * Serializer for [DefinitionId]
+ * Serializer for [AssetDefinitionId]
  */
-object AssetDefinitionIdSerializer : JsonSerializer<DefinitionId>() {
-    override fun serialize(value: DefinitionId, gen: JsonGenerator, serializers: SerializerProvider) {
+object AssetDefinitionIdSerializer : JsonSerializer<AssetDefinitionId>() {
+    override fun serialize(value: AssetDefinitionId, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.asString())
     }
 }
@@ -414,7 +419,16 @@ object MetadataSerializer : JsonSerializer<Metadata>() {
  */
 object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>>() {
     override fun serialize(value: EvaluatesTo<*>, gen: JsonGenerator, serializers: SerializerProvider) {
-        serializeEvaluatesTo(gen, value)
+        value.serialize(gen)
+    }
+}
+
+/**
+ * Custom serializer for [IdentifiableBox.NewRole]
+ */
+object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole>() {
+    override fun serialize(value: IdentifiableBox.NewRole, gen: JsonGenerator, serializers: SerializerProvider) {
+        serializeAny(gen, value.newRole)
     }
 }
 
@@ -424,25 +438,57 @@ object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>>() {
 object EnumerationSerializer : JsonSerializer<ModelEnum>() {
     override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
         when (value) {
-            is Instruction.Register -> serializeRegister(gen, value)
-            is Expression.Raw -> serializeExpressionRaw(gen, value)
-            else -> serializeNoneOrSingleMemberObject(gen, value)
+            is Instruction.Grant -> value.serialize(gen)
+            is Instruction.Burn -> value.serialize(gen)
+            is Instruction.Mint -> value.serialize(gen)
+            is Instruction.Register -> value.serialize(gen)
+            is Expression.Raw -> value.serialize(gen)
+            is Value.Identifiable -> value.serialize(gen)
+            is Value.Id -> value.serialize(gen)
+            else -> serializeAny(gen, value)
         }
     }
 }
 
-fun serializeExpressionRaw(gen: JsonGenerator, value: Expression.Raw) {
-    val clazz = value::class
+private fun Value.Identifiable.serialize(gen: JsonGenerator) {
+    val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
         0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(value))
+        1 -> gen.writeObject(memberProperties.first().call(this))
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
 }
 
-fun serializeRegister(gen: JsonGenerator, value: Instruction.Register) {
-    val clazz = value::class
+// todo повторения
+private fun Value.Id.serialize(gen: JsonGenerator) {
+    val clazz = this::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> gen.writeObject(memberProperties.first().call(this))
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
+
+private fun Expression.Raw.serialize(gen: JsonGenerator) {
+    val clazz = this::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> gen.writeObject(memberProperties.first().call(this))
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
+
+private fun Instruction.Grant.serialize(gen: JsonGenerator) = this.serializeBox<GrantBox>(gen)
+
+private fun Instruction.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
+
+private fun Instruction.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
+
+private fun Instruction.Register.serialize(gen: JsonGenerator) {
+    val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
         0 -> gen.writeString(clazz.simpleName)
@@ -450,7 +496,7 @@ fun serializeRegister(gen: JsonGenerator, value: Instruction.Register) {
             gen.writeStartObject()
             gen.writeObjectField(
                 clazz.simpleName,
-                memberProperties.first().call(value)
+                memberProperties.first().call(this)
                     ?.cast<RegisterBox>()
                     ?.`object`?.expression
             )
@@ -461,14 +507,80 @@ fun serializeRegister(gen: JsonGenerator, value: Instruction.Register) {
     }
 }
 
-fun serializeEvaluatesTo(gen: JsonGenerator, value: EvaluatesTo<*>) {
-    val clazz = value::class
+private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) {
+    val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
         0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(value))
+        1 -> gen.writeObject(memberProperties.first().call(this))
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
+}
+
+/**
+ * TODO
+ */
+private inline fun <reified B> Instruction.serializeBox(gen: JsonGenerator) {
+    val clazz = this::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> {
+            gen.writeStartObject()
+            gen.writeObjectFieldStart(clazz.simpleName)
+            memberProperties.first().call(this)?.cast<B>()?.serializeBox(gen)
+            gen.writeEndObject()
+            gen.writeEndObject()
+        }
+
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
+
+private inline fun <reified B> B.serializeBox(
+    gen: JsonGenerator
+) = when (B::class) {
+    BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
+    MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
+    GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
+    else -> throw IrohaSdkException("Unexpected type ${B::class}")
+}
+
+private fun BurnBox.serializeBox(
+    gen: JsonGenerator
+) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
+
+private fun MintBox.serializeBox(
+    gen: JsonGenerator
+) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
+
+private fun GrantBox.serializeBox(gen: JsonGenerator) {
+    val fieldData = when (val rawValue = this.`object`.expression.cast<Expression.Raw>().value) {
+        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.token
+        is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
+        else -> throw IrohaSdkException("Grant instruction serialization error")
+    }
+    gen.writeObjectField(fieldData.first, fieldData.second)
+    gen.writeObjectField("destination_id", this.destinationId)
+}
+
+private fun mintBurnSerialize(
+    gen: JsonGenerator,
+    expression: Expression,
+    destinationId: EvaluatesTo<IdBox>
+) {
+    val rawValue = expression
+        .cast<Expression.Raw>().value
+        .cast<Value.Numeric>().numericValue
+    val fieldData = when (rawValue) {
+        is NumericValue.U32 -> NumericValue.U32::class.simpleName to rawValue.u32
+        is NumericValue.U64 -> NumericValue.U64::class.simpleName to rawValue.u64
+        is NumericValue.U128 -> NumericValue.U128::class.simpleName to rawValue.u128
+        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPoint
+        else -> throw IrohaSdkException("Grant instruction serialization error")
+    }
+    gen.writeObjectField(fieldData.first, fieldData.second)
+    gen.writeObjectField("destination_id", destinationId)
 }
 
 /**
@@ -476,7 +588,7 @@ fun serializeEvaluatesTo(gen: JsonGenerator, value: EvaluatesTo<*>) {
  *
  * @throws SerializationException
  */
-fun serializeNoneOrSingleMemberObject(gen: JsonGenerator, value: Any) {
+private fun serializeAny(gen: JsonGenerator, value: Any) {
     val clazz = value::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {

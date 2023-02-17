@@ -11,8 +11,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.crypto.hash.HashOf
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
@@ -67,7 +67,7 @@ public sealed class FindError : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val definitionId: DefinitionId
+        public val assetDefinitionId: AssetDefinitionId
     ) : FindError() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -76,14 +76,14 @@ public sealed class FindError : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
                 AssetDefinition(
-                    DefinitionId.read(reader),
+                    AssetDefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
-                DefinitionId.write(writer, instance.definitionId)
+                AssetDefinitionId.write(writer, instance.assetDefinitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -389,6 +389,33 @@ public sealed class FindError : ModelEnum {
         }
     }
 
+    /**
+     * 'Parameter' variant
+     */
+    public data class Parameter(
+        public val parameter: jp.co.soramitsu.iroha2.generated.datamodel.Parameter
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
+            public const val DISCRIMINANT: Int = 13
+
+            public override fun read(reader: ScaleCodecReader): Parameter = try {
+                Parameter(
+                    jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Parameter) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.Parameter.write(writer, instance.parameter)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<FindError>, ScaleWriter<FindError> {
         public override fun read(reader: ScaleCodecReader): FindError = when (
             val discriminant =
@@ -407,6 +434,7 @@ public sealed class FindError : ModelEnum {
             10 -> Role.read(reader)
             11 -> PermissionTokenDefinition.read(reader)
             12 -> Validator.read(reader)
+            13 -> Parameter.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -426,6 +454,7 @@ public sealed class FindError : ModelEnum {
                 10 -> Role.write(writer, instance as Role)
                 11 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
                 12 -> Validator.write(writer, instance as Validator)
+                13 -> Parameter.write(writer, instance as Parameter)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

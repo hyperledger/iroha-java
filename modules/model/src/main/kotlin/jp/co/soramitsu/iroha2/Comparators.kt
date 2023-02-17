@@ -3,8 +3,8 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
@@ -33,7 +33,7 @@ fun AccountId.Companion.comparator() = compareBy<AccountId> { it.name.string }
  * Compare asset definition IDs
  */
 @JvmName("AssetDefinitionIdComparator")
-fun DefinitionId.Companion.comparator() = compareBy<DefinitionId> { it.name.string }
+fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
     .thenBy { it.domainId.name.string }
 
 /**
@@ -41,7 +41,7 @@ fun DefinitionId.Companion.comparator() = compareBy<DefinitionId> { it.name.stri
  */
 @JvmName("AssetIdComparator")
 fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
-    DefinitionId.comparator().compare(
+    AssetDefinitionId.comparator().compare(
         o1.definitionId,
         o2.definitionId
     )

@@ -7,7 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
@@ -17,14 +17,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * structure
  */
 public data class OriginFilterAssetDefinitionEvent(
-    public val definitionId: DefinitionId
+    public val assetDefinitionId: AssetDefinitionId
 ) {
     public companion object :
         ScaleReader<OriginFilterAssetDefinitionEvent>,
         ScaleWriter<OriginFilterAssetDefinitionEvent> {
         public override fun read(reader: ScaleCodecReader): OriginFilterAssetDefinitionEvent = try {
             OriginFilterAssetDefinitionEvent(
-                DefinitionId.read(reader),
+                AssetDefinitionId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -32,7 +32,7 @@ public data class OriginFilterAssetDefinitionEvent(
 
         public override fun write(writer: ScaleCodecWriter, instance: OriginFilterAssetDefinitionEvent) =
             try {
-                DefinitionId.write(writer, instance.definitionId)
+                AssetDefinitionId.write(writer, instance.assetDefinitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

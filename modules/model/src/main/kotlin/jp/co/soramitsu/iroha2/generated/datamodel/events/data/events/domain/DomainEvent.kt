@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.MetadataChanged
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetDefinitionEvent
 import jp.co.soramitsu.iroha2.wrapException
@@ -83,7 +85,7 @@ public sealed class DomainEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val domainId: DomainId
+        public val newDomain: NewDomain
     ) : DomainEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -92,14 +94,14 @@ public sealed class DomainEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    DomainId.read(reader),
+                    NewDomain.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                DomainId.write(writer, instance.domainId)
+                NewDomain.write(writer, instance.newDomain)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -137,7 +139,7 @@ public sealed class DomainEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val domainId: DomainId
+        public val metadataChanged: MetadataChanged<DomainId>
     ) : DomainEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -146,14 +148,14 @@ public sealed class DomainEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    DomainId.read(reader),
+                    MetadataChanged.read(reader) as MetadataChanged<DomainId>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                DomainId.write(writer, instance.domainId)
+                MetadataChanged.write(writer, instance.metadataChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -164,7 +166,7 @@ public sealed class DomainEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val domainId: DomainId
+        public val metadataChanged: MetadataChanged<DomainId>
     ) : DomainEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -173,14 +175,14 @@ public sealed class DomainEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    DomainId.read(reader),
+                    MetadataChanged.read(reader) as MetadataChanged<DomainId>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                DomainId.write(writer, instance.domainId)
+                MetadataChanged.write(writer, instance.metadataChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

@@ -55,10 +55,11 @@ import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.StatusKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.Schedule
 import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Predicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.nontrivial.NonTrivial
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.StringPredicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate as QueryPredicate
 
 /**
  * Filters are used to filter out events
@@ -364,58 +365,44 @@ object QueryFilters {
     /**
      * Starts with filter
      */
-    fun startsWith(prefix: String): PredicateBox.Raw {
-        return PredicateBox.Raw(
-            Predicate.Identifiable(QueryPredicate.StartsWith(prefix))
-        )
-    }
+    fun startsWith(prefix: String) = GenericValuePredicateBox.Raw(
+        ValuePredicate.Identifiable(StringPredicate.StartsWith(prefix))
+    )
 
     /**
      * Ends with filter
      */
-    fun endsWith(suffix: String): PredicateBox.Raw {
-        return PredicateBox.Raw(
-            Predicate.Identifiable(QueryPredicate.EndsWith(suffix))
-        )
-    }
+    fun endsWith(suffix: String) = GenericValuePredicateBox.Raw(
+        ValuePredicate.Identifiable(StringPredicate.EndsWith(suffix))
+    )
 
     /**
      * Contains filter
      */
-    fun contains(value: String): PredicateBox.Raw {
-        return PredicateBox.Raw(
-            Predicate.Identifiable(QueryPredicate.Contains(value))
-        )
-    }
+    fun contains(value: String) = GenericValuePredicateBox.Raw(
+        ValuePredicate.Identifiable(StringPredicate.Contains(value))
+    )
 
     /**
      * Is filter
      */
-    fun `is`(value: String): PredicateBox.Raw {
-        return PredicateBox.Raw(
-            Predicate.Identifiable(QueryPredicate.Is(value))
-        )
-    }
+    fun `is`(value: String) = GenericValuePredicateBox.Raw(
+        ValuePredicate.Identifiable(StringPredicate.Is(value))
+    )
 
     /**
      * Filter for multiple matches (OR)
      */
-    fun or(vararg predicates: QueryPredicate): PredicateBox.Or {
-        return PredicateBox.Or(
-            predicates.map { predicate ->
-                PredicateBox.Raw(Predicate.Identifiable(predicate))
-            }.toList()
-        )
-    }
+    fun or(vararg predicates: StringPredicate) = predicates
+        .map { GenericValuePredicateBox.Raw(ValuePredicate.Identifiable(it)) }.toList()
+        .let { NonTrivial<GenericValuePredicateBox<ValuePredicate>>(it) }
+        .let { GenericValuePredicateBox.Or(it) }
 
     /**
      * Filter for multiple matches (AND)
      */
-    fun and(vararg predicates: QueryPredicate): PredicateBox.And {
-        return PredicateBox.And(
-            predicates.map { predicate ->
-                PredicateBox.Raw(Predicate.Identifiable(predicate))
-            }.toList()
-        )
-    }
+    fun and(vararg predicates: StringPredicate) = predicates
+        .map { GenericValuePredicateBox.Raw(ValuePredicate.Identifiable(it)) }.toList()
+        .let { NonTrivial<GenericValuePredicateBox<ValuePredicate>>(it) }
+        .let { GenericValuePredicateBox.And(it) }
 }

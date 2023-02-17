@@ -23,9 +23,9 @@ public data class PipelineEventFilter(
     public companion object : ScaleReader<PipelineEventFilter>, ScaleWriter<PipelineEventFilter> {
         public override fun read(reader: ScaleCodecReader): PipelineEventFilter = try {
             PipelineEventFilter(
-                reader.readNullable(EntityKind),
-                reader.readNullable(StatusKind),
-                reader.readNullable(Hash),
+                reader.readNullable(EntityKind) as EntityKind?,
+                reader.readNullable(StatusKind) as StatusKind?,
+                reader.readNullable(Hash) as Hash?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

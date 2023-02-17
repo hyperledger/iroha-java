@@ -13,7 +13,8 @@ import kotlin.Any
 /**
  * EvaluatesTo
  *
- * Generated from 'iroha_data_model::expression::EvaluatesTo<u32>' regular structure
+ * Generated from 'iroha_data_model::expression::EvaluatesTo<iroha_data_model::trigger::TriggerId>'
+ * regular structure
  */
 public data class EvaluatesTo<T0>(
     public val expression: Expression

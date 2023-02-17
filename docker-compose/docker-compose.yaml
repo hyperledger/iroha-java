@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha:
-    image: hyperledger/iroha2:lts@sha256:8be886fafe608bf4f668ab557bbf66aaa77e354a98a498382113256d2bde2fa8
+    image: hyperledger/iroha2:dev-nightly-fe826be88d785f83496c781b104abb871fd7a13f
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
@@ -21,7 +21,7 @@ services:
     command: iroha --submit-genesis
 
   iroha1:
-    image: hyperledger/iroha2:lts@sha256:8be886fafe608bf4f668ab557bbf66aaa77e354a98a498382113256d2bde2fa8
+    image: hyperledger/iroha2:dev-nightly-fe826be88d785f83496c781b104abb871fd7a13f
     environment:
       TORII_P2P_ADDR: iroha1:1338
       TORII_API_URL: iroha1:8081
@@ -39,7 +39,7 @@ services:
       - "../modules/test-tools/src/main/resources:/config"
 
   iroha2:
-    image: hyperledger/iroha2:lts@sha256:8be886fafe608bf4f668ab557bbf66aaa77e354a98a498382113256d2bde2fa8
+    image: hyperledger/iroha2:dev-nightly-fe826be88d785f83496c781b104abb871fd7a13f
     environment:
       TORII_P2P_ADDR: iroha2:1339
       TORII_API_URL: iroha2:8082
@@ -57,7 +57,7 @@ services:
       - "../modules/test-tools/src/main/resources:/config"
 
   iroha3:
-    image: hyperledger/iroha2:lts@sha256:8be886fafe608bf4f668ab557bbf66aaa77e354a98a498382113256d2bde2fa8
+    image: hyperledger/iroha2:dev-nightly-fe826be88d785f83496c781b104abb871fd7a13f
     environment:
       TORII_P2P_ADDR: iroha3:1340
       TORII_API_URL: iroha3:8083

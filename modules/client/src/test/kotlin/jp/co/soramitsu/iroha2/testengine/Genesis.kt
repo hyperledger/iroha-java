@@ -10,9 +10,9 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -78,8 +78,8 @@ open class AliceWithTestAssets : Genesis(
     )
 ) {
     companion object {
-        val TEST_ASSET_DEFINITION_ID = DefinitionId("test".asName(), DEFAULT_DOMAIN_ID)
-        val TEST_ASSET_DEFINITION_ID2 = DefinitionId("test2".asName(), DEFAULT_DOMAIN_ID)
+        val TEST_ASSET_DEFINITION_ID = AssetDefinitionId("test".asName(), DEFAULT_DOMAIN_ID)
+        val TEST_ASSET_DEFINITION_ID2 = AssetDefinitionId("test2".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
@@ -133,7 +133,7 @@ open class StoreAssetWithMetadata : Genesis(
     companion object {
         val ASSET_KEY = "key".asName()
         val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 }
@@ -151,10 +151,10 @@ open class XorAndValAssets : Genesis(
     )
 ) {
     companion object {
-        const val XOR_QUANTITY = 1L
-        const val VAL_QUANTITY = 1L
-        val XOR_DEFINITION_ID = DefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
-        val VAL_DEFINITION_ID = DefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
+        const val XOR_QUANTITY = 1
+        const val VAL_QUANTITY = 1
+        val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+        val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 

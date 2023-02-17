@@ -400,6 +400,60 @@ public sealed class Instruction : ModelEnum {
         }
     }
 
+    /**
+     * 'SetParameter' variant
+     */
+    public data class SetParameter(
+        public val setParameterBox: SetParameterBox
+    ) : Instruction() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<SetParameter>, ScaleWriter<SetParameter> {
+            public const val DISCRIMINANT: Int = 14
+
+            public override fun read(reader: ScaleCodecReader): SetParameter = try {
+                SetParameter(
+                    SetParameterBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: SetParameter) = try {
+                SetParameterBox.write(writer, instance.setParameterBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'NewParameter' variant
+     */
+    public data class NewParameter(
+        public val newParameterBox: NewParameterBox
+    ) : Instruction() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<NewParameter>, ScaleWriter<NewParameter> {
+            public const val DISCRIMINANT: Int = 15
+
+            public override fun read(reader: ScaleCodecReader): NewParameter = try {
+                NewParameter(
+                    NewParameterBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: NewParameter) = try {
+                NewParameterBox.write(writer, instance.newParameterBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Instruction>, ScaleWriter<Instruction> {
         public override fun read(reader: ScaleCodecReader): Instruction = when (
             val discriminant =
@@ -419,6 +473,8 @@ public sealed class Instruction : ModelEnum {
             11 -> Grant.read(reader)
             12 -> Revoke.read(reader)
             13 -> ExecuteTrigger.read(reader)
+            14 -> SetParameter.read(reader)
+            15 -> NewParameter.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -439,6 +495,8 @@ public sealed class Instruction : ModelEnum {
                 11 -> Grant.write(writer, instance as Grant)
                 12 -> Revoke.write(writer, instance as Revoke)
                 13 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
+                14 -> SetParameter.write(writer, instance as SetParameter)
+                15 -> NewParameter.write(writer, instance as NewParameter)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

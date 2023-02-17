@@ -5,10 +5,10 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
@@ -128,7 +128,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `register and unregister asset instruction committed`(): Unit = runBlocking {
-        val definitionId = DefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
+        val definitionId = AssetDefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
 
         val assetId = AssetId(definitionId, ALICE_ACCOUNT_ID)
@@ -270,7 +270,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             is AssetValue.Store -> {
                 assertEquals(pair1.second.string, value.metadata.map[pair1.first]?.cast<Value.String>()?.string)
                 assertEquals(pair2.second.bool, value.metadata.map[pair2.first]?.cast<Value.Bool>()?.bool)
-                assertEquals(pair3.second.u32, (value.metadata.map[pair3.first]?.cast<Value.U32>())?.u32)
+                assertEquals(
+                    pair3.second.numericValue,
+                    value.metadata.map[pair3.first]?.cast<Value.Numeric>()?.numericValue
+                )
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
@@ -508,7 +511,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
-        val toBurn = 80L
+        val toBurn = 80
         val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
@@ -796,7 +799,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             }
     }
 
-    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Long) {
+    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Int) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             `if`(

@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -85,7 +84,7 @@ public sealed class IdBox : ModelEnum {
      * 'AssetDefinitionId' variant
      */
     public data class AssetDefinitionId(
-        public val definitionId: DefinitionId
+        public val assetDefinitionId: jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
     ) : IdBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -94,14 +93,17 @@ public sealed class IdBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): AssetDefinitionId = try {
                 AssetDefinitionId(
-                    DefinitionId.read(reader),
+                    jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId) = try {
-                DefinitionId.write(writer, instance.definitionId)
+                jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId.write(
+                    writer,
+                    instance.assetDefinitionId
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -280,6 +282,33 @@ public sealed class IdBox : ModelEnum {
         }
     }
 
+    /**
+     * 'ParameterId' variant
+     */
+    public data class ParameterId(
+        public val id: Id
+    ) : IdBox() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ParameterId>, ScaleWriter<ParameterId> {
+            public const val DISCRIMINANT: Int = 9
+
+            public override fun read(reader: ScaleCodecReader): ParameterId = try {
+                ParameterId(
+                    Id.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ParameterId) = try {
+                Id.write(writer, instance.id)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<IdBox>, ScaleWriter<IdBox> {
         public override fun read(reader: ScaleCodecReader): IdBox = when (
             val discriminant =
@@ -294,6 +323,7 @@ public sealed class IdBox : ModelEnum {
             6 -> RoleId.read(reader)
             7 -> PermissionTokenDefinitionId.read(reader)
             8 -> ValidatorId.read(reader)
+            9 -> ParameterId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -309,6 +339,7 @@ public sealed class IdBox : ModelEnum {
                 6 -> RoleId.write(writer, instance as RoleId)
                 7 -> PermissionTokenDefinitionId.write(writer, instance as PermissionTokenDefinitionId)
                 8 -> ValidatorId.write(writer, instance as ValidatorId)
+                9 -> ParameterId.write(writer, instance as ParameterId)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

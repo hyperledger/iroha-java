@@ -49,16 +49,12 @@
               "definition_id": "can_set_key_value_in_user_metadata",
               "params": {
                 "account_id": {
-                  "Id": {
-                    "AccountId": "alice@wonderland"
-                  }
+                  "AccountId": "alice@wonderland"
                 }
               }
             },
             "destination_id": {
-              "Id": {
-                "AccountId": "bob@wonderland"
-              }
+              "AccountId": "bob@wonderland"
             }
           }
         },
@@ -77,9 +73,7 @@
               "params": {}
             },
             "destination_id": {
-              "Id": {
-                "AccountId": "bob@wonderland"
-              }
+              "AccountId": "bob@wonderland"
             }
           }
         }

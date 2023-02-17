@@ -8,17 +8,20 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.`value`.Predicate
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.nontrivial.NonTrivial
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.`value`.ValuePredicate
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
 import kotlin.Int
-import kotlin.collections.List
 
 /**
- * PredicateBox
+ * GenericValuePredicateBox
  *
- * Generated from 'iroha_data_model::predicate::PredicateBox' enum
+ * Generated from
+ * 'iroha_data_model::predicate::GenericValuePredicateBox<iroha_data_model::predicate::value::ValuePredicate>'
+ * enum
  */
-public sealed class PredicateBox : ModelEnum {
+public sealed class GenericValuePredicateBox<T0> : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -28,8 +31,8 @@ public sealed class PredicateBox : ModelEnum {
      * 'And' variant
      */
     public data class And(
-        public val vec: List<PredicateBox>
-    ) : PredicateBox() {
+        public val nonTrivial: NonTrivial<GenericValuePredicateBox<ValuePredicate>>
+    ) : GenericValuePredicateBox<ValuePredicate>() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<And>, ScaleWriter<And> {
@@ -37,17 +40,14 @@ public sealed class PredicateBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): And = try {
                 And(
-                    reader.readVec(reader.readCompactInt()) { PredicateBox.read(reader) },
+                    NonTrivial.read(reader) as NonTrivial<GenericValuePredicateBox<ValuePredicate>>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: And) = try {
-                writer.writeCompact(instance.vec.size)
-                instance.vec.forEach { value ->
-                    PredicateBox.write(writer, value)
-                }
+                NonTrivial.write(writer, instance.nonTrivial)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -58,8 +58,8 @@ public sealed class PredicateBox : ModelEnum {
      * 'Or' variant
      */
     public data class Or(
-        public val vec: List<PredicateBox>
-    ) : PredicateBox() {
+        public val nonTrivial: NonTrivial<GenericValuePredicateBox<ValuePredicate>>
+    ) : GenericValuePredicateBox<ValuePredicate>() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Or>, ScaleWriter<Or> {
@@ -67,17 +67,14 @@ public sealed class PredicateBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Or = try {
                 Or(
-                    reader.readVec(reader.readCompactInt()) { PredicateBox.read(reader) },
+                    NonTrivial.read(reader) as NonTrivial<GenericValuePredicateBox<ValuePredicate>>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Or) = try {
-                writer.writeCompact(instance.vec.size)
-                instance.vec.forEach { value ->
-                    PredicateBox.write(writer, value)
-                }
+                NonTrivial.write(writer, instance.nonTrivial)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -88,8 +85,8 @@ public sealed class PredicateBox : ModelEnum {
      * 'Not' variant
      */
     public data class Not(
-        public val predicateBox: PredicateBox
-    ) : PredicateBox() {
+        public val genericValuePredicateBox: GenericValuePredicateBox<ValuePredicate>
+    ) : GenericValuePredicateBox<ValuePredicate>() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Not>, ScaleWriter<Not> {
@@ -97,14 +94,14 @@ public sealed class PredicateBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Not = try {
                 Not(
-                    PredicateBox.read(reader),
+                    GenericValuePredicateBox.read(reader) as GenericValuePredicateBox<ValuePredicate>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Not) = try {
-                PredicateBox.write(writer, instance.predicateBox)
+                GenericValuePredicateBox.write(writer, instance.genericValuePredicateBox)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -115,8 +112,8 @@ public sealed class PredicateBox : ModelEnum {
      * 'Raw' variant
      */
     public data class Raw(
-        public val predicate: Predicate
-    ) : PredicateBox() {
+        public val valuePredicate: ValuePredicate
+    ) : GenericValuePredicateBox<ValuePredicate>() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Raw>, ScaleWriter<Raw> {
@@ -124,24 +121,26 @@ public sealed class PredicateBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Raw = try {
                 Raw(
-                    Predicate.read(reader),
+                    ValuePredicate.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Raw) = try {
-                Predicate.write(writer, instance.predicate)
+                ValuePredicate.write(writer, instance.valuePredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<PredicateBox>, ScaleWriter<PredicateBox> {
-        public override fun read(reader: ScaleCodecReader): PredicateBox = when (
-            val discriminant =
-                reader.readUByte()
+    public companion object :
+        ScaleReader<GenericValuePredicateBox<out Any>>,
+        ScaleWriter<GenericValuePredicateBox<out Any>> {
+        public override fun read(reader: ScaleCodecReader): GenericValuePredicateBox<out Any> = when (
+            val
+            discriminant = reader.readUByte()
         ) {
             0 -> And.read(reader)
             1 -> Or.read(reader)
@@ -150,7 +149,11 @@ public sealed class PredicateBox : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PredicateBox) {
+        public override fun write(
+            writer: ScaleCodecWriter,
+            instance: GenericValuePredicateBox<out        
+                Any>
+        ) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> And.write(writer, instance as And)

@@ -27,7 +27,7 @@ public sealed class Container : ModelEnum {
      * 'Any' variant
      */
     public data class Any(
-        public val predicate: Predicate
+        public val valuePredicate: ValuePredicate
     ) : Container() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +36,14 @@ public sealed class Container : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Any = try {
                 Any(
-                    Predicate.read(reader),
+                    ValuePredicate.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Any) = try {
-                Predicate.write(writer, instance.predicate)
+                ValuePredicate.write(writer, instance.valuePredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -54,7 +54,7 @@ public sealed class Container : ModelEnum {
      * 'All' variant
      */
     public data class All(
-        public val predicate: Predicate
+        public val valuePredicate: ValuePredicate
     ) : Container() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -63,14 +63,14 @@ public sealed class Container : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): All = try {
                 All(
-                    Predicate.read(reader),
+                    ValuePredicate.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: All) = try {
-                Predicate.write(writer, instance.predicate)
+                ValuePredicate.write(writer, instance.valuePredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
