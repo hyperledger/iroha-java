@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
 import org.testcontainers.containers.Network
 import java.lang.reflect.Method
+import java.net.URL
 import java.security.KeyPair
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -79,7 +80,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(containers.first().getApiUrl(), log = true)
+            Iroha2Client(URL("http://localhost:8080"), log = true)
                 .also { utilizedResources.add(it) }
         }
 
@@ -161,7 +162,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     // only first peer should have --submit-genesis in peer start command
                     submitGenesis = n == 0
                 }
-                container.start()
+//                container.start()
                 containers.add(container)
             }.let { deferredSet.add(it) }
         }
