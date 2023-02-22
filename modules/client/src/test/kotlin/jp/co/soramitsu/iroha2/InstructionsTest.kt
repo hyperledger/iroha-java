@@ -56,7 +56,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID, testKeyPair = ALICE_KEYPAIR) {
+class InstructionsTest : IrohaTest<Iroha2Client>(
+    account = ALICE_ACCOUNT_ID,
+    keyPair = ALICE_KEYPAIR
+) {
 
     /**
      * Using for docs generation
@@ -293,14 +296,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
-        // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
             registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
-        // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             setKeyValue(aliceAssetId, "foo".asName(), "bar".asValue())
         }

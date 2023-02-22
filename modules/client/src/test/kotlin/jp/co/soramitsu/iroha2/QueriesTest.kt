@@ -55,13 +55,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([NewAccountWithMetadata::class])
     fun `find all accounts`(): Unit = runBlocking {
-        val keypair = keyPairFromHex(
-            "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
-            "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e"
-        )
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
-            .buildSigned(keypair)
+            .buildSigned(ALICE_KEYPAIR)
             .let { query ->
                 client.sendQuery(query)
             }.also { accounts ->
@@ -89,32 +85,32 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    fun `find accounts by name`(): Unit = runBlocking {
-//        QueryBuilder.findAccountById("asd@wonderland".asAccountId())
-//            .account(ALICE_ACCOUNT_ID)
-//            .buildSigned(ALICE_KEYPAIR)
-//            .let { query ->
-//                client.sendQuery(query)
-//            }.also { accounts ->
-//                assert(accounts.all { it.id.name == ALICE_ACCOUNT_NAME })
-//            }
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `find accounts by name`(): Unit = runBlocking {
+        QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { accounts ->
+                assert(accounts.all { it.id.name == ALICE_ACCOUNT_NAME })
+            }
+    }
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    fun `find accounts by name with filter`(): Unit = runBlocking {
-//        val filter = QueryFilters.startsWith("alice")
-//        QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
-//            .account(ALICE_ACCOUNT_ID)
-//            .buildSigned(ALICE_KEYPAIR)
-//            .let { query ->
-//                client.sendQuery(query)
-//            }.also { account ->
-//                assert(account.id.name == ALICE_ACCOUNT_NAME)
-//            }
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `find accounts by name with filter`(): Unit = runBlocking {
+        val filter = QueryFilters.startsWith("alice")
+        QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query ->
+                client.sendQuery(query)
+            }.also { accounts ->
+                assert(accounts.all { it.id.name == ALICE_ACCOUNT_NAME })
+            }
+    }
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])

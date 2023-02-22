@@ -16,7 +16,7 @@
             "NewAccount": {
               "id": "alice@wonderland",
               "signatories": [
-                "ed0120ba0b2654a7627d0cc329696bd74cc44efe3a4fb4d66c5f23b63edbb90dfd1dba"
+                "ed01204051fe430faa91695976b9a71c21ea54d604a2236ed044beb04462df8b8a9b25"
               ],
               "metadata": {}
             }
@@ -27,9 +27,45 @@
             "NewAccount": {
               "id": "bob@wonderland",
               "signatories": [
-                "ed01200ed33bcc5336aa7cd558576409d848bbec38387f82f0907119e0215fcb9e24fe"
+                "ed01208a4257883128cac35f2303f8ebd643a980cdc63be8b528aacea932b44e9fb5ad"
               ],
               "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAssetDefinition": {
+              "id": "xor#wonderland",
+              "value_type": "Quantity",
+              "mintable": "Infinitely",
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAssetDefinition": {
+              "id": "val#wonderland",
+              "value_type": "Quantity",
+              "mintable": "Infinitely",
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Mint": {
+            "U32": 1,
+            "destination_id": {
+              "AssetId": "xor#wonderland#alice@wonderland"
+            }
+          }
+        },
+        {
+          "Mint": {
+            "U32": 1,
+            "destination_id": {
+              "AssetId": "val#wonderland#alice@wonderland"
             }
           }
         }
