@@ -465,14 +465,6 @@ inline fun <reified T> Value.getValue() = when (this) {
     else -> throw IllegalArgumentException("Value type is not supported")
 }
 
-fun Any.asValue() = when (this) {
-    is Int -> this.toInt().asValue()
-    is Long -> this.toLong().asValue()
-    is String -> this.toString().asValue()
-    is Boolean -> this.toString().toBoolean().asValue()
-    else -> throw IllegalArgumentException("Value type is not supported")
-}
-
 inline fun <reified T> Map<Name, Value>.extract(key: String) = when (T::class) {
     Int::class -> this.getU32Value(key)?.toInt()
     BigInteger::class -> this.getU128Value(key)
