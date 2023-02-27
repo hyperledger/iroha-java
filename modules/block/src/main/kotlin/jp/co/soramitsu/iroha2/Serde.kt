@@ -429,7 +429,7 @@ object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>>() {
  */
 object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole>() {
     override fun serialize(value: IdentifiableBox.NewRole, gen: JsonGenerator, serializers: SerializerProvider) {
-        serializeAny(gen, value.newRole)
+        serializeSingleMember(gen, value.newRole)
     }
 }
 
@@ -447,42 +447,18 @@ object EnumerationSerializer : JsonSerializer<ModelEnum>() {
             is Expression.Raw -> value.serialize(gen)
             is Value.Identifiable -> value.serialize(gen)
             is Value.Id -> value.serialize(gen)
-            else -> serializeAny(gen, value)
+            else -> serializeSingleMember(gen, value)
         }
     }
 }
 
-private fun Value.Identifiable.serialize(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
-    when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(this))
-        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
+private fun Value.Identifiable.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
 
-// todo повторения
-// todo экстеншены из Ориллиона
-private fun Value.Id.serialize(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
-    when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(this))
-        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
+private fun Value.Id.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
 
-private fun Expression.Raw.serialize(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
-    when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(this))
-        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
+private fun Expression.Raw.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
+
+private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
 
 private fun Instruction.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
 
@@ -508,16 +484,6 @@ private fun Instruction.Register.serialize(gen: JsonGenerator) {
             gen.writeEndObject()
         }
 
-        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
-
-private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
-    when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> gen.writeObject(memberProperties.first().call(this))
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
 }
@@ -601,10 +567,8 @@ private fun mintBurnSerialize(
 
 /**
  * Serialise a single member object or nothing at all
- *
- * @throws SerializationException
  */
-private fun serializeAny(gen: JsonGenerator, value: Any) {
+private fun serializeSingleMember(gen: JsonGenerator, value: Any) {
     val clazz = value::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
@@ -614,7 +578,19 @@ private fun serializeAny(gen: JsonGenerator, value: Any) {
             gen.writeObjectField(clazz.simpleName, memberProperties.first().call(value))
             gen.writeEndObject()
         }
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
 
+/**
+ * Serialise an enum
+ */
+private inline fun <reified T> T.serializeEnum(gen: JsonGenerator) {
+    val clazz = this!!::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> gen.writeObject(memberProperties.first().call(this))
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
 }

@@ -10,9 +10,13 @@ import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.events.time.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
@@ -21,11 +25,14 @@ import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
+import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
@@ -302,3 +309,181 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.ParameterId -> this.id
     is IdBox.ValidatorId -> this.validatorId
 }
+
+fun Instruction.Register.extractAccount() = this
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewAccount>().newAccount
+
+fun Instruction.SetKeyValue.extractKey() = this
+    .setKeyValueBox.key.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Name>().name
+    .string
+
+fun Instruction.SetKeyValue.extractAccountId() = this.setKeyValueBox.objectId.extractAccountId()
+
+fun Instruction.Unregister.extractAccountId() = this.unregisterBox.objectId.extractAccountId()
+
+fun Instruction.Unregister.extractDomainId() = this.unregisterBox.objectId.extractDomainId()
+
+fun <T> EvaluatesTo<T>.extractAssetId() = this
+    .expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Id>().idBox
+    .cast<IdBox.AssetId>().assetId
+
+fun <T> EvaluatesTo<T>.extractAccountId() = this
+    .expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Id>().idBox
+    .cast<IdBox.AccountId>().accountId
+
+fun <T> EvaluatesTo<T>.extractDomainId() = this
+    .expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Id>().idBox
+    .cast<IdBox.DomainId>().domainId
+
+fun Instruction.Mint.extractPublicKey() = this
+    .mintBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.PublicKey>().publicKey
+    .payload.toHex()
+
+inline fun <reified I : Instruction> VersionedSignedTransaction.V1.extractInstruction() = this
+    .extractInstructionVec<I>()
+    .first().cast<I>()
+
+inline fun <reified I : Instruction> VersionedSignedTransaction.V1.extractInstructions() = this
+    .extractInstructionVec<I>()
+    .cast<List<I>>()
+
+inline fun <reified I : Instruction> VersionedSignedTransaction.V1.extractInstructionVec() = this
+    .signedTransaction.payload.instructions
+    .cast<Executable.Instructions>()
+    .vec.filterIsInstance<I>()
+
+fun Instruction.Register.extractNewDomainMetadata() = this
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewDomain>().newDomain.metadata
+
+fun Instruction.SetKeyValue.extractDomainId() = this
+    .setKeyValueBox.objectId.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Id>().idBox
+    .cast<IdBox.DomainId>().domainId
+
+fun Instruction.SetKeyValue.key() = this
+    .setKeyValueBox.key.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Name>().name.string
+
+fun Instruction.SetKeyValue.extractValueString() = this
+    .setKeyValueBox.value.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.String>().string
+
+fun Instruction.SetKeyValue.extractValueU32() = this.setKeyValueBox.value.extractValueU32()
+
+fun Instruction.SetKeyValue.extractValueU128() = this
+    .setKeyValueBox.value.expression
+    .cast<Expression.Raw>().value
+    .getValue<Value.Numeric>().numericValue
+    .getValue<BigInteger>()
+
+fun Instruction.SetKeyValue.extractValueBoolean() = this
+    .setKeyValueBox.value.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Bool>().bool
+
+fun Instruction.Grant.extractValuePermissionToken() = this
+    .grantBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.PermissionToken>().token
+
+fun Instruction.Burn.extractValueU32() = this.burnBox.`object`.extractValueU32()
+
+fun EvaluatesTo<Value>.extractValueU32() = this
+    .expression
+    .cast<Expression.Raw>().value
+    .getValue<Value.Numeric>().numericValue
+    .getValue<Long>()
+
+fun Trigger<*>.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
+
+fun Trigger<*>.extractSchedule() = this.action.filter
+    .cast<EventsFilterBox.Time>()
+    .timeEventFilter.executionTime
+    .cast<ExecutionTime.Schedule>().schedule
+
+fun Metadata.getStringValue(key: String) = this.map.getStringValue(key)
+
+fun Metadata.getBooleanValue(key: String) = this.map.getBooleanValue(key)
+
+fun Metadata.getNameValue(key: String) = this.map.getNameValue(key)
+
+fun Metadata.getFixedValue(key: String) = this.map.getFixedValue(key)
+
+fun Map<Name, Value>.getStringValue(key: String) = this[key.asName()]?.cast<Value.String>()?.string
+
+fun Map<Name, Value>.getBooleanValue(key: String) = this[key.asName()]?.cast<Value.Bool>()?.bool
+
+fun Map<Name, Value>.getU32Value(key: String) = this[key.asName()]
+    ?.cast<Value.Numeric>()?.numericValue
+    ?.cast<NumericValue.U32>()?.u32
+
+fun Map<Name, Value>.getU64Value(key: String) = this[key.asName()]
+    ?.cast<Value.Numeric>()?.numericValue
+    ?.cast<NumericValue.U64>()?.u64
+
+fun Map<Name, Value>.getU128Value(key: String) = this[key.asName()]
+    ?.cast<Value.Numeric>()?.numericValue
+    ?.cast<NumericValue.U128>()?.u128
+
+fun Map<Name, Value>.getFixedValue(key: String) = this[key.asName()]
+    ?.cast<Value.Numeric>()?.numericValue
+    ?.cast<NumericValue.Fixed>()?.fixed?.fixedPoint
+
+fun Map<Name, Value>.getNameValue(key: String) = this[key.asName()]?.cast<Value.Name>()?.name
+
+inline fun <reified T> NumericValue.getValue() = when (this) {
+    is NumericValue.U32 -> this.u32.cast()
+    is NumericValue.U64 -> this.u64.cast()
+    is NumericValue.U128 -> this.u128.cast()
+    is NumericValue.Fixed -> this.fixed.fixedPoint.cast<T>()
+}
+
+inline fun <reified T> Value.getValue() = when (this) {
+    is Value.Numeric -> this.numericValue.cast()
+    is Value.Bool -> this.bool.cast()
+    is Value.String -> this.string.cast()
+    is Value.Name -> this.name.string.cast<T>()
+    else -> throw IllegalArgumentException("Value type is not supported")
+}
+
+fun Any.asValue() = when (this) {
+    is Int -> this.toInt().asValue()
+    is Long -> this.toLong().asValue()
+    is String -> this.toString().asValue()
+    is Boolean -> this.toString().toBoolean().asValue()
+    else -> throw IllegalArgumentException("Value type is not supported")
+}
+
+inline fun <reified T> Map<Name, Value>.extract(key: String) = when (T::class) {
+    Int::class -> this.getU32Value(key)?.toInt()
+    BigInteger::class -> this.getU128Value(key)
+    String::class -> this.getStringValue(key)
+    Boolean::class -> this.getBooleanValue(key)
+    BigDecimal::class -> this.getFixedValue(key)
+    else -> throw RuntimeException("Unknown type ${T::class}")
+} as T?
+
+inline fun <reified T> Metadata.extract(key: String) = this.map.extract<T>(key)
+
+fun Asset.metadata() = this.value.cast<AssetValue.Store>().metadata.map
+
+fun TransactionBuilder.merge(other: TransactionBuilder) = this.instructions.value.addAll(other.instructions.value)
