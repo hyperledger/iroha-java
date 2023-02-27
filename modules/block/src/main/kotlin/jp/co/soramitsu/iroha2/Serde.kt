@@ -518,7 +518,7 @@ private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) {
 }
 
 /**
- * TODO
+ * Serializes BurnBox, MintBox or GrantBox
  */
 private inline fun <reified B> Instruction.serializeBox(gen: JsonGenerator) {
     val clazz = this::class

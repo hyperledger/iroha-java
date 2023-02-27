@@ -512,7 +512,7 @@ object Instructions {
      */
     fun burnAsset(assetId: AssetId, value: Int): Instruction {
         return burnSome(value.asValue(), IdBox.AssetId(assetId))
-    } // todo try u128
+    }
 
     /**
      * Burn an asset of the [AssetValueType.Fixed] asset value type
