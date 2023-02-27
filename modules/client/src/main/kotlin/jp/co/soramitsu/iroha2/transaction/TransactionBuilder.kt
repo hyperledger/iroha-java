@@ -427,7 +427,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
-    fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId) = this.apply {
+    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AssetId) = this.apply {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 

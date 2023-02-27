@@ -42,6 +42,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
+import jp.co.soramitsu.iroha2.toIrohaHash
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigInteger
 import java.security.KeyPair
@@ -306,10 +307,10 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findTransactionByHash(hashBytes: ByteArray) = findTransactionByHash(Hash(hashBytes))
+        fun findTransactionByHash(bytes: ByteArray) = findTransactionByHash(bytes.toIrohaHash())
 
         @JvmStatic
-        fun findTransactionByHash(hex: String) = findTransactionByHash(Hash(hex.fromHex().hash()))
+        fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
 
         @JvmStatic
         fun findAllTransactions(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(

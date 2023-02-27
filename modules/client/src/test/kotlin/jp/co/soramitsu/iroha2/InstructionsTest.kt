@@ -60,7 +60,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
     keyPair = ALICE_KEYPAIR
 ) {
-
     /**
      * Using for docs generation
      */
@@ -485,7 +484,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
         assertEquals(140, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
-        client.tx(account = BOB_ACCOUNT_ID, keyPair = BOB_KEYPAIR) {
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             transferAsset(bobAssetId, 40, aliceAssetId)
         }
         assertEquals(100, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))

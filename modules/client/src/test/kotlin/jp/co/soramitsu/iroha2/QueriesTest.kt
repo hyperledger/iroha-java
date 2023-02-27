@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -393,29 +392,20 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `find transaction by hash`(): Unit = runBlocking {
-        try {
-            val hash = client.sendTransaction {
-                account(ALICE_ACCOUNT_ID)
-                registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
-                buildSigned(ALICE_KEYPAIR)
-            }.let { d ->
-                withTimeout(txTimeout) { d.await() }
-            }
-            QueryBuilder.findTransactionByHash(hash)
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
-                .let { query -> client.sendQuery(query) }
-                .cast<TransactionValue.Transaction>()
-                .versionedSignedTransaction.hash()
-                .also { assertContentEquals(hash, it) }
-        } catch (e: Exception) {
-            val txs = QueryBuilder.findAllTransactions()
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
-                .let { query -> client.sendQuery(query) }
-                .map { ObjectMapper().writeValueAsString(it) }
-            println(txs)
+        val hash = client.sendTransaction {
+            account(ALICE_ACCOUNT_ID)
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            buildSigned(ALICE_KEYPAIR)
+        }.let { d ->
+            withTimeout(txTimeout) { d.await() }
         }
+        QueryBuilder.findTransactionByHash(hash)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .cast<TransactionValue.Transaction>()
+            .versionedSignedTransaction.hash()
+            .also { assertContentEquals(hash, it) }
     }
 
     @Test

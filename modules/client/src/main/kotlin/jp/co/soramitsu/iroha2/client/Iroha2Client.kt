@@ -130,8 +130,6 @@ open class Iroha2Client(
         }
     }
 
-    override fun close() = client.close()
-
     /**
      * Send a request to Iroha2 and extract payload.
      */
@@ -319,14 +317,7 @@ open class Iroha2Client(
         return when (frame) {
             is Frame.Binary -> {
                 when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
-                    is VersionedEventMessage.V1 -> {
-                        versionedMessage.eventMessage
-//                        actualMessage as? T
-//                            ?: throw WebSocketProtocolException(
-//                                "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
-//                            )
-                    }
-
+                    is VersionedEventMessage.V1 -> versionedMessage.eventMessage
                     else -> throw WebSocketProtocolException(
                         "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
                     )
@@ -365,4 +356,6 @@ open class Iroha2Client(
             return Duration.ofSeconds(seconds, nanos)
         }
     }
+
+    override fun close() = client.close()
 }

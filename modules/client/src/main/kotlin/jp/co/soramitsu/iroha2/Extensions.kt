@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.websocket.Frame // todo from orillion + await(10)
+import io.ktor.websocket.Frame
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
 import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
@@ -35,6 +35,7 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import kotlin.experimental.or
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
@@ -132,7 +133,18 @@ fun PublicKey.verify(signature: ByteArray, message: ByteArray): Boolean = try {
     throw CryptoException("Cannot verify message", ex)
 }
 
-fun ByteArray.hash(): ByteArray = Blake2b.Blake2b256().digest(this)
+fun ByteArray.toIrohaHash(): Hash {
+    if (this.size != 32) throw IrohaSdkException("Hash byte array size must be 32")
+
+    this[31] = this[31] or 1
+    return Hash(this)
+}
+
+fun ByteArray.hash(): ByteArray {
+    val bytes = Blake2b.Blake2b256().digest(this)
+    bytes[bytes.size - 1] = bytes[bytes.size - 1] or 1
+    return bytes
+}
 
 /**
  * Hash the given versioned transaction (`VersionedTransaction.V1`)

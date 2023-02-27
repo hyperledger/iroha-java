@@ -239,6 +239,17 @@ object U32Extractor : ResultExtractor<Long> {
 }
 
 /**
+ * Extract `Value.U64` from a query [result]
+ */
+object U64Extractor : ResultExtractor<BigInteger> {
+    override fun extract(result: PaginatedQueryResult): BigInteger {
+        return extractValue(result.result.value) { v: Value ->
+            v.cast<Value.Numeric>().numericValue.cast<NumericValue.U64>().u64
+        }
+    }
+}
+
+/**
  * Extract `Value.U128` from a query [result]
  */
 object U128Extractor : ResultExtractor<BigInteger> {

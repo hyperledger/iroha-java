@@ -721,7 +721,7 @@ object Instructions {
     /**
      * Transfer an asset from the identifiable source.
      */
-    fun transferAsset(sourceId: AssetId, value: Long, destinationId: AssetId): Instruction {
+    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AssetId): Instruction {
         return Instruction.Transfer(
             TransferBox(
                 sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
