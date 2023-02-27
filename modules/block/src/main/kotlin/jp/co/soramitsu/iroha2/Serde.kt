@@ -463,6 +463,7 @@ private fun Value.Identifiable.serialize(gen: JsonGenerator) {
 }
 
 // todo повторения
+// todo экстеншены из Ориллиона
 private fun Value.Id.serialize(gen: JsonGenerator) {
     val clazz = this::class
     val memberProperties = clazz.memberProperties
