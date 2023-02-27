@@ -583,7 +583,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             StoreAssetWithMetadata.ASSET_VALUE,
             assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
         )
-
         client.tx { removeKeyValue(assetId, assetKey) }
 
         val assetAfter = getAsset(assetId)
@@ -740,7 +739,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             StoreAssetWithMetadata.ASSET_VALUE,
             assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
         )
-
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -751,7 +749,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
                     RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asValue()
                 )
             }
-
         QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(BOB_ACCOUNT_ID)
             .buildSigned(BOB_KEYPAIR)
@@ -762,7 +759,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
                     RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asValue()
                 )
             }
-
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

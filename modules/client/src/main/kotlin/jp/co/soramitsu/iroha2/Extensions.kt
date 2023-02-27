@@ -289,3 +289,16 @@ fun Iterable<Instruction>.extractIdentifiableBoxes() = this.asSequence()
     .map { it.value }
     .filterIsInstance<Value.Identifiable>()
     .map { it.identifiableBox }.toList()
+
+fun IdBox.extractId(): Any = when (this) {
+    is IdBox.RoleId -> this.roleId
+    is IdBox.AccountId -> this.accountId
+    is IdBox.AssetId -> this.assetId
+    is IdBox.AssetDefinitionId -> this.assetDefinitionId
+    is IdBox.DomainId -> this.domainId
+    is IdBox.TriggerId -> this.triggerId
+    is IdBox.PeerId -> this.peerId
+    is IdBox.PermissionTokenDefinitionId -> this.tokenId
+    is IdBox.ParameterId -> this.id
+    is IdBox.ValidatorId -> this.validatorId
+}

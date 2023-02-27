@@ -35,6 +35,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
@@ -441,6 +442,7 @@ object EnumerationSerializer : JsonSerializer<ModelEnum>() {
             is Instruction.Grant -> value.serialize(gen)
             is Instruction.Burn -> value.serialize(gen)
             is Instruction.Mint -> value.serialize(gen)
+            is Instruction.SetKeyValue -> value.serialize(gen)
             is Instruction.Register -> value.serialize(gen)
             is Expression.Raw -> value.serialize(gen)
             is Value.Identifiable -> value.serialize(gen)
@@ -481,6 +483,8 @@ private fun Expression.Raw.serialize(gen: JsonGenerator) {
     }
 }
 
+private fun Instruction.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
+
 private fun Instruction.Grant.serialize(gen: JsonGenerator) = this.serializeBox<GrantBox>(gen)
 
 private fun Instruction.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
@@ -518,7 +522,7 @@ private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) {
 }
 
 /**
- * Serializes BurnBox, MintBox or GrantBox
+ * Serializes BurnBox, MintBox, GrantBox etc...
  */
 private inline fun <reified B> Instruction.serializeBox(gen: JsonGenerator) {
     val clazz = this::class
@@ -543,6 +547,7 @@ private inline fun <reified B> B.serializeBox(
     BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
     MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
     GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
+    SetKeyValueBox::class -> this?.cast<SetKeyValueBox>()?.serializeBox(gen)
     else -> throw IrohaSdkException("Unexpected type ${B::class}")
 }
 
@@ -562,6 +567,16 @@ private fun GrantBox.serializeBox(gen: JsonGenerator) {
     }
     gen.writeObjectField(fieldData.first, fieldData.second)
     gen.writeObjectField("destination_id", this.destinationId)
+}
+
+private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
+    val id = this.objectId.expression
+        .cast<Expression.Raw>().value
+        .cast<Value.Id>().idBox
+        .extractId()
+    gen.writeObjectField(id::class.simpleName, id)
+    gen.writeObjectField("key", this.key)
+    gen.writeObjectField("value", this.value)
 }
 
 private fun mintBurnSerialize(
