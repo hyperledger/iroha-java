@@ -61,6 +61,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     /**
      * Using for docs generation
      */
+    // #region java_register_domain
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `register domain instruction committed`(): Unit = runBlocking {
@@ -79,10 +80,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             .let { query -> client.sendQuery(query) }
             .also { result -> assertEquals(result.id, domainId) }
     }
+    // #endregion java_register_domain
 
     /**
      * Using for docs generation
      */
+    // #region java_register_account
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `register account instruction committed`(): Unit = runBlocking {
@@ -101,6 +104,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             .let { query -> client.sendQuery(query) }
             .also { account -> assertEquals(account.id, newAccountId) }
     }
+    // #endregion java_register_account
 
     @Test
     @WithIroha([DefaultGenesis::class])
@@ -225,6 +229,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     /**
      * Using for docs generation
      */
+    // #region java_register_asset
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `register asset instruction committed`(): Unit = runBlocking {
@@ -244,6 +249,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
         assetDefinitions.find { it.id == DEFAULT_ASSET_DEFINITION_ID }
             ?: fail("Expected query response contains assetDefinition $DEFAULT_ASSET_DEFINITION_ID, but it is not. Response was $assetDefinitions")
     }
+    // #endregion java_register_asset
 
     @Test
     @WithIroha([DefaultGenesis::class])
@@ -321,6 +327,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     /**
      * Using for docs generation
      */
+    // #region java_mint_asset
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `mint asset instruction committed`(): Unit = runBlocking {
@@ -341,6 +348,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
                 assertEquals(5, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
             }
     }
+    // #endregion java_mint_asset
+
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
