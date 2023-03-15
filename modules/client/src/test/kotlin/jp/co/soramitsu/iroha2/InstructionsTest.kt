@@ -5,10 +5,10 @@ import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
@@ -56,8 +56,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID, testKeyPair = ALICE_KEYPAIR) {
-
+class InstructionsTest : IrohaTest<Iroha2Client>(
+    account = ALICE_ACCOUNT_ID,
+    keyPair = ALICE_KEYPAIR
+) {
     /**
      * Using for docs generation
      */
@@ -132,7 +134,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     @Test
     @WithIroha([DefaultGenesis::class])
     fun `register and unregister asset instruction committed`(): Unit = runBlocking {
-        val definitionId = DefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
+        val definitionId = AssetDefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
 
         val assetId = AssetId(definitionId, ALICE_ACCOUNT_ID)
@@ -276,7 +278,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             is AssetValue.Store -> {
                 assertEquals(pair1.second.string, value.metadata.map[pair1.first]?.cast<Value.String>()?.string)
                 assertEquals(pair2.second.bool, value.metadata.map[pair2.first]?.cast<Value.Bool>()?.bool)
-                assertEquals(pair3.second.u32, (value.metadata.map[pair3.first]?.cast<Value.U32>())?.u32)
+                assertEquals(
+                    pair3.second.numericValue,
+                    value.metadata.map[pair3.first]?.cast<Value.Numeric>()?.numericValue
+                )
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
@@ -296,14 +301,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
-        // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
             registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
-        // transaction from behalf of Bob. He tries to set key-value Asset.Store to the Alice account
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             setKeyValue(aliceAssetId, "foo".asName(), "bar".asValue())
         }
@@ -490,7 +493,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
         assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
         assertEquals(140, getAccountAmount(BOB_ACCOUNT_ID, bobAssetId))
 
-        client.tx(account = BOB_ACCOUNT_ID, keyPair = BOB_KEYPAIR) {
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             transferAsset(bobAssetId, 40, aliceAssetId)
         }
         assertEquals(100, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
@@ -517,7 +520,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `burn if condition otherwise not burn`(): Unit = runBlocking {
-        val toBurn = 80L
+        val toBurn = 80
         val initAliceAmount = getAccountAmount()
 
         sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
@@ -589,7 +592,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             StoreAssetWithMetadata.ASSET_VALUE,
             assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
         )
-
         client.tx { removeKeyValue(assetId, assetKey) }
 
         val assetAfter = getAsset(assetId)
@@ -746,7 +748,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             StoreAssetWithMetadata.ASSET_VALUE,
             assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey]
         )
-
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -757,7 +758,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
                     RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asValue()
                 )
             }
-
         QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(BOB_ACCOUNT_ID)
             .buildSigned(BOB_KEYPAIR)
@@ -768,7 +768,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
                     RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asValue()
                 )
             }
-
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -805,7 +804,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
             }
     }
 
-    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Long) {
+    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Int) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             `if`(

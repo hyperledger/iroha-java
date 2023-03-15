@@ -8,7 +8,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.`value`.ValuePredicate
 import jp.co.soramitsu.iroha2.generated.datamodel.sorting.Sorting
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
@@ -20,7 +21,7 @@ import java.math.BigInteger
  */
 public data class PaginatedQueryResult(
     public val result: QueryResult,
-    public val filter: PredicateBox,
+    public val filter: GenericValuePredicateBox<ValuePredicate>,
     public val pagination: Pagination,
     public val sorting: Sorting,
     public val total: BigInteger
@@ -29,7 +30,7 @@ public data class PaginatedQueryResult(
         public override fun read(reader: ScaleCodecReader): PaginatedQueryResult = try {
             PaginatedQueryResult(
                 QueryResult.read(reader),
-                PredicateBox.read(reader),
+                GenericValuePredicateBox.read(reader) as GenericValuePredicateBox<ValuePredicate>,
                 Pagination.read(reader),
                 Sorting.read(reader),
                 reader.readUint64(),
@@ -40,7 +41,7 @@ public data class PaginatedQueryResult(
 
         public override fun write(writer: ScaleCodecWriter, instance: PaginatedQueryResult) = try {
             QueryResult.write(writer, instance.result)
-            PredicateBox.write(writer, instance.filter)
+            GenericValuePredicateBox.write(writer, instance.filter)
             Pagination.write(writer, instance.pagination)
             Sorting.write(writer, instance.sorting)
             writer.writeUint64(instance.total)

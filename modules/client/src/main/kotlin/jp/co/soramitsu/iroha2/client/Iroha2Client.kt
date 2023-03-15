@@ -16,7 +16,6 @@ import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.websocket.ClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.parameter
@@ -32,10 +31,10 @@ import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventMessage
+import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
 import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
 import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
@@ -131,8 +130,6 @@ open class Iroha2Client(
         }
     }
 
-    override fun close() = client.close()
-
     /**
      * Send a request to Iroha2 and extract payload.
      */
@@ -216,7 +213,7 @@ open class Iroha2Client(
         logger.debug("Creating subscription to transaction status: {}", hexHash)
 
         val subscriptionRequest = eventSubscriberMessageOf(hash)
-        val payload = VersionedEventSubscriberMessage.encode(subscriptionRequest)
+        val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
 
         launch {
@@ -227,7 +224,6 @@ open class Iroha2Client(
             ) {
                 logger.debug("WebSocket opened")
                 send(payload.toFrame())
-                readMessage<EventPublisherMessage.SubscriptionAccepted>(incoming.receive())
 
                 afterSubscription?.invoke()
                 logger.debug("Subscription was accepted by peer")
@@ -242,8 +238,6 @@ open class Iroha2Client(
                     } catch (e: TransactionRejectedException) {
                         result.completeExceptionally(e)
                         break
-                    } finally {
-                        accepted(this)
                     }
                     delay(eventReadTimeoutInMills)
                 }
@@ -253,7 +247,7 @@ open class Iroha2Client(
     }
 
     private fun pipelineEventProcess(
-        eventPublisherMessage: EventPublisherMessage.Event,
+        eventPublisherMessage: EventMessage,
         hash: ByteArray,
         hexHash: String
     ): ByteArray? {
@@ -289,16 +283,6 @@ open class Iroha2Client(
     }
 
     /**
-     * Send a message to a peer saying that the event was accepted
-     */
-    private suspend fun accepted(webSocket: ClientWebSocketSession) {
-        val eventReceived = VersionedEventSubscriberMessage.V1(
-            EventSubscriberMessage.EventReceived()
-        )
-        webSocket.send(VersionedEventSubscriberMessage.encode(eventReceived).toFrame())
-    }
-
-    /**
      * Extract the rejection reason
      */
     private fun RejectionReason.message(): String {
@@ -329,20 +313,13 @@ open class Iroha2Client(
     /**
      * Read the message from the frame
      */
-    private inline fun <reified T : EventPublisherMessage> readMessage(frame: Frame): T {
+    private fun readMessage(frame: Frame): EventMessage {
         return when (frame) {
             is Frame.Binary -> {
-                when (val versionedMessage = frame.readBytes().let { VersionedEventPublisherMessage.decode(it) }) {
-                    is VersionedEventPublisherMessage.V1 -> {
-                        val actualMessage = versionedMessage.eventPublisherMessage
-                        actualMessage as? T
-                            ?: throw WebSocketProtocolException(
-                                "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
-                            )
-                    }
-
+                when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
+                    is VersionedEventMessage.V1 -> versionedMessage.eventMessage
                     else -> throw WebSocketProtocolException(
-                        "Expected `${VersionedEventSubscriberMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
+                        "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
                     )
                 }
             }
@@ -353,14 +330,13 @@ open class Iroha2Client(
         }
     }
 
-    private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
-        return VersionedEventSubscriberMessage.V1(
-            EventSubscriberMessage.SubscriptionRequest(
-                Filters.pipeline(
-                    EntityKind.Transaction(),
-                    null,
-                    hash
-                )
+    private fun eventSubscriberMessageOf(
+        hash: ByteArray,
+        entityKind: EntityKind = EntityKind.Transaction()
+    ): VersionedEventSubscriptionRequest.V1 {
+        return VersionedEventSubscriptionRequest.V1(
+            EventSubscriptionRequest(
+                Filters.pipeline(entityKind, null, hash)
             )
         )
     }
@@ -380,4 +356,6 @@ open class Iroha2Client(
             return Duration.ofSeconds(seconds, nanos)
         }
     }
+
+    override fun close() = client.close()
 }

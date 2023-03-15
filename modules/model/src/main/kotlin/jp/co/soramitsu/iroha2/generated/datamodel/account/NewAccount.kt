@@ -28,7 +28,7 @@ public data class NewAccount(
             NewAccount(
                 AccountId.read(reader),
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
-                Metadata.read(reader)
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

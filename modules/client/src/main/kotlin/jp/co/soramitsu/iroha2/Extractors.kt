@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
@@ -34,6 +35,7 @@ interface ResultExtractor<T> {
                     result.paginatedQueryResult.total
                 )
             }
+
             else -> throw IrohaSdkException("Unexpected type ${result::class}")
         }
     }
@@ -230,7 +232,20 @@ object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
  */
 object U32Extractor : ResultExtractor<Long> {
     override fun extract(result: PaginatedQueryResult): Long {
-        return extractValue(result.result.value, Value.U32::u32)
+        return extractValue(result.result.value) { v: Value ->
+            v.cast<Value.Numeric>().numericValue.cast<NumericValue.U32>().u32
+        }
+    }
+}
+
+/**
+ * Extract `Value.U64` from a query [result]
+ */
+object U64Extractor : ResultExtractor<BigInteger> {
+    override fun extract(result: PaginatedQueryResult): BigInteger {
+        return extractValue(result.result.value) { v: Value ->
+            v.cast<Value.Numeric>().numericValue.cast<NumericValue.U64>().u64
+        }
     }
 }
 
@@ -239,7 +254,9 @@ object U32Extractor : ResultExtractor<Long> {
  */
 object U128Extractor : ResultExtractor<BigInteger> {
     override fun extract(result: PaginatedQueryResult): BigInteger {
-        return extractValue(result.result.value, Value.U128::u128)
+        return extractValue(result.result.value) { v: Value ->
+            v.cast<Value.Numeric>().numericValue.cast<NumericValue.U128>().u128
+        }
     }
 }
 

@@ -8,7 +8,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.MetadataChanged
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
@@ -27,7 +29,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val assetId: AssetId
+        public val asset: Asset
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +38,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    AssetId.read(reader),
+                    Asset.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                AssetId.write(writer, instance.assetId)
+                Asset.write(writer, instance.asset)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -81,7 +83,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Added' variant
      */
     public data class Added(
-        public val assetId: AssetId
+        public val assetChanged: AssetChanged
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -90,14 +92,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Added = try {
                 Added(
-                    AssetId.read(reader),
+                    AssetChanged.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Added) = try {
-                AssetId.write(writer, instance.assetId)
+                AssetChanged.write(writer, instance.assetChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -108,7 +110,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'Removed' variant
      */
     public data class Removed(
-        public val assetId: AssetId
+        public val assetChanged: AssetChanged
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -117,14 +119,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Removed = try {
                 Removed(
-                    AssetId.read(reader),
+                    AssetChanged.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Removed) = try {
-                AssetId.write(writer, instance.assetId)
+                AssetChanged.write(writer, instance.assetChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -135,7 +137,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val assetId: AssetId
+        public val metadataChanged: MetadataChanged<AssetId>
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -144,14 +146,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    AssetId.read(reader),
+                    MetadataChanged.read(reader) as MetadataChanged<AssetId>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                AssetId.write(writer, instance.assetId)
+                MetadataChanged.write(writer, instance.metadataChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -162,7 +164,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val assetId: AssetId
+        public val metadataChanged: MetadataChanged<AssetId>
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -171,14 +173,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    AssetId.read(reader),
+                    MetadataChanged.read(reader) as MetadataChanged<AssetId>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                AssetId.write(writer, instance.assetId)
+                MetadataChanged.write(writer, instance.metadataChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

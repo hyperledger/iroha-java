@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Long
 
 /**
  * Subtract
@@ -16,14 +16,14 @@ import kotlin.Long
  * Generated from 'iroha_data_model::expression::Subtract' regular structure
  */
 public data class Subtract(
-    public val left: EvaluatesTo<Long>,
-    public val right: EvaluatesTo<Long>
+    public val left: EvaluatesTo<NumericValue>,
+    public val right: EvaluatesTo<NumericValue>
 ) {
     public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
         public override fun read(reader: ScaleCodecReader): Subtract = try {
             Subtract(
-                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
-                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
+                EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
+                EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

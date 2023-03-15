@@ -22,9 +22,9 @@ import kotlin.collections.List
 public data class BlockHeaderValue(
     public val timestamp: BigInteger,
     public val height: BigInteger,
-    public val previousBlockHash: Hash,
-    public val transactionsHash: HashOf<List<VersionedSignedTransaction>>,
-    public val rejectedTransactionsHash: HashOf<List<VersionedSignedTransaction>>,
+    public val previousBlockHash: Hash? = null,
+    public val transactionsHash: HashOf<List<VersionedSignedTransaction>>? = null,
+    public val rejectedTransactionsHash: HashOf<List<VersionedSignedTransaction>>? = null,
     public val invalidatedBlocksHashes: List<Hash>,
     public val currentBlockHash: Hash
 ) {
@@ -33,9 +33,9 @@ public data class BlockHeaderValue(
             BlockHeaderValue(
                 reader.readUint128(),
                 reader.readUint64(),
-                Hash.read(reader),
-                HashOf.read(reader) as HashOf<List<VersionedSignedTransaction>>,
-                HashOf.read(reader) as HashOf<List<VersionedSignedTransaction>>,
+                reader.readNullable(Hash) as Hash?,
+                reader.readNullable(HashOf) as HashOf<List<VersionedSignedTransaction>>?,
+                reader.readNullable(HashOf) as HashOf<List<VersionedSignedTransaction>>?,
                 reader.readVec(reader.readCompactInt()) { Hash.read(reader) },
                 Hash.read(reader),
             )
@@ -46,9 +46,9 @@ public data class BlockHeaderValue(
         public override fun write(writer: ScaleCodecWriter, instance: BlockHeaderValue) = try {
             writer.writeUint128(instance.timestamp)
             writer.writeUint64(instance.height)
-            Hash.write(writer, instance.previousBlockHash)
-            HashOf.write(writer, instance.transactionsHash)
-            HashOf.write(writer, instance.rejectedTransactionsHash)
+            writer.writeNullable(Hash, instance.previousBlockHash)
+            writer.writeNullable(HashOf, instance.transactionsHash)
+            writer.writeNullable(HashOf, instance.rejectedTransactionsHash)
             writer.writeCompact(instance.invalidatedBlocksHashes.size)
             instance.invalidatedBlocksHashes.forEach { value ->
                 Hash.write(writer, value)

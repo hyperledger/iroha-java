@@ -24,7 +24,7 @@ public data class NewDomain(
         public override fun read(reader: ScaleCodecReader): NewDomain = try {
             NewDomain(
                 DomainId.read(reader),
-                reader.readNullable(IpfsPath),
+                reader.readNullable(IpfsPath) as IpfsPath?,
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {

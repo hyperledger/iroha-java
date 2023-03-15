@@ -17,13 +17,13 @@ import kotlin.Long
  */
 public data class AtIndex(
     public val index: Long,
-    public val predicate: Predicate
+    public val predicate: ValuePredicate
 ) {
     public companion object : ScaleReader<AtIndex>, ScaleWriter<AtIndex> {
         public override fun read(reader: ScaleCodecReader): AtIndex = try {
             AtIndex(
                 reader.readUint32(),
-                Predicate.read(reader),
+                ValuePredicate.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class AtIndex(
 
         public override fun write(writer: ScaleCodecWriter, instance: AtIndex) = try {
             writer.writeUint32(instance.index)
-            Predicate.write(writer, instance.predicate)
+            ValuePredicate.write(writer, instance.predicate)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -21,7 +21,7 @@ public data class Sorting(
     public companion object : ScaleReader<Sorting>, ScaleWriter<Sorting> {
         public override fun read(reader: ScaleCodecReader): Sorting = try {
             Sorting(
-                reader.readNullable(Name),
+                reader.readNullable(Name) as Name?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

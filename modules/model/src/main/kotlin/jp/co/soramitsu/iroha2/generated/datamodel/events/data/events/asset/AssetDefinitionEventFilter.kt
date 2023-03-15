@@ -27,18 +27,22 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
     public override fun equals(other: Any?) = when (this) {
         is ByCreated -> ByCreated.equals(this, other)
         is ByMintabilityChanged -> ByMintabilityChanged.equals(this, other)
+        is ByOwnerChanged -> ByOwnerChanged.equals(this, other)
         is ByDeleted -> ByDeleted.equals(this, other)
         is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
         is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        is ByTotalQuantityChanged -> ByTotalQuantityChanged.equals(this, other)
         else -> super.equals(other)
     }
 
     public override fun hashCode() = when (this) {
         is ByCreated -> ByCreated.hashCode()
         is ByMintabilityChanged -> ByMintabilityChanged.hashCode()
+        is ByOwnerChanged -> ByOwnerChanged.hashCode()
         is ByDeleted -> ByDeleted.hashCode()
         is ByMetadataInserted -> ByMetadataInserted.hashCode()
         is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        is ByTotalQuantityChanged -> ByTotalQuantityChanged.hashCode()
         else -> super.hashCode()
     }
 
@@ -103,13 +107,43 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
     }
 
     /**
+     * 'ByOwnerChanged' variant
+     */
+    public class ByOwnerChanged : AssetDefinitionEventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<ByOwnerChanged>, ScaleWriter<ByOwnerChanged> {
+            public const val DISCRIMINANT: Int = 2
+
+            public override fun read(reader: ScaleCodecReader): ByOwnerChanged = try {
+                ByOwnerChanged()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByOwnerChanged) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(o1: ByOwnerChanged, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetDefinitionEventFilter.ByOwnerChanged".hashCode()
+        }
+    }
+
+    /**
      * 'ByDeleted' variant
      */
     public class ByDeleted : AssetDefinitionEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByDeleted>, ScaleWriter<ByDeleted> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): ByDeleted = try {
                 ByDeleted()
@@ -139,7 +173,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByMetadataInserted>, ScaleWriter<ByMetadataInserted> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): ByMetadataInserted = try {
                 ByMetadataInserted()
@@ -169,7 +203,7 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<ByMetadataRemoved>, ScaleWriter<ByMetadataRemoved> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 5
 
             public override fun read(reader: ScaleCodecReader): ByMetadataRemoved = try {
                 ByMetadataRemoved()
@@ -192,6 +226,38 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         }
     }
 
+    /**
+     * 'ByTotalQuantityChanged' variant
+     */
+    public class ByTotalQuantityChanged : AssetDefinitionEventFilter() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<ByTotalQuantityChanged>,
+            ScaleWriter<ByTotalQuantityChanged> {
+            public const val DISCRIMINANT: Int = 6
+
+            public override fun read(reader: ScaleCodecReader): ByTotalQuantityChanged = try {
+                ByTotalQuantityChanged()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: ByTotalQuantityChanged) = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(o1: ByTotalQuantityChanged, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.asset.AssetDefinitionEventFilter.ByTotalQuantityChanged".hashCode()
+        }
+    }
+
     public companion object :
         ScaleReader<AssetDefinitionEventFilter>,
         ScaleWriter<AssetDefinitionEventFilter> {
@@ -201,9 +267,11 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByMintabilityChanged.read(reader)
-            2 -> ByDeleted.read(reader)
-            3 -> ByMetadataInserted.read(reader)
-            4 -> ByMetadataRemoved.read(reader)
+            2 -> ByOwnerChanged.read(reader)
+            3 -> ByDeleted.read(reader)
+            4 -> ByMetadataInserted.read(reader)
+            5 -> ByMetadataRemoved.read(reader)
+            6 -> ByTotalQuantityChanged.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -212,9 +280,11 @@ public sealed class AssetDefinitionEventFilter : ModelEnum {
             when (val discriminant = instance.discriminant()) {
                 0 -> ByCreated.write(writer, instance as ByCreated)
                 1 -> ByMintabilityChanged.write(writer, instance as ByMintabilityChanged)
-                2 -> ByDeleted.write(writer, instance as ByDeleted)
-                3 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
-                4 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
+                2 -> ByOwnerChanged.write(writer, instance as ByOwnerChanged)
+                3 -> ByDeleted.write(writer, instance as ByDeleted)
+                4 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
+                5 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
+                6 -> ByTotalQuantityChanged.write(writer, instance as ByTotalQuantityChanged)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

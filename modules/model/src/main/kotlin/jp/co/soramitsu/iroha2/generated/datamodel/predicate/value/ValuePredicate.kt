@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.ipaddr.Ipv4Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.ipaddr.Ipv6Predicate
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiInterval
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.numerical.SemiRange
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.StringPredicate
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Any
@@ -19,11 +20,11 @@ import kotlin.Boolean
 import kotlin.Int
 
 /**
- * Predicate
+ * ValuePredicate
  *
- * Generated from 'iroha_data_model::predicate::value::Predicate' enum
+ * Generated from 'iroha_data_model::predicate::value::ValuePredicate' enum
  */
-public sealed class Predicate : ModelEnum {
+public sealed class ValuePredicate : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -43,8 +44,8 @@ public sealed class Predicate : ModelEnum {
      * 'Identifiable' variant
      */
     public data class Identifiable(
-        public val predicate: jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate
-    ) : Predicate() {
+        public val stringPredicate: StringPredicate
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
@@ -52,17 +53,14 @@ public sealed class Predicate : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Identifiable = try {
                 Identifiable(
-                    jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.read(reader),
+                    StringPredicate.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Identifiable) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.write(
-                    writer,
-                    instance.predicate
-                )
+                StringPredicate.write(writer, instance.stringPredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -74,7 +72,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Container(
         public val container: jp.co.soramitsu.iroha2.generated.datamodel.predicate.`value`.Container
-    ) : Predicate() {
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Container>, ScaleWriter<Container> {
@@ -103,8 +101,8 @@ public sealed class Predicate : ModelEnum {
      * 'Display' variant
      */
     public data class Display(
-        public val predicate: jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate
-    ) : Predicate() {
+        public val stringPredicate: StringPredicate
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Display>, ScaleWriter<Display> {
@@ -112,17 +110,14 @@ public sealed class Predicate : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Display = try {
                 Display(
-                    jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.read(reader),
+                    StringPredicate.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Display) = try {
-                jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.Predicate.write(
-                    writer,
-                    instance.predicate
-                )
+                StringPredicate.write(writer, instance.stringPredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -134,7 +129,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Numerical(
         public val semiRange: SemiRange
-    ) : Predicate() {
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Numerical>, ScaleWriter<Numerical> {
@@ -161,7 +156,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class TimeStamp(
         public val semiInterval: SemiInterval<BigInteger>
-    ) : Predicate() {
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<TimeStamp>, ScaleWriter<TimeStamp> {
@@ -188,7 +183,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Ipv4Addr(
         public val ipv4Predicate: Ipv4Predicate
-    ) : Predicate() {
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Ipv4Addr>, ScaleWriter<Ipv4Addr> {
@@ -215,7 +210,7 @@ public sealed class Predicate : ModelEnum {
      */
     public data class Ipv6Addr(
         public val ipv6Predicate: Ipv6Predicate
-    ) : Predicate() {
+    ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Ipv6Addr>, ScaleWriter<Ipv6Addr> {
@@ -240,7 +235,7 @@ public sealed class Predicate : ModelEnum {
     /**
      * 'Pass' variant
      */
-    public class Pass : Predicate() {
+    public class Pass : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Pass>, ScaleWriter<Pass> {
@@ -262,12 +257,13 @@ public sealed class Predicate : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = "datamodel.predicate.value.Predicate.Pass".hashCode()
+            public override fun hashCode(): Int =
+                "datamodel.predicate.value.ValuePredicate.Pass".hashCode()
         }
     }
 
-    public companion object : ScaleReader<Predicate>, ScaleWriter<Predicate> {
-        public override fun read(reader: ScaleCodecReader): Predicate = when (
+    public companion object : ScaleReader<ValuePredicate>, ScaleWriter<ValuePredicate> {
+        public override fun read(reader: ScaleCodecReader): ValuePredicate = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -282,7 +278,7 @@ public sealed class Predicate : ModelEnum {
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Predicate) {
+        public override fun write(writer: ScaleCodecWriter, instance: ValuePredicate) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Identifiable.write(writer, instance as Identifiable)

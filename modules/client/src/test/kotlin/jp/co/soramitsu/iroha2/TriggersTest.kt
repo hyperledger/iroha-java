@@ -3,10 +3,10 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -70,7 +70,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             accountId = ALICE_ACCOUNT_ID
             registerEventTrigger(
                 triggerId,
-                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1)),
                 Repeats.Indefinitely(),
                 ALICE_ACCOUNT_ID,
                 Metadata(mapOf()),
@@ -112,7 +112,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             accountId = ALICE_ACCOUNT_ID
             registerPreCommitTrigger(
                 triggerId,
-                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 10L)),
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 10)),
                 Repeats.Indefinitely(),
                 ALICE_ACCOUNT_ID
             )
@@ -157,7 +157,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             accountId = ALICE_ACCOUNT_ID
             registerExecutableTrigger(
                 triggerId,
-                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1)),
                 Repeats.Exactly(1L),
                 ALICE_ACCOUNT_ID
             )
@@ -178,7 +178,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         sendAndAwaitTimeTrigger(
             triggerId,
             Repeats.Indefinitely(),
-            Instructions.burnAsset(DEFAULT_ASSET_ID, 1L)
+            Instructions.burnAsset(DEFAULT_ASSET_ID, 1)
         )
         sendAndWait10Txs()
 
@@ -194,7 +194,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         sendAndAwaitTimeTrigger(
             triggerId,
             Repeats.Exactly(5L),
-            Instructions.burnAsset(DEFAULT_ASSET_ID, 1L)
+            Instructions.burnAsset(DEFAULT_ASSET_ID, 1)
         )
         sendAndWait10Txs()
 
@@ -253,7 +253,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
                 assert(
                     assets.any {
-                        it.id.definitionId == DefinitionId(
+                        it.id.definitionId == AssetDefinitionId(
                             "nft_number_1_for_alice".asName(),
                             DEFAULT_DOMAIN_ID
                         )
@@ -272,7 +272,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             accountId = ALICE_ACCOUNT_ID
             registerExecutableTrigger(
                 triggerId,
-                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1L)),
+                listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1)),
                 Repeats.Exactly(1L),
                 ALICE_ACCOUNT_ID
             )
@@ -349,7 +349,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     private suspend fun createNewAsset(assetName: String, prevSize: Int) {
-        val newAsset = DefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
+        val newAsset = AssetDefinitionId(assetName.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerAssetDefinition(newAsset, AssetValueType.Quantity())
