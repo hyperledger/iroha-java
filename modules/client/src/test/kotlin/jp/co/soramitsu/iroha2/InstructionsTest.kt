@@ -55,7 +55,14 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+ import io.qameta.allure.Owner
+ import io.qameta.allure.Feature
+ import io.qameta.allure.Story
+ import io.qameta.allure.TmsLink
 
+
+
+@Owner("akostyuchenko")
 class InstructionsTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
     keyPair = ALICE_KEYPAIR
@@ -66,6 +73,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     // #region java_register_domain
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Domains")
+    @Story("Client registers a domain")
+    @TmsLink("register_domain")
     fun `register domain instruction committed`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
@@ -90,6 +100,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     // #region java_register_account
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Client registers an account")
+    @TmsLink("register_account")
     fun `register account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
