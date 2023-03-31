@@ -123,29 +123,36 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Client unregisters an account")
+    @TmsLink("unregister_account")
     fun `register and unregister account instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAccount(newAccountId, listOf()) }
 
         QueryBuilder.findAccountById(newAccountId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { account -> assertEquals(account.id, newAccountId) }
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query) }
+                .also { account -> assertEquals(account.id, newAccountId) }
 
         client.tx { unregisterAccount(newAccountId) }
         assertThrows<IrohaClientException> {
             runBlocking {
                 QueryBuilder.findAccountById(newAccountId)
-                    .account(ALICE_ACCOUNT_ID)
-                    .buildSigned(ALICE_KEYPAIR)
-                    .let { query -> client.sendQuery(query) }
+                        .account(ALICE_ACCOUNT_ID)
+                        .buildSigned(ALICE_KEYPAIR)
+                        .let { query -> client.sendQuery(query) }
             }
         }
     }
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Assets")
+    @Story("Client registers and unregisters an asset")
+    @TmsLink("register_asset")
+    @TmsLink("unregister_asset")
     fun `register and unregister asset instruction committed`(): Unit = runBlocking {
         val definitionId = AssetDefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
         client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
@@ -154,48 +161,54 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         client.tx { registerAsset(assetId, AssetValue.Quantity(0)) }
 
         QueryBuilder.findAssetById(assetId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { asset -> assertEquals(asset.id, assetId) }
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query) }
+                .also { asset -> assertEquals(asset.id, assetId) }
 
         client.tx { unregisterAsset(assetId) }
         assertThrows<IrohaClientException> {
             runBlocking {
                 QueryBuilder.findAssetById(assetId)
-                    .account(ALICE_ACCOUNT_ID)
-                    .buildSigned(ALICE_KEYPAIR)
-                    .let { query -> client.sendQuery(query) }
+                        .account(ALICE_ACCOUNT_ID)
+                        .buildSigned(ALICE_KEYPAIR)
+                        .let { query -> client.sendQuery(query) }
             }
         }
     }
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Domains")
+    @Story("Client unregisters a domain")
+    @TmsLink("unregister_domain")
     fun `register and unregister domain instruction committed`(): Unit = runBlocking {
         val newDomainId = DomainId("foo".asName())
         client.tx { registerDomain(newDomainId) }
 
         QueryBuilder.findDomainById(newDomainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { domain -> assertEquals(newDomainId, domain.id) }
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query) }
+                .also { domain -> assertEquals(newDomainId, domain.id) }
 
         client.tx { unregisterDomain(newDomainId) }
 
         assertThrows<IrohaClientException> {
             runBlocking {
                 QueryBuilder.findDomainById(newDomainId)
-                    .account(ALICE_ACCOUNT_ID)
-                    .buildSigned(ALICE_KEYPAIR)
-                    .let { query -> client.sendQuery(query) }
+                        .account(ALICE_ACCOUNT_ID)
+                        .buildSigned(ALICE_KEYPAIR)
+                        .let { query -> client.sendQuery(query) }
             }
         }
     }
 
     @Test
     @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Client registers an account")
+    @TmsLink("register_account_metadata")
     fun `register account with metadata instruction committed`(): Unit = runBlocking {
         val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
         val addressKey = "address".asName()
@@ -207,19 +220,19 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         val emailValue = "email".asValue()
         val cityValue = "city".asValue()
         val metadata = Metadata(
-            mapOf(
-                Pair(addressKey, addressValue),
-                Pair(phoneKey, phoneValue),
-                Pair(emailKey, emailValue),
-                Pair(cityKey, cityValue)
-            )
+                mapOf(
+                        Pair(addressKey, addressValue),
+                        Pair(phoneKey, phoneValue),
+                        Pair(emailKey, emailValue),
+                        Pair(cityKey, cityValue)
+                )
         )
 
         val encodedTx = TransactionBuilder {
             account(ALICE_ACCOUNT_ID)
             registerAccount(newAccountId, listOf(), metadata)
         }.buildSigned()
-            .let { VersionedSignedTransaction.encode(it) }
+                .let { VersionedSignedTransaction.encode(it) }
 
         val decodedTx = encodedTx.let { VersionedSignedTransaction.decode(it) }
         val signedTx = decodedTx.appendSignatures(ALICE_KEYPAIR)
@@ -229,17 +242,18 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         }
 
         val accountMetadata = QueryBuilder.findAccountById(newAccountId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { account -> assertEquals(account.id, newAccountId) }
-            .metadata
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
+                .let { query -> client.sendQuery(query) }
+                .also { account -> assertEquals(account.id, newAccountId) }
+                .metadata
         assertEquals(4, accountMetadata.map.size)
         assertEquals(addressValue, accountMetadata.map[addressKey])
         assertEquals(phoneValue, accountMetadata.map[phoneKey])
         assertEquals(emailValue, accountMetadata.map[emailKey])
         assertEquals(cityValue, accountMetadata.map[cityKey])
     }
+
 
     /**
      * Using for docs generation
