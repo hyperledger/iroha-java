@@ -1,5 +1,9 @@
 package jp.co.soramitsu.iroha2
 
+import io.qameta.allure.Feature
+import io.qameta.allure.Owner
+import io.qameta.allure.Story
+import io.qameta.allure.TmsLink
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -55,10 +59,6 @@ import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
- import io.qameta.allure.Owner
- import io.qameta.allure.Feature
- import io.qameta.allure.Story
- import io.qameta.allure.TmsLink
 
 
 
