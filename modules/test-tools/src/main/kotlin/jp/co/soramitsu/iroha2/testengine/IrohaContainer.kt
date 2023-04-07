@@ -148,7 +148,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "lts@sha256:8be886fafe608bf4f668ab557bbf66aaa77e354a98a498382113256d2bde2fa8"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-078b671eba4df91b33cbb9ecea32efe6dd6553c9"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"

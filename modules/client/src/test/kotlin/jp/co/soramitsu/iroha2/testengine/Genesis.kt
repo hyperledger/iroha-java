@@ -127,12 +127,15 @@ open class StoreAssetWithMetadata : Genesis(
             AssetValueType.Store(),
             Metadata(mapOf(ASSET_KEY to ASSET_VALUE))
         ),
-        Instructions.setKeyValue(ASSET_ID, ASSET_KEY, ASSET_VALUE)
+        Instructions.setKeyValue(ASSET_ID, ASSET_KEY, ASSET_VALUE),
+        Instructions.setKeyValue(ASSET_ID, ASSET_KEY_NUMERIC, ASSET_VALUE_NUMERIC)
     )
 ) {
     companion object {
         val ASSET_KEY = "key".asName()
+        val ASSET_KEY_NUMERIC = "number".asName()
         val ASSET_VALUE = "value".asValue()
+        val ASSET_VALUE_NUMERIC = 100L.asValue()
         val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }

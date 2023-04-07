@@ -582,6 +582,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     fun `remove asset instruction committed`(): Unit = runBlocking {
         val assetId = StoreAssetWithMetadata.ASSET_ID
         val assetKey = StoreAssetWithMetadata.ASSET_KEY
+        val assetKey2 = StoreAssetWithMetadata.ASSET_KEY_NUMERIC
 
         val assetBefore = getAsset(assetId)
         assertEquals(
@@ -590,6 +591,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
         )
 
         client.tx { removeKeyValue(assetId, assetKey) }
+        client.tx { removeKeyValue(assetId, assetKey2) }
 
         val assetAfter = getAsset(assetId)
         assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
