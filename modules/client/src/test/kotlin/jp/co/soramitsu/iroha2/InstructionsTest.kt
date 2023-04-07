@@ -350,7 +350,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
     }
     // #endregion java_mint_asset
 
-
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     fun `burn asset instruction committed`(): Unit = runBlocking {
