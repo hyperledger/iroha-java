@@ -3,12 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.asset
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Id
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindAssetQuantityById
@@ -16,16 +17,21 @@ import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
  * Generated from 'iroha_data_model::query::asset::FindAssetQuantityById' regular structure
  */
 public data class FindAssetQuantityById(
-    public val id: EvaluatesTo<Id>
+    public val id: EvaluatesTo<AssetId>
 ) {
     public companion object : ScaleReader<FindAssetQuantityById>, ScaleWriter<FindAssetQuantityById> {
-        public override fun read(reader: ScaleCodecReader): FindAssetQuantityById =
+        public override fun read(reader: ScaleCodecReader): FindAssetQuantityById = try {
             FindAssetQuantityById(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AssetId>,
             )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById) {
+        public override fun write(writer: ScaleCodecWriter, instance: FindAssetQuantityById) = try {
             EvaluatesTo.write(writer, instance.id)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

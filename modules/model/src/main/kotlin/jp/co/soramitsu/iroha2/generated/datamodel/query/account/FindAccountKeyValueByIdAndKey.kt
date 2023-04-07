@@ -3,13 +3,14 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.account
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Id
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import kotlin.String
+import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -18,21 +19,27 @@ import kotlin.String
  * structure
  */
 public data class FindAccountKeyValueByIdAndKey(
-    public val id: EvaluatesTo<Id>,
-    public val key: EvaluatesTo<String>
+    public val id: EvaluatesTo<AccountId>,
+    public val key: EvaluatesTo<Name>
 ) {
     public companion object :
         ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
-        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey =
+        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
             FindAccountKeyValueByIdAndKey(
-                EvaluatesTo.read(reader) as EvaluatesTo<Id>,
-                EvaluatesTo.read(reader) as EvaluatesTo<String>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
             )
-
-        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) {
-            EvaluatesTo.write(writer, instance.id)
-            EvaluatesTo.write(writer, instance.key)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) =
+            try {
+                EvaluatesTo.write(writer, instance.id)
+                EvaluatesTo.write(writer, instance.key)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
     }
 }

@@ -3,10 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.transaction
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -14,7 +16,7 @@ import kotlin.Int
  *
  * Generated from 'iroha_data_model::transaction::TransactionValue' enum
  */
-public sealed class TransactionValue {
+public sealed class TransactionValue : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -24,19 +26,25 @@ public sealed class TransactionValue {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val versionedTransaction: VersionedTransaction
+        public val versionedSignedTransaction: VersionedSignedTransaction
     ) : TransactionValue() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Transaction = Transaction(
-                VersionedTransaction.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Transaction = try {
+                Transaction(
+                    VersionedSignedTransaction.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transaction) {
-                VersionedTransaction.write(writer, instance.versionedTransaction)
+            public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
+                VersionedSignedTransaction.write(writer, instance.versionedSignedTransaction)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -52,12 +60,18 @@ public sealed class TransactionValue {
         public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): RejectedTransaction = RejectedTransaction(
-                VersionedRejectedTransaction.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): RejectedTransaction = try {
+                RejectedTransaction(
+                    VersionedRejectedTransaction.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) {
+            public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) = try {
                 VersionedRejectedTransaction.write(writer, instance.versionedRejectedTransaction)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

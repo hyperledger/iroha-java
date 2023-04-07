@@ -1,0 +1,23 @@
+dependencies {
+    api project(":client")
+    api project(":admin-client")
+    api project(":block")
+
+    api "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
+    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVer"
+
+    api "org.testcontainers:testcontainers:$testContainersVer"
+    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+    implementation "ch.qos.logback:logback-classic:$logbackVer"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.parse
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
@@ -28,14 +28,14 @@ import kotlin.test.assertTrue
 
 class SchemaParserTest {
 
-    private val gson = Gson()
+    private val mapper = ObjectMapper()
 
     @Test
     fun `when schema is empty then types are empty too`() {
         val schemaJson = """
-        {}    
+        {}
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assert(types.isEmpty())
@@ -44,9 +44,9 @@ class SchemaParserTest {
     @Test
     fun `should parse boolean type`() {
         val schemaJson = """
-        {"bool": "Bool"}    
+        {"bool": "Bool"}
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(1, types.size)
@@ -54,11 +54,54 @@ class SchemaParserTest {
     }
 
     @Test
+    fun `should parse recursive relations`() {
+        val schemaJson = """
+        {
+          "foo::bar::AAA": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "bbb",
+                  "ty": "foo::bar::BBB"
+                }
+              ]
+            }
+          },
+          "foo::bar::BBB": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "ccc",
+                  "ty": "foo::bar::CCC"
+                }
+              ]
+            }
+          },
+          "foo::bar::CCC": {
+            "Struct": {
+              "declarations": [
+                {
+                  "name": "aaa",
+                  "ty": "foo::bar::AAA"
+                }
+              ]
+            }
+          }
+        }
+        """.trimIndent()
+
+        val schema = readSchema(schemaJson)
+        val types = SchemaParser().parse(schema)
+
+        assertEquals(3, types.size)
+    }
+
+    @Test
     fun `should parse string type`() {
         val schemaJson = """
-        {"String": "String"}    
+        {"String": "String"}
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(1, types.size)
@@ -87,9 +130,9 @@ class SchemaParserTest {
            "u256":{
               "Int":"FixedWidth"
            }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(6, types.size)
@@ -105,27 +148,27 @@ class SchemaParserTest {
     fun `should parse compact numeric types`() {
         val schemaJson = """
         {
-          "iroha_schema::Compact<u8>": {
+          "Compact<u8>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u16>": {
+          "Compact<u16>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u32>": {
+          "Compact<u32>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u64>": {
+          "Compact<u64>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u128>": {
+          "Compact<u128>": {
             "Int": "Compact"
           },
-          "iroha_schema::Compact<u256>": {
+          "Compact<u256>": {
             "Int": "Compact"
           }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         val assertAll = { type: Type?, inner: Type ->
@@ -137,12 +180,12 @@ class SchemaParserTest {
         }
 
         assertEquals(6, types.size)
-        assertAll(types["iroha_schema::Compact<u8>"], U8Type)
-        assertAll(types["iroha_schema::Compact<u16>"], U16Type)
-        assertAll(types["iroha_schema::Compact<u32>"], U32Type)
-        assertAll(types["iroha_schema::Compact<u64>"], U64Type)
-        assertAll(types["iroha_schema::Compact<u128>"], U128Type)
-        assertAll(types["iroha_schema::Compact<u256>"], U256Type)
+        assertAll(types["Compact<u8>"], U8Type)
+        assertAll(types["Compact<u16>"], U16Type)
+        assertAll(types["Compact<u32>"], U32Type)
+        assertAll(types["Compact<u64>"], U64Type)
+        assertAll(types["Compact<u128>"], U128Type)
+        assertAll(types["Compact<u256>"], U256Type)
     }
 
     @Test
@@ -150,7 +193,7 @@ class SchemaParserTest {
         val structName = "foo::bar::Zulu"
         val schemaJson = """
         {
-            "BTreeMap<String, $structName>": {
+            "Map<String, $structName>": {
                 "Map": {
                   "key": "String",
                   "value": "$structName"
@@ -162,9 +205,9 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(3, types.size)
@@ -173,11 +216,11 @@ class SchemaParserTest {
         assertEquals(expectedStructType, types[structName])
         assertEquals(
             MapType(
-                "BTreeMap<String, $structName>",
+                "Map<String, $structName>",
                 TypeNest("String", StringType),
                 TypeNest(structName, expectedStructType),
             ),
-            types["BTreeMap<String, $structName>"]
+            types["Map<String, $structName>"]
         )
     }
 
@@ -194,9 +237,9 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
@@ -221,9 +264,9 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
@@ -248,9 +291,9 @@ class SchemaParserTest {
                     "declarations": []
                 }
             }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
@@ -280,7 +323,7 @@ class SchemaParserTest {
             }
         }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(2, types.size)
@@ -318,7 +361,7 @@ class SchemaParserTest {
             }
         }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(3, types.size)
@@ -348,7 +391,7 @@ class SchemaParserTest {
         val schemaJson = """
         {
             "$targetTupleStructName": {
-                "TupleStruct": {
+                "Tuple": {
                     "types": ["$innerStructName"]
                 }
             },
@@ -362,7 +405,7 @@ class SchemaParserTest {
             }
         }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(3, types.size)
@@ -414,7 +457,7 @@ class SchemaParserTest {
             }
         }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         val types = SchemaParser().parse(schema)
 
         assertEquals(3, types.size)
@@ -446,9 +489,13 @@ class SchemaParserTest {
             "Vec<$unresolvedStruct>": {
                 "Vec": "$unresolvedStruct"
             }
-        }    
+        }
         """.trimIndent()
-        val schema: Schema = gson.fromJson(schemaJson, object : TypeToken<Map<String, Any>>() {}.type)
+        val schema = readSchema(schemaJson)
         assertFailsWith(RuntimeException::class) { SchemaParser().parse(schema) }
+    }
+
+    private fun readSchema(schemaJson: String): Schema {
+        return mapper.readValue(schemaJson, object : TypeReference<Map<String, Any>>() {})
     }
 }

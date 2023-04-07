@@ -3,11 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.isi
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
-import kotlin.collections.MutableList
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
+import kotlin.collections.List
 
 /**
  * SequenceBox
@@ -15,16 +16,24 @@ import kotlin.collections.MutableList
  * Generated from 'iroha_data_model::isi::SequenceBox' regular structure
  */
 public data class SequenceBox(
-    public val instructions: MutableList<Instruction>
+    public val instructions: List<Instruction>
 ) {
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
-        public override fun read(reader: ScaleCodecReader): SequenceBox = SequenceBox(
-            MutableList(reader.readCompactInt()) { Instruction.read(reader) },
-        )
+        public override fun read(reader: ScaleCodecReader): SequenceBox = try {
+            SequenceBox(
+                reader.readVec(reader.readCompactInt()) { Instruction.read(reader) },
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SequenceBox) {
+        public override fun write(writer: ScaleCodecWriter, instance: SequenceBox) = try {
             writer.writeCompact(instance.instructions.size)
-            instance.instructions.forEach { value -> Instruction.write(writer, value) }
+            instance.instructions.forEach { value ->
+                Instruction.write(writer, value)
+            }
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

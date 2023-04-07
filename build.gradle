@@ -10,32 +10,48 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "$kotlinVer"
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 allprojects {
     repositories {
         mavenCentral()
         maven { url 'https://jitpack.io' }
-        flatDir {
-            dirs "${project.rootDir}/libs"
-        }
     }
 }
 
 subprojects {
-    apply plugin: "org.jetbrains.kotlin.jvm"
-    apply plugin: 'maven'
-    apply plugin: "org.jmailen.kotlinter"
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'org.jmailen.kotlinter'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-    group = 'jp.co.soramitsu.iroha-java'
-    version = '0.0.1-SNAPSHOT'
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
 
-    dependencies {
-        api fileTree(dir: 'libs', include: ['*.jar'])
-        testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+        repositories {
+            maven {
+                name = "iroha2-java-soramitsu"
+                url = "https://nexus.iroha.tech/repository/maven-soramitsu/"
+                credentials {
+                    username = System.getenv("NEXUS_USER")
+                    password = System.getenv("NEXUS_PASS")
+                }
+            }
+        }
     }
+
+    group = 'jp.co.soramitsu.iroha2-java'
+    version = 'git rev-parse --short HEAD'.execute().text.trim()
 
     test {
         useJUnitPlatform()
@@ -46,28 +62,22 @@ subprojects {
         withSourcesJar()
     }
 
-    jar {
-        from {
-            configurations.runtimeClasspath
-            //todo remove it as soon as will be own implementation of scale codec
-                    .filter { it.name.contains("polkaj-scale") }
-                    .collect {
-                        it.isDirectory() ? it : zipTree(it)
-                    }
-        }
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
     }
 
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 11
+            jvmTarget = 1.8
         }
     }
 
     compileTestKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 11
+            jvmTarget = 1.8
         }
     }
 
@@ -76,8 +86,21 @@ subprojects {
         indentSize = 4
         reporters = ['checkstyle', 'plain']
         experimentalRules = false
-        disabledRules = []
+        disabledRules = ['no-consecutive-blank-lines']
     }
+
+    shadowJar {
+        zip64 = true
+        archiveFileName = "${archiveBaseName.get()}-${archiveVersion.get()}.jar"
+    }
+
+    // uncomment to produce shadowJar build by default
+    // it is disabled by default to publish original version by CI, not a fat jar
+    tasks.shadowJar.enabled = false
+}
+
+task allShadowJars {
+    subprojects { pr -> allShadowJars.dependsOn("${pr.path}:shadowJar") }
 }
 
 check {

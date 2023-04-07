@@ -3,12 +3,14 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.expression
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.query.QueryBox
+import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
@@ -16,7 +18,7 @@ import kotlin.Int
  *
  * Generated from 'iroha_data_model::expression::Expression' enum
  */
-public sealed class Expression {
+public sealed class Expression : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -33,12 +35,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Add>, ScaleWriter<Add> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Add = Add(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Add = try {
+                Add(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Add) {
+            public override fun write(writer: ScaleCodecWriter, instance: Add) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Add.write(writer, instance.add)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -54,15 +62,21 @@ public sealed class Expression {
         public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Subtract = Subtract(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Subtract = try {
+                Subtract(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Subtract) {
+            public override fun write(writer: ScaleCodecWriter, instance: Subtract) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Subtract.write(
                     writer,
                     instance.subtract
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -78,15 +92,21 @@ public sealed class Expression {
         public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Multiply = Multiply(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Multiply = try {
+                Multiply(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Multiply) {
+            public override fun write(writer: ScaleCodecWriter, instance: Multiply) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Multiply.write(
                     writer,
                     instance.multiply
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -102,15 +122,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Divide = Divide(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.read(reader),
-            )
-
-            public override fun write(writer: ScaleCodecWriter, instance: Divide) {
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.write(
-                    writer,
-                    instance.divide
+            public override fun read(reader: ScaleCodecReader): Divide = try {
+                Divide(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Divide) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.expression.Divide.write(writer, instance.divide)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -126,12 +149,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): Mod = Mod(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Mod = try {
+                Mod(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Mod) {
+            public override fun write(writer: ScaleCodecWriter, instance: Mod) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Mod.write(writer, instance.mod)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -147,15 +176,21 @@ public sealed class Expression {
         public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): RaiseTo = RaiseTo(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): RaiseTo = try {
+                RaiseTo(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: RaiseTo) {
+            public override fun write(writer: ScaleCodecWriter, instance: RaiseTo) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.RaiseTo.write(
                     writer,
                     instance.raiseTo
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -171,15 +206,21 @@ public sealed class Expression {
         public companion object : ScaleReader<Greater>, ScaleWriter<Greater> {
             public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): Greater = Greater(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Greater = try {
+                Greater(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Greater) {
+            public override fun write(writer: ScaleCodecWriter, instance: Greater) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Greater.write(
                     writer,
                     instance.greater
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -195,12 +236,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Less>, ScaleWriter<Less> {
             public const val DISCRIMINANT: Int = 7
 
-            public override fun read(reader: ScaleCodecReader): Less = Less(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Less = try {
+                Less(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Less) {
+            public override fun write(writer: ScaleCodecWriter, instance: Less) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Less.write(writer, instance.less)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -216,12 +263,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
             public const val DISCRIMINANT: Int = 8
 
-            public override fun read(reader: ScaleCodecReader): Equal = Equal(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Equal = try {
+                Equal(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Equal) {
+            public override fun write(writer: ScaleCodecWriter, instance: Equal) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Equal.write(writer, instance.equal)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -237,12 +290,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Not>, ScaleWriter<Not> {
             public const val DISCRIMINANT: Int = 9
 
-            public override fun read(reader: ScaleCodecReader): Not = Not(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Not = try {
+                Not(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Not) {
+            public override fun write(writer: ScaleCodecWriter, instance: Not) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Not.write(writer, instance.not)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -258,12 +317,18 @@ public sealed class Expression {
         public companion object : ScaleReader<And>, ScaleWriter<And> {
             public const val DISCRIMINANT: Int = 10
 
-            public override fun read(reader: ScaleCodecReader): And = And(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.And.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): And = try {
+                And(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.And.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: And) {
+            public override fun write(writer: ScaleCodecWriter, instance: And) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.And.write(writer, instance.and)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -279,12 +344,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Or>, ScaleWriter<Or> {
             public const val DISCRIMINANT: Int = 11
 
-            public override fun read(reader: ScaleCodecReader): Or = Or(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Or = try {
+                Or(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Or) {
+            public override fun write(writer: ScaleCodecWriter, instance: Or) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Or.write(writer, instance.or)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -300,12 +371,18 @@ public sealed class Expression {
         public companion object : ScaleReader<If>, ScaleWriter<If> {
             public const val DISCRIMINANT: Int = 12
 
-            public override fun read(reader: ScaleCodecReader): If = If(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.If.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): If = try {
+                If(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.If.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: If) {
+            public override fun write(writer: ScaleCodecWriter, instance: If) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.If.write(writer, instance.`if`)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -321,12 +398,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Raw>, ScaleWriter<Raw> {
             public const val DISCRIMINANT: Int = 13
 
-            public override fun read(reader: ScaleCodecReader): Raw = Raw(
-                Value.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Raw = try {
+                Raw(
+                    Value.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Raw) {
+            public override fun write(writer: ScaleCodecWriter, instance: Raw) = try {
                 Value.write(writer, instance.`value`)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -342,12 +425,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Query>, ScaleWriter<Query> {
             public const val DISCRIMINANT: Int = 14
 
-            public override fun read(reader: ScaleCodecReader): Query = Query(
-                QueryBox.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Query = try {
+                Query(
+                    QueryBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Query) {
+            public override fun write(writer: ScaleCodecWriter, instance: Query) = try {
                 QueryBox.write(writer, instance.queryBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -363,15 +452,21 @@ public sealed class Expression {
         public companion object : ScaleReader<Contains>, ScaleWriter<Contains> {
             public const val DISCRIMINANT: Int = 15
 
-            public override fun read(reader: ScaleCodecReader): Contains = Contains(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Contains = try {
+                Contains(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Contains) {
+            public override fun write(writer: ScaleCodecWriter, instance: Contains) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.Contains.write(
                     writer,
                     instance.contains
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -387,15 +482,21 @@ public sealed class Expression {
         public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
             public const val DISCRIMINANT: Int = 16
 
-            public override fun read(reader: ScaleCodecReader): ContainsAll = ContainsAll(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): ContainsAll = try {
+                ContainsAll(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) {
+            public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAll.write(
                     writer,
                     instance.containsAll
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -411,15 +512,21 @@ public sealed class Expression {
         public companion object : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
             public const val DISCRIMINANT: Int = 17
 
-            public override fun read(reader: ScaleCodecReader): ContainsAny = ContainsAny(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): ContainsAny = try {
+                ContainsAny(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContainsAny) {
+            public override fun write(writer: ScaleCodecWriter, instance: ContainsAny) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.ContainsAny.write(
                     writer,
                     instance.containsAny
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -435,15 +542,18 @@ public sealed class Expression {
         public companion object : ScaleReader<Where>, ScaleWriter<Where> {
             public const val DISCRIMINANT: Int = 18
 
-            public override fun read(reader: ScaleCodecReader): Where = Where(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.read(reader),
-            )
-
-            public override fun write(writer: ScaleCodecWriter, instance: Where) {
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.write(
-                    writer,
-                    instance.`where`
+            public override fun read(reader: ScaleCodecReader): Where = try {
+                Where(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Where) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.expression.Where.write(writer, instance.`where`)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -459,15 +569,21 @@ public sealed class Expression {
         public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
             public const val DISCRIMINANT: Int = 19
 
-            public override fun read(reader: ScaleCodecReader): ContextValue = ContextValue(
-                jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): ContextValue = try {
+                ContextValue(
+                    jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContextValue) {
+            public override fun write(writer: ScaleCodecWriter, instance: ContextValue) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.expression.ContextValue.write(
                     writer,
                     instance.contextValue
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }

@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.TypeName
 import jp.co.soramitsu.iroha2.type.Type
 
 /**
- * Basic blueprint for all kind of types
+ * Basic blueprint for all kinds of types
  */
 abstract class Blueprint<T>(val source: T) {
     abstract val className: String
@@ -14,4 +14,7 @@ abstract class Blueprint<T>(val source: T) {
     open fun resolveProperties(type: T): List<Property> = listOf()
 }
 
+/**
+ * Type properties
+ */
 data class Property(val name: String, val typeName: TypeName, val original: Type)

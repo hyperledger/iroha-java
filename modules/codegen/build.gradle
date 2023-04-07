@@ -1,10 +1,13 @@
-group 'jp.co.soramitsu'
-version '1.0-SNAPSHOT'
-
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "com.google.code.gson:gson:$gsonVer"
+    implementation project(":model")
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonKotlinVer"
+
     implementation "com.squareup:kotlinpoet:$kotlinPoetVer"
+
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }
 
 task generate(type: JavaExec) {

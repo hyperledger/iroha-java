@@ -3,21 +3,28 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.ModelEnum
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
+import jp.co.soramitsu.iroha2.wrapException
+import java.math.BigInteger
 import kotlin.Boolean
 import kotlin.Int
-import kotlin.UInt
-import kotlin.collections.MutableList
+import kotlin.Long
+import kotlin.collections.List
 
 /**
  * Value
  *
  * Generated from 'iroha_data_model::Value' enum
  */
-public sealed class Value {
+public sealed class Value : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -27,19 +34,52 @@ public sealed class Value {
      * 'U32' variant
      */
     public data class U32(
-        public val u32: UInt
+        public val u32: Long
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<U32>, ScaleWriter<U32> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): U32 = U32(
-                reader.readUint32().toUInt(),
-            )
+            public override fun read(reader: ScaleCodecReader): U32 = try {
+                U32(
+                    reader.readUint32(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U32) {
-                writer.writeUint32(instance.u32.toInt())
+            public override fun write(writer: ScaleCodecWriter, instance: U32) = try {
+                writer.writeUint32(instance.u32)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'U128' variant
+     */
+    public data class U128(
+        public val u128: BigInteger
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<U128>, ScaleWriter<U128> {
+            public const val DISCRIMINANT: Int = 1
+
+            public override fun read(reader: ScaleCodecReader): U128 = try {
+                U128(
+                    reader.readUint128(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: U128) = try {
+                writer.writeUint128(instance.u128)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -53,14 +93,20 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Bool>, ScaleWriter<Bool> {
-            public const val DISCRIMINANT: Int = 1
+            public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Bool = Bool(
-                reader.readBoolean(),
-            )
+            public override fun read(reader: ScaleCodecReader): Bool = try {
+                Bool(
+                    reader.readBoolean(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Bool) {
+            public override fun write(writer: ScaleCodecWriter, instance: Bool) = try {
                 if (instance.bool) { writer.directWrite(1) } else { writer.directWrite(0) }
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -74,14 +120,74 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<String>, ScaleWriter<String> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): String = String(
-                reader.readString(),
-            )
+            public override fun read(reader: ScaleCodecReader): String = try {
+                String(
+                    reader.readString(),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: String) {
+            public override fun write(writer: ScaleCodecWriter, instance: String) = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Name' variant
+     */
+    public data class Name(
+        public val name: jp.co.soramitsu.iroha2.generated.datamodel.name.Name
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Name>, ScaleWriter<Name> {
+            public const val DISCRIMINANT: Int = 4
+
+            public override fun read(reader: ScaleCodecReader): Name = try {
+                Name(
+                    jp.co.soramitsu.iroha2.generated.datamodel.name.Name.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Name) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.name.Name.write(writer, instance.name)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Fixed' variant
+     */
+    public data class Fixed(
+        public val fixed: jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+            public const val DISCRIMINANT: Int = 5
+
+            public override fun read(reader: ScaleCodecReader): Fixed = try {
+                Fixed(
+                    jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
+                jp.co.soramitsu.iroha2.generated.primitives.fixed.Fixed.write(writer, instance.fixed)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -90,20 +196,55 @@ public sealed class Value {
      * 'Vec' variant
      */
     public data class Vec(
-        public val vec: MutableList<Value>
+        public val vec: List<Value>
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Vec>, ScaleWriter<Vec> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): Vec = Vec(
-                MutableList(reader.readCompactInt()) { Value.read(reader) },
-            )
+            public override fun read(reader: ScaleCodecReader): Vec = try {
+                Vec(
+                    reader.readVec(reader.readCompactInt()) { Value.read(reader) },
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Vec) {
+            public override fun write(writer: ScaleCodecWriter, instance: Vec) = try {
                 writer.writeCompact(instance.vec.size)
-                instance.vec.forEach { value -> Value.write(writer, value) }
+                instance.vec.forEach { value ->
+                    Value.write(writer, value)
+                }
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'LimitedMetadata' variant
+     */
+    public data class LimitedMetadata(
+        public val metadata: Metadata
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<LimitedMetadata>, ScaleWriter<LimitedMetadata> {
+            public const val DISCRIMINANT: Int = 7
+
+            public override fun read(reader: ScaleCodecReader): LimitedMetadata = try {
+                LimitedMetadata(
+                    Metadata.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: LimitedMetadata) = try {
+                Metadata.write(writer, instance.metadata)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -117,14 +258,20 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Id>, ScaleWriter<Id> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 8
 
-            public override fun read(reader: ScaleCodecReader): Id = Id(
-                IdBox.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Id = try {
+                Id(
+                    IdBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Id) {
+            public override fun write(writer: ScaleCodecWriter, instance: Id) = try {
                 IdBox.write(writer, instance.idBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -138,14 +285,20 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Identifiable>, ScaleWriter<Identifiable> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 9
 
-            public override fun read(reader: ScaleCodecReader): Identifiable = Identifiable(
-                IdentifiableBox.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Identifiable = try {
+                Identifiable(
+                    IdentifiableBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Identifiable) {
+            public override fun write(writer: ScaleCodecWriter, instance: Identifiable) = try {
                 IdentifiableBox.write(writer, instance.identifiableBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -159,14 +312,20 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 10
 
-            public override fun read(reader: ScaleCodecReader): PublicKey = PublicKey(
-                jp.co.soramitsu.iroha2.generated.crypto.PublicKey.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): PublicKey = try {
+                PublicKey(
+                    jp.co.soramitsu.iroha2.generated.crypto.PublicKey.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: PublicKey) {
+            public override fun write(writer: ScaleCodecWriter, instance: PublicKey) = try {
                 jp.co.soramitsu.iroha2.generated.crypto.PublicKey.write(writer, instance.publicKey)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -180,14 +339,20 @@ public sealed class Value {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 11
 
-            public override fun read(reader: ScaleCodecReader): Parameter = Parameter(
-                jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): Parameter = try {
+                Parameter(
+                    jp.co.soramitsu.iroha2.generated.datamodel.Parameter.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Parameter) {
+            public override fun write(writer: ScaleCodecWriter, instance: Parameter) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.Parameter.write(writer, instance.parameter)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -196,7 +361,7 @@ public sealed class Value {
      * 'SignatureCheckCondition' variant
      */
     public data class SignatureCheckCondition(
-        public val signatureCheckCondition:
+        public val signatureCheckCondition:  
             jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
@@ -204,18 +369,23 @@ public sealed class Value {
         public companion object :
             ScaleReader<SignatureCheckCondition>,
             ScaleWriter<SignatureCheckCondition> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 12
 
-            public override fun read(reader: ScaleCodecReader): SignatureCheckCondition =
+            public override fun read(reader: ScaleCodecReader): SignatureCheckCondition = try {
                 SignatureCheckCondition(
                     jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition) {
+            public override fun write(writer: ScaleCodecWriter, instance: SignatureCheckCondition) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition.write(
                     writer,
                     instance.signatureCheckCondition
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -224,23 +394,62 @@ public sealed class Value {
      * 'TransactionValue' variant
      */
     public data class TransactionValue(
-        public val transactionValue:
+        public val transactionValue:  
             jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
-            public const val DISCRIMINANT: Int = 9
+            public const val DISCRIMINANT: Int = 13
 
-            public override fun read(reader: ScaleCodecReader): TransactionValue = TransactionValue(
-                jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.read(reader),
-            )
+            public override fun read(reader: ScaleCodecReader): TransactionValue = try {
+                TransactionValue(
+                    jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
 
-            public override fun write(writer: ScaleCodecWriter, instance: TransactionValue) {
+            public override fun write(writer: ScaleCodecWriter, instance: TransactionValue) = try {
                 jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue.write(
                     writer,
                     instance.transactionValue
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'TransactionQueryResult' variant
+     */
+    public data class TransactionQueryResult(
+        public val transactionQueryResult:  
+            jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<TransactionQueryResult>,
+            ScaleWriter<TransactionQueryResult> {
+            public const val DISCRIMINANT: Int = 14
+
+            public override fun read(reader: ScaleCodecReader): TransactionQueryResult = try {
+                TransactionQueryResult(
+                    jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: TransactionQueryResult) = try {
+                jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult.write(
+                    writer,
+                    instance.transactionQueryResult
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -249,23 +458,160 @@ public sealed class Value {
      * 'PermissionToken' variant
      */
     public data class PermissionToken(
-        public val permissionToken:
-            jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken
+        public val token: Token
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
-            public const val DISCRIMINANT: Int = 10
+            public const val DISCRIMINANT: Int = 15
 
-            public override fun read(reader: ScaleCodecReader): PermissionToken = PermissionToken(
-                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.read(reader),
-            )
-
-            public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) {
-                jp.co.soramitsu.iroha2.generated.datamodel.permissions.PermissionToken.write(
-                    writer,
-                    instance.permissionToken
+            public override fun read(reader: ScaleCodecReader): PermissionToken = try {
+                PermissionToken(
+                    Token.read(reader),
                 )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
+                Token.write(writer, instance.token)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Hash' variant
+     */
+    public data class Hash(
+        public val hash: jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
+            public const val DISCRIMINANT: Int = 16
+
+            public override fun read(reader: ScaleCodecReader): Hash = try {
+                Hash(
+                    jp.co.soramitsu.iroha2.generated.crypto.hash.Hash.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Hash) = try {
+                jp.co.soramitsu.iroha2.generated.crypto.hash.Hash.write(writer, instance.hash)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Block' variant
+     */
+    public data class Block(
+        public val blockValue: BlockValue
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Block>, ScaleWriter<Block> {
+            public const val DISCRIMINANT: Int = 17
+
+            public override fun read(reader: ScaleCodecReader): Block = try {
+                Block(
+                    BlockValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
+                BlockValue.write(writer, instance.blockValue)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'BlockHeader' variant
+     */
+    public data class BlockHeader(
+        public val blockHeaderValue: BlockHeaderValue
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
+            public const val DISCRIMINANT: Int = 18
+
+            public override fun read(reader: ScaleCodecReader): BlockHeader = try {
+                BlockHeader(
+                    BlockHeaderValue.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: BlockHeader) = try {
+                BlockHeaderValue.write(writer, instance.blockHeaderValue)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Ipv4Addr' variant
+     */
+    public data class Ipv4Addr(
+        public val ipv4Addr: jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv4Addr>, ScaleWriter<Ipv4Addr> {
+            public const val DISCRIMINANT: Int = 19
+
+            public override fun read(reader: ScaleCodecReader): Ipv4Addr = try {
+                Ipv4Addr(
+                    jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv4Addr) = try {
+                jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr.write(writer, instance.ipv4Addr)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'Ipv6Addr' variant
+     */
+    public data class Ipv6Addr(
+        public val ipv6Addr: jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr
+    ) : Value() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Ipv6Addr>, ScaleWriter<Ipv6Addr> {
+            public const val DISCRIMINANT: Int = 20
+
+            public override fun read(reader: ScaleCodecReader): Ipv6Addr = try {
+                Ipv6Addr(
+                    jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Ipv6Addr) = try {
+                jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr.write(writer, instance.ipv6Addr)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
     }
@@ -276,16 +622,26 @@ public sealed class Value {
                 reader.readUByte()
         ) {
             0 -> U32.read(reader)
-            1 -> Bool.read(reader)
-            2 -> String.read(reader)
-            3 -> Vec.read(reader)
-            4 -> Id.read(reader)
-            5 -> Identifiable.read(reader)
-            6 -> PublicKey.read(reader)
-            7 -> Parameter.read(reader)
-            8 -> SignatureCheckCondition.read(reader)
-            9 -> TransactionValue.read(reader)
-            10 -> PermissionToken.read(reader)
+            1 -> U128.read(reader)
+            2 -> Bool.read(reader)
+            3 -> String.read(reader)
+            4 -> Name.read(reader)
+            5 -> Fixed.read(reader)
+            6 -> Vec.read(reader)
+            7 -> LimitedMetadata.read(reader)
+            8 -> Id.read(reader)
+            9 -> Identifiable.read(reader)
+            10 -> PublicKey.read(reader)
+            11 -> Parameter.read(reader)
+            12 -> SignatureCheckCondition.read(reader)
+            13 -> TransactionValue.read(reader)
+            14 -> TransactionQueryResult.read(reader)
+            15 -> PermissionToken.read(reader)
+            16 -> Hash.read(reader)
+            17 -> Block.read(reader)
+            18 -> BlockHeader.read(reader)
+            19 -> Ipv4Addr.read(reader)
+            20 -> Ipv6Addr.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -293,16 +649,26 @@ public sealed class Value {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> U32.write(writer, instance as U32)
-                1 -> Bool.write(writer, instance as Bool)
-                2 -> String.write(writer, instance as String)
-                3 -> Vec.write(writer, instance as Vec)
-                4 -> Id.write(writer, instance as Id)
-                5 -> Identifiable.write(writer, instance as Identifiable)
-                6 -> PublicKey.write(writer, instance as PublicKey)
-                7 -> Parameter.write(writer, instance as Parameter)
-                8 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
-                9 -> TransactionValue.write(writer, instance as TransactionValue)
-                10 -> PermissionToken.write(writer, instance as PermissionToken)
+                1 -> U128.write(writer, instance as U128)
+                2 -> Bool.write(writer, instance as Bool)
+                3 -> String.write(writer, instance as String)
+                4 -> Name.write(writer, instance as Name)
+                5 -> Fixed.write(writer, instance as Fixed)
+                6 -> Vec.write(writer, instance as Vec)
+                7 -> LimitedMetadata.write(writer, instance as LimitedMetadata)
+                8 -> Id.write(writer, instance as Id)
+                9 -> Identifiable.write(writer, instance as Identifiable)
+                10 -> PublicKey.write(writer, instance as PublicKey)
+                11 -> Parameter.write(writer, instance as Parameter)
+                12 -> SignatureCheckCondition.write(writer, instance as SignatureCheckCondition)
+                13 -> TransactionValue.write(writer, instance as TransactionValue)
+                14 -> TransactionQueryResult.write(writer, instance as TransactionQueryResult)
+                15 -> PermissionToken.write(writer, instance as PermissionToken)
+                16 -> Hash.write(writer, instance as Hash)
+                17 -> Block.write(writer, instance as Block)
+                18 -> BlockHeader.write(writer, instance as BlockHeader)
+                19 -> Ipv4Addr.write(writer, instance as Ipv4Addr)
+                20 -> Ipv6Addr.write(writer, instance as Ipv6Addr)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

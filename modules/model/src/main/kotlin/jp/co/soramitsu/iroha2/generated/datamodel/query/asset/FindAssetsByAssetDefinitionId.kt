@@ -3,12 +3,13 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.query.asset
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * FindAssetsByAssetDefinitionId
@@ -21,13 +22,19 @@ public data class FindAssetsByAssetDefinitionId(
     public companion object :
         ScaleReader<FindAssetsByAssetDefinitionId>,
         ScaleWriter<FindAssetsByAssetDefinitionId> {
-        public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId =
+        public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId = try {
             FindAssetsByAssetDefinitionId(
                 EvaluatesTo.read(reader) as EvaluatesTo<DefinitionId>,
             )
-
-        public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId) {
-            EvaluatesTo.write(writer, instance.assetDefinitionId)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
+
+        public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId) =
+            try {
+                EvaluatesTo.write(writer, instance.assetDefinitionId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
     }
 }

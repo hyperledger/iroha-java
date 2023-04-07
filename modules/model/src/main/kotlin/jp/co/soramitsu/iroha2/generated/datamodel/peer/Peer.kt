@@ -3,10 +3,11 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.peer
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * Peer
@@ -14,15 +15,21 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  * Generated from 'iroha_data_model::peer::Peer' regular structure
  */
 public data class Peer(
-    public val id: Id
+    public val id: PeerId
 ) {
     public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
-        public override fun read(reader: ScaleCodecReader): Peer = Peer(
-            Id.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): Peer = try {
+            Peer(
+                PeerId.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Peer) {
-            Id.write(writer, instance.id)
+        public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
+            PeerId.write(writer, instance.id)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }

@@ -3,10 +3,12 @@
 //
 package jp.co.soramitsu.iroha2.generated.datamodel.asset
 
-import io.emeraldpay.polkaj.scale.ScaleCodecReader
-import io.emeraldpay.polkaj.scale.ScaleCodecWriter
-import io.emeraldpay.polkaj.scale.ScaleReader
-import io.emeraldpay.polkaj.scale.ScaleWriter
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.wrapException
 
 /**
  * AssetDefinition
@@ -14,18 +16,30 @@ import io.emeraldpay.polkaj.scale.ScaleWriter
  * Generated from 'iroha_data_model::asset::AssetDefinition' regular structure
  */
 public data class AssetDefinition(
+    public val id: DefinitionId,
     public val valueType: AssetValueType,
-    public val id: DefinitionId
+    public val mintable: Mintable,
+    public val metadata: Metadata
 ) {
     public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
-        public override fun read(reader: ScaleCodecReader): AssetDefinition = AssetDefinition(
-            AssetValueType.read(reader),
-            DefinitionId.read(reader),
-        )
+        public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
+            AssetDefinition(
+                DefinitionId.read(reader),
+                AssetValueType.read(reader),
+                Mintable.read(reader),
+                Metadata.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) {
-            AssetValueType.write(writer, instance.valueType)
+        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
             DefinitionId.write(writer, instance.id)
+            AssetValueType.write(writer, instance.valueType)
+            Mintable.write(writer, instance.mintable)
+            Metadata.write(writer, instance.metadata)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
         }
     }
 }
