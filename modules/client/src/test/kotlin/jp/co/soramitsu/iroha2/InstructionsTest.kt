@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2
 
 import io.qameta.allure.Feature
 import io.qameta.allure.Owner
-import io.qameta.allure.Step
 import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
@@ -348,49 +347,26 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     fun `grant access to asset key-value committed`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
-        givenCreateAsset(aliceAssetId)
-        whenSetKeyValueForUser(aliceAssetId, "foo".asName(), "bar".asValue())
-        thenCheckAssetKeyValue(aliceAssetId, "foo".asName(), "bar")
-    }
-
-    @Step(
-        "GIVEN Alice has an asset definition with the ID {aliceAssetId} and a type of {AssetValue.Store}.\n" +
-            "GIVEN Alice grants Bob permission to set a key-value pair in the Asset.Store " +
-            "by registering a permission token " +
-            "and granting the setKeyValueAsset to Bob's account."
-    )
-    fun givenCreateAsset(aliceAssetId: AssetId): Unit = runBlocking {
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
+            // grant by Alice to Bob permissions to set key value in Asset.Store
             registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
             grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
         }
-    }
-
-    @Step("WHEN Bob sets a key-value pair with the key \"foo\" and the value \"bar\" for Alice's asset definition.")
-    fun whenSetKeyValueForUser(aliceAssetId: AssetId, key: Name, value: Value): Unit = runBlocking {
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            setKeyValue(aliceAssetId, key, value)
+            setKeyValue(aliceAssetId, "foo".asName(), "bar".asValue())
         }
-    }
 
-    @Step(
-        "THEN When querying Alice's asset definition by its ID, " +
-            "the asset is found with the correct definition ID and domain ID.\n" +
-            "THEN The asset has the expected type AssetValue.Store.\n" +
-            "THEN The asset's metadata map contains the key \"foo\" with the value \"bar\"."
-    )
-    fun thenCheckAssetKeyValue(aliceAssetId: AssetId, key: Name, expectedValue: String): Unit = runBlocking {
         val query = QueryBuilder.findAssetById(aliceAssetId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
+                .account(ALICE_ACCOUNT_ID)
+                .buildSigned(ALICE_KEYPAIR)
         val asset = client.sendQuery(query)
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
         assertEquals(aliceAssetId.definitionId.domainId, asset.id.definitionId.domainId)
         when (val value = asset.value) {
             is AssetValue.Store -> {
-                assertEquals(expectedValue, (value.metadata.map[key]?.cast<Value.String>())?.string)
+                assertEquals("bar", (value.metadata.map["foo".asName()]?.cast<Value.String>())?.string)
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
