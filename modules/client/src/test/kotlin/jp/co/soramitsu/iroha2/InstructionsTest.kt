@@ -358,8 +358,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         }
 
         val query = QueryBuilder.findAssetById(aliceAssetId)
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
         val asset = client.sendQuery(query)
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
