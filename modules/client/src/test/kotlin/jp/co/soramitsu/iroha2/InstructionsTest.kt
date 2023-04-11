@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2
 
-import io.qameta.allure.Step
 import io.qameta.allure.Feature
 import io.qameta.allure.Owner
+import io.qameta.allure.Step
 import io.qameta.allure.Story
-import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.annotations.Sdk
+import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -354,10 +354,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     }
 
     @Step(
-            "GIVEN Alice has an asset definition with the ID {aliceAssetId} and a type of {AssetValue.Store}.\n" +
-                    "GIVEN Alice grants Bob permission to set a key-value pair in the Asset.Store " +
-                    "by registering a permission token " +
-                    "and granting the setKeyValueAsset to Bob's account.")
+        "GIVEN Alice has an asset definition with the ID {aliceAssetId} and a type of {AssetValue.Store}.\n" +
+            "GIVEN Alice grants Bob permission to set a key-value pair in the Asset.Store " +
+            "by registering a permission token " +
+            "and granting the setKeyValueAsset to Bob's account."
+    )
     fun givenCreateAsset(aliceAssetId: AssetId): Unit = runBlocking {
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
@@ -374,14 +375,15 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     }
 
     @Step(
-            "THEN When querying Alice's asset definition by its ID, " +
-                    "the asset is found with the correct definition ID and domain ID.\n" +
-                    "THEN The asset has the expected type AssetValue.Store.\n" +
-                    "THEN The asset's metadata map contains the key \"foo\" with the value \"bar\".")
+        "THEN When querying Alice's asset definition by its ID, " +
+            "the asset is found with the correct definition ID and domain ID.\n" +
+            "THEN The asset has the expected type AssetValue.Store.\n" +
+            "THEN The asset's metadata map contains the key \"foo\" with the value \"bar\"."
+    )
     fun thenCheckAssetKeyValue(aliceAssetId: AssetId, key: Name, expectedValue: String): Unit = runBlocking {
         val query = QueryBuilder.findAssetById(aliceAssetId)
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
         val asset = client.sendQuery(query)
 
         assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
