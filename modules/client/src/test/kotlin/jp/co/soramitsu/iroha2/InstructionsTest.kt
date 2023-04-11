@@ -61,8 +61,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-
-
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 class InstructionsTest : IrohaTest<Iroha2Client>(
@@ -261,7 +259,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(cityValue, accountMetadata.map[cityKey])
     }
 
-
     /**
      * Using for docs generation
      */
@@ -372,9 +369,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
     }
-
-
-
 
     /**
      * Using for docs generation
