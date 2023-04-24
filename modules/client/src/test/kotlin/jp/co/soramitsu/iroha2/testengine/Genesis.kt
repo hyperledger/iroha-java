@@ -132,7 +132,7 @@ open class StoreAssetWithMetadata : Genesis(
 ) {
     companion object {
         val ASSET_KEY = "key".asName()
-        val ASSET_VALUE = "value".asValue()
+        val ASSET_VALUE = RandomStringUtils.randomAlphabetic(50).asValue()
         val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }

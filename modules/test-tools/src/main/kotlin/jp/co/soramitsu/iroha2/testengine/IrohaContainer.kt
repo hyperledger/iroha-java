@@ -53,6 +53,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
             .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
             .withEnv("WSV_WASM_RUNTIME_CONFIG", "{\"FUEL_LIMIT\":20000000, \"MAX_MEMORY\": 524288000}")
+            .also { container -> config.envs.forEach { (k, v) -> container.withEnv(k, v) } }
             .withExposedPorts(p2pPort, apiPort, telemetryPort)
             .withCreateContainerCmdModifier {
                 it.hostConfig!!.withPortBindings(

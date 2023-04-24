@@ -158,6 +158,11 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds
                     ports = portsList[n]
+                    envs = withIroha.configs.associate { config ->
+                        config.split(IROHA_CONFIG_DELIMITER).let {
+                            it.first() to it.last()
+                        }
+                    }
                     // only first peer should have --submit-genesis in peer start command
                     submitGenesis = n == 0
                 }

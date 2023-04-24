@@ -449,11 +449,10 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @Disabled
     @WithIroha([DefaultGenesis::class])
     fun `pagination plus sorting by metadata key`(): Unit = runBlocking {
-        val keyU32 = RandomStringUtils.random(5).asName()
-        val keyU128 = RandomStringUtils.random(5).asName()
+        val keyU32 = RandomStringUtils.randomAlphabetic(5).asName()
+        val keyU128 = RandomStringUtils.randomAlphabetic(5).asName()
 
         createAccount("new_000", mapOf(keyU32 to 1.asValue(), keyU128 to 1L.asValue()))
         createAccount("new_111", mapOf(keyU32 to 0.asValue(), keyU128 to 0L.asValue()))
@@ -465,9 +464,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 .buildSigned(ALICE_KEYPAIR)
                 .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
                 .let { accounts ->
-                    assertEquals(0.asValue(), accounts.data[0].metadata.map[key])
-                    assertEquals(1.asValue(), accounts.data[1].metadata.map[key])
-                    assertEquals(2.asValue(), accounts.data[2].metadata.map[key])
+                    assertEquals(if (key == keyU32) 0.asValue() else 0L.asValue(), accounts.data[0].metadata.map[key])
+                    assertEquals(if (key == keyU32) 1.asValue() else 1L.asValue(), accounts.data[1].metadata.map[key])
+                    assertEquals(if (key == keyU32) 2.asValue() else 2L.asValue(), accounts.data[2].metadata.map[key])
                 }
         }
     }
