@@ -98,7 +98,7 @@ open class WithExecutableTrigger : Genesis(
     )
 ) {
     companion object {
-        val TRIGGER_ID = TriggerId("some_trigger".asName())
+        val TRIGGER_ID = TriggerId("some_trigger".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
@@ -138,6 +138,16 @@ open class StoreAssetWithMetadata : Genesis(
     }
 }
 
+open class AliceCanMintXor : Genesis(
+    rawGenesisBlock(
+        Instructions.registerPermissionToken(
+            Permissions.CanMintUserAssetDefinitionsToken.type,
+            IdKey.AssetDefinitionId
+        ),
+        Instructions.grantMintUserAssetDefinitions(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
+    )
+)
+
 /**
  * Create XOR and VAL assets with one token for each and metadata
  */
@@ -153,8 +163,6 @@ open class XorAndValAssets : Genesis(
     companion object {
         const val XOR_QUANTITY = 1
         const val VAL_QUANTITY = 1
-        val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
-        val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 

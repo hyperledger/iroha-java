@@ -7,9 +7,11 @@ import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
 import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
@@ -184,6 +186,17 @@ object PermissionTokensExtractor : ResultExtractor<List<Token>> {
 }
 
 /**
+ * Extract a list of permission token definitions from a query [result]
+ */
+object PermissionTokenDefinitionsExtractor : ResultExtractor<List<Definition>> {
+    override fun extract(result: PaginatedQueryResult): List<Definition> {
+        return extractVec(result.result.value) {
+            extractIdentifiable(it, IdentifiableBox.PermissionTokenDefinition::definition)
+        }
+    }
+}
+
+/**
  * Extract a list of transaction values from a query [result]
  */
 object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
@@ -224,6 +237,20 @@ object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
         return extractVec(result.result.value) {
             extractValue(it, Value.Block::blockValue)
         }
+    }
+}
+
+object BlockHeadersValueExtractor : ResultExtractor<List<BlockHeaderValue>> {
+    override fun extract(result: PaginatedQueryResult): List<BlockHeaderValue> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.BlockHeader::blockHeaderValue)
+        }
+    }
+}
+
+object BlockHeaderValueExtractor : ResultExtractor<BlockHeaderValue> {
+    override fun extract(result: PaginatedQueryResult): BlockHeaderValue {
+        return extractValue(result.result.value, Value.BlockHeader::blockHeaderValue)
     }
 }
 

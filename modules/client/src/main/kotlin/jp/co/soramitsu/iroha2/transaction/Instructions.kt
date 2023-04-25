@@ -109,9 +109,7 @@ object Instructions {
         params: Map<Name, ValueKind> = mapOf()
     ): Instruction.Register {
         return registerSome {
-            RegistrableBox.PermissionTokenDefinition(
-                Definition(permissionsId, params)
-            )
+            RegistrableBox.PermissionTokenDefinition(Definition(permissionsId, params))
         }
     }
 

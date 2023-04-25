@@ -33,3 +33,9 @@ val DEFAULT_ASSET_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMA
 
 @JvmField
 val DEFAULT_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
+
+@JvmField
+val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+
+@JvmField
+val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)

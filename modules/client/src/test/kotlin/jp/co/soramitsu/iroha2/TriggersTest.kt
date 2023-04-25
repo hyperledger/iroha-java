@@ -23,7 +23,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
+import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
 import jp.co.soramitsu.iroha2.transaction.EntityFilters
 import jp.co.soramitsu.iroha2.transaction.EventFilters
 import jp.co.soramitsu.iroha2.transaction.Filters
@@ -250,7 +250,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .also { assets ->
                 assert(assets.size > 1)
                 assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
-                assert(assets.any { it.id.definitionId == XorAndValAssets.XOR_DEFINITION_ID })
+                assert(assets.any { it.id.definitionId == XOR_DEFINITION_ID })
                 assert(
                     assets.any {
                         it.id.definitionId == AssetDefinitionId(

@@ -433,9 +433,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
     }
 
+    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
+    @Disabled
     @Feature("Assets")
     @Story("Account burn an asset")
     @SdkTestId("burn_other_user_asset")
