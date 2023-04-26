@@ -93,7 +93,7 @@ object Queries {
     )
 
     /**
-     * Return all known assets by value
+     * Return the values of all known assets
      */
     fun findAllAssets() = QueryBox.FindAllAssets(FindAllAssets())
 
