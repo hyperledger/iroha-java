@@ -191,7 +191,7 @@ object Queries {
     )
 
     /**
-     * Return all the known registered domains
+     * Return all known registered domains
      */
     fun findAllDomains() = QueryBox.FindAllDomains(FindAllDomains())
 
