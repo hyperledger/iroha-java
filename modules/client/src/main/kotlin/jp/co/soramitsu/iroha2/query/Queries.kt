@@ -142,7 +142,7 @@ object Queries {
     )
 
     /**
-     * Return all known asset definitions by value
+     * Return the values of all known asset definitions
      */
     fun findAllAssetsDefinitions() = QueryBox.FindAllAssetsDefinitions(FindAllAssetsDefinitions())
 
