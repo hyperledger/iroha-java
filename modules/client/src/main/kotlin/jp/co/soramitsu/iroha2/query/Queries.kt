@@ -86,7 +86,7 @@ object Queries {
     )
 
     /**
-     * Return all accounts that belong to a specific asset definition [AssetDefinitionId]
+     * Return all the accounts that belong to a specific asset definition [AssetDefinitionId]
      */
     fun findAccountsWithAsset(definitionId: AssetDefinitionId) = QueryBox.FindAccountsWithAsset(
         FindAccountsWithAsset(definitionId.evaluatesTo())
