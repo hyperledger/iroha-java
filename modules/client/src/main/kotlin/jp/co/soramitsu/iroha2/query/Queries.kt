@@ -103,7 +103,7 @@ object Queries {
     fun findAssetById(assetId: AssetId) = QueryBox.FindAssetById(FindAssetById(assetId.evaluatesTo()))
 
     /**
-     * Return all assets that are registered in the given domain [DomainId]
+     * Return all the assets that are registered in the given domain [DomainId]
      */
     fun findAssetsByDomainId(domainId: DomainId) = QueryBox.FindAssetsByDomainId(
         FindAssetsByDomainId(domainId.evaluatesTo())
