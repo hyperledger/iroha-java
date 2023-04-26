@@ -201,7 +201,7 @@ object Queries {
     fun findDomainById(domainId: DomainId) = QueryBox.FindDomainById(FindDomainById(domainId.evaluatesTo()))
 
     /**
-     * Return all known peers identified by their key and accompanied by the address of the API endpoint of each
+     * Return all known peers identified by their key and accompanied by the address of their API endpoint
      */
     fun findAllPeers() = QueryBox.FindAllPeers(FindAllPeers())
 
