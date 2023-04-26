@@ -293,7 +293,7 @@ object Queries {
     fun findAllBlockHeaders() = QueryBox.FindAllBlockHeaders(FindAllBlockHeaders())
 
     /**
-     * Return block header corresponding to the given [Hash]
+     * Return the block header corresponding to the given [Hash]
      */
     fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(FindBlockHeaderByHash(hash.evaluatesTo()))
 
