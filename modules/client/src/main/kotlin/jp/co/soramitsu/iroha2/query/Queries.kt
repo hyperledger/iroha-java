@@ -220,7 +220,7 @@ object Queries {
     )
 
     /**
-     * Return all the permission token definitions
+     * Return all permission token definitions
      */
     fun findAllPermissionTokenDefinitions() = QueryBox.FindAllPermissionTokenDefinitions(
         FindAllPermissionTokenDefinitions()
