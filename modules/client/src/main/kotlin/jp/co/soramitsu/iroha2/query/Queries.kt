@@ -52,7 +52,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 
 /**
- * Queries are sent to an Iroha peer and prompt a response with details from the current world state view
+ * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.
  */
 object Queries {
 
