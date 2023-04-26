@@ -79,7 +79,7 @@ object Queries {
     fun findAccountsByName(name: Name) = QueryBox.FindAccountsByName(FindAccountsByName(name.evaluatesTo()))
 
     /**
-     * Return all accounts that belong to a specific domain [DomainId]
+     * Return all the accounts that belong to a specific domain [DomainId]
      */
     fun findAccountsByDomainId(domainId: DomainId) = QueryBox.FindAccountsByDomainId(
         FindAccountsByDomainId(domainId.evaluatesTo())
