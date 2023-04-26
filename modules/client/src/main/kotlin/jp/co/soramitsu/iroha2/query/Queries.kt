@@ -273,7 +273,7 @@ object Queries {
     fun findTriggerById(id: TriggerId) = QueryBox.FindTriggerById(FindTriggerById(id.evaluatesTo()))
 
     /**
-     * Return all triggers that are attached to the given [DomainId]
+     * Return all the triggers that are attached to the given [DomainId]
      */
     fun findTriggersByDomainId(id: DomainId) = QueryBox.FindTriggersByDomainId(FindTriggersByDomainId(id.evaluatesTo()))
 
