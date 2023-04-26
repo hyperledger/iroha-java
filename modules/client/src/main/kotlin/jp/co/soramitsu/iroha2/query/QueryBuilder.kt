@@ -6,10 +6,13 @@ import jp.co.soramitsu.iroha2.AssetDefinitionExtractor
 import jp.co.soramitsu.iroha2.AssetDefinitionsExtractor
 import jp.co.soramitsu.iroha2.AssetExtractor
 import jp.co.soramitsu.iroha2.AssetsExtractor
+import jp.co.soramitsu.iroha2.BlockHeaderValueExtractor
+import jp.co.soramitsu.iroha2.BlockHeadersValueExtractor
 import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
+import jp.co.soramitsu.iroha2.PermissionTokenDefinitionsExtractor
 import jp.co.soramitsu.iroha2.PermissionTokensExtractor
 import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
@@ -20,6 +23,7 @@ import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
 import jp.co.soramitsu.iroha2.TriggerExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
+import jp.co.soramitsu.iroha2.TriggersExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
 import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
@@ -105,24 +109,32 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: String) =
-            findAccountKeyValueByIdAndKey(accountId, key.asName())
+        fun findAccountKeyValueByIdAndKey(
+            accountId: AccountId,
+            key: String
+        ) = findAccountKeyValueByIdAndKey(accountId, key.asName())
 
         @JvmStatic
-        fun findAccountsByName(name: Name, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
-            QueryBuilder(
-                Queries.findAccountsByName(name),
-                AccountsExtractor,
-                queryFilter
-            )
+        fun findAccountsByName(
+            name: Name,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
+            Queries.findAccountsByName(name),
+            AccountsExtractor,
+            queryFilter
+        )
 
         @JvmStatic
-        fun findAccountsByDomainId(domainId: DomainId, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
-            QueryBuilder(
-                Queries.findAccountsByDomainId(domainId),
-                AccountsExtractor,
-                queryFilter
-            )
+        fun findAccountsByDomainId(
+            domainId: DomainId,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(Queries.findAccountsByDomainId(domainId), AccountsExtractor, queryFilter)
+
+        @JvmStatic
+        fun findAccountsWithAsset(
+            definitionId: AssetDefinitionId,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(Queries.findAccountsWithAsset(definitionId), AccountsExtractor, queryFilter)
 
         @JvmStatic
         fun findAllAssets(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
@@ -132,46 +144,49 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAllAssetsDefinitions(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
+        fun findAllAssetsDefinitions(
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
             Queries.findAllAssetsDefinitions(),
             AssetDefinitionsExtractor,
             queryFilter
         )
 
         @JvmStatic
-        fun findAssetsByName(name: Name, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
+        fun findAssetsByName(
+            name: Name,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
             Queries.findAssetsByName(name),
             AssetsExtractor,
             queryFilter
         )
 
         @JvmStatic
-        fun findAssetsByAccountId(accountId: AccountId, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
-            QueryBuilder(
-                Queries.findAssetsByAccountId(accountId),
-                AssetsExtractor,
-                queryFilter
-            )
-
-        @JvmStatic
-        fun findAccountById(accountId: AccountId) = QueryBuilder(
-            Queries.findAccountById(accountId),
-            AccountExtractor
+        fun findAssetsByAccountId(
+            accountId: AccountId,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
+            Queries.findAssetsByAccountId(accountId),
+            AssetsExtractor,
+            queryFilter
         )
 
         @JvmStatic
-        fun findAssetById(assetId: AssetId) = QueryBuilder(
-            Queries.findAssetById(assetId),
-            AssetExtractor
-        )
+        fun findAccountById(accountId: AccountId) = QueryBuilder(Queries.findAccountById(accountId), AccountExtractor)
 
         @JvmStatic
-        fun findAssetsByDomainId(domainId: DomainId, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
-            QueryBuilder(
-                Queries.findAssetsByDomainId(domainId),
-                AssetsExtractor,
-                queryFilter
-            )
+        fun findAssetById(assetId: AssetId) = QueryBuilder(Queries.findAssetById(assetId), AssetExtractor)
+
+        @JvmStatic
+        fun findAssetsByDomainId(
+            domainId: DomainId,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
+            Queries.findAssetsByDomainId(domainId),
+            AssetsExtractor,
+            queryFilter
+        )
 
         @JvmStatic
         fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId) = QueryBuilder(
@@ -183,12 +198,11 @@ class QueryBuilder<R>(
         fun findAllAssetsDefinitions(
             assetDefinition: AssetDefinitionId,
             queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
-        ) =
-            QueryBuilder(
-                Queries.findAssetsByAssetDefinitionId(assetDefinition),
-                AssetDefinitionsExtractor,
-                queryFilter
-            )
+        ) = QueryBuilder(
+            Queries.findAssetsByAssetDefinitionId(assetDefinition),
+            AssetDefinitionsExtractor,
+            queryFilter
+        )
 
         @JvmStatic
         fun findAssetsByDomainIdAndAssetDefinitionId(
@@ -208,14 +222,22 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        fun findTotalAssetQuantityByAssetDefinitionId(definitionId: AssetDefinitionId) = QueryBuilder(
+            Queries.findTotalAssetQuantityByAssetDefinitionId(definitionId),
+            U32Extractor
+        )
+
+        @JvmStatic
         fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBuilder(
             Queries.findAssetKeyValueByIdAndKey(assetId, key),
             ValueExtractor
         )
 
         @JvmStatic
-        fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: String) =
-            findAssetKeyValueByIdAndKey(assetId, key.asName())
+        fun findAssetKeyValueByIdAndKey(
+            assetId: AssetId,
+            key: String
+        ) = findAssetKeyValueByIdAndKey(assetId, key.asName())
 
         @JvmStatic
         fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: Name) = QueryBuilder(
@@ -224,12 +246,13 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: String) =
-            findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
+        fun findAssetDefinitionKeyValueByIdAndKey(
+            id: AssetDefinitionId,
+            key: String
+        ) = findAssetDefinitionKeyValueByIdAndKey(id, key.asName())
 
         @JvmStatic
-        fun findDomainKeyValueByIdAndKey(id: DomainId, key: String) =
-            findDomainKeyValueByIdAndKey(id, key.asName())
+        fun findDomainKeyValueByIdAndKey(id: DomainId, key: String) = findDomainKeyValueByIdAndKey(id, key.asName())
 
         @JvmStatic
         fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name) = QueryBuilder(
@@ -238,8 +261,9 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        fun findAllDomains(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
-            QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
+        fun findAllDomains(
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
 
         @JvmStatic
         fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
@@ -252,23 +276,30 @@ class QueryBuilder<R>(
         fun findTransactionsByAccountId(
             accountId: AccountId,
             queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
-        ) =
-            QueryBuilder(
-                Queries.findTransactionsByAccountId(accountId),
-                TransactionValuesExtractor,
-                queryFilter
-            )
+        ) = QueryBuilder(
+            Queries.findTransactionsByAccountId(accountId),
+            TransactionValuesExtractor,
+            queryFilter
+        )
 
         @JvmStatic
         fun findPermissionTokensByAccountId(
             accountId: AccountId,
             queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
-        ) =
-            QueryBuilder(
-                Queries.findPermissionTokensByAccountId(accountId),
-                PermissionTokensExtractor,
-                queryFilter
-            )
+        ) = QueryBuilder(
+            Queries.findPermissionTokensByAccountId(accountId),
+            PermissionTokensExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findAllPermissionTokenDefinitions(
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
+            Queries.findAllPermissionTokenDefinitions(),
+            PermissionTokenDefinitionsExtractor,
+            queryFilter
+        )
 
         @JvmStatic
         fun findRolesByAccountId(accountId: AccountId, queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) =
@@ -327,6 +358,19 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        fun findAllBlockHeaders(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
+            Queries.findAllBlockHeaders(),
+            BlockHeadersValueExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findBlockHeaderByHash(hash: Hash) = QueryBuilder(
+            Queries.findBlockHeaderByHash(hash),
+            BlockHeaderValueExtractor
+        )
+
+        @JvmStatic
         fun findAssetDefinitionById(definitionId: AssetDefinitionId) = QueryBuilder(
             Queries.findAssetDefinitionById(definitionId),
             AssetDefinitionExtractor
@@ -348,6 +392,23 @@ class QueryBuilder<R>(
         fun findAllActiveTriggerIds(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllActiveTriggerIds(),
             TriggerIdsExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findTriggersByDomainId(
+            domainId: DomainId,
+            queryFilter: GenericValuePredicateBox<ValuePredicate>? = null
+        ) = QueryBuilder(
+            Queries.findTriggersByDomainId(domainId),
+            TriggersExtractor,
+            queryFilter
+        )
+
+        @JvmStatic
+        fun findAllParameters(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder(
+            Queries.findAllParameters(),
+            ValueExtractor,
             queryFilter
         )
     }

@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByDomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAccountsWithAsset
 import jp.co.soramitsu.iroha2.generated.datamodel.query.account.FindAllAccounts
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssets
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAllAssetsDefinitions
@@ -25,11 +26,16 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByAssetD
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByDomainIdAndAssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindAssetsByName
+import jp.co.soramitsu.iroha2.generated.datamodel.query.asset.FindTotalAssetQuantityByAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.datamodel.query.block.FindAllBlockHeaders
 import jp.co.soramitsu.iroha2.generated.datamodel.query.block.FindAllBlocks
+import jp.co.soramitsu.iroha2.generated.datamodel.query.block.FindBlockHeaderByHash
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.domain.FindDomainKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllParameters
 import jp.co.soramitsu.iroha2.generated.datamodel.query.peer.FindAllPeers
+import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindAllPermissionTokenDefinitions
 import jp.co.soramitsu.iroha2.generated.datamodel.query.permissions.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoleIds
 import jp.co.soramitsu.iroha2.generated.datamodel.query.role.FindAllRoles
@@ -41,6 +47,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.query.transaction.FindTransact
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindAllActiveTriggerIds
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerById
 import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggerKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.datamodel.query.trigger.FindTriggersByDomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 
@@ -50,288 +57,253 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 object Queries {
 
     /**
-     * Find all accounts registered globally in the blockchain.
+     * Find all accounts registered globally in the blockchain
      */
-    fun findAllAccounts(): QueryBox.FindAllAccounts {
-        return QueryBox.FindAllAccounts(FindAllAccounts())
-    }
+    fun findAllAccounts() = QueryBox.FindAllAccounts(FindAllAccounts())
 
     /**
      * Return the full account information corresponding to the given [AccountId]
      */
-    fun findAccountById(accountId: AccountId): QueryBox.FindAccountById {
-        return QueryBox.FindAccountById(FindAccountById(accountId.evaluatesTo()))
-    }
+    fun findAccountById(accountId: AccountId) = QueryBox.FindAccountById(FindAccountById(accountId.evaluatesTo()))
 
     /**
-     * Return the value keyed by the provided [Name] for the given [AccountId].
+     * Return the value keyed by the provided [Name] for the given [AccountId]
      */
-    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name): QueryBox.FindAccountKeyValueByIdAndKey {
-        return QueryBox.FindAccountKeyValueByIdAndKey(
-            FindAccountKeyValueByIdAndKey(
-                accountId.evaluatesTo(),
-                key.evaluatesTo()
-            )
-        )
-    }
+    fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBox.FindAccountKeyValueByIdAndKey(
+        FindAccountKeyValueByIdAndKey(accountId.evaluatesTo(), key.evaluatesTo())
+    )
 
     /**
-     * Return all of the accounts that have the given [Name].
+     * Return all the accounts that have the given [Name]
      */
-    fun findAccountsByName(name: Name): QueryBox.FindAccountsByName {
-        return QueryBox.FindAccountsByName(FindAccountsByName(name.evaluatesTo()))
-    }
+    fun findAccountsByName(name: Name) = QueryBox.FindAccountsByName(FindAccountsByName(name.evaluatesTo()))
 
     /**
-     * Return all accounts that belong to a specific domain [DomainId].
+     * Return all the accounts that belong to a specific domain [DomainId]
      */
-    fun findAccountsByDomainId(domainId: DomainId): QueryBox.FindAccountsByDomainId {
-        return QueryBox.FindAccountsByDomainId(
-            FindAccountsByDomainId(domainId.evaluatesTo())
-        )
-    }
+    fun findAccountsByDomainId(domainId: DomainId) = QueryBox.FindAccountsByDomainId(
+        FindAccountsByDomainId(domainId.evaluatesTo())
+    )
 
     /**
-     * Return all known assets by value.
+     * Return all the accounts that belong to a specific asset definition [AssetDefinitionId]
      */
-    fun findAllAssets(): QueryBox.FindAllAssets {
-        return QueryBox.FindAllAssets(FindAllAssets())
-    }
+    fun findAccountsWithAsset(definitionId: AssetDefinitionId) = QueryBox.FindAccountsWithAsset(
+        FindAccountsWithAsset(definitionId.evaluatesTo())
+    )
 
     /**
-     * Return the aggregated data about the [AssetId] usage across the network.
+     * Return the values of all known assets
      */
-    fun findAssetById(assetId: AssetId): QueryBox.FindAssetById {
-        return QueryBox.FindAssetById(FindAssetById(assetId.evaluatesTo()))
-    }
+    fun findAllAssets() = QueryBox.FindAllAssets(FindAllAssets())
 
     /**
-     * Return all assets that are registered in the given domain [DomainId].
+     * Return the aggregated data about the [AssetId] usage across the network
      */
-    fun findAssetsByDomainId(domainId: DomainId): QueryBox.FindAssetsByDomainId {
-        return QueryBox.FindAssetsByDomainId(FindAssetsByDomainId(domainId.evaluatesTo()))
-    }
+    fun findAssetById(assetId: AssetId) = QueryBox.FindAssetById(FindAssetById(assetId.evaluatesTo()))
 
     /**
-     * Search the network for all assets that match the given [Name].
+     * Return all the assets that are registered in the given domain [DomainId]
      */
-    fun findAssetsByName(name: Name): QueryBox.FindAssetsByName {
-        return QueryBox.FindAssetsByName(FindAssetsByName(name.evaluatesTo()))
-    }
+    fun findAssetsByDomainId(domainId: DomainId) = QueryBox.FindAssetsByDomainId(
+        FindAssetsByDomainId(domainId.evaluatesTo())
+    )
 
     /**
-     * Return all of the assets that belong to a given [AccountId].
+     * Search the network for all assets that match the given [Name]
      */
-    fun findAssetsByAccountId(accountId: AccountId): QueryBox.FindAssetsByAccountId {
-        return QueryBox.FindAssetsByAccountId(FindAssetsByAccountId(accountId.evaluatesTo()))
-    }
+    fun findAssetsByName(name: Name) = QueryBox.FindAssetsByName(FindAssetsByName(name.evaluatesTo()))
 
     /**
-     * Search for all of the assets that have the given [DefinitionID].
+     * Return all the assets that belong to a given [AccountId]
      */
-    fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId): QueryBox.FindAssetsByAssetDefinitionId {
-        return QueryBox.FindAssetsByAssetDefinitionId(
-            FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
-        )
-    }
+    fun findAssetsByAccountId(accountId: AccountId) = QueryBox.FindAssetsByAccountId(
+        FindAssetsByAccountId(accountId.evaluatesTo())
+    )
 
     /**
-     * Search the domain with the [DomainId] for assets that have the given [DefinitionId].
+     * Search for all the assets that have the given [AssetDefinitionId]
+     */
+    fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId) = QueryBox.FindAssetsByAssetDefinitionId(
+        FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
+    )
+
+    /**
+     * Search the domain with the [DomainId] for assets that have the given [AssetDefinitionId]
      */
     fun findAssetsByDomainIdAndAssetDefinitionId(
         domainId: DomainId,
         assetDefinition: AssetDefinitionId
-    ): QueryBox.FindAssetsByDomainIdAndAssetDefinitionId {
-        return QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
-            FindAssetsByDomainIdAndAssetDefinitionId(
-                domainId.evaluatesTo(),
-                assetDefinition.evaluatesTo()
-            )
+    ) = QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
+        FindAssetsByDomainIdAndAssetDefinitionId(
+            domainId.evaluatesTo(),
+            assetDefinition.evaluatesTo()
         )
-    }
+    )
 
     /**
-     * Return all known asset definitions by value.
+     * Return the values of all known asset definitions
      */
-    fun findAllAssetsDefinitions(): QueryBox.FindAllAssetsDefinitions {
-        return QueryBox.FindAllAssetsDefinitions(
-            FindAllAssetsDefinitions()
-        )
-    }
+    fun findAllAssetsDefinitions() = QueryBox.FindAllAssetsDefinitions(FindAllAssetsDefinitions())
 
     /**
-     * Return the asset quantity for the given asset with [AssetId].
+     * Return the asset quantity for the given asset with [AssetId]
      */
-    fun findAssetQuantityById(assetId: AssetId): QueryBox.FindAssetQuantityById {
-        return QueryBox.FindAssetQuantityById(
-            FindAssetQuantityById(assetId.evaluatesTo())
-        )
-    }
+    fun findAssetQuantityById(assetId: AssetId) = QueryBox.FindAssetQuantityById(
+        FindAssetQuantityById(assetId.evaluatesTo())
+    )
 
     /**
-     * Return the value keyed by the given [Name] in the metadata of the asset corresponding to the given [AssetId].
+     * Return the asset quantity for the given asset with [AssetDefinitionId]
      */
-    fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name): QueryBox.FindAssetKeyValueByIdAndKey {
-        return QueryBox.FindAssetKeyValueByIdAndKey(
-            FindAssetKeyValueByIdAndKey(
-                assetId.evaluatesTo(),
-                key.evaluatesTo()
-            )
-        )
-    }
+    fun findTotalAssetQuantityByAssetDefinitionId(
+        definitionId: AssetDefinitionId
+    ) = QueryBox.FindTotalAssetQuantityByAssetDefinitionId(
+        FindTotalAssetQuantityByAssetDefinitionId(definitionId.evaluatesTo())
+    )
 
     /**
-     * Return the value keyed by the given [Name] in the metadata of the asset definition corresponding to the given [DefinitionId].
+     * Return the value keyed by the given [Name] in the metadata of the asset corresponding to the given [AssetId]
+     */
+    fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBox.FindAssetKeyValueByIdAndKey(
+        FindAssetKeyValueByIdAndKey(assetId.evaluatesTo(), key.evaluatesTo())
+    )
+
+    /**
+     * Return the value keyed by the given [Name]
+     * in the metadata of the asset definition corresponding to the given [AssetDefinitionId]
      */
     fun findAssetDefinitionKeyValueByIdAndKey(
         assetDefinition: AssetDefinitionId,
         key: Name
-    ): QueryBox.FindAssetDefinitionKeyValueByIdAndKey {
-        return QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
-            FindAssetDefinitionKeyValueByIdAndKey(
-                assetDefinition.evaluatesTo(),
-                key.evaluatesTo()
-            )
+    ) = QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
+        FindAssetDefinitionKeyValueByIdAndKey(
+            assetDefinition.evaluatesTo(),
+            key.evaluatesTo()
         )
-    }
+    )
 
     /**
-     * Return all of the known registered domains.
+     * Return the asset definition corresponding to the given [AssetDefinitionId]
      */
-    fun findAllDomains(): QueryBox.FindAllDomains {
-        return QueryBox.FindAllDomains(FindAllDomains())
-    }
+    fun findAssetDefinitionById(definitionId: AssetDefinitionId) = QueryBox.FindAssetDefinitionById(
+        FindAssetDefinitionById(definitionId.evaluatesTo())
+    )
 
     /**
-     * Return the domain corresponding to the given [DomainId].
+     * Return all known registered domains
      */
-    fun findDomainById(domainId: DomainId): QueryBox.FindDomainById {
-        return QueryBox.FindDomainById(FindDomainById(domainId.evaluatesTo()))
-    }
+    fun findAllDomains() = QueryBox.FindAllDomains(FindAllDomains())
 
     /**
-     * Return all known peers identified by their key and accompanied by the address of the API endpoint of each.
+     * Return the domain corresponding to the given [DomainId]
      */
-    fun findAllPeers(): QueryBox.FindAllPeers {
-        return QueryBox.FindAllPeers(FindAllPeers())
-    }
+    fun findDomainById(domainId: DomainId) = QueryBox.FindDomainById(FindDomainById(domainId.evaluatesTo()))
 
     /**
-     * Return the full set of transactions that an account with [AccountId] has submitted throughout the existence of the blockchain.
+     * Return all known peers identified by their key and accompanied by the address of their API endpoint
      */
-    fun findTransactionsByAccountId(accountId: AccountId): QueryBox.FindTransactionsByAccountId {
-        return QueryBox.FindTransactionsByAccountId(
-            FindTransactionsByAccountId(accountId.evaluatesTo())
-        )
-    }
+    fun findAllPeers() = QueryBox.FindAllPeers(FindAllPeers())
 
     /**
-     * Return all of the permission tokens granted to the specified [AccountId].
+     * Return the full set of transactions that an account with [AccountId] has submitted throughout the existence of the blockchain
      */
-    fun findPermissionTokensByAccountId(accountId: AccountId): QueryBox.FindPermissionTokensByAccountId {
-        return QueryBox.FindPermissionTokensByAccountId(
-            FindPermissionTokensByAccountId(accountId.evaluatesTo())
-        )
-    }
+    fun findTransactionsByAccountId(accountId: AccountId) = QueryBox.FindTransactionsByAccountId(
+        FindTransactionsByAccountId(accountId.evaluatesTo())
+    )
 
     /**
-     * Return the transaction by [Hash].
+     * Return all the permission tokens granted to the specified [AccountId]
      */
-    fun findTransactionByHash(hash: Hash): QueryBox.FindTransactionByHash {
-        return QueryBox.FindTransactionByHash(
-            FindTransactionByHash(hash.evaluatesTo())
-        )
-    }
+    fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBox.FindPermissionTokensByAccountId(
+        FindPermissionTokensByAccountId(accountId.evaluatesTo())
+    )
 
     /**
-     * Return all the role IDs that are attached to the given [AccountId].
+     * Return all permission token definitions
      */
-    fun findRolesByAccountId(accountId: AccountId): QueryBox.FindRolesByAccountId {
-        return QueryBox.FindRolesByAccountId(
-            FindRolesByAccountId(accountId.evaluatesTo())
-        )
-    }
+    fun findAllPermissionTokenDefinitions() = QueryBox.FindAllPermissionTokenDefinitions(
+        FindAllPermissionTokenDefinitions()
+    )
 
     /**
-     * Return all roles.
+     * Return the transaction by [Hash]
      */
-    fun findAllRoles(): QueryBox.FindAllRoles {
-        return QueryBox.FindAllRoles(FindAllRoles())
-    }
+    fun findTransactionByHash(hash: Hash) = QueryBox.FindTransactionByHash(FindTransactionByHash(hash.evaluatesTo()))
 
     /**
-     * Return role by [RoleId].
+     * Return all the role IDs that are attached to the given [AccountId]
      */
-    fun findRoleByRoleId(roleId: RoleId): QueryBox.FindRoleByRoleId {
-        return QueryBox.FindRoleByRoleId(
-            FindRoleByRoleId(roleId.evaluatesTo())
-        )
-    }
+    fun findRolesByAccountId(accountId: AccountId) = QueryBox.FindRolesByAccountId(
+        FindRolesByAccountId(accountId.evaluatesTo())
+    )
 
     /**
-     * Return all the role IDs.
+     * Return all roles
      */
-    fun findAllRoleIds(): QueryBox.FindAllRoleIds {
-        return QueryBox.FindAllRoleIds(FindAllRoleIds())
-    }
+    fun findAllRoles() = QueryBox.FindAllRoles(FindAllRoles())
 
     /**
-     * Return the value keyed by the given [Name] in the domain corresponding to the given [DomainId].
+     * Return the role by [RoleId]
      */
-    fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name): QueryBox.FindDomainKeyValueByIdAndKey {
-        return QueryBox.FindDomainKeyValueByIdAndKey(
-            FindDomainKeyValueByIdAndKey(
-                id.evaluatesTo(),
-                key.evaluatesTo()
-            )
-        )
-    }
+    fun findRoleByRoleId(roleId: RoleId) = QueryBox.FindRoleByRoleId(FindRoleByRoleId(roleId.evaluatesTo()))
 
     /**
-     * Find the value corresponding to the given key [Name] in the metadata of the trigger with the given [TriggerId].
+     * Return all role IDs
      */
-    fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name): QueryBox.FindTriggerKeyValueByIdAndKey {
-        return QueryBox.FindTriggerKeyValueByIdAndKey(
-            FindTriggerKeyValueByIdAndKey(
-                id.evaluatesTo(),
-                key.evaluatesTo()
-            )
-        )
-    }
+    fun findAllRoleIds() = QueryBox.FindAllRoleIds(FindAllRoleIds())
 
     /**
-     * Find the trigger with the given [TriggerId].
+     * Return the value keyed by the given [Name] in the domain corresponding to the given [DomainId]
      */
-    fun findTriggerById(id: TriggerId): QueryBox.FindTriggerById {
-        return QueryBox.FindTriggerById(
-            FindTriggerById(id.evaluatesTo())
-        )
-    }
+    fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name) = QueryBox.FindDomainKeyValueByIdAndKey(
+        FindDomainKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo())
+    )
 
     /**
-     * Find all currently active triggers, that is, triggers that have not expired at the time of the query.
+     * Return the value corresponding to the given key [Name] in the metadata of the trigger with the given [TriggerId]
      */
-    fun findAllActiveTriggerIds(): QueryBox.FindAllActiveTriggerIds {
-        return QueryBox.FindAllActiveTriggerIds(
-            FindAllActiveTriggerIds()
-        )
-    }
+    fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name) = QueryBox.FindTriggerKeyValueByIdAndKey(
+        FindTriggerKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo())
+    )
 
-    fun findAssetDefinitionById(definitionId: AssetDefinitionId): QueryBox.FindAssetDefinitionById {
-        return QueryBox.FindAssetDefinitionById(
-            FindAssetDefinitionById(definitionId.evaluatesTo())
-        )
-    }
+    /**
+     * Return the trigger with the given [TriggerId]
+     */
+    fun findTriggerById(id: TriggerId) = QueryBox.FindTriggerById(FindTriggerById(id.evaluatesTo()))
 
-    fun findAllBlocks(): QueryBox.FindAllBlocks {
-        return QueryBox.FindAllBlocks(
-            FindAllBlocks()
-        )
-    }
+    /**
+     * Return all the triggers that are attached to the given [DomainId]
+     */
+    fun findTriggersByDomainId(id: DomainId) = QueryBox.FindTriggersByDomainId(FindTriggersByDomainId(id.evaluatesTo()))
 
-    fun findAllTransactions(): QueryBox.FindAllTransactions {
-        return QueryBox.FindAllTransactions(
-            FindAllTransactions()
-        )
-    }
+    /**
+     * Return all currently active triggers, that is, triggers that have not expired at the time of the query
+     */
+    fun findAllActiveTriggerIds() = QueryBox.FindAllActiveTriggerIds(FindAllActiveTriggerIds())
+
+    /**
+     * Return all blocks
+     */
+    fun findAllBlocks() = QueryBox.FindAllBlocks(FindAllBlocks())
+
+    /**
+     * Return all block headers
+     */
+    fun findAllBlockHeaders() = QueryBox.FindAllBlockHeaders(FindAllBlockHeaders())
+
+    /**
+     * Return the block header corresponding to the given [Hash]
+     */
+    fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(FindBlockHeaderByHash(hash.evaluatesTo()))
+
+    /**
+     * Return all transactions
+     */
+    fun findAllTransactions() = QueryBox.FindAllTransactions(FindAllTransactions())
+
+    /**
+     * Return all parameters
+     */
+    fun findAllParameters() = QueryBox.FindAllParameters(FindAllParameters())
 }

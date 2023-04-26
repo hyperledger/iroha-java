@@ -34,6 +34,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
@@ -50,6 +51,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -334,6 +336,18 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     }
 
     @Test
+    @WithIroha(
+        [DefaultGenesis::class],
+        configs = ["WSV_ACCOUNT_METADATA_LIMITS$IROHA_CONFIG_DELIMITER{\"max_entry_byte_size\": 65536, \"max_len\": 1048576}"]
+    )
+    fun `account metadata limit increased`(): Unit = runBlocking {
+        client.tx {
+            // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
+            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), RandomStringUtils.random(5000).asValue())
+        }
+    }
+
+    @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Permissions")
     @Story("Account grants a permission")
@@ -399,7 +413,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     }
     // #endregion java_mint_asset
 
-
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     @Feature("Assets")
@@ -420,9 +433,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
     }
 
+    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
+    @Disabled
     @Feature("Assets")
     @Story("Account burn an asset")
     @SdkTestId("burn_other_user_asset")
@@ -820,13 +834,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         }
 
         QueryBuilder.findAssetById(assetId)
-            .account(BOB_ACCOUNT_ID)
-            .buildSigned(BOB_KEYPAIR)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { asset ->
                 assertTrue(
-                    asset.value
-                        .cast<AssetValue.Store>()
+                    asset.value.cast<AssetValue.Store>()
                         .metadata.map
                         .containsValue("value".asValue())
                 )

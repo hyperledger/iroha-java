@@ -39,7 +39,8 @@ class IrohaConfig(
     var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,
-    var submitGenesis: Boolean = true
+    var submitGenesis: Boolean = true,
+    var envs: Map<String, String> = emptyMap()
 ) {
     companion object {
         const val P2P_PORT_IDX = 0
