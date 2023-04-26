@@ -249,7 +249,7 @@ object Queries {
     fun findRoleByRoleId(roleId: RoleId) = QueryBox.FindRoleByRoleId(FindRoleByRoleId(roleId.evaluatesTo()))
 
     /**
-     * Return all the role IDs
+     * Return all role IDs
      */
     fun findAllRoleIds() = QueryBox.FindAllRoleIds(FindAllRoleIds())
 
