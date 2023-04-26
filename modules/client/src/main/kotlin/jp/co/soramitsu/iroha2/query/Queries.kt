@@ -154,7 +154,7 @@ object Queries {
     )
 
     /**
-     * Return the asset quantity for the given asset with [AssetId]
+     * Return the asset quantity for the given asset with [AssetDefinitionId]
      */
     fun findTotalAssetQuantityByAssetDefinitionId(
         definitionId: AssetDefinitionId
