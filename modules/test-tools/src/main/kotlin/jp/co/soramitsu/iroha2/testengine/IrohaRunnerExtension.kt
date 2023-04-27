@@ -136,16 +136,15 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
+
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
-
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
         }
-
         val deferredSet = mutableSetOf<Deferred<*>>()
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
@@ -153,7 +152,14 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
                     networkToJoin = network
-                    genesis = withIroha.sources.map { it.createInstance() }.toSingle()
+                    genesisPath = when {
+                        withIroha.source.isEmpty() -> null
+                        else -> withIroha.source
+                    }
+                    genesis = when {
+                        withIroha.source.isEmpty() -> withIroha.sources.map { it.createInstance() }.toSingle()
+                        else -> null
+                    }
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds
@@ -163,8 +169,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                             it.first() to it.last()
                         }
                     }
-                    // only first peer should have --submit-genesis in peer start command
-                    submitGenesis = n == 0
+                    submitGenesis = n == 0 // only first peer should have --submit-genesis in peer start command
                 }
                 container.start()
                 containers.add(container)

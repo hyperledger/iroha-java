@@ -14,9 +14,11 @@ import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
+import kotlin.io.path.Path
 import kotlin.io.path.absolute
 
 /**
@@ -68,7 +70,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 forHostPath(configDirLocation.value),
                 "/$DEFAULT_CONFIG_DIR"
             ).also {
-                config.genesis.writeToFile(genesisFileLocation.value)
+                config.genesis?.writeToFile(genesisFileLocation.value)
+                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation.value) }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
                     configFileLocation.value.toFile().writeBytes(content)
                 }
@@ -102,11 +105,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val telemetryPort: Int
 
     private val genesisFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
+        Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
     }
 
     private val configFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
+        Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
     }
 
     private val configDirLocation: Lazy<Path> = lazy {
@@ -116,7 +119,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     override fun start() {
         logger().debug("Starting Iroha container")
         if (logger().isDebugEnabled) {
-            val genesisAsJson = config.genesis.asJson()
+            val genesisAsJson = config.genesis?.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
         }
         super.start()
