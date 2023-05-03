@@ -3,7 +3,6 @@ package jp.co.soramitsu.iroha2.testengine
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
-import java.io.File
 import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
@@ -13,6 +12,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
+import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
