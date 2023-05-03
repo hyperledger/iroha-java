@@ -49,7 +49,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
@@ -442,10 +441,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
     }
 
-    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/304
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Disabled
     @Feature("Assets")
     @Story("Account burn an asset")
     @Permission("can_burn_assets_with_definition")
