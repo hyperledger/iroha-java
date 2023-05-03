@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.testengine
 import com.github.dockerjava.api.model.ExposedPort
 import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
+import java.io.File
 import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
@@ -72,6 +73,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             ).also {
                 config.genesis?.writeToFile(genesisFileLocation.value)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation.value) }
+
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
                     configFileLocation.value.toFile().writeBytes(content)
                 }
@@ -119,8 +121,13 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     override fun start() {
         logger().debug("Starting Iroha container")
         if (logger().isDebugEnabled) {
-            val genesisAsJson = config.genesis?.asJson()
-            logger().debug("Serialized genesis block: {}", genesisAsJson)
+            config.genesis?.asJson()?.also { json ->
+                logger().debug("Serialized genesis block: {}", json)
+            }
+            config.genesisPath?.also { path ->
+                val content = File(path).readText()
+                logger().debug("Serialized genesis block: {}", content)
+            }
         }
         super.start()
         logger().debug("Iroha container started")

@@ -169,7 +169,8 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                             it.first() to it.last()
                         }
                     }
-                    submitGenesis = n == 0 // only first peer should have --submit-genesis in peer start command
+                    // only first peer should have --submit-genesis in peer start command
+                    submitGenesis = n == 0
                 }
                 container.start()
                 containers.add(container)
