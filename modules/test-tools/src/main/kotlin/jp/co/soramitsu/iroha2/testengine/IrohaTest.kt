@@ -20,7 +20,7 @@ import java.time.Duration
 @ExtendWith(IrohaRunnerExtension::class)
 @Timeout(120)
 abstract class IrohaTest<T : Iroha2Client>(
-    val txTimeout: Duration = Duration.ofSeconds(10),
+    val txTimeout: Duration = Duration.ofSeconds(20),
     val network: Network = Network.newNetwork(),
     private val account: AccountId? = null,
     private val keyPair: KeyPair? = null

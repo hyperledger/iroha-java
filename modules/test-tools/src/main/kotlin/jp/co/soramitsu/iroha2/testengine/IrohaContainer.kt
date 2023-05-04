@@ -137,7 +137,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Stopping Iroha container")
         super.stop()
         if (config.shouldCloseNetwork) {
-            network.close()
+            network!!.close()
         }
         try {
             configDirLocation.value.toFile().deleteRecursively()

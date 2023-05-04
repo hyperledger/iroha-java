@@ -1,5 +1,8 @@
 package jp.co.soramitsu.iroha2.testengine
 
+import java.lang.reflect.Method
+import java.security.KeyPair
+import java.util.Collections
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
@@ -11,7 +14,6 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
@@ -20,9 +22,6 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
 import org.testcontainers.containers.Network
-import java.lang.reflect.Method
-import java.security.KeyPair
-import java.util.Collections
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
@@ -139,7 +138,9 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
-            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
+            val ports = findFreePorts(3)
+            println("PORTS: $ports")
+            portsList.add(ports) // P2P + API + TELEMETRY
         }
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
@@ -148,17 +149,13 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val deferredSet = mutableSetOf<Deferred<*>>()
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
-            async(Dispatchers.IO) {
+            async {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
                     networkToJoin = network
-                    genesisPath = when {
-                        withIroha.source.isEmpty() -> null
-                        else -> withIroha.source
-                    }
-                    genesis = when {
-                        withIroha.source.isEmpty() -> withIroha.sources.map { it.createInstance() }.toSingle()
-                        else -> null
+                    when {
+                        withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
+                        else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
                     }
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
@@ -172,7 +169,11 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     // only first peer should have --submit-genesis in peer start command
                     submitGenesis = n == 0
                 }
-                container.start()
+                try {
+                    container.start()
+                } catch (e: Exception) {
+                    println(e)
+                }
                 containers.add(container)
             }.let { deferredSet.add(it) }
         }

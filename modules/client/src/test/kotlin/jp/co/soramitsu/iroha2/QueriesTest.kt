@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import java.time.Instant
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
@@ -46,8 +47,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
-import java.time.Instant
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

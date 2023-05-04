@@ -3,6 +3,11 @@ package jp.co.soramitsu.iroha2
 import io.qameta.allure.Feature
 import io.qameta.allure.Owner
 import io.qameta.allure.Story
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
+import java.security.SecureRandom
+import java.util.UUID
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
@@ -45,18 +50,17 @@ import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
-import java.math.BigDecimal
-import java.math.MathContext
-import java.math.RoundingMode
-import java.security.SecureRandom
-import java.util.UUID
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
+import kotlin.random.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -901,6 +905,27 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
                     RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asValue()
                 )
             }
+    }
+
+    @Test
+    fun `findFreePorts returns unique free ports`(): Unit = runBlocking {
+        val dList = mutableListOf<Deferred<List<Int>>>()
+        repeat(10) { n ->
+            async {
+                val all = mutableListOf<Int>()
+                repeat(500) {
+                    delay(Random.nextLong(10, 20))
+                    val ports = findFreePorts(3, false).also { println("$n found $it") }
+                    all.addAll(ports)
+                }
+                all
+            }.let { dList.add(it) }
+        }
+
+        val all = mutableListOf<Int>()
+        dList.forEach { all.addAll(it.await()) }
+
+        assertEquals(all.size, all.toSet().size)
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
