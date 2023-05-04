@@ -138,9 +138,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
-            val ports = findFreePorts(3)
-            println("PORTS: $ports")
-            portsList.add(ports) // P2P + API + TELEMETRY
+            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
@@ -169,11 +167,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     // only first peer should have --submit-genesis in peer start command
                     submitGenesis = n == 0
                 }
-                try {
-                    container.start()
-                } catch (e: Exception) {
-                    println(e)
-                }
+                container.start()
                 containers.add(container)
             }.let { deferredSet.add(it) }
         }
