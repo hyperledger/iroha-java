@@ -57,7 +57,7 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.net.Socket
 import java.security.SecureRandom
-import java.util.*
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
