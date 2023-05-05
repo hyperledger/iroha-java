@@ -24,6 +24,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
@@ -60,6 +61,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
@@ -203,35 +206,32 @@ open class Iroha2Client(
 
     /**
      * Subscribe to block streaming
+     * @param from - block number to start from
+     * @param count - how many blocks to get before closing web socket
      */
-    fun subscribeToBlockStream(startFromBlock: Long, blocksCount: Int): CompletableDeferred<List<VersionedBlockMessage>> {
-        val result: CompletableDeferred<List<VersionedBlockMessage>> = CompletableDeferred()
-        val blocks = mutableListOf<VersionedBlockMessage>()
-        var count = 0
-        launch {
-            client.webSocket(
-                host = peerUrl.host,
-                port = peerUrl.port,
-                path = WS_ENDPOINT_BLOCK_STREAM
-            ) {
-                logger.debug("WebSocket opened")
-                val request = VersionedBlockSubscriptionRequest.V1(
-                    BlockSubscriptionRequest(BigInteger.valueOf(startFromBlock))
-                )
-                val payload = VersionedBlockSubscriptionRequest.encode(request)
-                send(payload.toFrame())
-                for (frame in incoming) {
-                    logger.debug("Received frame: $frame")
-                    val block = VersionedBlockMessage.decode(frame.readBytes())
-                    blocks.add(block)
-                    count++
-                    if (count == blocksCount) {
-                        result.complete(blocks)
-                    }
+    fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
+        var counter = 0
+        client.webSocket(
+            host = peerUrl.host,
+            port = peerUrl.port,
+            path = WS_ENDPOINT_BLOCK_STREAM
+        ) {
+            logger.debug("WebSocket opened")
+            val request = VersionedBlockSubscriptionRequest.V1(
+                BlockSubscriptionRequest(BigInteger.valueOf(from))
+            )
+            val payload = VersionedBlockSubscriptionRequest.encode(request)
+            send(payload.toFrame())
+            for (frame in incoming) {
+                logger.debug("Received frame: {}", frame)
+                val block = VersionedBlockMessage.decode(frame.readBytes())
+                emit(block)
+                counter++
+                if (counter == count) {
+                    close()
                 }
             }
         }
-        return result
     }
 
     /**
