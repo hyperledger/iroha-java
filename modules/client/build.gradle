@@ -5,6 +5,9 @@ plugins {
 dependencies {
     api project(":model")
 
+    // https://mvnrepository.com/artifact/com.github.docker-java/docker-java
+    implementation("com.github.docker-java:docker-java:3.3.0")
+
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"

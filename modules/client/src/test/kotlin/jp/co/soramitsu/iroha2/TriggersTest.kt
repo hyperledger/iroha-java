@@ -63,8 +63,8 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
 
         val filter = Filters.data(
             EntityFilters.byAssetDefinition(
-                eventFilter = AssetDefinitionEventFilter.ByCreated()
-            )
+                eventFilter = AssetDefinitionEventFilter.ByCreated(),
+            ),
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -74,7 +74,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Repeats.Indefinitely(),
                 ALICE_ACCOUNT_ID,
                 Metadata(mapOf()),
-                filter
+                filter,
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
@@ -114,7 +114,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 10)),
                 Repeats.Indefinitely(),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
@@ -159,7 +159,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1)),
                 Repeats.Exactly(1L),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
             )
             executeTrigger(triggerId)
             buildSigned(ALICE_KEYPAIR)
@@ -178,7 +178,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         sendAndAwaitTimeTrigger(
             triggerId,
             Repeats.Indefinitely(),
-            Instructions.burnAsset(DEFAULT_ASSET_ID, 1)
+            Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
         )
         sendAndWait10Txs()
 
@@ -194,7 +194,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         sendAndAwaitTimeTrigger(
             triggerId,
             Repeats.Exactly(5L),
-            Instructions.burnAsset(DEFAULT_ASSET_ID, 1)
+            Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
         )
         sendAndWait10Txs()
 
@@ -211,8 +211,8 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val filter = Filters.time(
             EventFilters.timeEventFilter(
                 Duration(BigInteger.valueOf(currentTime), 0),
-                Duration(BigInteger.valueOf(1L), 0)
-            )
+                Duration(BigInteger.valueOf(1L), 0),
+            ),
         )
         val wasm = this.javaClass.classLoader
             .getResource("create_nft_for_every_user_smartcontract.wasm")
@@ -226,7 +226,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Repeats.Indefinitely(),
                 ALICE_ACCOUNT_ID,
                 Metadata(mapOf()),
-                filter
+                filter,
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
@@ -255,9 +255,9 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                     assets.any {
                         it.id.definitionId == AssetDefinitionId(
                             "nft_number_1_for_alice".asName(),
-                            DEFAULT_DOMAIN_ID
+                            DEFAULT_DOMAIN_ID,
                         )
-                    }
+                    },
                 )
             }
     }
@@ -274,7 +274,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 triggerId,
                 listOf(Instructions.mintAsset(DEFAULT_ASSET_ID, 1)),
                 Repeats.Exactly(1L),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
@@ -315,7 +315,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     private suspend fun readQuantity(
         assetId: AssetId = DEFAULT_ASSET_ID,
         accountId: AccountId = ALICE_ACCOUNT_ID,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ): Long {
         return QueryBuilder.findAssetById(assetId)
             .account(accountId)
@@ -328,7 +328,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         triggerId: TriggerId,
         repeats: Repeats,
         instruction: Instruction,
-        accountId: AccountId = ALICE_ACCOUNT_ID
+        accountId: AccountId = ALICE_ACCOUNT_ID,
     ) {
         client.sendTransaction {
             this.accountId = accountId
@@ -339,8 +339,8 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 accountId,
                 EventFilters.timeEventFilter(
                     Duration(BigInteger.valueOf(Instant.now().epochSecond), 0L),
-                    Duration(BigInteger.valueOf(1L), 0L)
-                )
+                    Duration(BigInteger.valueOf(1L), 0L),
+                ),
             )
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
