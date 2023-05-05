@@ -7,8 +7,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 
+const val DEFAULT_DOMAIN = "wonderland"
+const val BOB_ACCOUNT = "bob"
+const val GENESIS = "genesis"
+
 @JvmField
-val DEFAULT_DOMAIN_ID = "wonderland".asDomainId()
+val DEFAULT_DOMAIN_ID = DEFAULT_DOMAIN.asDomainId()
 
 @JvmField
 val ALICE_ACCOUNT_NAME = "alice".asName()
@@ -20,7 +24,7 @@ val ALICE_ACCOUNT_ID = AccountId(ALICE_ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
 val ALICE_KEYPAIR = generateKeyPair()
 
 @JvmField
-val BOB_ACCOUNT_NAME = "bob".asName()
+val BOB_ACCOUNT_NAME = BOB_ACCOUNT.asName()
 
 @JvmField
 val BOB_ACCOUNT_ID = AccountId(BOB_ACCOUNT_NAME, DEFAULT_DOMAIN_ID)

@@ -316,6 +316,18 @@ fun Instruction.Register.extractAccount() = this
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewAccount>().newAccount
 
+fun Instruction.Register.extractDomain() = this
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewDomain>().newDomain
+
+fun Instruction.Register.extractAssetDefinition() = this
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewAssetDefinition>().newAssetDefinition
+
 fun Instruction.SetKeyValue.extractKey() = this
     .setKeyValueBox.key.expression
     .cast<Expression.Raw>().value

@@ -24,12 +24,16 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
+import jp.co.soramitsu.iroha2.generated.core.block.stream.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.core.block.stream.VersionedBlockMessage
+import jp.co.soramitsu.iroha2.generated.core.block.stream.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventMessage
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriptionRequest
@@ -57,10 +61,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
@@ -84,6 +91,7 @@ open class Iroha2Client(
         const val TRANSACTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
+        const val WS_ENDPOINT_BLOCK_STREAM = "/block/stream"
         const val HEALTH_ENDPOINT = "/health"
         const val STATUS_ENDPOINT = "/status"
         const val SCHEMA_ENDPOINT = "/schema"
@@ -193,6 +201,36 @@ open class Iroha2Client(
         }.also {
             lock.lock() // 1. waiting for unlock
             fireAndForget { signedTransaction }
+        }
+    }
+
+    /**
+     * Subscribe to block streaming
+     * @param from - block number to start from
+     * @param count - how many blocks to get before closing web socket
+     */
+    fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
+        var counter = 0
+        client.webSocket(
+            host = peerUrl.host,
+            port = peerUrl.port,
+            path = WS_ENDPOINT_BLOCK_STREAM
+        ) {
+            logger.debug("WebSocket opened")
+            val request = VersionedBlockSubscriptionRequest.V1(
+                BlockSubscriptionRequest(BigInteger.valueOf(from))
+            )
+            val payload = VersionedBlockSubscriptionRequest.encode(request)
+            send(payload.toFrame())
+            for (frame in incoming) {
+                logger.debug("Received frame: {}", frame)
+                val block = VersionedBlockMessage.decode(frame.readBytes())
+                emit(block)
+                counter++
+                if (counter == count) {
+                    close()
+                }
+            }
         }
     }
 
