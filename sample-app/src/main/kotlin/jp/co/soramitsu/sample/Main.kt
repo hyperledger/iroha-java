@@ -23,8 +23,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     val helper = Helper(peerUrl, telemetryUrl, admin, adminKeyPair)
 
     val domain = "domain_${System.currentTimeMillis()}"
-    helper.registerDomain(domain)
-        .also { println("DOMAIN $domain CREATED") }
+    helper.registerDomain(domain).also { println("DOMAIN $domain CREATED") }
 
     val assetDefinition = "asset_${System.currentTimeMillis()}$ASSET_ID_DELIMITER$domain"
     helper.registerAssetDefinition(assetDefinition, AssetValueType.Quantity())
