@@ -1,0 +1,83 @@
+{
+  "transactions": [
+    {
+      "isi": [
+        {
+          "Register": {
+            "NewDomain": {
+              "id": "wonderland",
+              "logo": null,
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAccount": {
+              "id": "alice@wonderland",
+              "signatories": [
+                "ed0120cc25624d62896d3a0bfd8940f928dc2abf27cc57cefeb442aa96d9081aae58a1"
+              ],
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "NewAccount": {
+              "id": "bob@wonderland",
+              "signatories": [
+                "ed01207233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0"
+              ],
+              "metadata": {}
+            }
+          }
+        },
+        {
+          "Register": {
+            "PermissionTokenDefinition": {
+              "id": "can_set_key_value_in_user_metadata",
+              "params": {
+                "account_id": "Id"
+              }
+            }
+          }
+        },
+        {
+          "Grant": {
+            "PermissionToken": {
+              "definition_id": "can_set_key_value_in_user_metadata",
+              "params": {
+                "account_id": {
+                  "AccountId": "alice@wonderland"
+                }
+              }
+            },
+            "destination_id": {
+              "AccountId": "bob@wonderland"
+            }
+          }
+        },
+        {
+          "Register": {
+            "PermissionTokenDefinition": {
+              "id": "can_register_domains",
+              "params": {}
+            }
+          }
+        },
+        {
+          "Grant": {
+            "PermissionToken": {
+              "definition_id": "can_register_domains",
+              "params": {}
+            },
+            "destination_id": {
+              "AccountId": "bob@wonderland"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

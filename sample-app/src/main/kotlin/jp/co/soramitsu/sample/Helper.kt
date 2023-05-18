@@ -16,11 +16,12 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.PredicateBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import kotlinx.coroutines.withTimeout
 import java.net.URL
 import java.security.KeyPair
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
 
 class Helper(
     peerUrl: String,
@@ -97,7 +98,7 @@ class Helper(
 
     suspend fun transferAsset(
         from: String,
-        value: Long,
+        value: Int,
         to: String,
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair
@@ -196,19 +197,19 @@ class Helper(
             } ?: throw RuntimeException("NOT FOUND")
     }
 
-    suspend fun findAllDomains(queryFilter: PredicateBox? = null) = QueryBuilder
+    suspend fun findAllDomains(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder
         .findAllDomains(queryFilter)
         .account(admin)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
-    suspend fun findAllAccounts(queryFilter: PredicateBox? = null) = QueryBuilder
+    suspend fun findAllAccounts(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder
         .findAllAccounts(queryFilter)
         .account(admin)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
-    suspend fun findAllAssets(queryFilter: PredicateBox? = null) = QueryBuilder
+    suspend fun findAllAssets(queryFilter: GenericValuePredicateBox<ValuePredicate>? = null) = QueryBuilder
         .findAllAssets(queryFilter)
         .account(admin)
         .buildSigned(keyPair)
