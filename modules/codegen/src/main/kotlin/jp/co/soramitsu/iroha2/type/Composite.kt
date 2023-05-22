@@ -57,7 +57,7 @@ data class TupleStructType(
 data class StructType(
     override val name: String,
     override val generics: List<TypeNest>,
-    val mapping: LinkedHashMap<String, TypeNest>
+    val mapping: Map<String, TypeNest>
 ) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
         return mapping.values.union(generics).flatMap {

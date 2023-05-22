@@ -19,7 +19,7 @@ class SchemaReader {
     /**
      * Read Iroha2 schema from a given [file][fileName]
      */
-    fun readSchema(fileName: String): Schema {
+    fun readSchema(fileName: String): Map<String, Any> {
         val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
         val sb = StringBuilder()
         val lines = resource.bufferedReader().lines().toList()
