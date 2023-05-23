@@ -1,26 +1,25 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
-import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
-import jp.co.soramitsu.iroha2.generated.datamodel.query.PaginatedQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
-import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
+import jp.co.soramitsu.iroha2.generated.Account
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.Domain
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.NumericValue
+import jp.co.soramitsu.iroha2.generated.PaginatedQueryResult
+import jp.co.soramitsu.iroha2.generated.Peer
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
+import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.Trigger
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import java.math.BigInteger
 
 /**
@@ -146,19 +145,19 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
 /**
  * Extract a trigger from a query [result]
  */
-object TriggerExtractor : ResultExtractor<Trigger<*>> {
-    override fun extract(result: PaginatedQueryResult): Trigger<*> {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::trigger)
+object TriggerExtractor : ResultExtractor<Trigger<*, *>> {
+    override fun extract(result: PaginatedQueryResult): Trigger<*, *> {
+        return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::triggerBox)
     }
 }
 
 /**
  * Extract a list of triggers from a query [result]
  */
-object TriggersExtractor : ResultExtractor<List<Trigger<*>>> {
-    override fun extract(result: PaginatedQueryResult): List<Trigger<*>> {
+object TriggersExtractor : ResultExtractor<List<Trigger<*, *>>> {
+    override fun extract(result: PaginatedQueryResult): List<Trigger<*, *>> {
         return extractVec(result.result.value) {
-            extractIdentifiable(it, IdentifiableBox.Trigger::trigger)
+            extractIdentifiable(it, IdentifiableBox.Trigger::triggerBox)
         }
     }
 }
@@ -177,10 +176,10 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
 /**
  * Extract a list of permission tokens from a query [result]
  */
-object PermissionTokensExtractor : ResultExtractor<List<Token>> {
-    override fun extract(result: PaginatedQueryResult): List<Token> {
+object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
+    override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
         return extractVec(result.result.value) {
-            extractValue(it, Value.PermissionToken::token)
+            extractValue(it, Value.PermissionToken::permissionToken)
         }
     }
 }
@@ -188,10 +187,10 @@ object PermissionTokensExtractor : ResultExtractor<List<Token>> {
 /**
  * Extract a list of permission token definitions from a query [result]
  */
-object PermissionTokenDefinitionsExtractor : ResultExtractor<List<Definition>> {
-    override fun extract(result: PaginatedQueryResult): List<Definition> {
+object PermissionTokenDefinitionsExtractor : ResultExtractor<List<PermissionTokenDefinition>> {
+    override fun extract(result: PaginatedQueryResult): List<PermissionTokenDefinition> {
         return extractVec(result.result.value) {
-            extractIdentifiable(it, IdentifiableBox.PermissionTokenDefinition::definition)
+            extractIdentifiable(it, IdentifiableBox.PermissionTokenDefinition::permissionTokenDefinition)
         }
     }
 }
@@ -232,25 +231,25 @@ object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryRe
     }
 }
 
-object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
-    override fun extract(result: PaginatedQueryResult): List<BlockValue> {
+//object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
+//    override fun extract(result: PaginatedQueryResult): List<BlockValue> {
+//        return extractVec(result.result.value) {
+//            extractValue(it, Value.Block::blockValue)
+//        }
+//    }
+//}
+
+object BlockHeadersExtractor : ResultExtractor<List<BlockHeader>> {
+    override fun extract(result: PaginatedQueryResult): List<BlockHeader> {
         return extractVec(result.result.value) {
-            extractValue(it, Value.Block::blockValue)
+            extractValue(it, Value.BlockHeader::blockHeader)
         }
     }
 }
 
-object BlockHeadersValueExtractor : ResultExtractor<List<BlockHeaderValue>> {
-    override fun extract(result: PaginatedQueryResult): List<BlockHeaderValue> {
-        return extractVec(result.result.value) {
-            extractValue(it, Value.BlockHeader::blockHeaderValue)
-        }
-    }
-}
-
-object BlockHeaderValueExtractor : ResultExtractor<BlockHeaderValue> {
-    override fun extract(result: PaginatedQueryResult): BlockHeaderValue {
-        return extractValue(result.result.value, Value.BlockHeader::blockHeaderValue)
+object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
+    override fun extract(result: PaginatedQueryResult): BlockHeader {
+        return extractValue(result.result.value, Value.BlockHeader::blockHeader)
     }
 }
 

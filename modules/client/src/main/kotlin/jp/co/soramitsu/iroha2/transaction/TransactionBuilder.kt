@@ -6,30 +6,31 @@ import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
-import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-import jp.co.soramitsu.iroha2.generated.crypto.signature.Signature
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.IpfsPath
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.events.time.TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
-import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.EventsFilterBox
+import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.Instruction
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.IpfsPath
+import jp.co.soramitsu.iroha2.generated.Mintable
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.Repeats
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.TransactionPayload
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
@@ -43,7 +44,7 @@ import kotlin.random.nextLong
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     var accountId: AccountId?
-    val instructions: Lazy<ArrayList<Instruction>>
+    val instructions: Lazy<ArrayList<InstructionBox>>
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
     var nonce: Long?
@@ -63,11 +64,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(accountName, domainId))
 
-    fun instructions(vararg instructions: Instruction) = this.apply { this.instructions.value.addAll(instructions) }
+    fun instructions(vararg instructions: InstructionBox) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instructions(instructions: Iterable<Instruction>) = this.apply { this.instructions.value.addAll(instructions) }
+    fun instructions(instructions: Iterable<InstructionBox>) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instruction(instruction: Instruction) = this.apply { this.instructions.value.add(instruction) }
+    fun instruction(instruction: InstructionBox) = this.apply { this.instructions.value.add(instruction) }
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -82,7 +83,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toBigInteger()) }
 
     fun buildSigned(vararg keyPairs: KeyPair): VersionedSignedTransaction {
-        val payload = Payload(
+        val payload = TransactionPayload(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             Executable.Instructions(instructions.value),
             creationTimeMillis ?: fallbackCreationTime(),
@@ -90,13 +91,13 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             nonce,
             metadata.value
         )
-        val encodedPayload = Payload.encode(payload)
+        val encodedPayload = TransactionPayload.encode(payload)
 
         val signatures = keyPairs.map {
             Signature(
                 it.public.toIrohaPublicKey(),
                 it.private.sign(encodedPayload)
-            ).asSignatureOf<Payload>()
+            ).asSignatureOf<TransactionPayload>()
         }.toList()
 
         return VersionedSignedTransaction.V1(
@@ -107,11 +108,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerTimeTrigger(
         triggerId: TriggerId,
-        isi: List<Instruction>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: jp.co.soramitsu.iroha2.generated.Metadata = Metadata(mapOf())
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTimeTrigger(
@@ -171,7 +172,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         wasm: ByteArray,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata = Metadata(mapOf()),
+        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf()),
         filter: EventsFilterBox
     ) = this.apply {
         instructions.value.add(
@@ -189,10 +190,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerPreCommitTrigger(
         triggerId: TriggerId,
-        isi: List<Instruction>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf())
     ) = this.apply {
         instructions.value.add(
             Instructions.registerPreCommitTrigger(
@@ -240,21 +241,21 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerRole(
         id: RoleId,
-        vararg tokens: Token
+        vararg tokens: PermissionToken
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
     @JvmOverloads
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf())
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
     @JvmOverloads
     fun registerAssetDefinition(
         id: AssetDefinitionId,
         assetValueType: AssetValueType,
-        metadata: Metadata = Metadata(mapOf()),
+        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
     ) = this.apply {
         instructions.value.add(
@@ -431,15 +432,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
-    fun `if`(condition: Boolean, then: Instruction, otherwise: Instruction) = this.apply {
+    fun `if`(condition: Boolean, then: InstructionBox, otherwise: InstructionBox) = this.apply {
         instructions.value.add(Instructions.`if`(condition, then, otherwise))
     }
 
-    fun pair(left: Instruction, right: Instruction) = this.apply {
+    fun pair(left: InstructionBox, right: InstructionBox) = this.apply {
         instructions.value.add(Instructions.pair(left, right))
     }
 
-    fun sequence(vararg instructions: Instruction) = this.apply {
+    fun sequence(vararg instructions: InstructionBox) = this.apply {
         this.instructions.value.add(Instructions.sequence(instructions.toList()))
     }
 

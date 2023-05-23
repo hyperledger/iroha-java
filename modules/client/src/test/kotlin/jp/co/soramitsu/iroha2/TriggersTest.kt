@@ -1,7 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
@@ -9,7 +8,6 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.asset.AssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats

@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.events.data.events.account.AccountEventFilter
@@ -60,6 +59,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.StringPredica
 import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.toIrohaHash
+import java.time.Duration
 
 /**
  * Filters are used to filter out events

@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.query
 
+import io.ktor.util.Hash
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
