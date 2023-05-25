@@ -18,11 +18,11 @@ import java.nio.file.Path
 object GeneratorEntryPoint {
     @OptIn(ExperimentalUnsignedTypes::class)
     fun generate(types: Map<String, Type>, outputPath: Path) {
-        types.values.mapNotNull {
-            when (it) {
-                is StructType -> StructBlueprint(it)
-                is EnumType -> EnumBlueprint(it)
-                is TupleStructType -> TupleStructBlueprint(it)
+        types.values.mapNotNull { type ->
+            when (type) {
+                is StructType -> StructBlueprint(type)
+                is EnumType -> EnumBlueprint(type)
+                is TupleStructType -> TupleStructBlueprint(type)
                 else -> null
             }
         }.forEach { type ->

@@ -38,9 +38,6 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     }
 
     open fun implGenerics(blueprint: T, clazz: TypeSpec.Builder) {
-        if ("Trigger" == blueprint.className) {
-            println("ASD")
-        }
         if (blueprint.source is CompositeType) {
             val generics = blueprint.source.generics
             for (i in generics.indices) {

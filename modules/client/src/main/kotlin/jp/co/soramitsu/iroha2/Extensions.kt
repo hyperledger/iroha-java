@@ -2,41 +2,41 @@ package jp.co.soramitsu.iroha2
 
 import io.ktor.util.Hash
 import io.ktor.websocket.Frame
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.Algorithm
-import jp.co.soramitsu.iroha2.generated.Asset
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.Bool
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.Expression
-import jp.co.soramitsu.iroha2.generated.FilterBox
-import jp.co.soramitsu.iroha2.generated.Fixed
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
-import jp.co.soramitsu.iroha2.generated.Metadata
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.NumericValue
-import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
-import jp.co.soramitsu.iroha2.generated.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.Signature
-import jp.co.soramitsu.iroha2.generated.SignatureOf
-import jp.co.soramitsu.iroha2.generated.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.SocketAddr
-import jp.co.soramitsu.iroha2.generated.SocketAddrHost
-import jp.co.soramitsu.iroha2.generated.SocketAddrV4
-import jp.co.soramitsu.iroha2.generated.TransactionPayload
-import jp.co.soramitsu.iroha2.generated.Trigger
-import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.AccountId
+import jp.co.soramitsu.iroha2.Algorithm
+import jp.co.soramitsu.iroha2.Asset
+import jp.co.soramitsu.iroha2.AssetDefinitionId
+import jp.co.soramitsu.iroha2.AssetId
+import jp.co.soramitsu.iroha2.AssetValue
+import jp.co.soramitsu.iroha2.Bool
+import jp.co.soramitsu.iroha2.DomainId
+import jp.co.soramitsu.iroha2.EvaluatesTo
+import jp.co.soramitsu.iroha2.Executable
+import jp.co.soramitsu.iroha2.ExecutionTime
+import jp.co.soramitsu.iroha2.Expression
+import jp.co.soramitsu.iroha2.FilterBox
+import jp.co.soramitsu.iroha2.Fixed
+import jp.co.soramitsu.iroha2.IdBox
+import jp.co.soramitsu.iroha2.IdentifiableBox
+import jp.co.soramitsu.iroha2.InstructionBox
+import jp.co.soramitsu.iroha2.Metadata
+import jp.co.soramitsu.iroha2.Name
+import jp.co.soramitsu.iroha2.NumericValue
+import jp.co.soramitsu.iroha2.PermissionToken
+import jp.co.soramitsu.iroha2.PermissionTokenId
+import jp.co.soramitsu.iroha2.RegistrableBox
+import jp.co.soramitsu.iroha2.RoleId
+import jp.co.soramitsu.iroha2.Signature
+import jp.co.soramitsu.iroha2.SignatureOf
+import jp.co.soramitsu.iroha2.SignedTransaction
+import jp.co.soramitsu.iroha2.SocketAddr
+import jp.co.soramitsu.iroha2.SocketAddrHost
+import jp.co.soramitsu.iroha2.SocketAddrV4
+import jp.co.soramitsu.iroha2.TransactionPayload
+import jp.co.soramitsu.iroha2.Trigger
+import jp.co.soramitsu.iroha2.TriggerId
+import jp.co.soramitsu.iroha2.Value
+import jp.co.soramitsu.iroha2.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -113,8 +113,8 @@ fun String.fromHex(): ByteArray = try {
 /**
  * Convert a public key to an Iroha public key
  */
-fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.generated.PublicKey {
-    return jp.co.soramitsu.iroha2.generated.PublicKey(Algorithm.Ed25519(), this.bytes())
+fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.PublicKey {
+    return jp.co.soramitsu.iroha2.PublicKey(Algorithm.Ed25519(), this.bytes())
 }
 
 /**
@@ -499,3 +499,7 @@ fun String.toSocketAddr() = this.split(":").let { parts ->
 
     SocketAddr.Host(SocketAddrHost(parts.first(), parts.last().toInt()))
 }
+
+fun String.replace(oldValue: String) = this.replace(oldValue, "")
+
+fun String.replace(regex: Regex) = this.replace(regex, "")
