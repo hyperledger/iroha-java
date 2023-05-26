@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import io.qameta.allure.Feature
+import io.qameta.allure.Issue
 import io.qameta.allure.Owner
 import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Permission
@@ -85,6 +86,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     @Disabled
+    @Issue("https://github.com/hyperledger/iroha/issues/2962")
     fun `registered peer should return consistent data`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
