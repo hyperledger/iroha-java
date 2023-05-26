@@ -15,22 +15,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'AccountFilter' regular structure
  */
 public data class AccountFilter(
-    public val originFilter: FilterOpt<OriginFilter<AccountEvent>>,
-    public val eventFilter: FilterOpt<AccountEventFilter>
+    public val originFilter: FilterOptOfOriginFilterOfAccountEvent,
+    public val eventFilter: FilterOptOfAccountEventFilter
 ) {
     public companion object : ScaleReader<AccountFilter>, ScaleWriter<AccountFilter> {
         public override fun read(reader: ScaleCodecReader): AccountFilter = try {
             AccountFilter(
-                FilterOpt.read(reader) as FilterOpt<OriginFilter<AccountEvent>>,
-                FilterOpt.read(reader) as FilterOpt<AccountEventFilter>,
+                FilterOptOfOriginFilterOfAccountEvent.read(reader),
+                FilterOptOfAccountEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: AccountFilter) = try {
-            FilterOpt.write(writer, instance.originFilter)
-            FilterOpt.write(writer, instance.eventFilter)
+            FilterOptOfOriginFilterOfAccountEvent.write(writer, instance.originFilter)
+            FilterOptOfAccountEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

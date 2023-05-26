@@ -134,7 +134,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val metadataChanged: MetadataChanged<AssetId>
+        public val metadataChangedOfAssetId: MetadataChangedOfAssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -143,14 +143,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    MetadataChanged.read(reader) as MetadataChanged<AssetId>,
+                    MetadataChangedOfAssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAssetId.write(writer, instance.metadataChangedOfAssetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -161,7 +161,7 @@ public sealed class AssetEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val metadataChanged: MetadataChanged<AssetId>
+        public val metadataChangedOfAssetId: MetadataChangedOfAssetId
     ) : AssetEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -170,14 +170,14 @@ public sealed class AssetEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    MetadataChanged.read(reader) as MetadataChanged<AssetId>,
+                    MetadataChangedOfAssetId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAssetId.write(writer, instance.metadataChangedOfAssetId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

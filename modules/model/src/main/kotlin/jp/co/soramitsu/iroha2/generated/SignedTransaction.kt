@@ -16,13 +16,13 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class SignedTransaction(
     public val payload: TransactionPayload,
-    public val signatures: SignaturesOf<TransactionPayload>
+    public val signatures: SignaturesOfOfTransactionPayload
 ) {
     public companion object : ScaleReader<SignedTransaction>, ScaleWriter<SignedTransaction> {
         public override fun read(reader: ScaleCodecReader): SignedTransaction = try {
             SignedTransaction(
                 TransactionPayload.read(reader),
-                SignaturesOf.read(reader) as SignaturesOf<TransactionPayload>,
+                SignaturesOfOfTransactionPayload.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -30,7 +30,7 @@ public data class SignedTransaction(
 
         public override fun write(writer: ScaleCodecWriter, instance: SignedTransaction) = try {
             TransactionPayload.write(writer, instance.payload)
-            SignaturesOf.write(writer, instance.signatures)
+            SignaturesOfOfTransactionPayload.write(writer, instance.signatures)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

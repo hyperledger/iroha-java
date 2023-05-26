@@ -20,7 +20,7 @@ public data class CommittedBlock(
     public val rejectedTransactions: List<VersionedRejectedTransaction>,
     public val transactions: List<VersionedValidTransaction>,
     public val eventRecommendations: List<Event>,
-    public val signatures: SignaturesOf<CommittedBlock>
+    public val signatures: SignaturesOfOfCommittedBlock
 ) {
     public companion object : ScaleReader<CommittedBlock>, ScaleWriter<CommittedBlock> {
         public override fun read(reader: ScaleCodecReader): CommittedBlock = try {
@@ -29,7 +29,7 @@ public data class CommittedBlock(
                 reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
                 reader.readVec(reader.readCompactInt()) { Event.read(reader) },
-                SignaturesOf.read(reader) as SignaturesOf<CommittedBlock>,
+                SignaturesOfOfCommittedBlock.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -49,7 +49,7 @@ public data class CommittedBlock(
             instance.eventRecommendations.forEach { value ->
                 Event.write(writer, value)
             }
-            SignaturesOf.write(writer, instance.signatures)
+            SignaturesOfOfCommittedBlock.write(writer, instance.signatures)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

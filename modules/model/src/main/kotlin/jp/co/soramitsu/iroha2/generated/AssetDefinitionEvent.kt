@@ -134,7 +134,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val metadataChanged: MetadataChanged<AssetDefinitionId>
+        public val metadataChangedOfAssetDefinitionId: MetadataChangedOfAssetDefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -143,14 +143,17 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    MetadataChanged.read(reader) as MetadataChanged<AssetDefinitionId>,
+                    MetadataChangedOfAssetDefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAssetDefinitionId.write(
+                    writer,
+                    instance.metadataChangedOfAssetDefinitionId
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -161,7 +164,7 @@ public sealed class AssetDefinitionEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val metadataChanged: MetadataChanged<AssetDefinitionId>
+        public val metadataChangedOfAssetDefinitionId: MetadataChangedOfAssetDefinitionId
     ) : AssetDefinitionEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -170,14 +173,17 @@ public sealed class AssetDefinitionEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    MetadataChanged.read(reader) as MetadataChanged<AssetDefinitionId>,
+                    MetadataChangedOfAssetDefinitionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAssetDefinitionId.write(
+                    writer,
+                    instance.metadataChangedOfAssetDefinitionId
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

@@ -53,7 +53,7 @@ public sealed class FilterBox : ModelEnum {
      * 'Data' variant
      */
     public data class Data(
-        public val filterOpt: FilterOpt<DataEntityFilter>
+        public val filterOptOfDataEntityFilter: FilterOptOfDataEntityFilter
     ) : FilterBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -62,14 +62,14 @@ public sealed class FilterBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Data = try {
                 Data(
-                    FilterOpt.read(reader) as FilterOpt<DataEntityFilter>,
+                    FilterOptOfDataEntityFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Data) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptOfDataEntityFilter.write(writer, instance.filterOptOfDataEntityFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

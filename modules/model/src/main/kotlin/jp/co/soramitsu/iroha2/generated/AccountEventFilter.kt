@@ -348,7 +348,7 @@ public sealed class AccountEventFilter : ModelEnum {
      * 'ByAsset' variant
      */
     public data class ByAsset(
-        public val filterOpt: FilterOpt<AssetFilter>
+        public val filterOptOfAssetFilter: FilterOptOfAssetFilter
     ) : AccountEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -357,14 +357,14 @@ public sealed class AccountEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAsset = try {
                 ByAsset(
-                    FilterOpt.read(reader) as FilterOpt<AssetFilter>,
+                    FilterOptOfAssetFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAsset) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptOfAssetFilter.write(writer, instance.filterOptOfAssetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

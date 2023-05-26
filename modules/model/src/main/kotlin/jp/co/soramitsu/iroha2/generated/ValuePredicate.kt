@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import java.math.BigInteger
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
@@ -147,7 +146,7 @@ public sealed class ValuePredicate : ModelEnum {
      * 'TimeStamp' variant
      */
     public data class TimeStamp(
-        public val semiInterval: SemiInterval<BigInteger>
+        public val semiIntervalOfu128: SemiIntervalOfu128
     ) : ValuePredicate() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -156,14 +155,14 @@ public sealed class ValuePredicate : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): TimeStamp = try {
                 TimeStamp(
-                    SemiInterval.read(reader) as SemiInterval<BigInteger>,
+                    SemiIntervalOfu128.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: TimeStamp) = try {
-                SemiInterval.write(writer, instance.semiInterval)
+                SemiIntervalOfu128.write(writer, instance.semiIntervalOfu128)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

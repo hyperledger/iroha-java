@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.parse
 
-private val GENERIC_REGEX = "^([^<]*)<(.+)>\$".toRegex() // PartName<SubType>
+import jp.co.soramitsu.iroha2.GENERIC_REGEX
+
 private const val TYPE_GROUP_INDEX = 2 // first one will be the entire typeDef, the second one will be raw type
 
 /**

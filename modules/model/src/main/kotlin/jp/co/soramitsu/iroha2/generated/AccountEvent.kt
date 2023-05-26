@@ -269,7 +269,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val metadataChanged: MetadataChanged<AccountId>
+        public val metadataChangedOfAccountId: MetadataChangedOfAccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -278,14 +278,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
                 MetadataInserted(
-                    MetadataChanged.read(reader) as MetadataChanged<AccountId>,
+                    MetadataChangedOfAccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAccountId.write(writer, instance.metadataChangedOfAccountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -296,7 +296,7 @@ public sealed class AccountEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val metadataChanged: MetadataChanged<AccountId>
+        public val metadataChangedOfAccountId: MetadataChangedOfAccountId
     ) : AccountEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -305,14 +305,14 @@ public sealed class AccountEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
                 MetadataRemoved(
-                    MetadataChanged.read(reader) as MetadataChanged<AccountId>,
+                    MetadataChangedOfAccountId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
-                MetadataChanged.write(writer, instance.metadataChanged)
+                MetadataChangedOfAccountId.write(writer, instance.metadataChangedOfAccountId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

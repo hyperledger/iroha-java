@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.parse
 
+import jp.co.soramitsu.iroha2.ARRAY_REGEX
 import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
@@ -95,9 +96,12 @@ object BooleanResolver : Resolver<BooleanType> {
  * Resolver for [MapType]
  */
 object SortedMapResolver : Resolver<MapType> {
+
+    const val NAME = "SortedMap"
+
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): MapType? {
-        if (!name.startsWith("SortedMap<")) return null
-        val wildcards = name.removePrefix("SortedMap")
+        if (!name.startsWith("$NAME<")) return null
+        val wildcards = name.removePrefix(NAME)
             .removeSurrounding("<", ">")
             .split(',')
             .map { it.trim() }
@@ -154,6 +158,8 @@ abstract class SortedWrapperResolver<T : IterableType>(
  * Resolver for [VecType]
  */
 object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
+    const val NAME = "Vec"
+
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
@@ -191,11 +197,11 @@ object SetResolver : WrapperResolver<SetType>("BTreeSet") {
  */
 object ArrayResolver : Resolver<ArrayType> {
 
-    private val REGEX = "Array<(\\S+), (\\S+)\\>".toRegex()
+    const val NAME = "Array"
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
-        if (!name.startsWith("Array")) return null
-        val groups = REGEX.find(name)?.groupValues ?: return null
+        if (!name.startsWith(NAME)) return null
+        val groups = ARRAY_REGEX.find(name)?.groupValues ?: return null
         return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
 }

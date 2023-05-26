@@ -15,22 +15,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'AssetFilter' regular structure
  */
 public data class AssetFilter(
-    public val originFilter: FilterOpt<OriginFilter<AssetEvent>>,
-    public val eventFilter: FilterOpt<AssetEventFilter>
+    public val originFilter: FilterOptOfOriginFilterOfAssetEvent,
+    public val eventFilter: FilterOptOfAssetEventFilter
 ) {
     public companion object : ScaleReader<AssetFilter>, ScaleWriter<AssetFilter> {
         public override fun read(reader: ScaleCodecReader): AssetFilter = try {
             AssetFilter(
-                FilterOpt.read(reader) as FilterOpt<OriginFilter<AssetEvent>>,
-                FilterOpt.read(reader) as FilterOpt<AssetEventFilter>,
+                FilterOptOfOriginFilterOfAssetEvent.read(reader),
+                FilterOptOfAssetEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetFilter) = try {
-            FilterOpt.write(writer, instance.originFilter)
-            FilterOpt.write(writer, instance.eventFilter)
+            FilterOptOfOriginFilterOfAssetEvent.write(writer, instance.originFilter)
+            FilterOptOfAssetEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -8,21 +8,20 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Any
 import kotlin.Short
 
 /**
- * Interval
+ * IntervalOfu8
  *
- * Generated from 'Interval<u8>' regular structure
+ * Generated from 'IntervalOfu8' regular structure
  */
-public data class Interval<T0>(
+public data class IntervalOfu8(
     public val start: Short,
     public val limit: Short
 ) {
-    public companion object : ScaleReader<Interval<out Any>>, ScaleWriter<Interval<out Any>> {
-        public override fun read(reader: ScaleCodecReader): Interval<out Any> = try {
-            Interval(
+    public companion object : ScaleReader<IntervalOfu8>, ScaleWriter<IntervalOfu8> {
+        public override fun read(reader: ScaleCodecReader): IntervalOfu8 = try {
+            IntervalOfu8(
                 reader.readUByte().toShort(),
                 reader.readUByte().toShort(),
             )
@@ -30,7 +29,7 @@ public data class Interval<T0>(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Interval<out Any>) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: IntervalOfu8) = try {
             writer.writeUByte(instance.start)
             writer.writeUByte(instance.limit)
         } catch (ex: Exception) {

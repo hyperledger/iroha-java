@@ -8,25 +8,23 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Any
 
 /**
- * MetadataChanged
+ * MetadataChangedOfAssetDefinitionId
  *
- * Generated from 'MetadataChanged<DomainId>' regular structure
+ * Generated from 'MetadataChangedOfAssetDefinitionId' regular structure
  */
-public data class MetadataChanged<T0>(
-    public val targetId: DomainId,
+public data class MetadataChangedOfAssetDefinitionId(
+    public val targetId: AssetDefinitionId,
     public val key: Name,
     public val `value`: Value
 ) {
     public companion object :
-        ScaleReader<MetadataChanged<out Any>>,
-        ScaleWriter<MetadataChanged<out
-                Any>> {
-        public override fun read(reader: ScaleCodecReader): MetadataChanged<out Any> = try {
-            MetadataChanged(
-                DomainId.read(reader),
+        ScaleReader<MetadataChangedOfAssetDefinitionId>,
+        ScaleWriter<MetadataChangedOfAssetDefinitionId> {
+        public override fun read(reader: ScaleCodecReader): MetadataChangedOfAssetDefinitionId = try {
+            MetadataChangedOfAssetDefinitionId(
+                AssetDefinitionId.read(reader),
                 Name.read(reader),
                 Value.read(reader),
             )
@@ -34,8 +32,11 @@ public data class MetadataChanged<T0>(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MetadataChanged<out Any>) = try {
-            DomainId.write(writer, instance.targetId)
+        public override fun write(
+            writer: ScaleCodecWriter,
+            instance: MetadataChangedOfAssetDefinitionId
+        ) = try {
+            AssetDefinitionId.write(writer, instance.targetId)
             Name.write(writer, instance.key)
             Value.write(writer, instance.`value`)
         } catch (ex: Exception) {

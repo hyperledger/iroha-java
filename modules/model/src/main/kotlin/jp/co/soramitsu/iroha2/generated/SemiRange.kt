@@ -9,9 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import java.math.BigInteger
 import kotlin.Int
-import kotlin.Long
 
 /**
  * SemiRange
@@ -28,7 +26,7 @@ public sealed class SemiRange : ModelEnum {
      * 'U32' variant
      */
     public data class U32(
-        public val semiInterval: SemiInterval<Long>
+        public val semiIntervalOfu32: SemiIntervalOfu32
     ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -37,14 +35,14 @@ public sealed class SemiRange : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): U32 = try {
                 U32(
-                    SemiInterval.read(reader) as SemiInterval<Long>,
+                    SemiIntervalOfu32.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: U32) = try {
-                SemiInterval.write(writer, instance.semiInterval)
+                SemiIntervalOfu32.write(writer, instance.semiIntervalOfu32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -55,7 +53,7 @@ public sealed class SemiRange : ModelEnum {
      * 'U128' variant
      */
     public data class U128(
-        public val semiInterval: SemiInterval<BigInteger>
+        public val semiIntervalOfu128: SemiIntervalOfu128
     ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -64,14 +62,14 @@ public sealed class SemiRange : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): U128 = try {
                 U128(
-                    SemiInterval.read(reader) as SemiInterval<BigInteger>,
+                    SemiIntervalOfu128.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: U128) = try {
-                SemiInterval.write(writer, instance.semiInterval)
+                SemiIntervalOfu128.write(writer, instance.semiIntervalOfu128)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -82,7 +80,7 @@ public sealed class SemiRange : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val semiInterval: SemiInterval<jp.co.soramitsu.iroha2.generated.Fixed>
+        public val semiIntervalOfFixed: SemiIntervalOfFixed
     ) : SemiRange() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -91,14 +89,14 @@ public sealed class SemiRange : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Fixed = try {
                 Fixed(
-                    SemiInterval.read(reader) as SemiInterval<jp.co.soramitsu.iroha2.generated.Fixed>,
+                    SemiIntervalOfFixed.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
-                SemiInterval.write(writer, instance.semiInterval)
+                SemiIntervalOfFixed.write(writer, instance.semiIntervalOfFixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

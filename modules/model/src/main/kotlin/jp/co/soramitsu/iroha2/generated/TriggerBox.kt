@@ -26,7 +26,7 @@ public sealed class TriggerBox : ModelEnum {
      * 'Raw' variant
      */
     public data class Raw(
-        public val trigger: Trigger<FilterBox, Executable>
+        public val triggerOfFilterBoxAndExecutable: TriggerOfFilterBoxAndExecutable
     ) : TriggerBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +35,14 @@ public sealed class TriggerBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Raw = try {
                 Raw(
-                    Trigger.read(reader) as Trigger<FilterBox, Executable>,
+                    TriggerOfFilterBoxAndExecutable.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Raw) = try {
-                Trigger.write(writer, instance.trigger)
+                TriggerOfFilterBoxAndExecutable.write(writer, instance.triggerOfFilterBoxAndExecutable)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -53,7 +53,7 @@ public sealed class TriggerBox : ModelEnum {
      * 'Optimized' variant
      */
     public data class Optimized(
-        public val trigger: Trigger<FilterBox, OptimizedExecutable>
+        public val triggerOfFilterBoxAndOptimizedExecutable: TriggerOfFilterBoxAndOptimizedExecutable
     ) : TriggerBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -62,14 +62,17 @@ public sealed class TriggerBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Optimized = try {
                 Optimized(
-                    Trigger.read(reader) as Trigger<FilterBox, OptimizedExecutable>,
+                    TriggerOfFilterBoxAndOptimizedExecutable.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Optimized) = try {
-                Trigger.write(writer, instance.trigger)
+                TriggerOfFilterBoxAndOptimizedExecutable.write(
+                    writer,
+                    instance.triggerOfFilterBoxAndOptimizedExecutable
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

@@ -161,7 +161,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val trigger: jp.co.soramitsu.iroha2.generated.Trigger<FilterBox, Executable>
+        public val triggerOfFilterBoxAndExecutable: TriggerOfFilterBoxAndExecutable
     ) : RegistrableBox() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -170,15 +170,14 @@ public sealed class RegistrableBox : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Trigger = try {
                 Trigger(
-                    jp.co.soramitsu.iroha2.generated.Trigger.read(reader) as
-                        jp.co.soramitsu.iroha2.generated.Trigger<FilterBox, Executable>,
+                    TriggerOfFilterBoxAndExecutable.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Trigger) = try {
-                jp.co.soramitsu.iroha2.generated.Trigger.write(writer, instance.trigger)
+                TriggerOfFilterBoxAndExecutable.write(writer, instance.triggerOfFilterBoxAndExecutable)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

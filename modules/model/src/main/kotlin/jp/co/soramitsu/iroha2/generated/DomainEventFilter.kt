@@ -160,7 +160,7 @@ public sealed class DomainEventFilter : ModelEnum {
      * 'ByAccount' variant
      */
     public data class ByAccount(
-        public val filterOpt: FilterOpt<AccountFilter>
+        public val filterOptOfAccountFilter: FilterOptOfAccountFilter
     ) : DomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -169,14 +169,14 @@ public sealed class DomainEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAccount = try {
                 ByAccount(
-                    FilterOpt.read(reader) as FilterOpt<AccountFilter>,
+                    FilterOptOfAccountFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAccount) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptOfAccountFilter.write(writer, instance.filterOptOfAccountFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -187,7 +187,7 @@ public sealed class DomainEventFilter : ModelEnum {
      * 'ByAssetDefinition' variant
      */
     public data class ByAssetDefinition(
-        public val filterOpt: FilterOpt<AssetDefinitionFilter>
+        public val filterOptOfAssetDefinitionFilter: FilterOptOfAssetDefinitionFilter
     ) : DomainEventFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -196,14 +196,14 @@ public sealed class DomainEventFilter : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): ByAssetDefinition = try {
                 ByAssetDefinition(
-                    FilterOpt.read(reader) as FilterOpt<AssetDefinitionFilter>,
+                    FilterOptOfAssetDefinitionFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: ByAssetDefinition) = try {
-                FilterOpt.write(writer, instance.filterOpt)
+                FilterOptOfAssetDefinitionFilter.write(writer, instance.filterOptOfAssetDefinitionFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

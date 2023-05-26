@@ -15,22 +15,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'RoleFilter' regular structure
  */
 public data class RoleFilter(
-    public val originFilter: FilterOpt<OriginFilter<RoleEvent>>,
-    public val eventFilter: FilterOpt<RoleEventFilter>
+    public val originFilter: FilterOptOfOriginFilterOfRoleEvent,
+    public val eventFilter: FilterOptOfRoleEventFilter
 ) {
     public companion object : ScaleReader<RoleFilter>, ScaleWriter<RoleFilter> {
         public override fun read(reader: ScaleCodecReader): RoleFilter = try {
             RoleFilter(
-                FilterOpt.read(reader) as FilterOpt<OriginFilter<RoleEvent>>,
-                FilterOpt.read(reader) as FilterOpt<RoleEventFilter>,
+                FilterOptOfOriginFilterOfRoleEvent.read(reader),
+                FilterOptOfRoleEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: RoleFilter) = try {
-            FilterOpt.write(writer, instance.originFilter)
-            FilterOpt.write(writer, instance.eventFilter)
+            FilterOptOfOriginFilterOfRoleEvent.write(writer, instance.originFilter)
+            FilterOptOfRoleEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

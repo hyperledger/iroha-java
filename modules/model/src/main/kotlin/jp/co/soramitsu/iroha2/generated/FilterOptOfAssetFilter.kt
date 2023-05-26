@@ -14,11 +14,11 @@ import kotlin.Boolean
 import kotlin.Int
 
 /**
- * FilterOpt
+ * FilterOptOfAssetFilter
  *
- * Generated from 'FilterOpt<TriggerFilter>' enum
+ * Generated from 'FilterOptOfAssetFilter' enum
  */
-public sealed class FilterOpt<T0> : ModelEnum {
+public sealed class FilterOptOfAssetFilter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -37,7 +37,7 @@ public sealed class FilterOpt<T0> : ModelEnum {
     /**
      * 'AcceptAll' variant
      */
-    public class AcceptAll : FilterOpt<TriggerFilter>() {
+    public class AcceptAll : FilterOptOfAssetFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
@@ -59,7 +59,7 @@ public sealed class FilterOpt<T0> : ModelEnum {
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".FilterOpt.AcceptAll".hashCode()
+            public override fun hashCode(): Int = ".FilterOptOfAssetFilter.AcceptAll".hashCode()
         }
     }
 
@@ -67,8 +67,8 @@ public sealed class FilterOpt<T0> : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val triggerFilter: TriggerFilter
-    ) : FilterOpt<TriggerFilter>() {
+        public val assetFilter: AssetFilter
+    ) : FilterOptOfAssetFilter() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
@@ -76,31 +76,31 @@ public sealed class FilterOpt<T0> : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): BySome = try {
                 BySome(
-                    TriggerFilter.read(reader),
+                    AssetFilter.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                TriggerFilter.write(writer, instance.triggerFilter)
+                AssetFilter.write(writer, instance.assetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<FilterOpt<out Any>>, ScaleWriter<FilterOpt<out Any>> {
-        public override fun read(reader: ScaleCodecReader): FilterOpt<out Any> = when (
-            val discriminant =
-                reader.readUByte()
+    public companion object : ScaleReader<FilterOptOfAssetFilter>, ScaleWriter<FilterOptOfAssetFilter> {
+        public override fun read(reader: ScaleCodecReader): FilterOptOfAssetFilter = when (
+            val
+            discriminant = reader.readUByte()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FilterOpt<out Any>) {
+        public override fun write(writer: ScaleCodecWriter, instance: FilterOptOfAssetFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)

@@ -15,22 +15,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'DomainFilter' regular structure
  */
 public data class DomainFilter(
-    public val originFilter: FilterOpt<OriginFilter<DomainEvent>>,
-    public val eventFilter: FilterOpt<DomainEventFilter>
+    public val originFilter: FilterOptOfOriginFilterOfDomainEvent,
+    public val eventFilter: FilterOptOfDomainEventFilter
 ) {
     public companion object : ScaleReader<DomainFilter>, ScaleWriter<DomainFilter> {
         public override fun read(reader: ScaleCodecReader): DomainFilter = try {
             DomainFilter(
-                FilterOpt.read(reader) as FilterOpt<OriginFilter<DomainEvent>>,
-                FilterOpt.read(reader) as FilterOpt<DomainEventFilter>,
+                FilterOptOfOriginFilterOfDomainEvent.read(reader),
+                FilterOptOfDomainEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: DomainFilter) = try {
-            FilterOpt.write(writer, instance.originFilter)
-            FilterOpt.write(writer, instance.eventFilter)
+            FilterOptOfOriginFilterOfDomainEvent.write(writer, instance.originFilter)
+            FilterOptOfDomainEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

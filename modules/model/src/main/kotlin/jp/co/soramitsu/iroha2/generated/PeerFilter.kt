@@ -15,22 +15,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'PeerFilter' regular structure
  */
 public data class PeerFilter(
-    public val originFilter: FilterOpt<OriginFilter<PeerEvent>>,
-    public val eventFilter: FilterOpt<PeerEventFilter>
+    public val originFilter: FilterOptOfOriginFilterOfPeerEvent,
+    public val eventFilter: FilterOptOfPeerEventFilter
 ) {
     public companion object : ScaleReader<PeerFilter>, ScaleWriter<PeerFilter> {
         public override fun read(reader: ScaleCodecReader): PeerFilter = try {
             PeerFilter(
-                FilterOpt.read(reader) as FilterOpt<OriginFilter<PeerEvent>>,
-                FilterOpt.read(reader) as FilterOpt<PeerEventFilter>,
+                FilterOptOfOriginFilterOfPeerEvent.read(reader),
+                FilterOptOfPeerEventFilter.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: PeerFilter) = try {
-            FilterOpt.write(writer, instance.originFilter)
-            FilterOpt.write(writer, instance.eventFilter)
+            FilterOptOfOriginFilterOfPeerEvent.write(writer, instance.originFilter)
+            FilterOptOfPeerEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

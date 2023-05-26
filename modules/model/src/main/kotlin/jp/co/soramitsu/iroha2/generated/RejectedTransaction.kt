@@ -16,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class RejectedTransaction(
     public val payload: TransactionPayload,
-    public val signatures: SignaturesOf<TransactionPayload>,
+    public val signatures: SignaturesOfOfTransactionPayload,
     public val rejectionReason: TransactionRejectionReason
 ) {
     public companion object : ScaleReader<RejectedTransaction>, ScaleWriter<RejectedTransaction> {
         public override fun read(reader: ScaleCodecReader): RejectedTransaction = try {
             RejectedTransaction(
                 TransactionPayload.read(reader),
-                SignaturesOf.read(reader) as SignaturesOf<TransactionPayload>,
+                SignaturesOfOfTransactionPayload.read(reader),
                 TransactionRejectionReason.read(reader),
             )
         } catch (ex: Exception) {
@@ -32,7 +32,7 @@ public data class RejectedTransaction(
 
         public override fun write(writer: ScaleCodecWriter, instance: RejectedTransaction) = try {
             TransactionPayload.write(writer, instance.payload)
-            SignaturesOf.write(writer, instance.signatures)
+            SignaturesOfOfTransactionPayload.write(writer, instance.signatures)
             TransactionRejectionReason.write(writer, instance.rejectionReason)
         } catch (ex: Exception) {
             throw wrapException(ex)
