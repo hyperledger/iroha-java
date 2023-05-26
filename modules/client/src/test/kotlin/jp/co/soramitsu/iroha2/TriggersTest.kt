@@ -45,7 +45,7 @@ import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Feature("Trigger")
+@Feature("Triggers")
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 class TriggersTest : IrohaTest<Iroha2Client>() {

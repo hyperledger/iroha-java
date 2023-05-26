@@ -348,6 +348,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         [DefaultGenesis::class],
         configs = ["WSV_ACCOUNT_METADATA_LIMITS$IROHA_CONFIG_DELIMITER{\"max_entry_byte_size\": 65536, \"max_len\": 1048576}"]
     )
+    @Feature("Accounts")
+    @Story("Account metadata limit adjustment")
+    @Permission("no_permission_required")
+    @SdkTestId("account_metadata_limit_increased")
     fun `account metadata limit increased`(): Unit = runBlocking {
         client.tx {
             // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config

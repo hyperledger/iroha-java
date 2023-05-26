@@ -33,7 +33,7 @@ import kotlin.test.assertTrue
 @Timeout(100)
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
-@Feature("Peer")
+@Feature("Peers")
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {

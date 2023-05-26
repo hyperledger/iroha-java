@@ -67,7 +67,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAllAccounts")
     @Story("Account queries all accounts")
     @SdkTestId("find_all_accounts")
@@ -85,7 +85,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAllAccountsWithFilter")
     @Story("Account queries all accounts with a filter")
     @SdkTestId("find_all_accounts_with_filter")
@@ -108,7 +108,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAccountsByName")
     @Story("Account queries accounts by name")
     @SdkTestId("find_accounts_by_name")
@@ -125,7 +125,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAccountsByNameWithFilter")
     @Story("Account queries accounts by name with a filter")
     @SdkTestId("find_accounts_by_name_with_filter")
@@ -143,7 +143,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAccountKeyValueByIdAndKey")
     @Story("Account queries account key value by ID and key")
     @SdkTestId("find_account_key_value_by_ID_and_key")
@@ -163,7 +163,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAccountsByDomainId")
     @Story("Account queries accounts by domain ID")
     @SdkTestId("find_accounts_by_domain_ID")
@@ -180,7 +180,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAccountsWithAsset")
     @Story("Account queries accounts with a specific asset")
     @SdkTestId("find_accounts_with_asset")
@@ -198,7 +198,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class, AliceCanMintXor::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindTotalAssetQuantityByAssetDefinitionId")
     @Story("Account queries total asset quantity by AssetDefinitionId")
     @SdkTestId("find_total_asset_quantity_by_AssetDefinitionId")
@@ -215,7 +215,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAllAssets")
     @Story("Account queries all assets")
     @SdkTestId("find_all_assets")
@@ -233,7 +233,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetsByName")
     @Story("Account queries assets by name")
     @SdkTestId("find_assets_by_name")
@@ -250,7 +250,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetsByAccountId")
     @Story("Account queries assets by account ID")
     @SdkTestId("find_assets_by_account_ID")
@@ -269,7 +269,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetsByDomainIdAndAssetDefinitionId")
     @Story("Account queries assets by domain name and asset definition ID")
     @SdkTestId("find_assets_by_domain_name_and_asset_definition_ID")
@@ -290,7 +290,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([XorAndValAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetQuantityById")
     @Story("Account queries asset quantity by asset ID")
     @SdkTestId("find_asset_quantity_by_ID")
@@ -308,7 +308,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([StoreAssetWithMetadata::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetKeyValueByIdAndKey")
     @Story("Account queries asset key value by ID and key")
     @SdkTestId("find_asset_key_value_by_ID_and_key")
@@ -328,7 +328,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([StoreAssetWithMetadata::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetDefinitionKeyValueByIdAndKey")
     @Story("Account queries asset definition key value by ID and key")
     @SdkTestId("find_asset_definition_key_value_by_ID_and_key")
@@ -348,7 +348,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([StoreAssetWithMetadata::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetByMetadataFilters")
     @Story("Account queries asset by metadata filters")
     @SdkTestId("find_asset_by_metadata_filters")
@@ -380,7 +380,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetDefinitionById")
     @Story("Account queries asset definition by ID")
     @SdkTestId("find_asset_definition_by_ID")
@@ -396,7 +396,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewDomain::class])
-    @Feature("Domain")
+    @Feature("Domains")
     @Query("FindAllDomains")
     @Story("Account queries all domains")
     @SdkTestId("find_all_domains")
@@ -414,7 +414,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewDomain::class])
-    @Feature("Domain")
+    @Feature("Domains")
     @Query("FindAllDomainsWithFilter")
     @Story("Domain queries all domains with filter")
     @SdkTestId("find_all_domains_with_filter")
@@ -433,7 +433,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Domain")
+    @Feature("Domains")
     @Query("FindDomainById")
     @Story("Domain queries domain by ID")
     @SdkTestId("find_domain_by_ID")
@@ -450,7 +450,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Peer")
+    @Feature("Peers")
     @Query("FindAllPeers")
     @Story("Peer queries all peers")
     @SdkTestId("find_all_peers")
@@ -467,7 +467,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Transaction")
+    @Feature("Transactions")
     @Query("FindTransactionsByAccountId")
     @Story("Transaction queries transactions by account id")
     @SdkTestId("find_transactions_by_account_id")
@@ -499,7 +499,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("PermissionToken")
+    @Feature("PermissionTokens")
     @Query("FindPermissionTokensByAccountId")
     @Story("PermissionToken queries permission tokens by account id")
     @SdkTestId("find_permission_tokens_by_account_id")
@@ -524,7 +524,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Transaction")
+    @Feature("Transactions")
     @Query("FindTransactionByHash")
     @Story("Transaction queries transaction by hash")
     @SdkTestId("find_transaction_by_hash")
@@ -547,7 +547,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([NewDomainWithMetadata::class])
-    @Feature("Domain")
+    @Feature("Domains")
     @Query("FindDomainKeyValueByIdAndKey")
     @Story("Domain queries domain key value by ID and key")
     @SdkTestId("find_domain_key_value_by_ID_and_key")
@@ -563,7 +563,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([WithExecutableTrigger::class])
-    @Feature("Trigger")
+    @Feature("Triggers")
     @Query("FindTriggerById")
     @Story("Trigger queries trigger by ID")
     @SdkTestId("find_trigger_by_id")
@@ -579,7 +579,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([WithExecutableTrigger::class])
-    @Feature("Trigger")
+    @Feature("Triggers")
     @Query("FindTriggersByDomainId")
     @Story("Trigger queries triggers by domain ID")
     @SdkTestId("find_triggers_by_domain_id")
@@ -594,7 +594,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([WithExecutableTrigger::class])
-    @Feature("Trigger")
+    @Feature("Triggers")
     @Query("FindAllActiveTriggerIds")
     @Story("Trigger queries all active trigger IDs")
     @SdkTestId("find_all_active_trigger_ids")
@@ -612,7 +612,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAllAccountsWithPaginationAndSorting")
     @Story("Account queries all accounts with pagination and sorting by metadata key")
     @SdkTestId("pagination_plus_sorting_by_metadata_key")
@@ -639,7 +639,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAllAccountsWithPagination")
     @Story("Account queries all accounts with pagination after inserting some new accounts")
     @SdkTestId("pagination_works_correct_after_inserting_some_new_accounts")
@@ -697,7 +697,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Account")
+    @Feature("Accounts")
     @Query("FindAllAccountsWithPagination")
     @Story("Account queries all accounts with pagination")
     @SdkTestId("find_all_account_with_pagination")
@@ -726,7 +726,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Transaction")
+    @Feature("Transactions")
     @Query("FindAllTransactions")
     @Story("Account queries all transactions")
     @SdkTestId("find_all_transactions")
@@ -751,7 +751,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Block")
+    @Feature("Blocks")
     @Query("FindAllBlocks")
     @Story("Account queries all blocks")
     @SdkTestId("find_all_blocks")
@@ -774,7 +774,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Block")
+    @Feature("Blocks")
     @Query("FindAllBlockHeaders")
     @Story("Account queries all block headers")
     @SdkTestId("find_all_block_headers")
@@ -797,7 +797,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
-    @Feature("Role")
+    @Feature("Roles")
     @Query("FindAllRoleIds")
     @Story("Account queries all role IDs")
     @SdkTestId("find_all_role_IDs")
@@ -816,7 +816,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
-    @Feature("Role")
+    @Feature("Roles")
     @Query("FindRolesByAccountId")
     @Story("Account queries roles by account ID")
     @SdkTestId("find_roles_by_account_ID")
@@ -835,7 +835,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
-    @Feature("Role")
+    @Feature("Roles")
     @Query("FindAllRoles")
     @Story("Account queries all roles")
     @SdkTestId("find_all_roles")
@@ -854,7 +854,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceHasRoleWithAccessToBobsMetadata::class])
-    @Feature("Role")
+    @Feature("Roles")
     @Query("FindRoleByRoleId")
     @Story("Account queries role by role ID")
     @SdkTestId("find_role_by_role_ID")
@@ -873,7 +873,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     @Test
     @WithIroha([AliceWithTestAssets::class])
-    @Feature("Asset")
+    @Feature("Assets")
     @Query("FindAssetDefinitionsWithOrFilter")
     @Story("Account queries asset definitions with or filter")
     @SdkTestId("find_asset_definitions_with_or_filter")
