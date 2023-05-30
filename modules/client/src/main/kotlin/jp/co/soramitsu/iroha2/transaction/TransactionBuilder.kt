@@ -1,22 +1,22 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.DigestFunction
 import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.EventsFilterBox
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.Instruction
+import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.IpfsPath
+import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -24,13 +24,13 @@ import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
-import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
@@ -101,7 +101,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         }.toList()
 
         return VersionedSignedTransaction.V1(
-            SignedTransaction(payload, signatures)
+            SignedTransaction(payload, SignaturesOfOfTransactionPayload(signatures))
         )
     }
 
@@ -112,7 +112,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
-        metadata: jp.co.soramitsu.iroha2.generated.Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf())
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTimeTrigger(
@@ -129,7 +129,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerExecutableTrigger(
         triggerId: TriggerId,
-        isi: List<Instruction>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf())
@@ -148,11 +148,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerEventTrigger(
         triggerId: TriggerId,
-        isi: List<Instruction>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: EventsFilterBox
+        filter: FilterBox
     ) = this.apply {
         instructions.value.add(
             Instructions.registerEventTrigger(
@@ -172,8 +172,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         wasm: ByteArray,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf()),
-        filter: EventsFilterBox
+        metadata: Metadata = Metadata(mapOf()),
+        filter: FilterBox
     ) = this.apply {
         instructions.value.add(
             Instructions.registerWasmTrigger(
@@ -193,7 +193,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf())
     ) = this.apply {
         instructions.value.add(
             Instructions.registerPreCommitTrigger(
@@ -248,14 +248,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
-        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf())
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
     @JvmOverloads
     fun registerAssetDefinition(
         id: AssetDefinitionId,
         assetValueType: AssetValueType,
-        metadata: jp.co.soramitsu.iroha2.generated.Metadata = jp.co.soramitsu.iroha2.generated.Metadata(mapOf()),
+        metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely()
     ) = this.apply {
         instructions.value.add(
@@ -357,15 +357,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerPeer(
         address: String,
         payload: ByteArray,
-        digestFunction: String = DigestFunction.Ed25519.hashFunName
-    ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, digestFunction)) }
+        algorithm: Algorithm = Algorithm.Ed25519()
+    ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, algorithm)) }
 
     @JvmOverloads
     fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        digestFunction: String = DigestFunction.Ed25519.hashFunName
-    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, digestFunction)) }
+        algorithm: Algorithm = Algorithm.Ed25519()
+    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
     fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }

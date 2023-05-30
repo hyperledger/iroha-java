@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Boolean
 
 /**
  * Or
@@ -15,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'Or' regular structure
  */
 public data class Or(
-    public val left: EvaluatesTo<Bool>,
-    public val right: EvaluatesTo<Bool>
+    public val left: EvaluatesTo<Boolean>,
+    public val right: EvaluatesTo<Boolean>
 ) {
     public companion object : ScaleReader<Or>, ScaleWriter<Or> {
         public override fun read(reader: ScaleCodecReader): Or = try {
             Or(
-                EvaluatesTo.read(reader) as EvaluatesTo<Bool>,
-                EvaluatesTo.read(reader) as EvaluatesTo<Bool>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

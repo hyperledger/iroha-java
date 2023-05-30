@@ -7,8 +7,6 @@ import jp.co.soramitsu.iroha2.annotations.Permission
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -20,7 +18,9 @@ import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
@@ -746,7 +746,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
                 .buildSigned(ALICE_KEYPAIR)
                 .let { query -> client.sendQuery(query) }
                 .let { account -> account.assets[DEFAULT_ASSET_ID]?.value }
-                .let { value -> value?.cast<AssetValue.Fixed>()?.fixed?.fixedPoint ?: BigDecimal.ZERO }
+                .let { value -> value?.cast<AssetValue.Fixed>()?.fixed?.fixedPointOfI64 ?: BigDecimal.ZERO }
                 .also { actualBalance ->
                     assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
                         expectedBalance.compareTo(actualBalance) == 0
@@ -833,12 +833,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId)
             registerRole(
                 roleId,
-                Token(
-                    TokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
+                PermissionToken(
+                    PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
                     mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
                 ),
-                Token(
-                    TokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
+                PermissionToken(
+                    PermissionTokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
                     mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
                 )
             )

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Boolean
 import kotlin.Int
 import kotlin.collections.List
 
@@ -27,7 +28,7 @@ public sealed class Value : ModelEnum {
      * 'Bool' variant
      */
     public data class Bool(
-        public val bool: jp.co.soramitsu.iroha2.generated.Bool
+        public val bool: Boolean
     ) : Value() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +37,14 @@ public sealed class Value : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Bool = try {
                 Bool(
-                    jp.co.soramitsu.iroha2.generated.Bool.read(reader),
+                    reader.readBoolean(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Bool) = try {
-                jp.co.soramitsu.iroha2.generated.Bool.write(writer, instance.bool)
+                if (instance.bool) { writer.directWrite(1) } else { writer.directWrite(0) }
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

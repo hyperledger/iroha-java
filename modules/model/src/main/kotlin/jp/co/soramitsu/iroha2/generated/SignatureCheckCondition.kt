@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Boolean
 
 /**
  * SignatureCheckCondition
@@ -15,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'SignatureCheckCondition' regular structure
  */
 public data class SignatureCheckCondition(
-    public val evaluatesToOfBool: EvaluatesTo<Bool>
+    public val evaluatesToOfBool: EvaluatesTo<Boolean>
 ) {
     public companion object :
         ScaleReader<SignatureCheckCondition>,
         ScaleWriter<SignatureCheckCondition> {
         public override fun read(reader: ScaleCodecReader): SignatureCheckCondition = try {
             SignatureCheckCondition(
-                EvaluatesTo.read(reader) as EvaluatesTo<Bool>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -16,9 +16,10 @@ import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
 import jp.co.soramitsu.iroha2.generated.TransactionValue
-import jp.co.soramitsu.iroha2.generated.Trigger
+import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import java.math.BigInteger
 
@@ -145,8 +146,8 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
 /**
  * Extract a trigger from a query [result]
  */
-object TriggerExtractor : ResultExtractor<Trigger<*, *>> {
-    override fun extract(result: PaginatedQueryResult): Trigger<*, *> {
+object TriggerBoxExtractor : ResultExtractor<TriggerBox> {
+    override fun extract(result: PaginatedQueryResult): TriggerBox {
         return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::triggerBox)
     }
 }
@@ -154,8 +155,8 @@ object TriggerExtractor : ResultExtractor<Trigger<*, *>> {
 /**
  * Extract a list of triggers from a query [result]
  */
-object TriggersExtractor : ResultExtractor<List<Trigger<*, *>>> {
-    override fun extract(result: PaginatedQueryResult): List<Trigger<*, *>> {
+object TriggerBoxesExtractor : ResultExtractor<List<TriggerBox>> {
+    override fun extract(result: PaginatedQueryResult): List<TriggerBox> {
         return extractVec(result.result.value) {
             extractIdentifiable(it, IdentifiableBox.Trigger::triggerBox)
         }
@@ -231,13 +232,13 @@ object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryRe
     }
 }
 
-//object BlocksValueExtractor : ResultExtractor<List<BlockValue>> {
-//    override fun extract(result: PaginatedQueryResult): List<BlockValue> {
-//        return extractVec(result.result.value) {
-//            extractValue(it, Value.Block::blockValue)
-//        }
-//    }
-//}
+object BlocksValueExtractor : ResultExtractor<List<VersionedCommittedBlock>> {
+    override fun extract(result: PaginatedQueryResult): List<VersionedCommittedBlock> {
+        return extractVec(result.result.value) {
+            extractValue(it, Value.Block::versionedCommittedBlock)
+        }
+    }
+}
 
 object BlockHeadersExtractor : ResultExtractor<List<BlockHeader>> {
     override fun extract(result: PaginatedQueryResult): List<BlockHeader> {

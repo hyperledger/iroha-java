@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Boolean
 
 /**
  * Conditional
@@ -15,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'Conditional' regular structure
  */
 public data class Conditional(
-    public val condition: EvaluatesTo<Bool>,
+    public val condition: EvaluatesTo<Boolean>,
     public val then: InstructionBox,
     public val otherwise: InstructionBox? = null
 ) {
     public companion object : ScaleReader<Conditional>, ScaleWriter<Conditional> {
         public override fun read(reader: ScaleCodecReader): Conditional = try {
             Conditional(
-                EvaluatesTo.read(reader) as EvaluatesTo<Bool>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 InstructionBox.read(reader),
                 reader.readNullable(InstructionBox) as InstructionBox?,
             )

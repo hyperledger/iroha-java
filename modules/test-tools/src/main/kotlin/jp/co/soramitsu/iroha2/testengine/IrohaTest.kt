@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Timeout

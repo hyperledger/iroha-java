@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Boolean
 
 /**
  * If
@@ -15,14 +16,14 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'If' regular structure
  */
 public data class If(
-    public val condition: EvaluatesTo<Bool>,
+    public val condition: EvaluatesTo<Boolean>,
     public val then: EvaluatesTo<Value>,
     public val otherwise: EvaluatesTo<Value>
 ) {
     public companion object : ScaleReader<If>, ScaleWriter<If> {
         public override fun read(reader: ScaleCodecReader): If = try {
             If(
-                EvaluatesTo.read(reader) as EvaluatesTo<Bool>,
+                EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
             )

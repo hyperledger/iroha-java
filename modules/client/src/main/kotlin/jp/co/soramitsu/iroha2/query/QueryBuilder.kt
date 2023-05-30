@@ -1,14 +1,13 @@
 package jp.co.soramitsu.iroha2.query
 
-import io.ktor.util.Hash
 import jp.co.soramitsu.iroha2.AccountExtractor
 import jp.co.soramitsu.iroha2.AccountsExtractor
 import jp.co.soramitsu.iroha2.AssetDefinitionExtractor
 import jp.co.soramitsu.iroha2.AssetDefinitionsExtractor
 import jp.co.soramitsu.iroha2.AssetExtractor
 import jp.co.soramitsu.iroha2.AssetsExtractor
-import jp.co.soramitsu.iroha2.BlockHeaderValueExtractor
-import jp.co.soramitsu.iroha2.BlockHeadersValueExtractor
+import jp.co.soramitsu.iroha2.BlockHeaderExtractor
+import jp.co.soramitsu.iroha2.BlockHeadersExtractor
 import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
@@ -22,14 +21,29 @@ import jp.co.soramitsu.iroha2.RolesExtractor
 import jp.co.soramitsu.iroha2.TransactionQueryResultExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
-import jp.co.soramitsu.iroha2.TriggerExtractor
+import jp.co.soramitsu.iroha2.TriggerBoxExtractor
+import jp.co.soramitsu.iroha2.TriggerBoxesExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
-import jp.co.soramitsu.iroha2.TriggersExtractor
 import jp.co.soramitsu.iroha2.U32Extractor
 import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.fromHex
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.QueryBox
+import jp.co.soramitsu.iroha2.generated.QueryPayload
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignedQuery
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.ValuePredicate
+import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaHash
@@ -341,14 +355,14 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAllBlockHeaders(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllBlockHeaders(),
-            BlockHeadersValueExtractor,
+            BlockHeadersExtractor,
             queryFilter
         )
 
         @JvmStatic
         fun findBlockHeaderByHash(hash: Hash) = QueryBuilder(
             Queries.findBlockHeaderByHash(hash),
-            BlockHeaderValueExtractor
+            BlockHeaderExtractor
         )
 
         @JvmStatic
@@ -360,7 +374,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findTriggerById(id: TriggerId) = QueryBuilder(
             Queries.findTriggerById(id),
-            TriggerExtractor
+            TriggerBoxExtractor
         )
 
         @JvmStatic
@@ -382,7 +396,7 @@ class QueryBuilder<R>(
             queryFilter: GenericPredicateBox<ValuePredicate>? = null
         ) = QueryBuilder(
             Queries.findTriggersByDomainId(domainId),
-            TriggersExtractor,
+            TriggerBoxesExtractor,
             queryFilter
         )
 

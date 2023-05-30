@@ -13,7 +13,7 @@ import kotlin.Any
 /**
  * EvaluatesTo
  *
- * Generated from 'EvaluatesTo<Vec<Value>>' regular structure
+ * Generated from 'EvaluatesTo<bool>' regular structure
  */
 public data class EvaluatesTo<T0>(
     public val expression: Expression

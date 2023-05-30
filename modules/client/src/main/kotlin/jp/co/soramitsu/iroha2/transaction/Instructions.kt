@@ -1,70 +1,61 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.DigestFunction
 import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
-import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.ActionOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.Mintable
-import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.IpfsPath
-import jp.co.soramitsu.iroha2.generated.NewDomain
-import jp.co.soramitsu.iroha2.generated.FilterBox
-import jp.co.soramitsu.iroha2.generated.time.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.BurnBox
+import jp.co.soramitsu.iroha2.generated.Conditional
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.FailBox
+import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.GrantBox
-import jp.co.soramitsu.iroha2.generated.If
-import jp.co.soramitsu.iroha2.generated.Instruction
-import jp.co.soramitsu.iroha2.generated.MintBox
-import jp.co.soramitsu.iroha2.generated.Pair
-import jp.co.soramitsu.iroha2.generated.RegisterBox
-import jp.co.soramitsu.iroha2.generated.RemoveKeyValueBox
-import jp.co.soramitsu.iroha2.generated.SequenceBox
-import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
-import jp.co.soramitsu.iroha2.generated.TransferBox
-import jp.co.soramitsu.iroha2.generated.UnregisterBox
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MintBox
+import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.NewRole
+import jp.co.soramitsu.iroha2.generated.Pair
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.NewRole
-import jp.co.soramitsu.iroha2.generated.Role
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.WasmSmartContract
-import jp.co.soramitsu.iroha2.generated.Trigger
-import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.Action
-import jp.co.soramitsu.iroha2.generated.Algorithm
-import jp.co.soramitsu.iroha2.generated.Bool
-import jp.co.soramitsu.iroha2.generated.Conditional
-import jp.co.soramitsu.iroha2.generated.FilterBox
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
-import jp.co.soramitsu.iroha2.generated.OptimizedExecutable
 import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
 import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.RemoveKeyValueBox
 import jp.co.soramitsu.iroha2.generated.Repeats
-import jp.co.soramitsu.iroha2.generated.SocketAddr
-import jp.co.soramitsu.iroha2.generated.SocketAddrV4
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SequenceBox
+import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.TransferBox
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueKind
+import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import jp.co.soramitsu.iroha2.toSocketAddr
 import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
@@ -151,9 +142,9 @@ object Instructions {
     ): InstructionBox {
         return registerSome {
             RegistrableBox.Trigger(
-                Trigger(
+                TriggerOfFilterBoxAndExecutable(
                     triggerId,
-                    Action(
+                    ActionOfFilterBoxAndExecutable(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
@@ -177,9 +168,9 @@ object Instructions {
     ): InstructionBox.Register {
         return registerSome {
             RegistrableBox.Trigger(
-                Trigger(
+                TriggerOfFilterBoxAndExecutable(
                     triggerId,
-                    Action(
+                    ActionOfFilterBoxAndExecutable(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
@@ -204,10 +195,10 @@ object Instructions {
     ): InstructionBox.Register {
         return registerSome {
             RegistrableBox.Trigger(
-                Trigger(
+                TriggerOfFilterBoxAndExecutable(
                     triggerId,
-                    Action(
-                        OptimizedExecutable.Instructions(isi),
+                    ActionOfFilterBoxAndExecutable(
+                        Executable.Instructions(isi),
                         repeats,
                         accountId,
                         filter,
@@ -231,12 +222,10 @@ object Instructions {
     ): InstructionBox.Register {
         return registerSome {
             RegistrableBox.Trigger(
-                Trigger(
+                TriggerOfFilterBoxAndExecutable(
                     triggerId,
-                    Action(
-                        Executable.Wasm(
-                            WasmSmartContract(wasm)
-                        ),
+                    ActionOfFilterBoxAndExecutable(
+                        Executable.Wasm(WasmSmartContract(wasm)),
                         repeats,
                         accountId,
                         filter,
@@ -259,9 +248,9 @@ object Instructions {
     ): InstructionBox.Register {
         return registerSome {
             RegistrableBox.Trigger(
-                Trigger(
+                TriggerOfFilterBoxAndExecutable(
                     triggerId,
-                    Action(
+                    ActionOfFilterBoxAndExecutable(
                         Executable.Instructions(isi),
                         repeats,
                         accountId,
@@ -654,6 +643,7 @@ object Instructions {
             )
         )
     }
+
     /**
      * Grant an account a given role.
      */
@@ -679,7 +669,7 @@ object Instructions {
      * Evaluate one instruction if a [condition] is met and another one otherwise.
      */
     fun `if`(
-        condition: Bool,
+        condition: Boolean,
         then: InstructionBox,
         otherwise: InstructionBox
     ) = InstructionBox.If(Conditional(condition.evaluatesTo(), then, otherwise))

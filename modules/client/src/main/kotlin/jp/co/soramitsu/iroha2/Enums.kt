@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
+import jp.co.soramitsu.iroha2.generated.Name
 
 enum class Permissions(val type: Name) {
     CanSetKeyValueUserAssetsToken("can_set_key_value_in_user_assets".asName()),

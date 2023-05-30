@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File

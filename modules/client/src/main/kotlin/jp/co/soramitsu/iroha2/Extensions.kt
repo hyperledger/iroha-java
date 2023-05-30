@@ -1,42 +1,43 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.util.Hash
 import io.ktor.websocket.Frame
-import jp.co.soramitsu.iroha2.AccountId
-import jp.co.soramitsu.iroha2.Algorithm
-import jp.co.soramitsu.iroha2.Asset
-import jp.co.soramitsu.iroha2.AssetDefinitionId
-import jp.co.soramitsu.iroha2.AssetId
-import jp.co.soramitsu.iroha2.AssetValue
-import jp.co.soramitsu.iroha2.Bool
-import jp.co.soramitsu.iroha2.DomainId
-import jp.co.soramitsu.iroha2.EvaluatesTo
-import jp.co.soramitsu.iroha2.Executable
-import jp.co.soramitsu.iroha2.ExecutionTime
-import jp.co.soramitsu.iroha2.Expression
-import jp.co.soramitsu.iroha2.FilterBox
-import jp.co.soramitsu.iroha2.Fixed
-import jp.co.soramitsu.iroha2.IdBox
-import jp.co.soramitsu.iroha2.IdentifiableBox
-import jp.co.soramitsu.iroha2.InstructionBox
-import jp.co.soramitsu.iroha2.Metadata
-import jp.co.soramitsu.iroha2.Name
-import jp.co.soramitsu.iroha2.NumericValue
-import jp.co.soramitsu.iroha2.PermissionToken
-import jp.co.soramitsu.iroha2.PermissionTokenId
-import jp.co.soramitsu.iroha2.RegistrableBox
-import jp.co.soramitsu.iroha2.RoleId
-import jp.co.soramitsu.iroha2.Signature
-import jp.co.soramitsu.iroha2.SignatureOf
-import jp.co.soramitsu.iroha2.SignedTransaction
-import jp.co.soramitsu.iroha2.SocketAddr
-import jp.co.soramitsu.iroha2.SocketAddrHost
-import jp.co.soramitsu.iroha2.SocketAddrV4
-import jp.co.soramitsu.iroha2.TransactionPayload
-import jp.co.soramitsu.iroha2.Trigger
-import jp.co.soramitsu.iroha2.TriggerId
-import jp.co.soramitsu.iroha2.Value
-import jp.co.soramitsu.iroha2.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.Algorithm
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.ExecutionTime
+import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.FilterBox
+import jp.co.soramitsu.iroha2.generated.Fixed
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NumericValue
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignatureOf
+import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.generated.TransactionPayload
+import jp.co.soramitsu.iroha2.generated.TriggerBox
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -48,6 +49,7 @@ import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 import kotlin.experimental.or
+import jp.co.soramitsu.iroha2.generated.PublicKey as IrohaPublicKey
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
@@ -92,7 +94,7 @@ fun BigInteger.asValue() = Value.Numeric(NumericValue.U128(this))
 
 fun BigDecimal.asValue() = Value.Numeric(NumericValue.Fixed(Fixed(this)))
 
-fun Boolean.asValue() = Value.Bool(Bool(this))
+fun Boolean.asValue() = Value.Bool(this)
 
 fun AccountId.asValue() = Value.Id(IdBox.AccountId(this))
 
@@ -113,8 +115,8 @@ fun String.fromHex(): ByteArray = try {
 /**
  * Convert a public key to an Iroha public key
  */
-fun PublicKey.toIrohaPublicKey(): jp.co.soramitsu.iroha2.PublicKey {
-    return jp.co.soramitsu.iroha2.PublicKey(Algorithm.Ed25519(), this.bytes())
+fun PublicKey.toIrohaPublicKey(): IrohaPublicKey {
+    return IrohaPublicKey(Algorithm.Ed25519(), this.bytes())
 }
 
 /**
@@ -149,7 +151,7 @@ fun ByteArray.toIrohaHash(): Hash {
     if (this.size != 32) throw IrohaSdkException("Hash byte array size must be 32")
 
     this[31] = this[31] or 1
-    return io.ktor.util.Hash(this)
+    return Hash(this)
 }
 
 fun ByteArray.hash(): ByteArray {
@@ -201,6 +203,10 @@ fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): Versi
     }
 }
 
+fun SignaturesOfOfTransactionPayload.plus(
+    signatures: Set<SignatureOf<TransactionPayload>>
+) = SignaturesOfOfTransactionPayload(this.signatures.plus(signatures))
+
 /**
  * Cast to another type
  */
@@ -248,10 +254,10 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.AssetDefinition -> IdentifiableBox.NewAssetDefinition(this.newAssetDefinition)
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
-    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.trigger)
     is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
         this.permissionTokenDefinition
     )
+    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
 }
 
 fun <T> T.asValue() = when (this) {
@@ -427,9 +433,13 @@ fun EvaluatesTo<Value>.extractValueU32() = this
     .getValue<Value.Numeric>().numericValue
     .getValue<Long>()
 
-fun Trigger<*, *>.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
+fun TriggerOfFilterBoxAndOptimizedExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
+fun TriggerOfFilterBoxAndExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
 
-fun Trigger<*, *>.extractSchedule() = this.action.filter
+fun TriggerOfFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
+fun TriggerOfFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
+fun FilterBox.extractSchedule() = this
     .cast<FilterBox.Time>()
     .timeEventFilter.executionTime
     .cast<ExecutionTime.Schedule>().schedule

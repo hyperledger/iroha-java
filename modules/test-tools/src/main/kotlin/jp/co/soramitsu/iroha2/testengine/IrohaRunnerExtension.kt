@@ -8,7 +8,9 @@ import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.findFreePorts
 import jp.co.soramitsu.iroha2.generateKeyPair
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.PeerId
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -177,7 +179,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     }
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
-        "$host:$port",
+        SocketAddr.Host(SocketAddrHost(host, port)),
         this.public.toIrohaPublicKey()
     )
 

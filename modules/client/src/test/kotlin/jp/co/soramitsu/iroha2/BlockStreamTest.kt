@@ -1,15 +1,15 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.core.block.CommittedBlock
-import jp.co.soramitsu.iroha2.generated.core.block.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.core.block.stream.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.Payload
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedValidTransaction
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.CommittedBlock
+import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.TransactionPayload
+import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
+import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
@@ -21,7 +21,6 @@ import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -48,11 +47,11 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             GENESIS,
             4
         )
-        val registerDomain = instructions[0].cast<Instruction.Register>().extractDomain().id.name.string
+        val registerDomain = instructions[0].cast<InstructionBox.Register>().extractDomain().id.name.string
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
-        assertEquals(ALICE_ACCOUNT_ID.asString(), instructions[1].cast<Instruction.Register>().extractAccount().id.asString())
-        assertEquals(BOB_ACCOUNT_ID.asString(), instructions[2].cast<Instruction.Register>().extractAccount().id.asString())
-        assertEquals("foo$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN", instructions[3].cast<Instruction.Register>().extractAccount().id.asString())
+        assertEquals(ALICE_ACCOUNT_ID.asString(), instructions[1].cast<InstructionBox.Register>().extractAccount().id.asString())
+        assertEquals(BOB_ACCOUNT_ID.asString(), instructions[2].cast<InstructionBox.Register>().extractAccount().id.asString())
+        assertEquals("foo$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN", instructions[3].cast<InstructionBox.Register>().extractAccount().id.asString())
 
         instructions = checkBlockStructure(
             blocks[1],
@@ -61,7 +60,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             BOB_ACCOUNT,
             1
         )
-        var newAssetDefinition = instructions[0].cast<Instruction.Register>().extractAssetDefinition()
+        var newAssetDefinition = instructions[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
@@ -77,7 +76,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             BOB_ACCOUNT,
             1
         )
-        newAssetDefinition = instructions[0].cast<Instruction.Register>().extractAssetDefinition()
+        newAssetDefinition = instructions[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
@@ -88,7 +87,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             .blockMessage.versionedCommittedBlock.cast<VersionedCommittedBlock.V1>().committedBlock
     }
 
-    private fun getInstructionPayload(committedBlock: CommittedBlock): Payload {
+    private fun getInstructionPayload(committedBlock: CommittedBlock): TransactionPayload {
         return committedBlock.transactions[0]
             .cast<VersionedValidTransaction.V1>()
             .validTransaction
@@ -101,7 +100,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
         instructionAccountDomain: String,
         instructionAccount: String,
         instructionSize: Int
-    ): List<Instruction> {
+    ): List<InstructionBox> {
         val committedBlock = getCommittedBlock(blockMessage)
         assertEquals(height, committedBlock.header.height.toLong())
         val payload = getInstructionPayload(committedBlock)

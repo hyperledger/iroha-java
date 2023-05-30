@@ -37,19 +37,6 @@ class SchemaReader {
         }
     }
 
-//    private fun String.parse(): String {
-//        COMMON_SCHEMA_GENERIC_REGEX.find(this)?.groupValues?.also { values ->
-//            val mutable = immutable.map { this.contains(it) }.all { !it }
-//            if (mutable && repeated[values[1]] != null) {
-//                val new = this.replace("<", "Of")
-//                    .replace(", ", "And")
-//                    .replace(">", "")
-//                return this.replace(this, new)
-//            }
-//        }
-//        return this
-//    }
-
     private fun String.replace(): String {
         var result = this
         toReplace.forEach { (old, new) -> result = result.replace(old, new) }

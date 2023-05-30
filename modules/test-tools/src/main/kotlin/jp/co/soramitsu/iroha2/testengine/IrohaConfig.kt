@@ -5,7 +5,9 @@ import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.generateKeyPair
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.PeerId
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.Network
@@ -32,7 +34,7 @@ class IrohaConfig(
     var keyPair: KeyPair = generateKeyPair(),
     var trustedPeers: List<PeerId> = listOf(
         PeerId(
-            "$alias:$DEFAULT_P2P_PORT",
+            SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)),
             keyPair.public.toIrohaPublicKey()
         )
     ),

@@ -7,20 +7,20 @@ import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
-import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
-import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.GenesisTransaction
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.Repeats
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
@@ -39,12 +39,12 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type, IdKey.AccountId),
         Instructions.registerRole(
             ROLE_ID,
-            Token(
-                TokenId(Permissions.CanSetKeyValueInUserMetadata.type),
+            PermissionToken(
+                PermissionTokenId(Permissions.CanSetKeyValueInUserMetadata.type),
                 mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             ),
-            Token(
-                TokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
+            PermissionToken(
+                PermissionTokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
                 mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             )
         ),
@@ -247,23 +247,22 @@ open class RubbishToTestMultipleGenesis : Genesis(
 /**
  * Return [RawGenesisBlock] with instructions to init genesis block
  */
-fun rawGenesisBlock(vararg isi: Instruction): RawGenesisBlock {
-    return RawGenesisBlock(
+fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
+    GenesisTransaction(
         listOf(
-            GenesisTransaction(
-                listOf(
-                    Instructions.registerDomain(DEFAULT_DOMAIN_ID),
-                    Instructions.registerAccount(
-                        ALICE_ACCOUNT_ID,
-                        listOf(ALICE_KEYPAIR.public.toIrohaPublicKey())
-                    ),
-                    Instructions.registerAccount(
-                        BOB_ACCOUNT_ID,
-                        listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
-                    ),
-                    *isi
-                )
-            )
+            Instructions.registerDomain(DEFAULT_DOMAIN_ID),
+            Instructions.registerAccount(
+                ALICE_ACCOUNT_ID,
+                listOf(ALICE_KEYPAIR.public.toIrohaPublicKey())
+            ),
+            Instructions.registerAccount(
+                BOB_ACCOUNT_ID,
+                listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
+            ),
+            *isi
         )
-    )
-}
+    ).let {
+        listOf(listOf(it))
+    },
+    Genesis.validatorMode
+)

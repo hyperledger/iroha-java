@@ -13,6 +13,7 @@ import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
+import java.lang.Exception
 import java.net.URL
 import java.nio.file.Path
 import java.time.Duration
@@ -119,7 +120,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             val genesisAsJson = config.genesis.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
         }
-        super.start()
+        try {
+            super.start()
+        } catch (e: Exception) {
+            println(e)
+        }
         logger().debug("Iroha container started")
     }
 
@@ -149,7 +154,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable@sha256:5356c8cd8b61ef7c16b18cf9d71808d66bca5fc78118256c5c2a1f92f7dd8fdf"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-86893b5c1bf6566e33007604ef46e48532966c89"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"

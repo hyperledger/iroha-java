@@ -16,13 +16,13 @@ import kotlin.collections.List
  * Generated from 'RawGenesisBlock' regular structure
  */
 public data class RawGenesisBlock(
-    public val transactions: List<GenesisTransaction>,
+    public val transactions: List<List<GenesisTransaction>>,
     public val validator: ValidatorMode
 ) {
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
         public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
             RawGenesisBlock(
-                reader.readVec(reader.readCompactInt()) { GenesisTransaction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { reader.readVec(reader.readCompactInt()) { GenesisTransaction.read(reader) } },
                 ValidatorMode.read(reader),
             )
         } catch (ex: Exception) {
@@ -32,7 +32,10 @@ public data class RawGenesisBlock(
         public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) = try {
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value ->
-                GenesisTransaction.write(writer, value)
+                writer.writeCompact(value.size)
+                value.forEach { value ->
+                    GenesisTransaction.write(writer, value)
+                }
             }
             ValidatorMode.write(writer, instance.validator)
         } catch (ex: Exception) {

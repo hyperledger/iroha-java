@@ -1,8 +1,8 @@
 package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
-import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.GenesisTransaction
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import org.junit.jupiter.api.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
@@ -27,6 +27,8 @@ annotation class WithIroha(
 /**
  * Empty genesis with no instructions
  */
-open class EmptyGenesis : Genesis(RawGenesisBlock(listOf(GenesisTransaction(emptyList()))))
+open class EmptyGenesis : Genesis(
+    RawGenesisBlock(listOf(listOf(GenesisTransaction(emptyList()))), validatorMode)
+)
 
 const val IROHA_CONFIG_DELIMITER = "="
