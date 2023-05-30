@@ -34,6 +34,8 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
+@Disabled
+@Issue("https://github.com/hyperledger/iroha/issues/2962")
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
@@ -85,8 +87,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
-    @Disabled
-    @Issue("https://github.com/hyperledger/iroha/issues/2962")
     fun `registered peer should return consistent data`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
