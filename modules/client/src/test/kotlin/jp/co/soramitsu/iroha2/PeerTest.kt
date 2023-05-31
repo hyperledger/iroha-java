@@ -113,7 +113,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             this.keyPair = keyPair
             this.ports = ports
             this.alias = alias
-            this.networkToJoin = containers.first().network
+            this.networkToJoin = containers.first().network ?: throw IrohaSdkException("Container network not found")
             this.genesis = DefaultGenesis::class.createInstance()
             this.trustedPeers = containers.map { it.extractPeerId() }
         }.also { it.start() }
