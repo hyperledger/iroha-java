@@ -1,5 +1,12 @@
 package jp.co.soramitsu.iroha2
 
+import io.qameta.allure.Feature
+import io.qameta.allure.Issue
+import io.qameta.allure.Owner
+import io.qameta.allure.Story
+import jp.co.soramitsu.iroha2.annotations.Permission
+import jp.co.soramitsu.iroha2.annotations.Sdk
+import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -24,7 +31,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @Timeout(100)
+@Owner("akostyuchenko")
+@Sdk("Java/Kotlin")
+@Feature("Peers")
 @Disabled
+@Issue("https://github.com/hyperledger/iroha/issues/2962")
 class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
@@ -33,6 +44,9 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @Story("Account registers a peer")
+    @Permission("no_permission_required")
+    @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -49,6 +63,9 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @Story("Account unregisters a peer")
+    @Permission("no_permission_required")
+    @SdkTestId("unregister_peer")
     fun `unregister peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]

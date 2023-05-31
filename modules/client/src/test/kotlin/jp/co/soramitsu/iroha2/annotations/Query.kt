@@ -6,7 +6,7 @@ import java.lang.annotation.Inherited
 @MustBeDocumented
 @Inherited
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@LabelAnnotation(name = "permission")
+@Target(AnnotationTarget.FUNCTION)
+@LabelAnnotation(name = "query")
 @Repeatable
-annotation class Permission(val value: String)
+annotation class Query(val value: String)
