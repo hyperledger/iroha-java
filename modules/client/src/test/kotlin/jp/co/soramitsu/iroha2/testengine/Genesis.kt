@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -22,6 +21,7 @@ import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
+import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
 
@@ -35,16 +35,14 @@ open class DefaultGenesis : Genesis(rawGenesisBlock())
  */
 open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
     rawGenesisBlock(
-        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserMetadata.type, IdKey.AccountId),
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                PermissionTokenId(Permissions.CanSetKeyValueInUserMetadata.type),
+                PermissionTokenId(Permissions.CanSetKeyValueInUserAccount.type),
                 mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             ),
             PermissionToken(
-                PermissionTokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
+                PermissionTokenId(Permissions.CanRemoveKeyValueInUserAccount.type),
                 mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue())
             )
         ),
@@ -63,8 +61,11 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
     rawGenesisBlock(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
-        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId),
-        Instructions.grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
+        Instructions.grantPermissionToken(
+            Permissions.CanMintUserAssetDefinitionsToken,
+            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            ALICE_ACCOUNT_ID
+        )
     )
 )
 
@@ -140,11 +141,11 @@ open class StoreAssetWithMetadata : Genesis(
 
 open class AliceCanMintXor : Genesis(
     rawGenesisBlock(
-        Instructions.registerPermissionToken(
-            Permissions.CanMintUserAssetDefinitionsToken.type,
-            IdKey.AssetDefinitionId
-        ),
-        Instructions.grantMintUserAssetDefinitions(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
+        Instructions.grantPermissionToken(
+            Permissions.CanMintUserAssetDefinitionsToken,
+            mapOf(IdKey.AssetId.type.asName() to XOR_DEFINITION_ID.asValue()),
+            ALICE_ACCOUNT_ID
+        )
     )
 )
 
@@ -248,21 +249,24 @@ open class RubbishToTestMultipleGenesis : Genesis(
  * Return [RawGenesisBlock] with instructions to init genesis block
  */
 fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
-    GenesisTransaction(
-        listOf(
-            Instructions.registerDomain(DEFAULT_DOMAIN_ID),
-            Instructions.registerAccount(
-                ALICE_ACCOUNT_ID,
-                listOf(ALICE_KEYPAIR.public.toIrohaPublicKey())
-            ),
-            Instructions.registerAccount(
-                BOB_ACCOUNT_ID,
-                listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
-            ),
-            *isi
-        )
-    ).let {
-        listOf(listOf(it))
-    },
+    listOf(
+        Instructions.registerDomain(DEFAULT_DOMAIN_ID),
+        Instructions.registerAccount(
+            ALICE_ACCOUNT_ID,
+            listOf(ALICE_KEYPAIR.public.toIrohaPublicKey())
+        ),
+        Instructions.registerAccount(
+            BOB_ACCOUNT_ID,
+            listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
+        ),
+        Instructions.registerPermissionToken(Permissions.CanUnregisterAccount, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserAccount.type, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAccount.type, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId),
+        Instructions.registerPermissionToken(Permissions.CanMintUserAssetDefinitionsToken.type, IdKey.AssetDefinitionId),
+        Instructions.registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId),
+        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId),
+        *isi
+    ).let { listOf(it) },
     Genesis.validatorMode
 )

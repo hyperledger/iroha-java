@@ -1,7 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.Expression
-import jp.co.soramitsu.iroha2.generated.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
@@ -11,10 +10,9 @@ import jp.co.soramitsu.iroha2.generated.NewDomain
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.Validator
 import jp.co.soramitsu.iroha2.generated.ValidatorMode
+import jp.co.soramitsu.iroha2.generated.ValidatorPath
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -41,13 +39,13 @@ open class Genesis(open val block: RawGenesisBlock) {
     companion object {
 
         val validatorMode = this::class.java.classLoader.getResource("validator.wasm")
-            ?.readBytes()?.let { ValidatorMode.Inline(Validator(WasmSmartContract(it))) }
+            ?.let { ValidatorMode.Path("validator.wasm") }
             ?: throw IrohaSdkException("validator.wasm not found")
 
         /**
          * Return empty genesis
          */
-        fun getEmpty() = Genesis(RawGenesisBlock(listOf(listOf(GenesisTransaction(listOf()))), validatorMode))
+        fun getEmpty() = Genesis(RawGenesisBlock(listOf(listOf()), validatorMode))
 
         /**
          * List of genesis blocks to single block with unique instructions
@@ -55,10 +53,10 @@ open class Genesis(open val block: RawGenesisBlock) {
         fun List<Genesis>.toSingle(): Genesis {
             val uniqueIsi: MutableSet<InstructionBox> = mutableSetOf()
             this.forEach { genesis ->
-                uniqueIsi.addAll(genesis.block.transactions.flatten().map { it.isi }.flatten())
+                uniqueIsi.addAll(genesis.block.transactions.flatten())
             }
 
-            return Genesis(RawGenesisBlock(listOf(listOf(GenesisTransaction(uniqueIsi.mergeMetadata()))), validatorMode))
+            return Genesis(RawGenesisBlock(listOf(uniqueIsi.mergeMetadata()), validatorMode))
         }
 
         private fun MutableSet<InstructionBox>.mergeMetadata(): List<InstructionBox> {

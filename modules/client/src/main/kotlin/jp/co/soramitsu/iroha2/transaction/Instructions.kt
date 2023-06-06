@@ -108,26 +108,19 @@ object Instructions {
     fun registerPermissionToken(
         permissionsId: PermissionTokenId,
         params: Map<Name, ValueKind> = mapOf()
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params))
-        }
-    }
+    ) = registerSome { RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params)) }
 
-    fun registerPermissionToken(permission: Permissions, idKey: IdKey): InstructionBox.Register {
-        return registerPermissionToken(permission.type, idKey.type)
-    }
+    fun registerPermissionToken(
+        permission: Permissions,
+        idKey: IdKey
+    ) = registerPermissionToken(permission.type, idKey.type)
 
-    fun registerPermissionToken(name: Name, idKey: IdKey): InstructionBox.Register {
-        return registerPermissionToken(name, idKey.type)
-    }
+    fun registerPermissionToken(name: Name, idKey: IdKey) = registerPermissionToken(name, idKey.type)
 
-    fun registerPermissionToken(name: Name, idKey: String): InstructionBox.Register {
-        return registerPermissionToken(
-            PermissionTokenId(name),
-            mapOf(idKey.asName() to ValueKind.Id())
-        )
-    }
+    fun registerPermissionToken(name: Name, idKey: String) = registerPermissionToken(
+        PermissionTokenId(name),
+        mapOf(idKey.asName() to ValueKind.Id())
+    )
 
     /**
      * Register a time trigger
@@ -470,178 +463,14 @@ object Instructions {
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     /**
-     * Grant an account the [Permissions.CanSetKeyValueUserAssetsToken] permission
-     */
-    fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-            params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanRemoveKeyValueInUserAssets] permission
-     */
-    fun grantRemoveKeyValueAsset(
-        assetId: AssetId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
-            params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanSetKeyValueInUserMetadata] permission
-     */
-    fun grantSetKeyValueMetadata(
-        accountId: AccountId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanSetKeyValueInUserMetadata.type),
-            params = mapOf(IdKey.AccountId.type.asName() to accountId.toValueId())
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanRemoveKeyValueInUserMetadata] permission
-     */
-    fun grantRemoveKeyValueMetadata(
-        accountId: AccountId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanRemoveKeyValueInUserMetadata.type),
-            params = mapOf(IdKey.AccountId.type.asName() to accountId.toValueId())
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanSetKeyValueInAssetDefinition] permission
-     */
-    fun grantSetKeyValueAssetDefinition(
-        assetDefinitionId: AssetDefinitionId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanSetKeyValueInAssetDefinition.type),
-            params = mapOf(
-                IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanRemoveKeyValueInAssetDefinition] permission
-     */
-    fun grantRemoveKeyValueAssetDefinition(
-        assetDefinitionId: AssetDefinitionId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanRemoveKeyValueInAssetDefinition.type),
-            params = mapOf(
-                IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanMintUserAssetDefinitionsToken] permission
-     */
-    fun grantMintUserAssetDefinitions(
-        assetDefinitionId: AssetDefinitionId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanMintUserAssetDefinitionsToken.type),
-            params = mapOf(
-                IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod] permission
-     */
-    fun grantTransferOnlyFixedNumberOfTimesPerPeriod(
-        period: BigInteger,
-        count: Long,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanTransferOnlyFixedNumberOfTimesPerPeriod.type),
-            params = mapOf(
-                PERIOD_PARAM_NAME to period.asValue(),
-                COUNT_PARAM_NAME to count.asValue()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanBurnAssetWithDefinition] permission
-     */
-    fun grantBurnAssetWithDefinitionId(
-        assetDefinitionId: AssetDefinitionId,
-        target: AccountId
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanBurnAssetWithDefinition.type),
-            params = mapOf(
-                IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanBurnUserAssetsToken] permission
-     */
-    fun grantBurnAssets(assetId: AssetId, target: AccountId) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanBurnUserAssetsToken.type),
-            params = mapOf(
-                IdKey.AssetId.type.asName() to assetId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanRegisterDomainsToken] permission
-     */
-    fun grantRegisterDomains(target: AccountId) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanRegisterDomainsToken.type),
-            params = emptyMap()
-        )
-    }
-
-    /**
      * Grant an account the [Permissions.CanTransferUserAssetsToken] permission
      */
-    fun grantTransferUserAsset(assetId: AssetId, target: AccountId) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanTransferUserAssetsToken.type),
-            params = mapOf(
-                IdKey.AssetId.type.asName() to assetId.toValueId()
-            )
-        )
-    }
-
-    /**
-     * Grant an account the [Permissions.CanUnregisterAssetWithDefinition] permission
-     */
-    fun grantUnregisterAssetDefinition(
-        assetDefinitionId: AssetDefinitionId,
+    fun grantPermissionToken(
+        permission: Permissions,
+        params: Map<Name, Value>,
         target: AccountId
     ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(
-            definitionId = PermissionTokenId(Permissions.CanUnregisterAssetWithDefinition.type),
-            params = mapOf(
-                IdKey.AssetDefinitionId.type.asName() to assetDefinitionId.toValueId()
-            )
-        )
+        PermissionToken(definitionId = PermissionTokenId(permission.type), params = params)
     }
 
     /**

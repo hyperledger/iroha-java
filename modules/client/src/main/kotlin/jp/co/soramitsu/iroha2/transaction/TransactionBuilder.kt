@@ -367,47 +367,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         algorithm: Algorithm = Algorithm.Ed25519()
     ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
-    fun grantSetKeyValueAsset(assetId: AssetId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantSetKeyValueAsset(assetId, target)) }
-
-    fun grantRemoveKeyValueAsset(assetId: AssetId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantRemoveKeyValueAsset(assetId, target)) }
-
-    fun grantSetKeyValueMetadata(accountId: AccountId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantSetKeyValueMetadata(accountId, target)) }
-
-    fun grantMintUserAssetDefinitions(assetDefinitionId: AssetDefinitionId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantMintUserAssetDefinitions(assetDefinitionId, target)) }
-
-    fun grantBurnAssetWithDefinitionId(assetDefinitionId: AssetDefinitionId, target: AccountId) =
-        this.apply { instructions.value.add(Instructions.grantBurnAssetWithDefinitionId(assetDefinitionId, target)) }
-
-    fun grantSetKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantSetKeyValueAssetDefinition(assetDefinitionId, target))
+    fun grantPermissionToken(permission: Permissions, params: Pair<Name, Value>, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantPermissionToken(permission, mapOf(params), target))
     }
 
-    fun grantRemoveKeyValueAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantRemoveKeyValueAssetDefinition(assetDefinitionId, target))
-    }
-
-    fun grantTransferOnlyFixedNumberOfTimesPerPeriod(period: BigInteger, count: Long, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantTransferOnlyFixedNumberOfTimesPerPeriod(period, count, target))
-    }
-
-    fun grantBurnAssets(assetId: AssetId, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantBurnAssets(assetId, target))
-    }
-
-    fun grantRegisterDomains(target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantRegisterDomains(target))
-    }
-
-    fun grantTransferUserAsset(assetId: AssetId, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantTransferUserAsset(assetId, target))
-    }
-
-    fun grantUnregisterAssetDefinition(assetDefinitionId: AssetDefinitionId, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantUnregisterAssetDefinition(assetDefinitionId, target))
+    fun grantPermissionToken(permission: Permissions, params: Map<Name, Value>, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantPermissionToken(permission, params, target))
     }
 
     fun burnAsset(assetId: AssetId, value: Int) = this.apply {

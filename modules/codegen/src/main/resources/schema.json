@@ -2041,14 +2041,6 @@
       }
     ]
   },
-  "GenesisTransaction": {
-    "Struct": [
-      {
-        "name": "isi",
-        "type": "Vec<InstructionBox>"
-      }
-    ]
-  },
   "GrantBox": {
     "Struct": [
       {
@@ -2077,6 +2069,7 @@
   "HashOf<MerkleTree<VersionedSignedTransaction>>": "Hash",
   "HashOf<VersionedCommittedBlock>": "Hash",
   "HashOf<VersionedSignedTransaction>": "Hash",
+  "HashOf<WasmSmartContract>": "Hash",
   "IdBox": {
     "Enum": [
       {
@@ -2635,7 +2628,7 @@
       {
         "tag": "WasmInternalRepr",
         "discriminant": 0,
-        "type": "Vec<u8>"
+        "type": "WasmInternalRepr"
       },
       {
         "tag": "Instructions",
@@ -3271,7 +3264,7 @@
     "Struct": [
       {
         "name": "transactions",
-        "type": "Vec<GenesisTransaction>"
+        "type": "Vec<Vec<InstructionBox>>"
       },
       {
         "name": "validator",
@@ -4108,20 +4101,12 @@
       {
         "tag": "Path",
         "discriminant": 0,
-        "type": "ValidatorPath"
+        "type": "String"
       },
       {
         "tag": "Inline",
         "discriminant": 1,
         "type": "Validator"
-      }
-    ]
-  },
-  "ValidatorPath": {
-    "Struct": [
-      {
-        "name": "validator_relative_path",
-        "type": "String"
       }
     ]
   },
@@ -4392,9 +4377,6 @@
   "Vec<GenericPredicateBox<ValuePredicate>>": {
     "Vec": "GenericPredicateBox<ValuePredicate>"
   },
-  "Vec<GenesisTransaction>": {
-    "Vec": "GenesisTransaction"
-  },
   "Vec<InstructionBox>": {
     "Vec": "InstructionBox"
   },
@@ -4406,6 +4388,9 @@
   },
   "Vec<Value>": {
     "Vec": "Value"
+  },
+  "Vec<Vec<InstructionBox>>": {
+    "Vec": "Vec<InstructionBox>"
   },
   "Vec<VersionedRejectedTransaction>": {
     "Vec": "VersionedRejectedTransaction"
@@ -4520,6 +4505,18 @@
       {
         "name": "reason",
         "type": "String"
+      }
+    ]
+  },
+  "WasmInternalRepr": {
+    "Struct": [
+      {
+        "name": "serialized",
+        "type": "Vec<u8>"
+      },
+      {
+        "name": "blob_hash",
+        "type": "HashOf<WasmSmartContract>"
       }
     ]
   },

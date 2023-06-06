@@ -1,21 +1,21 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.Container
+import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.Pagination
-import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
+import jp.co.soramitsu.iroha2.generated.Sorting
 import jp.co.soramitsu.iroha2.generated.StringPredicate
-import jp.co.soramitsu.iroha2.generated.Container
+import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
-import jp.co.soramitsu.iroha2.generated.Sorting
-import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
@@ -460,8 +460,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-            .also { println(it) }
-//            .also { trigger -> assertTrue { trigger.id == triggerId } }
+            .also { trigger -> assertTrue { trigger.id() == triggerId } }
     }
 
     @Test
@@ -608,7 +607,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
             .also { txs ->
-                assertTrue(txs.size == 6) // 5 + genesis tx
+                assertTrue(txs.size == 7) // 5 + 2 genesis txы
             }
     }
 

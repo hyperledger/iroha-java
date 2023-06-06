@@ -13,7 +13,7 @@ import kotlin.Any
 /**
  * HashOf
  *
- * Generated from 'HashOf<VersionedSignedTransaction>' regular structure
+ * Generated from 'HashOf<WasmSmartContract>' regular structure
  */
 public data class HashOf<T0>(
     public val hash: Hash

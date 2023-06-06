@@ -504,6 +504,11 @@ fun Asset.metadata() = this.value.cast<AssetValue.Store>().metadata.map
 
 fun TransactionBuilder.merge(other: TransactionBuilder) = this.instructions.value.addAll(other.instructions.value)
 
+fun TriggerBox.id() = when (this) {
+    is TriggerBox.Raw -> this.triggerOfFilterBoxAndExecutable.id
+    is TriggerBox.Optimized -> this.triggerOfFilterBoxAndOptimizedExecutable.id
+}
+
 fun String.toSocketAddr() = this.split(":").let { parts ->
     if (parts.size != 2) throw IrohaSdkException("Incorrect address")
 

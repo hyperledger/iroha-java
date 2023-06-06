@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.String
 
 /**
  * ValidatorMode
@@ -26,7 +27,7 @@ public sealed class ValidatorMode : ModelEnum {
      * 'Path' variant
      */
     public data class Path(
-        public val validatorPath: ValidatorPath
+        public val string: String
     ) : ValidatorMode() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -35,14 +36,14 @@ public sealed class ValidatorMode : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Path = try {
                 Path(
-                    ValidatorPath.read(reader),
+                    reader.readString(),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Path) = try {
-                ValidatorPath.write(writer, instance.validatorPath)
+                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

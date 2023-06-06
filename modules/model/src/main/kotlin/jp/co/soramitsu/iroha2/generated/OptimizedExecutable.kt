@@ -9,7 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.ByteArray
 import kotlin.Int
 import kotlin.collections.List
 
@@ -28,7 +27,7 @@ public sealed class OptimizedExecutable : ModelEnum {
      * 'WasmInternalRepr' variant
      */
     public data class WasmInternalRepr(
-        public val vec: ByteArray
+        public val wasmInternalRepr: jp.co.soramitsu.iroha2.generated.WasmInternalRepr
     ) : OptimizedExecutable() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -37,14 +36,14 @@ public sealed class OptimizedExecutable : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): WasmInternalRepr = try {
                 WasmInternalRepr(
-                    reader.readByteArray(),
+                    jp.co.soramitsu.iroha2.generated.WasmInternalRepr.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: WasmInternalRepr) = try {
-                writer.writeAsList(instance.vec)
+                jp.co.soramitsu.iroha2.generated.WasmInternalRepr.write(writer, instance.wasmInternalRepr)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

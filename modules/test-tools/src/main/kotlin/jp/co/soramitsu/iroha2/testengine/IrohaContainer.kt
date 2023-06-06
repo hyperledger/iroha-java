@@ -13,7 +13,6 @@ import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
-import java.lang.Exception
 import java.net.URL
 import java.nio.file.Path
 import java.time.Duration
@@ -66,12 +65,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
-                forHostPath(configDirLocation.value),
+                forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR"
             ).also {
-                config.genesis.writeToFile(genesisFileLocation.value)
+                config.genesis.writeToFile(genesisFileLocation)
+                getResource(DEFAULT_VALIDATOR_FILE_NAME).readBytes().let { content ->
+                    validatorFileLocation.toFile().writeBytes(content)
+                }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
-                    configFileLocation.value.toFile().writeBytes(content)
+                    configFileLocation.toFile().writeBytes(content)
                 }
             }.also { container ->
                 val command = when (config.submitGenesis) {
@@ -102,17 +104,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val apiPort: Int
     private val telemetryPort: Int
 
-    private val genesisFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
-    }
+    private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
-    private val configFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
-    }
-
-    private val configDirLocation: Lazy<Path> = lazy {
-        createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
-    }
+    private val validatorFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_VALIDATOR_FILE_NAME")
+    private val genesisFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_GENESIS_FILE_NAME")
+    private val configFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_CONFIG_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")
@@ -120,11 +116,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             val genesisAsJson = config.genesis.asJson()
             logger().debug("Serialized genesis block: {}", genesisAsJson)
         }
-        try {
-            super.start()
-        } catch (e: Exception) {
-            println(e)
-        }
+        super.start()
         logger().debug("Iroha container started")
     }
 
@@ -135,10 +127,10 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             network.close()
         }
         try {
-            configDirLocation.value.toFile().deleteRecursively()
+            configDirLocation.toFile().deleteRecursively()
         } catch (ex: IOException) {
             logger().warn(
-                "Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex"
+                "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex"
             )
         }
         logger().debug("Iroha container stopped")
@@ -154,8 +146,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "dev-nightly-86893b5c1bf6566e33007604ef46e48532966c89"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-dd730f987756aa7b60bc4aa4e75440138e92cc3c"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_VALIDATOR_FILE_NAME = "validator.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"

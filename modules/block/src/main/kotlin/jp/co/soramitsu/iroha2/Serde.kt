@@ -41,6 +41,8 @@ import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.ValidatorMode
+import jp.co.soramitsu.iroha2.generated.ValidatorPath
 import jp.co.soramitsu.iroha2.generated.Value
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
@@ -89,9 +91,9 @@ val JSON_SERDE by lazy {
         module.addSerializer(EvaluatesTo::class.java, EvaluatesToSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
         module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
+        module.addSerializer(ValidatorMode::class.java, ValidatorModeSerializer)
 
         mapper.registerModule(module)
-
         mapper.registerModule(
             KotlinModule.Builder()
                 .configure(KotlinFeature.NullToEmptyCollection, true)
@@ -382,6 +384,18 @@ object NameAsKeySerializer : JsonSerializer<Name>() {
 object NameSerializer : JsonSerializer<Name>() {
     override fun serialize(value: Name, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.string)
+    }
+}
+
+/**
+ * Serializer for [Name]
+ */
+object ValidatorModeSerializer : JsonSerializer<ValidatorMode>() {
+    override fun serialize(value: ValidatorMode, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is ValidatorMode.Path -> gen.writeString(value.string)
+            else -> throw IrohaSdkException("Unsupported type ${this::class}")
+        }
     }
 }
 

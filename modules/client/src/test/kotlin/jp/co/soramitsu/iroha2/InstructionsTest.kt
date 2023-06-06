@@ -143,7 +143,14 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             .let { query -> client.sendQuery(query) }
             .also { account -> assertEquals(account.id, newAccountId) }
 
-        client.tx { unregisterAccount(newAccountId) }
+        client.tx {
+            grantPermissionToken(
+                Permissions.CanUnregisterAccount,
+                IdKey.AccountId.type.asName() to newAccountId.toValueId(),
+                ALICE_ACCOUNT_ID
+            )
+            unregisterAccount(newAccountId)
+        }
         assertThrows<IrohaClientException> {
             runBlocking {
                 QueryBuilder.findAccountById(newAccountId)
@@ -365,8 +372,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         client.tx {
             registerAssetDefinition(aliceAssetId.definitionId, AssetValueType.Store())
             // grant by Alice to Bob permissions to set key value in Asset.Store
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
-            grantSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
+            grantPermissionToken(
+                Permissions.CanSetKeyValueUserAssetsToken,
+                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                BOB_ACCOUNT_ID
+            )
         }
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             setKeyValue(aliceAssetId, "foo".asName(), "bar".asValue())
@@ -449,8 +459,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         client.tx {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             mintAsset(DEFAULT_ASSET_ID, 100)
-            registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId)
-            grantBurnAssetWithDefinitionId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
+            grantPermissionToken(
+                Permissions.CanBurnAssetWithDefinition,
+                IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue(),
+                BOB_ACCOUNT_ID
+            )
         }
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { burnAsset(DEFAULT_ASSET_ID, 50) }
 
@@ -469,7 +482,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     @SdkTestId("burn_one_of_several_public_keys")
     fun `burn public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
-        mintPublicKey(ALICE_ACCOUNT_ID)
+        client.tx { mintPublicKey(ALICE_ACCOUNT_ID, generateKeyPair().public.toIrohaPublicKey()) }
 
         val alicePubKey = ALICE_KEYPAIR.public.toIrohaPublicKey()
         // check public key before burn it
@@ -498,8 +511,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     @SdkTestId("mint_public_key_after_burning_one_public_key")
     fun `burn and mint public key instruction committed`(): Unit = runBlocking {
         // mint public key, because needs at least 2 public keys to burn one of them
-        mintPublicKey(BOB_ACCOUNT_ID)
-
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            mintPublicKey(BOB_ACCOUNT_ID, generateKeyPair().public.toIrohaPublicKey())
+        }
         // check Bob's public key before burn it
         val bobPubKey = BOB_KEYPAIR.public.toIrohaPublicKey()
         var query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
@@ -509,7 +523,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         assertEquals(2, signatories.size)
 
         // burn Bob's public key
-        client.tx { burnPublicKey(BOB_ACCOUNT_ID, bobPubKey) }
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { burnPublicKey(BOB_ACCOUNT_ID, bobPubKey) }
 
         // check Bob's account has only 1 public key (was 2)
         query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
@@ -522,7 +536,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         val newKeyPair = generateKeyPair()
 
         // change Bob's account public key
-        client.tx { mintPublicKey(BOB_ACCOUNT_ID, newKeyPair.public.toIrohaPublicKey()) }
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { mintPublicKey(BOB_ACCOUNT_ID, newKeyPair.public.toIrohaPublicKey()) }
 
         // check public keys in Bob's account
         val newPubKeyQuery = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
@@ -544,15 +558,18 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         // grant permission to Alice to change Bob's account metadata
         client.sendTransaction {
             account(BOB_ACCOUNT_ID)
-            registerPermissionToken(Permissions.CanSetKeyValueInUserMetadata.type, IdKey.AccountId)
-            grantSetKeyValueMetadata(BOB_ACCOUNT_ID, ALICE_ACCOUNT_ID)
+            grantPermissionToken(
+                Permissions.CanSetKeyValueInUserAccount,
+                IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue(),
+                ALICE_ACCOUNT_ID
+            )
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
 
-        // add\update salt value in Bob's account metadata
-        val salt = "ABCDEFG".asValue()
+        // add/update salt value in Bob's account metadata
+        val salt = RandomStringUtils.random(10).asValue()
         client.tx { setKeyValue(BOB_ACCOUNT_ID, saltKey.asName(), salt) }
 
         // check new metadata in Bob's account
@@ -594,8 +611,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
         registerAccount(joeId, joeKeyPair.public.toIrohaPublicKey())
 
         client.tx {
-            registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId)
-            grantTransferUserAsset(aliceAssetId, joeId)
+            grantPermissionToken(
+                Permissions.CanTransferUserAssetsToken,
+                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                joeId
+            )
         }
         client.tx(account = joeId, keyPair = joeKeyPair) {
             transferAsset(aliceAssetId, 40, bobAssetId)
@@ -829,8 +849,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
 
         val roleId = RoleId("BOB_ASSET_ACCESS".asName())
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId)
-            registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId)
             registerRole(
                 roleId,
                 PermissionToken(
@@ -962,11 +980,5 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             .let { query ->
                 client.sendQuery(query)
             }
-    }
-
-    private suspend fun mintPublicKey(accountId: AccountId) {
-        client.tx {
-            mintPublicKey(accountId, generateKeyPair().public.toIrohaPublicKey())
-        }
     }
 }

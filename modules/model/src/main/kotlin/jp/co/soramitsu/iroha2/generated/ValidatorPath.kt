@@ -16,7 +16,7 @@ import kotlin.String
  * Generated from 'ValidatorPath' regular structure
  */
 public data class ValidatorPath(
-    public val validatorRelativePath: String
+    public val validatorPath: String
 ) {
     public companion object : ScaleReader<ValidatorPath>, ScaleWriter<ValidatorPath> {
         public override fun read(reader: ScaleCodecReader): ValidatorPath = try {
@@ -28,7 +28,7 @@ public data class ValidatorPath(
         }
 
         public override fun write(writer: ScaleCodecWriter, instance: ValidatorPath) = try {
-            writer.writeAsList(instance.validatorRelativePath.toByteArray(Charsets.UTF_8))
+            writer.writeAsList(instance.validatorPath.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
