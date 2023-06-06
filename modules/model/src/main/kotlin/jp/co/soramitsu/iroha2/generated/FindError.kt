@@ -322,6 +322,33 @@ public sealed class FindError : ModelEnum {
     }
 
     /**
+     * 'PermissionToken' variant
+     */
+    public data class PermissionToken(
+        public val permissionTokenFindError: PermissionTokenFindError
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
+            public const val DISCRIMINANT: Int = 11
+
+            public override fun read(reader: ScaleCodecReader): PermissionToken = try {
+                PermissionToken(
+                    PermissionTokenFindError.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PermissionToken) = try {
+                PermissionTokenFindError.write(writer, instance.permissionTokenFindError)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Parameter' variant
      */
     public data class Parameter(
@@ -330,7 +357,7 @@ public sealed class FindError : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
-            public const val DISCRIMINANT: Int = 11
+            public const val DISCRIMINANT: Int = 12
 
             public override fun read(reader: ScaleCodecReader): Parameter = try {
                 Parameter(
@@ -342,6 +369,33 @@ public sealed class FindError : ModelEnum {
 
             public override fun write(writer: ScaleCodecWriter, instance: Parameter) = try {
                 ParameterId.write(writer, instance.parameterId)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'PublicKey' variant
+     */
+    public data class PublicKey(
+        public val publicKey: jp.co.soramitsu.iroha2.generated.PublicKey
+    ) : FindError() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
+            public const val DISCRIMINANT: Int = 13
+
+            public override fun read(reader: ScaleCodecReader): PublicKey = try {
+                PublicKey(
+                    jp.co.soramitsu.iroha2.generated.PublicKey.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: PublicKey) = try {
+                jp.co.soramitsu.iroha2.generated.PublicKey.write(writer, instance.publicKey)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -364,7 +418,9 @@ public sealed class FindError : ModelEnum {
             8 -> Trigger.read(reader)
             9 -> Role.read(reader)
             10 -> PermissionTokenDefinition.read(reader)
-            11 -> Parameter.read(reader)
+            11 -> PermissionToken.read(reader)
+            12 -> Parameter.read(reader)
+            13 -> PublicKey.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -382,7 +438,9 @@ public sealed class FindError : ModelEnum {
                 8 -> Trigger.write(writer, instance as Trigger)
                 9 -> Role.write(writer, instance as Role)
                 10 -> PermissionTokenDefinition.write(writer, instance as PermissionTokenDefinition)
-                11 -> Parameter.write(writer, instance as Parameter)
+                11 -> PermissionToken.write(writer, instance as PermissionToken)
+                12 -> Parameter.write(writer, instance as Parameter)
+                13 -> PublicKey.write(writer, instance as PublicKey)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }

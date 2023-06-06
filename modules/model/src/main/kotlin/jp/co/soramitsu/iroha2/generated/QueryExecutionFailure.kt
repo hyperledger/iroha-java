@@ -63,33 +63,6 @@ public sealed class QueryExecutionFailure : ModelEnum {
     }
 
     /**
-     * 'Permission' variant
-     */
-    public data class Permission(
-        public val string: String
-    ) : QueryExecutionFailure() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object : ScaleReader<Permission>, ScaleWriter<Permission> {
-            public const val DISCRIMINANT: Int = 1
-
-            public override fun read(reader: ScaleCodecReader): Permission = try {
-                Permission(
-                    reader.readString(),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: Permission) = try {
-                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Evaluate' variant
      */
     public data class Evaluate(
@@ -98,7 +71,7 @@ public sealed class QueryExecutionFailure : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Evaluate>, ScaleWriter<Evaluate> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             public override fun read(reader: ScaleCodecReader): Evaluate = try {
                 Evaluate(
@@ -125,7 +98,7 @@ public sealed class QueryExecutionFailure : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Find>, ScaleWriter<Find> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 2
 
             public override fun read(reader: ScaleCodecReader): Find = try {
                 Find(
@@ -152,7 +125,7 @@ public sealed class QueryExecutionFailure : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Conversion>, ScaleWriter<Conversion> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 3
 
             public override fun read(reader: ScaleCodecReader): Conversion = try {
                 Conversion(
@@ -177,7 +150,7 @@ public sealed class QueryExecutionFailure : ModelEnum {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<Unauthorized>, ScaleWriter<Unauthorized> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 4
 
             public override fun read(reader: ScaleCodecReader): Unauthorized = try {
                 Unauthorized()
@@ -205,11 +178,10 @@ public sealed class QueryExecutionFailure : ModelEnum {
             discriminant = reader.readUByte()
         ) {
             0 -> Signature.read(reader)
-            1 -> Permission.read(reader)
-            2 -> Evaluate.read(reader)
-            3 -> Find.read(reader)
-            4 -> Conversion.read(reader)
-            5 -> Unauthorized.read(reader)
+            1 -> Evaluate.read(reader)
+            2 -> Find.read(reader)
+            3 -> Conversion.read(reader)
+            4 -> Unauthorized.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -217,11 +189,10 @@ public sealed class QueryExecutionFailure : ModelEnum {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Signature.write(writer, instance as Signature)
-                1 -> Permission.write(writer, instance as Permission)
-                2 -> Evaluate.write(writer, instance as Evaluate)
-                3 -> Find.write(writer, instance as Find)
-                4 -> Conversion.write(writer, instance as Conversion)
-                5 -> Unauthorized.write(writer, instance as Unauthorized)
+                1 -> Evaluate.write(writer, instance as Evaluate)
+                2 -> Find.write(writer, instance as Find)
+                3 -> Conversion.write(writer, instance as Conversion)
+                4 -> Unauthorized.write(writer, instance as Unauthorized)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }
