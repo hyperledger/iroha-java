@@ -1,0 +1,330 @@
+{
+  "transactions" : [ {
+    "isi" : [ {
+      "Register" : {
+        "Identifiable" : {
+          "NewDomain" : {
+            "id" : "wonderland",
+            "logo" : null,
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewDomain" : {
+            "id" : "dnalrednow",
+            "logo" : null,
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewDomain" : {
+            "id" : "test",
+            "logo" : null,
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewDomain" : {
+            "id" : "admin",
+            "logo" : null,
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAccount" : {
+            "id" : "alice@wonderland",
+            "signatories" : [ "ed01200851a1fa7e3f04a657299263e119975be4ab0d33631ec6ad4bd5b5e77594310e" ],
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAccount" : {
+            "id" : "admin@wonderland",
+            "signatories" : [ "ed01203161f2c70db3252505b90c0cce012c4cf4cb098da2a3b1475319ca5b3a1263f5" ],
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAccount" : {
+            "id" : "admin@dnalrednow",
+            "signatories" : [ "ed0120d24280aadc7167e002b263620fe936e4103e13d59a02286190a6af6a45c7c2f7" ],
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAccount" : {
+            "id" : "admin2@wonderland",
+            "signatories" : [ "ed01202611be069b48f6313d86a4e5c99deedaccc3046b4cb294849e11dadb27a701ca" ],
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAccount" : {
+            "id" : "bob@admin",
+            "signatories" : [ "ed01207f7137560b2c1fefa36834f609953f8ad78903a7f21d3c84a69949991885ba1c" ],
+            "metadata" : {
+              "authentication" : {
+                "String" : "9321c6560bdbe28df7808e4d03b0ef625c4e8f8e9935907763477ac601421066"
+              }
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAssetDefinition" : {
+            "id" : "test_asset#admin",
+            "value_type" : "Store",
+            "mintable" : "Once",
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAssetDefinition" : {
+            "id" : "wonderland_asset#admin",
+            "value_type" : "Store",
+            "mintable" : "Once",
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "NewAssetDefinition" : {
+            "id" : "123#test",
+            "value_type" : "Store",
+            "mintable" : "Infinitely",
+            "metadata" : { }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "PermissionTokenDefinition" : {
+            "id" : "can_set_key_value_in_user_assets",
+            "params" : {
+              "asset_id" : "Id"
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "PermissionTokenDefinition" : {
+            "id" : "can_mint_user_asset_definitions",
+            "params" : {
+              "asset_definition_id" : "Id"
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "PermissionTokenDefinition" : {
+            "id" : "can_burn_asset_with_definition",
+            "params" : {
+              "asset_definition_id" : "Id"
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "PermissionTokenDefinition" : {
+            "id" : "can_burn_user_assets",
+            "params" : {
+              "asset_id" : "Id"
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "Asset" : {
+            "id" : "wonderland_asset#admin#bob@admin",
+            "value" : {
+              "Store" : { }
+            }
+          }
+        }
+      }
+    }, {
+      "Register" : {
+        "Identifiable" : {
+          "Asset" : {
+            "id" : "test_asset#admin#bob@admin",
+            "value" : {
+              "Store" : { }
+            }
+          }
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "id"
+        },
+        "value" : {
+          "String" : "123"
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "wt"
+        },
+        "value" : {
+          "U32" : 123
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "fg"
+        },
+        "value" : {
+          "String" : "test"
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "ij"
+        },
+        "value" : {
+          "String" : "test"
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "gh"
+        },
+        "value" : {
+          "U32" : 123
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "ef"
+        },
+        "value" : {
+          "U32" : 1234
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "cd"
+        },
+        "value" : {
+          "U128" : 123
+        }
+      }
+    }, {
+      "SetKeyValue" : {
+        "object_id" : {
+          "Id" : {
+            "AssetId" : "123#test#alice@wonderland"
+          }
+        },
+        "key" : {
+          "Name" : "ab"
+        },
+        "value" : {
+          "Bool" : false
+        }
+      }
+    }, {
+      "Grant" : {
+        "object" : {
+          "PermissionToken" : {
+            "definition_id" : "can_set_key_value_in_user_assets",
+            "params" : {
+              "asset_id" : {
+                "Id" : {
+                  "AssetId" : "123#test#alice@wonderland"
+                }
+              }
+            }
+          }
+        },
+        "destination_id" : {
+          "Id" : {
+            "AccountId" : "bob@admin"
+          }
+        }
+      }
+    } ]
+  } ]
+}

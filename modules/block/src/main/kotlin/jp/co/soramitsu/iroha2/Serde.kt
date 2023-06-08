@@ -17,20 +17,26 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
+import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
 import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
 import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.datamodel.LengthLimits
 import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.datamodel.Value
 import jp.co.soramitsu.iroha2.generated.datamodel.ValueKind
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
 import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
+import jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
+import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
 import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
@@ -42,16 +48,23 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
+import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Limits
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
+import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
 import jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator
 import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionLimits
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
+import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
+import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr
+import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -69,6 +82,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
         module.addDeserializer(Value::class.java, ValueDeserializer)
         module.addDeserializer(ValueKind::class.java, ValueKindDeserializer)
+        module.addDeserializer(AssetValue::class.java, AssetValueDeserializer)
         module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer)
         module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
@@ -79,6 +93,8 @@ val JSON_SERDE by lazy {
         module.addDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdDeserializer)
         module.addDeserializer(AssetId::class.java, AssetIdDeserializer)
         module.addDeserializer(RegisterBox::class.java, RegisterBoxDeserializer)
+        module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
+        module.addDeserializer(Metadata::class.java, MetadataDeserializer)
         module.addDeserializer(TokenId::class.java, TokenIdDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
@@ -139,12 +155,12 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
 
     val iter = jsonNode.iterator()
     val nodes = mutableListOf<JsonNode>()
-
     while (iter.hasNext()) {
         val node = iter.next()
         nodes.add(node)
     }
-    val node = jsonNode.fields().next()
+
+    val node = nodes[0].fields().next()
     val destination = nodes[1]
 
     val param = node.key
@@ -165,13 +181,81 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
     )
 }
 
-private fun sealedDeserializeValue(p: JsonParser): Value {
+private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
     val node = p.readValueAsTree<JsonNode>().fields().next()
-    return node.value.asText().asValue()
+    val param = if (node.key.contains("Id")) "Id" else node.key
+
+    val clazz = when (param) {
+        "Bool" -> Boolean::class
+        "String" -> String::class
+        "Name" -> Name::class
+        "Vec" -> Value::class
+        "LimitedMetadata" -> Metadata::class
+        "MetadataLimits" -> Limits::class
+        "TransactionLimits" -> TransactionLimits::class
+        "LengthLimits" -> LengthLimits::class
+        "Id" -> IdBox::class
+        "Identifiable" -> IdentifiableBox::class
+        "PublicKey" -> PublicKey::class
+        "SignatureCheckCondition" -> SignatureCheckCondition::class
+        "TransactionValue" -> TransactionValue::class
+        "TransactionQueryResult" -> TransactionQueryResult::class
+        "PermissionToken" -> Token::class
+        "Hash" -> Hash::class
+        "Block" -> BlockValue::class
+        "BlockHeader" -> BlockHeaderValue::class
+        "Ipv4Addr" -> Ipv4Addr::class
+        "Ipv6Addr" -> Ipv6Addr::class
+        "U32" -> NumericValue::class
+        "U64" -> NumericValue::class
+        "U128" -> NumericValue::class
+        "Fixed" -> NumericValue::class
+        else -> throw DeserializationException("Value key $param not found")
+    }
+
+    if (param == "Bool") {
+        return Value.Bool(node.value.booleanValue())
+    } else if (param == "String") {
+        return Value.String(node.value.asText())
+    } else {
+        val name = if (node.key == "Id") node.value.fields().next().key else node.key
+        val value = if (node.key == "Id") node.value.fields().next().value else node.value
+        val subtype = clazz.nestedClasses.find { clazz ->
+            !clazz.isCompanion && clazz.simpleName == name
+        } ?: throw DeserializationException("Class with constructor($param) not found")
+
+        val argTypeName = subtype.primaryConstructor?.parameters
+            ?.firstOrNull()?.type?.toString()
+            ?: throw DeserializationException("Subtype parameter not found by $param")
+
+        val arg = mapper.convertValue(value, argTypeName.asClass())
+        return when (clazz) {
+            Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
+            Value::class -> throw DeserializationException("Value type $clazz not supported")
+            Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
+            Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
+            TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
+            LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
+            IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
+            IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
+            PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
+            SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
+            TransactionValue::class -> Value.TransactionValue(subtype.primaryConstructor?.call(arg) as TransactionValue)
+            TransactionQueryResult::class -> Value.TransactionQueryResult(subtype.primaryConstructor?.call(arg) as TransactionQueryResult)
+            Token::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as Token)
+            Hash::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as Hash)
+            BlockValue::class -> Value.Block(subtype.primaryConstructor?.call(arg) as BlockValue)
+            BlockHeaderValue::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeaderValue)
+            Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
+            Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
+            NumericValue::class -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue)
+            else -> throw DeserializationException("Value type $clazz not found")
+        }
+    }
 }
 
 private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
+    val node = p.readValueAsTree<JsonNode>().fields().next().value.fields().next()
     val param = node.key
 
     val subtype = IdBox::class.nestedClasses.find { clazz ->
@@ -187,7 +271,7 @@ private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
 }
 
 private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): RegisterBox {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
+    val node = p.readValueAsTree<JsonNode>().fields().next().value.fields().next()
 
     val param = node.key.removePrefix("New")
     val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
@@ -212,6 +296,73 @@ private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): R
     }
 }
 
+private fun sealedDeserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper): SetKeyValueBox {
+    val iter = p.readValueAsTree<JsonNode>().iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+
+    val objectId = nodes[0].fields().next().value.fields().next()
+    val key = nodes[1].fields().next()
+    val subtype = IdBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == objectId.key
+    }
+    val argTypeName = subtype?.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $objectId")
+
+    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
+    val keyArg = mapper.convertValue(key.value, "jp.co.soramitsu.iroha2.generated.datamodel.name.Name".asClass())
+    val valueArg = mapper.convertValue(nodes[2], "jp.co.soramitsu.iroha2.generated.datamodel.Value".asClass())
+    return SetKeyValueBox(
+        objectId = objectIdArg.evaluatesTo().cast(),
+        key = keyArg.evaluatesTo().cast(),
+        value = valueArg.evaluatesTo().cast()
+    )
+}
+
+private fun sealedDeserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
+    val nodeMetadata = p.readValueAsTree<JsonNode>().fields()
+    if (!nodeMetadata.hasNext()) {
+        return Metadata(mapOf())
+    }
+    val node = nodeMetadata.next()
+    val key = node.key.asName()
+    val valueNode = node.value.fields().next()
+    val value = valueNode.value.asText().asValue()
+    return Metadata(mapOf(Pair(key, value)))
+}
+
+private fun sealedDeserializeToken(p: JsonParser, mapper: ObjectMapper): Token {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+    val definitionId = jsonNode.fields().next()
+    val params = nodes[1].fields()
+    val tokenMap = mutableMapOf<Name, Value>()
+
+    val arg = mapper.convertValue(definitionId.value, "jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId".asClass()) as TokenId
+    if (params.hasNext()) {
+        val params = params.next().value.fields().next()
+        val arg2 = mapper.convertValue(params.key, "jp.co.soramitsu.iroha2.generated.datamodel.name.Name".asClass()) as Name
+        val arg3 = mapper.convertValue(params.value, "jp.co.soramitsu.iroha2.generated.datamodel.Value".asClass()) as Value
+        tokenMap[arg2] = arg3
+    }
+
+    return Token(
+        arg,
+        tokenMap
+    )
+}
+
 /**
  * Deserializer for [Iroha Special Instructions][Instruction]
  */
@@ -232,13 +383,23 @@ object GrantBoxDeserializer : JsonDeserializer<GrantBox>() {
  */
 object ValueDeserializer : JsonDeserializer<Value>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Value {
-        return sealedDeserializeValue(p)
+        return sealedDeserializeValue(p, JSON_SERDE)
     }
 }
 
 object ValueKindDeserializer : JsonDeserializer<ValueKind>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ValueKind {
         return p.readValueAs(String::class.java).asValueKind()
+    }
+}
+
+object AssetValueDeserializer : JsonDeserializer<AssetValue>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetValue {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+        return when (node.key) {
+            "Store" -> AssetValue.Store(Metadata(mapOf()))
+            else -> throw DeserializationException("AssetValue ${node.key} not found")
+        }
     }
 }
 
@@ -257,9 +418,27 @@ object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
     }
 }
 
+object SetKeyValueBoxDeserializer : JsonDeserializer<SetKeyValueBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueBox {
+        return sealedDeserializeSetKeyValueBox(p, JSON_SERDE)
+    }
+}
+
+object MetadataDeserializer : JsonDeserializer<Metadata>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Metadata {
+        return sealedDeserializeMetadata(p, JSON_SERDE)
+    }
+}
+
 object TokenIdDeserializer : JsonDeserializer<TokenId>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TokenId {
         return p.readValueAs(String::class.java).asTokenId()
+    }
+}
+
+object TokenDeserializer : JsonDeserializer<Token>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Token {
+        return sealedDeserializeToken(p, JSON_SERDE)
     }
 }
 
