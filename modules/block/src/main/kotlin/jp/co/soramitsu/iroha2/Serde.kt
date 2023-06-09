@@ -68,6 +68,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr
 import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr
 import java.io.ByteArrayOutputStream
+import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -195,7 +196,63 @@ private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
         node.key
     }
 
-    val clazz = when (param) {
+    val clazz = getClazzByParam(param)
+
+    if (param == "Bool") {
+        return Value.Bool(node.value.booleanValue())
+    } else if (param == "String") {
+        return Value.String(node.value.asText())
+    } else {
+        val name = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().key else node.key
+        val value = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().value else node.value
+        val subtype = clazz.nestedClasses.find { clazz ->
+            !clazz.isCompanion && clazz.simpleName == name
+        } ?: throw DeserializationException("Class with constructor($param) not found")
+
+        val argTypeName = subtype.primaryConstructor?.parameters
+            ?.firstOrNull()?.type?.toString()
+            ?: throw DeserializationException("Subtype parameter not found by $param")
+
+        val arg = mapper.convertValue(value, argTypeName.asClass())
+        return getValueByClazz(clazz, subtype, arg, name, param)
+    }
+}
+
+private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any, name: String, param: String): Value {
+    return when (clazz) {
+        Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
+        Value::class -> throw DeserializationException("Value type $clazz not supported")
+        Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
+        Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
+        TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
+        LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
+        IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
+        IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
+        PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
+        SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
+        TransactionValue::class -> Value.TransactionValue(subtype.primaryConstructor?.call(arg) as TransactionValue)
+        TransactionQueryResult::class -> Value.TransactionQueryResult(subtype.primaryConstructor?.call(arg) as TransactionQueryResult)
+        Token::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as Token)
+        Hash::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as Hash)
+        BlockValue::class -> Value.Block(subtype.primaryConstructor?.call(arg) as BlockValue)
+        BlockHeaderValue::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeaderValue)
+        Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
+        Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
+        NumericValue::class -> {
+            when (name) {
+                "U32" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U32)
+                "U64" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U64)
+                "U128" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U128)
+                "Fixed" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.Fixed)
+                else -> throw DeserializationException("Numeric value $param not found")
+            }
+        }
+        else -> throw DeserializationException("Value type $clazz not found")
+    }
+}
+
+private fun getClazzByParam(param: String): KClass<out Any> {
+    return when (param) {
         "Bool" -> Boolean::class
         "String" -> String::class
         "Name" -> Name::class
@@ -221,54 +278,6 @@ private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
         "U128" -> NumericValue::class
         "Fixed" -> NumericValue::class
         else -> throw DeserializationException("Value key $param not found")
-    }
-
-    if (param == "Bool") {
-        return Value.Bool(node.value.booleanValue())
-    } else if (param == "String") {
-        return Value.String(node.value.asText())
-    } else {
-        val name = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().key else node.key
-        val value = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().value else node.value
-        val subtype = clazz.nestedClasses.find { clazz ->
-            !clazz.isCompanion && clazz.simpleName == name
-        } ?: throw DeserializationException("Class with constructor($param) not found")
-
-        val argTypeName = subtype.primaryConstructor?.parameters
-            ?.firstOrNull()?.type?.toString()
-            ?: throw DeserializationException("Subtype parameter not found by $param")
-
-        val arg = mapper.convertValue(value, argTypeName.asClass())
-        return when (clazz) {
-            Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
-            Value::class -> throw DeserializationException("Value type $clazz not supported")
-            Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
-            Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
-            TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
-            LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
-            IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
-            IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
-            PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
-            SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
-            TransactionValue::class -> Value.TransactionValue(subtype.primaryConstructor?.call(arg) as TransactionValue)
-            TransactionQueryResult::class -> Value.TransactionQueryResult(subtype.primaryConstructor?.call(arg) as TransactionQueryResult)
-            Token::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as Token)
-            Hash::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as Hash)
-            BlockValue::class -> Value.Block(subtype.primaryConstructor?.call(arg) as BlockValue)
-            BlockHeaderValue::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeaderValue)
-            Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
-            Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
-            NumericValue::class -> {
-                when (name) {
-                    "U32" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U32)
-                    "U64" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U64)
-                    "U128" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U128)
-                    "Fixed" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.Fixed)
-                    else -> throw DeserializationException("Numeric value $param not found")
-                }
-            }
-            else -> throw DeserializationException("Value type $clazz not found")
-        }
     }
 }
 
@@ -300,6 +309,10 @@ private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): R
         ?: throw DeserializationException("Subtype parameter not found by $param")
 
     val arg = mapper.convertValue(node.value, argTypeName.asClass())
+    return getRegisterBox(arg)
+}
+
+private fun getRegisterBox(arg: Any): RegisterBox {
     return when (arg) {
         is NewDomain -> RegisterBox(RegistrableBox.Domain(arg).evaluatesTo())
         is NewAccount -> RegisterBox(RegistrableBox.Account(arg).evaluatesTo())
