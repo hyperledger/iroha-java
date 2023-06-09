@@ -37,7 +37,6 @@ import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
-import jp.co.soramitsu.iroha2.generated.ValidationFail
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder

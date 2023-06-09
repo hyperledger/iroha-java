@@ -105,9 +105,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
-    private val validatorFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_VALIDATOR_FILE_NAME")
-    private val genesisFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_GENESIS_FILE_NAME")
-    private val configFileLocation = kotlin.io.path.Path("${configDirLocation}/$DEFAULT_CONFIG_FILE_NAME")
+    private val validatorFileLocation = kotlin.io.path.Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
+    private val genesisFileLocation = kotlin.io.path.Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
+    private val configFileLocation = kotlin.io.path.Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")

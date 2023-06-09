@@ -13,7 +13,6 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -50,7 +49,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
