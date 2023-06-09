@@ -57,9 +57,7 @@ import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueKind
 import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import jp.co.soramitsu.iroha2.toSocketAddr
-import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
-import java.math.BigInteger
 
 val COUNT_PARAM_NAME by lazy { "count".asName() }
 val PERIOD_PARAM_NAME by lazy { "period".asName() }
@@ -486,11 +484,11 @@ object Instructions {
     /**
      * Transfer an asset from the identifiable source.
      */
-    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AssetId) = InstructionBox.Transfer(
+    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AccountId) = InstructionBox.Transfer(
         TransferBox(
             sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
             `object` = value.asValue().evaluatesTo(),
-            destinationId = IdBox.AssetId(destinationId).evaluatesTo()
+            destinationId = IdBox.AccountId(destinationId).evaluatesTo()
         )
     )
 

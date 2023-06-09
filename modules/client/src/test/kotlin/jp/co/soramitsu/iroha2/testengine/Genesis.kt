@@ -21,7 +21,6 @@ import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
-import jp.co.soramitsu.iroha2.toValueId
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
 
@@ -29,6 +28,21 @@ import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
  * Create a default genesis where there is just one domain with only Alice and Bob in it
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
+
+open class AliceHasPermissionToUnregisterDomain : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(NEW_DOMAIN_ID),
+        Instructions.grantPermissionToken(
+            Permissions.CanUnregisterDomain,
+            mapOf(IdKey.DomainId.type.asName() to NEW_DOMAIN_ID.asValue()),
+            ALICE_ACCOUNT_ID
+        )
+    )
+) {
+    companion object {
+        val NEW_DOMAIN_ID = DomainId("NEW_DOMAIN".asName())
+    }
+}
 
 /**
  * Give Alice access to Bob's metadata
@@ -109,6 +123,16 @@ open class WithExecutableTrigger : Genesis(
 open class AliceAndBobEachHave100Xor : Genesis(
     rawGenesisBlock(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.grantPermissionToken(
+            Permissions.CanTransferAssetsWithDefinition,
+            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            ALICE_ACCOUNT_ID
+        ),
+        Instructions.grantPermissionToken(
+            Permissions.CanTransferAssetsWithDefinition,
+            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            BOB_ACCOUNT_ID
+        ),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.mintAsset(BOB_ASSET_ID, 100)
     )
@@ -143,7 +167,7 @@ open class AliceCanMintXor : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserAssetDefinitionsToken,
-            mapOf(IdKey.AssetId.type.asName() to XOR_DEFINITION_ID.asValue()),
+            mapOf(IdKey.AssetDefinitionId.type.asName() to XOR_DEFINITION_ID.asValue()),
             ALICE_ACCOUNT_ID
         )
     )
@@ -260,12 +284,14 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
             listOf(BOB_KEYPAIR.public.toIrohaPublicKey())
         ),
         Instructions.registerPermissionToken(Permissions.CanUnregisterAccount, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanUnregisterDomain, IdKey.DomainId),
         Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserAccount.type, IdKey.AccountId),
         Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAccount.type, IdKey.AccountId),
         Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId),
         Instructions.registerPermissionToken(Permissions.CanMintUserAssetDefinitionsToken.type, IdKey.AssetDefinitionId),
         Instructions.registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId),
         Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId),
+        Instructions.registerPermissionToken(Permissions.CanTransferAssetsWithDefinition, IdKey.AssetDefinitionId),
         *isi
     ).let { listOf(it) },
     Genesis.validatorMode

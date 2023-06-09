@@ -11,7 +11,6 @@ import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.ValidatorMode
-import jp.co.soramitsu.iroha2.generated.ValidatorPath
 import jp.co.soramitsu.iroha2.generated.Value
 import java.nio.file.Files
 import java.nio.file.Path

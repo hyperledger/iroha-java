@@ -19,6 +19,7 @@ import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
@@ -137,7 +138,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
-            transferAsset(DEFAULT_ASSET_ID, 100, bobAssetId)
+            transferAsset(DEFAULT_ASSET_ID, 100, BOB_ACCOUNT_ID)
             buildSigned(ALICE_KEYPAIR)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }

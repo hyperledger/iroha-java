@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
+import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.Event
@@ -333,7 +334,6 @@ open class Iroha2Client(
                     "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
                 }
 
-                is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
                 is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                     "Genesis account can sign only transactions in the genesis block"
 
@@ -343,6 +343,8 @@ open class Iroha2Client(
                 is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
                 is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
                 is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+                is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
+                is TransactionRejectionReason.Validation -> reason.validationFail.toString()
             }
         }
     }

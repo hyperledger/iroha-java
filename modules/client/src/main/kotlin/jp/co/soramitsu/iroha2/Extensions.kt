@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.FilterBox
+import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.IdBox
@@ -36,6 +37,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
+import jp.co.soramitsu.iroha2.generated.ValidationFail
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
@@ -97,6 +99,12 @@ fun BigDecimal.asValue() = Value.Numeric(NumericValue.Fixed(Fixed(this)))
 fun Boolean.asValue() = Value.Bool(this)
 
 fun AccountId.asValue() = Value.Id(IdBox.AccountId(this))
+
+fun AssetId.asValue() = Value.Id(IdBox.AssetId(this))
+
+fun AssetDefinitionId.asValue() = Value.Id(IdBox.AssetDefinitionId(this))
+
+fun DomainId.asValue() = Value.Id(IdBox.DomainId(this))
 
 fun ByteArray.toFrame(fin: Boolean = true) = Frame.Binary(fin, this)
 
@@ -260,7 +268,7 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
 }
 
-fun <T> T.asValue() = when (this) {
+inline fun <reified T> T.asValue() = when (this) {
     is String -> this.asValue()
     is Long -> this.asValue()
     is Int -> this.asValue()
@@ -268,7 +276,9 @@ fun <T> T.asValue() = when (this) {
     is BigDecimal -> this.asValue()
     is Boolean -> this.asValue()
     is AccountId -> this.asValue()
-    else -> throw RuntimeException("Unsupported type")
+    is AssetDefinitionId -> this.asValue()
+    is AssetId -> this.asValue()
+    else -> throw RuntimeException("Unsupported type ${T::class}")
 }
 
 fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
@@ -518,3 +528,20 @@ fun String.toSocketAddr() = this.split(":").let { parts ->
 fun String.replace(oldValue: String) = this.replace(oldValue, "")
 
 fun String.replace(regex: Regex) = this.replace(regex, "")
+
+fun FindError.extract() = when (this) {
+    is FindError.Account -> this.accountId.asString()
+    is FindError.Asset -> this.assetId.asString()
+    is FindError.AssetDefinition -> this.assetDefinitionId.asString()
+    is FindError.Domain -> this.domainId.asString()
+    is FindError.Role -> this.roleId.asString()
+    is FindError.Block -> this.hashOf.hash.arrayOfU8.toHex()
+    is FindError.MetadataKey -> this.name.string
+    is FindError.Parameter -> this.parameterId.name.string
+    is FindError.Peer -> this.peerId.address.toString()
+    is FindError.PermissionToken -> this.permissionTokenFindError.permissionTokenId.name.string
+    is FindError.PermissionTokenDefinition -> this.permissionTokenId.name.string
+    is FindError.PublicKey -> this.publicKey.payload.toString()
+    is FindError.Trigger -> this.triggerId.asString()
+    is FindError.Transaction -> this.hashOf.hash.arrayOfU8.toHex()
+}

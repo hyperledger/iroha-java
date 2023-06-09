@@ -42,7 +42,6 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.ValidatorMode
-import jp.co.soramitsu.iroha2.generated.ValidatorPath
 import jp.co.soramitsu.iroha2.generated.Value
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
