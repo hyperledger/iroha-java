@@ -110,7 +110,7 @@ class DeserializerTest {
 
     private fun removeWhiteSpaceAndReplacePubKey(json: String): String {
         val regex = "(\"ed01)+\\w+\"".toRegex()
-        return json.replace("\r\n", "")
+        return json.replace(System.getProperty("line.separator"), "")
             .replace(" ", "")
             .replace(regex, "publicKey")
     }
