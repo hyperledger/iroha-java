@@ -20,6 +20,7 @@ import kotlin.reflect.KClass
 annotation class WithIroha(
     val sources: Array<KClass<out Genesis>> = [EmptyGenesis::class],
     val configs: Array<String> = [],
+    val source: String = "",
     val amount: Int = 1
 )
 

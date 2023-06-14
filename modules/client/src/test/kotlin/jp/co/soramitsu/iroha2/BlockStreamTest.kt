@@ -1,5 +1,10 @@
 package jp.co.soramitsu.iroha2
 
+import io.qameta.allure.Feature
+import io.qameta.allure.Owner
+import io.qameta.allure.Story
+import jp.co.soramitsu.iroha2.annotations.Sdk
+import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
@@ -26,10 +31,15 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+@Owner("akostyuchenko")
+@Sdk("Java/Kotlin")
+@Feature("Block Streaming")
 class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair = ALICE_KEYPAIR) {
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
+    @Story("Successful subscription to block stream")
+    @SdkTestId("when_subscribe_to_block_stream_then_success")
     fun `when subscribe to block stream then success`(): Unit = runBlocking {
         var blocksResult = client.subscribeToBlockStream(1, 2)
         val newAssetName = "rox"
