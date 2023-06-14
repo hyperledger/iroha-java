@@ -19,7 +19,7 @@ use iroha_wasm::{data_model::prelude::*, debug::DebugUnwrapExt, QueryHost};
 fn smartcontract_entry_point() {
 //     let query = QueryBox::FindAllAccounts(FindAllAccounts {});
     let query = FindAllAccounts;
-    let accounts: Vec<Account> = query.execute().try_into().dbg_unwrap();
+    let accounts: Vec<Account> = query.execute().dbg_unwrap();
 
     let limits = MetadataLimits::new(256, 256);
 
@@ -53,8 +53,8 @@ fn smartcontract_entry_point() {
 }
 
 fn generate_new_nft_id(account_id: &<Account as Identifiable>::Id) -> AssetDefinitionId {
-    let query = QueryBox::FindAssetsByAccountId(FindAssetsByAccountId::new(account_id.clone()));
-    let assets: Vec<Asset> = query.execute().try_into().dbg_unwrap();
+    let query = FindAssetsByAccountId::new(account_id.clone());
+    let assets: Vec<Asset> = query.execute().dbg_unwrap();
 
     let new_number = assets
         .into_iter()
