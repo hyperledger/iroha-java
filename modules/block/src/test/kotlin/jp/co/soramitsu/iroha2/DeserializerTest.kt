@@ -14,6 +14,6 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 
         assert(block.transactions.isNotEmpty())
-        assert(block.transactions.first().isi.size == 4)
+        assert(block.transactions.first().size == 4)
     }
 }

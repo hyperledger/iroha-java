@@ -6,17 +6,19 @@
 #![no_std]
 #![no_main]
 #![allow(clippy::all)]
-
+#[cfg(not(test))]
+extern crate panic_halt;
 extern crate alloc;
 
 use alloc::{format, string::ToString, vec::Vec};
 use core::str::FromStr;
 
-use iroha_wasm::{data_model::prelude::*, DebugUnwrapExt, Execute};
+use iroha_wasm::{data_model::prelude::*, debug::DebugUnwrapExt, QueryHost};
 
-#[iroha_wasm::entrypoint]
+#[iroha_wasm::main]
 fn smartcontract_entry_point() {
-    let query = QueryBox::FindAllAccounts(FindAllAccounts {});
+//     let query = QueryBox::FindAllAccounts(FindAllAccounts {});
+    let query = FindAllAccounts;
     let accounts: Vec<Account> = query.execute().try_into().dbg_unwrap();
 
     let limits = MetadataLimits::new(256, 256);
@@ -25,8 +27,8 @@ fn smartcontract_entry_point() {
         let mut metadata = Metadata::new();
         let name = format!(
             "nft_for_{}_in_{}",
-            account.id().name,
-            account.id().domain_id
+            account.id().name(),
+            account.id().domain_id()
         )
             .parse()
             .dbg_unwrap();
@@ -40,8 +42,8 @@ fn smartcontract_entry_point() {
             .with_metadata(metadata);
         let account_nft_id = <Asset as Identifiable>::Id::new(nft_id, account.id().clone());
 
-        Instruction::Register(RegisterBox::new(nft_definition)).execute();
-        Instruction::SetKeyValue(SetKeyValueBox::new(
+        InstructionBox::Register(RegisterBox::new(nft_definition)).execute();
+        InstructionBox::SetKeyValue(SetKeyValueBox::new(
             account_nft_id,
             Name::from_str("has_this_nft").dbg_unwrap(),
             Value::Bool(true),
@@ -56,13 +58,13 @@ fn generate_new_nft_id(account_id: &<Account as Identifiable>::Id) -> AssetDefin
 
     let new_number = assets
         .into_iter()
-        .filter(|asset| asset.id().definition_id.to_string().starts_with("nft_"))
+        .filter(|asset| asset.id().definition_id().to_string().starts_with("nft_"))
         .count()
         + 1;
 
     format!(
         "nft_number_{}_for_{}#{}",
-        new_number, account_id.name, account_id.domain_id
+        new_number, account_id.name(), account_id.domain_id()
     )
         .parse()
         .dbg_unwrap()

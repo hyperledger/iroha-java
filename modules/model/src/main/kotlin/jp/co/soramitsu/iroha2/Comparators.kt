@@ -5,6 +5,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SignatureOf
@@ -78,6 +79,12 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
         o2.signature.payload
     )
 }
+
+/**
+ * Compare permission tokens
+ */
+@JvmName("PermissionTokenIdComparator")
+fun PermissionTokenId.Companion.comparator() = compareBy<PermissionTokenId> { it.name.string }
 
 /**
  * Compare permission tokens

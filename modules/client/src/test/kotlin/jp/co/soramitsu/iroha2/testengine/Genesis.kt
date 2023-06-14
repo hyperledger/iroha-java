@@ -29,6 +29,16 @@ import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
+open class AliceHasPermissionToMintPublicKeys : Genesis(
+    rawGenesisBlock(
+        Instructions.grantPermissionToken(
+            Permissions.CanMintUserPublicKeys,
+            mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
+            ALICE_ACCOUNT_ID
+        )
+    )
+)
+
 open class AliceHasPermissionToUnregisterDomain : Genesis(
     rawGenesisBlock(
         Instructions.registerDomain(NEW_DOMAIN_ID),
@@ -292,6 +302,8 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
         Instructions.registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId),
         Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId),
         Instructions.registerPermissionToken(Permissions.CanTransferAssetsWithDefinition, IdKey.AssetDefinitionId),
+        Instructions.registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId),
+        Instructions.registerPermissionToken(Permissions.CanMintUserPublicKeys, IdKey.AccountId),
         *isi
     ).let { listOf(it) },
     Genesis.validatorMode

@@ -471,7 +471,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-//            .also { triggers -> assert(triggers.all { it }) }
+            .also { triggers -> assert(triggers.all { it.id().domainId == domainId }) }
     }
 
     @Test

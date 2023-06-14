@@ -49,13 +49,17 @@ public data class Account(
                 Asset.write(writer, value)
             }
             writer.writeCompact(instance.signatories.size)
-            instance.signatories.forEach { value ->
+            instance.signatories.sortedWith(
+                PublicKey.comparator()
+            ).forEach { value ->
                 PublicKey.write(writer, value)
             }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
             writer.writeCompact(instance.roles.size)
-            instance.roles.forEach { value ->
+            instance.roles.sortedWith(
+                RoleId.comparator()
+            ).forEach { value ->
                 RoleId.write(writer, value)
             }
         } catch (ex: Exception) {

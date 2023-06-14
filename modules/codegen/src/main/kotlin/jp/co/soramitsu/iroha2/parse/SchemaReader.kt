@@ -61,7 +61,7 @@ class SchemaReader {
             SortedMapResolver.NAME,
             ArrayResolver.NAME,
             VectorResolver.NAME,
-            "SortedVec",
+            SortedVectorResolver.NAME,
             "EvaluatesTo",
             "Option",
             "SignatureOf",

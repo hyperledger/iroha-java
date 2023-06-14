@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.collections.List
 
@@ -35,7 +36,9 @@ public data class SignaturesOfOfTransactionPayload(
         public override fun write(writer: ScaleCodecWriter, instance: SignaturesOfOfTransactionPayload) =
             try {
                 writer.writeCompact(instance.signatures.size)
-                instance.signatures.forEach { value ->
+                instance.signatures.sortedWith(
+                    SignatureOf.comparator()
+                ).forEach { value ->
                     SignatureOf.write(writer, value)
                 }
             } catch (ex: Exception) {

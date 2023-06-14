@@ -41,6 +41,7 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         SortedMapResolver,
         OptionResolver,
         VectorResolver,
+        SortedVectorResolver,
         ArrayResolver,
         EnumResolver,
         TupleStructResolver,
@@ -147,10 +148,26 @@ abstract class SortedWrapperResolver<T : IterableType>(
     }
 
     fun getSortedProperty(typeValue: Any?): Boolean {
-        return (typeValue as? Map<*, *>)
-            ?.let { typeValue[wrapperName] as? Map<*, *> }
-            ?.get("sorted") as? Boolean
-            ?: false
+        return (typeValue as? Map<*, *>)?.get("Sorted$wrapperName") != null
+    }
+}
+
+object SortedVectorResolver : SortedWrapperResolver<VecType>("SortedVec") {
+    const val NAME = "SortedVec"
+
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = VecType(name, innerType, sorted)
+
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
+        return when (
+            name.startsWith(wrapperName) || (typeValue as? Map<*, *>)?.get(wrapperName) != null
+        ) {
+            true -> createWrapper(name, extractGeneric(name, schemaParser).first(), true)
+            false -> null
+        }
     }
 }
 
@@ -168,14 +185,9 @@ object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
         return when (
-            name.startsWith(wrapperName) ||
-                (typeValue as? Map<*, *>)?.get(wrapperName) != null
+            name.startsWith(wrapperName) || (typeValue as? Map<*, *>)?.get(wrapperName) != null
         ) {
-            true -> createWrapper(
-                name,
-                extractGeneric(name, schemaParser).first(),
-                getSortedProperty(typeValue)
-            )
+            true -> createWrapper(name, extractGeneric(name, schemaParser).first(), false)
             false -> null
         }
     }

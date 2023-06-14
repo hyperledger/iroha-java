@@ -26,6 +26,7 @@ import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHasPermissionToMintPublicKeys
 import jp.co.soramitsu.iroha2.testengine.AliceHasPermissionToUnregisterDomain
 import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
@@ -465,7 +466,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class])
+    @WithIroha([AliceHasPermissionToMintPublicKeys::class])
     @Feature("Accounts")
     @Story("Account burn a public key")
     @Permission("no_permission_required")

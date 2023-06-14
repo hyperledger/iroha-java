@@ -59,9 +59,6 @@ import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import jp.co.soramitsu.iroha2.toSocketAddr
 import java.math.BigDecimal
 
-val COUNT_PARAM_NAME by lazy { "count".asName() }
-val PERIOD_PARAM_NAME by lazy { "period".asName() }
-
 /**
  * Iroha Special Instructions cover all possible actions within a blockchain
  * @see [Iroha2 Tutorial on Iroha Special Instructions](https://hyperledger.github.io/iroha-2-docs/guide/advanced/isi.html)
@@ -74,14 +71,8 @@ object Instructions {
     fun registerRole(
         roleId: RoleId,
         vararg tokens: PermissionToken
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Role(
-                NewRole(
-                    Role(roleId, tokens.toList())
-                )
-            )
-        }
+    ) = registerSome {
+        RegistrableBox.Role(NewRole(Role(roleId, tokens.toList())))
     }
 
     /**
@@ -92,12 +83,8 @@ object Instructions {
         id: AccountId,
         signatories: List<PublicKey>,
         metadata: Metadata = Metadata(mapOf())
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Account(
-                NewAccount(id, signatories, metadata)
-            )
-        }
+    ) = registerSome {
+        RegistrableBox.Account(NewAccount(id, signatories, metadata))
     }
 
     /**
@@ -106,7 +93,9 @@ object Instructions {
     fun registerPermissionToken(
         permissionsId: PermissionTokenId,
         params: Map<Name, ValueKind> = mapOf()
-    ) = registerSome { RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params)) }
+    ) = registerSome {
+        RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params))
+    }
 
     fun registerPermissionToken(
         permission: Permissions,
@@ -130,21 +119,19 @@ object Instructions {
         accountId: AccountId,
         filter: TimeEventFilter,
         metadata: Metadata
-    ): InstructionBox {
-        return registerSome {
-            RegistrableBox.Trigger(
-                TriggerOfFilterBoxAndExecutable(
-                    triggerId,
-                    ActionOfFilterBoxAndExecutable(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        FilterBox.Time(filter),
-                        metadata
-                    )
+    ) = registerSome {
+        RegistrableBox.Trigger(
+            TriggerOfFilterBoxAndExecutable(
+                triggerId,
+                ActionOfFilterBoxAndExecutable(
+                    Executable.Instructions(isi),
+                    repeats,
+                    accountId,
+                    FilterBox.Time(filter),
+                    metadata
                 )
             )
-        }
+        )
     }
 
     /**
@@ -156,21 +143,19 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Trigger(
-                TriggerOfFilterBoxAndExecutable(
-                    triggerId,
-                    ActionOfFilterBoxAndExecutable(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        Filters.executeTrigger(triggerId, accountId),
-                        metadata
-                    )
+    ) = registerSome {
+        RegistrableBox.Trigger(
+            TriggerOfFilterBoxAndExecutable(
+                triggerId,
+                ActionOfFilterBoxAndExecutable(
+                    Executable.Instructions(isi),
+                    repeats,
+                    accountId,
+                    Filters.executeTrigger(triggerId, accountId),
+                    metadata
                 )
             )
-        }
+        )
     }
 
     /**
