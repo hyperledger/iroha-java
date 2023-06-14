@@ -71,8 +71,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR"
             ).also {
-                config.genesis?.writeToFile(genesisFileLocation.value)
-                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation.value) }
+                config.genesis?.writeToFile(genesisFileLocation)
+                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
                 getResource(DEFAULT_VALIDATOR_FILE_NAME).readBytes().let { content ->
                     validatorFileLocation.toFile().writeBytes(content)
@@ -109,18 +109,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val apiPort: Int
     private val telemetryPort: Int
 
-    private val genesisFileLocation: Lazy<Path> = lazy {
-        Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
-    }
+    private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
-    private val configFileLocation: Lazy<Path> = lazy {
-        Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
-    }
-
-    private val configDirLocation: Lazy<Path> = lazy {
-        createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
-    }
-    private val validatorFileLocation = kotlin.io.path.Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
+    private val genesisFileLocation = Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
+    private val configFileLocation = Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
+    private val validatorFileLocation = Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")
