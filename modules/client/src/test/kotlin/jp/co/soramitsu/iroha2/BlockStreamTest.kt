@@ -50,13 +50,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
         var blocks = mutableListOf<VersionedBlockMessage>()
         blocksResult.collect { block -> blocks.add(block) }
 
-        var instructions = checkBlockStructure(
-            blocks[0],
-            1,
-            GENESIS,
-            GENESIS,
-            4
-        )
+        val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
+        var instructions = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)
         val registerDomain = instructions[0].cast<InstructionBox.Register>().extractDomain().id.name.string
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
         assertEquals(ALICE_ACCOUNT_ID.asString(), instructions[1].cast<InstructionBox.Register>().extractAccount().id.asString())
