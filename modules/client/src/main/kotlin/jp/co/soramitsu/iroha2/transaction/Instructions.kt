@@ -168,21 +168,19 @@ object Instructions {
         accountId: AccountId,
         metadata: Metadata,
         filter: FilterBox
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Trigger(
-                TriggerOfFilterBoxAndExecutable(
-                    triggerId,
-                    ActionOfFilterBoxAndExecutable(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        filter,
-                        metadata
-                    )
+    ) = registerSome {
+        RegistrableBox.Trigger(
+            TriggerOfFilterBoxAndExecutable(
+                triggerId,
+                ActionOfFilterBoxAndExecutable(
+                    Executable.Instructions(isi),
+                    repeats,
+                    accountId,
+                    filter,
+                    metadata
                 )
             )
-        }
+        )
     }
 
     /**
@@ -195,21 +193,19 @@ object Instructions {
         accountId: AccountId,
         metadata: Metadata,
         filter: FilterBox
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Trigger(
-                TriggerOfFilterBoxAndExecutable(
-                    triggerId,
-                    ActionOfFilterBoxAndExecutable(
-                        Executable.Wasm(WasmSmartContract(wasm)),
-                        repeats,
-                        accountId,
-                        filter,
-                        metadata
-                    )
+    ) = registerSome {
+        RegistrableBox.Trigger(
+            TriggerOfFilterBoxAndExecutable(
+                triggerId,
+                ActionOfFilterBoxAndExecutable(
+                    Executable.Wasm(WasmSmartContract(wasm)),
+                    repeats,
+                    accountId,
+                    filter,
+                    metadata
                 )
             )
-        }
+        )
     }
 
     /**
@@ -221,21 +217,19 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata
-    ): InstructionBox.Register {
-        return registerSome {
-            RegistrableBox.Trigger(
-                TriggerOfFilterBoxAndExecutable(
-                    triggerId,
-                    ActionOfFilterBoxAndExecutable(
-                        Executable.Instructions(isi),
-                        repeats,
-                        accountId,
-                        Filters.time(EventFilters.timeEventFilter()),
-                        metadata
-                    )
+    ) = registerSome {
+        RegistrableBox.Trigger(
+            TriggerOfFilterBoxAndExecutable(
+                triggerId,
+                ActionOfFilterBoxAndExecutable(
+                    Executable.Instructions(isi),
+                    repeats,
+                    accountId,
+                    Filters.time(EventFilters.timeEventFilter()),
+                    metadata
                 )
             )
-        }
+        )
     }
 
     /**
@@ -299,9 +293,7 @@ object Instructions {
         metadata: Map<Name, Value> = mapOf(),
         logo: IpfsPath? = null
     ) = registerSome {
-        RegistrableBox.Domain(
-            NewDomain(domainId, logo, Metadata(metadata))
-        )
+        RegistrableBox.Domain(NewDomain(domainId, logo, Metadata(metadata)))
     }
 
     /**
