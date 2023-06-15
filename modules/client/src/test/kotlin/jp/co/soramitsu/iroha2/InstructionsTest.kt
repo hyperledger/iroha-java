@@ -505,12 +505,14 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     @Permission("no_permission_required")
     @SdkTestId("mint_public_key_after_burning_one_public_key")
     fun `burn and mint public key`(): Unit = runBlocking {
+        val keyPair = generateKeyPair()
+
         // mint public key, because needs at least 2 public keys to burn one of them
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            mintPublicKey(BOB_ACCOUNT_ID, generateKeyPair().public.toIrohaPublicKey())
+            mintPublicKey(BOB_ACCOUNT_ID, keyPair.public.toIrohaPublicKey())
         }
         // check Bob's public key before burn it
-        val bobPubKey = BOB_KEYPAIR.public.toIrohaPublicKey()
+        val bobPubKey = keyPair.public.toIrohaPublicKey()
         var query = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
