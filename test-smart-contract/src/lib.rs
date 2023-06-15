@@ -17,7 +17,6 @@ use iroha_wasm::{data_model::prelude::*, debug::DebugUnwrapExt, QueryHost};
 
 #[iroha_wasm::main]
 fn smartcontract_entry_point() {
-//     let query = QueryBox::FindAllAccounts(FindAllAccounts {});
     let query = FindAllAccounts;
     let accounts: Vec<Account> = query.execute().dbg_unwrap();
 
