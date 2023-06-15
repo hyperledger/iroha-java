@@ -12,7 +12,6 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
-import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
