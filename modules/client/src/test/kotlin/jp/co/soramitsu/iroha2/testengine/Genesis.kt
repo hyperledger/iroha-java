@@ -29,12 +29,17 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
-open class AliceHasPermissionToMintPublicKeys : Genesis(
+open class AliceAndBobHasPermissionToMintPublicKeys : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserPublicKeys,
             mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
             ALICE_ACCOUNT_ID
+        ),
+        Instructions.grantPermissionToken(
+            Permissions.CanMintUserPublicKeys,
+            mapOf(IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue()),
+            BOB_ACCOUNT_ID
         )
     )
 )
