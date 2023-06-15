@@ -18,11 +18,11 @@ class SchemaReader {
         val sb = StringBuilder()
         val lines = resource.bufferedReader().lines().toList()
 
-        lines.forEach { it.countRepeatedWithGenerics() }
+        lines.forEach { line -> line.countRepeatedWithGenerics() }
         repeated.entries.removeIf { it.value < 2 }
         toReplace.putAll(lines.mapNotNull { it.getReplacePairOrNull() }.toMap())
 
-        lines.forEach { sb.appendLine(it.replace()) }
+        lines.forEach { line -> sb.appendLine(line.replace()) }
 
         return ObjectMapper().readValue(
             sb.toString(),
