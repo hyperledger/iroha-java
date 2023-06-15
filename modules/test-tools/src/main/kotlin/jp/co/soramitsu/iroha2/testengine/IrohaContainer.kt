@@ -117,15 +117,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     override fun start() {
         logger().debug("Starting Iroha container")
-        if (logger().isDebugEnabled) {
-            config.genesis?.asJson()?.also { json ->
-                logger().debug("Serialized genesis block: {}", json)
-            }
-            config.genesisPath?.also { path ->
-                val content = File(path).readText()
-                logger().debug("Serialized genesis block: {}", content)
-            }
-        }
         super.start()
         logger().debug("Iroha container started")
     }
