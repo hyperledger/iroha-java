@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -22,6 +24,16 @@ public sealed class FilterOptOriginFilterAssetDefinitionEvent : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is AcceptAll -> AcceptAll.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is AcceptAll -> AcceptAll.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'AcceptAll' variant
@@ -42,6 +54,14 @@ public sealed class FilterOptOriginFilterAssetDefinitionEvent : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: AcceptAll, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.filters.FilterOptOriginFilterAssetDefinitionEvent.AcceptAll".hashCode()
         }
     }
 
@@ -76,7 +96,7 @@ public sealed class FilterOptOriginFilterAssetDefinitionEvent : ModelEnum {
         ScaleReader<FilterOptOriginFilterAssetDefinitionEvent>,
         ScaleWriter<FilterOptOriginFilterAssetDefinitionEvent> {
         public override fun read(reader: ScaleCodecReader): FilterOptOriginFilterAssetDefinitionEvent =
-            when (val discriminant = reader.readUByte().toInt()) {
+            when (val discriminant = reader.readUByte()) {
                 0 -> AcceptAll.read(reader)
                 1 -> BySome.read(reader)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")

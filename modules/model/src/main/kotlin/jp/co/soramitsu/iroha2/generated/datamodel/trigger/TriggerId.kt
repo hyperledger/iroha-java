@@ -24,7 +24,7 @@ public data class TriggerId(
         public override fun read(reader: ScaleCodecReader): TriggerId = try {
             TriggerId(
                 Name.read(reader),
-                reader.readNullable(DomainId),
+                reader.readNullable(DomainId) as DomainId?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

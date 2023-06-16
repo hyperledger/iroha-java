@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
 import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
@@ -27,7 +28,7 @@ public sealed class RoleEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val roleId: RoleId
+        public val newRole: NewRole
     ) : RoleEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -36,14 +37,14 @@ public sealed class RoleEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Created = try {
                 Created(
-                    RoleId.read(reader),
+                    NewRole.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
-                RoleId.write(writer, instance.roleId)
+                NewRole.write(writer, instance.newRole)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -111,7 +112,7 @@ public sealed class RoleEvent : ModelEnum {
     public companion object : ScaleReader<RoleEvent>, ScaleWriter<RoleEvent> {
         public override fun read(reader: ScaleCodecReader): RoleEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Created.read(reader)
             1 -> Deleted.read(reader)

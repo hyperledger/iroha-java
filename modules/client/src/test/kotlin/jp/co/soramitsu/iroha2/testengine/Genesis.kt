@@ -10,9 +10,9 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
 import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
+import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
 import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
@@ -23,6 +23,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
 import jp.co.soramitsu.iroha2.generated.datamodel.trigger.action.Repeats
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 
 /**
  * Create a default genesis where there is just one domain with only Alice and Bob in it
@@ -77,8 +78,8 @@ open class AliceWithTestAssets : Genesis(
     )
 ) {
     companion object {
-        val TEST_ASSET_DEFINITION_ID = DefinitionId("test".asName(), DEFAULT_DOMAIN_ID)
-        val TEST_ASSET_DEFINITION_ID2 = DefinitionId("test2".asName(), DEFAULT_DOMAIN_ID)
+        val TEST_ASSET_DEFINITION_ID = AssetDefinitionId("test".asName(), DEFAULT_DOMAIN_ID)
+        val TEST_ASSET_DEFINITION_ID2 = AssetDefinitionId("test2".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
@@ -97,7 +98,7 @@ open class WithExecutableTrigger : Genesis(
     )
 ) {
     companion object {
-        val TRIGGER_ID = TriggerId("some_trigger".asName())
+        val TRIGGER_ID = TriggerId("some_trigger".asName(), DEFAULT_DOMAIN_ID)
     }
 }
 
@@ -131,11 +132,21 @@ open class StoreAssetWithMetadata : Genesis(
 ) {
     companion object {
         val ASSET_KEY = "key".asName()
-        val ASSET_VALUE = "value".asValue()
-        val DEFINITION_ID = DefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val ASSET_VALUE = RandomStringUtils.randomAlphabetic(50).asValue()
+        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
         val ASSET_ID = AssetId(DEFINITION_ID, ALICE_ACCOUNT_ID)
     }
 }
+
+open class AliceCanMintXor : Genesis(
+    rawGenesisBlock(
+        Instructions.registerPermissionToken(
+            Permissions.CanMintUserAssetDefinitionsToken.type,
+            IdKey.AssetDefinitionId
+        ),
+        Instructions.grantMintUserAssetDefinitions(XOR_DEFINITION_ID, ALICE_ACCOUNT_ID)
+    )
+)
 
 /**
  * Create XOR and VAL assets with one token for each and metadata
@@ -150,10 +161,8 @@ open class XorAndValAssets : Genesis(
     )
 ) {
     companion object {
-        const val XOR_QUANTITY = 1L
-        const val VAL_QUANTITY = 1L
-        val XOR_DEFINITION_ID = DefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
-        val VAL_DEFINITION_ID = DefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
+        const val XOR_QUANTITY = 1
+        const val VAL_QUANTITY = 1
     }
 }
 
@@ -207,6 +216,31 @@ open class NewDomain : Genesis(
 ) {
     companion object {
         val DOMAIN_ID = "foo_domain".asDomainId()
+    }
+}
+
+/**
+ * Specific genesis to test multiple genesis case
+ */
+open class RubbishToTestMultipleGenesis : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(DEFAULT_DOMAIN_ID, mapOf(DOMAIN_KEY_VALUE.asName() to DOMAIN_KEY_VALUE.asValue())),
+        Instructions.registerAccount(
+            ALICE_ACCOUNT_ID,
+            listOf(ALICE_KEYPAIR.public.toIrohaPublicKey()),
+            Metadata(mapOf(ALICE_KEY_VALUE.asName() to ALICE_KEY_VALUE.asValue()))
+        ),
+        Instructions.registerAccount(
+            BOB_ACCOUNT_ID,
+            listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
+            Metadata(mapOf(BOB_KEY_VALUE.asName() to BOB_KEY_VALUE.asValue()))
+        )
+    )
+) {
+    companion object {
+        val DOMAIN_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
+        val ALICE_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
+        val BOB_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
     }
 }
 

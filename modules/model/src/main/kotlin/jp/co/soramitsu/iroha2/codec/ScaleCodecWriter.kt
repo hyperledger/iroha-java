@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.codec.writer.UByteWriter
 import jp.co.soramitsu.iroha2.codec.writer.UInt16Writer
 import jp.co.soramitsu.iroha2.codec.writer.UInt32Writer
 import jp.co.soramitsu.iroha2.codec.writer.UIntWriter
+import jp.co.soramitsu.iroha2.codec.writer.ULong32Writer
 import java.io.Closeable
 import java.io.IOException
 import java.io.OutputStream
@@ -79,10 +80,12 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
                 BOOL.write(this, true)
                 writeUint32(value)
             }
+
             is Int -> {
                 BOOL.write(this, true)
                 writeUint16(value)
             }
+
             null -> BOOL.write(this, false)
         }
     }
@@ -116,8 +119,12 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         UINT16.write(this, value)
     }
 
-    fun writeUint32(value: Long) {
+    fun writeUint32(value: Int) {
         UINT32.write(this, value)
+    }
+
+    fun writeUint32(value: Long) {
+        ULONG32.write(this, value)
     }
 
     fun writeUint64(value: BigInteger) {
@@ -158,6 +165,7 @@ class ScaleCodecWriter(private val out: OutputStream) : Closeable {
         val UBYTE = UByteWriter()
         val UINT16 = UInt16Writer()
         val UINT32 = UInt32Writer()
+        val ULONG32 = ULong32Writer()
         val UINT64 = UIntWriter(64)
         val UINT128 = UIntWriter(128)
         val UINT256 = UIntWriter(256)

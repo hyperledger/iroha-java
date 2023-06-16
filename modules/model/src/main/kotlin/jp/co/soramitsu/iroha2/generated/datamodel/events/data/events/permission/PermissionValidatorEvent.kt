@@ -83,7 +83,7 @@ public sealed class PermissionValidatorEvent : ModelEnum {
         ScaleWriter<PermissionValidatorEvent> {
         public override fun read(reader: ScaleCodecReader): PermissionValidatorEvent = when (
             val
-            discriminant = reader.readUByte().toInt()
+            discriminant = reader.readUByte()
         ) {
             0 -> Added.read(reader)
             1 -> Removed.read(reader)

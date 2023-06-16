@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,20 @@ public sealed class StatusKind : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Validating -> Validating.equals(this, other)
+        is Rejected -> Rejected.equals(this, other)
+        is Committed -> Committed.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Validating -> Validating.hashCode()
+        is Rejected -> Rejected.hashCode()
+        is Committed -> Committed.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Validating' variant
@@ -41,6 +57,14 @@ public sealed class StatusKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Validating, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.pipeline.StatusKind.Validating".hashCode()
         }
     }
 
@@ -63,6 +87,14 @@ public sealed class StatusKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Rejected, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.pipeline.StatusKind.Rejected".hashCode()
         }
     }
 
@@ -85,13 +117,21 @@ public sealed class StatusKind : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Committed, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.pipeline.StatusKind.Committed".hashCode()
         }
     }
 
     public companion object : ScaleReader<StatusKind>, ScaleWriter<StatusKind> {
         public override fun read(reader: ScaleCodecReader): StatusKind = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Validating.read(reader)
             1 -> Rejected.read(reader)

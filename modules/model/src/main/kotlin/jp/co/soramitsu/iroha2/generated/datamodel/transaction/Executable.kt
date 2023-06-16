@@ -84,7 +84,7 @@ public sealed class Executable : ModelEnum {
     public companion object : ScaleReader<Executable>, ScaleWriter<Executable> {
         public override fun read(reader: ScaleCodecReader): Executable = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Instructions.read(reader)
             1 -> Wasm.read(reader)

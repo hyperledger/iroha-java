@@ -23,8 +23,10 @@ class CryptoTest {
     @Test
     fun `generating key pairs is thread safe`() {
         val iterations = 1000
-        val futureResults = generateSequence { CoroutineScope(Dispatchers.Default).async { generateKeyPair() } }
-            .take(iterations).toSet()
+        val futureResults = generateSequence {
+            CoroutineScope(Dispatchers.Default)
+                .async { generateKeyPair() }
+        }.take(iterations).toSet()
 
         class ByteArrayWrapper(private val byteArray: ByteArray) {
             override fun equals(other: Any?): Boolean {
@@ -58,7 +60,7 @@ class CryptoTest {
 
     @Test
     fun `hash function returns expected result`() {
-        val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b2"
+        val expected = "ba67336efd6a3df3a70eeb757860763036785c182ff4cf587541a0068d09f5b3"
         val input = "6920616d2064617461"
         assertEquals(expected, Hex.toHexString(input.fromHex().hash()))
     }

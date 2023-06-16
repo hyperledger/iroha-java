@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,16 @@ public sealed class ExecutionTime : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is PreCommit -> PreCommit.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is PreCommit -> PreCommit.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'PreCommit' variant
@@ -41,6 +53,14 @@ public sealed class ExecutionTime : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: PreCommit, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.time.ExecutionTime.PreCommit".hashCode()
         }
     }
 
@@ -77,7 +97,7 @@ public sealed class ExecutionTime : ModelEnum {
     public companion object : ScaleReader<ExecutionTime>, ScaleWriter<ExecutionTime> {
         public override fun read(reader: ScaleCodecReader): ExecutionTime = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> PreCommit.read(reader)
             1 -> Schedule.read(reader)

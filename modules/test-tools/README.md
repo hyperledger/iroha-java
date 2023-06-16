@@ -35,6 +35,11 @@ class Test : IrohaTest<AdminIroha2Client>() {
     }
 
     @Test
+    @WithIroha(source = "src/test/resources/genesis.json")
+    fun `genesis path test`(): Unit = runBlocking {
+    }
+
+    @Test
     @WithIroha
     fun `empty genesis test`(): Unit = runBlocking {
     }

@@ -17,7 +17,7 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AssetDefinitionEntry(
     public val definition: AssetDefinition,
-    public val registeredBy: AccountId
+    public val ownedBy: AccountId
 ) {
     public companion object : ScaleReader<AssetDefinitionEntry>, ScaleWriter<AssetDefinitionEntry> {
         public override fun read(reader: ScaleCodecReader): AssetDefinitionEntry = try {
@@ -31,7 +31,7 @@ public data class AssetDefinitionEntry(
 
         public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionEntry) = try {
             AssetDefinition.write(writer, instance.definition)
-            AccountId.write(writer, instance.registeredBy)
+            AccountId.write(writer, instance.ownedBy)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

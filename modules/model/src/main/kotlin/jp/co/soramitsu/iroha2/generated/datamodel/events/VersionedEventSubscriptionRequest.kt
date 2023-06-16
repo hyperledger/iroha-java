@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.core.block.stream
+package jp.co.soramitsu.iroha2.generated.datamodel.events
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * VersionedBlockSubscriberMessage
+ * VersionedEventSubscriptionRequest
  *
- * Generated from 'iroha_core::block::stream::VersionedBlockSubscriberMessage' enum
+ * Generated from 'iroha_data_model::events::VersionedEventSubscriptionRequest' enum
  */
-public sealed class VersionedBlockSubscriberMessage : ModelEnum {
+public sealed class VersionedEventSubscriptionRequest : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,8 +26,8 @@ public sealed class VersionedBlockSubscriberMessage : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val blockSubscriberMessage: BlockSubscriberMessage
-    ) : VersionedBlockSubscriberMessage() {
+        public val eventSubscriptionRequest: EventSubscriptionRequest
+    ) : VersionedEventSubscriptionRequest() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
@@ -35,14 +35,14 @@ public sealed class VersionedBlockSubscriberMessage : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    BlockSubscriberMessage.read(reader),
+                    EventSubscriptionRequest.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                BlockSubscriberMessage.write(writer, instance.blockSubscriberMessage)
+                EventSubscriptionRequest.write(writer, instance.eventSubscriptionRequest)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -50,17 +50,20 @@ public sealed class VersionedBlockSubscriberMessage : ModelEnum {
     }
 
     public companion object :
-        ScaleReader<VersionedBlockSubscriberMessage>,
-        ScaleWriter<VersionedBlockSubscriberMessage> {
-        public override fun read(reader: ScaleCodecReader): VersionedBlockSubscriberMessage = when (
+        ScaleReader<VersionedEventSubscriptionRequest>,
+        ScaleWriter<VersionedEventSubscriptionRequest> {
+        public override fun read(reader: ScaleCodecReader): VersionedEventSubscriptionRequest = when (
             val
-            discriminant = reader.readUByte().toInt()
+            discriminant = reader.readUByte()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedBlockSubscriberMessage) {
+        public override fun write(
+            writer: ScaleCodecWriter,
+            instance: VersionedEventSubscriptionRequest
+        ) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)

@@ -20,6 +20,8 @@ import kotlin.reflect.KClass
 @Inherited
 annotation class WithIroha(
     val sources: Array<KClass<out Genesis>> = [EmptyGenesis::class],
+    val configs: Array<String> = [],
+    val source: String = "",
     val amount: Int = 1
 )
 
@@ -27,3 +29,5 @@ annotation class WithIroha(
  * Empty genesis with no instructions
  */
 open class EmptyGenesis : Genesis(RawGenesisBlock(listOf(GenesisTransaction(emptyList()))))
+
+const val IROHA_CONFIG_DELIMITER = "="
