@@ -10,22 +10,11 @@ name: Iroha2-java main branch workflow
 on:
   push:
     branches: [ iroha2-dev, iroha2-main ]
+    tags:
+      - '**'
 jobs:
-  prepare:
+  publish:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Generate libraries list
-      id: generate-matrix
-      run: echo "::set-output name=matrix::$(ls ./modules | jq  --raw-input . | jq --slurp . | jq -c .)"
-    outputs:
-        matrix: ${{ steps.generate-matrix.outputs.matrix }}
-  build:
-    needs: prepare
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        library: ${{ fromJson(needs.prepare.outputs.matrix) }}          
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 16
@@ -33,81 +22,12 @@ jobs:
       with:
         java-version: '16'
         distribution: 'temurin'
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@v1
+    - name: Publish package
+      uses: gradle/gradle-build-action@v2.3.3
       with:
-        arguments: build
-    - name: Set lib name
-      run: echo "lib_name=$(find ./modules/${{ matrix.library }}/build/libs/ -name *.jar -type f -print | awk -F/ '{print length($NF)" "$NF}' | sort -nk1 | head -1 | sed 's/[^ ]* //' | sed 's/\.[^.]*$//')" >> $GITHUB_ENV
-    - name: Publish lib to nexus for branch
-      if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=jar
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}.jar
-    - name: Publish sources lib to nexus for branch
-      if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=jar classifier=sources
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-sources.jar
-    - name: Publish javadoc lib to nexus for branch
-      if: ${{ github.ref == 'refs/heads/iroha2-dev' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=jar classifier=javadoc
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-javadoc.jar
-    - name: Publish lib to nexus for tag
-      if: ${{ github.ref_type == 'tag' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }} version=${{ github.sha }}
-        assets: extension=jar
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}
-    - name: Publish sources lib to nexus for tag
-      if: ${{ github.ref_type == 'tag' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-sources version=${{ github.sha }}
-        assets: extension=jar classifier=sources
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-sources.jar
-    - name: Publish javadoc lib to nexus for tag
-      if: ${{ github.ref_type == 'tag' }}
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://nexus.iroha.tech/
-        username: '${{ secrets.NEXUS_USER }}'
-        password: '${{ secrets.NEXUS_PASS }}'
-        format: maven2
-        repository: maven-soramitsu
-        coordinates: groupId=jp.co.soramitsu.iroha2-java artifactId=${{ matrix.library }}-javadoc version=${{ github.sha }}
-        assets: extension=jar classifier=javadoc
-        filename: ./modules/${{ matrix.library }}/build/libs/${{ env.lib_name }}-javadoc.jar
+        arguments: publish
+      env:
+        NEXUS_USER: ${{ secrets.NEXUS_USER }}
+        NEXUS_PASS: ${{ secrets.NEXUS_PASS }}
