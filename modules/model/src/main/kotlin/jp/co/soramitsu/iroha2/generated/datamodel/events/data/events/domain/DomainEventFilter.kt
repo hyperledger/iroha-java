@@ -11,6 +11,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAccountFilter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.filters.FilterOptAssetDefinitionFilter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -23,6 +25,22 @@ public sealed class DomainEventFilter : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is ByCreated -> ByCreated.equals(this, other)
+        is ByDeleted -> ByDeleted.equals(this, other)
+        is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
+        is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is ByCreated -> ByCreated.hashCode()
+        is ByDeleted -> ByDeleted.hashCode()
+        is ByMetadataInserted -> ByMetadataInserted.hashCode()
+        is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'ByCreated' variant
@@ -43,6 +61,14 @@ public sealed class DomainEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -65,6 +91,14 @@ public sealed class DomainEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -87,6 +121,14 @@ public sealed class DomainEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataInserted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByMetadataInserted".hashCode()
         }
     }
 
@@ -109,6 +151,14 @@ public sealed class DomainEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByMetadataRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.domain.DomainEventFilter.ByMetadataRemoved".hashCode()
         }
     }
 
@@ -169,7 +219,7 @@ public sealed class DomainEventFilter : ModelEnum {
     public companion object : ScaleReader<DomainEventFilter>, ScaleWriter<DomainEventFilter> {
         public override fun read(reader: ScaleCodecReader): DomainEventFilter = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByDeleted.read(reader)

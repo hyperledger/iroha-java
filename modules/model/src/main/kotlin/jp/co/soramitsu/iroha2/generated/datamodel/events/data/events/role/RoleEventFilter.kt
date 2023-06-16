@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,20 @@ public sealed class RoleEventFilter : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is ByCreated -> ByCreated.equals(this, other)
+        is ByDeleted -> ByDeleted.equals(this, other)
+        is ByPermissionRemoved -> ByPermissionRemoved.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is ByCreated -> ByCreated.hashCode()
+        is ByDeleted -> ByDeleted.hashCode()
+        is ByPermissionRemoved -> ByPermissionRemoved.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'ByCreated' variant
@@ -41,6 +57,14 @@ public sealed class RoleEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -63,6 +87,14 @@ public sealed class RoleEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -85,13 +117,21 @@ public sealed class RoleEventFilter : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: ByPermissionRemoved, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.events.data.events.role.RoleEventFilter.ByPermissionRemoved".hashCode()
         }
     }
 
     public companion object : ScaleReader<RoleEventFilter>, ScaleWriter<RoleEventFilter> {
         public override fun read(reader: ScaleCodecReader): RoleEventFilter = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> ByCreated.read(reader)
             1 -> ByDeleted.read(reader)

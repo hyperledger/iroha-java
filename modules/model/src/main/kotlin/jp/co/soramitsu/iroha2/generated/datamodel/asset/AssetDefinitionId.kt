@@ -12,17 +12,17 @@ import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
 import jp.co.soramitsu.iroha2.wrapException
 
 /**
- * DefinitionId
+ * AssetDefinitionId
  *
- * Generated from 'iroha_data_model::asset::DefinitionId' regular structure
+ * Generated from 'iroha_data_model::asset::AssetDefinitionId' regular structure
  */
-public data class DefinitionId(
+public data class AssetDefinitionId(
     public val name: Name,
     public val domainId: DomainId
 ) {
-    public companion object : ScaleReader<DefinitionId>, ScaleWriter<DefinitionId> {
-        public override fun read(reader: ScaleCodecReader): DefinitionId = try {
-            DefinitionId(
+    public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
+        public override fun read(reader: ScaleCodecReader): AssetDefinitionId = try {
+            AssetDefinitionId(
                 Name.read(reader),
                 DomainId.read(reader),
             )
@@ -30,7 +30,7 @@ public data class DefinitionId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: DefinitionId) = try {
+        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId) = try {
             Name.write(writer, instance.name)
             DomainId.write(writer, instance.domainId)
         } catch (ex: Exception) {

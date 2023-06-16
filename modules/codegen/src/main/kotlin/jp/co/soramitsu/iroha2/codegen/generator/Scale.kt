@@ -155,10 +155,13 @@ private fun CompositeType.scaleReadImpl(): CodeBlock {
 private fun OptionType.scaleReadImpl(): CodeBlock {
     return when (this.innerType.requireValue()) {
         is U32Type, U16Type -> CodeBlock.of("reader.readNullable()")
-        else -> CodeBlock.of(
-            "reader.readNullable(%T)",
-            withoutGenerics(resolveKotlinType(this))
-        )
+        else -> resolveKotlinType(this).let { type ->
+            CodeBlock.of(
+                "reader.readNullable(%1T) as %2T",
+                withoutGenerics(type),
+                type
+            )
+        }
     }
 }
 

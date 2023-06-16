@@ -53,7 +53,7 @@ open class AdminIroha2Client(
     }
 
     /**
-     * Send status check request
+     * Send schema request
      */
     suspend fun schema(): String {
         return client

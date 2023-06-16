@@ -23,7 +23,7 @@ public data class Schedule(
         public override fun read(reader: ScaleCodecReader): Schedule = try {
             Schedule(
                 Duration.read(reader),
-                reader.readNullable(Duration),
+                reader.readNullable(Duration) as Duration?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

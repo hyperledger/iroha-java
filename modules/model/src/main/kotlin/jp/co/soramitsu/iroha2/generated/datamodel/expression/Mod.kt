@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Long
 
 /**
  * Mod
@@ -16,14 +16,14 @@ import kotlin.Long
  * Generated from 'iroha_data_model::expression::Mod' regular structure
  */
 public data class Mod(
-    public val left: EvaluatesTo<Long>,
-    public val right: EvaluatesTo<Long>
+    public val left: EvaluatesTo<NumericValue>,
+    public val right: EvaluatesTo<NumericValue>
 ) {
     public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
         public override fun read(reader: ScaleCodecReader): Mod = try {
             Mod(
-                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
-                EvaluatesTo.read(reader) as EvaluatesTo<Long>,
+                EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
+                EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -79,7 +79,7 @@ public sealed class RejectionReason : ModelEnum {
     public companion object : ScaleReader<RejectionReason>, ScaleWriter<RejectionReason> {
         public override fun read(reader: ScaleCodecReader): RejectionReason = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Block.read(reader)
             1 -> Transaction.read(reader)

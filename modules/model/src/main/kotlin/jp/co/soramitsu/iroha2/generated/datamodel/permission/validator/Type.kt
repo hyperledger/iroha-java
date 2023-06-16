@@ -9,6 +9,8 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Any
+import kotlin.Boolean
 import kotlin.Int
 
 /**
@@ -21,6 +23,22 @@ public sealed class Type : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
+
+    public override fun equals(other: Any?) = when (this) {
+        is Transaction -> Transaction.equals(this, other)
+        is Instruction -> Instruction.equals(this, other)
+        is Query -> Query.equals(this, other)
+        is Expression -> Expression.equals(this, other)
+        else -> super.equals(other)
+    }
+
+    public override fun hashCode() = when (this) {
+        is Transaction -> Transaction.hashCode()
+        is Instruction -> Instruction.hashCode()
+        is Query -> Query.hashCode()
+        is Expression -> Expression.hashCode()
+        else -> super.hashCode()
+    }
 
     /**
      * 'Transaction' variant
@@ -41,6 +59,14 @@ public sealed class Type : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Transaction, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Transaction".hashCode()
         }
     }
 
@@ -63,6 +89,14 @@ public sealed class Type : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Instruction, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Instruction".hashCode()
         }
     }
 
@@ -85,6 +119,13 @@ public sealed class Type : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Query, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int = "datamodel.permission.validator.Type.Query".hashCode()
         }
     }
 
@@ -107,13 +148,21 @@ public sealed class Type : ModelEnum {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(o1: Expression, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            public override fun hashCode(): Int =
+                "datamodel.permission.validator.Type.Expression".hashCode()
         }
     }
 
     public companion object : ScaleReader<Type>, ScaleWriter<Type> {
         public override fun read(reader: ScaleCodecReader): Type = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Transaction.read(reader)
             1 -> Instruction.read(reader)

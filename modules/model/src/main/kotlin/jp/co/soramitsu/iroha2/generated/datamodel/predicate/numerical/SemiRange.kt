@@ -109,7 +109,7 @@ public sealed class SemiRange : ModelEnum {
     public companion object : ScaleReader<SemiRange>, ScaleWriter<SemiRange> {
         public override fun read(reader: ScaleCodecReader): SemiRange = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> U32.read(reader)
             1 -> U128.read(reader)

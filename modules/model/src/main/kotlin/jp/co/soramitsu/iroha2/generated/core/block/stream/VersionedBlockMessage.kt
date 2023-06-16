@@ -1,7 +1,7 @@
 //
 // Auto-generated file. DO NOT EDIT!
 //
-package jp.co.soramitsu.iroha2.generated.core.block
+package jp.co.soramitsu.iroha2.generated.core.block.stream
 
 import jp.co.soramitsu.iroha2.ModelEnum
 import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
@@ -12,11 +12,11 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 
 /**
- * VersionedValidBlock
+ * VersionedBlockMessage
  *
- * Generated from 'iroha_core::block::VersionedValidBlock' enum
+ * Generated from 'iroha_core::block::stream::VersionedBlockMessage' enum
  */
-public sealed class VersionedValidBlock : ModelEnum {
+public sealed class VersionedBlockMessage : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
@@ -26,8 +26,8 @@ public sealed class VersionedValidBlock : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val validBlock: ValidBlock
-    ) : VersionedValidBlock() {
+        public val blockMessage: BlockMessage
+    ) : VersionedBlockMessage() {
         public override fun discriminant(): Int = DISCRIMINANT
 
         public companion object : ScaleReader<V1>, ScaleWriter<V1> {
@@ -35,30 +35,30 @@ public sealed class VersionedValidBlock : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): V1 = try {
                 V1(
-                    ValidBlock.read(reader),
+                    BlockMessage.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                ValidBlock.write(writer, instance.validBlock)
+                BlockMessage.write(writer, instance.blockMessage)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<VersionedValidBlock>, ScaleWriter<VersionedValidBlock> {
-        public override fun read(reader: ScaleCodecReader): VersionedValidBlock = when (
-            val discriminant =
-                reader.readUByte().toInt()
+    public companion object : ScaleReader<VersionedBlockMessage>, ScaleWriter<VersionedBlockMessage> {
+        public override fun read(reader: ScaleCodecReader): VersionedBlockMessage = when (
+            val
+            discriminant = reader.readUByte()
         ) {
             1 -> V1.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedValidBlock) {
+        public override fun write(writer: ScaleCodecWriter, instance: VersionedBlockMessage) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)

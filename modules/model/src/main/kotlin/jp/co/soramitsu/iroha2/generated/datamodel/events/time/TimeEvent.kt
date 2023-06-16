@@ -21,7 +21,7 @@ public data class TimeEvent(
     public companion object : ScaleReader<TimeEvent>, ScaleWriter<TimeEvent> {
         public override fun read(reader: ScaleCodecReader): TimeEvent = try {
             TimeEvent(
-                reader.readNullable(Interval),
+                reader.readNullable(Interval) as Interval?,
                 Interval.read(reader),
             )
         } catch (ex: Exception) {

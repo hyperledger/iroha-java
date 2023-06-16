@@ -81,7 +81,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Extended' variant
      */
     public data class Extended(
-        public val triggerId: TriggerId
+        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -90,14 +90,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Extended = try {
                 Extended(
-                    TriggerId.read(reader),
+                    TriggerNumberOfExecutionsChanged.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Extended) = try {
-                TriggerId.write(writer, instance.triggerId)
+                TriggerNumberOfExecutionsChanged.write(writer, instance.triggerNumberOfExecutionsChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -108,7 +108,7 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Shortened' variant
      */
     public data class Shortened(
-        public val triggerId: TriggerId
+        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged
     ) : TriggerEvent() {
         public override fun discriminant(): Int = DISCRIMINANT
 
@@ -117,14 +117,14 @@ public sealed class TriggerEvent : ModelEnum {
 
             public override fun read(reader: ScaleCodecReader): Shortened = try {
                 Shortened(
-                    TriggerId.read(reader),
+                    TriggerNumberOfExecutionsChanged.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
             public override fun write(writer: ScaleCodecWriter, instance: Shortened) = try {
-                TriggerId.write(writer, instance.triggerId)
+                TriggerNumberOfExecutionsChanged.write(writer, instance.triggerNumberOfExecutionsChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -134,7 +134,7 @@ public sealed class TriggerEvent : ModelEnum {
     public companion object : ScaleReader<TriggerEvent>, ScaleWriter<TriggerEvent> {
         public override fun read(reader: ScaleCodecReader): TriggerEvent = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Created.read(reader)
             1 -> Deleted.read(reader)

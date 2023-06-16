@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.account.AccountEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetDefinitionEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.asset.AssetEvent
+import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.config.ConfigurationEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.domain.DomainEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.peer.PeerEvent
 import jp.co.soramitsu.iroha2.generated.datamodel.events.`data`.events.permission.PermissionTokenEvent
@@ -274,10 +275,37 @@ public sealed class Event : ModelEnum {
         }
     }
 
+    /**
+     * 'Configuration' variant
+     */
+    public data class Configuration(
+        public val configurationEvent: ConfigurationEvent
+    ) : Event() {
+        public override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object : ScaleReader<Configuration>, ScaleWriter<Configuration> {
+            public const val DISCRIMINANT: Int = 9
+
+            public override fun read(reader: ScaleCodecReader): Configuration = try {
+                Configuration(
+                    ConfigurationEvent.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public override fun write(writer: ScaleCodecWriter, instance: Configuration) = try {
+                ConfigurationEvent.write(writer, instance.configurationEvent)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         public override fun read(reader: ScaleCodecReader): Event = when (
             val discriminant =
-                reader.readUByte().toInt()
+                reader.readUByte()
         ) {
             0 -> Peer.read(reader)
             1 -> Domain.read(reader)
@@ -288,6 +316,7 @@ public sealed class Event : ModelEnum {
             6 -> Role.read(reader)
             7 -> PermissionToken.read(reader)
             8 -> PermissionValidator.read(reader)
+            9 -> Configuration.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
         }
 
@@ -303,6 +332,7 @@ public sealed class Event : ModelEnum {
                 6 -> Role.write(writer, instance as Role)
                 7 -> PermissionToken.write(writer, instance as PermissionToken)
                 8 -> PermissionValidator.write(writer, instance as PermissionValidator)
+                9 -> Configuration.write(writer, instance as Configuration)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
             }
         }
