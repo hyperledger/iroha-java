@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.datamodel.ValueKind
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.FilterBox
@@ -81,11 +82,38 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
+fun String.asTokenId() = TokenId(Name(this))
+
 fun String.asDomainId() = DomainId(Name(this))
 
 fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
+
+fun String.asValueKind() = when (this) {
+    "Id" -> ValueKind.Id()
+    "Bool" -> ValueKind.Bool()
+    "String" -> ValueKind.String()
+    "Name" -> ValueKind.Name()
+    "Vec" -> ValueKind.Vec()
+    "LimitedMetadata" -> ValueKind.LimitedMetadata()
+    "MetadataLimits" -> ValueKind.MetadataLimits()
+    "TransactionLimits" -> ValueKind.TransactionLimits()
+    "LengthLimits" -> ValueKind.LengthLimits()
+    "Identifiable" -> ValueKind.Identifiable()
+    "PublicKey" -> ValueKind.PublicKey()
+    "SignatureCheckCondition" -> ValueKind.SignatureCheckCondition()
+    "TransactionValue" -> ValueKind.TransactionValue()
+    "TransactionQueryResult" -> ValueKind.TransactionQueryResult()
+    "PermissionToken" -> ValueKind.PermissionToken()
+    "Hash" -> ValueKind.Hash()
+    "Block" -> ValueKind.Block()
+    "BlockHeader" -> ValueKind.BlockHeader()
+    "Ipv4Addr" -> ValueKind.Ipv4Addr()
+    "Ipv6Addr" -> ValueKind.Ipv6Addr()
+    "Numeric" -> ValueKind.Numeric()
+    else -> throw IllegalArgumentException("Unsupported value kind type: $this")
+}
 
 fun Int.asValue() = Value.Numeric(NumericValue.U32(this.toLong()))
 
