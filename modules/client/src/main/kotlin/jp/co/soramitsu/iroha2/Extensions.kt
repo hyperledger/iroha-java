@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.datamodel.ValueKind
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.FilterBox
@@ -39,6 +38,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
 import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.ValueKind
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
@@ -82,7 +82,7 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
-fun String.asTokenId() = TokenId(Name(this))
+fun String.asTokenId() = PermissionTokenId(Name(this))
 
 fun String.asDomainId() = DomainId(Name(this))
 
@@ -90,8 +90,9 @@ fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
+// TODO
 fun String.asValueKind() = when (this) {
-    "Id" -> ValueKind.Id()
+    ValueKind.Id::class.java.name -> ValueKind.Id()
     "Bool" -> ValueKind.Bool()
     "String" -> ValueKind.String()
     "Name" -> ValueKind.Name()

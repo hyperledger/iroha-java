@@ -21,7 +21,7 @@ class DeserializerTest {
         // Grant -> PermissionToken
         // Register -> PermissionTokenDefinition
         // Grant -> PermissionToken
-        assert(block.transactions.first().isi.size == 7)
+        assert(block.transactions.flatten().size == 7)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
@@ -64,7 +64,7 @@ class DeserializerTest {
         // SetKeyValue -> AssetId
         // SetKeyValue -> AssetId
         // Grant -> PermissionToken
-        assert(block.transactions.first().size == 27)
+        assert(block.transactions.flatten().size == 27)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
@@ -100,7 +100,7 @@ class DeserializerTest {
         // Mint -> AssetId
         // Mint -> AssetId
         // Mint -> AssetId
-        assert(block.transactions.first().isi.size == 20)
+        assert(block.transactions.flatten().size == 20)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
