@@ -41,5 +41,3 @@ class SchemaParser {
         }
     }
 }
-
-// TODO: issue дженерики
