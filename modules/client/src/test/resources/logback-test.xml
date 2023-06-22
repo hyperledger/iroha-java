@@ -1,0 +1,27 @@
+<!--
+  ~  Copyright (C) Fraud Intelligence Limited - All Rights Reserved
+  ~
+  ~  This source code is protected under international copyright law.  All rights
+  ~  reserved and protected by the copyright holders.
+  ~  This file is confidential and only available to authorized individuals with the
+  ~  permission of the copyright holders.  If you encounter this file and do not have
+  ~  permission, please contact the copyright holders and delete this file.
+  ~  <support@fraudintelligencelimited.com>
+  ~
+  -->
+
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="INFO"/>
+    <logger name="com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire" level="OFF"/>
+</configuration>

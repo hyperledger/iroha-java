@@ -8,22 +8,22 @@ import jp.co.soramitsu.iroha2.annotations.Query
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.string.StringPredicate
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.Container
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValueOfKey
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
-import jp.co.soramitsu.iroha2.generated.datamodel.sorting.Sorting
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.Container
+import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.Pagination
+import jp.co.soramitsu.iroha2.generated.Sorting
+import jp.co.soramitsu.iroha2.generated.StringPredicate
+import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.ValueOfKey
+import jp.co.soramitsu.iroha2.generated.ValuePredicate
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
@@ -354,7 +354,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     @SdkTestId("find_asset_by_metadata_filters")
     @Disabled // https://github.com/hyperledger/iroha/issues/2697
     fun `find asset by metadata filters`(): Unit = runBlocking {
-        val filter = GenericValuePredicateBox.Raw(
+        val filter = GenericPredicateBox.Raw(
             ValuePredicate.Container(
                 Container.ValueOfKey(
                     ValueOfKey(
@@ -574,7 +574,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-            .also { trigger -> assertTrue { trigger.id == triggerId } }
+            .also { trigger -> assertTrue { trigger.id() == triggerId } }
     }
 
     @Test
@@ -589,7 +589,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-            .also { triggers -> assert(triggers.all { it.id.domainId == domainId }) }
+            .also { triggers -> assert(triggers.all { it.id().domainId == domainId }) }
     }
 
     @Test
@@ -745,7 +745,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
             .also { txs ->
-                assertTrue(txs.size == 6) // 5 + genesis tx
+                assertTrue(txs.size == 7) // 5 + 2 genesis txs
             }
     }
 
@@ -826,10 +826,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { ids ->
-                assertContains(
-                    ids,
-                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
-                )
+                assertContains(ids, AliceHasRoleWithAccessToBobsMetadata.ROLE_ID)
             }
     }
 

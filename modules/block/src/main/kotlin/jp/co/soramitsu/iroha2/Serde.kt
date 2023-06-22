@@ -17,56 +17,56 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-import jp.co.soramitsu.iroha2.generated.crypto.hash.Hash
-import jp.co.soramitsu.iroha2.generated.datamodel.IdBox
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.LengthLimits
-import jp.co.soramitsu.iroha2.generated.datamodel.NumericValue
-import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.ValueKind
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
-import jp.co.soramitsu.iroha2.generated.datamodel.account.SignatureCheckCondition
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Asset
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
-import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockHeaderValue
-import jp.co.soramitsu.iroha2.generated.datamodel.blockvalue.BlockValue
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventsFilterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.EvaluatesTo
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.BurnBox
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.GrantBox
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Limits
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.Peer
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Definition
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.TokenId
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.validator.Validator
-import jp.co.soramitsu.iroha2.generated.datamodel.role.NewRole
-import jp.co.soramitsu.iroha2.generated.datamodel.role.Role
-import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionLimits
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionValue
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.Trigger
-import jp.co.soramitsu.iroha2.generated.datamodel.trigger.TriggerId
-import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv4Addr
-import jp.co.soramitsu.iroha2.generated.primitives.addr.Ipv6Addr
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.Algorithm
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.BurnBox
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.GrantBox
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.Ipv4Addr
+import jp.co.soramitsu.iroha2.generated.Ipv6Addr
+import jp.co.soramitsu.iroha2.generated.LengthLimits
+import jp.co.soramitsu.iroha2.generated.Limits
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MintBox
+import jp.co.soramitsu.iroha2.generated.Mintable
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.NewRole
+import jp.co.soramitsu.iroha2.generated.NumericValue
+import jp.co.soramitsu.iroha2.generated.Peer
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
+import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RegisterBox
+import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.TransactionLimits
+import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
+import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.TriggerBox
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.ValidatorMode
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.ValueKind
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -81,7 +81,7 @@ val JSON_SERDE by lazy {
         val module = SimpleModule()
 
         // deserializers
-        module.addDeserializer(Instruction::class.java, InstructionDeserializer)
+        module.addDeserializer(InstructionBox::class.java, InstructionDeserializer)
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
         module.addDeserializer(Value::class.java, ValueDeserializer)
         module.addDeserializer(ValueKind::class.java, ValueKindDeserializer)
@@ -99,7 +99,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
         module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
-        module.addDeserializer(TokenId::class.java, TokenIdDeserializer)
+        module.addDeserializer(PermissionTokenId::class.java, TokenIdDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
@@ -109,7 +109,7 @@ val JSON_SERDE by lazy {
         // serializers
         module.addKeySerializer(Name::class.java, NameAsKeySerializer)
         module.addSerializer(DomainId::class.java, DomainIdSerializer)
-        module.addSerializer(TokenId::class.java, TokenIdSerializer)
+        module.addSerializer(PermissionTokenId::class.java, TokenIdSerializer)
         module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
@@ -122,9 +122,9 @@ val JSON_SERDE by lazy {
         module.addSerializer(EvaluatesTo::class.java, EvaluatesToSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
         module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
+        module.addSerializer(ValidatorMode::class.java, ValidatorModeSerializer)
 
         mapper.registerModule(module)
-
         mapper.registerModule(
             KotlinModule.Builder()
                 .configure(KotlinFeature.NullToEmptyCollection, true)
@@ -137,11 +137,11 @@ val JSON_SERDE by lazy {
     }
 }
 
-private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): Instruction {
+private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): InstructionBox {
     val node = p.readValueAsTree<JsonNode>().fields().next()
     val param = node.key
 
-    val subtype = Instruction::class.nestedClasses.find { clazz ->
+    val subtype = InstructionBox::class.nestedClasses.find { clazz ->
         !clazz.isCompanion && clazz.simpleName == param
     } ?: throw DeserializationException("Class with constructor($param) not found")
 
@@ -152,7 +152,7 @@ private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): I
     val toConvert: JsonNode = node.value
 
     val arg = mapper.convertValue(toConvert, argTypeName.asClass())
-    return subtype.primaryConstructor?.call(arg) as Instruction
+    return subtype.primaryConstructor?.call(arg) as InstructionBox
 }
 
 private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): GrantBox {
@@ -232,10 +232,10 @@ private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any
         SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
         TransactionValue::class -> Value.TransactionValue(subtype.primaryConstructor?.call(arg) as TransactionValue)
         TransactionQueryResult::class -> Value.TransactionQueryResult(subtype.primaryConstructor?.call(arg) as TransactionQueryResult)
-        Token::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as Token)
+        PermissionToken::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as PermissionToken)
         Hash::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as Hash)
-        BlockValue::class -> Value.Block(subtype.primaryConstructor?.call(arg) as BlockValue)
-        BlockHeaderValue::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeaderValue)
+        VersionedCommittedBlock::class -> Value.Block(subtype.primaryConstructor?.call(arg) as VersionedCommittedBlock)
+        BlockHeader::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeader)
         Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
         Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
         NumericValue::class -> {
@@ -247,6 +247,7 @@ private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any
                 else -> throw DeserializationException("Numeric value $param not found")
             }
         }
+
         else -> throw DeserializationException("Value type $clazz not found")
     }
 }
@@ -267,10 +268,10 @@ private fun getClazzByParam(param: String): KClass<out Any> {
         "SignatureCheckCondition" -> SignatureCheckCondition::class
         "TransactionValue" -> TransactionValue::class
         "TransactionQueryResult" -> TransactionQueryResult::class
-        "PermissionToken" -> Token::class
+        "PermissionToken" -> PermissionToken::class
         "Hash" -> Hash::class
-        "Block" -> BlockValue::class
-        "BlockHeader" -> BlockHeaderValue::class
+        "Block" -> VersionedCommittedBlock::class
+        "BlockHeader" -> BlockHeader::class
         "Ipv4Addr" -> Ipv4Addr::class
         "Ipv6Addr" -> Ipv6Addr::class
         "U32" -> NumericValue::class
@@ -316,13 +317,17 @@ private fun getRegisterBox(arg: Any): RegisterBox {
     return when (arg) {
         is NewDomain -> RegisterBox(RegistrableBox.Domain(arg).evaluatesTo())
         is NewAccount -> RegisterBox(RegistrableBox.Account(arg).evaluatesTo())
-        is Definition -> RegisterBox(RegistrableBox.PermissionTokenDefinition(arg).evaluatesTo())
+        is PermissionTokenDefinition -> RegisterBox(RegistrableBox.PermissionTokenDefinition(arg).evaluatesTo())
         is Peer -> RegisterBox(RegistrableBox.Peer(arg).evaluatesTo())
         is NewAssetDefinition -> RegisterBox(RegistrableBox.AssetDefinition(arg).evaluatesTo())
         is Asset -> RegisterBox(RegistrableBox.Asset(arg).evaluatesTo())
-        is Trigger<*> -> RegisterBox(RegistrableBox.Trigger(arg as Trigger<EventsFilterBox>).evaluatesTo())
         is NewRole -> RegisterBox(RegistrableBox.Role(arg).evaluatesTo())
-        is Validator -> RegisterBox(RegistrableBox.Validator(arg).evaluatesTo())
+        is TriggerBox -> when (arg) {
+            is TriggerBox.Raw -> RegistrableBox.Trigger(arg.triggerOfFilterBoxAndExecutable)
+            else -> throw IrohaSdkException("Unsupported trigger type")
+        }.let {
+            RegisterBox(it.evaluatesTo())
+        }
         else -> throw DeserializationException("Register box `$arg` not found")
     }
 }
@@ -390,19 +395,11 @@ private fun sealedDeserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRo
         nodes.add(node)
     }
 
-    val tokens = nodes[1].map {
-        mapper.convertValue(
-            it,
-            "jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token".asClass()
-        ) as Token
+    val tokens = nodes[1].map { // todo
+        mapper.convertValue(it, "jp.co.soramitsu.iroha2.generated.PermissionToken".asClass()) as PermissionToken
     }
     val roleId = RoleId(nodes[0].asText().asName())
-    return NewRole(
-        inner = Role(
-            id = roleId,
-            permissions = tokens
-        )
-    )
+    return NewRole(Role(id = roleId, permissions = tokens))
 }
 
 private fun sealedDeserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
@@ -418,10 +415,10 @@ private fun sealedDeserializeMetadata(p: JsonParser, mapper: ObjectMapper): Meta
 }
 
 /**
- * Deserializer for [Iroha Special Instructions][Instruction]
+ * Deserializer for [Iroha Special Instructions][InstructionBox]
  */
-object InstructionDeserializer : JsonDeserializer<Instruction>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Instruction {
+object InstructionDeserializer : JsonDeserializer<InstructionBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): InstructionBox {
         return sealedDeserializeInstruction(p, JSON_SERDE)
     }
 }
@@ -490,8 +487,8 @@ object MetadataDeserializer : JsonDeserializer<Metadata>() {
     }
 }
 
-object TokenIdDeserializer : JsonDeserializer<TokenId>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TokenId {
+object TokenIdDeserializer : JsonDeserializer<PermissionTokenId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PermissionTokenId {
         return p.readValueAs(String::class.java).asTokenId()
     }
 }
@@ -521,7 +518,7 @@ object AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
 object PublicKeyDeserializer : JsonDeserializer<PublicKey>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
         val key = p.readValueAs(String::class.java)
-        return PublicKey(Ed25519.hashFunName, key.fromHex())
+        return PublicKey(Algorithm.Ed25519(), key.fromHex())
     }
 }
 
@@ -660,10 +657,10 @@ object DomainIdSerializer : JsonSerializer<DomainId>() {
 }
 
 /**
- * Serializer for [TokenId]
+ * Serializer for [PermissionTokenId]
  */
-object TokenIdSerializer : JsonSerializer<TokenId>() {
-    override fun serialize(value: TokenId, gen: JsonGenerator, serializers: SerializerProvider) {
+object TokenIdSerializer : JsonSerializer<PermissionTokenId>() {
+    override fun serialize(value: PermissionTokenId, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.asString())
     }
 }
@@ -701,6 +698,18 @@ object NameAsKeySerializer : JsonSerializer<Name>() {
 object NameSerializer : JsonSerializer<Name>() {
     override fun serialize(value: Name, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.string)
+    }
+}
+
+/**
+ * Serializer for [Name]
+ */
+object ValidatorModeSerializer : JsonSerializer<ValidatorMode>() {
+    override fun serialize(value: ValidatorMode, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is ValidatorMode.Path -> gen.writeString(value.string)
+            else -> throw IrohaSdkException("Unsupported type ${this::class}")
+        }
     }
 }
 
@@ -759,11 +768,11 @@ object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole
 object EnumerationSerializer : JsonSerializer<ModelEnum>() {
     override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
         when (value) {
-            is Instruction.Grant -> value.serialize(gen)
-            is Instruction.Burn -> value.serialize(gen)
-            is Instruction.Mint -> value.serialize(gen)
-            is Instruction.SetKeyValue -> value.serialize(gen)
-            is Instruction.Register -> value.serialize(gen)
+            is InstructionBox.Grant -> value.serialize(gen)
+            is InstructionBox.Burn -> value.serialize(gen)
+            is InstructionBox.Mint -> value.serialize(gen)
+            is InstructionBox.SetKeyValue -> value.serialize(gen)
+            is InstructionBox.Register -> value.serialize(gen)
             is Expression.Raw -> value.serialize(gen)
             is Value.Identifiable -> value.serialize(gen)
             is Value.Id -> value.serialize(gen)
@@ -780,15 +789,15 @@ private fun Expression.Raw.serialize(gen: JsonGenerator) = this.serializeEnum(ge
 
 private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
 
-private fun Instruction.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
+private fun InstructionBox.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
 
-private fun Instruction.Grant.serialize(gen: JsonGenerator) = this.serializeBox<GrantBox>(gen)
+private fun InstructionBox.Grant.serialize(gen: JsonGenerator) = this.serializeBox<GrantBox>(gen)
 
-private fun Instruction.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
+private fun InstructionBox.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
 
-private fun Instruction.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
+private fun InstructionBox.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
 
-private fun Instruction.Register.serialize(gen: JsonGenerator) {
+private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
     val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
@@ -811,7 +820,7 @@ private fun Instruction.Register.serialize(gen: JsonGenerator) {
 /**
  * Serializes BurnBox, MintBox, GrantBox etc...
  */
-private inline fun <reified B> Instruction.serializeBox(gen: JsonGenerator) {
+private inline fun <reified B> InstructionBox.serializeBox(gen: JsonGenerator) {
     val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
@@ -848,9 +857,9 @@ private fun MintBox.serializeBox(
 
 private fun GrantBox.serializeBox(gen: JsonGenerator) {
     val fieldData = when (val rawValue = this.`object`.expression.cast<Expression.Raw>().value) {
-        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.token
+        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.permissionToken
         is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
-        else -> throw IrohaSdkException("Grant instruction serialization error")
+        else -> throw IrohaSdkException("Grant InstructionBox serialization error")
     }
     gen.writeObjectField(fieldData.first, fieldData.second)
     gen.writeObjectField("destination_id", this.destinationId)
@@ -878,8 +887,8 @@ private fun mintBurnSerialize(
         is NumericValue.U32 -> NumericValue.U32::class.simpleName to rawValue.u32
         is NumericValue.U64 -> NumericValue.U64::class.simpleName to rawValue.u64
         is NumericValue.U128 -> NumericValue.U128::class.simpleName to rawValue.u128
-        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPoint
-        else -> throw IrohaSdkException("Grant instruction serialization error")
+        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPointOfI64
+        else -> throw IrohaSdkException("Grant InstructionBox serialization error")
     }
     gen.writeObjectField(fieldData.first, fieldData.second)
     gen.writeObjectField("destination_id", destinationId)
@@ -898,6 +907,7 @@ private fun serializeSingleMember(gen: JsonGenerator, value: Any) {
             gen.writeObjectField(clazz.simpleName, memberProperties.first().call(value))
             gen.writeEndObject()
         }
+
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
     }
 }

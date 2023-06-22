@@ -2,36 +2,27 @@ package jp.co.soramitsu.iroha2.parse
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlin.streams.toList
+import jp.co.soramitsu.iroha2.COMMON_SCHEMA_GENERIC_REGEX
+import jp.co.soramitsu.iroha2.DEFINITION_SCHEMA_GENERIC_REGEX
 
 class SchemaReader {
-    companion object {
-        private const val SCHEMA_FILTER_TY = "ty:"
-        private const val DATA_MODEL_PATTERN = "iroha_data_model::(.+)::"
-        private const val MIN_NUMBER_OF_REPEATS_TO_RENAME = 2
-
-        private val dataFilterRegex = "data::filters::(.+)<".toRegex()
-        private val eventDataFilterRegex = "\"iroha_data_model::events::data::filters(.+)\"".toRegex()
-    }
 
     private val repeated = mutableMapOf<String, Int>()
+    private val toReplace = mutableMapOf<String, String>()
 
     /**
      * Read Iroha2 schema from a given [file][fileName]
      */
-    fun readSchema(fileName: String): Schema {
+    fun readSchema(fileName: String): Map<String, Any> {
         val resource = Thread.currentThread().contextClassLoader.getResourceAsStream(fileName)!!
         val sb = StringBuilder()
         val lines = resource.bufferedReader().lines().toList()
 
-        lines.forEach { countRepeated(it) }
-        repeated.entries.removeIf { it.value <= MIN_NUMBER_OF_REPEATS_TO_RENAME }
+        lines.forEach { line -> line.countRepeatedWithGenerics() }
+        repeated.entries.removeIf { it.value < 2 }
+        toReplace.putAll(lines.mapNotNull { it.getReplacePairOrNull() }.toMap())
 
-        val repeatedRegex = repeated.keys
-            .map { it.split("::").last().replace("\": {") }
-            .let { classes -> "(${classes.joinToString("|")})" }
-            .let { classes -> "$DATA_MODEL_PATTERN$classes\\W".toRegex() }
-        lines.forEach { sb.appendLine(parseLine(it, repeatedRegex)) }
+        lines.forEach { line -> sb.appendLine(line.replace()) }
 
         return ObjectMapper().readValue(
             sb.toString(),
@@ -39,80 +30,42 @@ class SchemaReader {
         )
     }
 
-    /**
-     * Parse a single [line] of Iroha2 schema
-     */
-    private fun parseLine(line: String, repeatedRegex: Regex): String {
-        return when {
-            line.contains(dataFilterRegex) -> parseDataFilterLine(line)
-            line.contains(repeatedRegex) -> parseRepeatedLine(line, repeatedRegex)
-            else -> line
+    private fun String.countRepeatedWithGenerics() {
+        DEFINITION_SCHEMA_GENERIC_REGEX.matchEntire(this)?.groupValues?.also { values ->
+            val key = values[1]
+            repeated[key] = repeated.getOrDefault(key, 0) + 1
         }
     }
 
-    private fun parseDataFilterLine(line: String): String {
-        var tmpLine = line.substringBeforeLast("\"").replace("\"").trim()
-        if (tmpLine.startsWith(SCHEMA_FILTER_TY)) {
-            tmpLine = tmpLine.substring(SCHEMA_FILTER_TY.length + 1)
-        }
-        val newFilterName = getFilterEventName(tmpLine)
-        val newLine = "\"" + tmpLine.substringBefore(getDelimiter(line)) + newFilterName + "\""
-
-        return line.replace(eventDataFilterRegex, newLine)
+    private fun String.replace(): String {
+        var result = this
+        toReplace.forEach { (old, new) -> result = result.replace(old, new) }
+        return result
     }
 
-    private fun parseRepeatedLine(line: String, repeatedRegex: Regex): String {
-        val extracted = repeatedRegex.find(line)?.value
-            ?: return line
-        val lineParts = extracted.split("::")
-            .takeIf { it.size > 1 }
-            ?: return line
-
-        val className = lineParts[lineParts.size - 1].replace(">")
-        val prefix = lineParts[lineParts.size - 2]
-            .split('_')
-            .joinToString("") { p -> p.replaceFirstChar { it.uppercaseChar() } }
-
-        return when (className.startsWith(prefix) || prefix == "${className.replace("\\W".toRegex())}s") {
-            true -> line
-            false -> line.replace(className, "$prefix$className")
-        }
-    }
-
-    /**
-     * Count repeated model names of Iroha2 schema
-     */
-    private fun countRepeated(line: String) {
-        if (line.contains("\"$DATA_MODEL_PATTERN(.+)\": \\{".toRegex())) {
-            val parts = line.split("::")
-            if (parts.size <= 1) return
-
-            val key = "::${parts.last()}".replace(">")
-            val counter = repeated.getOrDefault(key, 0)
-            repeated[key] = counter + 1
-        }
-    }
-
-    private fun getDelimiter(name: String): String {
-        return name.substringBefore("<").substringAfterLast("::")
-    }
-
-    /**
-     * @return filter event name
-     */
-    private fun getFilterEventName(name: String): String {
-        if (name.contains("data::filters")) {
-            val newName = name.substringBefore("<").substringAfterLast("::")
-            return when {
-                !name.contains("<") -> newName.replace(">")
-                else -> newName + getFilterEventName(name.substringAfter("<"))
+    private fun String.getReplacePairOrNull(): Pair<String, String>? {
+        COMMON_SCHEMA_GENERIC_REGEX.find(this)?.groupValues?.also { values ->
+            val mutable = immutable.map { this.contains(it) }.all { !it }
+            if (mutable && repeated[values[1]] != null) {
+                val source = "${values[1]}<${values[2]}>"
+                return source to source.replace("<", "Of")
+                    .replace(", ", "And")
+                    .replace(">", "")
             }
         }
-
-        return name.replace(">").split("::").last()
+        return null
     }
 
-    private fun String.replace(oldValue: String) = this.replace(oldValue, "")
-
-    private fun String.replace(regex: Regex) = this.replace(regex, "")
+    companion object {
+        private val immutable = listOf(
+            SortedMapResolver.NAME,
+            ArrayResolver.NAME,
+            VectorResolver.NAME,
+            SortedVectorResolver.NAME,
+            "EvaluatesTo",
+            "Option",
+            "SignatureOf",
+            "HashOf"
+        )
+    }
 }

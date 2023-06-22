@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
+import jp.co.soramitsu.iroha2.generated.Pagination
 import java.math.BigInteger
 
 /**

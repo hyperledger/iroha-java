@@ -12,7 +12,6 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
-import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
@@ -68,14 +67,17 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
-                forHostPath(configDirLocation.value),
+                forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR"
             ).also {
-                config.genesis?.writeToFile(genesisFileLocation.value)
-                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation.value) }
+                config.genesis?.writeToFile(genesisFileLocation)
+                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
+                getResource(DEFAULT_VALIDATOR_FILE_NAME).readBytes().let { content ->
+                    validatorFileLocation.toFile().writeBytes(content)
+                }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
-                    configFileLocation.value.toFile().writeBytes(content)
+                    configFileLocation.toFile().writeBytes(content)
                 }
             }.also { container ->
                 val command = when (config.submitGenesis) {
@@ -106,29 +108,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val apiPort: Int
     private val telemetryPort: Int
 
-    private val genesisFileLocation: Lazy<Path> = lazy {
-        Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
-    }
+    private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
-    private val configFileLocation: Lazy<Path> = lazy {
-        Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
-    }
-
-    private val configDirLocation: Lazy<Path> = lazy {
-        createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
-    }
+    private val genesisFileLocation = Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
+    private val configFileLocation = Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
+    private val validatorFileLocation = Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")
-        if (logger().isDebugEnabled) {
-            config.genesis?.asJson()?.also { json ->
-                logger().debug("Serialized genesis block: {}", json)
-            }
-            config.genesisPath?.also { path ->
-                val content = File(path).readText()
-                logger().debug("Serialized genesis block: {}", content)
-            }
-        }
         super.start()
         logger().debug("Iroha container started")
     }
@@ -140,10 +127,10 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             network!!.close()
         }
         try {
-            configDirLocation.value.toFile().deleteRecursively()
+            configDirLocation.toFile().deleteRecursively()
         } catch (ex: IOException) {
             logger().warn(
-                "Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex"
+                "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex"
             )
         }
         logger().debug("Iroha container stopped")
@@ -159,8 +146,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable@sha256:5356c8cd8b61ef7c16b18cf9d71808d66bca5fc78118256c5c2a1f92f7dd8fdf"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-0a9fc8ede7a126da87628ae306a845a29f89094c"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_VALIDATOR_FILE_NAME = "validator.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"

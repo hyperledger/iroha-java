@@ -2,9 +2,6 @@ package jp.co.soramitsu.iroha2.parse
 
 import jp.co.soramitsu.iroha2.type.Type
 
-typealias Types = Map<String, Type>
-typealias Schema = Map<String, Any>
-
 /**
  * Parser for Iroha2 schema
  */
@@ -18,9 +15,9 @@ class SchemaParser {
      *
      * @return resolved types
      */
-    fun parse(schema: Schema): Types {
+    fun parse(schema: Map<String, Any>): Map<String, Type> {
         val preprocessed = schema
-            .map { (name, typeValue) -> createAndGetNest(name, typeValue) }
+            .map { entry -> createAndGetNest(entry.key, entry.value) }
             .associateBy { it.name }
         val notResolvedTypes = preprocessed
             .flatMap { it.value.notResolvedTypes() }

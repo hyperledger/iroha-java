@@ -188,12 +188,10 @@ private fun CompactType.scaleReadImpl(): CodeBlock {
 
 private fun MapType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
     val key = (resolveKotlinType(this.key.requireValue()) as ClassName)
-    val keyName = key.takeIf { "Id" in it.simpleName }
-        ?.canonicalName
-        ?: key.simpleName
-    val sorted = when (this.sortedByKey) {
-        true -> CodeBlock.of(".toSortedMap(\n%1L.comparator()\n)", CodeBlock.of(keyName))
-        false -> CodeBlock.of("")
+    val keyName = key.simpleName
+    val sorted = when {
+        this.sortedByKey -> CodeBlock.of(".toSortedMap(\n%1L.comparator()\n)", CodeBlock.of(keyName))
+        else -> CodeBlock.of("")
     }
     return CodeBlock.of(
         "writer.writeCompact(%1L.size)\n" +
@@ -272,11 +270,4 @@ private fun SetType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
     )
 }
 
-private fun TypeName.rawTypeName() = run {
-    (this as? ParameterizedTypeName)
-        ?.rawType ?: (this as ClassName)
-}.let { className ->
-    className.takeIf { "Id" in it.simpleName }
-        ?.canonicalName
-        ?: className.simpleName
-}
+private fun TypeName.rawTypeName() = ((this as? ParameterizedTypeName)?.rawType ?: (this as ClassName)).simpleName

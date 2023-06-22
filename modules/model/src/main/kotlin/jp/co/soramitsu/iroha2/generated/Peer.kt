@@ -1,0 +1,35 @@
+//
+// Auto-generated file. DO NOT EDIT!
+//
+package jp.co.soramitsu.iroha2.generated
+
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
+
+/**
+ * Peer
+ *
+ * Generated from 'Peer' regular structure
+ */
+public data class Peer(
+    public val id: PeerId
+) {
+    public companion object : ScaleReader<Peer>, ScaleWriter<Peer> {
+        public override fun read(reader: ScaleCodecReader): Peer = try {
+            Peer(
+                PeerId.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
+
+        public override fun write(writer: ScaleCodecWriter, instance: Peer) = try {
+            PeerId.write(writer, instance.id)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
+    }
+}

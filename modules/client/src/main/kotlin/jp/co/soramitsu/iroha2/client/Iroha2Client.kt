@@ -31,24 +31,25 @@ import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
-import jp.co.soramitsu.iroha2.generated.core.block.stream.BlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.core.block.stream.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.core.block.stream.VersionedBlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
-import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.sorting.Sorting
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.extract
+import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.Event
+import jp.co.soramitsu.iroha2.generated.EventMessage
+import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.Pagination
+import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
+import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
+import jp.co.soramitsu.iroha2.generated.PipelineStatus
+import jp.co.soramitsu.iroha2.generated.Sorting
+import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
+import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
+import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
+import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
@@ -156,7 +157,7 @@ open class Iroha2Client(
     ): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
-            setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
+            setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
             page?.also {
                 parameter("start", it.start)
                 parameter("limit", it.limit)
@@ -203,6 +204,7 @@ open class Iroha2Client(
             fireAndForget { signedTransaction }
         }
     }
+    // todo уровень логов
 
     /**
      * Subscribe to block streaming
@@ -292,22 +294,20 @@ open class Iroha2Client(
         when (val event = eventPublisherMessage.event) {
             is Event.Pipeline -> {
                 val eventInner = event.pipelineEvent
-                if (eventInner.entityKind is EntityKind.Transaction && hash.contentEquals(eventInner.hash.array)) {
+                if (eventInner.entityKind is PipelineEntityKind.Transaction && hash.contentEquals(eventInner.hash.arrayOfU8)) {
                     when (val status = eventInner.status) {
-                        is Status.Committed -> {
+                        is PipelineStatus.Committed -> {
                             logger.debug("Transaction {} committed", hexHash)
                             return hash
                         }
 
-                        is Status.Rejected -> {
-                            val reason = status.rejectionReason.message()
+                        is PipelineStatus.Rejected -> {
+                            val reason = status.pipelineRejectionReason.message()
                             logger.error("Transaction {} was rejected by reason: `{}`", hexHash, reason)
                             throw TransactionRejectedException("Transaction rejected with reason '$reason'")
                         }
 
-                        is Status.Validating -> {
-                            logger.debug("Transaction {} is validating", hexHash)
-                        }
+                        is PipelineStatus.Validating -> logger.debug("Transaction {} is validating", hexHash)
                     }
                 }
                 return null
@@ -323,19 +323,18 @@ open class Iroha2Client(
     /**
      * Extract the rejection reason
      */
-    private fun RejectionReason.message(): String {
+    private fun PipelineRejectionReason.message(): String {
         return when (this) {
-            is RejectionReason.Block -> when (this.blockRejectionReason) {
+            is PipelineRejectionReason.Block -> when (this.blockRejectionReason) {
                 is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
             }
 
-            is RejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
+            is PipelineRejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
                 is TransactionRejectionReason.InstructionExecution -> {
                     val details = reason.instructionExecutionFail
                     "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
                 }
 
-                is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
                 is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                     "Genesis account can sign only transactions in the genesis block"
 
@@ -343,7 +342,10 @@ open class Iroha2Client(
                     reason.unsatisfiedSignatureConditionFail.reason
 
                 is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
-                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.string
+                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
+                is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+                is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
+                is TransactionRejectionReason.Validation -> reason.validationFail.toString()
             }
         }
     }
@@ -370,7 +372,7 @@ open class Iroha2Client(
 
     private fun eventSubscriberMessageOf(
         hash: ByteArray,
-        entityKind: EntityKind = EntityKind.Transaction()
+        entityKind: PipelineEntityKind = PipelineEntityKind.Transaction()
     ): VersionedEventSubscriptionRequest.V1 {
         return VersionedEventSubscriptionRequest.V1(
             EventSubscriptionRequest(

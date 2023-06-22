@@ -1,17 +1,17 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
-import jp.co.soramitsu.iroha2.generated.datamodel.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.datamodel.Value
-import jp.co.soramitsu.iroha2.generated.datamodel.account.NewAccount
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.NewAssetDefinition
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.NewDomain
-import jp.co.soramitsu.iroha2.generated.datamodel.expression.Expression
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.Instruction
-import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
+import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RegisterBox
+import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.ValidatorMode
+import jp.co.soramitsu.iroha2.generated.Value
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -19,8 +19,7 @@ import java.nio.file.StandardOpenOption
 /**
  * Genesis block is used to initialise a blockchain
  */
-open class Genesis(open val genesisBlock: RawGenesisBlock) {
-
+open class Genesis(open val block: RawGenesisBlock) {
     /**
      * Write genesis to file
      */
@@ -34,31 +33,35 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
     /**
      * Represent genesis as JSON
      */
-    fun asJson(): String = JSON_SERDE.writeValueAsString(this.genesisBlock)
+    fun asJson(): String = JSON_SERDE.writeValueAsString(this.block)
 
     companion object {
+
+        val validatorMode = this::class.java.classLoader.getResource("validator.wasm")
+            ?.let { ValidatorMode.Path("validator.wasm") }
+            ?: throw IrohaSdkException("validator.wasm not found")
 
         /**
          * Return empty genesis
          */
-        fun getEmpty() = Genesis(RawGenesisBlock(listOf(GenesisTransaction(listOf()))))
+        fun getEmpty() = Genesis(RawGenesisBlock(listOf(listOf()), validatorMode))
 
         /**
          * List of genesis blocks to single block with unique instructions
          */
         fun List<Genesis>.toSingle(): Genesis {
-            val uniqueIsi: MutableSet<Instruction> = mutableSetOf()
+            val uniqueIsi: MutableSet<InstructionBox> = mutableSetOf()
             this.forEach { genesis ->
-                uniqueIsi.addAll(genesis.genesisBlock.transactions.map { it.isi }.flatten())
+                uniqueIsi.addAll(genesis.block.transactions.flatten())
             }
 
-            return Genesis(RawGenesisBlock(listOf(GenesisTransaction(uniqueIsi.mergeMetadata()))))
+            return Genesis(RawGenesisBlock(listOf(uniqueIsi.mergeMetadata()), validatorMode))
         }
 
-        private fun MutableSet<Instruction>.mergeMetadata(): List<Instruction> {
+        private fun MutableSet<InstructionBox>.mergeMetadata(): List<InstructionBox> {
             val metadataMap = mutableMapOf<Any, Metadata>()
 
-            // only for Instruction.Register
+            // only for InstructionBox.Register
             this.extractIdentifiableBoxes().forEach { idBox ->
                 metadataMap.putMergedMetadata(idBox)
             }
@@ -68,16 +71,16 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
                 val idBox = toReplace.first().extractIdentifiableBox()
                 val registrableBox = idBox?.toRegisterBox(metadata)
                     ?: throw RuntimeException("IdentifiableBox shouldn't be null")
-                this.add(Instruction.Register(RegisterBox(registrableBox.evaluatesTo())))
+                this.add(InstructionBox.Register(RegisterBox(registrableBox.evaluatesTo())))
             }
 
             return this.sorted()
         }
 
-        private fun MutableSet<Instruction>.sorted() = this.sortedWith(
+        private fun MutableSet<InstructionBox>.sorted() = this.sortedWith(
             compareByDescending { instruction ->
                 when (instruction) {
-                    is Instruction.Register -> when (instruction.extractIdentifiableBox()) {
+                    is InstructionBox.Register -> when (instruction.extractIdentifiableBox()) {
                         is IdentifiableBox.NewDomain -> 6
                         is IdentifiableBox.NewAccount -> 5
                         is IdentifiableBox.NewAssetDefinition -> 4
@@ -105,7 +108,7 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
                     this.newAssetDefinition.id,
                     this.newAssetDefinition.valueType,
                     this.newAssetDefinition.mintable,
-                    metadata
+                    metadata = metadata
                 )
             )
 
@@ -140,14 +143,14 @@ open class Genesis(open val genesisBlock: RawGenesisBlock) {
             }
         }
 
-        private fun MutableSet<Instruction>.findIsiToReplace(
+        private fun MutableSet<InstructionBox>.findIsiToReplace(
             metadata: Map<Any, Metadata>
-        ): MutableMap<Metadata, MutableList<Instruction.Register>> {
-            val isiToReplace = mutableMapOf<Metadata, MutableList<Instruction.Register>>()
+        ): MutableMap<Metadata, MutableList<InstructionBox.Register>> {
+            val isiToReplace = mutableMapOf<Metadata, MutableList<InstructionBox.Register>>()
 
             this.forEach { instruction ->
                 runCatching {
-                    instruction.cast<Instruction.Register>()
+                    instruction.cast<InstructionBox.Register>()
                         .registerBox.`object`.expression
                         .cast<Expression.Raw>().value
                         .cast<Value.Identifiable>().identifiableBox
