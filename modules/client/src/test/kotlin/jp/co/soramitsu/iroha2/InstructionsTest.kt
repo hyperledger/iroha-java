@@ -293,7 +293,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    fun `grant access to asset key-value committed`(): Unit = runBlocking {
+    fun `grant access to asset key-value committed and then revoke`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
         // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
@@ -322,6 +322,15 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
         }
+
+        client.tx {
+            revokeSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
+        }
+        QueryBuilder.findPermissionTokensByAccountId(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { permissions -> assertTrue { permissions.isEmpty() } }
     }
 
     /**
@@ -684,7 +693,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    fun `register and grant role to account`(): Unit = runBlocking {
+    fun `register and grant role to account and then revoke it`(): Unit = runBlocking {
         val assetId = AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID)
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
@@ -719,6 +728,19 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
                         .cast<AssetValue.Store>()
                         .metadata.map
                         .containsValue("value".asValue())
+                )
+            }
+
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            revokeRole(roleId, ALICE_ACCOUNT_ID)
+        }
+        QueryBuilder.findRolesByAccountId(ALICE_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { roles ->
+                assertTrue(
+                    roles.isEmpty()
                 )
             }
     }
