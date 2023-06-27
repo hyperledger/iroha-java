@@ -22,6 +22,8 @@ import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NumericValue
+import jp.co.soramitsu.iroha2.generated.Parameter
+import jp.co.soramitsu.iroha2.generated.ParameterId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
@@ -86,33 +88,43 @@ fun String.asTokenId() = PermissionTokenId(Name(this))
 
 fun String.asDomainId() = DomainId(Name(this))
 
+fun String.asRoleId() = RoleId(Name(this))
+
+fun String.asParameter() = this.split(PARAMETER_DELIMITER).takeIf {
+    it.size == 2
+}?.let { parts ->
+    Parameter(
+        ParameterId(Name(parts[0])),
+        parts[1].asValue()
+    )
+}
+
 fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
-// TODO
 fun String.asValueKind() = when (this) {
-    ValueKind.Id::class.java.name -> ValueKind.Id()
-    "Bool" -> ValueKind.Bool()
-    "String" -> ValueKind.String()
-    "Name" -> ValueKind.Name()
-    "Vec" -> ValueKind.Vec()
-    "LimitedMetadata" -> ValueKind.LimitedMetadata()
-    "MetadataLimits" -> ValueKind.MetadataLimits()
-    "TransactionLimits" -> ValueKind.TransactionLimits()
-    "LengthLimits" -> ValueKind.LengthLimits()
-    "Identifiable" -> ValueKind.Identifiable()
-    "PublicKey" -> ValueKind.PublicKey()
-    "SignatureCheckCondition" -> ValueKind.SignatureCheckCondition()
-    "TransactionValue" -> ValueKind.TransactionValue()
-    "TransactionQueryResult" -> ValueKind.TransactionQueryResult()
-    "PermissionToken" -> ValueKind.PermissionToken()
-    "Hash" -> ValueKind.Hash()
-    "Block" -> ValueKind.Block()
-    "BlockHeader" -> ValueKind.BlockHeader()
-    "Ipv4Addr" -> ValueKind.Ipv4Addr()
-    "Ipv6Addr" -> ValueKind.Ipv6Addr()
-    "Numeric" -> ValueKind.Numeric()
+    ValueKind.Id::class.java.simpleName -> ValueKind.Id()
+    ValueKind.Bool::class.java.simpleName -> ValueKind.Bool()
+    ValueKind.String::class.java.simpleName -> ValueKind.String()
+    ValueKind.Name::class.java.simpleName -> ValueKind.Name()
+    ValueKind.Vec::class.java.simpleName -> ValueKind.Vec()
+    ValueKind.LimitedMetadata::class.java.simpleName -> ValueKind.LimitedMetadata()
+    ValueKind.MetadataLimits::class.java.simpleName -> ValueKind.MetadataLimits()
+    ValueKind.TransactionLimits::class.java.simpleName -> ValueKind.TransactionLimits()
+    ValueKind.LengthLimits::class.java.simpleName -> ValueKind.LengthLimits()
+    ValueKind.Identifiable::class.java.simpleName -> ValueKind.Identifiable()
+    ValueKind.PublicKey::class.java.simpleName -> ValueKind.PublicKey()
+    ValueKind.SignatureCheckCondition::class.java.simpleName -> ValueKind.SignatureCheckCondition()
+    ValueKind.TransactionValue::class.java.simpleName -> ValueKind.TransactionValue()
+    ValueKind.TransactionQueryResult::class.java.simpleName -> ValueKind.TransactionQueryResult()
+    ValueKind.PermissionToken::class.java.simpleName -> ValueKind.PermissionToken()
+    ValueKind.Hash::class.java.simpleName -> ValueKind.Hash()
+    ValueKind.Block::class.java.simpleName -> ValueKind.Block()
+    ValueKind.BlockHeader::class.java.simpleName -> ValueKind.BlockHeader()
+    ValueKind.Ipv4Addr::class.java.simpleName -> ValueKind.Ipv4Addr()
+    ValueKind.Ipv6Addr::class.java.simpleName -> ValueKind.Ipv6Addr()
+    ValueKind.Numeric::class.java.simpleName -> ValueKind.Numeric()
     else -> throw IllegalArgumentException("Unsupported value kind type: $this")
 }
 
@@ -270,6 +282,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is PermissionToken -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
         is RegistrableBox -> Value.Identifiable(this.toIdentifiableBox())
+        is Parameter -> Value.Identifiable(IdentifiableBox.Parameter(this))
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->
@@ -325,6 +338,8 @@ fun TriggerId.asString() = when (this.domainId) {
     null -> this.name.string
     else -> this.name.string + TRIGGER_ID_DELIMITER + this.domainId!!.name.string
 }
+
+fun Parameter.asString() = this.id.name.string + PARAMETER_DELIMITER + this.`val`.cast<Value.String>().string
 
 fun Metadata.merge(extra: Metadata) = Metadata(
     this.map.toMutableMap().also { it.putAll(extra.map) }

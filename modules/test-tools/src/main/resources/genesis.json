@@ -90,7 +90,7 @@
         "Mint": {
           "U32": 13,
           "destination_id": {
-            "AssetId": "rose##alice@wonderland"
+            "AssetId": "rose#wonderland#alice@wonderland"
           }
         }
       },
