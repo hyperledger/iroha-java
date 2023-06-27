@@ -1,0 +1,50 @@
+//
+// Auto-generated file. DO NOT EDIT!
+//
+package jp.co.soramitsu.iroha2.generated
+
+import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
+import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
+import jp.co.soramitsu.iroha2.codec.ScaleReader
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
+import jp.co.soramitsu.iroha2.wrapException
+
+/**
+ * AssetDefinition
+ *
+ * Generated from 'AssetDefinition' regular structure
+ */
+public data class AssetDefinition(
+    public val id: AssetDefinitionId,
+    public val valueType: AssetValueType,
+    public val mintable: Mintable,
+    public val logo: IpfsPath? = null,
+    public val metadata: Metadata,
+    public val ownedBy: AccountId
+) {
+    public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
+        public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
+            AssetDefinition(
+                AssetDefinitionId.read(reader),
+                AssetValueType.read(reader),
+                Mintable.read(reader),
+                reader.readNullable(IpfsPath) as IpfsPath?,
+                Metadata.read(reader),
+                AccountId.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
+
+        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
+            AssetDefinitionId.write(writer, instance.id)
+            AssetValueType.write(writer, instance.valueType)
+            Mintable.write(writer, instance.mintable)
+            writer.writeNullable(IpfsPath, instance.logo)
+            Metadata.write(writer, instance.metadata)
+            AccountId.write(writer, instance.ownedBy)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
+    }
+}

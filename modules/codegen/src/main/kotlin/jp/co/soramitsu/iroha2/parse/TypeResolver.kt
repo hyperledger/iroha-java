@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2.parse
 
+import jp.co.soramitsu.iroha2.ARRAY_REGEX
+import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.type.ArrayType
 import jp.co.soramitsu.iroha2.type.BooleanType
 import jp.co.soramitsu.iroha2.type.CompactType
@@ -36,19 +38,22 @@ class TypeResolver(private val schemaParser: SchemaParser) {
 
     private val resolvers = listOf<Resolver<*>>(
         BooleanResolver,
-        MapResolver,
+        SortedMapResolver,
         OptionResolver,
         VectorResolver,
+        SortedVectorResolver,
         ArrayResolver,
         EnumResolver,
         TupleStructResolver,
         StructResolver,
+        OneStringStructResolver,
         StringResolver,
         CompactResolver,
         UIntResolver,
         IntResolver,
         SetResolver,
         FixedPointResolver,
+        QueryResolver
     )
 
     /**
@@ -91,10 +96,13 @@ object BooleanResolver : Resolver<BooleanType> {
 /**
  * Resolver for [MapType]
  */
-object MapResolver : Resolver<MapType> {
+object SortedMapResolver : Resolver<MapType> {
+
+    const val NAME = "SortedMap"
+
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): MapType? {
-        if (!name.startsWith("Map<")) return null
-        val wildcards = name.removePrefix("Map")
+        if (!name.startsWith("$NAME<")) return null
+        val wildcards = name.removePrefix(NAME)
             .removeSurrounding("<", ">")
             .split(',')
             .map { it.trim() }
@@ -104,9 +112,7 @@ object MapResolver : Resolver<MapType> {
             name,
             schemaParser.createAndGetNest(wildcards[0]),
             schemaParser.createAndGetNest(wildcards[1]),
-            ((typeValue as? Map<*, *>)?.get("Map") as? Map<*, *>)
-                ?.get("sorted_by_key") as? Boolean
-                ?: false
+            true
         )
     }
 }
@@ -142,17 +148,13 @@ abstract class SortedWrapperResolver<T : IterableType>(
     }
 
     fun getSortedProperty(typeValue: Any?): Boolean {
-        return (typeValue as? Map<*, *>)
-            ?.let { typeValue[wrapperName] as? Map<*, *> }
-            ?.get("sorted") as? Boolean
-            ?: false
+        return (typeValue as? Map<*, *>)?.get("Sorted$wrapperName") != null
     }
 }
 
-/**
- * Resolver for [VecType]
- */
-object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
+object SortedVectorResolver : SortedWrapperResolver<VecType>("SortedVec") {
+    const val NAME = "SortedVec"
+
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
@@ -161,14 +163,31 @@ object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
         return when (
-            name.startsWith(wrapperName) ||
-                (typeValue as? Map<*, *>)?.get(wrapperName) != null
+            name.startsWith(wrapperName) || (typeValue as? Map<*, *>)?.get(wrapperName) != null
         ) {
-            true -> createWrapper(
-                name,
-                extractGeneric(name, schemaParser).first(),
-                getSortedProperty(typeValue)
-            )
+            true -> createWrapper(name, extractGeneric(name, schemaParser).first(), true)
+            false -> null
+        }
+    }
+}
+
+/**
+ * Resolver for [VecType]
+ */
+object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
+    const val NAME = "Vec"
+
+    override fun createWrapper(
+        name: String,
+        innerType: TypeNest,
+        sorted: Boolean
+    ) = VecType(name, innerType, sorted)
+
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
+        return when (
+            name.startsWith(wrapperName) || (typeValue as? Map<*, *>)?.get(wrapperName) != null
+        ) {
+            true -> createWrapper(name, extractGeneric(name, schemaParser).first(), false)
             false -> null
         }
     }
@@ -190,11 +209,11 @@ object SetResolver : WrapperResolver<SetType>("BTreeSet") {
  */
 object ArrayResolver : Resolver<ArrayType> {
 
-    private val REGEX by lazy { "\\[(\\S+); (\\d+)\\]".toRegex() }
+    const val NAME = "Array"
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
-        if (!name.startsWith("[")) return null
-        val groups = REGEX.find(name)?.groupValues ?: return null
+        if (!name.startsWith(NAME)) return null
+        val groups = ARRAY_REGEX.find(name)?.groupValues ?: return null
         return ArrayType(name, schemaParser.createAndGetNest(groups[1]), groups[2].toInt())
     }
 }
@@ -227,14 +246,13 @@ object CompactResolver : WrapperResolver<CompactType>("Compact") {
 object EnumResolver : Resolver<EnumType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): EnumType? {
         return if (typeValue is Map<*, *> && typeValue["Enum"] != null) {
-            val components = (typeValue["Enum"] as Map<String, List<Map<String, Any>>>)["variants"]
-                ?: return null
+            val components = typeValue["Enum"] as List<Map<String, Any>>
             val generics = extractGeneric(name, schemaParser)
             val variants = components.map {
-                val variantProperty = it["ty"] as String?
+                val variantProperty = it["type"] as String?
                 EnumType.Variant(
-                    it["name"]!! as String,
-                    it["discriminant"]!! as Int,
+                    (it["tag"] ?: throw IrohaSdkException("Enum name not found")) as String,
+                    (it["discriminant"] ?: throw IrohaSdkException("Enum discriminant not found")) as Int,
                     variantProperty?.let(schemaParser::createAndGetNest)
                 )
             }
@@ -253,7 +271,7 @@ object TupleStructResolver : Resolver<TupleStructType> {
         schemaParser: SchemaParser
     ): TupleStructType? {
         return if (typeValue is Map<*, *> && typeValue["Tuple"] != null) {
-            val components = (typeValue["Tuple"] as Map<String, List<String>>)["types"]!!
+            val components = typeValue["Tuple"] as List<String>
             val children = components.map(schemaParser::createAndGetNest)
             val generics = extractGeneric(name, schemaParser)
             TupleStructType(name, generics, children)
@@ -266,17 +284,57 @@ object TupleStructResolver : Resolver<TupleStructType> {
  */
 object StructResolver : Resolver<StructType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StructType? {
-        return if (typeValue is Map<*, *> && typeValue["Struct"] != null) {
-            val components =
-                (typeValue["Struct"] as Map<String, List<Map<String, String>>>)["declarations"]!!
-            val children = LinkedHashMap<String, TypeNest>()
+        return if ((typeValue is Map<*, *> && typeValue["Struct"] != null)) {
+            val components = typeValue["Struct"] as List<Map<String, String>>
+            val properties = LinkedHashMap<String, TypeNest>()
             for (singleMapping in components) {
-                val fieldName = singleMapping["name"]!!
-                val fieldType = singleMapping["ty"]!!
-                children[fieldName] = schemaParser.createAndGetNest(fieldType)
+                val fieldName = singleMapping["name"] ?: throw IrohaSdkException("Component 'name' not found")
+                val fieldType = singleMapping["type"] ?: throw IrohaSdkException("Component 'type' not found")
+                properties[fieldName] = schemaParser.createAndGetNest(fieldType)
             }
             val generics = extractGeneric(name, schemaParser)
-            StructType(name, generics, children)
+            StructType(name, generics, properties)
+        } else null
+    }
+}
+
+/**
+ * Resolver for [StructType]
+ */
+object OneStringStructResolver : Resolver<StructType> {
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StructType? {
+        return if (typeValue is String) {
+            val fieldName = typeValue.toFieldName()
+            val properties = LinkedHashMap<String, TypeNest>().also { map ->
+                map[fieldName] = schemaParser.createAndGetNest(typeValue)
+            }
+            val generics = extractGeneric(name, schemaParser)
+            StructType(name, generics, properties)
+        } else null
+    }
+
+    private fun String.toFieldName() = this.replaceFirstChar { it.lowercase() }.let { name ->
+        val parts = name.split("<")
+        val firstPart = parts.first()
+        val lastPart = parts.last().split(",")
+            .first().replaceFirstChar { it.uppercase() }
+            .replace(">", "")
+
+        when (firstPart.lowercase() == lastPart.lowercase()) {
+            true -> firstPart
+            false -> "${firstPart}Of$lastPart"
+        }
+    }
+}
+
+/**
+ * Resolver for [StructType]
+ */
+object QueryResolver : Resolver<StructType> {
+    override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StructType? {
+        return if (name.startsWith("Find") && typeValue == null) {
+            val generics = extractGeneric(name, schemaParser)
+            StructType(name, generics, emptyMap())
         } else null
     }
 }
@@ -299,6 +357,7 @@ object UIntResolver : Resolver<UIntType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): UIntType? {
         return when (name) {
             "AtomicU32Wrapper" -> U32Type
+            "NonZeroU8" -> U8Type
             "u8" -> U8Type
             "u16" -> U16Type
             "u32" -> U32Type
@@ -364,9 +423,7 @@ data class TypeNest(val name: String, var value: Type?) {
         if (this === other) return true
         if (other !is TypeNest) return false
 
-        if (name != other.name) return false
-
-        return true
+        return name == other.name
     }
 
     override fun hashCode(): Int {

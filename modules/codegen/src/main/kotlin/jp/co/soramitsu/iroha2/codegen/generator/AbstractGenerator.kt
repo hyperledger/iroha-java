@@ -58,7 +58,9 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             blueprint.className
         ).let { className ->
             when (blueprint.source is CompositeType && blueprint.source.generics.isNotEmpty()) {
-                true -> className.parameterizedBy(WildcardTypeName.producerOf(ANY_TYPE))
+                true -> className.parameterizedBy(
+                    blueprint.source.generics.map { WildcardTypeName.producerOf(ANY_TYPE) }
+                )
                 false -> className
             }
         }

@@ -8,10 +8,11 @@ import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.findFreePorts
 import jp.co.soramitsu.iroha2.generateKeyPair
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.PeerId
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
@@ -136,28 +137,35 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
+
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
-
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
         }
-
         val deferredSet = mutableSetOf<Deferred<*>>()
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
-            async(Dispatchers.IO) {
+            async {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
                     networkToJoin = network
-                    genesis = withIroha.sources.map { it.createInstance() }.toSingle()
+                    when {
+                        withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
+                        else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
+                    }
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
                     trustedPeers = peerIds
                     ports = portsList[n]
+                    envs = withIroha.configs.associate { config ->
+                        config.split(IROHA_CONFIG_DELIMITER).let {
+                            it.first() to it.last()
+                        }
+                    }
                     // only first peer should have --submit-genesis in peer start command
                     submitGenesis = n == 0
                 }
@@ -172,7 +180,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     }
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
-        "$host:$port",
+        SocketAddr.Host(SocketAddrHost(host, port)),
         this.public.toIrohaPublicKey()
     )
 

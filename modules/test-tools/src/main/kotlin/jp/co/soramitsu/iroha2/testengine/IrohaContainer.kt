@@ -14,9 +14,11 @@ import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
+import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
+import kotlin.io.path.Path
 import kotlin.io.path.absolute
 
 /**
@@ -53,6 +55,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
             .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
             .withEnv("WSV_WASM_RUNTIME_CONFIG", "{\"FUEL_LIMIT\":20000000, \"MAX_MEMORY\": 524288000}")
+            .also { container -> config.envs.forEach { (k, v) -> container.withEnv(k, v) } }
             .withExposedPorts(p2pPort, apiPort, telemetryPort)
             .withCreateContainerCmdModifier {
                 it.hostConfig!!.withPortBindings(
@@ -64,12 +67,17 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
-                forHostPath(configDirLocation.value),
+                forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR"
             ).also {
-                config.genesis.writeToFile(genesisFileLocation.value)
+                config.genesis?.writeToFile(genesisFileLocation)
+                config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
+
+                getResource(DEFAULT_VALIDATOR_FILE_NAME).readBytes().let { content ->
+                    validatorFileLocation.toFile().writeBytes(content)
+                }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
-                    configFileLocation.value.toFile().writeBytes(content)
+                    configFileLocation.toFile().writeBytes(content)
                 }
             }.also { container ->
                 val command = when (config.submitGenesis) {
@@ -100,24 +108,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val apiPort: Int
     private val telemetryPort: Int
 
-    private val genesisFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_GENESIS_FILE_NAME")
-    }
+    private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
-    private val configFileLocation: Lazy<Path> = lazy {
-        kotlin.io.path.Path("${configDirLocation.value}/$DEFAULT_CONFIG_FILE_NAME")
-    }
-
-    private val configDirLocation: Lazy<Path> = lazy {
-        createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
-    }
+    private val genesisFileLocation = Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
+    private val configFileLocation = Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
+    private val validatorFileLocation = Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")
-        if (logger().isDebugEnabled) {
-            val genesisAsJson = config.genesis.asJson()
-            logger().debug("Serialized genesis block: {}", genesisAsJson)
-        }
         super.start()
         logger().debug("Iroha container started")
     }
@@ -126,13 +124,13 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Stopping Iroha container")
         super.stop()
         if (config.shouldCloseNetwork) {
-            network.close()
+            network!!.close()
         }
         try {
-            configDirLocation.value.toFile().deleteRecursively()
+            configDirLocation.toFile().deleteRecursively()
         } catch (ex: IOException) {
             logger().warn(
-                "Could not remove temporary genesis file '${genesisFileLocation.value.absolute()}', error: $ex"
+                "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex"
             )
         }
         logger().debug("Iroha container stopped")
@@ -148,8 +146,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "lts@sha256:73cea62f49a0d1a7b4999da3923bdb389a85462e7b6d3a81e8d484e6cd7cd6e4"
+        const val DEFAULT_IMAGE_TAG = "dev-nightly-0a9fc8ede7a126da87628ae306a845a29f89094c"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_VALIDATOR_FILE_NAME = "validator.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"

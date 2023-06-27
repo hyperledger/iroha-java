@@ -1,13 +1,14 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.crypto.PublicKey
-import jp.co.soramitsu.iroha2.generated.crypto.signature.SignatureOf
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.DefinitionId
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
-import jp.co.soramitsu.iroha2.generated.datamodel.permission.token.Token
-import jp.co.soramitsu.iroha2.generated.datamodel.role.RoleId
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenId
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignatureOf
 import kotlin.reflect.KClass
 
 /**
@@ -33,7 +34,7 @@ fun AccountId.Companion.comparator() = compareBy<AccountId> { it.name.string }
  * Compare asset definition IDs
  */
 @JvmName("AssetDefinitionIdComparator")
-fun DefinitionId.Companion.comparator() = compareBy<DefinitionId> { it.name.string }
+fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
     .thenBy { it.domainId.name.string }
 
 /**
@@ -41,7 +42,7 @@ fun DefinitionId.Companion.comparator() = compareBy<DefinitionId> { it.name.stri
  */
 @JvmName("AssetIdComparator")
 fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
-    DefinitionId.comparator().compare(
+    AssetDefinitionId.comparator().compare(
         o1.definitionId,
         o2.definitionId
     )
@@ -82,8 +83,14 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
 /**
  * Compare permission tokens
  */
+@JvmName("PermissionTokenIdComparator")
+fun PermissionTokenId.Companion.comparator() = compareBy<PermissionTokenId> { it.name.string }
+
+/**
+ * Compare permission tokens
+ */
 @JvmName("PermissionTokenComparator")
-fun Token.Companion.comparator() = compareBy<Token> {
+fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
     it.definitionId.name.string
 }.thenComparator { o1, o2 ->
     val keys1 = o1.params.map { it.key.string }

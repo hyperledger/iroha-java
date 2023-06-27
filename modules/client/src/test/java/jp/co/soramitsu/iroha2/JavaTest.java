@@ -1,17 +1,17 @@
 package jp.co.soramitsu.iroha2;
 
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
-import jp.co.soramitsu.iroha2.generated.datamodel.Value;
-import jp.co.soramitsu.iroha2.generated.datamodel.account.Account;
-import jp.co.soramitsu.iroha2.generated.datamodel.account.AccountId;
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetId;
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValue;
-import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType;
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.Domain;
-import jp.co.soramitsu.iroha2.generated.datamodel.domain.DomainId;
-import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata;
-import jp.co.soramitsu.iroha2.generated.datamodel.name.Name;
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction;
+import jp.co.soramitsu.iroha2.generated.Value;
+import jp.co.soramitsu.iroha2.generated.Account;
+import jp.co.soramitsu.iroha2.generated.AccountId;
+import jp.co.soramitsu.iroha2.generated.AssetId;
+import jp.co.soramitsu.iroha2.generated.AssetValue;
+import jp.co.soramitsu.iroha2.generated.AssetValueType;
+import jp.co.soramitsu.iroha2.generated.Domain;
+import jp.co.soramitsu.iroha2.generated.DomainId;
+import jp.co.soramitsu.iroha2.generated.Metadata;
+import jp.co.soramitsu.iroha2.generated.Name;
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction;
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor;
 import jp.co.soramitsu.iroha2.query.QueryBuilder;
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis;
@@ -102,7 +102,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final VersionedSignedTransaction mintAssetTx = TransactionBuilder.Companion
             .builder()
             .account(ALICE_ACCOUNT_ID)
-            .mintAsset(DEFAULT_ASSET_ID, 5L)
+            .mintAsset(DEFAULT_ASSET_ID, 5)
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(mintAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
@@ -142,7 +142,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
                 assetMetadataKey,
                 assetMetadataValue2
             ).buildSigned(ALICE_KEYPAIR);
-        client.sendTransactionAsync(keyValueTx).get(10, TimeUnit.SECONDS);
+        client.sendTransactionAsync(keyValueTx).get(30, TimeUnit.SECONDS);
 
         final QueryAndExtractor<Value> assetDefinitionValueQuery = QueryBuilder
             .findAssetKeyValueByIdAndKey(assetId, assetMetadataKey)
@@ -150,7 +150,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
             .buildSigned(ALICE_KEYPAIR);
         final CompletableFuture<Value> future = client.sendQueryAsync(assetDefinitionValueQuery);
 
-        final Value value = future.get(10, TimeUnit.SECONDS);
+        final Value value = future.get(30, TimeUnit.SECONDS);
         Assertions.assertEquals(
             ((Value.String) value).getString(),
             assetMetadataValue2.getString()

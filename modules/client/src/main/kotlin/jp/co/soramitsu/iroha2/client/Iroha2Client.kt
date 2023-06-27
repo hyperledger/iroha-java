@@ -9,13 +9,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.websocket.ClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.parameter
@@ -24,25 +24,32 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
-import jp.co.soramitsu.iroha2.generated.datamodel.events.Event
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventPublisherMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.EventSubscriberMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventPublisherMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.VersionedEventSubscriberMessage
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.EntityKind
-import jp.co.soramitsu.iroha2.generated.datamodel.events.pipeline.Status
-import jp.co.soramitsu.iroha2.generated.datamodel.pagination.Pagination
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedPaginatedQueryResult
-import jp.co.soramitsu.iroha2.generated.datamodel.query.VersionedSignedQueryRequest
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.BlockRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.RejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.datamodel.transaction.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.cast
+import jp.co.soramitsu.iroha2.extract
+import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.Event
+import jp.co.soramitsu.iroha2.generated.EventMessage
+import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.Pagination
+import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
+import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
+import jp.co.soramitsu.iroha2.generated.PipelineStatus
+import jp.co.soramitsu.iroha2.generated.Sorting
+import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
+import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
+import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
+import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
@@ -55,10 +62,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
@@ -82,6 +92,7 @@ open class Iroha2Client(
         const val TRANSACTION_ENDPOINT = "/transaction"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
+        const val WS_ENDPOINT_BLOCK_STREAM = "/block/stream"
         const val HEALTH_ENDPOINT = "/health"
         const val STATUS_ENDPOINT = "/status"
         const val SCHEMA_ENDPOINT = "/schema"
@@ -117,14 +128,16 @@ open class Iroha2Client(
                 }
             }
             HttpResponseValidator {
-                handleResponseException { exception ->
-                    throw IrohaClientException(cause = exception)
+                handleResponseExceptionWithRequest { exception, _ ->
+                    val status = exception
+                        .takeIf { it is ClientRequestException }
+                        ?.cast<ClientRequestException>()
+                        ?.response?.status
+                    throw IrohaClientException(cause = exception, status = status)
                 }
             }
         }
     }
-
-    override fun close() = client.close()
 
     /**
      * Send a request to Iroha2 and extract payload.
@@ -137,13 +150,20 @@ open class Iroha2Client(
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
-    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>, page: Pagination?): Page<T> {
+    suspend fun <T> sendQuery(
+        queryAndExtractor: QueryAndExtractor<T>,
+        page: Pagination? = null,
+        sorting: Sorting? = null
+    ): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
-            setBody(VersionedSignedQueryRequest.encode(queryAndExtractor.query))
-            if (page != null) {
-                parameter("start", page.start)
-                parameter("limit", page.limit)
+            setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
+            page?.also {
+                parameter("start", it.start)
+                parameter("limit", it.limit)
+            }
+            sorting?.also {
+                parameter("sort_by_metadata_key", it.sortByMetadataKey?.string)
             }
         }
         return response.body<ByteArray>()
@@ -184,6 +204,37 @@ open class Iroha2Client(
             fireAndForget { signedTransaction }
         }
     }
+    // todo уровень логов
+
+    /**
+     * Subscribe to block streaming
+     * @param from - block number to start from
+     * @param count - how many blocks to get before closing web socket
+     */
+    fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
+        var counter = 0
+        client.webSocket(
+            host = peerUrl.host,
+            port = peerUrl.port,
+            path = WS_ENDPOINT_BLOCK_STREAM
+        ) {
+            logger.debug("WebSocket opened")
+            val request = VersionedBlockSubscriptionRequest.V1(
+                BlockSubscriptionRequest(BigInteger.valueOf(from))
+            )
+            val payload = VersionedBlockSubscriptionRequest.encode(request)
+            send(payload.toFrame())
+            for (frame in incoming) {
+                logger.debug("Received frame: {}", frame)
+                val block = VersionedBlockMessage.decode(frame.readBytes())
+                emit(block)
+                counter++
+                if (counter == count) {
+                    close()
+                }
+            }
+        }
+    }
 
     /**
      * Subscribe to track the transaction status
@@ -202,7 +253,7 @@ open class Iroha2Client(
         logger.debug("Creating subscription to transaction status: {}", hexHash)
 
         val subscriptionRequest = eventSubscriberMessageOf(hash)
-        val payload = VersionedEventSubscriberMessage.encode(subscriptionRequest)
+        val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
 
         launch {
@@ -213,7 +264,6 @@ open class Iroha2Client(
             ) {
                 logger.debug("WebSocket opened")
                 send(payload.toFrame())
-                readMessage<EventPublisherMessage.SubscriptionAccepted>(incoming.receive())
 
                 afterSubscription?.invoke()
                 logger.debug("Subscription was accepted by peer")
@@ -228,8 +278,6 @@ open class Iroha2Client(
                     } catch (e: TransactionRejectedException) {
                         result.completeExceptionally(e)
                         break
-                    } finally {
-                        accepted(this)
                     }
                     delay(eventReadTimeoutInMills)
                 }
@@ -239,29 +287,27 @@ open class Iroha2Client(
     }
 
     private fun pipelineEventProcess(
-        eventPublisherMessage: EventPublisherMessage.Event,
+        eventPublisherMessage: EventMessage,
         hash: ByteArray,
         hexHash: String
     ): ByteArray? {
         when (val event = eventPublisherMessage.event) {
             is Event.Pipeline -> {
                 val eventInner = event.pipelineEvent
-                if (eventInner.entityKind is EntityKind.Transaction && hash.contentEquals(eventInner.hash.array)) {
+                if (eventInner.entityKind is PipelineEntityKind.Transaction && hash.contentEquals(eventInner.hash.arrayOfU8)) {
                     when (val status = eventInner.status) {
-                        is Status.Committed -> {
+                        is PipelineStatus.Committed -> {
                             logger.debug("Transaction {} committed", hexHash)
                             return hash
                         }
 
-                        is Status.Rejected -> {
-                            val reason = status.rejectionReason.message()
+                        is PipelineStatus.Rejected -> {
+                            val reason = status.pipelineRejectionReason.message()
                             logger.error("Transaction {} was rejected by reason: `{}`", hexHash, reason)
                             throw TransactionRejectedException("Transaction rejected with reason '$reason'")
                         }
 
-                        is Status.Validating -> {
-                            logger.debug("Transaction {} is validating", hexHash)
-                        }
+                        is PipelineStatus.Validating -> logger.debug("Transaction {} is validating", hexHash)
                     }
                 }
                 return null
@@ -275,31 +321,20 @@ open class Iroha2Client(
     }
 
     /**
-     * Send a message to a peer saying that the event was accepted
-     */
-    private suspend fun accepted(webSocket: ClientWebSocketSession) {
-        val eventReceived = VersionedEventSubscriberMessage.V1(
-            EventSubscriberMessage.EventReceived()
-        )
-        webSocket.send(VersionedEventSubscriberMessage.encode(eventReceived).toFrame())
-    }
-
-    /**
      * Extract the rejection reason
      */
-    private fun RejectionReason.message(): String {
+    private fun PipelineRejectionReason.message(): String {
         return when (this) {
-            is RejectionReason.Block -> when (this.blockRejectionReason) {
+            is PipelineRejectionReason.Block -> when (this.blockRejectionReason) {
                 is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
             }
 
-            is RejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
+            is PipelineRejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
                 is TransactionRejectionReason.InstructionExecution -> {
                     val details = reason.instructionExecutionFail
                     "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
                 }
 
-                is TransactionRejectionReason.NotPermitted -> reason.notPermittedFail.reason
                 is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                     "Genesis account can sign only transactions in the genesis block"
 
@@ -307,7 +342,10 @@ open class Iroha2Client(
                     reason.unsatisfiedSignatureConditionFail.reason
 
                 is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
-                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.string
+                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
+                is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+                is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
+                is TransactionRejectionReason.Validation -> reason.validationFail.toString()
             }
         }
     }
@@ -315,20 +353,13 @@ open class Iroha2Client(
     /**
      * Read the message from the frame
      */
-    private inline fun <reified T : EventPublisherMessage> readMessage(frame: Frame): T {
+    private fun readMessage(frame: Frame): EventMessage {
         return when (frame) {
             is Frame.Binary -> {
-                when (val versionedMessage = frame.readBytes().let { VersionedEventPublisherMessage.decode(it) }) {
-                    is VersionedEventPublisherMessage.V1 -> {
-                        val actualMessage = versionedMessage.eventPublisherMessage
-                        actualMessage as? T
-                            ?: throw WebSocketProtocolException(
-                                "Expected `${T::class.qualifiedName}`, but was ${actualMessage::class.qualifiedName}"
-                            )
-                    }
-
+                when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
+                    is VersionedEventMessage.V1 -> versionedMessage.eventMessage
                     else -> throw WebSocketProtocolException(
-                        "Expected `${VersionedEventSubscriberMessage.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
+                        "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
                     )
                 }
             }
@@ -339,14 +370,13 @@ open class Iroha2Client(
         }
     }
 
-    private fun eventSubscriberMessageOf(hash: ByteArray): VersionedEventSubscriberMessage.V1 {
-        return VersionedEventSubscriberMessage.V1(
-            EventSubscriberMessage.SubscriptionRequest(
-                Filters.pipeline(
-                    EntityKind.Transaction(),
-                    null,
-                    hash
-                )
+    private fun eventSubscriberMessageOf(
+        hash: ByteArray,
+        entityKind: PipelineEntityKind = PipelineEntityKind.Transaction()
+    ): VersionedEventSubscriptionRequest.V1 {
+        return VersionedEventSubscriptionRequest.V1(
+            EventSubscriptionRequest(
+                Filters.pipeline(entityKind, null, hash)
             )
         )
     }
@@ -366,4 +396,6 @@ open class Iroha2Client(
             return Duration.ofSeconds(seconds, nanos)
         }
     }
+
+    override fun close() = client.close()
 }
