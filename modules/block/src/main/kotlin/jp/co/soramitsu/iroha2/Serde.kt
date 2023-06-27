@@ -150,7 +150,7 @@ val JSON_SERDE by lazy {
 private fun sealedDeserializeSequenceBox(p: JsonParser, mapper: ObjectMapper): SequenceBox {
     val jsonNodes = p.readValueAsTree<JsonNode>()
     val instructions = jsonNodes.map {
-        mapper.convertValue(it, "jp.co.soramitsu.iroha2.generated.InstructionBox".asClass()) as InstructionBox
+        mapper.convertValue(it, InstructionBox::class.java) as InstructionBox
     }
     return SequenceBox(instructions)
 }
@@ -189,7 +189,7 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
 
     val node = jsonNode.fields().next()
     val destination = nodes[1]
-    val paramAndValueToConvert = if ("RoleId" == node.key) {
+    val paramAndValueToConvert = if (RoleId::class.java.simpleName == node.key) {
         Pair(
             "Id",
             mapper.createObjectNode().set<ObjectNode>(
@@ -210,7 +210,7 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
         ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
 
     val grantObject = mapper.convertValue(paramAndValueToConvert.second, argTypeName.asClass())
-    val destinationId = mapper.convertValue(destination, "jp.co.soramitsu.iroha2.generated.IdBox".asClass())
+    val destinationId = mapper.convertValue(destination, IdBox::class.java)
     return GrantBox(
         `object` = grantObject.evaluatesTo().cast(),
         destinationId = destinationId.evaluatesTo().cast()
@@ -378,11 +378,11 @@ private fun sealedDeserializeMintBox(p: JsonParser, mapper: ObjectMapper): MintB
     )
     val objectId = mapper.convertValue(
         newNode,
-        "jp.co.soramitsu.iroha2.generated.Value".asClass()
+        Value::class.java
     ) as Value
     val destination = mapper.convertValue(
         nodes[1],
-        "jp.co.soramitsu.iroha2.generated.IdBox".asClass()
+        IdBox::class.java
     ) as IdBox
     return MintBox(
         `object` = objectId.evaluatesTo().cast(),
@@ -418,8 +418,8 @@ private fun sealedDeserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper)
         ?: throw DeserializationException("Subtype parameter not found by $objectId")
 
     val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
-    val keyArg = mapper.convertValue(key.value, "jp.co.soramitsu.iroha2.generated.Name".asClass())
-    val valueArg = mapper.convertValue(nodes[2], "jp.co.soramitsu.iroha2.generated.Value".asClass())
+    val keyArg = mapper.convertValue(key.value, Name::class.java)
+    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
     return SetKeyValueBox(
         objectId = objectIdArg.evaluatesTo().cast(),
         key = keyArg.evaluatesTo().cast(),
@@ -435,8 +435,8 @@ private fun sealedDeserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRo
         nodes.add(node)
     }
 
-    val tokens = nodes[1].map { // todo
-        mapper.convertValue(it, "jp.co.soramitsu.iroha2.generated.PermissionToken".asClass()) as PermissionToken
+    val tokens = nodes[1].map {
+        mapper.convertValue(it, PermissionToken::class.java) as PermissionToken
     }
     val roleId = RoleId(nodes[0].asText().asName())
     return NewRole(Role(id = roleId, permissions = tokens))
