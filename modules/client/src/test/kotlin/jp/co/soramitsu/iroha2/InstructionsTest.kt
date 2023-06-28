@@ -293,7 +293,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(testAccount = ALICE_ACCOUNT_ID,
 
     @Test
     @WithIroha([DefaultGenesis::class])
-    fun `grant access to asset key-value committed and then revoke`(): Unit = runBlocking {
+    fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
         // transaction from behalf of Alice. Alice gives permission to Bob to set key-value Asset.Store in her account
