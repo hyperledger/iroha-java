@@ -209,6 +209,7 @@ object SetResolver : WrapperResolver<SetType>("BTreeSet") {
  */
 object ArrayResolver : Resolver<ArrayType> {
 
+
     const val NAME = "Array"
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): ArrayType? {
