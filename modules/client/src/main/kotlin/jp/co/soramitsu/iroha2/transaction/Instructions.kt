@@ -36,6 +36,7 @@ import jp.co.soramitsu.iroha2.generated.datamodel.isi.MintBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.Pair
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RegisterBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.RemoveKeyValueBox
+import jp.co.soramitsu.iroha2.generated.datamodel.isi.RevokeBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SequenceBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.datamodel.isi.TransferBox
@@ -768,6 +769,30 @@ object Instructions {
         return Instruction.Fail(FailBox(message))
     }
 
+    /**
+     * Revoke an account the [Permissions.CanSetKeyValueUserAssetsToken] permission
+     */
+    fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId): Instruction {
+        return revokeSome(IdBox.AccountId(target)) {
+            Token(
+                definitionId = TokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
+                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
+            )
+        }
+    }
+
+    /**
+     * Revoke an account a given role.
+     */
+    fun revokeRole(roleId: RoleId, accountId: AccountId): Instruction {
+        return Instruction.Revoke(
+            RevokeBox(
+                destinationId = accountId.evaluatesTo().cast(),
+                `object` = IdBox.RoleId(roleId).evaluatesTo().cast()
+            )
+        )
+    }
+
     private inline fun unregisterSome(idBox: () -> IdBox): Instruction.Unregister {
         return Instruction.Unregister(
             UnregisterBox(idBox().evaluatesTo())
@@ -785,6 +810,15 @@ object Instructions {
     private inline fun grantSome(idBox: IdBox, permissionToken: () -> Token): Instruction.Grant {
         return Instruction.Grant(
             GrantBox(
+                destinationId = idBox.evaluatesTo(),
+                `object` = Value.PermissionToken(permissionToken()).evaluatesTo()
+            )
+        )
+    }
+
+    private inline fun revokeSome(idBox: IdBox, permissionToken: () -> Token): Instruction.Revoke {
+        return Instruction.Revoke(
+            RevokeBox(
                 destinationId = idBox.evaluatesTo(),
                 `object` = Value.PermissionToken(permissionToken()).evaluatesTo()
             )
