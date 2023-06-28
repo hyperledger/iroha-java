@@ -413,6 +413,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         this.instructions.value.add(Instructions.fail(message))
     }
 
+    fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.revokeSetKeyValueAsset(assetId, target)) }
+
+    fun revokeRole(
+        roleId: RoleId,
+        accountId: AccountId
+    ) = this.apply { instructions.value.add(Instructions.revokeRole(roleId, accountId)) }
+
     private fun fallbackCreationTime() = System.currentTimeMillis().toBigInteger()
 
     companion object {
