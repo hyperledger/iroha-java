@@ -361,7 +361,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     @Story("Account set key value pair")
     @Permission("can_set_key_value_in_user_asset")
     @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
-    fun `grant access to asset key-value committed and then revoke`(): Unit = runBlocking {
+    fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
 
         client.tx {
