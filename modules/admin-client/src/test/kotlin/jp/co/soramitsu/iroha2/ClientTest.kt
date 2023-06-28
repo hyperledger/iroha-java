@@ -10,7 +10,7 @@ import kotlin.test.assertFailsWith
 
 @Timeout(30)
 class ClientTest : IrohaTest<AdminIroha2Client>(
-    account = "".asAccountId(),
+    account = "alice@wonderland".asAccountId(),
     keyPair = generateKeyPair()
 ) {
 
