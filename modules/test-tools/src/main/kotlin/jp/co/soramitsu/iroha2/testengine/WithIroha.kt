@@ -24,6 +24,16 @@ annotation class WithIroha(
     val amount: Int = 1
 )
 
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Test
+@Inherited
+annotation class WithIrohaManual(
+    val apiUrl: String,
+    val telemetryUrl: String
+)
+
 /**
  * Empty genesis with no instructions
  */

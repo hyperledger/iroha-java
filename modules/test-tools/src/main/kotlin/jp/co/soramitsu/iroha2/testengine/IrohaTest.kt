@@ -22,8 +22,8 @@ import java.time.Duration
 abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(30),
     val network: Network = Network.newNetwork(),
-    private val account: AccountId? = null,
-    private val keyPair: KeyPair? = null
+    val account: AccountId,
+    val keyPair: KeyPair
 ) {
     lateinit var client: T
     lateinit var containers: List<IrohaContainer>
@@ -34,9 +34,7 @@ abstract class IrohaTest<T : Iroha2Client>(
         builder: TransactionBuilder.() -> Unit = {}
     ) {
         val finalAccountId = account ?: this@IrohaTest.account
-            ?: throw IrohaSdkException("Test account wasn't set")
         val finalKeyPair = keyPair ?: this@IrohaTest.keyPair
-            ?: throw IrohaSdkException("Test account key pair wasn't set")
 
         this.sendTransaction {
             account(finalAccountId)

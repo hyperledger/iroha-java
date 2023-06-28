@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.ALICE_MANUAL_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobHasPermissionToMintPublicKeys
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
@@ -43,6 +44,7 @@ import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
@@ -50,6 +52,7 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
@@ -70,6 +73,26 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
     keyPair = ALICE_KEYPAIR
 ) {
+    @Test
+    @Disabled // EXAMPLE
+    @WithIrohaManual("http://localhost:8080", "http://localhost:8180")
+    fun `register domain with manual initialized Iroha`(): Unit = runBlocking {
+        val domainId = "new_domain_name".asDomainId()
+        client.sendTransaction {
+            account(super.account)
+            registerDomain(domainId)
+            buildSigned(ALICE_MANUAL_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findDomainById(domainId)
+            .account(super.account)
+            .buildSigned(ALICE_MANUAL_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { result -> assertEquals(result.id, domainId) }
+    }
+
     /**
      * Using for docs generation
      */
@@ -83,16 +106,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
     fun `register domain`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
-            account(ALICE_ACCOUNT_ID)
+            account(super.account)
             registerDomain(domainId)
-            buildSigned(ALICE_KEYPAIR)
+            buildSigned(super.keyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
 
         QueryBuilder.findDomainById(domainId)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
+            .account(super.account)
+            .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
             .also { result -> assertEquals(result.id, domainId) }
     }
