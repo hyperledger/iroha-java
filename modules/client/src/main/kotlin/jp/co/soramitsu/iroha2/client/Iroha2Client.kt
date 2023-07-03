@@ -204,7 +204,6 @@ open class Iroha2Client(
             fireAndForget { signedTransaction }
         }
     }
-    // todo уровень логов
 
     /**
      * Subscribe to block streaming

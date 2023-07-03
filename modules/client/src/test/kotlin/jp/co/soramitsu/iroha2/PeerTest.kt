@@ -38,7 +38,10 @@ import kotlin.test.assertTrue
 @Feature("Peers")
 @Disabled
 @Issue("https://github.com/hyperledger/iroha/issues/2962")
-class PeerTest : IrohaTest<Iroha2Client>() {
+class PeerTest : IrohaTest<Iroha2Client>(
+    account = ALICE_ACCOUNT_ID,
+    keyPair = ALICE_KEYPAIR
+) {
 
     companion object {
         private const val PEER_AMOUNT = 4

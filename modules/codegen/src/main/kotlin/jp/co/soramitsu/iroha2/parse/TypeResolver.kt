@@ -102,6 +102,7 @@ object SortedMapResolver : Resolver<MapType> {
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): MapType? {
         if (!name.startsWith("$NAME<")) return null
+
         val wildcards = name.removePrefix(NAME)
             .removeSurrounding("<", ">")
             .split(',')
