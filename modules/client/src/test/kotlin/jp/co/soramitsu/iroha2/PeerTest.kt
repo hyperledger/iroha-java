@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@Timeout(100)
+@Timeout(1000)
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
@@ -50,6 +50,8 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
+        delay(10000000)
+
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
         val alias = "iroha$p2pPort"

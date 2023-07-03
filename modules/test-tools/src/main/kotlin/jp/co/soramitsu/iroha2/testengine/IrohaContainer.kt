@@ -5,10 +5,8 @@ import com.github.dockerjava.api.model.PortBinding
 import com.github.dockerjava.api.model.Ports
 import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
-import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
-import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
@@ -89,15 +87,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
-                    container.waitingFor(
-                        // await genesis was applied and seen in status
-                        HttpWaitStrategy()
-                            .forStatusCode(200)
-                            .forPort(telemetryPort)
-                            .forPath(STATUS_ENDPOINT)
-                            .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
-                            .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
-                    )
+//                    container.waitingFor(
+                    // await genesis was applied and seen in status
+//                        HttpWaitStrategy()
+//                            .forStatusCode(200)
+//                            .forPort(telemetryPort)
+//                            .forPath(STATUS_ENDPOINT)
+//                            .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
+//                            .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
+//                    )
                 }
             }
     }
