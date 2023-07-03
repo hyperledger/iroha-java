@@ -113,7 +113,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
                     QueryBuilder.findAllPeers()
                         .account(ALICE_ACCOUNT_ID)
                         .buildSigned(ALICE_KEYPAIR)
-                        .let { Iroha2Client(container.getApiUrl()).sendQuery(it) }
+                        .let { Iroha2Client(mutableListOf(container.getApiUrl())).sendQuery(it) }
                         .also { peers -> assertEquals(peers.size, peersCount) }
                         .also { return@repeat }
                 }
@@ -125,7 +125,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private fun startNewContainer(
         keyPair: KeyPair,
         alias: String,
-        ports: List<Int>
+        ports: List<Int>,
     ): IrohaContainer {
         return IrohaContainer {
             this.waitStrategy = false
@@ -141,7 +141,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun isPeerAvailable(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -157,7 +157,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -171,7 +171,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun registerPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -184,6 +184,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     private fun IrohaContainer.extractPeerId() = PeerId(
         SocketAddr.Host(SocketAddrHost(this.getP2pUrl().host, this.getP2pUrl().port)),
-        this.config.keyPair.public.toIrohaPublicKey()
+        this.config.keyPair.public.toIrohaPublicKey(),
     )
 }

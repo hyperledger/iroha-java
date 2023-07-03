@@ -45,7 +45,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     override fun interceptTestMethod(
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
-        extensionContext: ExtensionContext
+        extensionContext: ExtensionContext,
     ) = runBlocking {
         val testId = extensionContext.testId()
         try {
@@ -58,7 +58,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     }
 
     private suspend fun initIfRequested(
-        extensionContext: ExtensionContext
+        extensionContext: ExtensionContext,
     ): List<AutoCloseable> = coroutineScope {
         val withIroha = extensionContext.element.get()
             .annotations.filterIsInstance<WithIroha>()
@@ -80,31 +80,29 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(containers.first().getApiUrl(), log = true)
+            Iroha2Client(containers.map { it.getApiUrl() }.toMutableList(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
-                log = true
+                containers.map { it.getApiUrl() }.toMutableList(),
+                log = true,
             ).also { utilizedResources.add(it) }
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(containers.first().getApiUrl(), log = true)
+            Iroha2AsyncClient(containers.map { it.getApiUrl() }.toMutableList(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
-                log = true
+                containers.map { it.getApiUrl() }.toMutableList(),
+                log = true,
             ).also { utilizedResources.add(it) }
         }
 
@@ -114,7 +112,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     private inline fun <reified V : Any> setPropertyValue(
         declaredProperties: Collection<KProperty1<out Any, *>>,
         testClassInstance: Any,
-        valueToSet: () -> V
+        valueToSet: () -> V,
     ) {
         declaredProperties
             .filter { it.returnType.classifier == V::class }
@@ -133,7 +131,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private suspend fun createContainers(
         withIroha: WithIroha,
-        network: Network
+        network: Network,
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
@@ -181,7 +179,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
         SocketAddr.Host(SocketAddrHost(host, port)),
-        this.public.toIrohaPublicKey()
+        this.public.toIrohaPublicKey(),
     )
 
     private fun ExtensionContext.testId() = "${this.testClass.get().name}_${this.testMethod.get().name}"

@@ -15,7 +15,6 @@ import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
-import java.nio.file.Path
 import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.Path
@@ -32,7 +31,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     constructor(config: IrohaConfig.() -> Unit = {}) : this(IrohaConfig().apply(config))
 
     constructor(config: IrohaConfig) : super(
-        DockerImageName.parse("${config.imageName}:${config.imageTag}")
+        DockerImageName.parse("${config.imageName}:${config.imageTag}"),
     ) {
         val publicKey = config.keyPair.public.bytes().toHex()
         val privateKey = config.keyPair.private.bytes().toHex()
@@ -49,7 +48,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("IROHA_GENESIS_ACCOUNT_PUBLIC_KEY", "ed0120$publicKey")
             .withEnv(
                 "IROHA_GENESIS_ACCOUNT_PRIVATE_KEY",
-                "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}"
+                "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}",
             )
             .withEnv("TORII_P2P_ADDR", "${config.alias}:$p2pPort")
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
@@ -61,14 +60,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 it.hostConfig!!.withPortBindings(
                     PortBinding(Ports.Binding.bindPort(p2pPort), ExposedPort(p2pPort)),
                     PortBinding(Ports.Binding.bindPort(apiPort), ExposedPort(apiPort)),
-                    PortBinding(Ports.Binding.bindPort(telemetryPort), ExposedPort(telemetryPort))
+                    PortBinding(Ports.Binding.bindPort(telemetryPort), ExposedPort(telemetryPort)),
                 )
             }
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyFileToContainer(
                 forHostPath(configDirLocation),
-                "/$DEFAULT_CONFIG_DIR"
+                "/$DEFAULT_CONFIG_DIR",
             ).also {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
@@ -96,7 +95,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                             .forPort(telemetryPort)
                             .forPath(STATUS_ENDPOINT)
                             .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
-                            .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT)
+                            .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT),
                     )
                 }
             }
@@ -130,7 +129,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             configDirLocation.toFile().deleteRecursively()
         } catch (ex: IOException) {
             logger().warn(
-                "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex"
+                "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex",
             )
         }
         logger().debug("Iroha container stopped")

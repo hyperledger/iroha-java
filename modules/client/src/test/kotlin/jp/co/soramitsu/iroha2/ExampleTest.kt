@@ -32,7 +32,7 @@ class ExampleTest {
             this.genesis = DefaultGenesis::class.createInstance()
         }.also { it.start() }
 
-        val client = Iroha2Client(container.getApiUrl(), true)
+        val client = Iroha2Client(mutableListOf(container.getApiUrl()), true)
 
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {

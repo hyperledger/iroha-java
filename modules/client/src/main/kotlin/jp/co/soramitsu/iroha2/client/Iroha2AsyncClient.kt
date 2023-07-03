@@ -13,28 +13,19 @@ import java.util.concurrent.CompletableFuture
  */
 @Suppress("unused")
 class Iroha2AsyncClient @JvmOverloads constructor(
-    peerUrl: URL,
+    peerUrls: MutableList<URL>,
     log: Boolean = false,
     credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,
-    eventReadMaxAttempts: Int = 10
-) : Iroha2Client(peerUrl, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
-
-    @JvmOverloads
-    constructor(
-        peerUrl: String,
-        log: Boolean = false,
-        credentials: String? = null,
-        eventReadTimeoutInMills: Long = 250,
-        eventReadMaxAttempts: Int = 10
-    ) : this(URL(peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+    eventReadMaxAttempts: Int = 10,
+) : Iroha2Client(peerUrls, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
 
     /**
      * Send a request to Iroha2 and extract payload.
      * {@see Extractors}
      */
     fun <T> sendQueryAsync(
-        queryAndExtractor: QueryAndExtractor<T>
+        queryAndExtractor: QueryAndExtractor<T>,
     ): CompletableFuture<T> = future {
         sendQuery(queryAndExtractor)
     }
@@ -43,7 +34,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     fun sendTransactionAsync(
-        transaction: VersionedSignedTransaction
+        transaction: VersionedSignedTransaction,
     ): CompletableFuture<ByteArray> = runBlocking {
         sendTransaction { transaction }.asCompletableFuture()
     }
@@ -55,7 +46,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
      * which means that the peer accepted the transaction and the transaction passed the stateless validation.
      */
     fun fireAndForgetAsync(
-        transaction: VersionedSignedTransaction
+        transaction: VersionedSignedTransaction,
     ): CompletableFuture<ByteArray> = future {
         fireAndForget { transaction }
     }

@@ -149,7 +149,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             grantPermissionToken(
                 Permissions.CanUnregisterAccount,
                 IdKey.AccountId.type.asName() to joeId.toValueId(),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
             )
             unregisterAccount(joeId)
         }
@@ -370,7 +370,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             grantPermissionToken(
                 Permissions.CanSetKeyValueUserAssetsToken,
                 IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
-                BOB_ACCOUNT_ID
+                BOB_ACCOUNT_ID,
             )
         }
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
@@ -457,7 +457,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
                 IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue(),
-                BOB_ACCOUNT_ID
+                BOB_ACCOUNT_ID,
             )
         }
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { burnAsset(DEFAULT_ASSET_ID, 50) }
@@ -558,7 +558,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             grantPermissionToken(
                 Permissions.CanSetKeyValueInUserAccount,
                 IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue(),
-                ALICE_ACCOUNT_ID
+                ALICE_ACCOUNT_ID,
             )
             buildSigned(BOB_KEYPAIR)
         }.also { d ->
@@ -609,7 +609,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
             grantPermissionToken(
                 Permissions.CanTransferUserAssetsToken,
                 IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
-                joeId
+                joeId,
             )
         }
         client.tx(account = joeId, keyPair = joeKeyPair) {
