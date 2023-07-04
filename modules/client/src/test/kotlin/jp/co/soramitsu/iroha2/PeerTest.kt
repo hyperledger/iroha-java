@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@Timeout(1000)
+@Timeout(100)
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
@@ -50,8 +50,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
-        delay(10000000)
-
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
         val alias = "iroha$p2pPort"
@@ -101,6 +99,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
         startNewContainer(keyPair, alias, ports).use { container ->
             registerPeer(address, payload)
+            assertTrue(isPeerAvailable(address, payload))
 
             delay(5000)
 
@@ -127,7 +126,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private fun startNewContainer(
         keyPair: KeyPair,
         alias: String,
-        ports: List<Int>
+        ports: List<Int>,
     ): IrohaContainer {
         return IrohaContainer {
             this.waitStrategy = false
@@ -143,7 +142,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun isPeerAvailable(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -159,7 +158,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -173,7 +172,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun registerPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -186,6 +185,6 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     private fun IrohaContainer.extractPeerId() = PeerId(
         SocketAddr.Host(SocketAddrHost(this.getP2pUrl().host, this.getP2pUrl().port)),
-        this.config.keyPair.public.toIrohaPublicKey()
+        this.config.keyPair.public.toIrohaPublicKey(),
     )
 }

@@ -85,7 +85,7 @@ open class Iroha2Client(
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
     open val eventReadMaxAttempts: Int = 10,
-    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
+    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob(),
 ) : AutoCloseable, CoroutineScope {
 
     companion object {
@@ -114,7 +114,7 @@ open class Iroha2Client(
                     registerModule(
                         SimpleModule().apply {
                             addDeserializer(Duration::class.java, DurationDeserializer)
-                        }
+                        },
                     )
                 }
             }
@@ -153,7 +153,7 @@ open class Iroha2Client(
     suspend fun <T> sendQuery(
         queryAndExtractor: QueryAndExtractor<T>,
         page: Pagination? = null,
-        sorting: Sorting? = null
+        sorting: Sorting? = null,
     ): Page<T> {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
@@ -192,7 +192,7 @@ open class Iroha2Client(
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     suspend fun sendTransaction(
-        transaction: TransactionBuilder.() -> VersionedSignedTransaction
+        transaction: TransactionBuilder.() -> VersionedSignedTransaction,
     ): CompletableDeferred<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
 
@@ -204,7 +204,6 @@ open class Iroha2Client(
             fireAndForget { signedTransaction }
         }
     }
-    // todo уровень логов
 
     /**
      * Subscribe to block streaming
@@ -216,11 +215,11 @@ open class Iroha2Client(
         client.webSocket(
             host = peerUrl.host,
             port = peerUrl.port,
-            path = WS_ENDPOINT_BLOCK_STREAM
+            path = WS_ENDPOINT_BLOCK_STREAM,
         ) {
             logger.debug("WebSocket opened")
             val request = VersionedBlockSubscriptionRequest.V1(
-                BlockSubscriptionRequest(BigInteger.valueOf(from))
+                BlockSubscriptionRequest(BigInteger.valueOf(from)),
             )
             val payload = VersionedBlockSubscriptionRequest.encode(request)
             send(payload.toFrame())
@@ -247,7 +246,7 @@ open class Iroha2Client(
      */
     private fun subscribeToTransactionStatus(
         hash: ByteArray,
-        afterSubscription: (() -> Unit)? = null
+        afterSubscription: (() -> Unit)? = null,
     ): CompletableDeferred<ByteArray> {
         val hexHash = hash.toHex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
@@ -260,7 +259,7 @@ open class Iroha2Client(
             client.webSocket(
                 host = peerUrl.host,
                 port = peerUrl.port,
-                path = WS_ENDPOINT
+                path = WS_ENDPOINT,
             ) {
                 logger.debug("WebSocket opened")
                 send(payload.toFrame())
@@ -289,7 +288,7 @@ open class Iroha2Client(
     private fun pipelineEventProcess(
         eventPublisherMessage: EventMessage,
         hash: ByteArray,
-        hexHash: String
+        hexHash: String,
     ): ByteArray? {
         when (val event = eventPublisherMessage.event) {
             is Event.Pipeline -> {
@@ -315,7 +314,7 @@ open class Iroha2Client(
 
             else -> throw WebSocketProtocolException(
                 "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
-                    "but was ${event::class.qualifiedName}"
+                    "but was ${event::class.qualifiedName}",
             )
         }
     }
@@ -359,25 +358,25 @@ open class Iroha2Client(
                 when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
                     is VersionedEventMessage.V1 -> versionedMessage.eventMessage
                     else -> throw WebSocketProtocolException(
-                        "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`"
+                        "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`",
                     )
                 }
             }
 
             else -> throw WebSocketProtocolException(
-                "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`"
+                "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`",
             )
         }
     }
 
     private fun eventSubscriberMessageOf(
         hash: ByteArray,
-        entityKind: PipelineEntityKind = PipelineEntityKind.Transaction()
+        entityKind: PipelineEntityKind = PipelineEntityKind.Transaction(),
     ): VersionedEventSubscriptionRequest.V1 {
         return VersionedEventSubscriptionRequest.V1(
             EventSubscriptionRequest(
-                Filters.pipeline(entityKind, null, hash)
-            )
+                Filters.pipeline(entityKind, null, hash),
+            ),
         )
     }
 
@@ -387,11 +386,11 @@ open class Iroha2Client(
                 p.readValueAs(object : TypeReference<Map<String, Long>>() {})
             val seconds = pairs["secs"] ?: throw JsonMappingException.from(
                 p,
-                "Expected `secs` item for duration deserialization"
+                "Expected `secs` item for duration deserialization",
             )
             val nanos = pairs["nanos"] ?: throw JsonMappingException.from(
                 p,
-                "Expected `nanos` item for duration deserialization"
+                "Expected `nanos` item for duration deserialization",
             )
             return Duration.ofSeconds(seconds, nanos)
         }
