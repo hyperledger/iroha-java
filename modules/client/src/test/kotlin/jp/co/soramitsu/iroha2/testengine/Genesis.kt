@@ -33,7 +33,7 @@ open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterAnyPeer,
-            mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
+            mapOf(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -322,7 +322,7 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
         Instructions.registerPermissionToken(Permissions.CanTransferAssetsWithDefinition, IdKey.AssetDefinitionId),
         Instructions.registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId),
         Instructions.registerPermissionToken(Permissions.CanMintUserPublicKeys, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanUnregisterAnyPeer, IdKey.AccountId),
+        Instructions.registerPermissionToken(Permissions.CanUnregisterAnyPeer),
         *isi,
     ).let { listOf(it) },
     Genesis.validatorMode,
