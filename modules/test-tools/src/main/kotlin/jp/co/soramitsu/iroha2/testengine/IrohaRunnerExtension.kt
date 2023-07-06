@@ -22,6 +22,7 @@ import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
 import org.testcontainers.containers.Network
 import java.lang.reflect.Method
+import java.net.URL
 import java.security.KeyPair
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -62,15 +63,26 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     ): List<AutoCloseable> = coroutineScope {
         val withIroha = extensionContext.element.get()
             .annotations.filterIsInstance<WithIroha>()
-            .firstOrNull() ?: return@coroutineScope emptyList()
+            .firstOrNull()
+        val withIrohaManual = extensionContext.element.get()
+            .annotations.filterIsInstance<WithIrohaManual>()
+            .firstOrNull()
 
+        return@coroutineScope when {
+            withIroha != null -> withIroha.init(extensionContext)
+            withIrohaManual != null -> withIrohaManual.init(extensionContext).let { emptyList() }
+            else -> emptyList()
+        }
+    }
+
+    private suspend fun WithIroha.init(extensionContext: ExtensionContext): List<AutoCloseable> {
         val testInstance = extensionContext.testInstance.get()
         val network = testInstance.cast<IrohaTest<*>>().network
 
         val utilizedResources = mutableListOf<AutoCloseable>()
 
         // start containers
-        val containers = createContainers(withIroha, network)
+        val containers = createContainers(this, network)
         utilizedResources.addAll(containers)
 
         val properties = testInstance::class.memberProperties
@@ -106,7 +118,28 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             ).also { utilizedResources.add(it) }
         }
 
-        utilizedResources
+        return utilizedResources
+    }
+
+    private fun WithIrohaManual.init(extensionContext: ExtensionContext) {
+        val testInstance = extensionContext.testInstance.get()
+        val properties = testInstance::class.memberProperties
+
+        // inject `Iroha2Client` if it is declared in test class
+        setPropertyValue(properties, testInstance) { Iroha2Client(URL(this.apiUrl), log = true) }
+
+        // inject `AdminIroha2Client` if it is declared in test class
+        setPropertyValue(properties, testInstance) {
+            AdminIroha2Client(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+        }
+
+        // inject `Iroha2AsyncClient` if it is declared in test class
+        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(URL(this.apiUrl), log = true) }
+
+        // inject `AdminIroha2AsyncClient` if it is declared in test class
+        setPropertyValue(properties, testInstance) {
+            AdminIroha2AsyncClient(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+        }
     }
 
     private inline fun <reified V : Any> setPropertyValue(
@@ -136,10 +169,11 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
 
-        repeat(withIroha.amount) {
+        repeat(withIroha.amount + 1) {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
+        val genesisKeyPair = keyPairs.last()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
@@ -157,6 +191,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     }
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
+                    this.genesisKeyPair = genesisKeyPair
                     trustedPeers = peerIds
                     ports = portsList[n]
                     envs = withIroha.configs.associate { config ->

@@ -7,3 +7,4 @@ const val DEFAULT_TELEMETRY_PORT = 8180
 const val ASSET_ID_DELIMITER = "#"
 const val ACCOUNT_ID_DELIMITER = "@"
 const val TRIGGER_ID_DELIMITER = "$"
+const val PARAMETER_DELIMITER = "="

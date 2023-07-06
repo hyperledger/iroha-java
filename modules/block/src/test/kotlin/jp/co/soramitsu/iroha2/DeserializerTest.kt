@@ -1,13 +1,10 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 
-// https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/342
-@Disabled
 class DeserializerTest {
     @Test
     fun `should deserialize genesis block`() {
@@ -16,15 +13,21 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 
         assert(block.transactions.isNotEmpty())
-        // genesis.json has 7 instructions ("isi")
+        // genesis.json has 50 instructions ("isi")
+        // Register -> NewDomain
+        // Register -> NewAccount (2)
+        // Register -> NewAssetDefinition
         // Register -> NewDomain
         // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> PermissionTokenDefinition
-        // Grant -> PermissionToken
-        // Register -> PermissionTokenDefinition
-        // Grant -> PermissionToken
-        assert(block.transactions.flatten().size == 7)
+        // Register -> NewAssetDefinition
+        // Mint -> AssetId (2)
+        // Register -> PermissionTokenDefinition (35)
+        // Grant -> PermissionToken (2)
+        // Register -> NewRole
+        // Grant -> RoleId
+        // Sequence -> NewParameter
+        // Register -> NewRole
+        assert(block.transactions.flatten().size == 50)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
