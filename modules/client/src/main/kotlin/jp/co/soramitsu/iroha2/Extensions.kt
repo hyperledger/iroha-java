@@ -306,6 +306,7 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
         this.permissionTokenDefinition
     )
+
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
 }
 
@@ -333,6 +334,12 @@ fun DomainId.asString() = this.name.string
 fun PermissionTokenId.asString() = this.name.string
 
 fun RoleId.asString() = this.name.string
+
+fun SocketAddr.asString() = when (this) {
+    is SocketAddr.Host -> this.socketAddrHost.let { "${it.host}:${it.port}" }
+    is SocketAddr.Ipv4 -> this.socketAddrV4.let { "${it.ip}:${it.port}" }
+    is SocketAddr.Ipv6 -> this.socketAddrV6.let { "${it.ip}:${it.port}" }
+}
 
 fun TriggerId.asString() = when (this.domainId) {
     null -> this.name.string

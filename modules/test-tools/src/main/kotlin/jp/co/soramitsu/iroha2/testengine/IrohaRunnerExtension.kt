@@ -46,7 +46,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     override fun interceptTestMethod(
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
-        extensionContext: ExtensionContext
+        extensionContext: ExtensionContext,
     ) = runBlocking {
         val testId = extensionContext.testId()
         try {
@@ -59,7 +59,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     }
 
     private suspend fun initIfRequested(
-        extensionContext: ExtensionContext
+        extensionContext: ExtensionContext,
     ): List<AutoCloseable> = coroutineScope {
         val withIroha = extensionContext.element.get()
             .annotations.filterIsInstance<WithIroha>()
@@ -101,7 +101,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             AdminIroha2Client(
                 containers.first().getApiUrl(),
                 containers.first().getTelemetryUrl(),
-                log = true
+                log = true,
             ).also { utilizedResources.add(it) }
         }
 
@@ -116,7 +116,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             AdminIroha2AsyncClient(
                 containers.first().getApiUrl(),
                 containers.first().getTelemetryUrl(),
-                log = true
+                log = true,
             ).also { utilizedResources.add(it) }
         }
 
@@ -147,7 +147,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     private inline fun <reified V : Any> setPropertyValue(
         declaredProperties: Collection<KProperty1<out Any, *>>,
         testClassInstance: Any,
-        valueToSet: () -> V
+        valueToSet: () -> V,
     ) {
         declaredProperties
             .filter { it.returnType.classifier == V::class }
@@ -166,15 +166,16 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private suspend fun createContainers(
         withIroha: WithIroha,
-        network: Network
+        network: Network,
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
 
-        repeat(withIroha.amount) {
+        repeat(withIroha.amount + 1) {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
+        val genesisKeyPair = keyPairs.last()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
@@ -192,6 +193,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     }
                     alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     keyPair = keyPairs[n]
+                    this.genesisKeyPair = genesisKeyPair
                     trustedPeers = peerIds
                     ports = portsList[n]
                     envs = withIroha.configs.associate { config ->
@@ -214,7 +216,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private fun KeyPair.toPeerId(host: String, port: Int) = PeerId(
         SocketAddr.Host(SocketAddrHost(host, port)),
-        this.public.toIrohaPublicKey()
+        this.public.toIrohaPublicKey(),
     )
 
     private fun ExtensionContext.testId() = "${this.testClass.get().name}_${this.testMethod.get().name}"

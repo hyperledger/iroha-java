@@ -61,6 +61,7 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SequenceBox
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.TransactionLimits
 import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
 import jp.co.soramitsu.iroha2.generated.TransactionValue
@@ -121,6 +122,7 @@ val JSON_SERDE by lazy {
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
+        module.addSerializer(SocketAddr::class.java, SocketAddrSerializer)
         module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
         module.addSerializer(Name::class.java, NameSerializer)
         module.addSerializer(UInt::class.java, UIntSerializer)
@@ -359,6 +361,7 @@ private fun getRegisterBox(arg: Any): RegisterBox {
         }.let {
             RegisterBox(it.evaluatesTo())
         }
+
         else -> throw DeserializationException("Register box `$arg` not found")
     }
 }
@@ -743,6 +746,12 @@ object TokenIdSerializer : JsonSerializer<PermissionTokenId>() {
  */
 object RoleIdSerializer : JsonSerializer<RoleId>() {
     override fun serialize(value: RoleId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
+
+object SocketAddrSerializer : JsonSerializer<SocketAddr>() {
+    override fun serialize(value: SocketAddr, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.asString())
     }
 }
