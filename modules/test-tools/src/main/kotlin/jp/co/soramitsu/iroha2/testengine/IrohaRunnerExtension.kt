@@ -175,7 +175,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
-        val genesisKeyPair = keyPairs.first()
+        val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
