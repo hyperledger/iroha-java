@@ -21,7 +21,7 @@ annotation class WithIroha(
     val sources: Array<KClass<out Genesis>> = [EmptyGenesis::class],
     val configs: Array<String> = [],
     val source: String = "",
-    val amount: Int = 1
+    val amount: Int = 1,
 )
 
 @MustBeDocumented
@@ -30,15 +30,19 @@ annotation class WithIroha(
 @Test
 @Inherited
 annotation class WithIrohaManual(
-    val apiUrl: String,
-    val telemetryUrl: String
+    val apiUrl: String = "",
+    val telemetryUrl: String = "",
+    val account: String = "",
+    val publicKey: String = "",
+    val privateKey: String = "",
+    val dockerComposeFile: String = "",
 )
 
 /**
  * Empty genesis with no instructions
  */
 open class EmptyGenesis : Genesis(
-    RawGenesisBlock(listOf(emptyList()), validatorMode)
+    RawGenesisBlock(listOf(emptyList()), validatorMode),
 )
 
 const val IROHA_CONFIG_DELIMITER = "="

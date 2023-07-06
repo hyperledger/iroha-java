@@ -38,10 +38,7 @@ import kotlin.test.assertTrue
 @Feature("Peers")
 @Disabled
 @Issue("https://github.com/hyperledger/iroha/issues/2962")
-class PeerTest : IrohaTest<Iroha2Client>(
-    account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR
-) {
+class PeerTest : IrohaTest<Iroha2Client>() {
 
     companion object {
         private const val PEER_AMOUNT = 4
@@ -128,7 +125,7 @@ class PeerTest : IrohaTest<Iroha2Client>(
     private fun startNewContainer(
         keyPair: KeyPair,
         alias: String,
-        ports: List<Int>
+        ports: List<Int>,
     ): IrohaContainer {
         return IrohaContainer {
             this.waitStrategy = false
@@ -144,7 +141,7 @@ class PeerTest : IrohaTest<Iroha2Client>(
     private suspend fun isPeerAvailable(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -160,7 +157,7 @@ class PeerTest : IrohaTest<Iroha2Client>(
     private suspend fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -174,7 +171,7 @@ class PeerTest : IrohaTest<Iroha2Client>(
     private suspend fun registerPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -187,6 +184,6 @@ class PeerTest : IrohaTest<Iroha2Client>(
 
     private fun IrohaContainer.extractPeerId() = PeerId(
         SocketAddr.Host(SocketAddrHost(this.getP2pUrl().host, this.getP2pUrl().port)),
-        this.config.keyPair.public.toIrohaPublicKey()
+        this.config.keyPair.public.toIrohaPublicKey(),
     )
 }
