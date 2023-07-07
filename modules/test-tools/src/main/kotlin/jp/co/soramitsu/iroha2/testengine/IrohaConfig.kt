@@ -33,14 +33,15 @@ class IrohaConfig(
     var pullPolicy: ImagePullPolicy = PullPolicy.ageBased(Duration.ofMinutes(10)),
     var alias: String = IrohaContainer.NETWORK_ALIAS + DEFAULT_P2P_PORT,
     var keyPair: KeyPair = generateKeyPair(),
+    var genesisKeyPair: KeyPair = generateKeyPair(),
     var trustedPeers: List<PeerId> = listOf(
-        PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey())
+        PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey()),
     ),
     var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,
     var submitGenesis: Boolean = true,
-    var envs: Map<String, String> = emptyMap()
+    var envs: Map<String, String> = emptyMap(),
 ) {
     companion object {
         const val P2P_PORT_IDX = 0

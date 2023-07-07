@@ -14,6 +14,7 @@ import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceCanUnregisterAnyPeer
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.IrohaConfig
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
@@ -22,7 +23,6 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -36,7 +36,6 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
-@Disabled
 @Issue("https://github.com/hyperledger/iroha/issues/2962")
 class PeerTest : IrohaTest<Iroha2Client>() {
 
@@ -64,7 +63,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @WithIroha([AliceCanUnregisterAnyPeer::class], amount = PEER_AMOUNT)
     @Story("Account unregisters a peer")
     @Permission("no_permission_required")
     @SdkTestId("unregister_peer")
@@ -99,6 +98,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
         startNewContainer(keyPair, alias, ports).use { container ->
             registerPeer(address, payload)
+            assertTrue(isPeerAvailable(address, payload))
 
             delay(5000)
 

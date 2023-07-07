@@ -36,6 +36,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         val publicKey = config.keyPair.public.bytes().toHex()
         val privateKey = config.keyPair.private.bytes().toHex()
 
+        val genesisPublicKey = config.genesisKeyPair.public.bytes().toHex()
+        val genesisPrivateKey = config.genesisKeyPair.private.bytes().toHex()
+
         this.p2pPort = config.ports[IrohaConfig.P2P_PORT_IDX]
         this.apiPort = config.ports[IrohaConfig.API_PORT_IDX]
         this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
@@ -45,10 +48,10 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
             .withEnv("IROHA_PRIVATE_KEY", "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}")
-            .withEnv("IROHA_GENESIS_ACCOUNT_PUBLIC_KEY", "ed0120$publicKey")
+            .withEnv("IROHA_GENESIS_ACCOUNT_PUBLIC_KEY", "ed0120$genesisPublicKey")
             .withEnv(
                 "IROHA_GENESIS_ACCOUNT_PRIVATE_KEY",
-                "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}",
+                "{\"digest_function\": \"ed25519\", \"payload\": \"$genesisPrivateKey$genesisPublicKey\"}",
             )
             .withEnv("TORII_P2P_ADDR", "${config.alias}:$p2pPort")
             .withEnv("TORII_API_URL", "${config.alias}:$apiPort")

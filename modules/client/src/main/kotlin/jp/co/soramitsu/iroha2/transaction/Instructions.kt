@@ -72,7 +72,7 @@ object Instructions {
      */
     fun registerRole(
         roleId: RoleId,
-        vararg tokens: PermissionToken
+        vararg tokens: PermissionToken,
     ) = registerSome {
         RegistrableBox.Role(NewRole(Role(roleId, tokens.toList())))
     }
@@ -84,7 +84,7 @@ object Instructions {
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
     ) = registerSome {
         RegistrableBox.Account(NewAccount(id, signatories, metadata))
     }
@@ -94,21 +94,25 @@ object Instructions {
      */
     fun registerPermissionToken(
         permissionsId: PermissionTokenId,
-        params: Map<Name, ValueKind> = mapOf()
+        params: Map<Name, ValueKind> = mapOf(),
     ) = registerSome {
         RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params))
     }
 
     fun registerPermissionToken(
         permission: Permissions,
-        idKey: IdKey
+    ) = registerPermissionToken(permission.type, null)
+
+    fun registerPermissionToken(
+        permission: Permissions,
+        idKey: IdKey,
     ) = registerPermissionToken(permission.type, idKey.type)
 
     fun registerPermissionToken(name: Name, idKey: IdKey) = registerPermissionToken(name, idKey.type)
 
-    fun registerPermissionToken(name: Name, idKey: String) = registerPermissionToken(
+    fun registerPermissionToken(name: Name, idKey: String?) = registerPermissionToken(
         PermissionTokenId(name),
-        mapOf(idKey.asName() to ValueKind.Id())
+        idKey?.let { mapOf(it.asName() to ValueKind.Id()) } ?: emptyMap(),
     )
 
     /**
@@ -120,7 +124,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
-        metadata: Metadata
+        metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
             TriggerOfFilterBoxAndExecutable(
@@ -130,9 +134,9 @@ object Instructions {
                     repeats,
                     accountId,
                     FilterBox.Time(filter),
-                    metadata
-                )
-            )
+                    metadata,
+                ),
+            ),
         )
     }
 
@@ -144,7 +148,7 @@ object Instructions {
         isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata
+        metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
             TriggerOfFilterBoxAndExecutable(
@@ -154,9 +158,9 @@ object Instructions {
                     repeats,
                     accountId,
                     Filters.executeTrigger(triggerId, accountId),
-                    metadata
-                )
-            )
+                    metadata,
+                ),
+            ),
         )
     }
 
@@ -169,7 +173,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox
+        filter: FilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
             TriggerOfFilterBoxAndExecutable(
@@ -179,9 +183,9 @@ object Instructions {
                     repeats,
                     accountId,
                     filter,
-                    metadata
-                )
-            )
+                    metadata,
+                ),
+            ),
         )
     }
 
@@ -194,7 +198,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox
+        filter: FilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
             TriggerOfFilterBoxAndExecutable(
@@ -204,9 +208,9 @@ object Instructions {
                     repeats,
                     accountId,
                     filter,
-                    metadata
-                )
-            )
+                    metadata,
+                ),
+            ),
         )
     }
 
@@ -218,7 +222,7 @@ object Instructions {
         isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata
+        metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
             TriggerOfFilterBoxAndExecutable(
@@ -228,9 +232,9 @@ object Instructions {
                     repeats,
                     accountId,
                     Filters.time(EventFilters.timeEventFilter()),
-                    metadata
-                )
-            )
+                    metadata,
+                ),
+            ),
         )
     }
 
@@ -244,7 +248,7 @@ object Instructions {
      */
     fun unregisterTrigger(
         triggerName: String,
-        domainId: DomainId? = null
+        domainId: DomainId? = null,
     ) = unregisterSome {
         IdBox.TriggerId(TriggerId(triggerName.asName(), domainId))
     }
@@ -272,10 +276,10 @@ object Instructions {
         id: AssetDefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
-        mintable: Mintable = Mintable.Infinitely()
+        mintable: Mintable = Mintable.Infinitely(),
     ) = registerSome {
         RegistrableBox.AssetDefinition(
-            NewAssetDefinition(id, assetValueType, mintable, metadata = metadata)
+            NewAssetDefinition(id, assetValueType, mintable, metadata = metadata),
         )
     }
 
@@ -293,7 +297,7 @@ object Instructions {
     fun registerDomain(
         domainId: DomainId,
         metadata: Map<Name, Value> = mapOf(),
-        logo: IpfsPath? = null
+        logo: IpfsPath? = null,
     ) = registerSome {
         RegistrableBox.Domain(NewDomain(domainId, logo, Metadata(metadata)))
     }
@@ -305,10 +309,10 @@ object Instructions {
     fun registerPeer(
         address: String,
         payload: ByteArray,
-        digestFunction: Algorithm = Algorithm.Ed25519()
+        digestFunction: Algorithm = Algorithm.Ed25519(),
     ) = registerSome {
         RegistrableBox.Peer(
-            Peer(PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload)))
+            Peer(PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload))),
         )
     }
 
@@ -319,10 +323,10 @@ object Instructions {
     fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        digestFunction: Algorithm = Algorithm.Ed25519()
+        digestFunction: Algorithm = Algorithm.Ed25519(),
     ) = unregisterSome {
         IdBox.PeerId(
-            PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload))
+            PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload)),
         )
     }
 
@@ -332,13 +336,13 @@ object Instructions {
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: Value
+        value: Value,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox(
             objectId = IdBox.AssetId(assetId).evaluatesTo(),
             key = key.evaluatesTo(),
-            value = value.evaluatesTo()
-        )
+            value = value.evaluatesTo(),
+        ),
     )
 
     /**
@@ -347,13 +351,13 @@ object Instructions {
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: Value
+        value: Value,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox(
             objectId = IdBox.AssetDefinitionId(definitionId).evaluatesTo(),
             key = key.evaluatesTo(),
-            value = value.evaluatesTo()
-        )
+            value = value.evaluatesTo(),
+        ),
     )
 
     /**
@@ -362,13 +366,13 @@ object Instructions {
     fun setKeyValue(
         accountId: AccountId,
         key: Name,
-        value: Value
+        value: Value,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox(
             objectId = IdBox.AccountId(accountId).evaluatesTo(),
             key = key.evaluatesTo(),
-            value = value.evaluatesTo()
-        )
+            value = value.evaluatesTo(),
+        ),
     )
 
     /**
@@ -377,8 +381,8 @@ object Instructions {
     fun removeKeyValue(assetId: AssetId, key: Name) = InstructionBox.RemoveKeyValue(
         RemoveKeyValueBox(
             objectId = IdBox.AssetId(assetId).evaluatesTo(),
-            key = key.evaluatesTo()
-        )
+            key = key.evaluatesTo(),
+        ),
     )
 
     /**
@@ -387,13 +391,13 @@ object Instructions {
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: Value
+        value: Value,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox(
             objectId = IdBox.DomainId(domainId).evaluatesTo(),
             key = key.evaluatesTo(),
-            value = value.evaluatesTo()
-        )
+            value = value.evaluatesTo(),
+        ),
     )
 
     /**
@@ -416,7 +420,7 @@ object Instructions {
      */
     fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = mintSome(
         Value.PublicKey(pubKey),
-        IdBox.AccountId(accountId)
+        IdBox.AccountId(accountId),
     )
 
     /**
@@ -434,7 +438,7 @@ object Instructions {
      */
     fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = burnSome(
         Value.PublicKey(pubKey),
-        IdBox.AccountId(accountId)
+        IdBox.AccountId(accountId),
     )
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
@@ -445,7 +449,7 @@ object Instructions {
     fun grantPermissionToken(
         permission: Permissions,
         params: Map<Name, Value>,
-        target: AccountId
+        target: AccountId,
     ) = grantSome(IdBox.AccountId(target)) {
         PermissionToken(definitionId = PermissionTokenId(permission.type), params = params)
     }
@@ -456,8 +460,8 @@ object Instructions {
     fun grantRole(roleId: RoleId, accountId: AccountId) = InstructionBox.Grant(
         GrantBox(
             destinationId = accountId.evaluatesTo().cast(),
-            `object` = IdBox.RoleId(roleId).evaluatesTo().cast()
-        )
+            `object` = IdBox.RoleId(roleId).evaluatesTo().cast(),
+        ),
     )
 
     /**
@@ -467,8 +471,8 @@ object Instructions {
         TransferBox(
             sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
             `object` = value.asValue().evaluatesTo(),
-            destinationId = IdBox.AccountId(destinationId).evaluatesTo()
-        )
+            destinationId = IdBox.AccountId(destinationId).evaluatesTo(),
+        ),
     )
 
     /**
@@ -477,7 +481,7 @@ object Instructions {
     fun `if`(
         condition: Boolean,
         then: InstructionBox,
-        otherwise: InstructionBox
+        otherwise: InstructionBox,
     ) = InstructionBox.If(Conditional(condition.evaluatesTo(), then, otherwise))
 
     /**
@@ -502,7 +506,7 @@ object Instructions {
         return revokeSome(IdBox.AccountId(target)) {
             PermissionToken(
                 definitionId = PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId())
+                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
             )
         }
     }
@@ -514,56 +518,56 @@ object Instructions {
         return InstructionBox.Revoke(
             RevokeBox(
                 destinationId = accountId.evaluatesTo().cast(),
-                `object` = IdBox.RoleId(roleId).evaluatesTo().cast()
-            )
+                `object` = IdBox.RoleId(roleId).evaluatesTo().cast(),
+            ),
         )
     }
 
     private inline fun unregisterSome(idBox: () -> IdBox) = InstructionBox.Unregister(
-        UnregisterBox(idBox().evaluatesTo())
+        UnregisterBox(idBox().evaluatesTo()),
     )
 
     private inline fun registerSome(
-        regBox: () -> RegistrableBox
+        regBox: () -> RegistrableBox,
     ) = InstructionBox.Register(RegisterBox(regBox().evaluatesTo()))
 
     private inline fun grantSome(
         idBox: IdBox,
-        permissionToken: () -> PermissionToken
+        permissionToken: () -> PermissionToken,
     ) = InstructionBox.Grant(
         GrantBox(
             destinationId = idBox.evaluatesTo(),
-            `object` = Value.PermissionToken(permissionToken()).evaluatesTo()
-        )
+            `object` = Value.PermissionToken(permissionToken()).evaluatesTo(),
+        ),
     )
 
     private inline fun revokeSome(idBox: IdBox, permissionToken: () -> PermissionToken): InstructionBox.Revoke {
         return InstructionBox.Revoke(
             RevokeBox(
                 destinationId = idBox.evaluatesTo(),
-                `object` = Value.PermissionToken(permissionToken()).evaluatesTo()
-            )
+                `object` = Value.PermissionToken(permissionToken()).evaluatesTo(),
+            ),
         )
     }
 
     private fun burnSome(value: Value, idBox: IdBox) = InstructionBox.Burn(
         BurnBox(
             `object` = value.evaluatesTo(),
-            destinationId = idBox.evaluatesTo()
-        )
+            destinationId = idBox.evaluatesTo(),
+        ),
     )
 
     private fun mintSome(value: Value, idBox: IdBox) = InstructionBox.Mint(
         MintBox(
             `object` = value.evaluatesTo(),
-            destinationId = idBox.evaluatesTo()
-        )
+            destinationId = idBox.evaluatesTo(),
+        ),
     )
 
     private fun mintSome(value: Value, assetId: AssetId) = InstructionBox.Mint(
         MintBox(
             `object` = value.evaluatesTo(),
-            destinationId = IdBox.AssetId(assetId).evaluatesTo()
-        )
+            destinationId = IdBox.AssetId(assetId).evaluatesTo(),
+        ),
     )
 }
