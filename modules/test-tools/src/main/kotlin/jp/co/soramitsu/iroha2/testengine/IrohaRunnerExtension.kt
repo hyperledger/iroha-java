@@ -126,19 +126,19 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val properties = testInstance::class.memberProperties
 
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2Client(URL(this.apiUrl), log = true) }
+        setPropertyValue(properties, testInstance) { Iroha2Client(mutableListOf(URL(this.apiUrl)), log = true) }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+            AdminIroha2Client(mutableListOf(URL(this.apiUrl)), log = true)
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(URL(this.apiUrl), log = true) }
+        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(mutableListOf(URL(this.apiUrl)), log = true) }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+            AdminIroha2AsyncClient(mutableListOf(URL(this.apiUrl)), log = true)
         }
     }
 

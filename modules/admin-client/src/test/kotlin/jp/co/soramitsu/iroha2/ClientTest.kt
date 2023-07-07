@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Timeout
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@Timeout(30)
+@Timeout(120)
 class ClientTest : IrohaTest<AdminIroha2Client>(
     account = "alice@wonderland".asAccountId(),
     keyPair = generateKeyPair()
@@ -52,5 +52,21 @@ class ClientTest : IrohaTest<AdminIroha2Client>(
         assertFailsWith<IrohaClientException> {
             client.describeConfig()
         }
+    }
+
+    @Test
+    @WithIroha(amount = PEER_AMOUNT)
+    fun `round-robin load balancing test`(): Unit = runBlocking {
+        val urls = mutableSetOf<String>()
+        repeat(PEER_AMOUNT * 2 + 1) {
+            val config = client.getConfigs()
+            urls.add(config["TORII"]!!.cast<Map<String, String>>()["API_URL"]!!)
+        }
+
+        assertEquals(PEER_AMOUNT, urls.size)
+    }
+
+    companion object {
+        private const val PEER_AMOUNT = 4
     }
 }

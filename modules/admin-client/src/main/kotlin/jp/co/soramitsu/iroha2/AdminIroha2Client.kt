@@ -78,7 +78,7 @@ open class AdminIroha2Client(
         URL(
             peerUrl.protocol,
             peerUrl.host,
-            DEFAULT_TELEMETRY_PORT,
+            peerUrl.port + 1,
             peerUrl.file,
         )
     }

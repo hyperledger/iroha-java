@@ -145,7 +145,7 @@ open class Iroha2Client(
 
     // Round-robin load balancing
     protected fun getPeerUrl() = when (lastRequestedPeerIdx) {
-        null -> peerUrls.first()
+        null -> peerUrls.first().also { lastRequestedPeerIdx = 0 }
         else -> {
             lastRequestedPeerIdx = when (lastRequestedPeerIdx) {
                 peerUrls.size - 1 -> 0
