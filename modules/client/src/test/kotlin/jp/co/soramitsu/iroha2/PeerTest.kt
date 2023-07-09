@@ -39,7 +39,7 @@ import kotlin.test.assertTrue
 @Issue("https://github.com/hyperledger/iroha/issues/2962")
 class PeerTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR
+    keyPair = ALICE_KEYPAIR,
 ) {
 
     companion object {

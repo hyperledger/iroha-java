@@ -10,7 +10,8 @@ enum class IntMax(val max: BigInteger) {
     U128(BigInteger.valueOf(2).pow(128) - BigInteger.ONE),
     U256(BigInteger.valueOf(2).pow(256) - BigInteger.ONE),
     I128(BigInteger.valueOf(2).pow(127) - BigInteger.ONE),
-    I256(BigInteger.valueOf(2).pow(255) - BigInteger.ONE);
+    I256(BigInteger.valueOf(2).pow(255) - BigInteger.ONE),
+    ;
 
     companion object {
         fun uintMaxValue(bit: Int): BigInteger {
@@ -37,7 +38,8 @@ enum class IntMax(val max: BigInteger) {
  */
 enum class IntMin(val min: BigInteger) {
     I128(-BigInteger.valueOf(2).pow(127)),
-    I256(-BigInteger.valueOf(2).pow(255));
+    I256(-BigInteger.valueOf(2).pow(255)),
+    ;
 
     companion object {
         fun intMinValue(bit: Int): BigInteger {

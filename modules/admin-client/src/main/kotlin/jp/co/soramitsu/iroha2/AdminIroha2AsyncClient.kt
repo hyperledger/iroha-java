@@ -13,17 +13,17 @@ class AdminIroha2AsyncClient @JvmOverloads constructor(
         peerUrl.protocol,
         peerUrl.host,
         DEFAULT_TELEMETRY_PORT,
-        peerUrl.file
+        peerUrl.file,
     ),
     log: Boolean = false,
-    credentials: String? = null
+    credentials: String? = null,
 ) : AdminIroha2Client(peerUrl, telemetryUrl, log, credentials) {
 
     @JvmOverloads
     constructor(
         peerUrl: String,
         telemetryUrl: String,
-        log: Boolean = false
+        log: Boolean = false,
     ) : this(URL(peerUrl), URL(telemetryUrl), log)
 
     /**

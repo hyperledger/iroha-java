@@ -44,6 +44,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
 
         this.config = config
+
         this.withNetwork(config.networkToJoin)
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
@@ -68,7 +69,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             }
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
-            .withCopyFileToContainer(
+            .withCopyToContainer(
                 forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR",
             ).also {
@@ -138,11 +139,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Iroha container stopped")
     }
 
-    fun getP2pUrl(): URL = URL("http", containerIpAddress, p2pPort, "")
+    fun getP2pUrl(): URL = URL("http", host, p2pPort, "")
 
-    fun getApiUrl(): URL = URL("http", containerIpAddress, apiPort, "")
+    fun getApiUrl(): URL = URL("http", host, apiPort, "")
 
-    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, telemetryPort, "")
+    fun getTelemetryUrl(): URL = URL("http", host, telemetryPort, "")
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 

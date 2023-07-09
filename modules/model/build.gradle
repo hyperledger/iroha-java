@@ -1,0 +1,7 @@
+lintKotlinMain {
+  source = source - fileTree("src/main/kotlin/jp/co/soramitsu/iroha2/generated/")
+}
+
+formatKotlinMain {
+    source = source - fileTree("src/main/kotlin/jp/co/soramitsu/iroha2/generated/")
+}

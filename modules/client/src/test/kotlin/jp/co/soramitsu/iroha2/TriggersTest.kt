@@ -22,7 +22,6 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
@@ -51,7 +50,7 @@ import kotlin.test.assertNotNull
 @Sdk("Java/Kotlin")
 class TriggersTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR
+    keyPair = ALICE_KEYPAIR,
 ) {
 
     @Test
@@ -150,7 +149,6 @@ class TriggersTest : IrohaTest<Iroha2Client>(
         assertEquals(120L, newQuantity)
 
         // transfer asset instruction just to test trigger
-        val bobAssetId = AliceAndBobEachHave100Xor.BOB_ASSET_ID
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             transferAsset(DEFAULT_ASSET_ID, 100, BOB_ACCOUNT_ID)

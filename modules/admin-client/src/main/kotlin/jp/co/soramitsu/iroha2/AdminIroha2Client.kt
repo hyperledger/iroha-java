@@ -19,10 +19,10 @@ open class AdminIroha2Client(
         peerUrl.protocol,
         peerUrl.host,
         DEFAULT_TELEMETRY_PORT,
-        peerUrl.file
+        peerUrl.file,
     ),
     log: Boolean = false,
-    credentials: String? = null
+    credentials: String? = null,
 ) : Iroha2Client(peerUrl, log, credentials) {
 
     /**

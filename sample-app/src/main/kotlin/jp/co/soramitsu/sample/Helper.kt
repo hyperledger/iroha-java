@@ -16,19 +16,19 @@ import jp.co.soramitsu.iroha2.generated.datamodel.asset.AssetValueType
 import jp.co.soramitsu.iroha2.generated.datamodel.asset.Mintable
 import jp.co.soramitsu.iroha2.generated.datamodel.metadata.Metadata
 import jp.co.soramitsu.iroha2.generated.datamodel.name.Name
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
+import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import kotlinx.coroutines.withTimeout
 import java.net.URL
 import java.security.KeyPair
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.GenericValuePredicateBox
-import jp.co.soramitsu.iroha2.generated.datamodel.predicate.value.ValuePredicate
 
 class Helper(
     peerUrl: String,
     telemetryUrl: String,
     private val admin: AccountId,
     private val keyPair: KeyPair,
-    private val timeout: Long = 10000
+    private val timeout: Long = 10000,
 ) {
 
     private val client = AdminIroha2Client(URL(peerUrl), URL(telemetryUrl), log = true)
@@ -37,7 +37,7 @@ class Helper(
         id: String,
         metadata: Map<Name, Value> = mapOf(),
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -53,7 +53,7 @@ class Helper(
         signatories: List<PublicKey>,
         metadata: Map<Name, Value> = mapOf(),
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -70,7 +70,7 @@ class Helper(
         metadata: Map<Name, Value> = mapOf(),
         mintable: Mintable = Mintable.Infinitely(),
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -85,7 +85,7 @@ class Helper(
         id: String,
         value: AssetValue,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -101,7 +101,7 @@ class Helper(
         value: Int,
         to: String,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -115,7 +115,7 @@ class Helper(
     suspend fun unregisterDomain(
         id: String,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -129,7 +129,7 @@ class Helper(
     suspend fun unregisterAccount(
         id: String,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -143,7 +143,7 @@ class Helper(
     suspend fun unregisterAsset(
         id: String,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -158,7 +158,7 @@ class Helper(
         assetId: String,
         target: AccountId,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)
@@ -174,7 +174,7 @@ class Helper(
         assetId: String,
         target: AccountId,
         admin: AccountId = this.admin,
-        keyPair: KeyPair = this.keyPair
+        keyPair: KeyPair = this.keyPair,
     ) {
         client.sendTransaction {
             account(admin)

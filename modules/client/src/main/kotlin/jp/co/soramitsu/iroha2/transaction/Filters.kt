@@ -72,7 +72,7 @@ object Filters {
      */
     fun data(entityFilter: DataEntityFilter? = null) = FilterBox.Data(
         entityFilter?.let { FilterOptOfDataEntityFilter.BySome(it) }
-            ?: FilterOptOfDataEntityFilter.AcceptAll()
+            ?: FilterOptOfDataEntityFilter.AcceptAll(),
     )
 
     /**
@@ -85,9 +85,9 @@ object Filters {
      */
     fun executeTrigger(
         triggerId: TriggerId,
-        authority: AccountId
+        authority: AccountId,
     ) = FilterBox.ExecuteTrigger(
-        ExecuteTriggerEventFilter(triggerId, authority)
+        ExecuteTriggerEventFilter(triggerId, authority),
     )
 
     /**
@@ -100,13 +100,13 @@ object Filters {
     fun pipeline(
         entityKind: PipelineEntityKind? = null,
         statusKind: PipelineStatusKind? = null,
-        hash: ByteArray? = null
+        hash: ByteArray? = null,
     ) = FilterBox.Pipeline(
         PipelineEventFilter(
             entityKind,
             statusKind,
-            hash?.toIrohaHash()
-        )
+            hash?.toIrohaHash(),
+        ),
     )
 }
 
@@ -122,16 +122,16 @@ object EntityFilters {
      */
     fun byAssetDefinition(
         originFilter: OriginFilterOfAssetDefinitionEvent? = null,
-        eventFilter: AssetDefinitionEventFilter? = null
+        eventFilter: AssetDefinitionEventFilter? = null,
     ) = DataEntityFilter.ByAssetDefinition(
         FilterOptOfAssetDefinitionFilter.BySome(
             AssetDefinitionFilter(
                 originFilter?.let { FilterOptOfOriginFilterOfAssetDefinitionEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfAssetDefinitionEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfAssetDefinitionEventFilter.BySome(it) }
-                    ?: FilterOptOfAssetDefinitionEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfAssetDefinitionEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -145,16 +145,16 @@ object EntityFilters {
      */
     fun byAccount(
         idFilter: OriginFilterOfAccountEvent? = null,
-        eventFilter: AccountEventFilter? = null
+        eventFilter: AccountEventFilter? = null,
     ) = DataEntityFilter.ByAccount(
         FilterOptOfAccountFilter.BySome(
             AccountFilter(
                 idFilter?.let { FilterOptOfOriginFilterOfAccountEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfAccountEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfAccountEventFilter.BySome(it) }
-                    ?: FilterOptOfAccountEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfAccountEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -168,16 +168,16 @@ object EntityFilters {
      */
     fun byAsset(
         assetFilter: OriginFilterOfAssetEvent? = null,
-        eventFilter: AssetEventFilter? = null
+        eventFilter: AssetEventFilter? = null,
     ) = DataEntityFilter.ByAsset(
         FilterOptOfAssetFilter.BySome(
             AssetFilter(
                 assetFilter?.let { FilterOptOfOriginFilterOfAssetEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfAssetEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfAssetEventFilter.BySome(it) }
-                    ?: FilterOptOfAssetEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfAssetEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -191,16 +191,16 @@ object EntityFilters {
      */
     fun byTrigger(
         idFilter: OriginFilterOfTriggerEvent? = null,
-        eventFilter: TriggerEventFilter? = null
+        eventFilter: TriggerEventFilter? = null,
     ) = DataEntityFilter.ByTrigger(
         FilterOptOfTriggerFilter.BySome(
             TriggerFilter(
                 idFilter?.let { FilterOptOfOriginFilterOfTriggerEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfTriggerEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfTriggerEventFilter.BySome(it) }
-                    ?: FilterOptOfTriggerEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfTriggerEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -214,16 +214,16 @@ object EntityFilters {
      */
     fun byDomain(
         originFilter: OriginFilterOfDomainEvent? = null,
-        eventFilter: DomainEventFilter? = null
+        eventFilter: DomainEventFilter? = null,
     ) = DataEntityFilter.ByDomain(
         FilterOptOfDomainFilter.BySome(
             DomainFilter(
                 originFilter?.let { FilterOptOfOriginFilterOfDomainEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfDomainEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfDomainEventFilter.BySome(it) }
-                    ?: FilterOptOfDomainEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfDomainEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -237,16 +237,16 @@ object EntityFilters {
      */
     fun byPeer(
         originFilter: OriginFilterOfPeerEvent? = null,
-        eventFilter: PeerEventFilter? = null
+        eventFilter: PeerEventFilter? = null,
     ) = DataEntityFilter.ByPeer(
         FilterOptOfPeerFilter.BySome(
             PeerFilter(
                 originFilter?.let { FilterOptOfOriginFilterOfPeerEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfPeerEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfPeerEventFilter.BySome(it) }
-                    ?: FilterOptOfPeerEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfPeerEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -260,16 +260,16 @@ object EntityFilters {
      */
     fun byRole(
         originFilter: OriginFilterOfRoleEvent? = null,
-        eventFilter: RoleEventFilter? = null
+        eventFilter: RoleEventFilter? = null,
     ) = DataEntityFilter.ByRole(
         FilterOptOfRoleFilter.BySome(
             RoleFilter(
                 originFilter?.let { FilterOptOfOriginFilterOfRoleEvent.BySome(it) }
                     ?: FilterOptOfOriginFilterOfRoleEvent.AcceptAll(),
                 eventFilter?.let { FilterOptOfRoleEventFilter.BySome(it) }
-                    ?: FilterOptOfRoleEventFilter.AcceptAll()
-            )
-        )
+                    ?: FilterOptOfRoleEventFilter.AcceptAll(),
+            ),
+        ),
     )
 
     /**
@@ -288,7 +288,7 @@ object EventFilters {
      */
     fun timeEventFilter(
         start: Duration,
-        period: Duration? = null
+        period: Duration? = null,
     ) = TimeEventFilter(ExecutionTime.Schedule(Schedule(start, period)))
 
     /**
@@ -306,28 +306,28 @@ object QueryFilters {
      * Starts with filter
      */
     fun startsWith(prefix: String) = GenericPredicateBox.Raw(
-        ValuePredicate.Identifiable(StringPredicate.StartsWith(prefix))
+        ValuePredicate.Identifiable(StringPredicate.StartsWith(prefix)),
     )
 
     /**
      * Ends with filter
      */
     fun endsWith(suffix: String) = GenericPredicateBox.Raw(
-        ValuePredicate.Identifiable(StringPredicate.EndsWith(suffix))
+        ValuePredicate.Identifiable(StringPredicate.EndsWith(suffix)),
     )
 
     /**
      * Contains filter
      */
     fun contains(value: String) = GenericPredicateBox.Raw(
-        ValuePredicate.Identifiable(StringPredicate.Contains(value))
+        ValuePredicate.Identifiable(StringPredicate.Contains(value)),
     )
 
     /**
      * Is filter
      */
     fun `is`(value: String) = GenericPredicateBox.Raw(
-        ValuePredicate.Identifiable(StringPredicate.Is(value))
+        ValuePredicate.Identifiable(StringPredicate.Is(value)),
     )
 
     /**
