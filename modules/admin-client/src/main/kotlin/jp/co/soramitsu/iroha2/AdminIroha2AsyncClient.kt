@@ -8,10 +8,10 @@ import java.net.URL
  */
 @Suppress("unused")
 class AdminIroha2AsyncClient @JvmOverloads constructor(
-    peerUrls: MutableList<URL>,
+    urls: MutableList<Pair<URL, URL>>,
     log: Boolean = false,
     credentials: String? = null,
-) : AdminIroha2Client(peerUrls, log, credentials) {
+) : AdminIroha2Client(urls, log, credentials) {
 
     /**
      * Send health check request

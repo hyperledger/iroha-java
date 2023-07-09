@@ -30,7 +30,6 @@ import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
-import jp.co.soramitsu.iroha2.asString
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
@@ -39,7 +38,6 @@ import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.Pagination
-import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
@@ -82,7 +80,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused")
 open class Iroha2Client(
-    open val peerUrls: MutableList<URL>,
+    open val urls: MutableList<Pair<URL, URL>>,
     open val log: Boolean = false,
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
@@ -144,18 +142,21 @@ open class Iroha2Client(
     private var lastRequestedPeerIdx: Int? = null
 
     // Round-robin load balancing
-    protected fun getPeerUrl() = when (lastRequestedPeerIdx) {
-        null -> peerUrls.first().also { lastRequestedPeerIdx = 0 }
+    protected fun getTelemetryUrl() = getUrls().second
+
+    // Round-robin load balancing
+    protected fun getPeerUrl() = getUrls().first
+
+    private fun getUrls() = when (lastRequestedPeerIdx) {
+        null -> urls.first().also { lastRequestedPeerIdx = 0 }
         else -> {
             lastRequestedPeerIdx = when (lastRequestedPeerIdx) {
-                peerUrls.size - 1 -> 0
+                urls.size - 1 -> 0
                 else -> lastRequestedPeerIdx!! + 1
             }
-            peerUrls[lastRequestedPeerIdx!!]
+            urls[lastRequestedPeerIdx!!]
         }
     }
-
-    fun addPeer(id: PeerId) = peerUrls.add(URL(id.address.asString()))
 
     /**
      * Send a request to Iroha2 and extract payload.

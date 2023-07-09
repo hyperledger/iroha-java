@@ -14,10 +14,10 @@ import java.net.URL
  */
 @Suppress("unused")
 open class AdminIroha2Client(
-    peerUrls: MutableList<URL>,
+    urls: MutableList<Pair<URL, URL>>,
     log: Boolean = false,
     credentials: String? = null,
-) : Iroha2Client(peerUrls, log, credentials) {
+) : Iroha2Client(urls, log, credentials) {
 
     /**
      * Send metrics request
@@ -73,15 +73,6 @@ open class AdminIroha2Client(
     }
 
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
-
-    private fun getTelemetryUrl() = getPeerUrl().let { peerUrl ->
-        URL(
-            peerUrl.protocol,
-            peerUrl.host,
-            peerUrl.port + 1,
-            peerUrl.file,
-        )
-    }
 
     private suspend inline fun <reified T, reified B> config(body: B): T {
         val response: HttpResponse = client.get("${getPeerUrl()}$CONFIGURATION_ENDPOINT") {

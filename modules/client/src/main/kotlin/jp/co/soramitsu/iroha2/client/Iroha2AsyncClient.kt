@@ -13,12 +13,12 @@ import java.util.concurrent.CompletableFuture
  */
 @Suppress("unused")
 class Iroha2AsyncClient @JvmOverloads constructor(
-    peerUrls: MutableList<URL>,
+    urls: MutableList<Pair<URL, URL>>,
     log: Boolean = false,
     credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,
     eventReadMaxAttempts: Int = 10,
-) : Iroha2Client(peerUrls, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
+) : Iroha2Client(urls, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
 
     /**
      * Send a request to Iroha2 and extract payload.
