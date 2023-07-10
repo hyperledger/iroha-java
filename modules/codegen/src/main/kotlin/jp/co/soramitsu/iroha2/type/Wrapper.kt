@@ -19,7 +19,7 @@ abstract class WrapperType(override val name: String, open val innerType: TypeNe
 abstract class IterableType(
     override val name: String,
     override val innerType: TypeNest,
-    open var sorted: Boolean
+    open var sorted: Boolean,
 ) : WrapperType(name, innerType)
 
 /**
@@ -27,7 +27,7 @@ abstract class IterableType(
  */
 data class OptionType(
     override val name: String,
-    override val innerType: TypeNest
+    override val innerType: TypeNest,
 ) : WrapperType(name, innerType)
 
 /**
@@ -36,7 +36,7 @@ data class OptionType(
 data class VecType(
     override val name: String,
     override val innerType: TypeNest,
-    override var sorted: Boolean = false
+    override var sorted: Boolean = false,
 ) : IterableType(name, innerType, sorted)
 
 /**
@@ -45,7 +45,7 @@ data class VecType(
 data class SetType(
     override val name: String,
     override val innerType: TypeNest,
-    override var sorted: Boolean = false
+    override var sorted: Boolean = false,
 ) : IterableType(name, innerType, sorted)
 
 /**
@@ -55,7 +55,7 @@ data class ArrayType(
     override val name: String,
     override val innerType: TypeNest,
     val size: Int,
-    override var sorted: Boolean = false
+    override var sorted: Boolean = false,
 ) : IterableType(name, innerType, sorted)
 
 /**
@@ -63,7 +63,7 @@ data class ArrayType(
  */
 data class CompactType(
     override val name: String,
-    override val innerType: TypeNest
+    override val innerType: TypeNest,
 ) : WrapperType(name, innerType)
 
 /**
@@ -72,5 +72,5 @@ data class CompactType(
 data class FixedPointType(
     override val name: String,
     override val innerType: TypeNest,
-    val decimalPlaces: Int
+    val decimalPlaces: Int,
 ) : WrapperType(name, innerType)

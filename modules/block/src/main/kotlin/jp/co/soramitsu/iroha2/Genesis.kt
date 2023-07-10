@@ -27,7 +27,7 @@ open class Genesis(open val block: RawGenesisBlock) {
         path,
         asJson().toByteArray(Charsets.UTF_8),
         StandardOpenOption.TRUNCATE_EXISTING,
-        StandardOpenOption.CREATE
+        StandardOpenOption.CREATE,
     )
 
     /**
@@ -91,16 +91,16 @@ open class Genesis(open val block: RawGenesisBlock) {
 
                     else -> -1
                 }
-            }
+            },
         )
 
         private fun IdentifiableBox.toRegisterBox(metadata: Metadata) = when (this) {
             is IdentifiableBox.NewAccount -> RegistrableBox.Account(
-                NewAccount(this.newAccount.id, this.newAccount.signatories, metadata)
+                NewAccount(this.newAccount.id, this.newAccount.signatories, metadata),
             )
 
             is IdentifiableBox.NewDomain -> RegistrableBox.Domain(
-                NewDomain(this.newDomain.id, this.newDomain.logo, metadata)
+                NewDomain(this.newDomain.id, this.newDomain.logo, metadata),
             )
 
             is IdentifiableBox.NewAssetDefinition -> RegistrableBox.AssetDefinition(
@@ -108,8 +108,8 @@ open class Genesis(open val block: RawGenesisBlock) {
                     this.newAssetDefinition.id,
                     this.newAssetDefinition.valueType,
                     this.newAssetDefinition.mintable,
-                    metadata = metadata
-                )
+                    metadata = metadata,
+                ),
             )
 
             else -> throw IrohaSdkException("Unexpected type ${this::class}")
@@ -118,7 +118,7 @@ open class Genesis(open val block: RawGenesisBlock) {
         private fun MutableMap<Any, Metadata>.putMergedMetadata(idBox: IdentifiableBox) {
             fun MutableMap<Any, Metadata>.putOrMerge(
                 id: Any,
-                metadata: Metadata
+                metadata: Metadata,
             ) = when (val value = this[id]) {
                 null -> this[id] = metadata
                 else -> {
@@ -136,7 +136,7 @@ open class Genesis(open val block: RawGenesisBlock) {
                 is IdentifiableBox.NewDomain -> this.putOrMerge(idBox.newDomain.id, idBox.newDomain.metadata)
                 is IdentifiableBox.NewAssetDefinition -> this.putOrMerge(
                     idBox.newAssetDefinition.id,
-                    idBox.newAssetDefinition.metadata
+                    idBox.newAssetDefinition.metadata,
                 )
 
                 else -> {}
@@ -144,7 +144,7 @@ open class Genesis(open val block: RawGenesisBlock) {
         }
 
         private fun MutableSet<InstructionBox>.findIsiToReplace(
-            metadata: Map<Any, Metadata>
+            metadata: Map<Any, Metadata>,
         ): MutableMap<Metadata, MutableList<InstructionBox.Register>> {
             val isiToReplace = mutableMapOf<Metadata, MutableList<InstructionBox.Register>>()
 

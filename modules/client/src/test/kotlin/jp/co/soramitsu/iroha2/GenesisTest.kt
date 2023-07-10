@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test
 
 class GenesisTest : IrohaTest<Iroha2Client>(
     account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR
+    keyPair = ALICE_KEYPAIR,
 ) {
     companion object {
         private val ALICE_KEYPAIR = keyPairFromHex(
             "cc25624d62896d3a0bfd8940f928dc2abf27cc57cefeb442aa96d9081aae58a1",
-            "3bac34cda9e3763fa069c1198312d1ec73b53023b8180c822ac355435edc4a24"
+            "3bac34cda9e3763fa069c1198312d1ec73b53023b8180c822ac355435edc4a24",
         )
     }
 

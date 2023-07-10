@@ -53,7 +53,7 @@ class TypeResolver(private val schemaParser: SchemaParser) {
         IntResolver,
         SetResolver,
         FixedPointResolver,
-        QueryResolver
+        QueryResolver,
     )
 
     /**
@@ -89,7 +89,9 @@ object BooleanResolver : Resolver<BooleanType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): BooleanType? {
         return if (name == "bool") {
             BooleanType
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -113,7 +115,7 @@ object SortedMapResolver : Resolver<MapType> {
             name,
             schemaParser.createAndGetNest(wildcards[0]),
             schemaParser.createAndGetNest(wildcards[1]),
-            true
+            true,
         )
     }
 }
@@ -139,7 +141,7 @@ abstract class WrapperResolver<T : Type>(open val wrapperName: String) : Resolve
  * Basic resolver for iterable types
  */
 abstract class SortedWrapperResolver<T : IterableType>(
-    override val wrapperName: String
+    override val wrapperName: String,
 ) : WrapperResolver<T>(wrapperName) {
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): T? {
@@ -159,7 +161,7 @@ object SortedVectorResolver : SortedWrapperResolver<VecType>("SortedVec") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
-        sorted: Boolean
+        sorted: Boolean,
     ) = VecType(name, innerType, sorted)
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
@@ -181,7 +183,7 @@ object VectorResolver : SortedWrapperResolver<VecType>("Vec") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
-        sorted: Boolean
+        sorted: Boolean,
     ) = VecType(name, innerType, sorted)
 
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): VecType? {
@@ -201,7 +203,7 @@ object SetResolver : WrapperResolver<SetType>("BTreeSet") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
-        sorted: Boolean
+        sorted: Boolean,
     ) = SetType(name, innerType, sorted)
 }
 
@@ -226,7 +228,7 @@ object OptionResolver : WrapperResolver<OptionType>("Option") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
-        sorted: Boolean
+        sorted: Boolean,
     ) = OptionType(name, innerType)
 }
 
@@ -237,7 +239,7 @@ object CompactResolver : WrapperResolver<CompactType>("Compact") {
     override fun createWrapper(
         name: String,
         innerType: TypeNest,
-        sorted: Boolean
+        sorted: Boolean,
     ) = CompactType(name, innerType)
 }
 
@@ -254,11 +256,13 @@ object EnumResolver : Resolver<EnumType> {
                 EnumType.Variant(
                     (it["tag"] ?: throw IrohaSdkException("Enum name not found")) as String,
                     (it["discriminant"] ?: throw IrohaSdkException("Enum discriminant not found")) as Int,
-                    variantProperty?.let(schemaParser::createAndGetNest)
+                    variantProperty?.let(schemaParser::createAndGetNest),
                 )
             }
             EnumType(name, generics, variants)
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -269,14 +273,16 @@ object TupleStructResolver : Resolver<TupleStructType> {
     override fun resolve(
         name: String,
         typeValue: Any?,
-        schemaParser: SchemaParser
+        schemaParser: SchemaParser,
     ): TupleStructType? {
         return if (typeValue is Map<*, *> && typeValue["Tuple"] != null) {
             val components = typeValue["Tuple"] as List<String>
             val children = components.map(schemaParser::createAndGetNest)
             val generics = extractGeneric(name, schemaParser)
             TupleStructType(name, generics, children)
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -295,7 +301,9 @@ object StructResolver : Resolver<StructType> {
             }
             val generics = extractGeneric(name, schemaParser)
             StructType(name, generics, properties)
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -311,7 +319,9 @@ object OneStringStructResolver : Resolver<StructType> {
             }
             val generics = extractGeneric(name, schemaParser)
             StructType(name, generics, properties)
-        } else null
+        } else {
+            null
+        }
     }
 
     private fun String.toFieldName() = this.replaceFirstChar { it.lowercase() }.let { name ->
@@ -336,7 +346,9 @@ object QueryResolver : Resolver<StructType> {
         return if (name.startsWith("Find") && typeValue == null) {
             val generics = extractGeneric(name, schemaParser)
             StructType(name, generics, emptyMap())
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -347,7 +359,9 @@ object StringResolver : Resolver<StringType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StringType? {
         return if (name.endsWith("String")) {
             StringType
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -397,7 +411,9 @@ object FixedPointResolver : Resolver<FixedPointType> {
             val base = schemaParser.createAndGetNest(members["base"]!! as String)
             val decimalPlaces = members["decimal_places"]!! as Int
             FixedPointType(name, base, decimalPlaces)
-        } else null
+        } else {
+            null
+        }
     }
 }
 

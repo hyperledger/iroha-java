@@ -25,7 +25,7 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
                 .addModifiers(KModifier.OVERRIDE)
                 .returns(Int::class)
                 .addCode("return DISCRIMINANT")
-                .build()
+                .build(),
         )
     }
 
@@ -35,14 +35,14 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
             for (property in blueprint.properties) {
                 constructorBuilder.addParameter(
                     ParameterSpec.builder(property.name, property.typeName)
-                        .build()
+                        .build(),
                 )
                 clazz.addProperty(
                     PropertySpec.builder(
                         property.name,
-                        property.typeName
+                        property.typeName,
                     ).initializer(property.name)
-                        .build()
+                        .build(),
                 )
             }
             clazz.primaryConstructor(constructorBuilder.build())
@@ -51,13 +51,13 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
 
     override fun implCompanions(
         blueprint: EnumVariantBlueprint,
-        clazz: TypeSpec.Builder
+        clazz: TypeSpec.Builder,
     ): TypeSpec.Builder {
         return super.implCompanions(blueprint, clazz)
             .addProperty(
                 PropertySpec.builder("DISCRIMINANT", Int::class, KModifier.CONST)
                     .initializer("%L", blueprint.discriminant)
-                    .build()
+                    .build(),
             )
     }
 
@@ -71,7 +71,7 @@ object EnumVariantGenerator : AbstractGenerator<EnumVariantBlueprint>() {
             className.parameterizedBy(
                 generics.map {
                     resolveKotlinType(it.requireValue())
-                }
+                },
             ).also { clazz.superclass(it) }
         } else {
             clazz.superclass(className)

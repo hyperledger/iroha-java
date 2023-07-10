@@ -4,10 +4,10 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 
 /**
- * SCALE codec reader for Java enum values. 
+ * SCALE codec reader for Java enum values.
  *
  * The reader reads one byte and returns a Enum value with the equal Ordinal value.
- * 
+ *
  * If you need to read an enumeration with assigned value, i.e. Rust style enum, you should use [UnionReader] instead.
  *
  * @param <T> type of Enum

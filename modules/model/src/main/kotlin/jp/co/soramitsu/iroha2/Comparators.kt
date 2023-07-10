@@ -44,7 +44,7 @@ fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it
 fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
     AssetDefinitionId.comparator().compare(
         o1.definitionId,
-        o2.definitionId
+        o2.definitionId,
     )
 }.thenComparator { o1, o2 ->
     AccountId.comparator().compare(o1.accountId, o2.accountId)
@@ -71,12 +71,12 @@ fun PublicKey.Companion.comparator() = Comparator<PublicKey> { o1, o2 ->
 fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
     PublicKey.comparator().compare(
         o1.signature.publicKey,
-        o2.signature.publicKey
+        o2.signature.publicKey,
     )
 }.thenComparator { o1, o2 ->
     ByteArray::class.comparator().compare(
         o1.signature.payload,
-        o2.signature.payload
+        o2.signature.payload,
     )
 }
 

@@ -54,12 +54,12 @@ fun resolveScaleReadImpl(type: Type): CodeBlock {
         is VecType -> type.scaleReadImpl()
         is SetType -> CodeBlock.of(
             "reader.readSet(reader.readCompactInt()) {%L}",
-            resolveScaleReadImpl(type.innerType.requireValue())
+            resolveScaleReadImpl(type.innerType.requireValue()),
         )
         is MapType -> CodeBlock.of(
             "reader.readMap(reader.readCompactInt(), {%1L}, {%2L})",
             resolveScaleReadImpl(type.key.requireValue()),
-            resolveScaleReadImpl(type.value.requireValue())
+            resolveScaleReadImpl(type.value.requireValue()),
         )
         is U8Type -> CodeBlock.of("reader.readUByte().toShort()")
         is U16Type -> CodeBlock.of("reader.readUint16()")
@@ -127,7 +127,7 @@ private fun ArrayType.scaleReadImpl(): CodeBlock {
         else -> CodeBlock.of(
             "reader.readArray(%L) {%L}",
             this.size,
-            resolveScaleReadImpl(this.innerType.requireValue())
+            resolveScaleReadImpl(this.innerType.requireValue()),
         )
     }
 }
@@ -137,7 +137,7 @@ private fun VecType.scaleReadImpl(): CodeBlock {
         is U8Type -> CodeBlock.of("reader.readByteArray()")
         else -> CodeBlock.of(
             "reader.readVec(reader.readCompactInt()) {%L}",
-            resolveScaleReadImpl(this.innerType.requireValue())
+            resolveScaleReadImpl(this.innerType.requireValue()),
         )
     }
 }
@@ -159,7 +159,7 @@ private fun OptionType.scaleReadImpl(): CodeBlock {
             CodeBlock.of(
                 "reader.readNullable(%1T) as %2T",
                 withoutGenerics(type),
-                type
+                type,
             )
         }
     }
@@ -199,7 +199,7 @@ private fun MapType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
         propName,
         resolveScaleWriteImpl(this.key.requireValue(), CodeBlock.of("key")),
         resolveScaleWriteImpl(this.value.requireValue(), CodeBlock.of("value")),
-        sorted
+        sorted,
     )
 }
 
@@ -214,12 +214,12 @@ private fun OptionType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
     return when (this.innerType.requireValue()) {
         is U32Type, U16Type -> CodeBlock.of(
             "writer.writeNullable(%L)",
-            propName
+            propName,
         )
         else -> CodeBlock.of(
             "writer.writeNullable(%1T, %2L)",
             withoutGenerics(resolveKotlinType(this)),
-            propName
+            propName,
         )
     }
 }
@@ -232,7 +232,7 @@ private fun ArrayType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
             CodeBlock.of(
                 "%1L.forEach { value ->\n%2L\n}",
                 propName,
-                value
+                value,
             )
         }
     }
@@ -256,7 +256,7 @@ private fun VecType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
                 "writer.writeCompact(%1L.size)\n%1L%3L.forEach { value ->\n%2L\n}",
                 propName,
                 value,
-                sorted
+                sorted,
             )
         }
     }
@@ -266,7 +266,7 @@ private fun SetType.scaleWriteImpl(propName: CodeBlock): CodeBlock {
     return CodeBlock.of(
         "writer.writeCompact(%1L.size)\n%1L.forEach { value -> %2L }",
         propName,
-        resolveScaleWriteImpl(this.innerType.requireValue(), CodeBlock.of("value"))
+        resolveScaleWriteImpl(this.innerType.requireValue(), CodeBlock.of("value")),
     )
 }
 

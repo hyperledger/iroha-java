@@ -70,7 +70,7 @@ object Queries {
      * Return the value keyed by the provided [Name] for the given [AccountId]
      */
     fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBox.FindAccountKeyValueByIdAndKey(
-        FindAccountKeyValueByIdAndKey(accountId.evaluatesTo(), key.evaluatesTo())
+        FindAccountKeyValueByIdAndKey(accountId.evaluatesTo(), key.evaluatesTo()),
     )
 
     /**
@@ -82,14 +82,14 @@ object Queries {
      * Return all the accounts that belong to a specific domain [DomainId]
      */
     fun findAccountsByDomainId(domainId: DomainId) = QueryBox.FindAccountsByDomainId(
-        FindAccountsByDomainId(domainId.evaluatesTo())
+        FindAccountsByDomainId(domainId.evaluatesTo()),
     )
 
     /**
      * Return all the accounts that belong to a specific asset definition [AssetDefinitionId]
      */
     fun findAccountsWithAsset(definitionId: AssetDefinitionId) = QueryBox.FindAccountsWithAsset(
-        FindAccountsWithAsset(definitionId.evaluatesTo())
+        FindAccountsWithAsset(definitionId.evaluatesTo()),
     )
 
     /**
@@ -106,7 +106,7 @@ object Queries {
      * Return all the assets that are registered in the given domain [DomainId]
      */
     fun findAssetsByDomainId(domainId: DomainId) = QueryBox.FindAssetsByDomainId(
-        FindAssetsByDomainId(domainId.evaluatesTo())
+        FindAssetsByDomainId(domainId.evaluatesTo()),
     )
 
     /**
@@ -118,14 +118,14 @@ object Queries {
      * Return all the assets that belong to a given [AccountId]
      */
     fun findAssetsByAccountId(accountId: AccountId) = QueryBox.FindAssetsByAccountId(
-        FindAssetsByAccountId(accountId.evaluatesTo())
+        FindAssetsByAccountId(accountId.evaluatesTo()),
     )
 
     /**
      * Search for all the assets that have the given [AssetDefinitionId]
      */
     fun findAssetsByAssetDefinitionId(assetDefinition: AssetDefinitionId) = QueryBox.FindAssetsByAssetDefinitionId(
-        FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo())
+        FindAssetsByAssetDefinitionId(assetDefinition.evaluatesTo()),
     )
 
     /**
@@ -133,12 +133,12 @@ object Queries {
      */
     fun findAssetsByDomainIdAndAssetDefinitionId(
         domainId: DomainId,
-        assetDefinition: AssetDefinitionId
+        assetDefinition: AssetDefinitionId,
     ) = QueryBox.FindAssetsByDomainIdAndAssetDefinitionId(
         FindAssetsByDomainIdAndAssetDefinitionId(
             domainId.evaluatesTo(),
-            assetDefinition.evaluatesTo()
-        )
+            assetDefinition.evaluatesTo(),
+        ),
     )
 
     /**
@@ -150,23 +150,23 @@ object Queries {
      * Return the asset quantity for the given asset with [AssetId]
      */
     fun findAssetQuantityById(assetId: AssetId) = QueryBox.FindAssetQuantityById(
-        FindAssetQuantityById(assetId.evaluatesTo())
+        FindAssetQuantityById(assetId.evaluatesTo()),
     )
 
     /**
      * Return the asset quantity for the given asset with [AssetDefinitionId]
      */
     fun findTotalAssetQuantityByAssetDefinitionId(
-        definitionId: AssetDefinitionId
+        definitionId: AssetDefinitionId,
     ) = QueryBox.FindTotalAssetQuantityByAssetDefinitionId(
-        FindTotalAssetQuantityByAssetDefinitionId(definitionId.evaluatesTo())
+        FindTotalAssetQuantityByAssetDefinitionId(definitionId.evaluatesTo()),
     )
 
     /**
      * Return the value keyed by the given [Name] in the metadata of the asset corresponding to the given [AssetId]
      */
     fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBox.FindAssetKeyValueByIdAndKey(
-        FindAssetKeyValueByIdAndKey(assetId.evaluatesTo(), key.evaluatesTo())
+        FindAssetKeyValueByIdAndKey(assetId.evaluatesTo(), key.evaluatesTo()),
     )
 
     /**
@@ -175,19 +175,19 @@ object Queries {
      */
     fun findAssetDefinitionKeyValueByIdAndKey(
         assetDefinition: AssetDefinitionId,
-        key: Name
+        key: Name,
     ) = QueryBox.FindAssetDefinitionKeyValueByIdAndKey(
         FindAssetDefinitionKeyValueByIdAndKey(
             assetDefinition.evaluatesTo(),
-            key.evaluatesTo()
-        )
+            key.evaluatesTo(),
+        ),
     )
 
     /**
      * Return the asset definition corresponding to the given [AssetDefinitionId]
      */
     fun findAssetDefinitionById(definitionId: AssetDefinitionId) = QueryBox.FindAssetDefinitionById(
-        FindAssetDefinitionById(definitionId.evaluatesTo())
+        FindAssetDefinitionById(definitionId.evaluatesTo()),
     )
 
     /**
@@ -209,21 +209,21 @@ object Queries {
      * Return the full set of transactions that an account with [AccountId] has submitted throughout the existence of the blockchain
      */
     fun findTransactionsByAccountId(accountId: AccountId) = QueryBox.FindTransactionsByAccountId(
-        FindTransactionsByAccountId(accountId.evaluatesTo())
+        FindTransactionsByAccountId(accountId.evaluatesTo()),
     )
 
     /**
      * Return all the permission tokens granted to the specified [AccountId]
      */
     fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBox.FindPermissionTokensByAccountId(
-        FindPermissionTokensByAccountId(accountId.evaluatesTo())
+        FindPermissionTokensByAccountId(accountId.evaluatesTo()),
     )
 
     /**
      * Return all permission token definitions
      */
     fun findAllPermissionTokenDefinitions() = QueryBox.FindAllPermissionTokenDefinitions(
-        FindAllPermissionTokenDefinitions()
+        FindAllPermissionTokenDefinitions(),
     )
 
     /**
@@ -235,7 +235,7 @@ object Queries {
      * Return all the role IDs that are attached to the given [AccountId]
      */
     fun findRolesByAccountId(accountId: AccountId) = QueryBox.FindRolesByAccountId(
-        FindRolesByAccountId(accountId.evaluatesTo())
+        FindRolesByAccountId(accountId.evaluatesTo()),
     )
 
     /**
@@ -257,14 +257,14 @@ object Queries {
      * Return the value keyed by the given [Name] in the domain corresponding to the given [DomainId]
      */
     fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name) = QueryBox.FindDomainKeyValueByIdAndKey(
-        FindDomainKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo())
+        FindDomainKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo()),
     )
 
     /**
      * Return the value corresponding to the given key [Name] in the metadata of the trigger with the given [TriggerId]
      */
     fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name) = QueryBox.FindTriggerKeyValueByIdAndKey(
-        FindTriggerKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo())
+        FindTriggerKeyValueByIdAndKey(id.evaluatesTo(), key.evaluatesTo()),
     )
 
     /**

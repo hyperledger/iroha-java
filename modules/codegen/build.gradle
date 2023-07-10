@@ -12,11 +12,11 @@ dependencies {
 
 task generate(type: JavaExec) {
     group = 'codegen'
-    main = 'jp.co.soramitsu.iroha2.EntryPoint'
+    mainClass = 'jp.co.soramitsu.iroha2.EntryPoint'
     classpath = sourceSets.main.runtimeClasspath
-    //folder where to write generated classes
+    // Folder where to write generated classes
     args "outputPath=../model/src/main/kotlin"
-    //schema file expected to be find in classpath
+    // Schema file expected to be found in classpath
     args "schemaFileName=schema.json"
     finalizedBy ':model:formatKotlin'
 }
