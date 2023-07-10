@@ -138,8 +138,16 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val properties = testInstance::class.memberProperties
 
         val urls = File(this.dockerComposeFile).readDockerComposeData()
-        val apiUrl = this.apiUrl.takeIf { it.isNotEmpty() } ?: urls.first
-        val telemetryUrl = this.telemetryUrl.takeIf { it.isNotEmpty() } ?: urls.second
+        val apiUrls = when (this.dockerComposeFile.isEmpty()) {
+            true -> this.apiUrls.toList()
+            else -> urls!!.first
+        }
+        val telemetryUrls = when (this.dockerComposeFile.isEmpty()) {
+            true -> this.telemetryUrls.toList()
+            else -> urls!!.second
+        }
+
+        val mutableUrls = apiUrls.mapIndexed { idx, url -> URL(url) to URL(telemetryUrls[idx]) }.toMutableList()
 
         // inject `KeyPair` if it is declared in test class
         setPropertyValue(properties, testInstance) { keyPairFromHex(this.publicKey, this.privateKey) }
@@ -149,32 +157,37 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(mutableListOf(URL(apiUrl) to URL(this.telemetryUrl)), log = true)
+            Iroha2Client(mutableUrls, log = true)
         }
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(mutableListOf(URL(apiUrl) to URL(telemetryUrl)), log = true)
+            AdminIroha2Client(mutableUrls, log = true)
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(mutableListOf(URL(apiUrl) to URL(this.telemetryUrl)), log = true)
+            Iroha2AsyncClient(mutableUrls, log = true)
         }
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(mutableListOf(URL(apiUrl) to URL(telemetryUrl)), log = true)
+            AdminIroha2AsyncClient(mutableUrls, log = true)
         }
     }
 
-    private fun File.readDockerComposeData(): Pair<String?, String?> {
-        val all = yaml.load<Map<String, *>>(this.inputStream())["services"]
-            ?.cast<Map<String, *>>()?.get("iroha")
-            ?.cast<Map<String, *>>()?.get("environment")
-            ?.cast<Map<String, String>>() ?: throw IllegalArgumentException("Invalid docker-compose file")
-        val apiUrl = all["TORII_API_URL"]?.replace(IrohaContainer.NETWORK_ALIAS, "localhost")
-        val telemetryUrl = all["TORII_TELEMETRY_URL"]?.replace(IrohaContainer.NETWORK_ALIAS, "localhost")
+    private fun File.readDockerComposeData(): Pair<List<String>, List<String>>? {
+        fun String?.convertUrl() = this
+            ?.replace("${IrohaContainer.NETWORK_ALIAS}[0-9]*".toRegex(), "localhost")
+            ?.let { "http://$it" }
+            ?: throw IllegalArgumentException("Invalid docker-compose file")
 
-        return "http://$apiUrl" to "http://$telemetryUrl"
+        val all = runCatching {
+            yaml.load<Map<String, *>>(this.inputStream())["services"]
+                ?.cast<Map<String, *>>()?.values?.toList()
+                ?.map { it?.cast<Map<String, *>>()?.get("environment") }
+                ?.cast<List<Map<String, String>>>() ?: return null
+        }.onFailure { return null }.getOrThrow()
+
+        return all.map { it["TORII_API_URL"].convertUrl() } to all.map { it["TORII_TELEMETRY_URL"].convertUrl() }
     }
 
     private inline fun <reified V : Any> setPropertyValue(

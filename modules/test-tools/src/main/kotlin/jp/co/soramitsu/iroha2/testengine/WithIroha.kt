@@ -30,8 +30,8 @@ annotation class WithIroha(
 @Test
 @Inherited
 annotation class WithIrohaManual(
-    val apiUrl: String = "",
-    val telemetryUrl: String = "",
+    val apiUrls: Array<String> = [],
+    val telemetryUrls: Array<String> = [],
     val account: String = "",
     val publicKey: String = "",
     val privateKey: String = "",
