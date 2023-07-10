@@ -104,30 +104,28 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(containers.first().getApiUrl(), log = true)
+            Iroha2Client(containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
+                containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(),
                 log = true,
             ).also { utilizedResources.add(it) }
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(containers.first().getApiUrl(), log = true)
+            Iroha2AsyncClient(containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(), log = true)
                 .also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
+                containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(),
                 log = true,
             ).also { utilizedResources.add(it) }
         }
@@ -150,19 +148,21 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         setPropertyValue(properties, testInstance) { this.account.asAccountId() }
 
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2Client(URL(apiUrl), log = true) }
-
+        setPropertyValue(properties, testInstance) {
+            Iroha2Client(mutableListOf(URL(apiUrl) to URL(this.telemetryUrl)), log = true)
+        }
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(URL(apiUrl), URL(telemetryUrl), log = true)
+            AdminIroha2Client(mutableListOf(URL(apiUrl) to URL(telemetryUrl)), log = true)
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(URL(apiUrl), log = true) }
-
+        setPropertyValue(properties, testInstance) {
+            Iroha2AsyncClient(mutableListOf(URL(apiUrl) to URL(this.telemetryUrl)), log = true)
+        }
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(URL(apiUrl), URL(telemetryUrl), log = true)
+            AdminIroha2AsyncClient(mutableListOf(URL(apiUrl) to URL(telemetryUrl)), log = true)
         }
     }
 

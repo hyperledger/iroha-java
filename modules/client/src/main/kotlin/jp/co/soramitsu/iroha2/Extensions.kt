@@ -77,9 +77,9 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
         AssetId(
             AssetDefinitionId(
                 parts[0].asName(),
-                domainId ?: accountId.domainId
+                domainId ?: accountId.domainId,
             ),
-            accountId
+            accountId,
         )
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
@@ -237,22 +237,22 @@ fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): Versi
             val signatures = keypairs.map {
                 Signature(
                     it.public.toIrohaPublicKey(),
-                    it.private.sign(encodedPayload)
+                    it.private.sign(encodedPayload),
                 ).asSignatureOf<TransactionPayload>()
             }.toSet()
 
             VersionedSignedTransaction.V1(
                 SignedTransaction(
                     signedTransaction.payload,
-                    signedTransaction.signatures.plus(signatures)
-                )
+                    signedTransaction.signatures.plus(signatures),
+                ),
             )
         }
     }
 }
 
 fun SignaturesOfOfTransactionPayload.plus(
-    signatures: Set<SignatureOf<TransactionPayload>>
+    signatures: Set<SignatureOf<TransactionPayload>>,
 ) = SignaturesOfOfTransactionPayload(this.signatures.plus(signatures))
 
 /**
@@ -304,7 +304,7 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
     is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
-        this.permissionTokenDefinition
+        this.permissionTokenDefinition,
     )
 
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
@@ -349,7 +349,7 @@ fun TriggerId.asString() = when (this.domainId) {
 fun Parameter.asString() = this.id.name.string + PARAMETER_DELIMITER + this.`val`.cast<Value.String>().string
 
 fun Metadata.merge(extra: Metadata) = Metadata(
-    this.map.toMutableMap().also { it.putAll(extra.map) }
+    this.map.toMutableMap().also { it.putAll(extra.map) },
 )
 
 fun InstructionBox.Register.extractIdentifiableBox() = runCatching {

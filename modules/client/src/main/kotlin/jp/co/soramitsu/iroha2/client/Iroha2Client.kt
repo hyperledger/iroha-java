@@ -80,7 +80,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused")
 open class Iroha2Client(
-    open var peerUrl: URL,
+    open val urls: MutableList<Pair<URL, URL>>,
     open val log: Boolean = false,
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
@@ -139,6 +139,25 @@ open class Iroha2Client(
         }
     }
 
+    private var lastRequestedPeerIdx: Int? = null
+
+    // Round-robin load balancing
+    protected fun getTelemetryUrl() = getUrls().second
+
+    // Round-robin load balancing
+    protected fun getPeerUrl() = getUrls().first
+
+    private fun getUrls() = when (lastRequestedPeerIdx) {
+        null -> urls.first().also { lastRequestedPeerIdx = 0 }
+        else -> {
+            lastRequestedPeerIdx = when (lastRequestedPeerIdx) {
+                urls.size - 1 -> 0
+                else -> lastRequestedPeerIdx!! + 1
+            }
+            urls[lastRequestedPeerIdx!!]
+        }
+    }
+
     /**
      * Send a request to Iroha2 and extract payload.
      */
@@ -156,7 +175,7 @@ open class Iroha2Client(
         sorting: Sorting? = null,
     ): Page<T> {
         logger.debug("Sending query")
-        val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
+        val response: HttpResponse = client.post("${getPeerUrl()}$QUERY_ENDPOINT") {
             setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
             page?.also {
                 parameter("start", it.start)
@@ -181,7 +200,7 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
+        val response: HttpResponse = client.post("${getPeerUrl()}$TRANSACTION_ENDPOINT") {
             setBody(VersionedSignedTransaction.encode(signedTransaction))
         }
         response.body<Unit>()
@@ -212,6 +231,7 @@ open class Iroha2Client(
      */
     fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
         var counter = 0
+        val peerUrl = getPeerUrl()
         client.webSocket(
             host = peerUrl.host,
             port = peerUrl.port,
@@ -254,6 +274,7 @@ open class Iroha2Client(
         val subscriptionRequest = eventSubscriberMessageOf(hash)
         val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
+        val peerUrl = getPeerUrl()
 
         launch {
             client.webSocket(

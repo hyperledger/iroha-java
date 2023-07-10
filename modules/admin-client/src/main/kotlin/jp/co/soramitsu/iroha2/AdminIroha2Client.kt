@@ -14,23 +14,17 @@ import java.net.URL
  */
 @Suppress("unused")
 open class AdminIroha2Client(
-    peerUrl: URL,
-    open var telemetryUrl: URL = URL(
-        peerUrl.protocol,
-        peerUrl.host,
-        DEFAULT_TELEMETRY_PORT,
-        peerUrl.file
-    ),
+    urls: MutableList<Pair<URL, URL>>,
     log: Boolean = false,
-    credentials: String? = null
-) : Iroha2Client(peerUrl, log, credentials) {
+    credentials: String? = null,
+) : Iroha2Client(urls, log, credentials) {
 
     /**
      * Send metrics request
      */
     suspend fun metrics(): String {
         return client
-            .get("$telemetryUrl$METRICS_ENDPOINT")
+            .get("${getTelemetryUrl()}$METRICS_ENDPOINT")
             .body()
     }
 
@@ -39,7 +33,7 @@ open class AdminIroha2Client(
      */
     suspend fun health(): Int {
         return client
-            .get("$peerUrl$HEALTH_ENDPOINT")
+            .get("${getPeerUrl()}$HEALTH_ENDPOINT")
             .status.value
     }
 
@@ -48,7 +42,7 @@ open class AdminIroha2Client(
      */
     suspend fun status(): PeerStatus {
         return client
-            .get("$telemetryUrl$STATUS_ENDPOINT")
+            .get("${getTelemetryUrl()}$STATUS_ENDPOINT")
             .body()
     }
 
@@ -57,7 +51,7 @@ open class AdminIroha2Client(
      */
     suspend fun schema(): String {
         return client
-            .get("$peerUrl$SCHEMA_ENDPOINT")
+            .get("${getTelemetryUrl()}$SCHEMA_ENDPOINT")
             .body()
     }
 
@@ -81,7 +75,7 @@ open class AdminIroha2Client(
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
 
     private suspend inline fun <reified T, reified B> config(body: B): T {
-        val response: HttpResponse = client.get("$peerUrl$CONFIGURATION_ENDPOINT") {
+        val response: HttpResponse = client.get("${getPeerUrl()}$CONFIGURATION_ENDPOINT") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
