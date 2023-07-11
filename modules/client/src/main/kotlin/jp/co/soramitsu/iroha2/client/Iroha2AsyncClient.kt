@@ -54,7 +54,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
     /**
      * Subscribe to track the transaction status
      */
-    suspend fun subscribeToTransactionStatusAsync(
+    fun subscribeToTransactionStatusAsync(
         hash: ByteArray,
     ) = subscribeToTransactionStatus(hash).asCompletableFuture()
 }

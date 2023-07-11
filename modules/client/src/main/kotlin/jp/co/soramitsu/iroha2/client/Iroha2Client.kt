@@ -277,7 +277,7 @@ open class Iroha2Client(
     /**
      * Subscribe to track the transaction status
      */
-    suspend fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
+    fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
 
     /**
      * @param hash - Signed transaction hash
