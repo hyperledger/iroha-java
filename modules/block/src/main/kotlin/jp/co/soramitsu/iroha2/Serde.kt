@@ -141,7 +141,7 @@ val JSON_SERDE by lazy {
             KotlinModule.Builder()
                 .configure(KotlinFeature.NullToEmptyCollection, true)
                 .configure(KotlinFeature.NullToEmptyMap, true)
-                .build()
+                .build(),
         )
 
         mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
@@ -196,8 +196,8 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
             "Id",
             mapper.createObjectNode().set<ObjectNode>(
                 jsonNode.fields().next().key,
-                jsonNode.fields().next().value
-            )
+                jsonNode.fields().next().value,
+            ),
         )
     } else {
         Pair(node.key, node.value)
@@ -215,7 +215,7 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
     val destinationId = mapper.convertValue(destination, IdBox::class.java)
     return GrantBox(
         `object` = grantObject.evaluatesTo().cast(),
-        destinationId = destinationId.evaluatesTo().cast()
+        destinationId = destinationId.evaluatesTo().cast(),
     )
 }
 
@@ -377,19 +377,19 @@ private fun sealedDeserializeMintBox(p: JsonParser, mapper: ObjectMapper): MintB
 
     val newNode = mapper.createObjectNode().set<ObjectNode>(
         jsonNode.fields().next().key,
-        jsonNode.fields().next().value
+        jsonNode.fields().next().value,
     )
     val objectId = mapper.convertValue(
         newNode,
-        Value::class.java
+        Value::class.java,
     ) as Value
     val destination = mapper.convertValue(
         nodes[1],
-        IdBox::class.java
+        IdBox::class.java,
     ) as IdBox
     return MintBox(
         `object` = objectId.evaluatesTo().cast(),
-        destinationId = destination.evaluatesTo().cast()
+        destinationId = destination.evaluatesTo().cast(),
     )
 }
 
@@ -398,7 +398,7 @@ private fun sealedDeserializeNewParameterBox(p: JsonParser, mapper: ObjectMapper
     val parameter = jsonNode.value.asText().asParameter()
 
     return NewParameterBox(
-        parameter = parameter.evaluatesTo().cast()
+        parameter = parameter.evaluatesTo().cast(),
     )
 }
 
@@ -426,7 +426,7 @@ private fun sealedDeserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper)
     return SetKeyValueBox(
         objectId = objectIdArg.evaluatesTo().cast(),
         key = keyArg.evaluatesTo().cast(),
-        value = valueArg.evaluatesTo().cast()
+        value = valueArg.evaluatesTo().cast(),
     )
 }
 
@@ -925,7 +925,7 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
                 clazz.simpleName,
                 memberProperties.first().call(this)
                     ?.cast<RegisterBox>()
-                    ?.`object`?.expression
+                    ?.`object`?.expression,
             )
             gen.writeEndObject()
         }
@@ -955,7 +955,7 @@ private inline fun <reified B> InstructionBox.serializeBox(gen: JsonGenerator) {
 }
 
 private inline fun <reified B> B.serializeBox(
-    gen: JsonGenerator
+    gen: JsonGenerator,
 ) = when (B::class) {
     BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
     MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
@@ -965,11 +965,11 @@ private inline fun <reified B> B.serializeBox(
 }
 
 private fun BurnBox.serializeBox(
-    gen: JsonGenerator
+    gen: JsonGenerator,
 ) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
 
 private fun MintBox.serializeBox(
-    gen: JsonGenerator
+    gen: JsonGenerator,
 ) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
 
 private fun GrantBox.serializeBox(gen: JsonGenerator) {
@@ -995,7 +995,7 @@ private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
 private fun mintBurnSerialize(
     gen: JsonGenerator,
     expression: Expression,
-    destinationId: EvaluatesTo<IdBox>
+    destinationId: EvaluatesTo<IdBox>,
 ) {
     val rawValue = expression
         .cast<Expression.Raw>().value

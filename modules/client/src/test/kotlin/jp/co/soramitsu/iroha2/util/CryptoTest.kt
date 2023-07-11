@@ -44,7 +44,7 @@ class CryptoTest {
                 iterations,
                 futureResults.map { it.await().private.bytes() }
                     .map { ByteArrayWrapper(it) }
-                    .toSet().size
+                    .toSet().size,
             )
         }
     }

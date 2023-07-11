@@ -11,7 +11,7 @@ val dockerClient: DockerClient = DockerClientBuilder.getInstance().build()
 
 suspend fun findFreePorts(
     amount: Int,
-    lock: Boolean = true
+    lock: Boolean = true,
 ): List<Int> {
     fun find(): List<Int> {
         val busyPorts = dockerClient.listContainersCmd().exec().map { container ->

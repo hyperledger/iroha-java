@@ -63,7 +63,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             2,
             DEFAULT_DOMAIN,
             BOB_ACCOUNT,
-            1
+            1,
         )
         var newAssetDefinition = instructions[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
@@ -79,7 +79,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
             2,
             DEFAULT_DOMAIN,
             BOB_ACCOUNT,
-            1
+            1,
         )
         newAssetDefinition = instructions[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
@@ -104,7 +104,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
         height: Long,
         instructionAccountDomain: String,
         instructionAccount: String,
-        instructionSize: Int
+        instructionSize: Int,
     ): List<InstructionBox> {
         val committedBlock = getCommittedBlock(blockMessage)
         assertEquals(height, committedBlock.header.height.toLong())

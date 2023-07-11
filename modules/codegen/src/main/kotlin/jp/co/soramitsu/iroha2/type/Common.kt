@@ -23,7 +23,7 @@ data class MapType(
     override val name: String,
     val key: TypeNest,
     val value: TypeNest,
-    val sortedByKey: Boolean = false
+    val sortedByKey: Boolean = false,
 ) : Type(name) {
     override fun notResolvedTypes(): Set<String> {
         val result = mutableSetOf<String>()

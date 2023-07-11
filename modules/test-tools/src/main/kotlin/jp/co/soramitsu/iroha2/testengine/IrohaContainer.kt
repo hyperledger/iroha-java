@@ -44,6 +44,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
 
         this.config = config
+
         this.withNetwork(config.networkToJoin)
             .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
@@ -68,7 +69,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             }
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
-            .withCopyFileToContainer(
+            .withCopyToContainer(
                 forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR",
             ).also {

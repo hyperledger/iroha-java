@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import jp.co.soramitsu.iroha2.COMMON_SCHEMA_GENERIC_REGEX
 import jp.co.soramitsu.iroha2.DEFINITION_SCHEMA_GENERIC_REGEX
+import kotlin.streams.toList
 
 class SchemaReader {
 
@@ -26,7 +27,7 @@ class SchemaReader {
 
         return ObjectMapper().readValue(
             sb.toString(),
-            object : TypeReference<MutableMap<String, Any>>() {}
+            object : TypeReference<MutableMap<String, Any>>() {},
         )
     }
 
@@ -65,7 +66,7 @@ class SchemaReader {
             "EvaluatesTo",
             "Option",
             "SignatureOf",
-            "HashOf"
+            "HashOf",
         )
     }
 }

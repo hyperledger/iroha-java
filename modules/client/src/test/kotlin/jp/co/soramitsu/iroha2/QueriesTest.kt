@@ -92,7 +92,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find all accounts with filter`(): Unit = runBlocking {
         val filter = QueryFilters.or(
             StringPredicate.Is("alice@wonderland"),
-            StringPredicate.Is("bob@wonderland")
+            StringPredicate.Is("bob@wonderland"),
         )
         QueryBuilder.findAllAccounts(filter)
             .account(ALICE_ACCOUNT_ID)
@@ -150,7 +150,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find account key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAccountKeyValueByIdAndKey(
             NewAccountWithMetadata.ACCOUNT_ID,
-            NewAccountWithMetadata.KEY
+            NewAccountWithMetadata.KEY,
         )
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -276,7 +276,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find assets by domain name and asset definition id`(): Unit = runBlocking {
         QueryBuilder.findAssetsByDomainIdAndAssetDefinitionId(
             DEFAULT_DOMAIN_ID,
-            XOR_DEFINITION_ID
+            XOR_DEFINITION_ID,
         )
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -315,7 +315,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find asset key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetKeyValueByIdAndKey(
             StoreAssetWithMetadata.ASSET_ID,
-            StoreAssetWithMetadata.ASSET_KEY
+            StoreAssetWithMetadata.ASSET_KEY,
         )
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -335,7 +335,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find asset definition key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findAssetDefinitionKeyValueByIdAndKey(
             StoreAssetWithMetadata.DEFINITION_ID,
-            StoreAssetWithMetadata.ASSET_KEY
+            StoreAssetWithMetadata.ASSET_KEY,
         )
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -361,12 +361,12 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
                         StoreAssetWithMetadata.ASSET_KEY,
                         ValuePredicate.Identifiable(
                             StringPredicate.Is(
-                                StoreAssetWithMetadata.ASSET_VALUE.string
-                            )
-                        )
-                    )
-                )
-            )
+                                StoreAssetWithMetadata.ASSET_VALUE.string,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
         )
         QueryBuilder.findAllAssets(filter)
             .account(ALICE_ACCOUNT_ID)
@@ -554,7 +554,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find domain key value by ID and key`(): Unit = runBlocking {
         QueryBuilder.findDomainKeyValueByIdAndKey(
             NewDomainWithMetadata.DOMAIN_ID,
-            NewDomainWithMetadata.KEY
+            NewDomainWithMetadata.KEY,
         ).account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
@@ -809,7 +809,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .also { ids ->
                 assertContains(
                     ids,
-                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID,
                 )
             }
     }
@@ -844,7 +844,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
             .also { roles ->
                 assertContains(
                     roles.map { it.id },
-                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID
+                    AliceHasRoleWithAccessToBobsMetadata.ROLE_ID,
                 )
             }
     }
@@ -877,7 +877,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
     fun `find asset definitions with or filter`(): Unit = runBlocking {
         val definitionId = AliceWithTestAssets.TEST_ASSET_DEFINITION_ID
         val filter = QueryFilters.or(
-            StringPredicate.Is("${definitionId.name.string}#${definitionId.domainId.name.string}")
+            StringPredicate.Is("${definitionId.name.string}#${definitionId.domainId.name.string}"),
         )
         QueryBuilder.findAllAssetsDefinitions(filter)
             .account(ALICE_ACCOUNT_ID)
@@ -892,7 +892,7 @@ class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair 
 
     private suspend fun createAccount(
         name: String,
-        metadata: Map<Name, Value> = mapOf()
+        metadata: Map<Name, Value> = mapOf(),
     ) {
         val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
         client.sendTransaction {
