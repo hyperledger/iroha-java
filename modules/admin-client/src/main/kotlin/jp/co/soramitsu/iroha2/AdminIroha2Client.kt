@@ -32,18 +32,20 @@ open class AdminIroha2Client(
     constructor(
         apiUrl: URL,
         telemetryUrl: URL,
+        peerUrl: URL,
         log: Boolean = false,
         credentials: String? = null,
         balancingHealthCheck: Boolean = true,
-    ) : this(IrohaUrls(apiUrl, telemetryUrl), log, credentials, balancingHealthCheck)
+    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, balancingHealthCheck)
 
     constructor(
         apiUrl: String,
         telemetryUrl: String,
+        peerUrl: String,
         log: Boolean = false,
         credentials: String? = null,
         balancingHealthCheck: Boolean = true,
-    ) : this(URL(apiUrl), URL(telemetryUrl), log, credentials, balancingHealthCheck)
+    ) : this(URL(apiUrl), URL(telemetryUrl), URL(peerUrl), log, credentials, balancingHealthCheck)
 
     /**
      * Send metrics request

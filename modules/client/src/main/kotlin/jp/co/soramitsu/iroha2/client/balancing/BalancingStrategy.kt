@@ -6,4 +6,6 @@ interface BalancingStrategy {
     suspend fun getTelemetryUrl(): URL
 
     suspend fun getApiUrl(): URL
+
+    suspend fun getPeerUrl(): URL
 }

@@ -22,7 +22,7 @@ abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(30),
     val network: Network = Network.newNetwork(),
     val account: AccountId,
-    val keyPair: KeyPair
+    val keyPair: KeyPair,
 ) {
     lateinit var client: T
     lateinit var containers: List<IrohaContainer>
@@ -30,7 +30,7 @@ abstract class IrohaTest<T : Iroha2Client>(
     suspend fun Iroha2Client.tx(
         account: AccountId? = null,
         keyPair: KeyPair? = null,
-        builder: TransactionBuilder.() -> Unit = {}
+        builder: TransactionBuilder.() -> Unit = {},
     ) {
         val finalAccountId = account ?: this@IrohaTest.account
         val finalKeyPair = keyPair ?: this@IrohaTest.keyPair

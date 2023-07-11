@@ -31,7 +31,8 @@ annotation class WithIroha(
 @Inherited
 annotation class WithIrohaManual(
     val apiUrl: String,
-    val telemetryUrl: String
+    val telemetryUrl: String,
+    val peerUrl: String,
 )
 
 /**

@@ -3,15 +3,18 @@ package jp.co.soramitsu.iroha2.client.balancing
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import java.net.URL
 
+/**
+ * Round-robin load balancing strategy
+ */
 open class RoundRobinStrategy(private val urls: List<IrohaUrls>) : BalancingStrategy {
 
     private var lastRequestedPeerIdx: Int? = null
 
-    // Round-robin load balancing
     override suspend fun getTelemetryUrl(): URL = getUrls().telemetryUrl
 
-    // Round-robin load balancing
     override suspend fun getApiUrl(): URL = getUrls().apiUrl
+
+    override suspend fun getPeerUrl(): URL = getUrls().peerUrl
 
     private fun getUrls() = when (lastRequestedPeerIdx) {
         null -> urls.first().also { lastRequestedPeerIdx = 0 }

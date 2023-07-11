@@ -116,7 +116,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>(
                     QueryBuilder.findAllPeers()
                         .account(ALICE_ACCOUNT_ID)
                         .buildSigned(ALICE_KEYPAIR)
-                        .let { Iroha2Client(container.getApiUrl(), container.getTelemetryUrl()).sendQuery(it) }
+                        .let { Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl()).sendQuery(it) }
                         .also { peers -> assertEquals(peers.size, peersCount) }
                         .also { return@repeat }
                 }

@@ -7,4 +7,6 @@ open class WithoutBalancingStrategy(private val urls: List<IrohaUrls>) : Balanci
     override suspend fun getTelemetryUrl(): URL = urls.first().telemetryUrl
 
     override suspend fun getApiUrl(): URL = urls.first().apiUrl
+
+    override suspend fun getPeerUrl(): URL = urls.first().peerUrl
 }

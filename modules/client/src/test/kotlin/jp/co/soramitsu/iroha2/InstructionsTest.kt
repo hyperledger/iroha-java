@@ -75,7 +75,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>(
 ) {
     @Test
     @Disabled // EXAMPLE
-    @WithIrohaManual("http://localhost:8080", "http://localhost:8180")
+    @WithIrohaManual("http://localhost:8080", "http://localhost:8180", "http://localhost:1337")
     fun `register domain with manual initialized Iroha`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
         client.sendTransaction {
