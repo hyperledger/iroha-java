@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
@@ -40,7 +41,7 @@ class GenesisTest : IrohaTest<Iroha2Client>(
             this.genesisPath = path
         }.also { it.start() }
 
-        val client = Iroha2Client(mutableListOf(container.getApiUrl() to container.getTelemetryUrl()), true)
+        val client = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), true)
         client.checkAliceAndBobExists()
     }
 

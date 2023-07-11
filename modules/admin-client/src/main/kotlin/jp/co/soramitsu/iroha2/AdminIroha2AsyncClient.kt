@@ -1,14 +1,14 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import kotlinx.coroutines.future.future
-import java.net.URL
 
 /**
  * Extension of [AdminIroha2Client] for Java. Functionality for monitoring peers and configuration support
  */
 @Suppress("unused")
 class AdminIroha2AsyncClient @JvmOverloads constructor(
-    urls: MutableList<Pair<URL, URL>>,
+    urls: MutableList<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
 ) : AdminIroha2Client(urls, log, credentials) {

@@ -138,11 +138,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Iroha container stopped")
     }
 
-    fun getP2pUrl(): URL = URL("http", containerIpAddress, p2pPort, "")
+    fun getP2pUrl(): URL = URL("http", host, p2pPort, "")
 
-    fun getApiUrl(): URL = URL("http", containerIpAddress, apiPort, "")
+    fun getApiUrl(): URL = URL("http", host, apiPort, "")
 
-    fun getTelemetryUrl(): URL = URL("http", containerIpAddress, telemetryPort, "")
+    fun getTelemetryUrl(): URL = URL("http", host, telemetryPort, "")
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 

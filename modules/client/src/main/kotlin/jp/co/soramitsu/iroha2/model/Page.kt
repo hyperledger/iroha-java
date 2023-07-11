@@ -1,4 +1,4 @@
-package jp.co.soramitsu.iroha2
+package jp.co.soramitsu.iroha2.model
 
 import jp.co.soramitsu.iroha2.generated.Pagination
 import java.math.BigInteger

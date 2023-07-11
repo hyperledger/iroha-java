@@ -21,6 +21,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
+import jp.co.soramitsu.iroha2.model.Page
 import java.math.BigInteger
 
 /**
