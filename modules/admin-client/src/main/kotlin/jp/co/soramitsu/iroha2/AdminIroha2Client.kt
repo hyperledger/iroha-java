@@ -9,6 +9,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.model.IrohaUrls
+import kotlinx.coroutines.runBlocking
 import java.net.URL
 
 /**
@@ -97,12 +98,12 @@ open class AdminIroha2Client(
         return response.body()
     }
 
-    override suspend fun getApiUrl(): URL = when (balancingHealthCheck) {
+    override fun getApiUrl(): URL = when (balancingHealthCheck) {
         true -> {
             var attempt = 0
             var url = super.getApiUrl()
 
-            while (health(url) != HttpStatusCode.OK.value) {
+            while (runBlocking { health(url) } != HttpStatusCode.OK.value) {
                 url = super.getApiUrl()
                 if (++attempt >= urls.size) {
                     throw IrohaClientException("All peers are unhealthy")

@@ -194,7 +194,7 @@ open class Iroha2Client(
         sorting: Sorting? = null,
     ): Page<T> {
         logger.debug("Sending query")
-        val response: HttpResponse = client.post("${getPeerUrl()}$QUERY_ENDPOINT") {
+        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
             page?.also {
                 parameter("start", it.start)
@@ -219,7 +219,7 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.post("${getPeerUrl()}$TRANSACTION_ENDPOINT") {
+        val response: HttpResponse = client.post("${getApiUrl()}$TRANSACTION_ENDPOINT") {
             setBody(VersionedSignedTransaction.encode(signedTransaction))
         }
         response.body<Unit>()
@@ -250,7 +250,7 @@ open class Iroha2Client(
      */
     fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
         var counter = 0
-        val peerUrl = getPeerUrl()
+        val peerUrl = getApiUrl()
         client.webSocket(
             host = peerUrl.host,
             port = peerUrl.port,
@@ -283,17 +283,17 @@ open class Iroha2Client(
      * @param hash - Signed transaction hash
      * @param afterSubscription - Expression that is invoked after subscription
      */
-    private suspend fun subscribeToTransactionStatus(
+    private fun subscribeToTransactionStatus(
         hash: ByteArray,
         afterSubscription: (() -> Unit)? = null,
-    ): CompletableDeferred<ByteArray> = coroutineScope {
+    ): CompletableDeferred<ByteArray> {
         val hexHash = hash.toHex()
         logger.debug("Creating subscription to transaction status: {}", hexHash)
 
         val subscriptionRequest = eventSubscriberMessageOf(hash)
         val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
-        val peerUrl = getPeerUrl()
+        val peerUrl = getApiUrl()
 
         launch {
             client.webSocket(
@@ -322,7 +322,7 @@ open class Iroha2Client(
                 }
             }
         }
-        result
+        return result
     }
 
     private fun pipelineEventProcess(

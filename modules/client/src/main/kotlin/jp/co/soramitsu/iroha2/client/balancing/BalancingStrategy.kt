@@ -3,9 +3,9 @@ package jp.co.soramitsu.iroha2.client.balancing
 import java.net.URL
 
 interface BalancingStrategy {
-    suspend fun getTelemetryUrl(): URL
+    fun getTelemetryUrl(): URL
 
-    suspend fun getApiUrl(): URL
+    fun getApiUrl(): URL
 
-    suspend fun getPeerUrl(): URL
+    fun getPeerUrl(): URL
 }
