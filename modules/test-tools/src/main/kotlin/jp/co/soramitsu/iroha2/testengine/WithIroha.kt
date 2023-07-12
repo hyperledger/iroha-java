@@ -36,7 +36,7 @@ annotation class WithIrohaManual(
     val account: String = "",
     val publicKey: String = "",
     val privateKey: String = "",
-    val dockerComposeFile: String = ""
+    val dockerComposeFile: String = "",
 )
 
 /**
