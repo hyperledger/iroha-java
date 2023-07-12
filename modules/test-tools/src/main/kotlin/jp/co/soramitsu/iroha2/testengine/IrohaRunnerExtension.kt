@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -92,31 +93,29 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(containers.first().getApiUrl(), log = true)
-                .also { utilizedResources.add(it) }
+            Iroha2Client(
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+            ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
-                log = true,
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
             ).also { utilizedResources.add(it) }
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(containers.first().getApiUrl(), log = true)
-                .also { utilizedResources.add(it) }
+            Iroha2AsyncClient(
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+            ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
-                containers.first().getApiUrl(),
-                containers.first().getTelemetryUrl(),
-                log = true,
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
             ).also { utilizedResources.add(it) }
         }
 
@@ -128,19 +127,31 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val properties = testInstance::class.memberProperties
 
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2Client(URL(this.apiUrl), log = true) }
-
+        setPropertyValue(properties, testInstance) {
+            Iroha2Client(this.apiUrl, this.telemetryUrl, this.apiUrl)
+        }
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+            AdminIroha2Client(this.apiUrl, this.telemetryUrl, this.peerUrl)
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(URL(this.apiUrl), log = true) }
-
+        setPropertyValue(properties, testInstance) {
+            Iroha2AsyncClient(
+                mutableListOf(IrohaUrls(URL(this.apiUrl), URL(this.telemetryUrl), URL(this.peerUrl))),
+            )
+        }
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(URL(this.apiUrl), URL(this.telemetryUrl), log = true)
+            AdminIroha2AsyncClient(
+                mutableListOf(
+                    IrohaUrls(
+                        URL(this.apiUrl),
+                        URL(this.telemetryUrl),
+                        URL(this.peerUrl),
+                    ),
+                ),
+            )
         }
     }
 

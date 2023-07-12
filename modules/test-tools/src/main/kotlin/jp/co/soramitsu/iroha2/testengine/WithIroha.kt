@@ -32,6 +32,7 @@ annotation class WithIroha(
 annotation class WithIrohaManual(
     val apiUrl: String,
     val telemetryUrl: String,
+    val peerUrl: String,
 )
 
 /**

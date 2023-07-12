@@ -27,10 +27,10 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
-import jp.co.soramitsu.iroha2.Page
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
+import jp.co.soramitsu.iroha2.client.balancing.RoundRobinStrategy
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
@@ -51,6 +51,8 @@ import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
+import jp.co.soramitsu.iroha2.model.IrohaUrls
+import jp.co.soramitsu.iroha2.model.Page
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
 import jp.co.soramitsu.iroha2.toHex
@@ -80,13 +82,49 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused")
 open class Iroha2Client(
-    open var peerUrl: URL,
+    open val urls: MutableList<IrohaUrls>,
     open val log: Boolean = false,
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
     open val eventReadMaxAttempts: Int = 10,
     override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob(),
-) : AutoCloseable, CoroutineScope {
+) : AutoCloseable, CoroutineScope, RoundRobinStrategy(urls) {
+
+    constructor(
+        url: IrohaUrls,
+        log: Boolean = false,
+        credentials: String? = null,
+        eventReadTimeoutInMills: Long = 250,
+        eventReadMaxAttempts: Int = 10,
+    ) : this(mutableListOf(url), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+
+    constructor(
+        apiUrl: URL,
+        telemetryUrl: URL,
+        peerUrl: URL,
+        log: Boolean = false,
+        credentials: String? = null,
+        eventReadTimeoutInMills: Long = 250,
+        eventReadMaxAttempts: Int = 10,
+    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+
+    constructor(
+        apiUrl: String,
+        telemetryUrl: String,
+        peerUrl: String,
+        log: Boolean = true,
+        credentials: String? = null,
+        eventReadTimeoutInMills: Long = 250,
+        eventReadMaxAttempts: Int = 10,
+    ) : this(
+        URL(apiUrl),
+        URL(telemetryUrl),
+        URL(peerUrl),
+        log,
+        credentials,
+        eventReadTimeoutInMills,
+        eventReadMaxAttempts,
+    )
 
     companion object {
         const val TRANSACTION_ENDPOINT = "/transaction"
@@ -156,7 +194,7 @@ open class Iroha2Client(
         sorting: Sorting? = null,
     ): Page<T> {
         logger.debug("Sending query")
-        val response: HttpResponse = client.post("$peerUrl$QUERY_ENDPOINT") {
+        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
             page?.also {
                 parameter("start", it.start)
@@ -181,7 +219,7 @@ open class Iroha2Client(
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
-        val response: HttpResponse = client.post("$peerUrl$TRANSACTION_ENDPOINT") {
+        val response: HttpResponse = client.post("${getApiUrl()}$TRANSACTION_ENDPOINT") {
             setBody(VersionedSignedTransaction.encode(signedTransaction))
         }
         response.body<Unit>()
@@ -212,6 +250,7 @@ open class Iroha2Client(
      */
     fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
         var counter = 0
+        val peerUrl = getApiUrl()
         client.webSocket(
             host = peerUrl.host,
             port = peerUrl.port,
@@ -254,6 +293,7 @@ open class Iroha2Client(
         val subscriptionRequest = eventSubscriberMessageOf(hash)
         val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
+        val peerUrl = getApiUrl()
 
         launch {
             client.webSocket(

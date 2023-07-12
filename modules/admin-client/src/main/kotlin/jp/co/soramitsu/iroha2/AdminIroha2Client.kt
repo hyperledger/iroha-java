@@ -5,8 +5,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.model.IrohaUrls
+import kotlinx.coroutines.runBlocking
 import java.net.URL
 
 /**
@@ -14,59 +17,66 @@ import java.net.URL
  */
 @Suppress("unused")
 open class AdminIroha2Client(
-    peerUrl: URL,
-    open var telemetryUrl: URL = URL(
-        peerUrl.protocol,
-        peerUrl.host,
-        DEFAULT_TELEMETRY_PORT,
-        peerUrl.file,
-    ),
+    urls: MutableList<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
-) : Iroha2Client(peerUrl, log, credentials) {
+    private val balancingHealthCheck: Boolean = true,
+) : Iroha2Client(urls, log, credentials) {
+
+    constructor(
+        url: IrohaUrls,
+        log: Boolean = false,
+        credentials: String? = null,
+        balancingHealthCheck: Boolean = true,
+    ) : this(mutableListOf(url), log, credentials, balancingHealthCheck)
+
+    constructor(
+        apiUrl: URL,
+        telemetryUrl: URL,
+        peerUrl: URL,
+        log: Boolean = false,
+        credentials: String? = null,
+        balancingHealthCheck: Boolean = true,
+    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, balancingHealthCheck)
+
+    constructor(
+        apiUrl: String,
+        telemetryUrl: String,
+        peerUrl: String,
+        log: Boolean = false,
+        credentials: String? = null,
+        balancingHealthCheck: Boolean = true,
+    ) : this(URL(apiUrl), URL(telemetryUrl), URL(peerUrl), log, credentials, balancingHealthCheck)
 
     /**
      * Send metrics request
      */
-    suspend fun metrics(): String {
-        return client
-            .get("$telemetryUrl$METRICS_ENDPOINT")
-            .body()
-    }
+    suspend fun metrics(): String = client.get("${getTelemetryUrl()}$METRICS_ENDPOINT").body()
 
     /**
      * Send health check request
      */
-    suspend fun health(): Int {
-        return client
-            .get("$peerUrl$HEALTH_ENDPOINT")
-            .status.value
-    }
+    suspend fun health(): Int = client.get("${getApiUrl()}$HEALTH_ENDPOINT").status.value
+
+    /**
+     * Send health check request
+     */
+    suspend fun health(peerUrl: URL): Int = client.get("$peerUrl$HEALTH_ENDPOINT").status.value
 
     /**
      * Send status check request
      */
-    suspend fun status(): PeerStatus {
-        return client
-            .get("$telemetryUrl$STATUS_ENDPOINT")
-            .body()
-    }
+    suspend fun status(): PeerStatus = client.get("${getTelemetryUrl()}$STATUS_ENDPOINT").body()
 
     /**
      * Send schema request
      */
-    suspend fun schema(): String {
-        return client
-            .get("$peerUrl$SCHEMA_ENDPOINT")
-            .body()
-    }
+    suspend fun schema(): String = client.get("${getTelemetryUrl()}$SCHEMA_ENDPOINT").body()
 
     /**
      * Request current configuration of the peer
      */
-    suspend fun getConfigs(): Map<String, *> {
-        return config(ConfigurationFieldType.Value)
-    }
+    suspend fun getConfigs(): Map<String, *> = config(ConfigurationFieldType.Value)
 
     /**
      * Request description of a configuration property
@@ -81,11 +91,28 @@ open class AdminIroha2Client(
     suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
 
     private suspend inline fun <reified T, reified B> config(body: B): T {
-        val response: HttpResponse = client.get("$peerUrl$CONFIGURATION_ENDPOINT") {
+        val response: HttpResponse = client.get("${getApiUrl()}$CONFIGURATION_ENDPOINT") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
         return response.body()
+    }
+
+    override fun getApiUrl(): URL = when (balancingHealthCheck) {
+        true -> {
+            var attempt = 0
+            var url = super.getApiUrl()
+
+            while (runBlocking { health(url) } != HttpStatusCode.OK.value) {
+                url = super.getApiUrl()
+                if (++attempt >= urls.size) {
+                    throw IrohaClientException("All peers are unhealthy")
+                }
+            }
+            url
+        }
+
+        false -> super.getApiUrl()
     }
 
     enum class ConfigurationFieldType { Value, Docs }

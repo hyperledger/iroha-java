@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2.client
 
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
-import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -13,21 +13,12 @@ import java.util.concurrent.CompletableFuture
  */
 @Suppress("unused")
 class Iroha2AsyncClient @JvmOverloads constructor(
-    peerUrl: URL,
+    urls: MutableList<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,
     eventReadMaxAttempts: Int = 10,
-) : Iroha2Client(peerUrl, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
-
-    @JvmOverloads
-    constructor(
-        peerUrl: String,
-        log: Boolean = false,
-        credentials: String? = null,
-        eventReadTimeoutInMills: Long = 250,
-        eventReadMaxAttempts: Int = 10,
-    ) : this(URL(peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+) : Iroha2Client(urls, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
 
     /**
      * Send a request to Iroha2 and extract payload.
@@ -63,5 +54,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
     /**
      * Subscribe to track the transaction status
      */
-    fun subscribeToTransactionStatusAsync(hash: ByteArray) = subscribeToTransactionStatus(hash).asCompletableFuture()
+    fun subscribeToTransactionStatusAsync(
+        hash: ByteArray,
+    ) = subscribeToTransactionStatus(hash).asCompletableFuture()
 }

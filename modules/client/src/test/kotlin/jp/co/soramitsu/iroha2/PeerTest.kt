@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.annotations.Permission
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
@@ -15,6 +16,7 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceCanUnregisterAnyPeer
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.IrohaConfig
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
@@ -37,7 +39,7 @@ import kotlin.test.assertTrue
 @Sdk("Java/Kotlin")
 @Feature("Peers")
 @Issue("https://github.com/hyperledger/iroha/issues/2962")
-class PeerTest : IrohaTest<Iroha2Client>(
+class PeerTest : IrohaTest<AdminIroha2Client>(
     account = ALICE_ACCOUNT_ID,
     keyPair = ALICE_KEYPAIR,
 ) {
@@ -80,12 +82,10 @@ class PeerTest : IrohaTest<Iroha2Client>(
 
         startNewContainer(keyPair, alias, ports).use {
             registerPeer(address, payload)
-            assertTrue(isPeerAvailable(address, payload))
-
-            delay(1000)
+            repeat(PEER_AMOUNT) { assertTrue(isPeerAvailable(address, payload)) }
 
             unregisterPeer(address, payload)
-            assertFalse(isPeerAvailable(address, payload))
+            repeat(PEER_AMOUNT) { assertFalse(isPeerAvailable(address, payload)) }
         }
     }
 
@@ -116,12 +116,20 @@ class PeerTest : IrohaTest<Iroha2Client>(
                     QueryBuilder.findAllPeers()
                         .account(ALICE_ACCOUNT_ID)
                         .buildSigned(ALICE_KEYPAIR)
-                        .let { Iroha2Client(container.getApiUrl()).sendQuery(it) }
+                        .let { Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl()).sendQuery(it) }
                         .also { peers -> assertEquals(peers.size, peersCount) }
                         .also { return@repeat }
                 }
                 delay(2000)
             }
+        }
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    fun `round-robin load balancing test`(): Unit = runBlocking {
+        repeat(PEER_AMOUNT + 1) {
+            assertEquals(findDomain(DEFAULT_DOMAIN_ID).id, DEFAULT_DOMAIN_ID)
         }
     }
 
@@ -189,4 +197,10 @@ class PeerTest : IrohaTest<Iroha2Client>(
         SocketAddr.Host(SocketAddrHost(this.getP2pUrl().host, this.getP2pUrl().port)),
         this.config.keyPair.public.toIrohaPublicKey(),
     )
+
+    private suspend fun findDomain(id: DomainId = DEFAULT_DOMAIN_ID) = QueryBuilder
+        .findDomainById(id)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { client.sendQuery(it) }
 }
