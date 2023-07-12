@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2.testengine
 
+import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
+import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.generateKeyPair
@@ -8,17 +10,19 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 
 const val DEFAULT_DOMAIN = "wonderland"
+const val ALICE_ACCOUNT = "alice"
 const val BOB_ACCOUNT = "bob"
 const val GENESIS = "genesis"
+const val ALICE_ACCOUNT_ID_VALUE = "$ALICE_ACCOUNT$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN"
 
 @JvmField
 val DEFAULT_DOMAIN_ID = DEFAULT_DOMAIN.asDomainId()
 
 @JvmField
-val ALICE_ACCOUNT_NAME = "alice".asName()
+val ALICE_ACCOUNT_NAME = ALICE_ACCOUNT.asName()
 
 @JvmField
-val ALICE_ACCOUNT_ID = AccountId(ALICE_ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
+val ALICE_ACCOUNT_ID = ALICE_ACCOUNT_ID_VALUE.asAccountId()
 
 @JvmField
 val ALICE_KEYPAIR = generateKeyPair()

@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.testengine
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
+import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
@@ -12,8 +13,8 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
-import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.keyPairFromHex
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,7 +28,6 @@ import org.testcontainers.containers.Network
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.lang.reflect.Method
-import java.net.URL
 import java.security.KeyPair
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -138,15 +138,10 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val testInstance = extensionContext.testInstance.get()
         val properties = testInstance::class.memberProperties
 
-        val urls = File(this.dockerComposeFile).readDockerComposeData()
-        val apiUrls = when (this.dockerComposeFile.isEmpty()) {
-            true -> this.apiUrls.toList()
-            else -> urls!!.first
-        }
-        val telemetryUrls = when (this.dockerComposeFile.isEmpty()) {
-            true -> this.telemetryUrls.toList()
-            else -> urls!!.second
-        }
+        val urls = when (this.dockerComposeFile.isEmpty()) {
+            true -> this.apiUrls.mapIndexed { idx, url -> IrohaUrls(url, telemetryUrls[idx], peerUrls[idx]) }
+            else -> File(this.dockerComposeFile).readDockerComposeData()
+        } ?: throw IrohaSdkException("Iroha URLs required")
 
         // inject `KeyPair` if it is declared in test class
         setPropertyValue(properties, testInstance) { keyPairFromHex(this.publicKey, this.privateKey) }
@@ -155,35 +150,19 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         setPropertyValue(properties, testInstance) { this.account.asAccountId() }
 
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            Iroha2Client(this.apiUrl, this.telemetryUrl, this.apiUrl)
-        }
+        setPropertyValue(properties, testInstance) { Iroha2Client(urls) }
+
         // inject `AdminIroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(this.apiUrl, this.telemetryUrl, this.peerUrl)
-        }
+        setPropertyValue(properties, testInstance) { AdminIroha2Client(urls) }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(
-                mutableListOf(IrohaUrls(URL(this.apiUrl), URL(this.telemetryUrl), URL(this.peerUrl))),
-            )
-        }
+        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(urls) }
+
         // inject `AdminIroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(
-                mutableListOf(
-                    IrohaUrls(
-                        URL(this.apiUrl),
-                        URL(this.telemetryUrl),
-                        URL(this.peerUrl),
-                    ),
-                ),
-            )
-        }
+        setPropertyValue(properties, testInstance) { AdminIroha2AsyncClient(urls) }
     }
 
-    private fun File.readDockerComposeData(): Pair<List<String>, List<String>>? {
+    private fun File.readDockerComposeData(): List<IrohaUrls>? {
         fun String?.convertUrl() = this
             ?.replace("${IrohaContainer.NETWORK_ALIAS}[0-9]*".toRegex(), "localhost")
             ?.let { "http://$it" }
@@ -196,7 +175,13 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                 ?.cast<List<Map<String, String>>>() ?: return null
         }.onFailure { return null }.getOrThrow()
 
-        return all.map { it["TORII_API_URL"].convertUrl() } to all.map { it["TORII_TELEMETRY_URL"].convertUrl() }
+        return all.map {
+            IrohaUrls(
+                it["TORII_API_URL"].convertUrl(),
+                it["TORII_TELEMETRY_URL"].convertUrl(),
+                it["TORII_P2P_ADDR"].convertUrl(),
+            )
+        }
     }
 
     private inline fun <reified V : Any> setPropertyValue(

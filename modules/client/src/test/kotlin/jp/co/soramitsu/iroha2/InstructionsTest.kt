@@ -23,6 +23,7 @@ import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID_VALUE
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobHasPermissionToMintPublicKeys
@@ -72,10 +73,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @Disabled // EXAMPLE
     @WithIrohaManual(
-        ["http://localhost:8080"],
-        ["http://localhost:8180"],
-        ["http://localhost:1337"],
-        "alice@wonderland",
+        ["http://localhost:8080", "http://localhost:8081", "http://localhost:8082", "http://localhost:8083"],
+        ["http://localhost:8180", "http://localhost:8181", "http://localhost:8182", "http://localhost:8183"],
+        ["http://localhost:1337", "http://localhost:1338", "http://localhost:1339", "http://localhost:1340"],
+        account = ALICE_ACCOUNT_ID_VALUE,
         "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
     )
@@ -99,7 +100,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @Disabled // EXAMPLE
     @WithIrohaManual(
-        account = "alice@wonderland",
+        account = ALICE_ACCOUNT_ID_VALUE,
         publicKey = "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         privateKey = "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
         dockerComposeFile = "../../docker-compose/docker-compose.yaml",
@@ -109,7 +110,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.sendTransaction {
             account(super.account)
             registerDomain(domainId)
-                .buildSigned(super.keyPair)
+            buildSigned(super.keyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
