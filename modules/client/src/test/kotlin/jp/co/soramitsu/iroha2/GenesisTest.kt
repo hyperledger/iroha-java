@@ -37,7 +37,7 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
             this.genesisPath = path
         }.also { it.start() }
 
-        val client = Iroha2Client(mutableListOf(container.getApiUrl() to container.getTelemetryUrl()), true)
+        val client = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl(), true)
         client.checkAliceAndBobExists()
     }
 

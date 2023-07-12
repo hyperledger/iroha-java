@@ -36,12 +36,12 @@ enum class Permissions(val type: Name) {
     CanExecuteUserTrigger("can_execute_user_trigger".asName()),
     CanUnregisterUserTrigger("can_unregister_user_trigger".asName()),
     CanMintUserTrigger("can_mint_user_trigger".asName()),
-    CanUpgradeValidator("can_upgrade_validator".asName())
+    CanUpgradeValidator("can_upgrade_validator".asName()),
 }
 
 enum class IdKey(val type: String) {
     AccountId("account_id"),
     AssetId("asset_id"),
     AssetDefinitionId("asset_definition_id"),
-    DomainId("domain_id")
+    DomainId("domain_id"),
 }

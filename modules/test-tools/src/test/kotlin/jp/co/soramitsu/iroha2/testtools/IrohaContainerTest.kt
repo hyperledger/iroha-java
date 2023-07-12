@@ -14,9 +14,9 @@ import kotlin.test.assertEquals
 @Timeout(60)
 internal class IrohaContainerTest {
 
+    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/338
     @Test
     @Disabled
-    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/338
     fun `findFreePorts returns unique free ports`(): Unit = runBlocking {
         val dList = mutableListOf<Deferred<List<Int>>>()
         repeat(10) {

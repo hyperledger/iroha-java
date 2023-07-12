@@ -9,7 +9,7 @@ import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
 object TupleStructGenerator : AbstractGenerator<TupleStructBlueprint>() {
     override fun implKDoc(
         blueprint: TupleStructBlueprint,
-        clazz: TypeSpec.Builder
+        clazz: TypeSpec.Builder,
     ) {
         super.implKDoc(blueprint, clazz)
         clazz.addKdoc("\n\nGenerated from '${blueprint.source.name}' tuple structure")

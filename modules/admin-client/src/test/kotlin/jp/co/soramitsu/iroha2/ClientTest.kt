@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import io.ktor.http.HttpStatusCode
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
@@ -15,7 +16,7 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
     @WithIroha
     fun health(): Unit = runBlocking {
         val health = client.health()
-        assert(health == 200)
+        assert(health == HttpStatusCode.OK.value)
     }
 
     @Test

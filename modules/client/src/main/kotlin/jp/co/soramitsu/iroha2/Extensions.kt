@@ -95,7 +95,7 @@ fun String.asParameter() = this.split(PARAMETER_DELIMITER).takeIf {
 }?.let { parts ->
     Parameter(
         ParameterId(Name(parts[0])),
-        parts[1].asValue()
+        parts[1].asValue(),
     )
 }
 

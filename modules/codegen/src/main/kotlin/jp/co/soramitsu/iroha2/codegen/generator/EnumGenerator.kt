@@ -32,7 +32,7 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
             FunSpec.builder("discriminant")
                 .addModifiers(KModifier.ABSTRACT)
                 .returns(Int::class, CodeBlock.of("Discriminator of variant in enum"))
-                .build()
+                .build(),
         )
         if (true in blueprint.variants.map { it.properties.isEmpty() }) {
             clazz.addFunction(
@@ -40,12 +40,12 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
                     .addParameter(ParameterSpec.builder("other", ANY_TYPE.copy(nullable = true)).build())
                     .addCode(equalsCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
-                    .build()
+                    .build(),
             ).addFunction(
                 FunSpec.builder("hashCode")
                     .addCode(hashcodeCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
-                    .build()
+                    .build(),
             )
         }
     }

@@ -21,6 +21,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
+import jp.co.soramitsu.iroha2.model.Page
 import java.math.BigInteger
 
 /**
@@ -34,7 +35,7 @@ interface ResultExtractor<T> {
                 Page(
                     data,
                     result.paginatedQueryResult.pagination,
-                    result.paginatedQueryResult.total
+                    result.paginatedQueryResult.total,
                 )
             }
 
@@ -337,12 +338,12 @@ inline fun <reified I : Value, R> extractIdentifiable(value: Value, downstream: 
         is Value.Identifiable -> when (val box = value.identifiableBox) {
             is I -> downstream(box)
             else -> throw QueryPayloadExtractionException(
-                "Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`"
+                "Expected `${I::class.qualifiedName}`, but got `${box::class.qualifiedName}`",
             )
         }
 
         else -> throw QueryPayloadExtractionException(
-            "Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+            "Expected `${Value.Identifiable::class.qualifiedName}`, but got `${value::class.qualifiedName}`",
         )
     }
 }
@@ -359,7 +360,7 @@ inline fun <reified R> extractVec(value: Value, downstream: (Value) -> R): List<
         }
 
         else -> throw QueryPayloadExtractionException(
-            "Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+            "Expected `${Value.Vec::class.qualifiedName}`, but got `${value::class.qualifiedName}`",
         )
     }
 }
@@ -373,7 +374,7 @@ inline fun <reified V : Value, R> extractValue(value: Value, downstream: (V) -> 
     return when (value) {
         is V -> downstream(value)
         else -> throw QueryPayloadExtractionException(
-            "Expected `${V::class.qualifiedName}`, but got `${value::class.qualifiedName}`"
+            "Expected `${V::class.qualifiedName}`, but got `${value::class.qualifiedName}`",
         )
     }
 }

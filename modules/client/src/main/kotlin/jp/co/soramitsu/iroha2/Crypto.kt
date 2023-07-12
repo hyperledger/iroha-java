@@ -17,7 +17,7 @@ import java.security.SecureRandom
 val DEFAULT_SPEC: EdDSANamedCurveSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.ED_25519)
 
 enum class DigestFunction(val hashFunName: String, val index: Int) {
-    Ed25519("ed25519", 0xed)
+    Ed25519("ed25519", 0xed),
 }
 
 /**
@@ -35,7 +35,7 @@ fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
         val pubKey = EdDSAPublicKeySpec(privKey.a, spec)
         KeyPair(
             EdDSAPublicKey(pubKey),
-            EdDSAPrivateKey(privKey)
+            EdDSAPrivateKey(privKey),
         )
     } catch (ex: Exception) {
         throw CryptoException("Cannot generate a key pair", ex)

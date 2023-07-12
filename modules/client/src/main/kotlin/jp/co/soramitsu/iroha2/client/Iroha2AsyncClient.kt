@@ -1,11 +1,11 @@
 package jp.co.soramitsu.iroha2.client
 
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
-import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
  */
 @Suppress("unused")
 class Iroha2AsyncClient @JvmOverloads constructor(
-    urls: MutableList<Pair<URL, URL>>,
+    urls: MutableList<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,
@@ -54,5 +54,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
     /**
      * Subscribe to track the transaction status
      */
-    fun subscribeToTransactionStatusAsync(hash: ByteArray) = subscribeToTransactionStatus(hash).asCompletableFuture()
+    fun subscribeToTransactionStatusAsync(
+        hash: ByteArray,
+    ) = subscribeToTransactionStatus(hash).asCompletableFuture()
 }

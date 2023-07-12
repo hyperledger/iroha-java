@@ -89,19 +89,19 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             creationTimeMillis ?: fallbackCreationTime(),
             timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
             nonce,
-            metadata.value
+            metadata.value,
         )
         val encodedPayload = TransactionPayload.encode(payload)
 
         val signatures = keyPairs.map {
             Signature(
                 it.public.toIrohaPublicKey(),
-                it.private.sign(encodedPayload)
+                it.private.sign(encodedPayload),
             ).asSignatureOf<TransactionPayload>()
         }.toList()
 
         return VersionedSignedTransaction.V1(
-            SignedTransaction(payload, SignaturesOfOfTransactionPayload(signatures))
+            SignedTransaction(payload, SignaturesOfOfTransactionPayload(signatures)),
         )
     }
 
@@ -112,7 +112,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTimeTrigger(
@@ -121,8 +121,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 filter,
-                metadata
-            )
+                metadata,
+            ),
         )
     }
 
@@ -132,7 +132,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
             Instructions.registerExecutableTrigger(
@@ -140,8 +140,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 isi,
                 repeats,
                 accountId,
-                metadata
-            )
+                metadata,
+            ),
         )
     }
 
@@ -152,7 +152,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: FilterBox
+        filter: FilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerEventTrigger(
@@ -161,8 +161,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 metadata,
-                filter
-            )
+                filter,
+            ),
         )
     }
 
@@ -173,7 +173,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: FilterBox
+        filter: FilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerWasmTrigger(
@@ -182,8 +182,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 metadata,
-                filter
-            )
+                filter,
+            ),
         )
     }
 
@@ -193,7 +193,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
             Instructions.registerPreCommitTrigger(
@@ -201,8 +201,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 isi,
                 repeats,
                 accountId,
-                metadata
-            )
+                metadata,
+            ),
         )
     }
 
@@ -212,43 +212,43 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun unregisterTrigger(id: TriggerId) = this.apply {
         instructions.value.add(
-            Instructions.unregisterTrigger(id)
+            Instructions.unregisterTrigger(id),
         )
     }
 
     fun unregisterTrigger(triggerName: String, domainId: DomainId? = null) = this.apply {
         instructions.value.add(
-            Instructions.unregisterTrigger(triggerName, domainId)
+            Instructions.unregisterTrigger(triggerName, domainId),
         )
     }
 
     fun unregisterAccount(id: AccountId) = this.apply {
         instructions.value.add(
-            Instructions.unregisterAccount(id)
+            Instructions.unregisterAccount(id),
         )
     }
 
     fun unregisterDomain(id: DomainId) = this.apply {
         instructions.value.add(
-            Instructions.unregisterDomain(id)
+            Instructions.unregisterDomain(id),
         )
     }
 
     fun grantRole(
         roleId: RoleId,
-        accountId: AccountId
+        accountId: AccountId,
     ) = this.apply { instructions.value.add(Instructions.grantRole(roleId, accountId)) }
 
     fun registerRole(
         id: RoleId,
-        vararg tokens: PermissionToken
+        vararg tokens: PermissionToken,
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
     @JvmOverloads
     fun registerAccount(
         id: AccountId,
         signatories: List<PublicKey>,
-        metadata: Metadata = Metadata(mapOf())
+        metadata: Metadata = Metadata(mapOf()),
     ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
 
     @JvmOverloads
@@ -256,75 +256,75 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         id: AssetDefinitionId,
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
-        mintable: Mintable = Mintable.Infinitely()
+        mintable: Mintable = Mintable.Infinitely(),
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerAssetDefinition(id, assetValueType, metadata, mintable)
+            Instructions.registerAssetDefinition(id, assetValueType, metadata, mintable),
         )
     }
 
     fun registerAsset(
         id: AssetId,
-        assetValue: AssetValue
+        assetValue: AssetValue,
     ) = this.apply { instructions.value.add(Instructions.registerAsset(id, assetValue)) }
 
     fun setKeyValue(
         assetId: AssetId,
         key: String,
-        value: Value
+        value: Value,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key.asName(), value)) }
 
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: Value
+        value: Value,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
 
     fun setKeyValue(
         accountId: AccountId,
         key: Name,
-        value: Value
+        value: Value,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
 
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: Value
+        value: Value,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
 
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: Value
+        value: Value,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(domainId, key, value)) }
 
     fun removeKeyValue(
         assetId: AssetId,
-        key: Name
+        key: Name,
     ) = this.apply { instructions.value.add(Instructions.removeKeyValue(assetId, key)) }
 
     fun removeKeyValue(
         assetId: AssetId,
-        key: String
+        key: String,
     ) = removeKeyValue(assetId, key.asName())
 
     fun executeTrigger(
-        triggerId: TriggerId
+        triggerId: TriggerId,
     ) = this.apply { instructions.value.add(Instructions.executeTrigger(triggerId)) }
 
     fun mintAsset(
         assetId: AssetId,
-        quantity: Int
+        quantity: Int,
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
     fun mintAsset(
         assetId: AssetId,
-        quantity: BigDecimal
+        quantity: BigDecimal,
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
     fun registerPermissionToken(permission: Permissions, idKey: IdKey) = this.apply {
         instructions.value.add(
-            Instructions.registerPermissionToken(permission, idKey)
+            Instructions.registerPermissionToken(permission, idKey),
         )
     }
 
@@ -334,7 +334,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerPermissionToken(name: Name, idKey: String) = this.apply {
         instructions.value.add(
-            Instructions.registerPermissionToken(name, idKey)
+            Instructions.registerPermissionToken(name, idKey),
         )
     }
 
@@ -342,14 +342,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerDomain(
         domainId: DomainId,
         metadata: Map<Name, Value> = mapOf(),
-        logo: IpfsPath? = null
+        logo: IpfsPath? = null,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerDomain(
                 domainId,
                 metadata,
-                logo
-            )
+                logo,
+            ),
         )
     }
 
@@ -357,14 +357,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerPeer(
         address: String,
         payload: ByteArray,
-        algorithm: Algorithm = Algorithm.Ed25519()
+        algorithm: Algorithm = Algorithm.Ed25519(),
     ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, algorithm)) }
 
     @JvmOverloads
     fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        algorithm: Algorithm = Algorithm.Ed25519()
+        algorithm: Algorithm = Algorithm.Ed25519(),
     ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
     fun grantPermissionToken(permission: Permissions, params: Pair<Name, Value>, target: AccountId) = this.apply {
@@ -418,7 +418,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun revokeRole(
         roleId: RoleId,
-        accountId: AccountId
+        accountId: AccountId,
     ) = this.apply { instructions.value.add(Instructions.revokeRole(roleId, accountId)) }
 
     private fun fallbackCreationTime() = System.currentTimeMillis().toBigInteger()

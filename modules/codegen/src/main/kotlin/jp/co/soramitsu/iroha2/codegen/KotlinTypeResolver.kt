@@ -49,7 +49,7 @@ fun resolveKotlinType(type: Type): TypeName {
                         resolveKotlinType(
                             it.requireValue(),
                         )
-                    }
+                    },
                 )
             }
         }
@@ -79,7 +79,7 @@ fun resolveKotlinType(type: Type): TypeName {
             val wrapperType = lookUpInBuiltInTypes(type)
             (wrapperType as ClassName).parameterizedBy(
                 resolveKotlinType(type.key.requireValue()),
-                resolveKotlinType(type.value.requireValue())
+                resolveKotlinType(type.value.requireValue()),
             )
         }
         // only "primitive" types left
@@ -128,5 +128,5 @@ val builtinKotlinTypes = mapOf<KClass<*>, TypeName>(
     VecType::class to List::class.asTypeName(),
     SetType::class to Set::class.asTypeName(),
     MapType::class to Map::class.asTypeName(),
-    ArrayType::class to Array::class.asTypeName()
+    ArrayType::class to Array::class.asTypeName(),
 )

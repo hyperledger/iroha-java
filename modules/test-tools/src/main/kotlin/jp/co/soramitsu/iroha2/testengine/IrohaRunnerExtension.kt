@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
@@ -104,29 +105,29 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(), log = true)
-                .also { utilizedResources.add(it) }
+            Iroha2Client(
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+            ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
-                containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(),
-                log = true,
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
             ).also { utilizedResources.add(it) }
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(), log = true)
-                .also { utilizedResources.add(it) }
+            Iroha2AsyncClient(
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+            ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
-                containers.map { it.getApiUrl() to it.getTelemetryUrl() }.toMutableList(),
-                log = true,
+                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
             ).also { utilizedResources.add(it) }
         }
 
@@ -147,8 +148,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             else -> urls!!.second
         }
 
-        val mutableUrls = apiUrls.mapIndexed { idx, url -> URL(url) to URL(telemetryUrls[idx]) }.toMutableList()
-
         // inject `KeyPair` if it is declared in test class
         setPropertyValue(properties, testInstance) { keyPairFromHex(this.publicKey, this.privateKey) }
 
@@ -157,20 +156,30 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2Client(mutableUrls, log = true)
+            Iroha2Client(this.apiUrl, this.telemetryUrl, this.apiUrl)
         }
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(mutableUrls, log = true)
+            AdminIroha2Client(this.apiUrl, this.telemetryUrl, this.peerUrl)
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(mutableUrls, log = true)
+            Iroha2AsyncClient(
+                mutableListOf(IrohaUrls(URL(this.apiUrl), URL(this.telemetryUrl), URL(this.peerUrl))),
+            )
         }
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(mutableUrls, log = true)
+            AdminIroha2AsyncClient(
+                mutableListOf(
+                    IrohaUrls(
+                        URL(this.apiUrl),
+                        URL(this.telemetryUrl),
+                        URL(this.peerUrl),
+                    ),
+                ),
+            )
         }
     }
 

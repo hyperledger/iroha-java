@@ -34,7 +34,7 @@ object GeneratorEntryPoint {
             }
             val builder = FileSpec.builder(type.packageName, type.className)
                 .addType(typeSpec)
-                .addComment("\nAuto-generated file. DO NOT EDIT!\n")
+                .addFileComment("\nAuto-generated file. DO NOT EDIT!\n")
 
             val isSortedMap = type.properties
                 .map { it.original as? MapType }

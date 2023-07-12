@@ -13,7 +13,7 @@ class StructBlueprint(type: StructType) : TypeBasedBlueprint<StructType>(type) {
             Property(
                 convertToCamelCase(name),
                 resolveKotlinType(ty.requireValue()),
-                ty.requireValue()
+                ty.requireValue(),
             )
         }
     }
