@@ -48,10 +48,7 @@ import kotlin.test.assertNotNull
 @Feature("Triggers")
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
-class TriggersTest : IrohaTest<Iroha2Client>(
-    account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR,
-) {
+class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])

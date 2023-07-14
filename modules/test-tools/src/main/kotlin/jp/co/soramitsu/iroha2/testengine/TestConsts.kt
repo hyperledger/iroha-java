@@ -1,33 +1,31 @@
 package jp.co.soramitsu.iroha2.testengine
 
+import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
+import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.keyPairFromHex
 
 const val DEFAULT_DOMAIN = "wonderland"
+const val ALICE_ACCOUNT = "alice"
 const val BOB_ACCOUNT = "bob"
 const val GENESIS = "genesis"
+const val ALICE_ACCOUNT_ID_VALUE = "$ALICE_ACCOUNT$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN"
 
 @JvmField
 val DEFAULT_DOMAIN_ID = DEFAULT_DOMAIN.asDomainId()
 
 @JvmField
-val ALICE_ACCOUNT_NAME = "alice".asName()
+val ALICE_ACCOUNT_NAME = ALICE_ACCOUNT.asName()
 
 @JvmField
-val ALICE_ACCOUNT_ID = AccountId(ALICE_ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
+val ALICE_ACCOUNT_ID = ALICE_ACCOUNT_ID_VALUE.asAccountId()
 
 @JvmField
 val ALICE_KEYPAIR = generateKeyPair()
-
-val ALICE_MANUAL_KEYPAIR = keyPairFromHex(
-    "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
-    "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
-)
 
 @JvmField
 val BOB_ACCOUNT_NAME = BOB_ACCOUNT.asName()

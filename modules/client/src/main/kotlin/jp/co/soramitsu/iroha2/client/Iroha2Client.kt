@@ -82,7 +82,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused")
 open class Iroha2Client(
-    open val urls: MutableList<IrohaUrls>,
+    open val urls: List<IrohaUrls>,
     open val log: Boolean = false,
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,
@@ -293,12 +293,12 @@ open class Iroha2Client(
         val subscriptionRequest = eventSubscriberMessageOf(hash)
         val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
-        val peerUrl = getApiUrl()
+        val apiUrl = getApiUrl()
 
         launch {
             client.webSocket(
-                host = peerUrl.host,
-                port = peerUrl.port,
+                host = apiUrl.host,
+                port = apiUrl.port,
                 path = WS_ENDPOINT,
             ) {
                 logger.debug("WebSocket opened")

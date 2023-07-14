@@ -14,6 +14,7 @@ services:
       IROHA_GENESIS_ACCOUNT_PRIVATE_KEY: '{ "digest_function": "ed25519", "payload": "038ae16b219da35aa036335ed0a43c28a2cc737150112c78a7b8034b9d99c9023f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255" }'
       WSV_WASM_RUNTIME_CONFIG: "{\"FUEL_LIMIT\":900000000000, \"MAX_MEMORY\": 524288000}"
     ports:
+      - "1337:1337"
       - "8080:8080"
       - "8180:8180"
     volumes:
@@ -33,8 +34,9 @@ services:
       IROHA_GENESIS_ACCOUNT_PRIVATE_KEY: '{ "digest_function": "ed25519", "payload": "038ae16b219da35aa036335ed0a43c28a2cc737150112c78a7b8034b9d99c9023f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255" }'
       WSV_WASM_RUNTIME_CONFIG: "{\"FUEL_LIMIT\":900000000000, \"MAX_MEMORY\": 524288000}"
     ports:
-      - "8081:8080"
-      - "8181:8180"
+      - "1338:1338"
+      - "8081:8081"
+      - "8181:8181"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
 
@@ -51,8 +53,9 @@ services:
       IROHA_GENESIS_ACCOUNT_PRIVATE_KEY: '{ "digest_function": "ed25519", "payload": "038ae16b219da35aa036335ed0a43c28a2cc737150112c78a7b8034b9d99c9023f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255" }'
       WSV_WASM_RUNTIME_CONFIG: "{\"FUEL_LIMIT\":900000000000, \"MAX_MEMORY\": 524288000}"
     ports:
-      - "8082:8080"
-      - "8182:8180"
+      - "1339:1339"
+      - "8082:8082"
+      - "8182:8182"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
 
@@ -69,7 +72,8 @@ services:
       IROHA_GENESIS_ACCOUNT_PRIVATE_KEY: '{ "digest_function": "ed25519", "payload": "038ae16b219da35aa036335ed0a43c28a2cc737150112c78a7b8034b9d99c9023f4e3e98571b55514edc5ccf7e53ca7509d89b2868e62921180a6f57c2f4e255" }'
       WSV_WASM_RUNTIME_CONFIG: "{\"FUEL_LIMIT\":900000000000, \"MAX_MEMORY\": 524288000}"
     ports:
-      - "8083:8080"
-      - "8183:8180"
+      - "1340:1340"
+      - "8083:8083"
+      - "8183:8183"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"

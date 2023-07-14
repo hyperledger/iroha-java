@@ -27,7 +27,6 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha;
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.Network;
 
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.ALICE_ACCOUNT_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.ALICE_KEYPAIR;
@@ -36,10 +35,6 @@ import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_DOMAIN_ID;
 
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
-
-    public JavaTest() {
-        super(Duration.ofSeconds(30), Network.newNetwork(), ALICE_ACCOUNT_ID, ALICE_KEYPAIR);
-    }
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)

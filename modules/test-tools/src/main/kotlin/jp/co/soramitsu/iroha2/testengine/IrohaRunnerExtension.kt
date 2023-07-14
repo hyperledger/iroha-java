@@ -3,6 +3,8 @@ package jp.co.soramitsu.iroha2.testengine
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
+import jp.co.soramitsu.iroha2.IrohaSdkException
+import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
@@ -11,6 +13,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
@@ -22,8 +25,9 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
 import org.testcontainers.containers.Network
+import org.yaml.snakeyaml.Yaml
+import java.io.File
 import java.lang.reflect.Method
-import java.net.URL
 import java.security.KeyPair
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -37,6 +41,8 @@ import kotlin.reflect.full.memberProperties
 class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private val resources: MutableMap<String, List<AutoCloseable>> = Collections.synchronizedMap(mutableMapOf())
+
+    private val yaml = Yaml()
 
     override fun beforeEach(context: ExtensionContext) = runBlocking {
         // init container and client if annotation was passed on test method
@@ -88,6 +94,12 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         val properties = testInstance::class.memberProperties
 
+        // inject `KeyPair` if it is declared in test class
+        setPropertyValue(properties, testInstance) { ALICE_ACCOUNT_ID }
+
+        // inject `AccountId` if it is declared in test class
+        setPropertyValue(properties, testInstance) { ALICE_KEYPAIR }
+
         // inject `List<IrohaContainer>` if it is declared in test class
         setPropertyValue(properties, testInstance) { containers }
 
@@ -126,31 +138,48 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val testInstance = extensionContext.testInstance.get()
         val properties = testInstance::class.memberProperties
 
+        val urls = when (this.dockerComposeFile.isEmpty()) {
+            true -> this.apiUrls.mapIndexed { idx, url -> IrohaUrls(url, telemetryUrls[idx], peerUrls[idx]) }
+            else -> File(this.dockerComposeFile).readDockerComposeData()
+        } ?: throw IrohaSdkException("Iroha URLs required")
+
+        // inject `KeyPair` if it is declared in test class
+        setPropertyValue(properties, testInstance) { keyPairFromHex(this.publicKey, this.privateKey) }
+
+        // inject `AccountId` if it is declared in test class
+        setPropertyValue(properties, testInstance) { this.account.asAccountId() }
+
         // inject `Iroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            Iroha2Client(this.apiUrl, this.telemetryUrl, this.apiUrl)
-        }
+        setPropertyValue(properties, testInstance) { Iroha2Client(urls) }
+
         // inject `AdminIroha2Client` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            AdminIroha2Client(this.apiUrl, this.telemetryUrl, this.peerUrl)
-        }
+        setPropertyValue(properties, testInstance) { AdminIroha2Client(urls) }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            Iroha2AsyncClient(
-                mutableListOf(IrohaUrls(URL(this.apiUrl), URL(this.telemetryUrl), URL(this.peerUrl))),
-            )
-        }
+        setPropertyValue(properties, testInstance) { Iroha2AsyncClient(urls) }
+
         // inject `AdminIroha2AsyncClient` if it is declared in test class
-        setPropertyValue(properties, testInstance) {
-            AdminIroha2AsyncClient(
-                mutableListOf(
-                    IrohaUrls(
-                        URL(this.apiUrl),
-                        URL(this.telemetryUrl),
-                        URL(this.peerUrl),
-                    ),
-                ),
+        setPropertyValue(properties, testInstance) { AdminIroha2AsyncClient(urls) }
+    }
+
+    private fun File.readDockerComposeData(): List<IrohaUrls>? {
+        fun String?.convertUrl() = this
+            ?.replace("${IrohaContainer.NETWORK_ALIAS}[0-9]*".toRegex(), "localhost")
+            ?.let { "http://$it" }
+            ?: throw IllegalArgumentException("Invalid docker-compose file")
+
+        val all = runCatching {
+            yaml.load<Map<String, *>>(this.inputStream())["services"]
+                ?.cast<Map<String, *>>()?.values?.toList()
+                ?.map { it?.cast<Map<String, *>>()?.get("environment") }
+                ?.cast<List<Map<String, String>>>() ?: return null
+        }.onFailure { return null }.getOrThrow()
+
+        return all.map {
+            IrohaUrls(
+                it["TORII_API_URL"].convertUrl(),
+                it["TORII_TELEMETRY_URL"].convertUrl(),
+                it["TORII_P2P_ADDR"].convertUrl(),
             )
         }
     }

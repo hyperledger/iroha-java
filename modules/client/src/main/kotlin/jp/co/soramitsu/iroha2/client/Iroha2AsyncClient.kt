@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture
  */
 @Suppress("unused")
 class Iroha2AsyncClient @JvmOverloads constructor(
-    urls: MutableList<IrohaUrls>,
+    urls: List<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
     eventReadTimeoutInMills: Long = 250,

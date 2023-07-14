@@ -16,7 +16,6 @@ import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
@@ -34,7 +33,7 @@ import kotlin.test.assertNotNull
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Block Streaming")
-class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair = ALICE_KEYPAIR) {
+class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
@@ -54,9 +53,18 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
         var instructions = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)
         val registerDomain = instructions[0].cast<InstructionBox.Register>().extractDomain().id.name.string
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
-        assertEquals(ALICE_ACCOUNT_ID.asString(), instructions[1].cast<InstructionBox.Register>().extractAccount().id.asString())
-        assertEquals(BOB_ACCOUNT_ID.asString(), instructions[2].cast<InstructionBox.Register>().extractAccount().id.asString())
-        assertEquals("foo$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN", instructions[3].cast<InstructionBox.Register>().extractAccount().id.asString())
+        assertEquals(
+            ALICE_ACCOUNT_ID.asString(),
+            instructions[1].cast<InstructionBox.Register>().extractAccount().id.asString(),
+        )
+        assertEquals(
+            BOB_ACCOUNT_ID.asString(),
+            instructions[2].cast<InstructionBox.Register>().extractAccount().id.asString(),
+        )
+        assertEquals(
+            "foo$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN",
+            instructions[3].cast<InstructionBox.Register>().extractAccount().id.asString(),
+        )
 
         instructions = checkBlockStructure(
             blocks[1],
