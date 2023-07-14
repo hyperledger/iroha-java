@@ -251,7 +251,7 @@ open class Iroha2Client(
     /**
      * Subscribe to block streaming
      * @param from - block number to start from
-     * @param count - how many blocks to get before closing channel
+     * @param count - how many blocks to get before closing the channel
      * @param action - code which will be invoked after a new block received
      * @param closeOn - if the condition returns true then the channel will be closed
      */
