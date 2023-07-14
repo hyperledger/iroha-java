@@ -96,7 +96,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyP
         var lastHeight = BigInteger.ZERO
         launch { channel.collect { lastHeight = it } }
 
-        repeat(15) {
+        repeat(expectedLastHeight.intValueExact() + 5) {
             delay(1000)
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
         }
