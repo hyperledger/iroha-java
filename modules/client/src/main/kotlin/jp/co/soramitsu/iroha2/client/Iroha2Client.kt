@@ -24,7 +24,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
-import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.TransactionRejectedException
@@ -248,12 +247,12 @@ open class Iroha2Client(
      * @param from - block number to start from
      * @param count - how many blocks to get before closing web socket
      */
-    fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
+    fun subscribeToBlockStream(from: Long = 1, count: Int): Flow<VersionedBlockMessage> = flow {
         var counter = 0
-        val peerUrl = getApiUrl()
+        val apiUrl = getApiUrl()
         client.webSocket(
-            host = peerUrl.host,
-            port = peerUrl.port,
+            host = apiUrl.host,
+            port = apiUrl.port,
             path = WS_ENDPOINT_BLOCK_STREAM,
         ) {
             logger.debug("WebSocket opened")
@@ -262,14 +261,37 @@ open class Iroha2Client(
             )
             val payload = VersionedBlockSubscriptionRequest.encode(request)
             send(payload.toFrame())
+
             for (frame in incoming) {
                 logger.debug("Received frame: {}", frame)
-                val block = VersionedBlockMessage.decode(frame.readBytes())
-                emit(block)
-                counter++
-                if (counter == count) {
-                    close()
+                emit(VersionedBlockMessage.decode(frame.readBytes()))
+                if (++counter == count) {
+                    break
                 }
+            }
+        }
+    }
+
+    fun subscribeToBlockStream(
+        from: Long = 1,
+        action: suspend CoroutineScope.(block: VersionedBlockMessage) -> Any,
+    ): Flow<Any> = flow {
+        val apiUrl = getApiUrl()
+        client.webSocket(
+            host = apiUrl.host,
+            port = apiUrl.port,
+            path = WS_ENDPOINT_BLOCK_STREAM,
+        ) {
+            logger.debug("WebSocket opened")
+            val request = VersionedBlockSubscriptionRequest.V1(
+                BlockSubscriptionRequest(BigInteger.valueOf(from)),
+            )
+            val payload = VersionedBlockSubscriptionRequest.encode(request)
+            send(payload.toFrame())
+
+            for (frame in incoming) {
+                logger.debug("Received frame: {}", frame)
+                emit(action(VersionedBlockMessage.decode(frame.readBytes())))
             }
         }
     }
@@ -293,12 +315,12 @@ open class Iroha2Client(
         val subscriptionRequest = eventSubscriberMessageOf(hash)
         val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
-        val peerUrl = getApiUrl()
+        val apiUrl = getApiUrl()
 
         launch {
             client.webSocket(
-                host = peerUrl.host,
-                port = peerUrl.port,
+                host = apiUrl.host,
+                port = apiUrl.port,
                 path = WS_ENDPOINT,
             ) {
                 logger.debug("WebSocket opened")
