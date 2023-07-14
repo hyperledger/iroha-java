@@ -13,7 +13,6 @@ import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
@@ -36,7 +35,7 @@ import kotlin.test.assertNotNull
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Block Streaming")
-class BlockStreamTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair = ALICE_KEYPAIR) {
+class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])

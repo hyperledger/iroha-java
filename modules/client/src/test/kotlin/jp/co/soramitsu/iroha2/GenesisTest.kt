@@ -11,10 +11,7 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
-class GenesisTest : IrohaTest<Iroha2Client>(
-    account = ALICE_ACCOUNT_ID,
-    keyPair = ALICE_KEYPAIR,
-) {
+class GenesisTest : IrohaTest<Iroha2Client>() {
     companion object {
         private val ALICE_KEYPAIR = keyPairFromHex(
             "cc25624d62896d3a0bfd8940f928dc2abf27cc57cefeb442aa96d9081aae58a1",

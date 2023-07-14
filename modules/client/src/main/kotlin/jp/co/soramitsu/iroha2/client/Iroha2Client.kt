@@ -81,7 +81,7 @@ import kotlin.coroutines.CoroutineContext
  */
 @Suppress("unused")
 open class Iroha2Client(
-    open val urls: MutableList<IrohaUrls>,
+    open val urls: List<IrohaUrls>,
     open val log: Boolean = false,
     open val credentials: String? = null,
     open val eventReadTimeoutInMills: Long = 250,

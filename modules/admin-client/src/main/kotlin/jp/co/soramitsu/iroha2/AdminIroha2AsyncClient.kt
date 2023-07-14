@@ -8,7 +8,7 @@ import kotlinx.coroutines.future.future
  */
 @Suppress("unused")
 class AdminIroha2AsyncClient @JvmOverloads constructor(
-    urls: MutableList<IrohaUrls>,
+    urls: List<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
 ) : AdminIroha2Client(urls, log, credentials) {

@@ -21,11 +21,11 @@ import java.time.Duration
 abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(30),
     val network: Network = Network.newNetwork(),
-    val account: AccountId,
-    val keyPair: KeyPair,
 ) {
     lateinit var client: T
     lateinit var containers: List<IrohaContainer>
+    lateinit var account: AccountId
+    lateinit var keyPair: KeyPair
 
     suspend fun Iroha2Client.tx(
         account: AccountId? = null,
@@ -36,9 +36,9 @@ abstract class IrohaTest<T : Iroha2Client>(
         val finalKeyPair = keyPair ?: this@IrohaTest.keyPair
 
         this.sendTransaction {
-            account(finalAccountId)
+            account(finalAccountId!!)
             builder(this)
-            buildSigned(finalKeyPair)
+            buildSigned(finalKeyPair!!)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }

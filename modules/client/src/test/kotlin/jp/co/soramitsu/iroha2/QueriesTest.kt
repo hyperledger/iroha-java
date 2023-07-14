@@ -63,7 +63,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Permission("no_permission_required")
-class QueriesTest : IrohaTest<Iroha2Client>(account = ALICE_ACCOUNT_ID, keyPair = ALICE_KEYPAIR) {
+class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])

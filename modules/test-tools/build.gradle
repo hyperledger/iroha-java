@@ -6,14 +6,14 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
     api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     api "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+    api "org.testcontainers:testcontainers:$testContainersVer"
+    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVer"
-
-    api "org.testcontainers:testcontainers:$testContainersVer"
-    api "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     implementation "ch.qos.logback:logback-classic:$logbackVer"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVer"
+    implementation "org.yaml:snakeyaml:2.0"
 
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }

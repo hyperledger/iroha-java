@@ -17,7 +17,7 @@ import java.net.URL
  */
 @Suppress("unused")
 open class AdminIroha2Client(
-    urls: MutableList<IrohaUrls>,
+    urls: List<IrohaUrls>,
     log: Boolean = false,
     credentials: String? = null,
     private val balancingHealthCheck: Boolean = true,
