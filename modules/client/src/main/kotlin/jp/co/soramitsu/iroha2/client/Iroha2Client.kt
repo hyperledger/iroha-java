@@ -64,7 +64,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
@@ -242,56 +242,51 @@ open class Iroha2Client(
         }
     }
 
+    fun subscribeToBlockStream(from: Long = 1, count: Int) = subscribeToBlockStream(
+        from,
+        count,
+        action = { block -> block },
+    )
+
     /**
      * Subscribe to block streaming
      * @param from - block number to start from
-     * @param count - how many blocks to get before closing web socket
+     * @param count - how many blocks to get before closing channel
+     * @param action - code which will be invoked after a new block received
+     * @param closeOn - if the condition returns true then the channel will be closed
      */
-    fun subscribeToBlockStream(from: Long = 1, count: Int): Flow<VersionedBlockMessage> = flow {
+    fun <T> subscribeToBlockStream(
+        from: Long = 1,
+        count: Int? = null,
+        action: suspend (block: VersionedBlockMessage) -> T,
+        closeOn: suspend (block: VersionedBlockMessage) -> Boolean = { false },
+    ): Flow<T> = channelFlow {
+        logger.info("Block stream channel opened")
+
+        val channel = this
         var counter = 0
         val apiUrl = getApiUrl()
+        val request = VersionedBlockSubscriptionRequest.V1(
+            BlockSubscriptionRequest(BigInteger.valueOf(from)),
+        )
+        val payload = VersionedBlockSubscriptionRequest.encode(request)
+
         client.webSocket(
             host = apiUrl.host,
             port = apiUrl.port,
             path = WS_ENDPOINT_BLOCK_STREAM,
         ) {
             logger.debug("WebSocket opened")
-            val request = VersionedBlockSubscriptionRequest.V1(
-                BlockSubscriptionRequest(BigInteger.valueOf(from)),
-            )
-            val payload = VersionedBlockSubscriptionRequest.encode(request)
             send(payload.toFrame())
 
             for (frame in incoming) {
                 logger.debug("Received frame: {}", frame)
-                emit(VersionedBlockMessage.decode(frame.readBytes()))
-                if (++counter == count) {
-                    break
+                val block = VersionedBlockMessage.decode(frame.readBytes())
+                channel.send(action(block))
+                if (++counter == count || closeOn(block)) {
+                    logger.info("Block stream channel is closing")
+                    channel.close()
                 }
-            }
-        }
-    }
-
-    fun subscribeToBlockStream(
-        from: Long = 1,
-        action: suspend CoroutineScope.(block: VersionedBlockMessage) -> Any,
-    ): Flow<Any> = flow {
-        val apiUrl = getApiUrl()
-        client.webSocket(
-            host = apiUrl.host,
-            port = apiUrl.port,
-            path = WS_ENDPOINT_BLOCK_STREAM,
-        ) {
-            logger.debug("WebSocket opened")
-            val request = VersionedBlockSubscriptionRequest.V1(
-                BlockSubscriptionRequest(BigInteger.valueOf(from)),
-            )
-            val payload = VersionedBlockSubscriptionRequest.encode(request)
-            send(payload.toFrame())
-
-            for (frame in incoming) {
-                logger.debug("Received frame: {}", frame)
-                emit(action(VersionedBlockMessage.decode(frame.readBytes())))
             }
         }
     }
