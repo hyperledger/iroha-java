@@ -211,11 +211,11 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
 
-        repeat(withIroha.amount + 1) {
+        repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
             portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
         }
-        val genesisKeyPair = keyPairs.last()
+        val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
