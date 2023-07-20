@@ -451,9 +451,7 @@ data class BlockStreamContext(
     val closeIf: suspend (block: VersionedBlockMessage) -> Boolean,
 )
 
-class BlockStreamSubscription<T> private constructor(private val context: BlockStreamContext) : CoroutineScope {
-
-    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
+class BlockStreamSubscription<T> private constructor(private val context: BlockStreamContext) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -467,14 +465,14 @@ class BlockStreamSubscription<T> private constructor(private val context: BlockS
 
     fun receive(index: Int = 0): Flow<T> = channels[index].second
 
-    fun consume(): BlockStreamSubscription<T> {
+    suspend fun consume(): BlockStreamSubscription<T> = coroutineScope {
         println("[${Thread.currentThread().name}]_CONSUMING_")
         if (!consumed) {
             expand(context.onBlock as suspend (block: VersionedBlockMessage) -> T)
             launch { run() }
             consumed = true
         }
-        return getInstance(context) as BlockStreamSubscription<T>
+        getInstance(context) as BlockStreamSubscription<T>
     }
 
     private suspend fun run() {
