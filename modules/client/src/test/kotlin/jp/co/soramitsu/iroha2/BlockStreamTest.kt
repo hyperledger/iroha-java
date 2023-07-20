@@ -20,17 +20,16 @@ import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
-import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -43,15 +42,31 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @WithIroha([NewAccountWithMetadata::class])
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
+    fun `asdqwe asdzxc`(): Unit = runBlocking {
+        println("[${Thread.currentThread().name}]_SUB_")
+        val subscription = client.asd(count = 2)
+        println("[${Thread.currentThread().name}]_SUBED_")
+        println("[${Thread.currentThread().name}]_RECEIVE_")
+        val asd = subscription.receive()
+        println("[${Thread.currentThread().name}]_RECEIVED_")
+        println("[${Thread.currentThread().name}]_COLLECT_")
+        asd.collect { block -> println("BLOCK: $block") }
+        println("[${Thread.currentThread().name}]_COLLECTED_")
+    }
+
+    @Test
+    @WithIroha([NewAccountWithMetadata::class])
+    @Story("Successful subscription to block stream")
+    @SdkTestId("subscription_to_block_stream")
     fun `subscription to block stream`(): Unit = runBlocking {
-        var subscription = client.subscribeToBlockStream(count = 2).receive()
+        val subscription = client.subscribeToBlockStream(count = 2)
         val newAssetName = "rox"
 
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetValueType.Store())
         }
-        var blocks = mutableListOf<VersionedBlockMessage>()
-        subscription.collect { block -> blocks.add(block) }
+        val blocks = mutableListOf<VersionedBlockMessage>()
+        subscription.receive().collect { block -> blocks.add(block) }
 
         val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
         var isi = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)

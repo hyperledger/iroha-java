@@ -63,14 +63,13 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.math.BigInteger
@@ -246,6 +245,11 @@ open class Iroha2Client(
         }
     }
 
+    suspend fun asd(
+        from: Long = 1,
+        count: Int,
+    ): BlockStreamSubscription<Int> = subscribeToBlockStream(from, count, { block -> block })
+
     suspend fun subscribeToBlockStream(
         from: Long = 1,
         count: Int,
@@ -269,16 +273,13 @@ open class Iroha2Client(
         },
         closeOn: suspend (block: VersionedBlockMessage) -> Boolean = { false },
     ): BlockStreamSubscription<T> {
-        val context = BlockStreamContext(
-            getApiUrl(),
-            client,
-            from,
-            count,
-            onBlock,
-            onFailure,
-            closeOn,
-        )
-        return BlockStreamSubscription.getInstance(context).subscribe() as BlockStreamSubscription<T>
+        val context = BlockStreamContext(getApiUrl(), client, from, count, onBlock, onFailure, closeOn)
+        println("[${Thread.currentThread().name}]_INSTANCE_")
+        val asd = BlockStreamSubscription.getInstance(context) as BlockStreamSubscription<T>
+        println("[${Thread.currentThread().name}]_INSTANCED_")
+        val c = asd.consume()
+        println("[${Thread.currentThread().name}]_CONSUMED_")
+        return c
     }
 
     /**
@@ -456,47 +457,58 @@ class BlockStreamSubscription<T> private constructor(private val context: BlockS
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val channels: MutableList<Pair<suspend (block: VersionedBlockMessage) -> T, Channel<T>>> = mutableListOf()
+    private val channels: MutableList<Pair<suspend (block: VersionedBlockMessage) -> T, MutableSharedFlow<T>>> = mutableListOf()
 
-    fun addAction(onBlock: suspend (block: VersionedBlockMessage) -> T) {
-        channels.add(onBlock to Channel())
+    private var consumed: Boolean = false
+
+    fun expand(onBlock: suspend (block: VersionedBlockMessage) -> T) {
+        channels.add(onBlock to MutableSharedFlow())
     }
 
-    fun receive(index: Int = 0): Flow<T> {
-        return channels[index].second.receiveAsFlow().catch { context.onFailure }
-    }
+    fun receive(index: Int = 0): Flow<T> = channels[index].second
 
-    suspend fun subscribe(): BlockStreamSubscription<T> {
-        addAction(context.onBlock as suspend (block: VersionedBlockMessage) -> T)
-        run()
+    fun consume(): BlockStreamSubscription<T> {
+        println("[${Thread.currentThread().name}]_CONSUMING_")
+        if (!consumed) {
+            expand(context.onBlock as suspend (block: VersionedBlockMessage) -> T)
+            launch { run() }
+            consumed = true
+        }
         return getInstance(context) as BlockStreamSubscription<T>
     }
 
-    private suspend fun run() = coroutineScope {
+    private suspend fun run() {
         var counter = 0
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
 
-        launch {
-            context.client.webSocket(
-                host = context.apiUrl.host,
-                port = context.apiUrl.port,
-                path = Iroha2Client.WS_ENDPOINT_BLOCK_STREAM,
-            ) {
-                logger.debug("WebSocket opened")
-                send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
+        println("[${Thread.currentThread().name}]_WAIT_EMIT_")
+        delay(3000)
 
-                for (frame in incoming) {
-                    logger.debug("Received frame: {}", frame)
-                    val block = VersionedBlockMessage.decode(frame.readBytes())
-                    channels.forEach { (action, channel) -> channel.send(action(block)) }
+        println("[${Thread.currentThread().name}]_EMIT_")
+        channels.forEach { (action, channel) -> channel.emit(1 as T) }
+        println("[${Thread.currentThread().name}]_EMITED_")
 
-                    if (++counter == context.count || context.closeIf(block)) {
-                        logger.info("Block stream channel is closing")
-                        channels.forEach { (_, channel) -> channel.close() }
-                    }
-                }
-            }
-        }
+        delay(1000000)
+
+//        context.client.webSocket(
+//            host = context.apiUrl.host,
+//            port = context.apiUrl.port,
+//            path = Iroha2Client.WS_ENDPOINT_BLOCK_STREAM,
+//        ) {
+//            logger.debug("WebSocket opened")
+//            send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
+//
+//            for (frame in incoming) {
+//                logger.debug("Received frame: {}", frame)
+//                val block = VersionedBlockMessage.decode(frame.readBytes())
+//                channels.forEach { (action, channel) -> channel.emit(action(block)) }
+//
+//                if (++counter == context.count || context.closeIf(block)) {
+//                    logger.info("Block stream channel is closing")
+//                    channels.forEach { (_, channel) -> channel } // todo
+//                }
+//            }
+//        }
     }
 
     companion object : SingletonHolder<BlockStreamSubscription<Any>, BlockStreamContext>(::BlockStreamSubscription)
