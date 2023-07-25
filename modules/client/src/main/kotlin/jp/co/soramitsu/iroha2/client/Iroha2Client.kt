@@ -26,8 +26,10 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
+import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
+import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
@@ -61,13 +63,14 @@ import jp.co.soramitsu.iroha2.transaction.Filters
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -77,6 +80,7 @@ import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
+import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -250,7 +254,7 @@ open class Iroha2Client(
     fun subscribeToBlockStream(
         from: Long = 1,
         count: Int,
-    ): BlockStreamSubscription = subscribeToBlockStream(from, count, { block -> block })
+    ): Pair<UUID, BlockStreamSubscription> = subscribeToBlockStream(from, count, { block -> block })
 
     /**
      * Subscribe to block streaming
@@ -269,9 +273,9 @@ open class Iroha2Client(
             logger.error("Block stream was closed with an exception: {}", throwable.message)
         },
         closeIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
-    ): BlockStreamSubscription {
+    ): Pair<UUID, BlockStreamSubscription> {
         val context = BlockStreamContext(getApiUrl(), client, from, count, onBlock, onFailure, closeIf)
-        return BlockStreamSubscription.getInstance(context).consume()
+        return BlockStreamSubscription.getInstance(context).subscribe()
     }
 
     /**
@@ -443,12 +447,16 @@ data class BlockStreamContext(
     val closeIf: suspend (block: VersionedBlockMessage) -> Boolean,
 )
 
-data class BlockStreamSubscriptionStorage(
+data class BlockStreamStorage(
     val onBlock: suspend (block: VersionedBlockMessage) -> Any,
     val closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
     val onFailure: suspend (t: Throwable) -> Unit,
     val channel: Channel<Any>,
-)
+) {
+    private val id: UUID = UUID.randomUUID()
+
+    fun getId() = id
+}
 
 class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope {
 
@@ -456,40 +464,47 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val source: MutableList<BlockStreamSubscriptionStorage> = mutableListOf()
+    private val source: MutableMap<UUID, BlockStreamStorage> = mutableMapOf()
+    private var initialStorageId: UUID? = null
+    private var stopped: Boolean = false
+    private val jobs: MutableList<Job> = mutableListOf()
 
-    private var consumed: Boolean = false
-
-    fun consume(): BlockStreamSubscription {
-        if (!consumed) {
-            expand(context.closeIf, context.onFailure, context.onBlock)
+    fun subscribe(): Pair<UUID, BlockStreamSubscription> {
+        if (initialStorageId == null) {
+            initialStorageId = expand(context.closeIf, context.onFailure, context.onBlock)
             launch { run() }
-            consumed = true
         }
-        return getInstance(context)
+        logger.info("Subscribed to block stream")
+        return initialStorageId!! to getInstance(context)
+    }
+
+    fun unsubscribe() {
+        stopped = true
+        jobs.forEach { it.cancel() }
+        logger.info("Unsubscribed from block stream")
     }
 
     fun expand(
         closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
         onFailure: (suspend (t: Throwable) -> Unit)? = null,
         onBlock: suspend (block: VersionedBlockMessage) -> Any,
-    ) = source.add(
-        BlockStreamSubscriptionStorage(
-            onBlock,
-            closeIf,
-            onFailure ?: context.onFailure,
-            Channel(),
-        ),
-    ).also { logger.debug("Block stream subscription was expanded. Number of channels is ${source.size}") }
+    ): UUID {
+        val storage = BlockStreamStorage(onBlock, closeIf, onFailure ?: context.onFailure, Channel())
+        source[storage.getId()] = storage
+        logger.debug("Block stream subscription has been expanded. Number of channels is ${source.size}")
 
-    // todo async
-    // todo uuid
-    fun <T> receive(actionIdx: Int = 0): Flow<T> {
-        val storage = source[actionIdx]
+        return storage.getId()
+    }
+
+    fun <T> receive(actionId: UUID, collector: FlowCollector<T>) = launch {
+        receiveBlocking<T>(actionId).collect(collector)
+    }.also { jobs.add(it) }
+
+    fun <T> receiveBlocking(actionId: UUID): Flow<T> {
+        val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
         return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun run() {
         var counter = 0
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
@@ -503,27 +518,29 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
             send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
 
             for (frame in incoming) {
+                if (stopped) {
+                    this.close()
+                    source.closeAndClear()
+                    return@webSocket
+                }
+
                 logger.debug("Received frame: {}", frame)
 
                 val block = VersionedBlockMessage.decode(frame.readBytes())
-                source.forEachIndexed { index, storage ->
-                    if (storage.channel.isClosedForSend) {
-                        return@forEachIndexed
-                    }
-                    logger.info("TRYING SEND: $index")
-
+                source.forEach { (id, storage) ->
                     val result = storage.onBlock(block)
+                    logger.debug("{} action result: {}", storage.getId(), result)
                     storage.channel.send(result)
-                    logger.info("RESULT: $result")
 
                     if (storage.closeIf?.let { it(block) } == true) {
-                        logger.info("Block stream channel#$index is closing")
-                        storage.channel.close() // todo memory leak
+                        logger.debug("Block stream channel#{} is closing", id)
+                        storage.channel.close()
+                        source.remove(storage.getId())
                     }
                 }
                 if (++counter == context.count) {
-                    logger.info("Block stream channels are closing")
-                    source.forEach { storage -> storage.channel.close() }
+                    logger.debug("Block stream channels are closing")
+                    source.closeAndClear()
                 }
             }
         }
@@ -556,4 +573,9 @@ open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
             }
         }
     }
+}
+
+fun MutableMap<*, BlockStreamStorage>.closeAndClear() {
+    this.values.forEach { it.channel.close() }
+    this.clear()
 }
