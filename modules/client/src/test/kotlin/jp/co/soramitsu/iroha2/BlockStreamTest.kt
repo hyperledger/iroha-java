@@ -23,8 +23,6 @@ import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
@@ -42,14 +40,16 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
     fun `subscription to block stream`(): Unit = runBlocking {
-        var blocksResult = client.subscribeToBlockStream(count = 2)
+        val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
+        val actionId = idToSubscription.first
+        val subscription = idToSubscription.second
         val newAssetName = "rox"
 
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetValueType.Store())
         }
         var blocks = mutableListOf<VersionedBlockMessage>()
-        blocksResult.collect { block -> blocks.add(block) }
+        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
 
         val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
         var isi = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)
@@ -70,9 +70,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
         // get the last block second time
-        blocksResult = client.subscribeToBlockStream(2, 1)
         blocks = mutableListOf()
-        blocksResult.collect { block -> blocks.add(block) }
+        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
         isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
 
         newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
@@ -86,20 +85,37 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
     fun `subscription to endless block stream`(): Unit = runBlocking {
-        val expectedLastHeight = BigInteger.TEN
-        val channel = client.subscribeToBlockStream(
-            action = { block -> block.extractBlock().height() },
-            closeOn = { block -> block.extractBlock().height() == expectedLastHeight },
+        val repeatTimes = 5
+        val shift = 1 // to test not to take more than was ordered
+        val idToSubscription = client.subscribeToBlockStream(
+            onBlock = { block -> block.extractBlock().height() },
+            closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
         )
-
+        val initialActionId = idToSubscription.first
+        val subscription = idToSubscription.second
         var lastHeight = BigInteger.ZERO
-        launch { channel.collect { lastHeight = it } }
 
-        repeat(expectedLastHeight.intValueExact() + 5) {
-            delay(1000)
+        subscription.receive<BigInteger>(initialActionId) { lastHeight = it }
+
+        repeat(repeatTimes + shift) {
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
         }
-        assertEquals(expectedLastHeight, lastHeight)
+        assertEquals(BigInteger.valueOf(repeatTimes.toLong()), lastHeight)
+
+        val isi = mutableListOf<InstructionBox>()
+        val nextActionId = subscription.expand { block ->
+            block.extractBlock().transactions.first().extractInstruction()
+        }
+        subscription.receive<InstructionBox>(nextActionId) { isi.add(it) }
+
+        lateinit var lastValue: String
+        repeat(repeatTimes) {
+            lastValue = random(16)
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), lastValue.asValue()) }
+        }
+        assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
+
+        subscription.unsubscribe()
     }
 
     private fun CommittedBlock.extractInstructionPayload() = this.transactions[0]

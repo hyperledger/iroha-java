@@ -45,6 +45,7 @@ import jp.co.soramitsu.iroha2.generated.ValueKind
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -441,6 +442,16 @@ fun InstructionBox.Mint.extractPublicKey() = this
     .cast<Expression.Raw>().value
     .cast<Value.PublicKey>().publicKey
     .payload.toHex()
+
+fun VersionedValidTransaction.extractInstruction() = this.extractInstructionVec().first()
+
+fun VersionedValidTransaction.extractInstructionVec() = this
+    .cast<VersionedValidTransaction.V1>().validTransaction.payload.instructions
+    .cast<Executable.Instructions>().vec
+
+inline fun <reified I : InstructionBox> VersionedSignedTransaction.extractInstruction() = this
+    .cast<VersionedSignedTransaction.V1>()
+    .extractInstruction<I>()
 
 inline fun <reified I : InstructionBox> VersionedSignedTransaction.V1.extractInstruction() = this
     .extractInstructionVec<I>()
