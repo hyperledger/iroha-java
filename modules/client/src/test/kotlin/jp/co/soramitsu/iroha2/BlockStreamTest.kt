@@ -23,7 +23,6 @@ import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
@@ -104,7 +103,9 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(BigInteger.valueOf(repeatTimes.toLong()), lastHeight)
 
         val isi = mutableListOf<InstructionBox>()
-        val nextActionId = subscription.expand { block -> block.extractBlock().transactions.first().extractInstruction() }
+        val nextActionId = subscription.expand { block ->
+            block.extractBlock().transactions.first().extractInstruction()
+        }
         subscription.receive<InstructionBox>(nextActionId) { isi.add(it) }
 
         lateinit var lastValue: String
