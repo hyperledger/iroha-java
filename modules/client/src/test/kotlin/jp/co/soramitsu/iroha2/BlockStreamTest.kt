@@ -7,29 +7,30 @@ import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.BlockHeader
 import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
-import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
+import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -42,31 +43,15 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @WithIroha([NewAccountWithMetadata::class])
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
-    fun `asdqwe asdzxc`(): Unit = runBlocking {
-        println("[${Thread.currentThread().name}]_SUB_")
-        val subscription = client.asd(count = 2)
-        println("[${Thread.currentThread().name}]_SUBED_")
-        println("[${Thread.currentThread().name}]_RECEIVE_")
-        val asd = subscription.receive()
-        println("[${Thread.currentThread().name}]_RECEIVED_")
-        println("[${Thread.currentThread().name}]_COLLECT_")
-        asd.collect { block -> println("BLOCK: $block") }
-        println("[${Thread.currentThread().name}]_COLLECTED_")
-    }
-
-    @Test
-    @WithIroha([NewAccountWithMetadata::class])
-    @Story("Successful subscription to block stream")
-    @SdkTestId("subscription_to_block_stream")
     fun `subscription to block stream`(): Unit = runBlocking {
-        val subscription = client.subscribeToBlockStream(count = 2)
+        val subscription = client.subscribeToBlockStream(from = 1, count = 2)
         val newAssetName = "rox"
 
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetValueType.Store())
         }
-        val blocks = mutableListOf<VersionedBlockMessage>()
-        subscription.receive().collect { block -> blocks.add(block) }
+        var blocks = mutableListOf<VersionedBlockMessage>()
+        subscription.receive<VersionedBlockMessage>().collect { block -> blocks.add(block) }
 
         val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
         var isi = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)
@@ -87,37 +72,49 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
         // get the last block second time
-//        subscription = client.subscribeToBlockStream(2, 1)
-//        blocks = mutableListOf()
-//        subscription.collect { block -> blocks.add(block) }
-//        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
-//
-//        newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
-//        assertNotNull(newAssetDefinition)
-//        assertEquals(newAssetName, newAssetDefinition.id.name.string)
-//        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
+        blocks = mutableListOf()
+        subscription.receive<VersionedBlockMessage>().collect { block -> blocks.add(block) }
+        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
+
+        newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
+        assertNotNull(newAssetDefinition)
+        assertEquals(newAssetName, newAssetDefinition.id.name.string)
+        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
     }
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Story("Successful subscription to endless block stream")
-//    @SdkTestId("subscription_to_endless_block_stream")
-//    fun `subscription to endless block stream`(): Unit = runBlocking {
-//        val expectedLastHeight = BigInteger.TEN
-//        val channel = client.subscribeToBlockStream(
-//            action = { block -> block.extractBlock().height() },
-//            closeOn = { block -> block.extractBlock().height() == expectedLastHeight },
-//        )
-//
-//        var lastHeight = BigInteger.ZERO
-//        launch { channel.collect { lastHeight = it } }
-//
-//        repeat(expectedLastHeight.intValueExact() + 5) {
-//            delay(1000)
-//            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
-//        }
-//        assertEquals(expectedLastHeight, lastHeight)
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Story("Successful subscription to endless block stream")
+    @SdkTestId("subscription_to_endless_block_stream")
+    fun `subscription to endless block stream`(): Unit = runBlocking {
+        val repeatTimes = 5
+        val shift = 1 // to test not to take more than was ordered
+        val subscription = client.subscribeToBlockStream(
+            onBlock = { block -> block.extractBlock().height() },
+            closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
+        )
+        var lastHeight = BigInteger.ZERO
+
+        launch { subscription.receive<BigInteger>(actionIdx = 0).collect { lastHeight = it } }
+
+        repeat(repeatTimes + shift) {
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
+        }
+        assertEquals(BigInteger.valueOf(repeatTimes.toLong()), lastHeight)
+
+        val isi = mutableListOf<InstructionBox>()
+        subscription.expand { block -> block.extractBlock().transactions.first().extractInstruction() }
+        val endless = launch { subscription.receive<InstructionBox>(actionIdx = 1).collect { isi.add(it) } }
+
+        lateinit var lastValue: String
+        repeat(repeatTimes) {
+            lastValue = random(16)
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), lastValue.asValue()) }
+        }
+        assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
+
+        endless.cancel()
+    }
 
     private fun CommittedBlock.extractInstructionPayload() = this.transactions[0]
         .cast<VersionedValidTransaction.V1>().validTransaction.payload

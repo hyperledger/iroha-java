@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2.client.balancing
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import java.net.URL
 
+// todo interface
 /**
  * Round-robin load balancing strategy
  */
