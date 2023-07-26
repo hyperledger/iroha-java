@@ -49,12 +49,17 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 import java.time.Instant
+import java.util.concurrent.Executors
+import kotlin.coroutines.CoroutineContext
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -63,7 +68,11 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Permission("no_permission_required")
-class QueriesTest : IrohaTest<Iroha2Client>() {
+class QueriesTest : IrohaTest<Iroha2Client>(), CoroutineScope {
+
+    override val coroutineContext: CoroutineContext = Executors
+        .newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+        .asCoroutineDispatcher() + SupervisorJob()
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
