@@ -26,6 +26,7 @@ import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
 import kotlin.test.assertEquals
@@ -41,6 +42,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
     @Issue("https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/361")
+    @ResourceLock("blockStream")
     fun `subscription to block stream`(): Unit = runBlocking {
         val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
         val actionId = idToSubscription.first
@@ -71,6 +73,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
+        subscription.unsubscribe()
+
 //        blocks = mutableListOf()
 //        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
 //        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
@@ -85,6 +89,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
+    @ResourceLock("blockStream")
     fun `subscription to endless block stream`(): Unit = runBlocking {
         val repeatTimes = 5
         val shift = 1 // to test not to take more than was ordered

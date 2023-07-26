@@ -13,8 +13,8 @@ import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -35,7 +35,6 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     private val source: MutableMap<UUID, BlockStreamStorage> = mutableMapOf()
     private var initialStorageId: UUID? = null
     private var stopped: Boolean = false
-    private val jobs: MutableList<Job> = mutableListOf()
 
     fun subscribe(): Pair<UUID, BlockStreamSubscription> {
         if (initialStorageId == null) {
@@ -48,7 +47,9 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
 
     fun unsubscribe() {
         stopped = true
-        jobs.forEach { it.cancel() }
+        this.cancel()
+        destroy()
+
         logger.info("Unsubscribed from block stream")
     }
 
@@ -66,14 +67,9 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
 
     fun <T> receive(actionId: UUID, collector: FlowCollector<T>) = launch {
         receiveBlocking<T>(actionId).collect(collector)
-    }.also { jobs.add(it) }
-
-    fun <T> receiveBlocking(actionId: UUID): Flow<T> {
-        val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
-        return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
 
-    fun <T> receiveBlockingJava(actionId: UUID): Flow<T> {
+    fun <T> receiveBlocking(actionId: UUID): Flow<T> {
         val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
         return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
@@ -96,7 +92,6 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
                     source.closeAndClear()
                     return@webSocket
                 }
-
                 logger.debug("Received frame: {}", frame)
 
                 val block = VersionedBlockMessage.decode(frame.readBytes())

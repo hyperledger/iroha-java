@@ -6,6 +6,10 @@ open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
     @Volatile
     private var instance: T? = null
 
+    open fun destroy() {
+        instance = null
+    }
+
     fun getInstance(arg: A): T {
         val checkInstance = instance
         if (checkInstance != null) {
@@ -19,7 +23,6 @@ open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
             } else {
                 val created = creator!!(arg)
                 instance = created
-                creator = null
                 created
             }
         }
