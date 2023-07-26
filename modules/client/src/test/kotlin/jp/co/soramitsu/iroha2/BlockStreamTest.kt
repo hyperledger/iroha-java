@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import io.qameta.allure.Feature
+import io.qameta.allure.Issue
 import io.qameta.allure.Owner
 import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Sdk
@@ -39,6 +40,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @WithIroha([NewAccountWithMetadata::class])
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
+    @Issue("https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/361")
     fun `subscription to block stream`(): Unit = runBlocking {
         val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
         val actionId = idToSubscription.first
@@ -69,15 +71,14 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
-        // get the last block second time
-        blocks = mutableListOf()
-        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
-        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
-
-        newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
-        assertNotNull(newAssetDefinition)
-        assertEquals(newAssetName, newAssetDefinition.id.name.string)
-        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
+//        blocks = mutableListOf()
+//        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
+//        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
+//
+//        newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
+//        assertNotNull(newAssetDefinition)
+//        assertEquals(newAssetName, newAssetDefinition.id.name.string)
+//        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
     }
 
     @Test

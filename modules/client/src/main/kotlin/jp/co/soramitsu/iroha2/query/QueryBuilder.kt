@@ -91,6 +91,7 @@ class QueryBuilder<R>(
 
     companion object {
         @JvmStatic
+        @JvmOverloads
         fun findAllAccounts(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllAccounts(),
             AccountsExtractor,
@@ -110,6 +111,7 @@ class QueryBuilder<R>(
         ) = findAccountKeyValueByIdAndKey(accountId, key.asName())
 
         @JvmStatic
+        @JvmOverloads
         fun findAccountsByName(
             name: Name,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -120,18 +122,21 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAccountsByDomainId(
             domainId: DomainId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(Queries.findAccountsByDomainId(domainId), AccountsExtractor, queryFilter)
 
         @JvmStatic
+        @JvmOverloads
         fun findAccountsWithAsset(
             definitionId: AssetDefinitionId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(Queries.findAccountsWithAsset(definitionId), AccountsExtractor, queryFilter)
 
         @JvmStatic
+        @JvmOverloads
         fun findAllAssets(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllAssets(),
             AssetsExtractor,
@@ -139,6 +144,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllAssetsDefinitions(
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(
@@ -148,6 +154,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAssetsByName(
             name: Name,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -158,6 +165,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAssetsByAccountId(
             accountId: AccountId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -174,6 +182,7 @@ class QueryBuilder<R>(
         fun findAssetById(assetId: AssetId) = QueryBuilder(Queries.findAssetById(assetId), AssetExtractor)
 
         @JvmStatic
+        @JvmOverloads
         fun findAssetsByDomainId(
             domainId: DomainId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -190,6 +199,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllAssetsDefinitions(
             assetDefinition: AssetDefinitionId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -200,6 +210,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAssetsByDomainIdAndAssetDefinitionId(
             domainId: DomainId,
             assetDefinition: AssetDefinitionId,
@@ -256,6 +267,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllDomains(
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(Queries.findAllDomains(), DomainsExtractor, queryFilter)
@@ -264,10 +276,12 @@ class QueryBuilder<R>(
         fun findDomainById(domainId: DomainId) = QueryBuilder(Queries.findDomainById(domainId), DomainExtractor)
 
         @JvmStatic
+        @JvmOverloads
         fun findAllPeers(queryFilter: GenericPredicateBox<ValuePredicate>? = null) =
             QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
 
         @JvmStatic
+        @JvmOverloads
         fun findTransactionsByAccountId(
             accountId: AccountId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -278,6 +292,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findPermissionTokensByAccountId(
             accountId: AccountId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -288,6 +303,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllPermissionTokenDefinitions(
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(
@@ -297,6 +313,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findRolesByAccountId(accountId: AccountId, queryFilter: GenericPredicateBox<ValuePredicate>? = null) =
             QueryBuilder(
                 Queries.findRolesByAccountId(accountId),
@@ -305,6 +322,7 @@ class QueryBuilder<R>(
             )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllRoleIds(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllRoleIds(),
             RoleIdsExtractor,
@@ -312,6 +330,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllRoles(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllRoles(),
             RolesExtractor,
@@ -319,6 +338,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findRoleByRoleId(roleId: RoleId, queryFilter: GenericPredicateBox<ValuePredicate>? = null) =
             QueryBuilder(
                 Queries.findRoleByRoleId(roleId),
@@ -339,6 +359,7 @@ class QueryBuilder<R>(
         fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
 
         @JvmStatic
+        @JvmOverloads
         fun findAllTransactions(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllTransactions(),
             TransactionQueryResultExtractor,
@@ -346,6 +367,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllBlocks(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllBlocks(),
             BlocksValueExtractor,
@@ -353,6 +375,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllBlockHeaders(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllBlockHeaders(),
             BlockHeadersExtractor,
@@ -384,6 +407,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllActiveTriggerIds(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllActiveTriggerIds(),
             TriggerIdsExtractor,
@@ -391,6 +415,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findTriggersByDomainId(
             domainId: DomainId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -401,6 +426,7 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
+        @JvmOverloads
         fun findAllParameters(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllParameters(),
             ValueExtractor,

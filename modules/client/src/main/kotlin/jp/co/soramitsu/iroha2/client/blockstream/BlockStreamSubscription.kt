@@ -73,6 +73,11 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
 
+    fun <T> receiveBlockingJava(actionId: UUID): Flow<T> {
+        val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
+        return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
+    }
+
     private suspend fun run() {
         var counter = 0
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
