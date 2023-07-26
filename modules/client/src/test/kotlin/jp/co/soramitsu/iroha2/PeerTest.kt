@@ -26,6 +26,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
+import org.junit.jupiter.api.parallel.ResourceLock
 import java.security.KeyPair
 import java.time.Duration
 import kotlin.reflect.full.createInstance
@@ -48,6 +49,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Story("Account registers a peer")
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
+    @ResourceLock("multiplePeerTest")
     fun `register peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -67,6 +69,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Story("Account unregisters a peer")
     @Permission("no_permission_required")
     @SdkTestId("unregister_peer")
+    @ResourceLock("multiplePeerTest")
     fun `unregister peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -86,6 +89,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @ResourceLock("multiplePeerTest")
     fun `registered peer should return consistent data`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
@@ -128,6 +132,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @ResourceLock("multiplePeerTest")
     fun `round-robin load balancing test`(): Unit = runBlocking {
         repeat(PEER_AMOUNT + 1) {
             assertEquals(findDomain(DEFAULT_DOMAIN_ID).id, DEFAULT_DOMAIN_ID)
