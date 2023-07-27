@@ -18,8 +18,6 @@ import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
 import kotlin.*;
 import kotlin.Pair;
 import kotlin.coroutines.*;
-import kotlinx.coroutines.*;
-import static kotlinx.coroutines.BuildersKt.runBlocking;
 import kotlinx.coroutines.flow.*;
 import static org.apache.commons.lang3.RandomStringUtils.random;
 import org.jetbrains.annotations.*;
@@ -31,6 +29,7 @@ import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.ALICE_KEYPAIR;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_DEFINITION_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_DOMAIN_ID;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
@@ -168,6 +167,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
+    @ResourceLock("blockStream")
     public void blockStreaming() throws ExecutionException, InterruptedException {
         int count = 5;
         Pair<UUID, BlockStreamSubscription> idToSubscription = client.subscribeToBlockStream(1, count);
@@ -191,6 +191,8 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         Integer blocksSize = client.sendQueryAsync(query).get().size();
 
         Assertions.assertEquals(blocksSize, blocks.size());
+
+        subscription.unsubscribe();
     }
 
     static class BlockMessageCollector implements FlowCollector<VersionedBlockMessage> {
