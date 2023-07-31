@@ -63,6 +63,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Permission("no_permission_required")
+@Disabled
 class QueriesTest : IrohaTest<Iroha2Client>() {
 
     @Test

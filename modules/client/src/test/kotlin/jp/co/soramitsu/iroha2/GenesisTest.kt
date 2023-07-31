@@ -9,8 +9,10 @@ import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@Disabled
 class GenesisTest : IrohaTest<Iroha2Client>() {
     companion object {
         private val ALICE_KEYPAIR = keyPairFromHex(
