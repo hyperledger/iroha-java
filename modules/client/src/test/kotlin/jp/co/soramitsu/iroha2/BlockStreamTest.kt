@@ -45,7 +45,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @ResourceLock("blockStream")
     fun `subscription to block stream`(): Unit = runBlocking {
         val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
-        val actionId = idToSubscription.first
+        val actionId = idToSubscription.first!!
         val subscription = idToSubscription.second
         val newAssetName = "rox"
 
@@ -73,8 +73,6 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
-        subscription.unsubscribe()
-
 //        blocks = mutableListOf()
 //        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
 //        isi = checkBlockStructure(blocks[0], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
@@ -83,6 +81,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 //        assertNotNull(newAssetDefinition)
 //        assertEquals(newAssetName, newAssetDefinition.id.name.string)
 //        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
+
+        subscription.unsubscribe()
     }
 
     @Test
@@ -97,25 +97,25 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             onBlock = { block -> block.extractBlock().height() },
             closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
         )
-        val initialActionId = idToSubscription.first
+        val initialActionId = idToSubscription.first!!
         val subscription = idToSubscription.second
-        var lastHeight = BigInteger.ZERO
+        var heightSum = BigInteger.ZERO
 
-        subscription.receive<BigInteger>(initialActionId) { lastHeight = it }
+        subscription.receive<BigInteger>(initialActionId) { heightSum += it }
 
         repeat(repeatTimes + shift) {
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
         }
-        assertEquals(BigInteger.valueOf(repeatTimes.toLong()), lastHeight)
+        assertEquals((1..repeatTimes.toLong()).sum(), heightSum.toLong())
 
         val isi = mutableListOf<InstructionBox>()
-        val nextActionId = subscription.expand { block ->
-            block.extractBlock().transactions.first().extractInstruction()
-        }
-        subscription.receive<InstructionBox>(nextActionId) { isi.add(it) }
+        subscription.subscribeAndReceive<InstructionBox>(
+            onBlock = { it.extractBlock().transactions.first().extractInstruction() },
+            collector = { isi.add(it) },
+        )
 
         lateinit var lastValue: String
-        repeat(repeatTimes) {
+        repeat(repeatTimes * 2) {
             lastValue = random(16)
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), lastValue.asValue()) }
         }

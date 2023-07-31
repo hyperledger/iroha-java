@@ -36,9 +36,9 @@ abstract class IrohaTest<T : Iroha2Client>(
         val finalKeyPair = keyPair ?: this@IrohaTest.keyPair
 
         this.sendTransaction {
-            account(finalAccountId!!)
+            account(finalAccountId)
             builder(this)
-            buildSigned(finalKeyPair!!)
+            buildSigned(finalKeyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }

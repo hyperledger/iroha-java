@@ -33,8 +33,10 @@ import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.balancing.RoundRobinStrategy
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamContext
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
+import jp.co.soramitsu.iroha2.extractBlock
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
@@ -52,6 +54,7 @@ import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
+import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.model.Page
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
@@ -69,6 +72,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
 import java.util.UUID
@@ -242,30 +246,44 @@ open class Iroha2Client(
         }
     }
 
+    /**
+     * @see subscribeToBlockStream below
+     */
     fun subscribeToBlockStream(
         from: Long = 1,
-        count: Int,
-    ): Pair<UUID, BlockStreamSubscription> = subscribeToBlockStream(from, count, { block -> block })
+        count: Long,
+    ): Pair<UUID?, BlockStreamSubscription> = subscribeToBlockStream(
+        from,
+        onBlock = { block -> block },
+        closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
+    )
 
     /**
-     * Subscribe to block streaming
+     * Subscribe to block streaming. Returns null if the subscription has already been received
+     *
      * @param from - block number to start from
-     * @param count - how many blocks to get before closing the channel
-     * @param onBlock - code which will be invoked after a new block received
-     * @param onFailure - code which will be invoked on exception throwing
+     * @param onBlock - the code that will be invoked after a new block received
+     * @param onFailure - the code that will be invoked on exception throwing
      * @param closeIf - if the condition returns true then the channel will be closed
+     * @param onClose - the code that will be invoked right before closing
      */
     @JvmOverloads
     fun subscribeToBlockStream(
         from: Long = 1,
-        count: Int? = null,
-        onBlock: suspend (block: VersionedBlockMessage) -> Any,
+        onBlock: (block: VersionedBlockMessage) -> Any,
         onFailure: suspend (t: Throwable) -> Unit = { throwable ->
             logger.error("Block stream was closed with an exception: {}", throwable.message)
         },
         closeIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
-    ): Pair<UUID, BlockStreamSubscription> {
-        val context = BlockStreamContext(getApiUrl(), client, from, count, onBlock, onFailure, closeIf)
+        onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+    ): Pair<UUID?, BlockStreamSubscription> {
+        val context = BlockStreamContext(
+            getApiUrl(),
+            client,
+            from,
+            BlockStreamStorage(onBlock, closeIf, onFailure),
+            onClose,
+        )
         return BlockStreamSubscription.getInstance(context).subscribe()
     }
 

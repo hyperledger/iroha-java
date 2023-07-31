@@ -13,8 +13,6 @@ import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -24,41 +22,55 @@ import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
 class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope {
 
-    override val coroutineContext: CoroutineContext = Dispatchers.IO + SupervisorJob()
+    override val coroutineContext: CoroutineContext = Dispatchers.IO
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val source: MutableMap<UUID, BlockStreamStorage> = mutableMapOf()
-    private var initialStorageId: UUID? = null
-    private var stopped: Boolean = false
+    private val source: ConcurrentHashMap<UUID, BlockStreamStorage> = ConcurrentHashMap()
+    private var stopped: AtomicBoolean = AtomicBoolean(false)
+    private var initialized: AtomicBoolean = AtomicBoolean(false)
 
-    fun subscribe(): Pair<UUID, BlockStreamSubscription> {
-        if (initialStorageId == null) {
-            initialStorageId = expand(context.closeIf, context.onFailure, context.onBlock)
-            launch { run() }
+    init {
+        run()
+    }
+
+    fun subscribe(): Pair<UUID?, BlockStreamSubscription> {
+        return when (initialized.get()) {
+            false -> {
+                initialized.set(true)
+                subscribe(
+                    context.storage.closeIf,
+                    context.storage.onFailure,
+                    context.storage.onBlock,
+                ) to getInstance(context)
+            }
+            true -> null to getInstance(context)
         }
-        logger.info("Subscribed to block stream")
-        return initialStorageId!! to getInstance(context)
     }
 
-    fun unsubscribe() {
-        stopped = true
-        this.cancel()
-        destroy()
-
-        logger.info("Unsubscribed from block stream")
-    }
-
-    fun expand(
+    @JvmOverloads
+    fun <T> subscribeAndReceive(
         closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
         onFailure: (suspend (t: Throwable) -> Unit)? = null,
-        onBlock: suspend (block: VersionedBlockMessage) -> Any,
+        onBlock: (block: VersionedBlockMessage) -> Any,
+        collector: FlowCollector<T>,
+    ) = subscribe(closeIf, onFailure, onBlock).let { id ->
+        id to receive(id, collector)
+    }
+
+    fun subscribe(
+        closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
+        onFailure: (suspend (t: Throwable) -> Unit)? = null,
+        onBlock: (block: VersionedBlockMessage) -> Any,
     ): UUID {
-        val storage = BlockStreamStorage(onBlock, closeIf, onFailure ?: context.onFailure, Channel())
+        val storage = BlockStreamStorage(onBlock, closeIf, onFailure ?: context.storage.onFailure)
+        storage.channel = Channel()
         source[storage.getId()] = storage
         logger.debug("Block stream subscription has been expanded. Number of channels is ${source.size}")
 
@@ -74,8 +86,13 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
 
-    private suspend fun run() {
-        var counter = 0
+    fun unsubscribe() {
+        stopped.set(true)
+        destroy() // singleton instance of subscription
+        logger.info("Unsubscribed from block stream")
+    }
+
+    private fun run() = launch {
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
 
         context.client.webSocket(
@@ -87,7 +104,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
             send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
 
             for (frame in incoming) {
-                if (stopped) {
+                if (stopped.get()) {
                     this.close()
                     source.closeAndClear()
                     return@webSocket
@@ -106,12 +123,9 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
                         source.remove(storage.getId())
                     }
                 }
-                if (++counter == context.count) {
-                    logger.debug("Block stream channels are closing")
-                    source.closeAndClear()
-                }
             }
         }
+        context.onClose()
     }
 
     private fun MutableMap<*, BlockStreamStorage>.closeAndClear() {

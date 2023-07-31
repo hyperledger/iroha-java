@@ -6,7 +6,7 @@ open class SingletonHolder<out T : Any, in A>(creator: (A) -> T) {
     @Volatile
     private var instance: T? = null
 
-    open fun destroy() {
+    fun destroy() {
         instance = null
     }
 
