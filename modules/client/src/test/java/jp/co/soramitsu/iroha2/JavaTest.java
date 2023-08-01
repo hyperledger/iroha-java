@@ -170,7 +170,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @ResourceLock("blockStream")
     public void blockStreaming() throws ExecutionException, InterruptedException {
         int count = 5;
-        Pair<UUID, BlockStreamSubscription> idToSubscription = client.subscribeToBlockStream(1, count);
+        Pair<UUID, BlockStreamSubscription> idToSubscription = client.subscribeToBlockStreamBlocking(1, count);
         UUID actionId = idToSubscription.component1();
         BlockStreamSubscription subscription = idToSubscription.component2();
 
@@ -192,7 +192,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
         Assertions.assertEquals(blocksSize, blocks.size());
 
-        subscription.unsubscribe();
+        subscription.unsubscribeBlocking();
     }
 
     static class BlockMessageCollector implements FlowCollector<VersionedBlockMessage> {

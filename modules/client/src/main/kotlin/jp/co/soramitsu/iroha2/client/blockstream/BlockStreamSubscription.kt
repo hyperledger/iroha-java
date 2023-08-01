@@ -13,12 +13,15 @@ import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
@@ -39,21 +42,25 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     private var stopped: AtomicBoolean = AtomicBoolean(false)
     private var initialized: AtomicBoolean = AtomicBoolean(false)
 
-    suspend fun subscribe(): Pair<UUID, BlockStreamSubscription> = mutex.withLock {
+    private lateinit var runJob: Job
+
+    suspend fun subscribe(): Pair<UUID, BlockStreamSubscription> {
         return when (initialized.get()) {
             false -> {
                 initialized.set(true)
-                subscribe(
-                    context.storage.closeIf,
-                    context.storage.onFailure,
-                    context.storage.onBlock,
-                ) to getInstance(context).also {
-                    run()
+                subscribe(context.storage) to getInstance(context).also {
+                    runJob = run()
                 }
             }
             true -> source.keys().toList().first() to getInstance(context)
         }
     }
+
+    private suspend fun subscribe(storage: BlockStreamStorage) = subscribe(
+        storage.closeIf,
+        storage.onFailure,
+        storage.onBlock,
+    )
 
     @JvmOverloads
     suspend fun subscribe(
@@ -88,12 +95,14 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         return storage.channel.cast<Channel<T>>().receiveAsFlow().catch { storage.onFailure(it) }
     }
 
-    fun unsubscribe() {
-        if (stopped.getAndSet(true)) {
-            destroy() // singleton instance of subscription
-            logger.info("Unsubscribed from block stream")
-        }
+    suspend fun unsubscribe() {
+        runJob.cancelAndJoin()
+        stopped.set(true)
+        destroy() // singleton instance of subscription
+        logger.info("Unsubscribed from block stream")
     }
+
+    fun unsubscribeBlocking() = runBlocking { unsubscribe() }
 
     private fun run() = launch {
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
@@ -116,6 +125,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
 
                 val block = VersionedBlockMessage.decode(frame.readBytes())
                 source.forEach { (id, storage) ->
+                    logger.debug("Executing {} action", storage.getId())
                     val result = storage.onBlock(block)
                     logger.debug("{} action result: {}", storage.getId(), result)
                     storage.channel.send(result)

@@ -69,6 +69,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -246,10 +247,16 @@ open class Iroha2Client(
         }
     }
 
+    @JvmOverloads
+    fun subscribeToBlockStreamBlocking(from: Long = 1, count: Long) = runBlocking {
+        subscribeToBlockStream(from, count)
+    }
+
     /**
      * @see subscribeToBlockStream below
      */
-    fun subscribeToBlockStream(
+    @JvmOverloads
+    suspend fun subscribeToBlockStream(
         from: Long = 1,
         count: Long,
     ): Pair<UUID?, BlockStreamSubscription> = subscribeToBlockStream(
@@ -268,7 +275,7 @@ open class Iroha2Client(
      * @param onClose - the code that will be invoked right before closing
      */
     @JvmOverloads
-    fun subscribeToBlockStream(
+    suspend fun subscribeToBlockStream(
         from: Long = 1,
         onBlock: (block: VersionedBlockMessage) -> Any,
         onFailure: suspend (t: Throwable) -> Unit = { throwable ->

@@ -36,7 +36,6 @@ import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigInteger
@@ -49,7 +48,6 @@ import kotlin.test.assertNotNull
 @Feature("Triggers")
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
-@Disabled
 class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
