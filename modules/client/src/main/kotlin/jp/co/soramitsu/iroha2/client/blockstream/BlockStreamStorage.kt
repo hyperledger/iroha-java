@@ -1,10 +1,9 @@
 package jp.co.soramitsu.iroha2.client.blockstream
 
-import java.lang.IllegalArgumentException
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import kotlinx.coroutines.channels.Channel
+import java.lang.IllegalArgumentException
 import java.util.UUID
-import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 
 data class BlockStreamStorage(
     val onBlock: (block: VersionedBlockMessage) -> Any,
@@ -33,7 +32,7 @@ class BlockStreamStorageBuilder(builder: BlockStreamStorageBuilder.() -> Unit = 
         return BlockStreamStorage(
             onBlock!!,
             cancelIf,
-            onFailure
+            onFailure,
         )
     }
 

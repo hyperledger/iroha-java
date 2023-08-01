@@ -7,6 +7,7 @@ import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorageBuilder
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorageBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 

@@ -114,7 +114,7 @@ open class Iroha2Client(
         log,
         credentials,
         eventReadTimeoutInMills,
-        eventReadMaxAttempts
+        eventReadMaxAttempts,
     )
 
     constructor(
@@ -295,10 +295,10 @@ open class Iroha2Client(
                 BlockStreamStorage(
                     onBlock,
                     cancelIf,
-                    onFailure
-                )
+                    onFailure,
+                ),
             ),
-            onClose
+            onClose,
         )
     }
 
@@ -406,7 +406,7 @@ open class Iroha2Client(
 
             else -> throw WebSocketProtocolException(
                 "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
-                        "but was ${event::class.qualifiedName}",
+                    "but was ${event::class.qualifiedName}",
             )
         }
     }
