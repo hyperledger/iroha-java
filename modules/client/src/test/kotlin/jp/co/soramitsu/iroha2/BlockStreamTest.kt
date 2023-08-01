@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorageBuilder
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -45,7 +46,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @ResourceLock("blockStream")
     fun `subscription to block stream`(): Unit = runBlocking {
         val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
-        val actionId = idToSubscription.first!!
+        val actionId = idToSubscription.first.first().id
         val subscription = idToSubscription.second
         val newAssetName = "rox"
 
@@ -82,7 +83,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 //        assertEquals(newAssetName, newAssetDefinition.id.name.string)
 //        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
 
-        subscription.unsubscribe()
+        subscription.stop()
     }
 
     @Test
@@ -95,9 +96,9 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val shift = 1 // to test not to take more than was ordered
         val idToSubscription = client.subscribeToBlockStream(
             onBlock = { block -> block.extractBlock().height() },
-            closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
+            cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
         )
-        val initialActionId = idToSubscription.first!!
+        val initialActionId = idToSubscription.first.first().id
         val subscription = idToSubscription.second
         var heightSum = BigInteger.ZERO
 
@@ -110,7 +111,9 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
         val isi = mutableListOf<InstructionBox>()
         subscription.subscribeAndReceive<InstructionBox>(
-            onBlock = { it.extractBlock().transactions.first().extractInstruction() },
+            BlockStreamStorageBuilder {
+                onBlock { it.extractBlock().transactions.first().extractInstruction() }
+            }.build(),
             collector = { isi.add(it) },
         )
 
@@ -121,7 +124,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         }
         assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
 
-        subscription.unsubscribe()
+        subscription.stop()
     }
 
     private fun CommittedBlock.extractInstructionPayload() = this.transactions[0]

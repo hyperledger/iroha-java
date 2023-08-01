@@ -76,7 +76,6 @@ import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
-import java.util.UUID
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -110,7 +109,13 @@ open class Iroha2Client(
         credentials: String? = null,
         eventReadTimeoutInMills: Long = 250,
         eventReadMaxAttempts: Int = 10,
-    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+    ) : this(
+        IrohaUrls(apiUrl, telemetryUrl, peerUrl),
+        log,
+        credentials,
+        eventReadTimeoutInMills,
+        eventReadMaxAttempts
+    )
 
     constructor(
         apiUrl: String,
@@ -259,10 +264,10 @@ open class Iroha2Client(
     suspend fun subscribeToBlockStream(
         from: Long = 1,
         count: Long,
-    ): Pair<UUID?, BlockStreamSubscription> = subscribeToBlockStream(
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
         from,
         onBlock = { block -> block },
-        closeIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
+        cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
     )
 
     /**
@@ -271,7 +276,7 @@ open class Iroha2Client(
      * @param from - block number to start from
      * @param onBlock - the code that will be invoked after a new block received
      * @param onFailure - the code that will be invoked on exception throwing
-     * @param closeIf - if the condition returns true then the channel will be closed
+     * @param cancelIf - if the condition returns true then the channel will be closed
      * @param onClose - the code that will be invoked right before closing
      */
     @JvmOverloads
@@ -281,17 +286,44 @@ open class Iroha2Client(
         onFailure: suspend (t: Throwable) -> Unit = { throwable ->
             logger.error("Block stream was closed with an exception: {}", throwable.message)
         },
-        closeIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
+        cancelIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
-    ): Pair<UUID?, BlockStreamSubscription> {
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
+        return subscribeToBlockStream(
+            from,
+            listOf(
+                BlockStreamStorage(
+                    onBlock,
+                    cancelIf,
+                    onFailure
+                )
+            ),
+            onClose
+        )
+    }
+
+    /**
+     * Subscribe to block streaming. Returns null if the subscription has already been received
+     *
+     * @param from - block number to start from
+     * @param blockStreamStorages - wrapper for the code blocks that represent logic
+     * of a block received processing, cancellation condition and error processing
+     * @param onClose - the code that will be invoked right before closing
+     */
+    @JvmOverloads
+    suspend fun subscribeToBlockStream(
+        from: Long = 1,
+        blockStreamStorages: Iterable<BlockStreamStorage>,
+        onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
         val context = BlockStreamContext(
             getApiUrl(),
             client,
             from,
-            BlockStreamStorage(onBlock, closeIf, onFailure),
+            blockStreamStorages,
             onClose,
         )
-        return BlockStreamSubscription.getInstance(context).subscribe()
+        return blockStreamStorages to BlockStreamSubscription.getInstance(context).start()
     }
 
     /**
@@ -374,7 +406,7 @@ open class Iroha2Client(
 
             else -> throw WebSocketProtocolException(
                 "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
-                    "but was ${event::class.qualifiedName}",
+                        "but was ${event::class.qualifiedName}",
             )
         }
     }

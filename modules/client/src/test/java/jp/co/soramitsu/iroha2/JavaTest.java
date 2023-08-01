@@ -192,7 +192,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
         Assertions.assertEquals(blocksSize, blocks.size());
 
-        subscription.unsubscribeBlocking();
+        subscription.stopBlocking();
     }
 
     static class BlockMessageCollector implements FlowCollector<VersionedBlockMessage> {

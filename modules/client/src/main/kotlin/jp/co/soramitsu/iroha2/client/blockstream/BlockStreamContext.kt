@@ -7,6 +7,6 @@ data class BlockStreamContext(
     val apiUrl: URL,
     val client: HttpClient,
     val from: Long = 1,
-    val storage: BlockStreamStorage,
+    val storages: Iterable<BlockStreamStorage>,
     val onClose: () -> Unit,
 )
