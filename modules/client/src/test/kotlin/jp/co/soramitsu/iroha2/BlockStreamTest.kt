@@ -7,6 +7,7 @@ import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -112,7 +112,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val isi = mutableListOf<InstructionBox>()
         subscription.subscribeAndReceive<InstructionBox>(
             BlockStreamStorage(
-                onBlock = { it.extractBlock().transactions.first().extractInstruction() }
+                onBlock = { it.extractBlock().transactions.first().extractInstruction() },
             ),
             collector = { isi.add(it) },
         )
