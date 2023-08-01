@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.util.UUID
@@ -31,16 +33,13 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
     private val logger = LoggerFactory.getLogger(javaClass)
+    private val mutex = Mutex()
 
     private val source: ConcurrentHashMap<UUID, BlockStreamStorage> = ConcurrentHashMap()
     private var stopped: AtomicBoolean = AtomicBoolean(false)
     private var initialized: AtomicBoolean = AtomicBoolean(false)
 
-    init {
-        run()
-    }
-
-    fun subscribe(): Pair<UUID?, BlockStreamSubscription> {
+    suspend fun subscribe(): Pair<UUID, BlockStreamSubscription> = mutex.withLock {
         return when (initialized.get()) {
             false -> {
                 initialized.set(true)
@@ -48,33 +47,36 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
                     context.storage.closeIf,
                     context.storage.onFailure,
                     context.storage.onBlock,
-                ) to getInstance(context)
+                ) to getInstance(context).also {
+                    run()
+                }
             }
-            true -> null to getInstance(context)
+            true -> source.keys().toList().first() to getInstance(context)
         }
     }
 
     @JvmOverloads
-    fun <T> subscribeAndReceive(
+    suspend fun subscribe(
         closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
         onFailure: (suspend (t: Throwable) -> Unit)? = null,
         onBlock: (block: VersionedBlockMessage) -> Any,
-        collector: FlowCollector<T>,
-    ) = subscribe(closeIf, onFailure, onBlock).let { id ->
-        id to receive(id, collector)
-    }
-
-    fun subscribe(
-        closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
-        onFailure: (suspend (t: Throwable) -> Unit)? = null,
-        onBlock: (block: VersionedBlockMessage) -> Any,
-    ): UUID {
+    ): UUID = mutex.withLock {
         val storage = BlockStreamStorage(onBlock, closeIf, onFailure ?: context.storage.onFailure)
         storage.channel = Channel()
         source[storage.getId()] = storage
         logger.debug("Block stream subscription has been expanded. Number of channels is ${source.size}")
 
         return storage.getId()
+    }
+
+    @JvmOverloads
+    suspend fun <T> subscribeAndReceive(
+        closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
+        onFailure: (suspend (t: Throwable) -> Unit)? = null,
+        onBlock: (block: VersionedBlockMessage) -> Any,
+        collector: FlowCollector<T>,
+    ) = subscribe(closeIf, onFailure, onBlock).let { id ->
+        id to receive(id, collector)
     }
 
     fun <T> receive(actionId: UUID, collector: FlowCollector<T>) = launch {
@@ -87,9 +89,10 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     }
 
     fun unsubscribe() {
-        stopped.set(true)
-        destroy() // singleton instance of subscription
-        logger.info("Unsubscribed from block stream")
+        if (stopped.getAndSet(true)) {
+            destroy() // singleton instance of subscription
+            logger.info("Unsubscribed from block stream")
+        }
     }
 
     private fun run() = launch {
