@@ -69,11 +69,10 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         onBlock: (block: VersionedBlockMessage) -> Any,
     ): UUID = mutex.withLock {
         val storage = BlockStreamStorage(onBlock, closeIf, onFailure ?: context.storage.onFailure)
-        storage.channel = Channel()
-        source[storage.getId()] = storage
+        source[storage.id] = storage
         logger.debug("Block stream subscription has been expanded. Number of channels is ${source.size}")
 
-        return storage.getId()
+        return storage.id
     }
 
     @JvmOverloads
@@ -125,15 +124,15 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
 
                 val block = VersionedBlockMessage.decode(frame.readBytes())
                 source.forEach { (id, storage) ->
-                    logger.debug("Executing {} action", storage.getId())
+                    logger.debug("Executing {} action", storage.id)
                     val result = storage.onBlock(block)
-                    logger.debug("{} action result: {}", storage.getId(), result)
-                    storage.channel.send(result)
+                    logger.debug("{} action result: {}", storage.id, result)
+                    storage.channel.value.send(result)
 
                     if (storage.closeIf?.let { it(block) } == true) {
                         logger.debug("Block stream channel#{} is closing", id)
-                        storage.channel.close()
-                        source.remove(storage.getId())
+                        storage.channel.value.close()
+                        source.remove(storage.id)
                     }
                 }
             }
@@ -142,7 +141,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     }
 
     private fun MutableMap<*, BlockStreamStorage>.closeAndClear() {
-        this.values.forEach { it.channel.close() }
+        this.values.forEach { it.channel.value.close() }
         this.clear()
     }
 

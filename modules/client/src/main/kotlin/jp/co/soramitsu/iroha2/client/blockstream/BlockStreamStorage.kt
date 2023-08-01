@@ -9,9 +9,7 @@ data class BlockStreamStorage(
     val closeIf: (suspend (block: VersionedBlockMessage) -> Boolean)? = null,
     val onFailure: suspend (t: Throwable) -> Unit,
 ) {
-    lateinit var channel: Channel<Any>
+    val channel = lazy { Channel<Any>() }
 
-    private val id: UUID = UUID.randomUUID()
-
-    fun getId() = id
+    val id: UUID = UUID.randomUUID()
 }
