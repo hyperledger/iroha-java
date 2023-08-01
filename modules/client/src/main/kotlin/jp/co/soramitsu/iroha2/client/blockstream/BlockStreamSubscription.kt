@@ -71,7 +71,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         logger.debug("Block stream subscription has been expanded. Updated number of channels is ${source.size}")
     }
 
-    suspend fun <T> subscribeAndReceive(
+    fun <T> subscribeAndReceive(
         storage: BlockStreamStorage,
         collector: FlowCollector<T>,
     ) {
