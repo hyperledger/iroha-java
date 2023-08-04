@@ -54,7 +54,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetValueType.Store())
         }
         var blocks = mutableListOf<VersionedBlockMessage>()
-        subscription.receiveBlocking<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
+        subscription.receive<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
 
         val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
         var isi = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)

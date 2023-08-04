@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.util.UUID
@@ -29,12 +30,11 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope {
+open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
+    open val logger: Logger = LoggerFactory.getLogger(javaClass)
     private val source: ConcurrentHashMap<UUID, BlockStreamStorage> = ConcurrentHashMap()
     private val running: AtomicBoolean = AtomicBoolean(false)
     private val stopped: AtomicBoolean = AtomicBoolean(false)
@@ -42,7 +42,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     private lateinit var runJob: Job
 
     init {
-        subscribe(context.storages) to getInstance(context)
+        subscribe(context.storages)
     }
 
     fun start(): BlockStreamSubscription {
@@ -52,14 +52,10 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         return this
     }
 
-    fun subscribe(
-        storage: BlockStreamStorage,
-    ) = subscribe(listOf(storage))
+    fun subscribe(storage: BlockStreamStorage) = subscribe(listOf(storage))
 
     @Synchronized
-    fun subscribe(
-        storages: Iterable<BlockStreamStorage>,
-    ) {
+    fun subscribe(storages: Iterable<BlockStreamStorage>) {
         logger.debug("Expanding subscription with ${storages.count()} storages")
         for (it in storages) {
             if (source.keys.contains(it.id)) {
@@ -71,22 +67,20 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
         logger.debug("Block stream subscription has been expanded. Updated number of channels is ${source.size}")
     }
 
-    fun <T> subscribeAndReceive(
-        storage: BlockStreamStorage,
-        collector: FlowCollector<T>,
-    ) {
+    fun <T> subscribeAndReceive(storage: BlockStreamStorage, collector: FlowCollector<T>) {
         subscribe(storage)
         receive(storage.id, collector)
     }
 
     fun <T> receive(actionId: UUID, collector: FlowCollector<T>) = launch {
-        receiveBlocking<T>(actionId).collect(collector)
+        receive<T>(actionId).collect(collector)
     }
 
-    fun <T> receiveBlocking(actionId: UUID): Flow<T> {
+    fun <T> receive(actionId: UUID): Flow<T> {
         val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
-        return storage.channel.value.cast<Channel<T>>().receiveAsFlow()
-            .catch { storage.onFailure?.let { method -> method(it) } }
+        return storage.channel.value.cast<Channel<T>>().receiveAsFlow().catch {
+            storage.onFailure?.let { method -> method(it) }
+        }
     }
 
     suspend fun stop() {
@@ -99,8 +93,7 @@ class BlockStreamSubscription private constructor(private val context: BlockStre
     fun stopBlocking() = runBlocking { stop() }
 
     private fun run() = launch {
-        val request = VersionedBlockSubscriptionRequest
-            .V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
+        val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
 
         context.client.webSocket(
             host = context.apiUrl.host,
