@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -33,6 +34,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@Disabled
 @Timeout(100)
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")

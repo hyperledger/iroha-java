@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2;
 
+import java.time.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -169,6 +170,8 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @WithIroha(sources = DefaultGenesis.class)
     @ResourceLock("blockStream")
     public void blockStreaming() throws ExecutionException, InterruptedException {
+        System.out.println("TIMEOF 'subscription to block stream': " + Instant.now());
+
         int count = 5;
         Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> idToSubscription =
                 client.subscribeToBlockStreamBlocking(1, count);

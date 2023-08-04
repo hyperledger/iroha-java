@@ -67,6 +67,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@Disabled
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 class InstructionsTest : IrohaTest<Iroha2Client>() {

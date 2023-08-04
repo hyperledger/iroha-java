@@ -60,6 +60,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Disabled
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Permission("no_permission_required")

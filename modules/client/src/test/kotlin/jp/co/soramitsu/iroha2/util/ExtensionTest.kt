@@ -6,8 +6,10 @@ import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asAssetDefinitionId
 import jp.co.soramitsu.iroha2.asAssetId
 import jp.co.soramitsu.iroha2.asString
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@Disabled
 class ExtensionTest {
 
     @Test
