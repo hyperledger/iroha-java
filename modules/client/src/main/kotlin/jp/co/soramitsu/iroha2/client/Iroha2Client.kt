@@ -264,10 +264,12 @@ open class Iroha2Client(
     suspend fun subscribeToBlockStream(
         from: Long = 1,
         count: Long,
+        autoStart: Boolean = true,
     ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
         from,
         onBlock = { block -> block },
         cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
+        autoStart = autoStart
     )
 
     /**
@@ -288,6 +290,7 @@ open class Iroha2Client(
         },
         cancelIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+        autoStart: Boolean = true,
     ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
         return subscribeToBlockStream(
             from,
@@ -299,6 +302,7 @@ open class Iroha2Client(
                 ),
             ),
             onClose,
+            autoStart,
         )
     }
 
@@ -309,12 +313,15 @@ open class Iroha2Client(
      * @param blockStreamStorages - wrapper for the code blocks that represent logic
      * of a block received processing, cancellation condition and error processing
      * @param onClose - the code that will be invoked right before closing
+     * @param autoStart - whether websocket is going to be receiving blocks immediately,
+     * otherwise calling 'start' method required
      */
     @JvmOverloads
     suspend fun subscribeToBlockStream(
         from: Long = 1,
         blockStreamStorages: Iterable<BlockStreamStorage>,
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+        autoStart: Boolean = true,
     ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
         val context = BlockStreamContext(
             getApiUrl(),
@@ -323,7 +330,8 @@ open class Iroha2Client(
             blockStreamStorages,
             onClose,
         )
-        return blockStreamStorages to BlockStreamSubscription.getInstance(context).start()
+        return blockStreamStorages to BlockStreamSubscription.getInstance(context)
+            .apply { if(autoStart) start() }
     }
 
     /**

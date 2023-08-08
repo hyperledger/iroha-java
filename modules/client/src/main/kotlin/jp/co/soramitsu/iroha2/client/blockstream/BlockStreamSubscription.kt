@@ -57,12 +57,10 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
     @Synchronized
     fun subscribe(storages: Iterable<BlockStreamStorage>) {
         logger.debug("Expanding subscription with ${storages.count()} storages")
-        for (it in storages) {
-            if (source.keys.contains(it.id)) {
-                logger.warn("Given id ${it.id} is already present in the subscription, not being added repeatedly")
-                continue
+        storages.forEach {
+            source.putIfAbsent(it.id, it)?.run {
+                logger.warn("Given id $id is already present in the subscription, not being added repeatedly")
             }
-            source[it.id] = it
         }
         logger.debug("Block stream subscription has been expanded. Updated number of channels is ${source.size}")
     }
