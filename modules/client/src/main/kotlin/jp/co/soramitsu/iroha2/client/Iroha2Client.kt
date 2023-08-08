@@ -269,7 +269,7 @@ open class Iroha2Client(
         from,
         onBlock = { block -> block },
         cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
-        autoStart = autoStart
+        autoStart = autoStart,
     )
 
     /**
@@ -331,7 +331,7 @@ open class Iroha2Client(
             onClose,
         )
         return blockStreamStorages to BlockStreamSubscription.getInstance(context)
-            .apply { if(autoStart) start() }
+            .apply { if (autoStart) start() }
     }
 
     /**
