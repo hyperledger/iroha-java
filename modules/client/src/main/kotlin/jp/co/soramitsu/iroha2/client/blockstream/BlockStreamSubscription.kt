@@ -28,9 +28,11 @@ import java.math.BigInteger
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope {
+open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope, AutoCloseable {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
@@ -85,15 +87,19 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
     }
 
     suspend fun stop() {
-        if (!stopped.getAndSet(true)) {
-            runJob.cancelAndJoin()
-            destroy() // singleton instance of subscription
-            logger.info("Unsubscribed from block stream, closing")
+        withContext(NonCancellable) {
+            if (!stopped.getAndSet(true)) {
+                runJob.cancelAndJoin()
+                destroy() // singleton instance of subscription
+                logger.info("Unsubscribed from block stream, closing")
+            }
         }
         logger.warn("Block stream is already closed")
     }
 
-    fun stopBlocking() = runBlocking { stop() }
+    override fun close() {
+        runBlocking { stop() }
+    }
 
     private fun run() = launch {
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
