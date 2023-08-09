@@ -79,10 +79,7 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
     }
 
     fun <T> receive(actionId: UUID): Flow<T> {
-        val storage = source[actionId] ?: run {
-            logger.warn("Source flow ids: ${source.keys.joinToString(", ") { it.toString() }}")
-            throw IrohaSdkException("Flow#$actionId not found")
-        }
+        val storage = source[actionId] ?: throw IrohaSdkException("Flow#$actionId not found")
         return storage.channel.value.cast<Channel<T>>().receiveAsFlow().catch {
             storage.onFailure?.let { method -> method(it) }
         }
