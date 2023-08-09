@@ -126,12 +126,17 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
                         val result = storage.onBlock(block)
                         logger.debug("{} action result: {}", id, result)
                         val channel = storage.channel.value
-
                         if (!channel.isClosedForSend) {
                             channel.send(result)
+                        } else {
+                            logger.warn(
+                                "Block stream channel#{} is already closed, not sending the action result",
+                                id
+                            )
                         }
 
                         if (storage.cancelIf?.let { it(block) } == true) {
+                            // idempotent
                             channel.close()
                             idsToRemove.add(id)
                             logger.debug("Block stream channel#{} is closed and scheduled for removal", id)
