@@ -11,7 +11,10 @@ import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -30,7 +33,6 @@ import java.math.BigInteger
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.coroutines.CoroutineContext
 
 open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope, AutoCloseable {
 
@@ -91,16 +93,17 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
             if (!stopped.getAndSet(true)) {
                 runJob.cancelAndJoin()
                 destroy() // singleton instance of subscription
-                logger.info("Unsubscribed from block stream, closing")
+                logger.info("Unsubscribed from block streaming")
             }
         }
-        logger.warn("Block stream is already closed")
+        logger.warn("Block streaming is already closed")
     }
 
     override fun close() {
         runBlocking { stop() }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun run() = launch {
         val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
 
@@ -109,38 +112,48 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
             port = context.apiUrl.port,
             path = Iroha2Client.WS_ENDPOINT_BLOCK_STREAM,
         ) {
-            logger.debug("WebSocket opened")
-            send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
+            try {
+                logger.debug("WebSocket opened")
+                send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
+                val idsToRemove = mutableListOf<UUID>()
 
-            for (frame in incoming) {
-                if (stopped.get()) {
-                    this.close()
-                    source.closeAndClear()
-                    return@webSocket
-                }
-                logger.debug("Received frame: {}", frame)
+                for (frame in incoming) {
+                    logger.debug("Received frame: {}", frame)
 
-                val block = VersionedBlockMessage.decode(frame.readBytes())
-                source.forEach { (id, storage) ->
-                    logger.debug("Executing {} action", storage.id)
-                    val result = storage.onBlock(block)
-                    logger.debug("{} action result: {}", storage.id, result)
-                    storage.channel.value.send(result)
+                    val block = VersionedBlockMessage.decode(frame.readBytes())
+                    source.forEach { (id, storage) ->
+                        logger.debug("Executing {} action", id)
+                        val result = storage.onBlock(block)
+                        logger.debug("{} action result: {}", id, result)
+                        val channel = storage.channel.value
 
-                    if (storage.cancelIf?.let { it(block) } == true) {
-                        logger.debug("Block stream channel#{} is closing", id)
-                        storage.channel.value.close()
-                        source.remove(storage.id)
+                        if (!channel.isClosedForSend) {
+                            channel.send(result)
+                        }
+
+                        if (storage.cancelIf?.let { it(block) } == true) {
+                            channel.close()
+                            idsToRemove.add(id)
+                            logger.debug("Block stream channel#{} is closed and scheduled for removal", id)
+                        }
+                    }
+                    if (idsToRemove.isNotEmpty()) {
+                        idsToRemove.forEach {
+                            source.remove(it)
+                            logger.debug("Block stream channel#{} is removed", it)
+                        }
+                        idsToRemove.clear()
                     }
                 }
+            } catch (e: CancellationException) {
+                logger.info("Closing subscription WS")
+                this.close()
+                source.values.forEach { it.channel.value.close() }
+                return@webSocket
+            } finally {
+                context.onClose()
             }
         }
-        context.onClose()
-    }
-
-    private fun MutableMap<*, BlockStreamStorage>.closeAndClear() {
-        this.values.forEach { it.channel.value.close() }
-        this.clear()
     }
 
     companion object : SingletonHolder<BlockStreamSubscription, BlockStreamContext>(::BlockStreamSubscription)
