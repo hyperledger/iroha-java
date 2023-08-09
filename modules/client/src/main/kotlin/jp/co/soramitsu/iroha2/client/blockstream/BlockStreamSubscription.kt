@@ -131,7 +131,7 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
                         } else {
                             logger.warn(
                                 "Block stream channel#{} is already closed, not sending the action result",
-                                id
+                                id,
                             )
                         }
 
