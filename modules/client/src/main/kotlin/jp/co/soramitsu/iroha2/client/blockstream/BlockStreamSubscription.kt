@@ -11,7 +11,6 @@ import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -33,6 +32,7 @@ import java.math.BigInteger
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.CoroutineContext
 
 open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope, AutoCloseable {
 
