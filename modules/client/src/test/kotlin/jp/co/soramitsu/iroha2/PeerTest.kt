@@ -1,7 +1,6 @@
 package jp.co.soramitsu.iroha2
 
 import io.qameta.allure.Feature
-import io.qameta.allure.Issue
 import io.qameta.allure.Owner
 import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Permission
@@ -38,7 +37,6 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
-@Issue("https://github.com/hyperledger/iroha/issues/2962")
 class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     companion object {
@@ -113,7 +111,13 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
                     QueryBuilder.findAllPeers()
                         .account(ALICE_ACCOUNT_ID)
                         .buildSigned(ALICE_KEYPAIR)
-                        .let { Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl()).sendQuery(it) }
+                        .let {
+                            Iroha2Client(
+                                container.getApiUrl(),
+                                container.getTelemetryUrl(),
+                                container.getP2pUrl(),
+                            ).sendQuery(it)
+                        }
                         .also { peers -> assertEquals(peers.size, peersCount) }
                         .also { return@repeat }
                 }

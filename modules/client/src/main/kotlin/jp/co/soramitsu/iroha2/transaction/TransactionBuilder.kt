@@ -263,6 +263,19 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
+    @JvmOverloads
+    fun registerAssetDefinition(
+        name: Name,
+        domainId: DomainId,
+        assetValueType: AssetValueType,
+        metadata: Metadata = Metadata(mapOf()),
+        mintable: Mintable = Mintable.Infinitely(),
+    ) = this.apply {
+        instructions.value.add(
+            Instructions.registerAssetDefinition(AssetDefinitionId(name, domainId), assetValueType, metadata, mintable),
+        )
+    }
+
     fun registerAsset(
         id: AssetId,
         assetValue: AssetValue,

@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -41,7 +42,10 @@ import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueKind
+import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -378,6 +382,13 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.ParameterId -> this.parameterId
 }
 
+fun InstructionBox.extractAccount() = this
+    .cast<InstructionBox.Register>()
+    .registerBox.`object`.expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewAccount>().newAccount
+
 fun InstructionBox.Register.extractAccount() = this
     .registerBox.`object`.expression
     .cast<Expression.Raw>().value
@@ -431,6 +442,16 @@ fun InstructionBox.Mint.extractPublicKey() = this
     .cast<Expression.Raw>().value
     .cast<Value.PublicKey>().publicKey
     .payload.toHex()
+
+fun VersionedValidTransaction.extractInstruction() = this.extractInstructionVec().first()
+
+fun VersionedValidTransaction.extractInstructionVec() = this
+    .cast<VersionedValidTransaction.V1>().validTransaction.payload.instructions
+    .cast<Executable.Instructions>().vec
+
+inline fun <reified I : InstructionBox> VersionedSignedTransaction.extractInstruction() = this
+    .cast<VersionedSignedTransaction.V1>()
+    .extractInstruction<I>()
 
 inline fun <reified I : InstructionBox> VersionedSignedTransaction.V1.extractInstruction() = this
     .extractInstructionVec<I>()
@@ -494,10 +515,20 @@ fun EvaluatesTo<Value>.extractValueU32() = this
     .getValue<Long>()
 
 fun TriggerOfFilterBoxAndOptimizedExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
+
 fun TriggerOfFilterBoxAndExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
 
 fun TriggerOfFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
 fun TriggerOfFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
+fun VersionedBlockMessage.extractBlock() = this
+    .cast<VersionedBlockMessage.V1>().blockMessage.versionedCommittedBlock
+    .extractBlock()
+
+fun VersionedCommittedBlock.extractBlock() = this.cast<VersionedCommittedBlock.V1>().committedBlock
+
+fun CommittedBlock.height() = this.header.height
 
 fun FilterBox.extractSchedule() = this
     .cast<FilterBox.Time>()

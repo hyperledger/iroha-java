@@ -1,30 +1,27 @@
 package jp.co.soramitsu.iroha2;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.time.*;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
-import jp.co.soramitsu.iroha2.generated.Account;
-import jp.co.soramitsu.iroha2.generated.AccountId;
-import jp.co.soramitsu.iroha2.generated.AssetId;
-import jp.co.soramitsu.iroha2.generated.AssetValue;
-import jp.co.soramitsu.iroha2.generated.AssetValueType;
-import jp.co.soramitsu.iroha2.generated.Domain;
-import jp.co.soramitsu.iroha2.generated.DomainId;
+import jp.co.soramitsu.iroha2.client.blockstream.*;
+import jp.co.soramitsu.iroha2.generated.*;
 import jp.co.soramitsu.iroha2.generated.Metadata;
-import jp.co.soramitsu.iroha2.generated.Name;
-import jp.co.soramitsu.iroha2.generated.Value;
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction;
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor;
 import jp.co.soramitsu.iroha2.query.QueryBuilder;
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis;
 import jp.co.soramitsu.iroha2.testengine.IrohaTest;
 import jp.co.soramitsu.iroha2.testengine.WithIroha;
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder;
+import kotlin.*;
+import kotlin.Pair;
+import kotlin.coroutines.*;
+import kotlinx.coroutines.flow.*;
+import static org.apache.commons.lang3.RandomStringUtils.random;
+import org.jetbrains.annotations.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +30,7 @@ import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.ALICE_KEYPAIR;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_DEFINITION_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_DOMAIN_ID;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
@@ -49,7 +47,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
-    public void registerDomainInstructionCommitted() throws ExecutionException, InterruptedException, TimeoutException {
+    public void registerDomain() throws ExecutionException, InterruptedException, TimeoutException {
         final DomainId domainId = new DomainId(new Name("new_domain_name"));
         final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
@@ -67,7 +65,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
-    public void registerAccountInstructionCommitted() throws Exception {
+    public void registerAccount() throws Exception {
         final AccountId accountId = new AccountId(new Name("new_account"), DEFAULT_DOMAIN_ID);
         final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
@@ -85,7 +83,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
-    public void mintAssetInstructionCommitted() throws Exception {
+    public void mintAsset() throws Exception {
         final VersionedSignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
@@ -109,7 +107,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
-    public void updateKeyValueInstructionCommitted() throws Exception {
+    public void updateKeyValue() throws Exception {
         final Name assetMetadataKey = new Name("asset_metadata_key");
         final Value.String assetMetadataValue = new Value.String("some string value");
         final Value.String assetMetadataValue2 = new Value.String("some string value 2");
@@ -142,7 +140,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
     @Test
     @WithIroha(sources = DefaultGenesis.class)
-    public void setKeyValueInstructionCommitted() throws Exception {
+    public void setKeyValue() throws Exception {
         final Value.String assetValue = new Value.String("some string value");
         final Name assetKey = new Name("asset_metadata_key");
 
@@ -166,5 +164,55 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
         final Value value = future.get(10, TimeUnit.SECONDS);
         Assertions.assertEquals(((Value.String) value).getString(), assetValue.getString());
+    }
+
+    @Test
+    @WithIroha(sources = DefaultGenesis.class)
+    @ResourceLock("blockStream")
+    public void blockStreaming() throws ExecutionException, InterruptedException {
+        int count = 5;
+        Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> idToSubscription =
+            client.subscribeToBlockStream(1, count);
+        UUID actionId = idToSubscription.component1().iterator().next().getId();
+        BlockStreamSubscription subscription = idToSubscription.component2();
+
+        List<VersionedBlockMessage> blocks = new ArrayList<>();
+        subscription.receive(actionId, new BlockMessageCollector(blocks));
+
+        for (int i = 0; i <= count + 1; i++) {
+            final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
+                .account(ALICE_ACCOUNT_ID)
+                .setKeyValue(ALICE_ACCOUNT_ID, new Name(random(10)), new Value.String(random(10)))
+                .buildSigned(ALICE_KEYPAIR);
+            client.sendTransactionAsync(transaction);
+        }
+
+        QueryAndExtractor<List<VersionedCommittedBlock>> query = QueryBuilder.findAllBlocks()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR);
+        Integer blocksSize = client.sendQueryAsync(query).get().size();
+
+        Assertions.assertEquals(blocksSize, blocks.size());
+
+        subscription.close();
+    }
+
+    static class BlockMessageCollector implements FlowCollector<VersionedBlockMessage> {
+
+        List<VersionedBlockMessage> blocks;
+
+        public BlockMessageCollector(List<VersionedBlockMessage> blocks) {
+            this.blocks = blocks;
+        }
+
+        @Nullable
+        @Override
+        public Object emit(
+            VersionedBlockMessage versionedBlockMessage,
+            @NotNull Continuation<? super Unit> continuation
+        ) {
+            blocks.add(versionedBlockMessage);
+            return null;
+        }
     }
 }

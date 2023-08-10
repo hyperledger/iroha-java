@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package jp.co.soramitsu.iroha2.client
 
 import com.fasterxml.jackson.core.JsonParser
@@ -24,16 +26,18 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
 import io.ktor.websocket.Frame
-import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.TransactionRejectedException
 import jp.co.soramitsu.iroha2.WebSocketProtocolException
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.balancing.RoundRobinStrategy
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamContext
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
+import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
+import jp.co.soramitsu.iroha2.extractBlock
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
-import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
@@ -44,13 +48,13 @@ import jp.co.soramitsu.iroha2.generated.PipelineStatus
 import jp.co.soramitsu.iroha2.generated.Sorting
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
+import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.model.Page
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
@@ -64,8 +68,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
@@ -106,7 +108,13 @@ open class Iroha2Client(
         credentials: String? = null,
         eventReadTimeoutInMills: Long = 250,
         eventReadMaxAttempts: Int = 10,
-    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts)
+    ) : this(
+        IrohaUrls(apiUrl, telemetryUrl, peerUrl),
+        log,
+        credentials,
+        eventReadTimeoutInMills,
+        eventReadMaxAttempts,
+    )
 
     constructor(
         apiUrl: String,
@@ -244,34 +252,78 @@ open class Iroha2Client(
     }
 
     /**
-     * Subscribe to block streaming
-     * @param from - block number to start from
-     * @param count - how many blocks to get before closing web socket
+     * @see subscribeToBlockStream below
      */
-    fun subscribeToBlockStream(from: Long, count: Int): Flow<VersionedBlockMessage> = flow {
-        var counter = 0
-        val peerUrl = getApiUrl()
-        client.webSocket(
-            host = peerUrl.host,
-            port = peerUrl.port,
-            path = WS_ENDPOINT_BLOCK_STREAM,
-        ) {
-            logger.debug("WebSocket opened")
-            val request = VersionedBlockSubscriptionRequest.V1(
-                BlockSubscriptionRequest(BigInteger.valueOf(from)),
-            )
-            val payload = VersionedBlockSubscriptionRequest.encode(request)
-            send(payload.toFrame())
-            for (frame in incoming) {
-                logger.debug("Received frame: {}", frame)
-                val block = VersionedBlockMessage.decode(frame.readBytes())
-                emit(block)
-                counter++
-                if (counter == count) {
-                    close()
-                }
-            }
-        }
+    @JvmOverloads
+    fun subscribeToBlockStream(
+        from: Long = 1,
+        count: Long,
+        autoStart: Boolean = true,
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
+        from,
+        onBlock = { block -> block },
+        cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
+        autoStart = autoStart,
+    )
+
+    /**
+     * Subscribe to block streaming. Returns null if the subscription has already been received
+     *
+     * @param from - block number to start from
+     * @param onBlock - the code that will be invoked after a new block received
+     * @param onFailure - the code that will be invoked on exception throwing
+     * @param cancelIf - if the condition returns true then the channel will be closed
+     * @param onClose - the code that will be invoked right before closing
+     */
+    @JvmOverloads
+    fun subscribeToBlockStream(
+        from: Long = 1,
+        onBlock: (block: VersionedBlockMessage) -> Any,
+        onFailure: suspend (t: Throwable) -> Unit = { throwable ->
+            logger.error("Block stream was closed with an exception: {}", throwable.message)
+        },
+        cancelIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
+        onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+        autoStart: Boolean = true,
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
+        from,
+        listOf(
+            BlockStreamStorage(
+                onBlock,
+                cancelIf,
+                onFailure,
+            ),
+        ),
+        onClose,
+        autoStart,
+    )
+
+    /**
+     * Subscribe to block streaming. Returns null if the subscription has already been received
+     *
+     * @param from - block number to start from
+     * @param blockStreamStorages - wrapper for the code blocks that represent logic
+     * of a block received processing, cancellation condition and error processing
+     * @param onClose - the code that will be invoked right before closing
+     * @param autoStart - whether websocket is going to be receiving blocks immediately,
+     * otherwise calling 'start' method required
+     */
+    @JvmOverloads
+    fun subscribeToBlockStream(
+        from: Long = 1,
+        blockStreamStorages: Iterable<BlockStreamStorage>,
+        onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
+        autoStart: Boolean = true,
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
+        val context = BlockStreamContext(
+            getApiUrl(),
+            client,
+            from,
+            blockStreamStorages,
+            onClose,
+        )
+        return blockStreamStorages to BlockStreamSubscription.getInstance(context)
+            .apply { if (autoStart) start() }
     }
 
     /**
@@ -362,63 +414,57 @@ open class Iroha2Client(
     /**
      * Extract the rejection reason
      */
-    private fun PipelineRejectionReason.message(): String {
-        return when (this) {
-            is PipelineRejectionReason.Block -> when (this.blockRejectionReason) {
-                is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
+    private fun PipelineRejectionReason.message(): String = when (this) {
+        is PipelineRejectionReason.Block -> when (this.blockRejectionReason) {
+            is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
+        }
+
+        is PipelineRejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
+            is TransactionRejectionReason.InstructionExecution -> {
+                val details = reason.instructionExecutionFail
+                "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
             }
 
-            is PipelineRejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
-                is TransactionRejectionReason.InstructionExecution -> {
-                    val details = reason.instructionExecutionFail
-                    "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
-                }
+            is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
+                "Genesis account can sign only transactions in the genesis block"
 
-                is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
-                    "Genesis account can sign only transactions in the genesis block"
+            is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
+                reason.unsatisfiedSignatureConditionFail.reason
 
-                is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
-                    reason.unsatisfiedSignatureConditionFail.reason
-
-                is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
-                is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
-                is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
-                is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
-                is TransactionRejectionReason.Validation -> reason.validationFail.toString()
-            }
+            is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
+            is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
+            is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+            is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
+            is TransactionRejectionReason.Validation -> reason.validationFail.toString()
         }
     }
 
     /**
      * Read the message from the frame
      */
-    private fun readMessage(frame: Frame): EventMessage {
-        return when (frame) {
-            is Frame.Binary -> {
-                when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
-                    is VersionedEventMessage.V1 -> versionedMessage.eventMessage
-                    else -> throw WebSocketProtocolException(
-                        "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`",
-                    )
-                }
+    private fun readMessage(frame: Frame): EventMessage = when (frame) {
+        is Frame.Binary -> {
+            when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
+                is VersionedEventMessage.V1 -> versionedMessage.eventMessage
+                else -> throw WebSocketProtocolException(
+                    "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`",
+                )
             }
-
-            else -> throw WebSocketProtocolException(
-                "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`",
-            )
         }
+
+        else -> throw WebSocketProtocolException(
+            "Expected server will `${Frame.Binary::class.qualifiedName}` frame, but was `${frame::class.qualifiedName}`",
+        )
     }
 
     private fun eventSubscriberMessageOf(
         hash: ByteArray,
         entityKind: PipelineEntityKind = PipelineEntityKind.Transaction(),
-    ): VersionedEventSubscriptionRequest.V1 {
-        return VersionedEventSubscriptionRequest.V1(
-            EventSubscriptionRequest(
-                Filters.pipeline(entityKind, null, hash),
-            ),
-        )
-    }
+    ) = VersionedEventSubscriptionRequest.V1(
+        EventSubscriptionRequest(
+            Filters.pipeline(entityKind, null, hash),
+        ),
+    )
 
     object DurationDeserializer : JsonDeserializer<Duration>() {
         override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Duration {
