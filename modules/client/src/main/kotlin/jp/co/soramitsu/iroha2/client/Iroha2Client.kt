@@ -69,7 +69,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -252,16 +251,11 @@ open class Iroha2Client(
         }
     }
 
-    @JvmOverloads
-    fun subscribeToBlockStreamBlocking(from: Long = 1, count: Long) = runBlocking {
-        subscribeToBlockStream(from, count)
-    }
-
     /**
      * @see subscribeToBlockStream below
      */
     @JvmOverloads
-    suspend fun subscribeToBlockStream(
+    fun subscribeToBlockStream(
         from: Long = 1,
         count: Long,
         autoStart: Boolean = true,
@@ -282,7 +276,7 @@ open class Iroha2Client(
      * @param onClose - the code that will be invoked right before closing
      */
     @JvmOverloads
-    suspend fun subscribeToBlockStream(
+    fun subscribeToBlockStream(
         from: Long = 1,
         onBlock: (block: VersionedBlockMessage) -> Any,
         onFailure: suspend (t: Throwable) -> Unit = { throwable ->
@@ -291,20 +285,18 @@ open class Iroha2Client(
         cancelIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
         autoStart: Boolean = true,
-    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> {
-        return subscribeToBlockStream(
-            from,
-            listOf(
-                BlockStreamStorage(
-                    onBlock,
-                    cancelIf,
-                    onFailure,
-                ),
+    ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
+        from,
+        listOf(
+            BlockStreamStorage(
+                onBlock,
+                cancelIf,
+                onFailure,
             ),
-            onClose,
-            autoStart,
-        )
-    }
+        ),
+        onClose,
+        autoStart,
+    )
 
     /**
      * Subscribe to block streaming. Returns null if the subscription has already been received
@@ -317,7 +309,7 @@ open class Iroha2Client(
      * otherwise calling 'start' method required
      */
     @JvmOverloads
-    suspend fun subscribeToBlockStream(
+    fun subscribeToBlockStream(
         from: Long = 1,
         blockStreamStorages: Iterable<BlockStreamStorage>,
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },

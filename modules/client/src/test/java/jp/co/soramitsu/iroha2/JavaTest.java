@@ -170,11 +170,9 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @WithIroha(sources = DefaultGenesis.class)
     @ResourceLock("blockStream")
     public void blockStreaming() throws ExecutionException, InterruptedException {
-        System.out.println("TIMEOF 'subscription to block stream': " + Instant.now());
-
         int count = 5;
         Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> idToSubscription =
-                client.subscribeToBlockStreamBlocking(1, count);
+            client.subscribeToBlockStream(1, count);
         UUID actionId = idToSubscription.component1().iterator().next().getId();
         BlockStreamSubscription subscription = idToSubscription.component2();
 

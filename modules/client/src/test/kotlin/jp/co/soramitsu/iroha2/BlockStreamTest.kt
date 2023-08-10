@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
-import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -46,8 +45,6 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Issue("https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/361")
     @ResourceLock("blockStream")
     fun `subscription to block stream`(): Unit = runBlocking {
-        println("TIMEOF 'subscription to block stream': ${Instant.now()}")
-
         val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
         val actionId = idToSubscription.first.first().id
         val subscription = idToSubscription.second
@@ -95,8 +92,6 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("subscription_to_endless_block_stream")
     @ResourceLock("blockStream")
     fun `subscription to endless block stream`(): Unit = runBlocking {
-        println("TIMEOF 'subscription to block stream': ${Instant.now()}")
-
         val repeatTimes = 5
         val shift = 1 // to test not to take more than was ordered
         val idToSubscription = client.subscribeToBlockStream(

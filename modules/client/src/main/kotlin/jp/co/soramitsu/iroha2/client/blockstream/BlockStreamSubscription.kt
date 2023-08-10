@@ -34,7 +34,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
-open class BlockStreamSubscription private constructor(private val context: BlockStreamContext) : CoroutineScope, AutoCloseable {
+open class BlockStreamSubscription private constructor(
+    private val context: BlockStreamContext,
+) : CoroutineScope, AutoCloseable {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
@@ -85,20 +87,16 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
         }
     }
 
-    suspend fun stop() {
-        withContext(NonCancellable) {
-            if (!stopped.getAndSet(true)) {
-                runJob.cancelAndJoin()
-                destroy() // singleton instance of subscription
-                logger.info("Unsubscribed from block streaming")
-            }
+    suspend fun stop() = withContext(NonCancellable) {
+        if (!stopped.getAndSet(true)) {
+            runJob.cancelAndJoin()
+            destroy() // singleton instance of subscription
+            logger.info("Unsubscribed from block streaming")
         }
         logger.warn("Block streaming is already closed")
     }
 
-    override fun close() {
-        runBlocking { stop() }
-    }
+    override fun close() = runBlocking { stop() }
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun run() = launch {
@@ -123,15 +121,10 @@ open class BlockStreamSubscription private constructor(private val context: Bloc
                         val result = storage.onBlock(block)
                         logger.debug("{} action result: {}", id, result)
                         val channel = storage.channel.value
-                        if (!channel.isClosedForSend) {
-                            channel.send(result)
-                        } else {
-                            logger.warn(
-                                "Block stream channel#{} is already closed, not sending the action result",
-                                id,
-                            )
+                        when (channel.isClosedForSend) {
+                            true -> logger.warn("Block stream channel#{} is already closed, not sending the action result", id)
+                            false -> channel.send(result)
                         }
-
                         if (storage.cancelIf?.let { it(block) } == true) {
                             // idempotent
                             channel.close()
