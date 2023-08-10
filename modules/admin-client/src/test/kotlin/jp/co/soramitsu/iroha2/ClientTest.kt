@@ -4,14 +4,12 @@ import io.ktor.http.HttpStatusCode
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 @Timeout(120)
-@Disabled
 class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test

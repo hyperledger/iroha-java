@@ -36,7 +36,6 @@ import jp.co.soramitsu.iroha2.transaction.Instructions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigInteger
@@ -46,7 +45,6 @@ import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-@Disabled
 @Feature("Triggers")
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")

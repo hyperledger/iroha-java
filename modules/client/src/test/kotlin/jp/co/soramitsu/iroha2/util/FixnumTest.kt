@@ -4,7 +4,6 @@ import jp.co.soramitsu.iroha2.DEFAULT_SCALE
 import jp.co.soramitsu.iroha2.FixedPointConversionException
 import jp.co.soramitsu.iroha2.fromFixedPoint
 import jp.co.soramitsu.iroha2.toFixedPoint
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.math.RoundingMode.DOWN
@@ -12,7 +11,6 @@ import java.security.SecureRandom
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-@Disabled
 class FixnumTest {
 
     @Test
