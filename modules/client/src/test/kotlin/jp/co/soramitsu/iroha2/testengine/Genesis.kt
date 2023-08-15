@@ -29,6 +29,16 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
+open class AliceCanUpgradeValidator : Genesis(
+    rawGenesisBlock(
+        Instructions.grantPermissionToken(
+            Permissions.CanUpgradeValidator,
+            mapOf(),
+            ALICE_ACCOUNT_ID,
+        ),
+    ),
+)
+
 open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
@@ -323,6 +333,7 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
         Instructions.registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId),
         Instructions.registerPermissionToken(Permissions.CanMintUserPublicKeys, IdKey.AccountId),
         Instructions.registerPermissionToken(Permissions.CanUnregisterAnyPeer),
+        Instructions.registerPermissionToken(Permissions.CanUpgradeValidator),
         *isi,
     ).let { listOf(it) },
     Genesis.validatorMode,

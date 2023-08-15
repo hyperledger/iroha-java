@@ -416,7 +416,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @WithIroha([NewDomain::class])
     @Feature("Domains")
     @Query("FindAllDomainsWithFilter")
-    @Story("Domain queries all domains with filter")
+    @Story("Account queries all domains with filter")
     @SdkTestId("find_all_domains_with_filter")
     fun `find all domains with filter`(): Unit = runBlocking {
         val filter = QueryFilters.startsWith("wonder")
