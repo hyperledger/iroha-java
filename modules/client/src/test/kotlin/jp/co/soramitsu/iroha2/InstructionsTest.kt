@@ -410,7 +410,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Accounts")
-    @Story("Account set key value pair")
+    @Story("Account sets key value pair")
     @Permission("can_set_key_value_in_user_asset")
     @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
     fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
@@ -487,7 +487,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     @Feature("Assets")
-    @Story("Account burn an asset")
+    @Story("Account burns an asset")
     @Permission("no_permission_required")
     @SdkTestId("burn_asset_for_account_in_same_domain")
     fun `burn asset`(): Unit = runBlocking {
@@ -508,7 +508,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Assets")
-    @Story("Account burn an asset")
+    @Story("Account burns an asset")
     @Permission("can_burn_assets_with_definition")
     @SdkTestId("burn_other_user_asset")
     fun `burn other user asset`(): Unit = runBlocking {
@@ -533,7 +533,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([AliceAndBobHasPermissionToMintPublicKeys::class])
     @Feature("Accounts")
-    @Story("Account burn a public key")
+    @Story("Account burns a public key")
     @Permission("no_permission_required")
     @SdkTestId("burn_one_of_several_public_keys")
     fun `burn public key`(): Unit = runBlocking {
@@ -787,9 +787,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Feature("Assets")
     @Story("Account registers an asset definition")
     @SdkTestId("register_fixed_asset_definition")
-    @Story("Account mint an asset")
+    @Story("Account mints an asset")
     @SdkTestId("mint_fixed_asset")
-    @Story("Account burn an asset")
+    @Story("Account burns an asset")
     @Permission("no_permission_required")
     @SdkTestId("burn_fixed_asset")
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
@@ -895,7 +895,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_role")
     @SdkTestId("attach_permissions_to_role")
     @SdkTestId("grant_role_to_account")
-    @Story("Account set key value pair")
+    @Story("Account sets key value pair")
     @Permission("can_set_key_value_in_user_asset")
     @Feature("Accounts")
     @SdkTestId("set_key_value_in_foreign_asset_after_granting_role")
