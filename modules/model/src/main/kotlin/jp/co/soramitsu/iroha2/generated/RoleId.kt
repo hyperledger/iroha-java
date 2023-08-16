@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RoleId
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'RoleId' regular structure
  */
 public data class RoleId(
-    public val name: Name
+    public val name: Name,
 ) {
     public companion object : ScaleReader<RoleId>, ScaleWriter<RoleId> {
-        public override fun read(reader: ScaleCodecReader): RoleId = try {
+        override fun read(reader: ScaleCodecReader): RoleId = try {
             RoleId(
                 Name.read(reader),
             )
@@ -26,7 +27,7 @@ public data class RoleId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RoleId) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RoleId): Unit = try {
             Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)

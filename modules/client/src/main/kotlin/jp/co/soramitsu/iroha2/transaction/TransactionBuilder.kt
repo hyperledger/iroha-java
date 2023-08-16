@@ -1,10 +1,11 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.IdKey
+import jp.co.soramitsu.iroha2.IrohaClientException
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
+import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -19,6 +20,8 @@ import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu32
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.Repeats
@@ -66,7 +69,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun instructions(vararg instructions: InstructionBox) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instructions(instructions: Iterable<InstructionBox>) = this.apply { this.instructions.value.addAll(instructions) }
+    fun instructions(instructions: Iterable<InstructionBox>) =
+        this.apply { this.instructions.value.addAll(instructions) }
 
     fun instruction(instruction: InstructionBox) = this.apply { this.instructions.value.add(instruction) }
 
@@ -84,11 +88,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun buildSigned(vararg keyPairs: KeyPair): VersionedSignedTransaction {
         val payload = TransactionPayload(
+            creationTimeMillis ?: fallbackCreationTime(),
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             Executable.Instructions(instructions.value),
-            creationTimeMillis ?: fallbackCreationTime(),
-            timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS,
-            nonce,
+            NonZeroOfu64(timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS),
+            NonZeroOfu32(nonce ?: throw IrohaClientException("Nonce must not be null")),
             metadata.value,
         )
         val encodedPayload = TransactionPayload.encode(payload)
@@ -101,7 +105,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         }.toList()
 
         return VersionedSignedTransaction.V1(
-            SignedTransaction(payload, SignaturesOfOfTransactionPayload(signatures)),
+            SignedTransaction(SignaturesOfOfTransactionPayload(signatures), payload),
         )
     }
 
@@ -322,22 +326,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal,
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
-    fun registerPermissionToken(permission: Permissions, idKey: IdKey) = this.apply {
-        instructions.value.add(
-            Instructions.registerPermissionToken(permission, idKey),
-        )
-    }
-
-    fun registerPermissionToken(name: Name, idKey: IdKey) = this.apply {
-        registerPermissionToken(name, idKey.type)
-    }
-
-    fun registerPermissionToken(name: Name, idKey: String) = this.apply {
-        instructions.value.add(
-            Instructions.registerPermissionToken(name, idKey),
-        )
-    }
-
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
@@ -367,12 +355,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         algorithm: Algorithm = Algorithm.Ed25519(),
     ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
-    fun grantPermissionToken(permission: Permissions, params: Pair<Name, Value>, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantPermissionToken(permission, mapOf(params), target))
-    }
-
-    fun grantPermissionToken(permission: Permissions, params: Map<Name, Value>, target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantPermissionToken(permission, params, target))
+    fun grantPermissionToken(permission: Permissions, payload: ByteArray, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 
     fun burnAsset(assetId: AssetId, value: Int) = this.apply {

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RegisterBox
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'RegisterBox' regular structure
  */
 public data class RegisterBox(
-    public val `object`: EvaluatesTo<RegistrableBox>
+    public val `object`: EvaluatesTo<RegistrableBox>,
 ) {
     public companion object : ScaleReader<RegisterBox>, ScaleWriter<RegisterBox> {
-        public override fun read(reader: ScaleCodecReader): RegisterBox = try {
+        override fun read(reader: ScaleCodecReader): RegisterBox = try {
             RegisterBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<RegistrableBox>,
             )
@@ -26,7 +27,7 @@ public data class RegisterBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RegisterBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RegisterBox): Unit = try {
             EvaluatesTo.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)

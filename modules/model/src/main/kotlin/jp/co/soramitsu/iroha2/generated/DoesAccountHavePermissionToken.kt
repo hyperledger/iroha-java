@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * DoesAccountHavePermissionToken
@@ -16,24 +17,24 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class DoesAccountHavePermissionToken(
     public val accountId: EvaluatesTo<AccountId>,
-    public val permissionToken: PermissionToken
+    public val permissionToken: EvaluatesTo<PermissionToken>,
 ) {
     public companion object :
         ScaleReader<DoesAccountHavePermissionToken>,
         ScaleWriter<DoesAccountHavePermissionToken> {
-        public override fun read(reader: ScaleCodecReader): DoesAccountHavePermissionToken = try {
+        override fun read(reader: ScaleCodecReader): DoesAccountHavePermissionToken = try {
             DoesAccountHavePermissionToken(
                 EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
-                PermissionToken.read(reader),
+                EvaluatesTo.read(reader) as EvaluatesTo<PermissionToken>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: DoesAccountHavePermissionToken) =
+        override fun write(writer: ScaleCodecWriter, instance: DoesAccountHavePermissionToken): Unit =
             try {
                 EvaluatesTo.write(writer, instance.accountId)
-                PermissionToken.write(writer, instance.permissionToken)
+                EvaluatesTo.write(writer, instance.permissionToken)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

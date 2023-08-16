@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Divide
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Divide(
     public val left: EvaluatesTo<NumericValue>,
-    public val right: EvaluatesTo<NumericValue>
+    public val right: EvaluatesTo<NumericValue>,
 ) {
     public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
-        public override fun read(reader: ScaleCodecReader): Divide = try {
+        override fun read(reader: ScaleCodecReader): Divide = try {
             Divide(
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
@@ -28,7 +29,7 @@ public data class Divide(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Divide) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Divide): Unit = try {
             EvaluatesTo.write(writer, instance.left)
             EvaluatesTo.write(writer, instance.right)
         } catch (ex: Exception) {

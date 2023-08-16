@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * StringPredicate
@@ -27,14 +28,16 @@ public sealed class StringPredicate : ModelEnum {
      * 'Contains' variant
      */
     public data class Contains(
-        public val string: String
+        public val string: String,
     ) : StringPredicate() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Contains>, ScaleWriter<Contains> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.StringPredicate.Contains>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.StringPredicate.Contains> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Contains = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.StringPredicate.Contains = try {
                 Contains(
                     reader.readString(),
                 )
@@ -42,7 +45,10 @@ public sealed class StringPredicate : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Contains) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.StringPredicate.Contains,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -54,14 +60,16 @@ public sealed class StringPredicate : ModelEnum {
      * 'StartsWith' variant
      */
     public data class StartsWith(
-        public val string: String
+        public val string: String,
     ) : StringPredicate() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<StartsWith>, ScaleWriter<StartsWith> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.StringPredicate.StartsWith>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.StringPredicate.StartsWith> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): StartsWith = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.StringPredicate.StartsWith = try {
                 StartsWith(
                     reader.readString(),
                 )
@@ -69,7 +77,10 @@ public sealed class StringPredicate : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: StartsWith) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.StringPredicate.StartsWith,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -81,14 +92,16 @@ public sealed class StringPredicate : ModelEnum {
      * 'EndsWith' variant
      */
     public data class EndsWith(
-        public val string: String
+        public val string: String,
     ) : StringPredicate() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<EndsWith>, ScaleWriter<EndsWith> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.StringPredicate.EndsWith>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.StringPredicate.EndsWith> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): EndsWith = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.StringPredicate.EndsWith = try {
                 EndsWith(
                     reader.readString(),
                 )
@@ -96,7 +109,10 @@ public sealed class StringPredicate : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: EndsWith) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.StringPredicate.EndsWith,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -108,14 +124,16 @@ public sealed class StringPredicate : ModelEnum {
      * 'Is' variant
      */
     public data class Is(
-        public val string: String
+        public val string: String,
     ) : StringPredicate() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Is>, ScaleWriter<Is> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.StringPredicate.Is>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.StringPredicate.Is> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Is = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.StringPredicate.Is = try {
                 Is(
                     reader.readString(),
                 )
@@ -123,7 +141,10 @@ public sealed class StringPredicate : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Is) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.StringPredicate.Is,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -132,7 +153,7 @@ public sealed class StringPredicate : ModelEnum {
     }
 
     public companion object : ScaleReader<StringPredicate>, ScaleWriter<StringPredicate> {
-        public override fun read(reader: ScaleCodecReader): StringPredicate = when (
+        override fun read(reader: ScaleCodecReader): StringPredicate = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -140,18 +161,16 @@ public sealed class StringPredicate : ModelEnum {
             1 -> StartsWith.read(reader)
             2 -> EndsWith.read(reader)
             3 -> Is.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: StringPredicate) {
+        override fun write(writer: ScaleCodecWriter, instance: StringPredicate) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Contains.write(writer, instance as Contains)
                 1 -> StartsWith.write(writer, instance as StartsWith)
                 2 -> EndsWith.write(writer, instance as EndsWith)
                 3 -> Is.write(writer, instance as Is)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

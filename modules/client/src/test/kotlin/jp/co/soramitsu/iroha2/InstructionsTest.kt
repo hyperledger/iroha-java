@@ -16,7 +16,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Value
@@ -200,7 +199,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(joeId, joeKeyPair) {
             grantPermissionToken(
                 Permissions.CanUnregisterAccount,
-                IdKey.AccountId.type.asName() to joeId.toValueId(),
+                AccountId.encode(joeId),
                 ALICE_ACCOUNT_ID,
             )
             unregisterAccount(joeId)
@@ -421,7 +420,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             // grant by Alice to Bob permissions to set key value in Asset.Store
             grantPermissionToken(
                 Permissions.CanSetKeyValueUserAssetsToken,
-                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                AssetId.encode(aliceAssetId),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -517,7 +516,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             mintAsset(DEFAULT_ASSET_ID, 100)
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
-                IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue(),
+                AssetDefinitionId.encode(DEFAULT_ASSET_DEFINITION_ID),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -618,7 +617,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             account(BOB_ACCOUNT_ID)
             grantPermissionToken(
                 Permissions.CanSetKeyValueInUserAccount,
-                IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue(),
+                AccountId.encode(BOB_ACCOUNT_ID),
                 ALICE_ACCOUNT_ID,
             )
             buildSigned(BOB_KEYPAIR)
@@ -669,7 +668,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             grantPermissionToken(
                 Permissions.CanTransferUserAssetsToken,
-                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                AssetId.encode(aliceAssetId),
                 joeId,
             )
         }
@@ -910,12 +909,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerRole(
                 roleId,
                 PermissionToken(
-                    PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
+                    Permissions.CanSetKeyValueUserAssetsToken.type,
+                    RoleId.encode(roleId),
                 ),
                 PermissionToken(
-                    PermissionTokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
-                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
+                    Permissions.CanRemoveKeyValueInUserAssets.type,
+                    ByteArray(0),
                 ),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
@@ -1019,16 +1018,14 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     private suspend fun getAccountAmount(
         accountId: AccountId = ALICE_ACCOUNT_ID,
         assetId: AssetId = DEFAULT_ASSET_ID,
-    ): Long {
-        return QueryBuilder.findAccountById(accountId)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query).assets[assetId]?.value
-            }.let { value ->
-                (value as? AssetValue.Quantity)?.u32 ?: 0
-            }
-    }
+    ) = QueryBuilder.findAccountById(accountId)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { query ->
+            client.sendQuery(query).assets[assetId]?.value
+        }.let { value ->
+            (value as? AssetValue.Quantity)?.u32 ?: 0
+        }
 
     private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Int) {
         client.sendTransaction {
@@ -1044,12 +1041,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    private suspend fun getAsset(assetId: AssetId? = null): Asset {
-        return QueryBuilder.findAssetById(assetId ?: DEFAULT_ASSET_ID)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }
-    }
+    private suspend fun getAsset(assetId: AssetId? = null) = QueryBuilder
+        .findAssetById(assetId ?: DEFAULT_ASSET_ID)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { query ->
+            client.sendQuery(query)
+        }
 }

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * OriginFilterOfDomainEvent
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'OriginFilterOfDomainEvent' regular structure
  */
 public data class OriginFilterOfDomainEvent(
-    public val domainId: DomainId
+    public val domainId: DomainId,
 ) {
     public companion object :
         ScaleReader<OriginFilterOfDomainEvent>,
         ScaleWriter<OriginFilterOfDomainEvent> {
-        public override fun read(reader: ScaleCodecReader): OriginFilterOfDomainEvent = try {
+        override fun read(reader: ScaleCodecReader): OriginFilterOfDomainEvent = try {
             OriginFilterOfDomainEvent(
                 DomainId.read(reader),
             )
@@ -28,7 +29,7 @@ public data class OriginFilterOfDomainEvent(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfDomainEvent) = try {
+        override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfDomainEvent): Unit = try {
             DomainId.write(writer, instance.domainId)
         } catch (ex: Exception) {
             throw wrapException(ex)

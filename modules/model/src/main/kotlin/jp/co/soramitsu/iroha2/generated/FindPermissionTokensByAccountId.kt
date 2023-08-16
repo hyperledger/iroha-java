@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindPermissionTokensByAccountId
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'FindPermissionTokensByAccountId' regular structure
  */
 public data class FindPermissionTokensByAccountId(
-    public val id: EvaluatesTo<AccountId>
+    public val id: EvaluatesTo<AccountId>,
 ) {
     public companion object :
         ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
-        public override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
+        override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
             FindPermissionTokensByAccountId(
                 EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
             )
@@ -28,7 +29,7 @@ public data class FindPermissionTokensByAccountId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId) =
+        override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId): Unit =
             try {
                 EvaluatesTo.write(writer, instance.id)
             } catch (ex: Exception) {

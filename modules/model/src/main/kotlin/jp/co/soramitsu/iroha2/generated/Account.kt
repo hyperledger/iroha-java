@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 import kotlin.collections.Map
 
@@ -23,10 +24,10 @@ public data class Account(
     public val signatories: List<PublicKey>,
     public val signatureCheckCondition: SignatureCheckCondition,
     public val metadata: Metadata,
-    public val roles: List<RoleId>
+    public val roles: List<RoleId>,
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
-        public override fun read(reader: ScaleCodecReader): Account = try {
+        override fun read(reader: ScaleCodecReader): Account = try {
             Account(
                 AccountId.read(reader),
                 reader.readMap(reader.readCompactInt(), { AssetId.read(reader) }, { Asset.read(reader) }),
@@ -39,18 +40,18 @@ public data class Account(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Account): Unit = try {
             AccountId.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
             instance.assets.toSortedMap(
-                AssetId.comparator()
+                AssetId.comparator(),
             ).forEach { (key, value) ->
                 AssetId.write(writer, key)
                 Asset.write(writer, value)
             }
             writer.writeCompact(instance.signatories.size)
             instance.signatories.sortedWith(
-                PublicKey.comparator()
+                PublicKey.comparator(),
             ).forEach { value ->
                 PublicKey.write(writer, value)
             }
@@ -58,7 +59,7 @@ public data class Account(
             Metadata.write(writer, instance.metadata)
             writer.writeCompact(instance.roles.size)
             instance.roles.sortedWith(
-                RoleId.comparator()
+                RoleId.comparator(),
             ).forEach { value ->
                 RoleId.write(writer, value)
             }

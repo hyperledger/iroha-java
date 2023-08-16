@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * Expression
@@ -26,22 +27,28 @@ public sealed class Expression : ModelEnum {
      * 'Add' variant
      */
     public data class Add(
-        public val add: jp.co.soramitsu.iroha2.generated.Add
+        public val add: jp.co.soramitsu.iroha2.generated.Add,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Add>, ScaleWriter<Add> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Add>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Add> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Add = try {
-                Add(
-                    jp.co.soramitsu.iroha2.generated.Add.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Add =
+                try {
+                    Add(
+                        jp.co.soramitsu.iroha2.generated.Add.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Add) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Add,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Add.write(writer, instance.add)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +60,16 @@ public sealed class Expression : ModelEnum {
      * 'Subtract' variant
      */
     public data class Subtract(
-        public val subtract: jp.co.soramitsu.iroha2.generated.Subtract
+        public val subtract: jp.co.soramitsu.iroha2.generated.Subtract,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Subtract>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Subtract> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Subtract = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Subtract = try {
                 Subtract(
                     jp.co.soramitsu.iroha2.generated.Subtract.read(reader),
                 )
@@ -68,7 +77,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Subtract) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Subtract,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Subtract.write(writer, instance.subtract)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +92,16 @@ public sealed class Expression : ModelEnum {
      * 'Multiply' variant
      */
     public data class Multiply(
-        public val multiply: jp.co.soramitsu.iroha2.generated.Multiply
+        public val multiply: jp.co.soramitsu.iroha2.generated.Multiply,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Multiply>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Multiply> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Multiply = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Multiply = try {
                 Multiply(
                     jp.co.soramitsu.iroha2.generated.Multiply.read(reader),
                 )
@@ -95,7 +109,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Multiply) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Multiply,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Multiply.write(writer, instance.multiply)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -107,14 +124,16 @@ public sealed class Expression : ModelEnum {
      * 'Divide' variant
      */
     public data class Divide(
-        public val divide: jp.co.soramitsu.iroha2.generated.Divide
+        public val divide: jp.co.soramitsu.iroha2.generated.Divide,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Divide>, ScaleWriter<Divide> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Divide>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Divide> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Divide = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Divide = try {
                 Divide(
                     jp.co.soramitsu.iroha2.generated.Divide.read(reader),
                 )
@@ -122,7 +141,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Divide) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Divide,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Divide.write(writer, instance.divide)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -134,22 +156,28 @@ public sealed class Expression : ModelEnum {
      * 'Mod' variant
      */
     public data class Mod(
-        public val mod: jp.co.soramitsu.iroha2.generated.Mod
+        public val mod: jp.co.soramitsu.iroha2.generated.Mod,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Mod>, ScaleWriter<Mod> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Mod>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Mod> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): Mod = try {
-                Mod(
-                    jp.co.soramitsu.iroha2.generated.Mod.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Mod =
+                try {
+                    Mod(
+                        jp.co.soramitsu.iroha2.generated.Mod.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Mod) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Mod,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Mod.write(writer, instance.mod)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -161,14 +189,16 @@ public sealed class Expression : ModelEnum {
      * 'RaiseTo' variant
      */
     public data class RaiseTo(
-        public val raiseTo: jp.co.soramitsu.iroha2.generated.RaiseTo
+        public val raiseTo: jp.co.soramitsu.iroha2.generated.RaiseTo,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<RaiseTo>, ScaleWriter<RaiseTo> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.RaiseTo>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.RaiseTo> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): RaiseTo = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.RaiseTo = try {
                 RaiseTo(
                     jp.co.soramitsu.iroha2.generated.RaiseTo.read(reader),
                 )
@@ -176,7 +206,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: RaiseTo) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.RaiseTo,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.RaiseTo.write(writer, instance.raiseTo)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -188,14 +221,16 @@ public sealed class Expression : ModelEnum {
      * 'Greater' variant
      */
     public data class Greater(
-        public val greater: jp.co.soramitsu.iroha2.generated.Greater
+        public val greater: jp.co.soramitsu.iroha2.generated.Greater,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Greater>, ScaleWriter<Greater> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Greater>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Greater> {
             public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): Greater = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Greater = try {
                 Greater(
                     jp.co.soramitsu.iroha2.generated.Greater.read(reader),
                 )
@@ -203,7 +238,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Greater) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Greater,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Greater.write(writer, instance.greater)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -215,14 +253,16 @@ public sealed class Expression : ModelEnum {
      * 'Less' variant
      */
     public data class Less(
-        public val less: jp.co.soramitsu.iroha2.generated.Less
+        public val less: jp.co.soramitsu.iroha2.generated.Less,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Less>, ScaleWriter<Less> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Less>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Less> {
             public const val DISCRIMINANT: Int = 7
 
-            public override fun read(reader: ScaleCodecReader): Less = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Less = try {
                 Less(
                     jp.co.soramitsu.iroha2.generated.Less.read(reader),
                 )
@@ -230,7 +270,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Less) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Less,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Less.write(writer, instance.less)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -242,14 +285,16 @@ public sealed class Expression : ModelEnum {
      * 'Equal' variant
      */
     public data class Equal(
-        public val equal: jp.co.soramitsu.iroha2.generated.Equal
+        public val equal: jp.co.soramitsu.iroha2.generated.Equal,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Equal>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Equal> {
             public const val DISCRIMINANT: Int = 8
 
-            public override fun read(reader: ScaleCodecReader): Equal = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Equal = try {
                 Equal(
                     jp.co.soramitsu.iroha2.generated.Equal.read(reader),
                 )
@@ -257,7 +302,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Equal) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Equal,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Equal.write(writer, instance.equal)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -269,22 +317,28 @@ public sealed class Expression : ModelEnum {
      * 'Not' variant
      */
     public data class Not(
-        public val not: jp.co.soramitsu.iroha2.generated.Not
+        public val not: jp.co.soramitsu.iroha2.generated.Not,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Not>, ScaleWriter<Not> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Not>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Not> {
             public const val DISCRIMINANT: Int = 9
 
-            public override fun read(reader: ScaleCodecReader): Not = try {
-                Not(
-                    jp.co.soramitsu.iroha2.generated.Not.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Not =
+                try {
+                    Not(
+                        jp.co.soramitsu.iroha2.generated.Not.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Not) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Not,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Not.write(writer, instance.not)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -296,22 +350,28 @@ public sealed class Expression : ModelEnum {
      * 'And' variant
      */
     public data class And(
-        public val and: jp.co.soramitsu.iroha2.generated.And
+        public val and: jp.co.soramitsu.iroha2.generated.And,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<And>, ScaleWriter<And> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.And>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.And> {
             public const val DISCRIMINANT: Int = 10
 
-            public override fun read(reader: ScaleCodecReader): And = try {
-                And(
-                    jp.co.soramitsu.iroha2.generated.And.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.And =
+                try {
+                    And(
+                        jp.co.soramitsu.iroha2.generated.And.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: And) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.And,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.And.write(writer, instance.and)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -323,22 +383,28 @@ public sealed class Expression : ModelEnum {
      * 'Or' variant
      */
     public data class Or(
-        public val or: jp.co.soramitsu.iroha2.generated.Or
+        public val or: jp.co.soramitsu.iroha2.generated.Or,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Or>, ScaleWriter<Or> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Or>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Or> {
             public const val DISCRIMINANT: Int = 11
 
-            public override fun read(reader: ScaleCodecReader): Or = try {
-                Or(
-                    jp.co.soramitsu.iroha2.generated.Or.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Or =
+                try {
+                    Or(
+                        jp.co.soramitsu.iroha2.generated.Or.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Or) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Or,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Or.write(writer, instance.or)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -350,22 +416,28 @@ public sealed class Expression : ModelEnum {
      * 'If' variant
      */
     public data class If(
-        public val `if`: jp.co.soramitsu.iroha2.generated.If
+        public val `if`: jp.co.soramitsu.iroha2.generated.If,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<If>, ScaleWriter<If> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.If>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.If> {
             public const val DISCRIMINANT: Int = 12
 
-            public override fun read(reader: ScaleCodecReader): If = try {
-                If(
-                    jp.co.soramitsu.iroha2.generated.If.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.If =
+                try {
+                    If(
+                        jp.co.soramitsu.iroha2.generated.If.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: If) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.If,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.If.write(writer, instance.`if`)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -377,22 +449,28 @@ public sealed class Expression : ModelEnum {
      * 'Raw' variant
      */
     public data class Raw(
-        public val `value`: Value
+        public val `value`: Value,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Raw>, ScaleWriter<Raw> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Raw>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Raw> {
             public const val DISCRIMINANT: Int = 13
 
-            public override fun read(reader: ScaleCodecReader): Raw = try {
-                Raw(
-                    Value.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Raw =
+                try {
+                    Raw(
+                        Value.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Raw) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Raw,
+            ): Unit = try {
                 Value.write(writer, instance.`value`)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -404,14 +482,16 @@ public sealed class Expression : ModelEnum {
      * 'Query' variant
      */
     public data class Query(
-        public val queryBox: QueryBox
+        public val queryBox: QueryBox,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Query>, ScaleWriter<Query> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Query>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Query> {
             public const val DISCRIMINANT: Int = 14
 
-            public override fun read(reader: ScaleCodecReader): Query = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Query = try {
                 Query(
                     QueryBox.read(reader),
                 )
@@ -419,7 +499,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Query) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Query,
+            ): Unit = try {
                 QueryBox.write(writer, instance.queryBox)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -431,14 +514,16 @@ public sealed class Expression : ModelEnum {
      * 'Contains' variant
      */
     public data class Contains(
-        public val contains: jp.co.soramitsu.iroha2.generated.Contains
+        public val contains: jp.co.soramitsu.iroha2.generated.Contains,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Contains>, ScaleWriter<Contains> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Contains>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Contains> {
             public const val DISCRIMINANT: Int = 15
 
-            public override fun read(reader: ScaleCodecReader): Contains = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Contains = try {
                 Contains(
                     jp.co.soramitsu.iroha2.generated.Contains.read(reader),
                 )
@@ -446,7 +531,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Contains) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Contains,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Contains.write(writer, instance.contains)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -458,14 +546,16 @@ public sealed class Expression : ModelEnum {
      * 'ContainsAll' variant
      */
     public data class ContainsAll(
-        public val containsAll: jp.co.soramitsu.iroha2.generated.ContainsAll
+        public val containsAll: jp.co.soramitsu.iroha2.generated.ContainsAll,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.ContainsAll>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.ContainsAll> {
             public const val DISCRIMINANT: Int = 16
 
-            public override fun read(reader: ScaleCodecReader): ContainsAll = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.ContainsAll = try {
                 ContainsAll(
                     jp.co.soramitsu.iroha2.generated.ContainsAll.read(reader),
                 )
@@ -473,7 +563,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.ContainsAll,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.ContainsAll.write(writer, instance.containsAll)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -485,14 +578,16 @@ public sealed class Expression : ModelEnum {
      * 'ContainsAny' variant
      */
     public data class ContainsAny(
-        public val containsAny: jp.co.soramitsu.iroha2.generated.ContainsAny
+        public val containsAny: jp.co.soramitsu.iroha2.generated.ContainsAny,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ContainsAny>, ScaleWriter<ContainsAny> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.ContainsAny>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.ContainsAny> {
             public const val DISCRIMINANT: Int = 17
 
-            public override fun read(reader: ScaleCodecReader): ContainsAny = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.ContainsAny = try {
                 ContainsAny(
                     jp.co.soramitsu.iroha2.generated.ContainsAny.read(reader),
                 )
@@ -500,7 +595,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContainsAny) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.ContainsAny,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.ContainsAny.write(writer, instance.containsAny)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -512,14 +610,16 @@ public sealed class Expression : ModelEnum {
      * 'Where' variant
      */
     public data class Where(
-        public val `where`: jp.co.soramitsu.iroha2.generated.Where
+        public val `where`: jp.co.soramitsu.iroha2.generated.Where,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Where>, ScaleWriter<Where> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.Where>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.Where> {
             public const val DISCRIMINANT: Int = 18
 
-            public override fun read(reader: ScaleCodecReader): Where = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.Where = try {
                 Where(
                     jp.co.soramitsu.iroha2.generated.Where.read(reader),
                 )
@@ -527,7 +627,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Where) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.Where,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Where.write(writer, instance.`where`)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -539,14 +642,16 @@ public sealed class Expression : ModelEnum {
      * 'ContextValue' variant
      */
     public data class ContextValue(
-        public val contextValue: jp.co.soramitsu.iroha2.generated.ContextValue
+        public val contextValue: jp.co.soramitsu.iroha2.generated.ContextValue,
     ) : Expression() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Expression.ContextValue>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Expression.ContextValue> {
             public const val DISCRIMINANT: Int = 19
 
-            public override fun read(reader: ScaleCodecReader): ContextValue = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Expression.ContextValue = try {
                 ContextValue(
                     jp.co.soramitsu.iroha2.generated.ContextValue.read(reader),
                 )
@@ -554,7 +659,10 @@ public sealed class Expression : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ContextValue) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Expression.ContextValue,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.ContextValue.write(writer, instance.contextValue)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -563,7 +671,7 @@ public sealed class Expression : ModelEnum {
     }
 
     public companion object : ScaleReader<Expression>, ScaleWriter<Expression> {
-        public override fun read(reader: ScaleCodecReader): Expression = when (
+        override fun read(reader: ScaleCodecReader): Expression = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -587,10 +695,9 @@ public sealed class Expression : ModelEnum {
             17 -> ContainsAny.read(reader)
             18 -> Where.read(reader)
             19 -> ContextValue.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Expression) {
+        override fun write(writer: ScaleCodecWriter, instance: Expression) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Add.write(writer, instance as Add)
@@ -613,8 +720,7 @@ public sealed class Expression : ModelEnum {
                 17 -> ContainsAny.write(writer, instance as ContainsAny)
                 18 -> Where.write(writer, instance as Where)
                 19 -> ContextValue.write(writer, instance as ContextValue)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

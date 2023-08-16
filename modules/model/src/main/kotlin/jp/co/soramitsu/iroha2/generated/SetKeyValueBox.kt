@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * SetKeyValueBox
@@ -17,10 +18,10 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class SetKeyValueBox(
     public val objectId: EvaluatesTo<IdBox>,
     public val key: EvaluatesTo<Name>,
-    public val `value`: EvaluatesTo<Value>
+    public val `value`: EvaluatesTo<Value>,
 ) {
     public companion object : ScaleReader<SetKeyValueBox>, ScaleWriter<SetKeyValueBox> {
-        public override fun read(reader: ScaleCodecReader): SetKeyValueBox = try {
+        override fun read(reader: ScaleCodecReader): SetKeyValueBox = try {
             SetKeyValueBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
@@ -30,7 +31,7 @@ public data class SetKeyValueBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SetKeyValueBox): Unit = try {
             EvaluatesTo.write(writer, instance.objectId)
             EvaluatesTo.write(writer, instance.key)
             EvaluatesTo.write(writer, instance.`value`)

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * BlockMessage
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'BlockMessage' regular structure
  */
 public data class BlockMessage(
-    public val versionedCommittedBlock: VersionedCommittedBlock
+    public val versionedCommittedBlock: VersionedCommittedBlock,
 ) {
     public companion object : ScaleReader<BlockMessage>, ScaleWriter<BlockMessage> {
-        public override fun read(reader: ScaleCodecReader): BlockMessage = try {
+        override fun read(reader: ScaleCodecReader): BlockMessage = try {
             BlockMessage(
                 VersionedCommittedBlock.read(reader),
             )
@@ -26,7 +27,7 @@ public data class BlockMessage(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: BlockMessage) = try {
+        override fun write(writer: ScaleCodecWriter, instance: BlockMessage): Unit = try {
             VersionedCommittedBlock.write(writer, instance.versionedCommittedBlock)
         } catch (ex: Exception) {
             throw wrapException(ex)

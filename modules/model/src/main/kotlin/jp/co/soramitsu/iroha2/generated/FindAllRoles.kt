@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllRoles
@@ -19,13 +20,13 @@ import kotlin.Int
  */
 public class FindAllRoles {
     public companion object : ScaleReader<FindAllRoles>, ScaleWriter<FindAllRoles> {
-        public override fun read(reader: ScaleCodecReader): FindAllRoles = try {
+        override fun read(reader: ScaleCodecReader): FindAllRoles = try {
             FindAllRoles()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllRoles) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllRoles): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -35,6 +36,6 @@ public class FindAllRoles {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllRoles".hashCode()
+        override fun hashCode(): Int = ".FindAllRoles".hashCode()
     }
 }

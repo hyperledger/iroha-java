@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * DataEntityFilter
@@ -26,14 +27,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByPeer' variant
      */
     public data class ByPeer(
-        public val filterOptOfPeerFilter: FilterOptOfPeerFilter
+        public val filterOptOfPeerFilter: FilterOptOfPeerFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByPeer>, ScaleWriter<ByPeer> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByPeer>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByPeer> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): ByPeer = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByPeer = try {
                 ByPeer(
                     FilterOptOfPeerFilter.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByPeer) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByPeer,
+            ): Unit = try {
                 FilterOptOfPeerFilter.write(writer, instance.filterOptOfPeerFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +59,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByDomain' variant
      */
     public data class ByDomain(
-        public val filterOptOfDomainFilter: FilterOptOfDomainFilter
+        public val filterOptOfDomainFilter: FilterOptOfDomainFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByDomain>, ScaleWriter<ByDomain> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByDomain>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByDomain> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): ByDomain = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByDomain = try {
                 ByDomain(
                     FilterOptOfDomainFilter.read(reader),
                 )
@@ -68,7 +76,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByDomain) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByDomain,
+            ): Unit = try {
                 FilterOptOfDomainFilter.write(writer, instance.filterOptOfDomainFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +91,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByAccount' variant
      */
     public data class ByAccount(
-        public val filterOptOfAccountFilter: FilterOptOfAccountFilter
+        public val filterOptOfAccountFilter: FilterOptOfAccountFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByAccount>, ScaleWriter<ByAccount> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAccount>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAccount> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): ByAccount = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAccount = try {
                 ByAccount(
                     FilterOptOfAccountFilter.read(reader),
                 )
@@ -95,7 +108,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByAccount) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAccount,
+            ): Unit = try {
                 FilterOptOfAccountFilter.write(writer, instance.filterOptOfAccountFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -107,14 +123,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByAssetDefinition' variant
      */
     public data class ByAssetDefinition(
-        public val filterOptOfAssetDefinitionFilter: FilterOptOfAssetDefinitionFilter
+        public val filterOptOfAssetDefinitionFilter: FilterOptOfAssetDefinitionFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByAssetDefinition>, ScaleWriter<ByAssetDefinition> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAssetDefinition>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAssetDefinition> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): ByAssetDefinition = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAssetDefinition = try {
                 ByAssetDefinition(
                     FilterOptOfAssetDefinitionFilter.read(reader),
                 )
@@ -122,7 +140,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByAssetDefinition) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAssetDefinition,
+            ): Unit = try {
                 FilterOptOfAssetDefinitionFilter.write(writer, instance.filterOptOfAssetDefinitionFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -134,14 +155,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByAsset' variant
      */
     public data class ByAsset(
-        public val filterOptOfAssetFilter: FilterOptOfAssetFilter
+        public val filterOptOfAssetFilter: FilterOptOfAssetFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByAsset>, ScaleWriter<ByAsset> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAsset>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAsset> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): ByAsset = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAsset = try {
                 ByAsset(
                     FilterOptOfAssetFilter.read(reader),
                 )
@@ -149,7 +172,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByAsset) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByAsset,
+            ): Unit = try {
                 FilterOptOfAssetFilter.write(writer, instance.filterOptOfAssetFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -161,14 +187,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByTrigger' variant
      */
     public data class ByTrigger(
-        public val filterOptOfTriggerFilter: FilterOptOfTriggerFilter
+        public val filterOptOfTriggerFilter: FilterOptOfTriggerFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByTrigger>, ScaleWriter<ByTrigger> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByTrigger>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByTrigger> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): ByTrigger = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByTrigger = try {
                 ByTrigger(
                     FilterOptOfTriggerFilter.read(reader),
                 )
@@ -176,7 +204,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByTrigger) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByTrigger,
+            ): Unit = try {
                 FilterOptOfTriggerFilter.write(writer, instance.filterOptOfTriggerFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -188,14 +219,16 @@ public sealed class DataEntityFilter : ModelEnum {
      * 'ByRole' variant
      */
     public data class ByRole(
-        public val filterOptOfRoleFilter: FilterOptOfRoleFilter
+        public val filterOptOfRoleFilter: FilterOptOfRoleFilter,
     ) : DataEntityFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByRole>, ScaleWriter<ByRole> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByRole>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByRole> {
             public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): ByRole = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByRole = try {
                 ByRole(
                     FilterOptOfRoleFilter.read(reader),
                 )
@@ -203,7 +236,10 @@ public sealed class DataEntityFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByRole) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DataEntityFilter.ByRole,
+            ): Unit = try {
                 FilterOptOfRoleFilter.write(writer, instance.filterOptOfRoleFilter)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -212,7 +248,7 @@ public sealed class DataEntityFilter : ModelEnum {
     }
 
     public companion object : ScaleReader<DataEntityFilter>, ScaleWriter<DataEntityFilter> {
-        public override fun read(reader: ScaleCodecReader): DataEntityFilter = when (
+        override fun read(reader: ScaleCodecReader): DataEntityFilter = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -223,10 +259,9 @@ public sealed class DataEntityFilter : ModelEnum {
             4 -> ByAsset.read(reader)
             5 -> ByTrigger.read(reader)
             6 -> ByRole.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: DataEntityFilter) {
+        override fun write(writer: ScaleCodecWriter, instance: DataEntityFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> ByPeer.write(writer, instance as ByPeer)
@@ -236,8 +271,7 @@ public sealed class DataEntityFilter : ModelEnum {
                 4 -> ByAsset.write(writer, instance as ByAsset)
                 5 -> ByTrigger.write(writer, instance as ByTrigger)
                 6 -> ByRole.write(writer, instance as ByRole)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

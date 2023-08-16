@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Schedule
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Schedule(
     public val start: Duration,
-    public val period: Duration? = null
+    public val period: Duration? = null,
 ) {
     public companion object : ScaleReader<Schedule>, ScaleWriter<Schedule> {
-        public override fun read(reader: ScaleCodecReader): Schedule = try {
+        override fun read(reader: ScaleCodecReader): Schedule = try {
             Schedule(
                 Duration.read(reader),
                 reader.readNullable(Duration) as Duration?,
@@ -28,7 +29,7 @@ public data class Schedule(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Schedule) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Schedule): Unit = try {
             Duration.write(writer, instance.start)
             writer.writeNullable(Duration, instance.period)
         } catch (ex: Exception) {

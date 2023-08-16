@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -16,16 +17,17 @@ import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.NumericValue
 import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.ParameterId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
@@ -40,7 +42,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.ValueKind
+import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
@@ -52,8 +54,14 @@ import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.util.Locale
+import java.util.StringTokenizer
 import kotlin.experimental.or
 import jp.co.soramitsu.iroha2.generated.PublicKey as IrohaPublicKey
+
+fun VersionedBlockSubscriptionRequest.V1.Companion.of(from: Long) = VersionedBlockSubscriptionRequest.V1(
+    BlockSubscriptionRequest(NonZeroOfu64(BigInteger.valueOf(from))),
+)
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
@@ -84,7 +92,7 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
-fun String.asTokenId() = PermissionTokenId(Name(this))
+// fun String.asTokenId() = PermissionTokenId(Name(this))
 
 fun String.asDomainId() = DomainId(Name(this))
 
@@ -103,30 +111,30 @@ fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
 
-fun String.asValueKind() = when (this) {
-    ValueKind.Id::class.java.simpleName -> ValueKind.Id()
-    ValueKind.Bool::class.java.simpleName -> ValueKind.Bool()
-    ValueKind.String::class.java.simpleName -> ValueKind.String()
-    ValueKind.Name::class.java.simpleName -> ValueKind.Name()
-    ValueKind.Vec::class.java.simpleName -> ValueKind.Vec()
-    ValueKind.LimitedMetadata::class.java.simpleName -> ValueKind.LimitedMetadata()
-    ValueKind.MetadataLimits::class.java.simpleName -> ValueKind.MetadataLimits()
-    ValueKind.TransactionLimits::class.java.simpleName -> ValueKind.TransactionLimits()
-    ValueKind.LengthLimits::class.java.simpleName -> ValueKind.LengthLimits()
-    ValueKind.Identifiable::class.java.simpleName -> ValueKind.Identifiable()
-    ValueKind.PublicKey::class.java.simpleName -> ValueKind.PublicKey()
-    ValueKind.SignatureCheckCondition::class.java.simpleName -> ValueKind.SignatureCheckCondition()
-    ValueKind.TransactionValue::class.java.simpleName -> ValueKind.TransactionValue()
-    ValueKind.TransactionQueryResult::class.java.simpleName -> ValueKind.TransactionQueryResult()
-    ValueKind.PermissionToken::class.java.simpleName -> ValueKind.PermissionToken()
-    ValueKind.Hash::class.java.simpleName -> ValueKind.Hash()
-    ValueKind.Block::class.java.simpleName -> ValueKind.Block()
-    ValueKind.BlockHeader::class.java.simpleName -> ValueKind.BlockHeader()
-    ValueKind.Ipv4Addr::class.java.simpleName -> ValueKind.Ipv4Addr()
-    ValueKind.Ipv6Addr::class.java.simpleName -> ValueKind.Ipv6Addr()
-    ValueKind.Numeric::class.java.simpleName -> ValueKind.Numeric()
-    else -> throw IllegalArgumentException("Unsupported value kind type: $this")
-}
+// fun String.asValueKind() = when (this) {
+//    ValueKind.Id::class.java.simpleName -> ValueKind.Id()
+//    ValueKind.Bool::class.java.simpleName -> ValueKind.Bool()
+//    ValueKind.String::class.java.simpleName -> ValueKind.String()
+//    ValueKind.Name::class.java.simpleName -> ValueKind.Name()
+//    ValueKind.Vec::class.java.simpleName -> ValueKind.Vec()
+//    ValueKind.LimitedMetadata::class.java.simpleName -> ValueKind.LimitedMetadata()
+//    ValueKind.MetadataLimits::class.java.simpleName -> ValueKind.MetadataLimits()
+//    ValueKind.TransactionLimits::class.java.simpleName -> ValueKind.TransactionLimits()
+//    ValueKind.LengthLimits::class.java.simpleName -> ValueKind.LengthLimits()
+//    ValueKind.Identifiable::class.java.simpleName -> ValueKind.Identifiable()
+//    ValueKind.PublicKey::class.java.simpleName -> ValueKind.PublicKey()
+//    ValueKind.SignatureCheckCondition::class.java.simpleName -> ValueKind.SignatureCheckCondition()
+//    ValueKind.TransactionValue::class.java.simpleName -> ValueKind.TransactionValue()
+//    ValueKind.TransactionQueryResult::class.java.simpleName -> ValueKind.TransactionQueryResult()
+//    ValueKind.PermissionToken::class.java.simpleName -> ValueKind.PermissionToken()
+//    ValueKind.Hash::class.java.simpleName -> ValueKind.Hash()
+//    ValueKind.Block::class.java.simpleName -> ValueKind.Block()
+//    ValueKind.BlockHeader::class.java.simpleName -> ValueKind.BlockHeader()
+//    ValueKind.Ipv4Addr::class.java.simpleName -> ValueKind.Ipv4Addr()
+//    ValueKind.Ipv6Addr::class.java.simpleName -> ValueKind.Ipv6Addr()
+//    ValueKind.Numeric::class.java.simpleName -> ValueKind.Numeric()
+//    else -> throw IllegalArgumentException("Unsupported value kind type: $this")
+// }
 
 fun Int.asValue() = Value.Numeric(NumericValue.U32(this.toLong()))
 
@@ -141,6 +149,8 @@ fun Boolean.asValue() = Value.Bool(this)
 fun AccountId.asValue() = Value.Id(IdBox.AccountId(this))
 
 fun AssetId.asValue() = Value.Id(IdBox.AssetId(this))
+
+fun PermissionToken.asValue() = Value.PermissionToken(this)
 
 fun AssetDefinitionId.asValue() = Value.Id(IdBox.AssetDefinitionId(this))
 
@@ -243,8 +253,8 @@ fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): Versi
 
             VersionedSignedTransaction.V1(
                 SignedTransaction(
-                    signedTransaction.payload,
                     signedTransaction.signatures.plus(signatures),
+                    signedTransaction.payload,
                 ),
             )
         }
@@ -277,7 +287,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is RoleId -> Value.Id(IdBox.RoleId(this))
         is TriggerId -> Value.Id(IdBox.TriggerId(this))
         is IdBox -> Value.Id(this)
-        is Hash -> Value.Hash(this)
+        is HashValue -> Value.Hash(this)
         is Name -> Value.Name(this)
         is PermissionToken -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
@@ -303,10 +313,6 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.AssetDefinition -> IdentifiableBox.NewAssetDefinition(this.newAssetDefinition)
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
-    is RegistrableBox.PermissionTokenDefinition -> IdentifiableBox.PermissionTokenDefinition(
-        this.permissionTokenDefinition,
-    )
-
     is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
 }
 
@@ -320,6 +326,7 @@ inline fun <reified T> T.asValue() = when (this) {
     is AccountId -> this.asValue()
     is AssetDefinitionId -> this.asValue()
     is AssetId -> this.asValue()
+    is PermissionToken -> this.asValue()
     else -> throw RuntimeException("Unsupported type ${T::class}")
 }
 
@@ -330,8 +337,6 @@ fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.
 fun AccountId.asString() = this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string
 
 fun DomainId.asString() = this.name.string
-
-fun PermissionTokenId.asString() = this.name.string
 
 fun RoleId.asString() = this.name.string
 
@@ -374,7 +379,7 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.DomainId -> this.domainId
     is IdBox.TriggerId -> this.triggerId
     is IdBox.PeerId -> this.peerId
-    is IdBox.PermissionTokenDefinitionId -> this.permissionTokenId
+    is IdBox.PermissionTokenId -> this.name
     is IdBox.ParameterId -> this.parameterId
 }
 
@@ -589,9 +594,41 @@ fun FindError.extract() = when (this) {
     is FindError.MetadataKey -> this.name.string
     is FindError.Parameter -> this.parameterId.name.string
     is FindError.Peer -> this.peerId.address.toString()
-    is FindError.PermissionToken -> this.permissionTokenFindError.permissionTokenId.name.string
-    is FindError.PermissionTokenDefinition -> this.permissionTokenId.name.string
+    is FindError.PermissionToken -> this.name.string
     is FindError.PublicKey -> this.publicKey.payload.toString()
     is FindError.Trigger -> this.triggerId.asString()
     is FindError.Transaction -> this.hashOf.hash.arrayOfU8.toHex()
 }
+
+fun String.toCamelCase(name: String): String {
+    val tokenizer = StringTokenizer(name, "_")
+    return if (tokenizer.hasMoreTokens()) {
+        val resultBuilder = StringBuilder(tokenizer.nextToken())
+        for (token in tokenizer) {
+            resultBuilder.append((token as String).replaceFirstChar(Char::uppercase))
+        }
+        resultBuilder.toString()
+    } else {
+        name
+    }
+}
+
+fun String.toCamelCase() = this.lowercase(Locale.getDefault())
+    .split(" ", "_")
+    .withIndex()
+    .joinToString("") { value ->
+        when (value.index) {
+            0 -> value.value
+            else -> value.value.replaceFirstChar {
+                when (it.isLowerCase()) {
+                    true -> it.titlecase(Locale.getDefault())
+                    else -> it.toString()
+                }
+            }
+        }
+    }
+
+fun String.toSnakeCase() = this
+    .split("(?<=.)(?=\\p{Lu})|\\s".toRegex())
+    .joinToString("_")
+    .lowercase(Locale.getDefault())

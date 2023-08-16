@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * VersionedCommittedBlock
@@ -26,14 +27,16 @@ public sealed class VersionedCommittedBlock : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val committedBlock: CommittedBlock
+        public val committedBlock: CommittedBlock,
     ) : VersionedCommittedBlock() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<V1>, ScaleWriter<V1> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock.V1>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock.V1> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): V1 = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock.V1 = try {
                 V1(
                     CommittedBlock.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class VersionedCommittedBlock : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock.V1,
+            ): Unit = try {
                 CommittedBlock.write(writer, instance.committedBlock)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -52,20 +58,18 @@ public sealed class VersionedCommittedBlock : ModelEnum {
     public companion object :
         ScaleReader<VersionedCommittedBlock>,
         ScaleWriter<VersionedCommittedBlock> {
-        public override fun read(reader: ScaleCodecReader): VersionedCommittedBlock = when (
-            val
-            discriminant = reader.readUByte()
+        override fun read(reader: ScaleCodecReader): VersionedCommittedBlock = when (
+            val discriminant =
+                reader.readUByte()
         ) {
             1 -> V1.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: VersionedCommittedBlock) {
+        override fun write(writer: ScaleCodecWriter, instance: VersionedCommittedBlock) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

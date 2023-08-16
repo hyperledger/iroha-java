@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * TriggerEvent
@@ -26,14 +27,16 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val triggerId: TriggerId
+        public val triggerId: TriggerId,
     ) : TriggerEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Created>, ScaleWriter<Created> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEvent.Created>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEvent.Created> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Created = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEvent.Created = try {
                 Created(
                     TriggerId.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class TriggerEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEvent.Created,
+            ): Unit = try {
                 TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +59,16 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val triggerId: TriggerId
+        public val triggerId: TriggerId,
     ) : TriggerEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEvent.Deleted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEvent.Deleted> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Deleted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEvent.Deleted = try {
                 Deleted(
                     TriggerId.read(reader),
                 )
@@ -68,7 +76,10 @@ public sealed class TriggerEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEvent.Deleted,
+            ): Unit = try {
                 TriggerId.write(writer, instance.triggerId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +91,16 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Extended' variant
      */
     public data class Extended(
-        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged
+        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged,
     ) : TriggerEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Extended>, ScaleWriter<Extended> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEvent.Extended>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEvent.Extended> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Extended = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEvent.Extended = try {
                 Extended(
                     TriggerNumberOfExecutionsChanged.read(reader),
                 )
@@ -95,7 +108,10 @@ public sealed class TriggerEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Extended) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEvent.Extended,
+            ): Unit = try {
                 TriggerNumberOfExecutionsChanged.write(writer, instance.triggerNumberOfExecutionsChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -107,14 +123,16 @@ public sealed class TriggerEvent : ModelEnum {
      * 'Shortened' variant
      */
     public data class Shortened(
-        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged
+        public val triggerNumberOfExecutionsChanged: TriggerNumberOfExecutionsChanged,
     ) : TriggerEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Shortened>, ScaleWriter<Shortened> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEvent.Shortened>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEvent.Shortened> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Shortened = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEvent.Shortened = try {
                 Shortened(
                     TriggerNumberOfExecutionsChanged.read(reader),
                 )
@@ -122,7 +140,10 @@ public sealed class TriggerEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Shortened) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEvent.Shortened,
+            ): Unit = try {
                 TriggerNumberOfExecutionsChanged.write(writer, instance.triggerNumberOfExecutionsChanged)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -131,7 +152,7 @@ public sealed class TriggerEvent : ModelEnum {
     }
 
     public companion object : ScaleReader<TriggerEvent>, ScaleWriter<TriggerEvent> {
-        public override fun read(reader: ScaleCodecReader): TriggerEvent = when (
+        override fun read(reader: ScaleCodecReader): TriggerEvent = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -139,18 +160,16 @@ public sealed class TriggerEvent : ModelEnum {
             1 -> Deleted.read(reader)
             2 -> Extended.read(reader)
             3 -> Shortened.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TriggerEvent) {
+        override fun write(writer: ScaleCodecWriter, instance: TriggerEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Created.write(writer, instance as Created)
                 1 -> Deleted.write(writer, instance as Deleted)
                 2 -> Extended.write(writer, instance as Extended)
                 3 -> Shortened.write(writer, instance as Shortened)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

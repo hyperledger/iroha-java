@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * NumericValue
@@ -28,14 +29,16 @@ public sealed class NumericValue : ModelEnum {
      * 'U32' variant
      */
     public data class U32(
-        public val u32: Long
+        public val u32: Long,
     ) : NumericValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<U32>, ScaleWriter<U32> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.NumericValue.U32>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.NumericValue.U32> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): U32 = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.NumericValue.U32 = try {
                 U32(
                     reader.readUint32(),
                 )
@@ -43,7 +46,10 @@ public sealed class NumericValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U32) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.NumericValue.U32,
+            ): Unit = try {
                 writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -55,14 +61,16 @@ public sealed class NumericValue : ModelEnum {
      * 'U64' variant
      */
     public data class U64(
-        public val u64: BigInteger
+        public val u64: BigInteger,
     ) : NumericValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<U64>, ScaleWriter<U64> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.NumericValue.U64>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.NumericValue.U64> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): U64 = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.NumericValue.U64 = try {
                 U64(
                     reader.readUint64(),
                 )
@@ -70,7 +78,10 @@ public sealed class NumericValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U64) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.NumericValue.U64,
+            ): Unit = try {
                 writer.writeUint64(instance.u64)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -82,14 +93,16 @@ public sealed class NumericValue : ModelEnum {
      * 'U128' variant
      */
     public data class U128(
-        public val u128: BigInteger
+        public val u128: BigInteger,
     ) : NumericValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<U128>, ScaleWriter<U128> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.NumericValue.U128>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.NumericValue.U128> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): U128 = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.NumericValue.U128 = try {
                 U128(
                     reader.readUint128(),
                 )
@@ -97,7 +110,10 @@ public sealed class NumericValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U128) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.NumericValue.U128,
+            ): Unit = try {
                 writer.writeUint128(instance.u128)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -109,14 +125,16 @@ public sealed class NumericValue : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val fixed: jp.co.soramitsu.iroha2.generated.Fixed
+        public val fixed: jp.co.soramitsu.iroha2.generated.Fixed,
     ) : NumericValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.NumericValue.Fixed>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.NumericValue.Fixed> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Fixed = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.NumericValue.Fixed = try {
                 Fixed(
                     jp.co.soramitsu.iroha2.generated.Fixed.read(reader),
                 )
@@ -124,7 +142,10 @@ public sealed class NumericValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.NumericValue.Fixed,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Fixed.write(writer, instance.fixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -133,7 +154,7 @@ public sealed class NumericValue : ModelEnum {
     }
 
     public companion object : ScaleReader<NumericValue>, ScaleWriter<NumericValue> {
-        public override fun read(reader: ScaleCodecReader): NumericValue = when (
+        override fun read(reader: ScaleCodecReader): NumericValue = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -141,18 +162,16 @@ public sealed class NumericValue : ModelEnum {
             1 -> U64.read(reader)
             2 -> U128.read(reader)
             3 -> Fixed.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NumericValue) {
+        override fun write(writer: ScaleCodecWriter, instance: NumericValue) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> U32.write(writer, instance as U32)
                 1 -> U64.write(writer, instance as U64)
                 2 -> U128.write(writer, instance as U128)
                 3 -> Fixed.write(writer, instance as Fixed)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

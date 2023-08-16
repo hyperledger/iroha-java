@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindDomainKeyValueByIdAndKey
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class FindDomainKeyValueByIdAndKey(
     public val id: EvaluatesTo<DomainId>,
-    public val key: EvaluatesTo<Name>
+    public val key: EvaluatesTo<Name>,
 ) {
     public companion object :
         ScaleReader<FindDomainKeyValueByIdAndKey>,
         ScaleWriter<FindDomainKeyValueByIdAndKey> {
-        public override fun read(reader: ScaleCodecReader): FindDomainKeyValueByIdAndKey = try {
+        override fun read(reader: ScaleCodecReader): FindDomainKeyValueByIdAndKey = try {
             FindDomainKeyValueByIdAndKey(
                 EvaluatesTo.read(reader) as EvaluatesTo<DomainId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
@@ -30,12 +31,11 @@ public data class FindDomainKeyValueByIdAndKey(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindDomainKeyValueByIdAndKey) =
-            try {
-                EvaluatesTo.write(writer, instance.id)
-                EvaluatesTo.write(writer, instance.key)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+        override fun write(writer: ScaleCodecWriter, instance: FindDomainKeyValueByIdAndKey): Unit = try {
+            EvaluatesTo.write(writer, instance.id)
+            EvaluatesTo.write(writer, instance.key)
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
     }
 }

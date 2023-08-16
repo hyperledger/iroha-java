@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindAccountKeyValueByIdAndKey
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class FindAccountKeyValueByIdAndKey(
     public val id: EvaluatesTo<AccountId>,
-    public val key: EvaluatesTo<Name>
+    public val key: EvaluatesTo<Name>,
 ) {
     public companion object :
         ScaleReader<FindAccountKeyValueByIdAndKey>,
         ScaleWriter<FindAccountKeyValueByIdAndKey> {
-        public override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
+        override fun read(reader: ScaleCodecReader): FindAccountKeyValueByIdAndKey = try {
             FindAccountKeyValueByIdAndKey(
                 EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
@@ -30,7 +31,7 @@ public data class FindAccountKeyValueByIdAndKey(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey) =
+        override fun write(writer: ScaleCodecWriter, instance: FindAccountKeyValueByIdAndKey): Unit =
             try {
                 EvaluatesTo.write(writer, instance.id)
                 EvaluatesTo.write(writer, instance.key)

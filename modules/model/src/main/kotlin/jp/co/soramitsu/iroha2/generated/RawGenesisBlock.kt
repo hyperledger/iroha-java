@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -17,10 +18,10 @@ import kotlin.collections.List
  */
 public data class RawGenesisBlock(
     public val transactions: List<List<InstructionBox>>,
-    public val validator: ValidatorMode
+    public val validator: ValidatorMode,
 ) {
     public companion object : ScaleReader<RawGenesisBlock>, ScaleWriter<RawGenesisBlock> {
-        public override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
+        override fun read(reader: ScaleCodecReader): RawGenesisBlock = try {
             RawGenesisBlock(
                 reader.readVec(reader.readCompactInt()) { reader.readVec(reader.readCompactInt()) { InstructionBox.read(reader) } },
                 ValidatorMode.read(reader),
@@ -29,7 +30,7 @@ public data class RawGenesisBlock(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RawGenesisBlock): Unit = try {
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value ->
                 writer.writeCompact(value.size)

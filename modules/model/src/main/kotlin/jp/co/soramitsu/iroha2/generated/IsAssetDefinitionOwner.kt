@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * IsAssetDefinitionOwner
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class IsAssetDefinitionOwner(
     public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>,
-    public val accountId: EvaluatesTo<AccountId>
+    public val accountId: EvaluatesTo<AccountId>,
 ) {
     public companion object : ScaleReader<IsAssetDefinitionOwner>, ScaleWriter<IsAssetDefinitionOwner> {
-        public override fun read(reader: ScaleCodecReader): IsAssetDefinitionOwner = try {
+        override fun read(reader: ScaleCodecReader): IsAssetDefinitionOwner = try {
             IsAssetDefinitionOwner(
                 EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
                 EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
@@ -28,7 +29,7 @@ public data class IsAssetDefinitionOwner(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: IsAssetDefinitionOwner) = try {
+        override fun write(writer: ScaleCodecWriter, instance: IsAssetDefinitionOwner): Unit = try {
             EvaluatesTo.write(writer, instance.assetDefinitionId)
             EvaluatesTo.write(writer, instance.accountId)
         } catch (ex: Exception) {

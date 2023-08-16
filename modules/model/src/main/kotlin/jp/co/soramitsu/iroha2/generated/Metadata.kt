@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.Map
 
 /**
@@ -17,10 +18,10 @@ import kotlin.collections.Map
  * Generated from 'Metadata' regular structure
  */
 public data class Metadata(
-    public val map: Map<Name, Value>
+    public val map: Map<Name, Value>,
 ) {
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
-        public override fun read(reader: ScaleCodecReader): Metadata = try {
+        override fun read(reader: ScaleCodecReader): Metadata = try {
             Metadata(
                 reader.readMap(reader.readCompactInt(), { Name.read(reader) }, { Value.read(reader) }),
             )
@@ -28,10 +29,10 @@ public data class Metadata(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Metadata) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit = try {
             writer.writeCompact(instance.map.size)
             instance.map.toSortedMap(
-                Name.comparator()
+                Name.comparator(),
             ).forEach { (key, value) ->
                 Name.write(writer, key)
                 Value.write(writer, value)

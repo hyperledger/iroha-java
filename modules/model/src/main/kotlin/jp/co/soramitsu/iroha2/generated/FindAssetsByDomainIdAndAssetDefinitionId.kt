@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindAssetsByDomainIdAndAssetDefinitionId
@@ -16,25 +17,24 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class FindAssetsByDomainIdAndAssetDefinitionId(
     public val domainId: EvaluatesTo<DomainId>,
-    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>
+    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>,
 ) {
     public companion object :
         ScaleReader<FindAssetsByDomainIdAndAssetDefinitionId>,
         ScaleWriter<FindAssetsByDomainIdAndAssetDefinitionId> {
-        public override fun read(reader: ScaleCodecReader): FindAssetsByDomainIdAndAssetDefinitionId =
-            try {
-                FindAssetsByDomainIdAndAssetDefinitionId(
-                    EvaluatesTo.read(reader) as EvaluatesTo<DomainId>,
-                    EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+        override fun read(reader: ScaleCodecReader): FindAssetsByDomainIdAndAssetDefinitionId = try {
+            FindAssetsByDomainIdAndAssetDefinitionId(
+                EvaluatesTo.read(reader) as EvaluatesTo<DomainId>,
+                EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(
+        override fun write(
             writer: ScaleCodecWriter,
-            instance: FindAssetsByDomainIdAndAssetDefinitionId
-        ) = try {
+            instance: FindAssetsByDomainIdAndAssetDefinitionId,
+        ): Unit = try {
             EvaluatesTo.write(writer, instance.domainId)
             EvaluatesTo.write(writer, instance.assetDefinitionId)
         } catch (ex: Exception) {

@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllAssets
@@ -19,13 +20,13 @@ import kotlin.Int
  */
 public class FindAllAssets {
     public companion object : ScaleReader<FindAllAssets>, ScaleWriter<FindAllAssets> {
-        public override fun read(reader: ScaleCodecReader): FindAllAssets = try {
+        override fun read(reader: ScaleCodecReader): FindAllAssets = try {
             FindAllAssets()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllAssets) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllAssets): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -35,6 +36,6 @@ public class FindAllAssets {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllAssets".hashCode()
+        override fun hashCode(): Int = ".FindAllAssets".hashCode()
     }
 }

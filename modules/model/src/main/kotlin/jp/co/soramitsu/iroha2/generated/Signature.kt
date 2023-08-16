@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * Signature
@@ -17,10 +18,10 @@ import kotlin.ByteArray
  */
 public data class Signature(
     public val publicKey: PublicKey,
-    public val payload: ByteArray
+    public val payload: ByteArray,
 ) {
     public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
-        public override fun read(reader: ScaleCodecReader): Signature = try {
+        override fun read(reader: ScaleCodecReader): Signature = try {
             Signature(
                 PublicKey.read(reader),
                 reader.readByteArray(),
@@ -29,7 +30,7 @@ public data class Signature(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Signature) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Signature): Unit = try {
             PublicKey.write(writer, instance.publicKey)
             writer.writeAsList(instance.payload)
         } catch (ex: Exception) {

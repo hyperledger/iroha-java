@@ -81,10 +81,9 @@ open class Genesis(open val block: RawGenesisBlock) {
             compareByDescending { instruction ->
                 when (instruction) {
                     is InstructionBox.Register -> when (instruction.extractIdentifiableBox()) {
-                        is IdentifiableBox.NewDomain -> 6
-                        is IdentifiableBox.NewAccount -> 5
-                        is IdentifiableBox.NewAssetDefinition -> 4
-                        is IdentifiableBox.PermissionTokenDefinition -> 3
+                        is IdentifiableBox.NewDomain -> 5
+                        is IdentifiableBox.NewAccount -> 4
+                        is IdentifiableBox.NewAssetDefinition -> 3
                         is IdentifiableBox.NewRole -> 2
                         else -> 1
                     }

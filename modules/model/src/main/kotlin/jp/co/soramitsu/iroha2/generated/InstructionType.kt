@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * InstructionType
@@ -24,7 +25,7 @@ public sealed class InstructionType : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is Register -> Register.equals(this, other)
         is Unregister -> Unregister.equals(this, other)
         is Mint -> Mint.equals(this, other)
@@ -42,10 +43,9 @@ public sealed class InstructionType : ModelEnum {
         is NewParameter -> NewParameter.equals(this, other)
         is Upgrade -> Upgrade.equals(this, other)
         is Fail -> Fail.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is Register -> Register.hashCode()
         is Unregister -> Unregister.hashCode()
         is Mint -> Mint.hashCode()
@@ -63,35 +63,39 @@ public sealed class InstructionType : ModelEnum {
         is NewParameter -> NewParameter.hashCode()
         is Upgrade -> Upgrade.hashCode()
         is Fail -> Fail.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'Register' variant
      */
     public class Register : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Register>, ScaleWriter<Register> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Register>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Register> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Register = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Register = try {
                 Register()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Register) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Register,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Register, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Register, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Register".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Register".hashCode()
         }
     }
 
@@ -99,28 +103,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Unregister' variant
      */
     public class Unregister : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Unregister>, ScaleWriter<Unregister> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Unregister>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Unregister> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Unregister = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Unregister = try {
                 Unregister()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Unregister) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Unregister,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Unregister, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Unregister, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Unregister".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Unregister".hashCode()
         }
     }
 
@@ -128,28 +137,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Mint' variant
      */
     public class Mint : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Mint>, ScaleWriter<Mint> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Mint>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Mint> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Mint = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Mint = try {
                 Mint()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Mint) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Mint,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Mint, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Mint, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Mint".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Mint".hashCode()
         }
     }
 
@@ -157,28 +171,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Burn' variant
      */
     public class Burn : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Burn>, ScaleWriter<Burn> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Burn>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Burn> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Burn = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Burn = try {
                 Burn()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Burn) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Burn,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Burn, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Burn, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Burn".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Burn".hashCode()
         }
     }
 
@@ -186,28 +205,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Transfer' variant
      */
     public class Transfer : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Transfer>, ScaleWriter<Transfer> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Transfer>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Transfer> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): Transfer = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Transfer = try {
                 Transfer()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transfer) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Transfer,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Transfer, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Transfer, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Transfer".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Transfer".hashCode()
         }
     }
 
@@ -215,28 +239,33 @@ public sealed class InstructionType : ModelEnum {
      * 'If' variant
      */
     public class If : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<If>, ScaleWriter<If> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.If>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.If> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): If = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.If = try {
                 If()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: If) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.If,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: If, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.If, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.If".hashCode()
+            override fun hashCode(): Int = ".InstructionType.If".hashCode()
         }
     }
 
@@ -244,28 +273,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Pair' variant
      */
     public class Pair : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Pair>, ScaleWriter<Pair> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Pair>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Pair> {
             public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): Pair = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Pair = try {
                 Pair()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Pair) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Pair,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Pair, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Pair, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Pair".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Pair".hashCode()
         }
     }
 
@@ -273,28 +307,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Sequence' variant
      */
     public class Sequence : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Sequence>, ScaleWriter<Sequence> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Sequence>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Sequence> {
             public const val DISCRIMINANT: Int = 7
 
-            public override fun read(reader: ScaleCodecReader): Sequence = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Sequence = try {
                 Sequence()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Sequence) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Sequence,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Sequence, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Sequence, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Sequence".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Sequence".hashCode()
         }
     }
 
@@ -302,28 +341,33 @@ public sealed class InstructionType : ModelEnum {
      * 'SetKeyValue' variant
      */
     public class SetKeyValue : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<SetKeyValue>, ScaleWriter<SetKeyValue> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue> {
             public const val DISCRIMINANT: Int = 8
 
-            public override fun read(reader: ScaleCodecReader): SetKeyValue = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue = try {
                 SetKeyValue()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: SetKeyValue) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: SetKeyValue, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.SetKeyValue".hashCode()
+            override fun hashCode(): Int = ".InstructionType.SetKeyValue".hashCode()
         }
     }
 
@@ -331,28 +375,36 @@ public sealed class InstructionType : ModelEnum {
      * 'RemoveKeyValue' variant
      */
     public class RemoveKeyValue : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<RemoveKeyValue>, ScaleWriter<RemoveKeyValue> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue> {
             public const val DISCRIMINANT: Int = 9
 
-            public override fun read(reader: ScaleCodecReader): RemoveKeyValue = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue = try {
                 RemoveKeyValue()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValue) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: RemoveKeyValue, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.RemoveKeyValue".hashCode()
+            override fun hashCode(): Int = ".InstructionType.RemoveKeyValue".hashCode()
         }
     }
 
@@ -360,28 +412,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Grant' variant
      */
     public class Grant : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Grant>, ScaleWriter<Grant> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Grant>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Grant> {
             public const val DISCRIMINANT: Int = 10
 
-            public override fun read(reader: ScaleCodecReader): Grant = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Grant = try {
                 Grant()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Grant) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Grant,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Grant, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Grant, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Grant".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Grant".hashCode()
         }
     }
 
@@ -389,28 +446,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Revoke' variant
      */
     public class Revoke : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Revoke>, ScaleWriter<Revoke> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Revoke>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Revoke> {
             public const val DISCRIMINANT: Int = 11
 
-            public override fun read(reader: ScaleCodecReader): Revoke = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Revoke = try {
                 Revoke()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Revoke) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Revoke,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Revoke, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Revoke, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Revoke".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Revoke".hashCode()
         }
     }
 
@@ -418,28 +480,36 @@ public sealed class InstructionType : ModelEnum {
      * 'ExecuteTrigger' variant
      */
     public class ExecuteTrigger : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger> {
             public const val DISCRIMINANT: Int = 12
 
-            public override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger = try {
                 ExecuteTrigger()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ExecuteTrigger, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.ExecuteTrigger".hashCode()
+            override fun hashCode(): Int = ".InstructionType.ExecuteTrigger".hashCode()
         }
     }
 
@@ -447,28 +517,36 @@ public sealed class InstructionType : ModelEnum {
      * 'SetParameter' variant
      */
     public class SetParameter : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<SetParameter>, ScaleWriter<SetParameter> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter> {
             public const val DISCRIMINANT: Int = 13
 
-            public override fun read(reader: ScaleCodecReader): SetParameter = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter = try {
                 SetParameter()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: SetParameter) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: SetParameter, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.SetParameter".hashCode()
+            override fun hashCode(): Int = ".InstructionType.SetParameter".hashCode()
         }
     }
 
@@ -476,28 +554,36 @@ public sealed class InstructionType : ModelEnum {
      * 'NewParameter' variant
      */
     public class NewParameter : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<NewParameter>, ScaleWriter<NewParameter> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter> {
             public const val DISCRIMINANT: Int = 14
 
-            public override fun read(reader: ScaleCodecReader): NewParameter = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter = try {
                 NewParameter()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: NewParameter) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: NewParameter, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.NewParameter".hashCode()
+            override fun hashCode(): Int = ".InstructionType.NewParameter".hashCode()
         }
     }
 
@@ -505,28 +591,33 @@ public sealed class InstructionType : ModelEnum {
      * 'Upgrade' variant
      */
     public class Upgrade : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Upgrade>, ScaleWriter<Upgrade> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade> {
             public const val DISCRIMINANT: Int = 15
 
-            public override fun read(reader: ScaleCodecReader): Upgrade = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade = try {
                 Upgrade()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Upgrade) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Upgrade, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Upgrade".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Upgrade".hashCode()
         }
     }
 
@@ -534,33 +625,38 @@ public sealed class InstructionType : ModelEnum {
      * 'Fail' variant
      */
     public class Fail : InstructionType() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Fail>, ScaleWriter<Fail> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Fail>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Fail> {
             public const val DISCRIMINANT: Int = 16
 
-            public override fun read(reader: ScaleCodecReader): Fail = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Fail = try {
                 Fail()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Fail) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Fail,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Fail, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Fail, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".InstructionType.Fail".hashCode()
+            override fun hashCode(): Int = ".InstructionType.Fail".hashCode()
         }
     }
 
     public companion object : ScaleReader<InstructionType>, ScaleWriter<InstructionType> {
-        public override fun read(reader: ScaleCodecReader): InstructionType = when (
+        override fun read(reader: ScaleCodecReader): InstructionType = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -581,10 +677,9 @@ public sealed class InstructionType : ModelEnum {
             14 -> NewParameter.read(reader)
             15 -> Upgrade.read(reader)
             16 -> Fail.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: InstructionType) {
+        override fun write(writer: ScaleCodecWriter, instance: InstructionType) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Register.write(writer, instance as Register)
@@ -604,8 +699,7 @@ public sealed class InstructionType : ModelEnum {
                 14 -> NewParameter.write(writer, instance as NewParameter)
                 15 -> Upgrade.write(writer, instance as Upgrade)
                 16 -> Fail.write(writer, instance as Fail)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

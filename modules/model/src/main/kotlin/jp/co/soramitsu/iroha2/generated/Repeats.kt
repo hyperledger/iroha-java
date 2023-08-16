@@ -13,6 +13,7 @@ import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * Repeats
@@ -25,42 +26,45 @@ public sealed class Repeats : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is Indefinitely -> Indefinitely.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is Indefinitely -> Indefinitely.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'Indefinitely' variant
      */
     public class Indefinitely : Repeats() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Indefinitely>, ScaleWriter<Indefinitely> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Repeats.Indefinitely>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Repeats.Indefinitely> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Indefinitely = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Repeats.Indefinitely = try {
                 Indefinitely()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Indefinitely) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Repeats.Indefinitely,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Indefinitely, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.Repeats.Indefinitely, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".Repeats.Indefinitely".hashCode()
+            override fun hashCode(): Int = ".Repeats.Indefinitely".hashCode()
         }
     }
 
@@ -68,14 +72,16 @@ public sealed class Repeats : ModelEnum {
      * 'Exactly' variant
      */
     public data class Exactly(
-        public val u32: Long
+        public val u32: Long,
     ) : Repeats() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Exactly>, ScaleWriter<Exactly> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Repeats.Exactly>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Repeats.Exactly> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Exactly = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Repeats.Exactly = try {
                 Exactly(
                     reader.readUint32(),
                 )
@@ -83,7 +89,10 @@ public sealed class Repeats : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Exactly) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Repeats.Exactly,
+            ): Unit = try {
                 writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -92,22 +101,20 @@ public sealed class Repeats : ModelEnum {
     }
 
     public companion object : ScaleReader<Repeats>, ScaleWriter<Repeats> {
-        public override fun read(reader: ScaleCodecReader): Repeats = when (
+        override fun read(reader: ScaleCodecReader): Repeats = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> Indefinitely.read(reader)
             1 -> Exactly.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Repeats) {
+        override fun write(writer: ScaleCodecWriter, instance: Repeats) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Indefinitely.write(writer, instance as Indefinitely)
                 1 -> Exactly.write(writer, instance as Exactly)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

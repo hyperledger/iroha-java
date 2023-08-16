@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RoleFilter
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class RoleFilter(
     public val originFilter: FilterOptOfOriginFilterOfRoleEvent,
-    public val eventFilter: FilterOptOfRoleEventFilter
+    public val eventFilter: FilterOptOfRoleEventFilter,
 ) {
     public companion object : ScaleReader<RoleFilter>, ScaleWriter<RoleFilter> {
-        public override fun read(reader: ScaleCodecReader): RoleFilter = try {
+        override fun read(reader: ScaleCodecReader): RoleFilter = try {
             RoleFilter(
                 FilterOptOfOriginFilterOfRoleEvent.read(reader),
                 FilterOptOfRoleEventFilter.read(reader),
@@ -28,7 +29,7 @@ public data class RoleFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RoleFilter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RoleFilter): Unit = try {
             FilterOptOfOriginFilterOfRoleEvent.write(writer, instance.originFilter)
             FilterOptOfRoleEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {

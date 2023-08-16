@@ -87,6 +87,10 @@ class ScaleCodecReader(private val source: ByteArray) {
                 true -> readUint16()
                 else -> null
             } as T?
+            String::class -> when (readBoolean()) {
+                true -> readString()
+                else -> null
+            } as T?
             else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
         }
     }

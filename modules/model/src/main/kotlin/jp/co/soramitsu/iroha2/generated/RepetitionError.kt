@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RepetitionError
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class RepetitionError(
     public val instructionType: InstructionType,
-    public val id: IdBox
+    public val id: IdBox,
 ) {
     public companion object : ScaleReader<RepetitionError>, ScaleWriter<RepetitionError> {
-        public override fun read(reader: ScaleCodecReader): RepetitionError = try {
+        override fun read(reader: ScaleCodecReader): RepetitionError = try {
             RepetitionError(
                 InstructionType.read(reader),
                 IdBox.read(reader),
@@ -28,7 +29,7 @@ public data class RepetitionError(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RepetitionError) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RepetitionError): Unit = try {
             InstructionType.write(writer, instance.instructionType)
             IdBox.write(writer, instance.id)
         } catch (ex: Exception) {

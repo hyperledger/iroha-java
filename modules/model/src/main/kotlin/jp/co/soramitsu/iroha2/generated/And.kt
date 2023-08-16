@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
+import kotlin.Unit
 
 /**
  * And
@@ -17,10 +18,10 @@ import kotlin.Boolean
  */
 public data class And(
     public val left: EvaluatesTo<Boolean>,
-    public val right: EvaluatesTo<Boolean>
+    public val right: EvaluatesTo<Boolean>,
 ) {
     public companion object : ScaleReader<And>, ScaleWriter<And> {
-        public override fun read(reader: ScaleCodecReader): And = try {
+        override fun read(reader: ScaleCodecReader): And = try {
             And(
                 EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
@@ -29,7 +30,7 @@ public data class And(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: And) = try {
+        override fun write(writer: ScaleCodecWriter, instance: And): Unit = try {
             EvaluatesTo.write(writer, instance.left)
             EvaluatesTo.write(writer, instance.right)
         } catch (ex: Exception) {

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
+import kotlin.Unit
 
 /**
  * WasmExecutionFail
@@ -16,10 +17,10 @@ import kotlin.String
  * Generated from 'WasmExecutionFail' regular structure
  */
 public data class WasmExecutionFail(
-    public val reason: String
+    public val reason: String,
 ) {
     public companion object : ScaleReader<WasmExecutionFail>, ScaleWriter<WasmExecutionFail> {
-        public override fun read(reader: ScaleCodecReader): WasmExecutionFail = try {
+        override fun read(reader: ScaleCodecReader): WasmExecutionFail = try {
             WasmExecutionFail(
                 reader.readString(),
             )
@@ -27,7 +28,7 @@ public data class WasmExecutionFail(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: WasmExecutionFail) = try {
+        override fun write(writer: ScaleCodecWriter, instance: WasmExecutionFail): Unit = try {
             writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

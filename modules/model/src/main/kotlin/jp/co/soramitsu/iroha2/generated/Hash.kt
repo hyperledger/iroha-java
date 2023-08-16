@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * Hash
@@ -16,10 +17,10 @@ import kotlin.ByteArray
  * Generated from 'Hash' regular structure
  */
 public data class Hash(
-    public val arrayOfU8: ByteArray
+    public val arrayOfU8: ByteArray,
 ) {
     public companion object : ScaleReader<Hash>, ScaleWriter<Hash> {
-        public override fun read(reader: ScaleCodecReader): Hash = try {
+        override fun read(reader: ScaleCodecReader): Hash = try {
             Hash(
                 reader.readByteArray(32),
             )
@@ -27,7 +28,7 @@ public data class Hash(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Hash) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Hash): Unit = try {
             writer.writeByteArray(instance.arrayOfU8)
         } catch (ex: Exception) {
             throw wrapException(ex)

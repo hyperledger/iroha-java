@@ -31,6 +31,7 @@ import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.GrantBox
 import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
@@ -51,8 +52,6 @@ import jp.co.soramitsu.iroha2.generated.NumericValue
 import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
@@ -63,13 +62,12 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.TransactionLimits
-import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.ValidatorMode
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.ValueKind
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.KClass
@@ -90,7 +88,6 @@ val JSON_SERDE by lazy {
         module.addDeserializer(ValidatorMode::class.java, ValidatorDeserializer)
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
         module.addDeserializer(Value::class.java, ValueDeserializer)
-        module.addDeserializer(ValueKind::class.java, ValueKindDeserializer)
         module.addDeserializer(AssetValue::class.java, AssetValueDeserializer)
         module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer)
         module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
@@ -106,7 +103,6 @@ val JSON_SERDE by lazy {
         module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
         module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
-        module.addDeserializer(PermissionTokenId::class.java, TokenIdDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addDeserializer(NewParameterBox::class.java, NewParameterBoxDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
@@ -115,9 +111,9 @@ val JSON_SERDE by lazy {
         module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
 
         // serializers
+        module.addSerializer(PermissionToken::class.java, PermissionTokenSerializer)
         module.addKeySerializer(Name::class.java, NameAsKeySerializer)
         module.addSerializer(DomainId::class.java, DomainIdSerializer)
-        module.addSerializer(PermissionTokenId::class.java, TokenIdSerializer)
         module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
@@ -221,33 +217,30 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
 
 private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
     val node = p.readValueAsTree<JsonNode>().fields().next()
-    val param = if (node.key.contains("Id")) {
-        "Id"
-    } else if ("Numeric" == node.key) {
-        node.value.fields().next().key
-    } else {
-        node.key
+    val param = when {
+        node.key.contains("Id") -> "Id"
+        "Numeric" == node.key -> node.value.fields().next().key
+        else -> node.key
     }
-
     val clazz = getClazzByParam(param)
 
-    if (param == "Bool") {
-        return Value.Bool(node.value.booleanValue())
-    } else if (param == "String") {
-        return Value.String(node.value.asText())
-    } else {
-        val name = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().key else node.key
-        val value = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().value else node.value
-        val subtype = clazz.nestedClasses.find { clazz ->
-            !clazz.isCompanion && clazz.simpleName == name
-        } ?: throw DeserializationException("Class with constructor($param) not found")
+    return when (param) {
+        "Bool" -> Value.Bool(node.value.booleanValue())
+        "String" -> Value.String(node.value.asText())
+        else -> {
+            val name = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().key else node.key
+            val value = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().value else node.value
+            val subtype = clazz.nestedClasses.find {
+                !it.isCompanion && it.simpleName == name
+            } ?: throw DeserializationException("Class with constructor($param) not found")
 
-        val argTypeName = subtype.primaryConstructor?.parameters
-            ?.firstOrNull()?.type?.toString()
-            ?: throw DeserializationException("Subtype parameter not found by $param")
+            val argTypeName = subtype.primaryConstructor?.parameters
+                ?.firstOrNull()?.type?.toString()
+                ?: throw DeserializationException("Subtype parameter not found by $param")
 
-        val arg = mapper.convertValue(value, argTypeName.asClass())
-        return getValueByClazz(clazz, subtype, arg, name, param)
+            val arg = mapper.convertValue(value, argTypeName.asClass())
+            return getValueByClazz(clazz, subtype, arg, name, param)
+        }
     }
 }
 
@@ -263,10 +256,8 @@ private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any
         IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
         PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
         SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
-        TransactionValue::class -> Value.TransactionValue(subtype.primaryConstructor?.call(arg) as TransactionValue)
-        TransactionQueryResult::class -> Value.TransactionQueryResult(subtype.primaryConstructor?.call(arg) as TransactionQueryResult)
         PermissionToken::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as PermissionToken)
-        Hash::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as Hash)
+        HashValue::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as HashValue)
         VersionedCommittedBlock::class -> Value.Block(subtype.primaryConstructor?.call(arg) as VersionedCommittedBlock)
         BlockHeader::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeader)
         Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
@@ -300,7 +291,7 @@ private fun getClazzByParam(param: String): KClass<out Any> {
         "PublicKey" -> PublicKey::class
         "SignatureCheckCondition" -> SignatureCheckCondition::class
         "TransactionValue" -> TransactionValue::class
-        "TransactionQueryResult" -> TransactionQueryResult::class
+        "TransactionQueryOutput" -> TransactionQueryOutput::class
         "PermissionToken" -> PermissionToken::class
         "Hash" -> Hash::class
         "Block" -> VersionedCommittedBlock::class
@@ -350,7 +341,6 @@ private fun getRegisterBox(arg: Any): RegisterBox {
     return when (arg) {
         is NewDomain -> RegisterBox(RegistrableBox.Domain(arg).evaluatesTo())
         is NewAccount -> RegisterBox(RegistrableBox.Account(arg).evaluatesTo())
-        is PermissionTokenDefinition -> RegisterBox(RegistrableBox.PermissionTokenDefinition(arg).evaluatesTo())
         is Peer -> RegisterBox(RegistrableBox.Peer(arg).evaluatesTo())
         is NewAssetDefinition -> RegisterBox(RegistrableBox.AssetDefinition(arg).evaluatesTo())
         is Asset -> RegisterBox(RegistrableBox.Asset(arg).evaluatesTo())
@@ -499,12 +489,6 @@ object ValueDeserializer : JsonDeserializer<Value>() {
     }
 }
 
-object ValueKindDeserializer : JsonDeserializer<ValueKind>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ValueKind {
-        return p.readValueAs(String::class.java).asValueKind()
-    }
-}
-
 object AssetValueDeserializer : JsonDeserializer<AssetValue>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetValue {
         val node = p.readValueAsTree<JsonNode>().fields().next()
@@ -551,12 +535,6 @@ object SetKeyValueBoxDeserializer : JsonDeserializer<SetKeyValueBox>() {
 object MetadataDeserializer : JsonDeserializer<Metadata>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Metadata {
         return sealedDeserializeMetadata(p, JSON_SERDE)
-    }
-}
-
-object TokenIdDeserializer : JsonDeserializer<PermissionTokenId>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PermissionTokenId {
-        return p.readValueAs(String::class.java).asTokenId()
     }
 }
 
@@ -724,19 +702,22 @@ object AccountIdSerializer : JsonSerializer<AccountId>() {
 }
 
 /**
- * Serializer for [DomainId]
+ * Serializer for [PermissionToken]
  */
-object DomainIdSerializer : JsonSerializer<DomainId>() {
-    override fun serialize(value: DomainId, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeString(value.asString())
+object PermissionTokenSerializer : JsonSerializer<PermissionToken>() {
+    override fun serialize(token: PermissionToken, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
+        gen.writeObjectField(PermissionToken::definitionId.name.toSnakeCase(), token.definitionId)
+        gen.writeObjectField(PermissionToken::payload.name, token.payload.map { it.toInt() }.toIntArray())
+        gen.writeEndObject()
     }
 }
 
 /**
- * Serializer for [PermissionTokenId]
+ * Serializer for [DomainId]
  */
-object TokenIdSerializer : JsonSerializer<PermissionTokenId>() {
-    override fun serialize(value: PermissionTokenId, gen: JsonGenerator, serializers: SerializerProvider) {
+object DomainIdSerializer : JsonSerializer<DomainId>() {
+    override fun serialize(value: DomainId, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.asString())
     }
 }
@@ -908,7 +889,9 @@ private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) = this.serializeEnum(ge
 
 private fun InstructionBox.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
 
-private fun InstructionBox.Grant.serialize(gen: JsonGenerator) = this.serializeBox<GrantBox>(gen)
+private fun InstructionBox.Grant.serialize(gen: JsonGenerator) {
+    return this.serializeBox<GrantBox>(gen)
+}
 
 private fun InstructionBox.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
 
@@ -1042,14 +1025,12 @@ private inline fun <reified T> T.serializeEnum(gen: JsonGenerator) {
     }
 }
 
-private fun String.asClass(): Class<*> {
-    return runCatching {
-        Class.forName(this)
-    }.getOrNull() ?: run {
-        when (this) {
-            "kotlin.Long" -> Long::class.java
-            "kotlin.Int" -> Int::class.java
-            else -> null
-        }
-    } ?: throw DeserializationException("Class $this not found")
-}
+private fun String.asClass() = runCatching {
+    Class.forName(this)
+}.getOrNull() ?: run {
+    when (this) {
+        "kotlin.Long" -> Long::class.java
+        "kotlin.Int" -> Int::class.java
+        else -> null
+    }
+} ?: throw DeserializationException("Class $this not found")

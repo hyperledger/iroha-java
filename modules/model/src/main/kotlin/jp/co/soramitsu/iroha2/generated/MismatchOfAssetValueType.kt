@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * MismatchOfAssetValueType
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class MismatchOfAssetValueType(
     public val expected: AssetValueType,
-    public val `actual`: AssetValueType
+    public val `actual`: AssetValueType,
 ) {
     public companion object :
         ScaleReader<MismatchOfAssetValueType>,
         ScaleWriter<MismatchOfAssetValueType> {
-        public override fun read(reader: ScaleCodecReader): MismatchOfAssetValueType = try {
+        override fun read(reader: ScaleCodecReader): MismatchOfAssetValueType = try {
             MismatchOfAssetValueType(
                 AssetValueType.read(reader),
                 AssetValueType.read(reader),
@@ -30,7 +31,7 @@ public data class MismatchOfAssetValueType(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MismatchOfAssetValueType) = try {
+        override fun write(writer: ScaleCodecWriter, instance: MismatchOfAssetValueType): Unit = try {
             AssetValueType.write(writer, instance.expected)
             AssetValueType.write(writer, instance.`actual`)
         } catch (ex: Exception) {

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindAssetsByAssetDefinitionId
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'FindAssetsByAssetDefinitionId' regular structure
  */
 public data class FindAssetsByAssetDefinitionId(
-    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>
+    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>,
 ) {
     public companion object :
         ScaleReader<FindAssetsByAssetDefinitionId>,
         ScaleWriter<FindAssetsByAssetDefinitionId> {
-        public override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId = try {
+        override fun read(reader: ScaleCodecReader): FindAssetsByAssetDefinitionId = try {
             FindAssetsByAssetDefinitionId(
                 EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
             )
@@ -28,7 +29,7 @@ public data class FindAssetsByAssetDefinitionId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId) =
+        override fun write(writer: ScaleCodecWriter, instance: FindAssetsByAssetDefinitionId): Unit =
             try {
                 EvaluatesTo.write(writer, instance.assetDefinitionId)
             } catch (ex: Exception) {

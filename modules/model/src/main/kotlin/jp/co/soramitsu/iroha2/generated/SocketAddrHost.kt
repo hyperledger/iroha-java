@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * SocketAddrHost
@@ -18,10 +19,10 @@ import kotlin.String
  */
 public data class SocketAddrHost(
     public val host: String,
-    public val port: Int
+    public val port: Int,
 ) {
     public companion object : ScaleReader<SocketAddrHost>, ScaleWriter<SocketAddrHost> {
-        public override fun read(reader: ScaleCodecReader): SocketAddrHost = try {
+        override fun read(reader: ScaleCodecReader): SocketAddrHost = try {
             SocketAddrHost(
                 reader.readString(),
                 reader.readUint16(),
@@ -30,7 +31,7 @@ public data class SocketAddrHost(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SocketAddrHost) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SocketAddrHost): Unit = try {
             writer.writeAsList(instance.host.toByteArray(Charsets.UTF_8))
             writer.writeUint16(instance.port)
         } catch (ex: Exception) {

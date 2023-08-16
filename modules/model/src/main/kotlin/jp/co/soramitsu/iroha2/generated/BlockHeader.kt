@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -24,10 +25,10 @@ public data class BlockHeader(
     public val previousBlockHash: HashOf<VersionedCommittedBlock>? = null,
     public val transactionsHash: HashOf<List<VersionedSignedTransaction>>? = null,
     public val rejectedTransactionsHash: HashOf<List<VersionedSignedTransaction>>? = null,
-    public val committedWithTopology: List<PeerId>
+    public val committedWithTopology: List<PeerId>,
 ) {
     public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
-        public override fun read(reader: ScaleCodecReader): BlockHeader = try {
+        override fun read(reader: ScaleCodecReader): BlockHeader = try {
             BlockHeader(
                 reader.readUint128(),
                 reader.readUint64(),
@@ -42,7 +43,7 @@ public data class BlockHeader(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: BlockHeader) = try {
+        override fun write(writer: ScaleCodecWriter, instance: BlockHeader): Unit = try {
             writer.writeUint128(instance.timestamp)
             writer.writeUint64(instance.consensusEstimation)
             writer.writeUint64(instance.height)

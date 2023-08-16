@@ -14,7 +14,7 @@ import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
@@ -101,9 +101,9 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     }
 
     private fun getInstructionPayload(committedBlock: CommittedBlock): TransactionPayload {
-        return committedBlock.transactions[0]
-            .cast<VersionedValidTransaction.V1>()
-            .validTransaction
+        return committedBlock.transactions[0].value
+            .cast<VersionedSignedTransaction.V1>()
+            .signedTransaction
             .payload
     }
 
@@ -117,8 +117,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val committedBlock = getCommittedBlock(blockMessage)
         assertEquals(height, committedBlock.header.height.toLong())
         val payload = getInstructionPayload(committedBlock)
-        assertEquals(instructionAccountDomain, payload.accountId.domainId.name.string)
-        assertEquals(instructionAccount, payload.accountId.name.string)
+        assertEquals(instructionAccountDomain, payload.authority.domainId.name.string)
+        assertEquals(instructionAccount, payload.authority.name.string)
         val instructions = payload.instructions.cast<Executable.Instructions>().vec
         assertEquals(instructionSize, instructions.size)
         return instructions

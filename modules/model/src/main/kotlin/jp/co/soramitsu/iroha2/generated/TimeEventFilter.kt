@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * TimeEventFilter
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'TimeEventFilter' regular structure
  */
 public data class TimeEventFilter(
-    public val executionTime: ExecutionTime
+    public val executionTime: ExecutionTime,
 ) {
     public companion object : ScaleReader<TimeEventFilter>, ScaleWriter<TimeEventFilter> {
-        public override fun read(reader: ScaleCodecReader): TimeEventFilter = try {
+        override fun read(reader: ScaleCodecReader): TimeEventFilter = try {
             TimeEventFilter(
                 ExecutionTime.read(reader),
             )
@@ -26,7 +27,7 @@ public data class TimeEventFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TimeEventFilter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: TimeEventFilter): Unit = try {
             ExecutionTime.write(writer, instance.executionTime)
         } catch (ex: Exception) {
             throw wrapException(ex)

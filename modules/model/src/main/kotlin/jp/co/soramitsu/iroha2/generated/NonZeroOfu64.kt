@@ -9,26 +9,27 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Unit
 
 /**
- * TransactionExpired
+ * NonZeroOfu64
  *
- * Generated from 'TransactionExpired' regular structure
+ * Generated from 'NonZeroOfu64' regular structure
  */
-public data class TransactionExpired(
-    public val timeToLiveMs: BigInteger
+public data class NonZeroOfu64(
+    public val u64: BigInteger,
 ) {
-    public companion object : ScaleReader<TransactionExpired>, ScaleWriter<TransactionExpired> {
-        public override fun read(reader: ScaleCodecReader): TransactionExpired = try {
-            TransactionExpired(
+    public companion object : ScaleReader<NonZeroOfu64>, ScaleWriter<NonZeroOfu64> {
+        override fun read(reader: ScaleCodecReader): NonZeroOfu64 = try {
+            NonZeroOfu64(
                 reader.readUint64(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TransactionExpired) = try {
-            writer.writeUint64(instance.timeToLiveMs)
+        override fun write(writer: ScaleCodecWriter, instance: NonZeroOfu64): Unit = try {
+            writer.writeUint64(instance.u64)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

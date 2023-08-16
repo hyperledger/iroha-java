@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllDomains
@@ -19,13 +20,13 @@ import kotlin.Int
  */
 public class FindAllDomains {
     public companion object : ScaleReader<FindAllDomains>, ScaleWriter<FindAllDomains> {
-        public override fun read(reader: ScaleCodecReader): FindAllDomains = try {
+        override fun read(reader: ScaleCodecReader): FindAllDomains = try {
             FindAllDomains()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllDomains) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllDomains): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -35,6 +36,6 @@ public class FindAllDomains {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllDomains".hashCode()
+        override fun hashCode(): Int = ".FindAllDomains".hashCode()
     }
 }

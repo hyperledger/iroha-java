@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ActionOfFilterBoxAndOptimizedExecutable
@@ -17,33 +18,29 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class ActionOfFilterBoxAndOptimizedExecutable(
     public val executable: OptimizedExecutable,
     public val repeats: Repeats,
-    public val technicalAccount: AccountId,
+    public val authority: AccountId,
     public val filter: FilterBox,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object :
         ScaleReader<ActionOfFilterBoxAndOptimizedExecutable>,
         ScaleWriter<ActionOfFilterBoxAndOptimizedExecutable> {
-        public override fun read(reader: ScaleCodecReader): ActionOfFilterBoxAndOptimizedExecutable =
-            try {
-                ActionOfFilterBoxAndOptimizedExecutable(
-                    OptimizedExecutable.read(reader),
-                    Repeats.read(reader),
-                    AccountId.read(reader),
-                    FilterBox.read(reader),
-                    Metadata.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+        override fun read(reader: ScaleCodecReader): ActionOfFilterBoxAndOptimizedExecutable = try {
+            ActionOfFilterBoxAndOptimizedExecutable(
+                OptimizedExecutable.read(reader),
+                Repeats.read(reader),
+                AccountId.read(reader),
+                FilterBox.read(reader),
+                Metadata.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: ActionOfFilterBoxAndOptimizedExecutable
-        ) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ActionOfFilterBoxAndOptimizedExecutable): Unit = try {
             OptimizedExecutable.write(writer, instance.executable)
             Repeats.write(writer, instance.repeats)
-            AccountId.write(writer, instance.technicalAccount)
+            AccountId.write(writer, instance.authority)
             FilterBox.write(writer, instance.filter)
             Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {

@@ -40,11 +40,13 @@ object EnumGenerator : AbstractGenerator<EnumBlueprint>() {
                     .addParameter(ParameterSpec.builder("other", ANY_TYPE.copy(nullable = true)).build())
                     .addCode(equalsCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
+                    .returns(Boolean::class.java)
                     .build(),
             ).addFunction(
                 FunSpec.builder("hashCode")
                     .addCode(hashcodeCode(blueprint))
                     .addModifiers(KModifier.OVERRIDE)
+                    .returns(Int::class.java)
                     .build(),
             )
         }

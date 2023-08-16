@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * PeerId
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class PeerId(
     public val address: SocketAddr,
-    public val publicKey: PublicKey
+    public val publicKey: PublicKey,
 ) {
     public companion object : ScaleReader<PeerId>, ScaleWriter<PeerId> {
-        public override fun read(reader: ScaleCodecReader): PeerId = try {
+        override fun read(reader: ScaleCodecReader): PeerId = try {
             PeerId(
                 SocketAddr.read(reader),
                 PublicKey.read(reader),
@@ -28,7 +29,7 @@ public data class PeerId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PeerId) = try {
+        override fun write(writer: ScaleCodecWriter, instance: PeerId): Unit = try {
             SocketAddr.write(writer, instance.address)
             PublicKey.write(writer, instance.publicKey)
         } catch (ex: Exception) {
