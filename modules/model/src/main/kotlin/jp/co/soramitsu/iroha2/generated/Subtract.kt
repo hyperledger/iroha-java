@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Subtract
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Subtract(
     public val left: EvaluatesTo<NumericValue>,
-    public val right: EvaluatesTo<NumericValue>
+    public val right: EvaluatesTo<NumericValue>,
 ) {
     public companion object : ScaleReader<Subtract>, ScaleWriter<Subtract> {
-        public override fun read(reader: ScaleCodecReader): Subtract = try {
+        override fun read(reader: ScaleCodecReader): Subtract = try {
             Subtract(
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
@@ -28,7 +29,7 @@ public data class Subtract(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Subtract) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Subtract): Unit = try {
             EvaluatesTo.write(writer, instance.left)
             EvaluatesTo.write(writer, instance.right)
         } catch (ex: Exception) {

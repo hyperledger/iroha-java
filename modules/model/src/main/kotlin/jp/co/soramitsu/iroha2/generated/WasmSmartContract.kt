@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * WasmSmartContract
@@ -16,10 +17,10 @@ import kotlin.ByteArray
  * Generated from 'WasmSmartContract' regular structure
  */
 public data class WasmSmartContract(
-    public val vecOfU8: ByteArray
+    public val vecOfU8: ByteArray,
 ) {
     public companion object : ScaleReader<WasmSmartContract>, ScaleWriter<WasmSmartContract> {
-        public override fun read(reader: ScaleCodecReader): WasmSmartContract = try {
+        override fun read(reader: ScaleCodecReader): WasmSmartContract = try {
             WasmSmartContract(
                 reader.readByteArray(),
             )
@@ -27,7 +28,7 @@ public data class WasmSmartContract(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: WasmSmartContract) = try {
+        override fun write(writer: ScaleCodecWriter, instance: WasmSmartContract): Unit = try {
             writer.writeAsList(instance.vecOfU8)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -27,14 +28,16 @@ public sealed class OptimizedExecutable : ModelEnum {
      * 'WasmInternalRepr' variant
      */
     public data class WasmInternalRepr(
-        public val wasmInternalRepr: jp.co.soramitsu.iroha2.generated.WasmInternalRepr
+        public val wasmInternalRepr: jp.co.soramitsu.iroha2.generated.WasmInternalRepr,
     ) : OptimizedExecutable() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<WasmInternalRepr>, ScaleWriter<WasmInternalRepr> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.OptimizedExecutable.WasmInternalRepr>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.OptimizedExecutable.WasmInternalRepr> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): WasmInternalRepr = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.OptimizedExecutable.WasmInternalRepr = try {
                 WasmInternalRepr(
                     jp.co.soramitsu.iroha2.generated.WasmInternalRepr.read(reader),
                 )
@@ -42,11 +45,15 @@ public sealed class OptimizedExecutable : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: WasmInternalRepr) = try {
-                jp.co.soramitsu.iroha2.generated.WasmInternalRepr.write(writer, instance.wasmInternalRepr)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.OptimizedExecutable.WasmInternalRepr,
+            ): Unit =
+                try {
+                    jp.co.soramitsu.iroha2.generated.WasmInternalRepr.write(writer, instance.wasmInternalRepr)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
@@ -54,14 +61,16 @@ public sealed class OptimizedExecutable : ModelEnum {
      * 'Instructions' variant
      */
     public data class Instructions(
-        public val vec: List<InstructionBox>
+        public val vec: List<InstructionBox>,
     ) : OptimizedExecutable() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Instructions>, ScaleWriter<Instructions> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.OptimizedExecutable.Instructions>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.OptimizedExecutable.Instructions> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Instructions = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.OptimizedExecutable.Instructions = try {
                 Instructions(
                     reader.readVec(reader.readCompactInt()) { InstructionBox.read(reader) },
                 )
@@ -69,7 +78,10 @@ public sealed class OptimizedExecutable : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Instructions) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.OptimizedExecutable.Instructions,
+            ): Unit = try {
                 writer.writeCompact(instance.vec.size)
                 instance.vec.forEach { value ->
                     InstructionBox.write(writer, value)
@@ -81,22 +93,20 @@ public sealed class OptimizedExecutable : ModelEnum {
     }
 
     public companion object : ScaleReader<OptimizedExecutable>, ScaleWriter<OptimizedExecutable> {
-        public override fun read(reader: ScaleCodecReader): OptimizedExecutable = when (
+        override fun read(reader: ScaleCodecReader): OptimizedExecutable = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> WasmInternalRepr.read(reader)
             1 -> Instructions.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: OptimizedExecutable) {
+        override fun write(writer: ScaleCodecWriter, instance: OptimizedExecutable) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> WasmInternalRepr.write(writer, instance as WasmInternalRepr)
                 1 -> Instructions.write(writer, instance as Instructions)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

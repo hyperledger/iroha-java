@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Unit
 
 /**
  * SemiIntervalOfu128
@@ -17,10 +18,10 @@ import java.math.BigInteger
  */
 public data class SemiIntervalOfu128(
     public val start: BigInteger,
-    public val limit: BigInteger
+    public val limit: BigInteger,
 ) {
     public companion object : ScaleReader<SemiIntervalOfu128>, ScaleWriter<SemiIntervalOfu128> {
-        public override fun read(reader: ScaleCodecReader): SemiIntervalOfu128 = try {
+        override fun read(reader: ScaleCodecReader): SemiIntervalOfu128 = try {
             SemiIntervalOfu128(
                 reader.readUint128(),
                 reader.readUint128(),
@@ -29,7 +30,7 @@ public data class SemiIntervalOfu128(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfu128) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfu128): Unit = try {
             writer.writeUint128(instance.start)
             writer.writeUint128(instance.limit)
         } catch (ex: Exception) {

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -19,10 +20,10 @@ import kotlin.collections.List
 public data class NewAccount(
     public val id: AccountId,
     public val signatories: List<PublicKey>,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<NewAccount>, ScaleWriter<NewAccount> {
-        public override fun read(reader: ScaleCodecReader): NewAccount = try {
+        override fun read(reader: ScaleCodecReader): NewAccount = try {
             NewAccount(
                 AccountId.read(reader),
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
@@ -32,11 +33,11 @@ public data class NewAccount(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NewAccount) = try {
+        override fun write(writer: ScaleCodecWriter, instance: NewAccount): Unit = try {
             AccountId.write(writer, instance.id)
             writer.writeCompact(instance.signatories.size)
             instance.signatories.sortedWith(
-                PublicKey.comparator()
+                PublicKey.comparator(),
             ).forEach { value ->
                 PublicKey.write(writer, value)
             }

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -17,12 +18,12 @@ import kotlin.collections.List
  * Generated from 'SignaturesOfOfTransactionPayload' regular structure
  */
 public data class SignaturesOfOfTransactionPayload(
-    public val signatures: List<SignatureOf<TransactionPayload>>
+    public val signatures: List<SignatureOf<TransactionPayload>>,
 ) {
     public companion object :
         ScaleReader<SignaturesOfOfTransactionPayload>,
         ScaleWriter<SignaturesOfOfTransactionPayload> {
-        public override fun read(reader: ScaleCodecReader): SignaturesOfOfTransactionPayload = try {
+        override fun read(reader: ScaleCodecReader): SignaturesOfOfTransactionPayload = try {
             SignaturesOfOfTransactionPayload(
                 reader.readVec(reader.readCompactInt()) {
                     SignatureOf.read(reader) as
@@ -33,11 +34,11 @@ public data class SignaturesOfOfTransactionPayload(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SignaturesOfOfTransactionPayload) =
+        override fun write(writer: ScaleCodecWriter, instance: SignaturesOfOfTransactionPayload): Unit =
             try {
                 writer.writeCompact(instance.signatures.size)
                 instance.signatures.sortedWith(
-                    SignatureOf.comparator()
+                    SignatureOf.comparator(),
                 ).forEach { value ->
                     SignatureOf.write(writer, value)
                 }

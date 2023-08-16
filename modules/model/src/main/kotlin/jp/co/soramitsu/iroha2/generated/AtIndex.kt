@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * AtIndex
@@ -17,10 +18,10 @@ import kotlin.Long
  */
 public data class AtIndex(
     public val index: Long,
-    public val predicate: ValuePredicate
+    public val predicate: ValuePredicate,
 ) {
     public companion object : ScaleReader<AtIndex>, ScaleWriter<AtIndex> {
-        public override fun read(reader: ScaleCodecReader): AtIndex = try {
+        override fun read(reader: ScaleCodecReader): AtIndex = try {
             AtIndex(
                 reader.readUint32(),
                 ValuePredicate.read(reader),
@@ -29,7 +30,7 @@ public data class AtIndex(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AtIndex) = try {
+        override fun write(writer: ScaleCodecWriter, instance: AtIndex): Unit = try {
             writer.writeUint32(instance.index)
             ValuePredicate.write(writer, instance.predicate)
         } catch (ex: Exception) {

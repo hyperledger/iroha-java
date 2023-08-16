@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedValidTransaction
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
+import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -126,9 +127,12 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
         subscription.stop()
     }
-
-    private fun CommittedBlock.extractInstructionPayload() = this.transactions[0]
-        .cast<VersionedValidTransaction.V1>().validTransaction.payload
+    private fun getInstructionPayload(committedBlock: CommittedBlock): TransactionPayload {
+        return committedBlock.transactions[0].value
+            .cast<VersionedSignedTransaction.V1>()
+            .signedTransaction
+            .payload
+    }
 
     private fun checkBlockStructure(
         blockMessage: VersionedBlockMessage,
@@ -138,12 +142,11 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         instructionSize: Int,
     ): List<InstructionBox> {
         val committedBlock = blockMessage.extractBlock()
-        val payload = committedBlock.extractInstructionPayload()
-        val instructions = payload.instructions.cast<Executable.Instructions>().vec
-
         assertEquals(height, committedBlock.header.height.toLong())
-        assertEquals(instructionAccountDomain, payload.accountId.domainId.name.string)
-        assertEquals(instructionAccount, payload.accountId.name.string)
+        val payload = getInstructionPayload(committedBlock)
+        assertEquals(instructionAccountDomain, payload.authority.domainId.name.string)
+        assertEquals(instructionAccount, payload.authority.name.string)
+        val instructions = payload.instructions.cast<Executable.Instructions>().vec
         assertEquals(instructionSize, instructions.size)
 
         return instructions

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * AssetDefinitionOwnerChanged
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AssetDefinitionOwnerChanged(
     public val assetDefinitionId: AssetDefinitionId,
-    public val newOwner: AccountId
+    public val newOwner: AccountId,
 ) {
     public companion object :
         ScaleReader<AssetDefinitionOwnerChanged>,
         ScaleWriter<AssetDefinitionOwnerChanged> {
-        public override fun read(reader: ScaleCodecReader): AssetDefinitionOwnerChanged = try {
+        override fun read(reader: ScaleCodecReader): AssetDefinitionOwnerChanged = try {
             AssetDefinitionOwnerChanged(
                 AssetDefinitionId.read(reader),
                 AccountId.read(reader),
@@ -30,7 +31,7 @@ public data class AssetDefinitionOwnerChanged(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionOwnerChanged) = try {
+        override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionOwnerChanged): Unit = try {
             AssetDefinitionId.write(writer, instance.assetDefinitionId)
             AccountId.write(writer, instance.newOwner)
         } catch (ex: Exception) {

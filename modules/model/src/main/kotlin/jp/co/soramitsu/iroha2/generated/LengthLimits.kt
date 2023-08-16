@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * LengthLimits
@@ -17,10 +18,10 @@ import kotlin.Long
  */
 public data class LengthLimits(
     public val min: Long,
-    public val max: Long
+    public val max: Long,
 ) {
     public companion object : ScaleReader<LengthLimits>, ScaleWriter<LengthLimits> {
-        public override fun read(reader: ScaleCodecReader): LengthLimits = try {
+        override fun read(reader: ScaleCodecReader): LengthLimits = try {
             LengthLimits(
                 reader.readUint32(),
                 reader.readUint32(),
@@ -29,7 +30,7 @@ public data class LengthLimits(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: LengthLimits) = try {
+        override fun write(writer: ScaleCodecWriter, instance: LengthLimits): Unit = try {
             writer.writeUint32(instance.min)
             writer.writeUint32(instance.max)
         } catch (ex: Exception) {

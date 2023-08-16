@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Equal
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Equal(
     public val left: EvaluatesTo<Value>,
-    public val right: EvaluatesTo<Value>
+    public val right: EvaluatesTo<Value>,
 ) {
     public companion object : ScaleReader<Equal>, ScaleWriter<Equal> {
-        public override fun read(reader: ScaleCodecReader): Equal = try {
+        override fun read(reader: ScaleCodecReader): Equal = try {
             Equal(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
@@ -28,7 +29,7 @@ public data class Equal(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Equal) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Equal): Unit = try {
             EvaluatesTo.write(writer, instance.left)
             EvaluatesTo.write(writer, instance.right)
         } catch (ex: Exception) {

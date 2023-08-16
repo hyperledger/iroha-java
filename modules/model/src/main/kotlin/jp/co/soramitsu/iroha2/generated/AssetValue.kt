@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Int
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * AssetValue
@@ -28,14 +29,16 @@ public sealed class AssetValue : ModelEnum {
      * 'Quantity' variant
      */
     public data class Quantity(
-        public val u32: Long
+        public val u32: Long,
     ) : AssetValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Quantity>, ScaleWriter<Quantity> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetValue.Quantity>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetValue.Quantity> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Quantity = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetValue.Quantity = try {
                 Quantity(
                     reader.readUint32(),
                 )
@@ -43,7 +46,10 @@ public sealed class AssetValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Quantity) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetValue.Quantity,
+            ): Unit = try {
                 writer.writeUint32(instance.u32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -55,14 +61,16 @@ public sealed class AssetValue : ModelEnum {
      * 'BigQuantity' variant
      */
     public data class BigQuantity(
-        public val u128: BigInteger
+        public val u128: BigInteger,
     ) : AssetValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<BigQuantity>, ScaleWriter<BigQuantity> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetValue.BigQuantity>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetValue.BigQuantity> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): BigQuantity = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetValue.BigQuantity = try {
                 BigQuantity(
                     reader.readUint128(),
                 )
@@ -70,7 +78,10 @@ public sealed class AssetValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: BigQuantity) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetValue.BigQuantity,
+            ): Unit = try {
                 writer.writeUint128(instance.u128)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -82,14 +93,16 @@ public sealed class AssetValue : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val fixed: jp.co.soramitsu.iroha2.generated.Fixed
+        public val fixed: jp.co.soramitsu.iroha2.generated.Fixed,
     ) : AssetValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetValue.Fixed>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetValue.Fixed> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Fixed = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetValue.Fixed = try {
                 Fixed(
                     jp.co.soramitsu.iroha2.generated.Fixed.read(reader),
                 )
@@ -97,7 +110,10 @@ public sealed class AssetValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetValue.Fixed,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Fixed.write(writer, instance.fixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -109,14 +125,16 @@ public sealed class AssetValue : ModelEnum {
      * 'Store' variant
      */
     public data class Store(
-        public val metadata: Metadata
+        public val metadata: Metadata,
     ) : AssetValue() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Store>, ScaleWriter<Store> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetValue.Store>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetValue.Store> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Store = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetValue.Store = try {
                 Store(
                     Metadata.read(reader),
                 )
@@ -124,7 +142,10 @@ public sealed class AssetValue : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Store) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetValue.Store,
+            ): Unit = try {
                 Metadata.write(writer, instance.metadata)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -133,7 +154,7 @@ public sealed class AssetValue : ModelEnum {
     }
 
     public companion object : ScaleReader<AssetValue>, ScaleWriter<AssetValue> {
-        public override fun read(reader: ScaleCodecReader): AssetValue = when (
+        override fun read(reader: ScaleCodecReader): AssetValue = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -141,18 +162,16 @@ public sealed class AssetValue : ModelEnum {
             1 -> BigQuantity.read(reader)
             2 -> Fixed.read(reader)
             3 -> Store.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetValue) {
+        override fun write(writer: ScaleCodecWriter, instance: AssetValue) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Quantity.write(writer, instance as Quantity)
                 1 -> BigQuantity.write(writer, instance as BigQuantity)
                 2 -> Fixed.write(writer, instance as Fixed)
                 3 -> Store.write(writer, instance as Store)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

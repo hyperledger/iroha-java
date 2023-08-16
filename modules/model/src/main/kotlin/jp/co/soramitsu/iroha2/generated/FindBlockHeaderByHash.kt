@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindBlockHeaderByHash
@@ -15,18 +16,18 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'FindBlockHeaderByHash' regular structure
  */
 public data class FindBlockHeaderByHash(
-    public val hash: EvaluatesTo<Hash>
+    public val hash: EvaluatesTo<HashOf<VersionedCommittedBlock>>,
 ) {
     public companion object : ScaleReader<FindBlockHeaderByHash>, ScaleWriter<FindBlockHeaderByHash> {
-        public override fun read(reader: ScaleCodecReader): FindBlockHeaderByHash = try {
+        override fun read(reader: ScaleCodecReader): FindBlockHeaderByHash = try {
             FindBlockHeaderByHash(
-                EvaluatesTo.read(reader) as EvaluatesTo<Hash>,
+                EvaluatesTo.read(reader) as EvaluatesTo<HashOf<VersionedCommittedBlock>>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindBlockHeaderByHash) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindBlockHeaderByHash): Unit = try {
             EvaluatesTo.write(writer, instance.hash)
         } catch (ex: Exception) {
             throw wrapException(ex)

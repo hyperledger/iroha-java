@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ActionOfFilterBoxAndExecutable
@@ -17,14 +18,14 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class ActionOfFilterBoxAndExecutable(
     public val executable: Executable,
     public val repeats: Repeats,
-    public val technicalAccount: AccountId,
+    public val authority: AccountId,
     public val filter: FilterBox,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object :
         ScaleReader<ActionOfFilterBoxAndExecutable>,
         ScaleWriter<ActionOfFilterBoxAndExecutable> {
-        public override fun read(reader: ScaleCodecReader): ActionOfFilterBoxAndExecutable = try {
+        override fun read(reader: ScaleCodecReader): ActionOfFilterBoxAndExecutable = try {
             ActionOfFilterBoxAndExecutable(
                 Executable.read(reader),
                 Repeats.read(reader),
@@ -36,11 +37,11 @@ public data class ActionOfFilterBoxAndExecutable(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ActionOfFilterBoxAndExecutable) =
+        override fun write(writer: ScaleCodecWriter, instance: ActionOfFilterBoxAndExecutable): Unit =
             try {
                 Executable.write(writer, instance.executable)
                 Repeats.write(writer, instance.repeats)
-                AccountId.write(writer, instance.technicalAccount)
+                AccountId.write(writer, instance.authority)
                 FilterBox.write(writer, instance.filter)
                 Metadata.write(writer, instance.metadata)
             } catch (ex: Exception) {

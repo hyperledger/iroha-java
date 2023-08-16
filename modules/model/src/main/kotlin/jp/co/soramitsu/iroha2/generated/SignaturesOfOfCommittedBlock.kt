@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -17,12 +18,12 @@ import kotlin.collections.List
  * Generated from 'SignaturesOfOfCommittedBlock' regular structure
  */
 public data class SignaturesOfOfCommittedBlock(
-    public val signatures: List<SignatureOf<CommittedBlock>>
+    public val signatures: List<SignatureOf<CommittedBlock>>,
 ) {
     public companion object :
         ScaleReader<SignaturesOfOfCommittedBlock>,
         ScaleWriter<SignaturesOfOfCommittedBlock> {
-        public override fun read(reader: ScaleCodecReader): SignaturesOfOfCommittedBlock = try {
+        override fun read(reader: ScaleCodecReader): SignaturesOfOfCommittedBlock = try {
             SignaturesOfOfCommittedBlock(
                 reader.readVec(reader.readCompactInt()) {
                     SignatureOf.read(reader) as
@@ -33,16 +34,15 @@ public data class SignaturesOfOfCommittedBlock(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SignaturesOfOfCommittedBlock) =
-            try {
-                writer.writeCompact(instance.signatures.size)
-                instance.signatures.sortedWith(
-                    SignatureOf.comparator()
-                ).forEach { value ->
-                    SignatureOf.write(writer, value)
-                }
-            } catch (ex: Exception) {
-                throw wrapException(ex)
+        override fun write(writer: ScaleCodecWriter, instance: SignaturesOfOfCommittedBlock): Unit = try {
+            writer.writeCompact(instance.signatures.size)
+            instance.signatures.sortedWith(
+                SignatureOf.comparator(),
+            ).forEach { value ->
+                SignatureOf.write(writer, value)
             }
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
     }
 }

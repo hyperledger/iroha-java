@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ExecuteTriggerEventFilter
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class ExecuteTriggerEventFilter(
     public val triggerId: TriggerId,
-    public val authority: AccountId
+    public val authority: AccountId,
 ) {
     public companion object :
         ScaleReader<ExecuteTriggerEventFilter>,
         ScaleWriter<ExecuteTriggerEventFilter> {
-        public override fun read(reader: ScaleCodecReader): ExecuteTriggerEventFilter = try {
+        override fun read(reader: ScaleCodecReader): ExecuteTriggerEventFilter = try {
             ExecuteTriggerEventFilter(
                 TriggerId.read(reader),
                 AccountId.read(reader),
@@ -30,7 +31,7 @@ public data class ExecuteTriggerEventFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ExecuteTriggerEventFilter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ExecuteTriggerEventFilter): Unit = try {
             TriggerId.write(writer, instance.triggerId)
             AccountId.write(writer, instance.authority)
         } catch (ex: Exception) {

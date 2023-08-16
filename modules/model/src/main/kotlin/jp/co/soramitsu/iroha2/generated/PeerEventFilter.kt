@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * PeerEventFilter
@@ -24,44 +25,47 @@ public sealed class PeerEventFilter : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is ByAdded -> ByAdded.equals(this, other)
         is ByRemoved -> ByRemoved.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is ByAdded -> ByAdded.hashCode()
         is ByRemoved -> ByRemoved.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'ByAdded' variant
      */
     public class ByAdded : PeerEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByAdded>, ScaleWriter<ByAdded> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByAdded>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByAdded> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): ByAdded = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByAdded = try {
                 ByAdded()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByAdded) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByAdded,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByAdded, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByAdded, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".PeerEventFilter.ByAdded".hashCode()
+            override fun hashCode(): Int = ".PeerEventFilter.ByAdded".hashCode()
         }
     }
 
@@ -69,48 +73,51 @@ public sealed class PeerEventFilter : ModelEnum {
      * 'ByRemoved' variant
      */
     public class ByRemoved : PeerEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByRemoved>, ScaleWriter<ByRemoved> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByRemoved>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByRemoved> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): ByRemoved = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByRemoved = try {
                 ByRemoved()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByRemoved) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByRemoved,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByRemoved, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.PeerEventFilter.ByRemoved, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".PeerEventFilter.ByRemoved".hashCode()
+            override fun hashCode(): Int = ".PeerEventFilter.ByRemoved".hashCode()
         }
     }
 
     public companion object : ScaleReader<PeerEventFilter>, ScaleWriter<PeerEventFilter> {
-        public override fun read(reader: ScaleCodecReader): PeerEventFilter = when (
+        override fun read(reader: ScaleCodecReader): PeerEventFilter = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> ByAdded.read(reader)
             1 -> ByRemoved.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PeerEventFilter) {
+        override fun write(writer: ScaleCodecWriter, instance: PeerEventFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> ByAdded.write(writer, instance as ByAdded)
                 1 -> ByRemoved.write(writer, instance as ByRemoved)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

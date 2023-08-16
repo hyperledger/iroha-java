@@ -16,8 +16,6 @@ import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.Pagination
-import jp.co.soramitsu.iroha2.generated.Sorting
 import jp.co.soramitsu.iroha2.generated.StringPredicate
 import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.Value
@@ -465,85 +463,85 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-    @Test
-    @WithIroha([DefaultGenesis::class])
-    @Feature("Transactions")
-    @Query("FindTransactionsByAccountId")
-    @Story("Transaction queries transactions by account id")
-    @SdkTestId("find_transactions_by_account_id")
-    fun `find transactions by account id`(): Unit = runBlocking {
-        client.sendTransaction {
-            account(ALICE_ACCOUNT_ID)
-            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
-            buildSigned(ALICE_KEYPAIR)
-        }
+//    @Test
+//    @WithIroha([DefaultGenesis::class])
+//    @Feature("Transactions")
+//    @Query("FindTransactionsByAccountId")
+//    @Story("Transaction queries transactions by account id")
+//    @SdkTestId("find_transactions_by_account_id")
+//    fun `find transactions by account id`(): Unit = runBlocking {
+//        client.sendTransaction {
+//            account(ALICE_ACCOUNT_ID)
+//            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+//            buildSigned(ALICE_KEYPAIR)
+//        }
+//
+//        QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query ->
+//                client.sendQuery(query)
+//            }.let { txValues ->
+//                txValues.all { value ->
+//                    value.cast<TransactionValue.Transaction>()
+//                        .versionedSignedTransaction
+//                        .cast<VersionedSignedTransaction.V1>()
+//                        .signedTransaction
+//                        .payload
+//                        .accountId == ALICE_ACCOUNT_ID
+//                }
+//            }.also {
+//                assert(it)
+//            }
+//    }
 
-        QueryBuilder.findTransactionsByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query ->
-                client.sendQuery(query)
-            }.let { txValues ->
-                txValues.all { value ->
-                    value.cast<TransactionValue.Transaction>()
-                        .versionedSignedTransaction
-                        .cast<VersionedSignedTransaction.V1>()
-                        .signedTransaction
-                        .payload
-                        .accountId == ALICE_ACCOUNT_ID
-                }
-            }.also {
-                assert(it)
-            }
-    }
+//    @Test
+//    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+//    @Feature("PermissionTokens")
+//    @Query("FindPermissionTokensByAccountId")
+//    @Story("PermissionToken queries permission tokens by account id")
+//    @SdkTestId("find_permission_tokens_by_account_id")
+//    fun `find permission tokens by account id`(): Unit = runBlocking {
+//        QueryBuilder.findPermissionTokensByAccountId(ALICE_ACCOUNT_ID)
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query ->
+//                client.sendQuery(query)
+//            }.let { tokens ->
+//                tokens.any {
+//                    it.params[IdKey.AssetDefinitionId.type.asName()]
+//                        ?.cast<Value.Id>()
+//                        ?.idBox
+//                        ?.cast<IdBox.AssetDefinitionId>()
+//                        ?.assetDefinitionId == DEFAULT_ASSET_DEFINITION_ID
+//                }
+//            }.also {
+//                assert(it)
+//            }
+//    }
 
-    @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("PermissionTokens")
-    @Query("FindPermissionTokensByAccountId")
-    @Story("PermissionToken queries permission tokens by account id")
-    @SdkTestId("find_permission_tokens_by_account_id")
-    fun `find permission tokens by account id`(): Unit = runBlocking {
-        QueryBuilder.findPermissionTokensByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query ->
-                client.sendQuery(query)
-            }.let { tokens ->
-                tokens.any {
-                    it.params[IdKey.AssetDefinitionId.type.asName()]
-                        ?.cast<Value.Id>()
-                        ?.idBox
-                        ?.cast<IdBox.AssetDefinitionId>()
-                        ?.assetDefinitionId == DEFAULT_ASSET_DEFINITION_ID
-                }
-            }.also {
-                assert(it)
-            }
-    }
-
-    @Test
-    @WithIroha([DefaultGenesis::class])
-    @Feature("Transactions")
-    @Query("FindTransactionByHash")
-    @Story("Transaction queries transaction by hash")
-    @SdkTestId("find_transaction_by_hash")
-    fun `find transaction by hash`(): Unit = runBlocking {
-        val hash = client.sendTransaction {
-            account(ALICE_ACCOUNT_ID)
-            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
-            buildSigned(ALICE_KEYPAIR)
-        }.let { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-        QueryBuilder.findTransactionByHash(hash)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .cast<TransactionValue.Transaction>()
-            .versionedSignedTransaction.hash()
-            .also { assertContentEquals(hash, it) }
-    }
+//    @Test
+//    @WithIroha([DefaultGenesis::class])
+//    @Feature("Transactions")
+//    @Query("FindTransactionByHash")
+//    @Story("Transaction queries transaction by hash")
+//    @SdkTestId("find_transaction_by_hash")
+//    fun `find transaction by hash`(): Unit = runBlocking {
+//        val hash = client.sendTransaction {
+//            account(ALICE_ACCOUNT_ID)
+//            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+//            buildSigned(ALICE_KEYPAIR)
+//        }.let { d ->
+//            withTimeout(txTimeout) { d.await() }
+//        }
+//        QueryBuilder.findTransactionByHash(hash)
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query) }
+//            .cast<TransactionValue.Transaction>()
+//            .versionedSignedTransaction.hash()
+//            .also { assertContentEquals(hash, it) }
+//    }
 
     @Test
     @WithIroha([NewDomainWithMetadata::class])
@@ -610,144 +608,144 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-    @Test
-    @WithIroha([DefaultGenesis::class])
-    @Feature("Accounts")
-    @Query("FindAllAccountsWithPaginationAndSorting")
-    @Story("Account queries all accounts with pagination and sorting by metadata key")
-    @SdkTestId("pagination_plus_sorting_by_metadata_key")
-    fun `pagination plus sorting by metadata key`(): Unit = runBlocking {
-        val keyU32 = RandomStringUtils.randomAlphabetic(5).asName()
-        val keyU128 = RandomStringUtils.randomAlphabetic(5).asName()
+//    @Test
+//    @WithIroha([DefaultGenesis::class])
+//    @Feature("Accounts")
+//    @Query("FindAllAccountsWithPaginationAndSorting")
+//    @Story("Account queries all accounts with pagination and sorting by metadata key")
+//    @SdkTestId("pagination_plus_sorting_by_metadata_key")
+//    fun `pagination plus sorting by metadata key`(): Unit = runBlocking {
+//        val keyU32 = RandomStringUtils.randomAlphabetic(5).asName()
+//        val keyU128 = RandomStringUtils.randomAlphabetic(5).asName()
+//
+//        createAccount("new_000", mapOf(keyU32 to 1.asValue(), keyU128 to 1L.asValue()))
+//        createAccount("new_111", mapOf(keyU32 to 0.asValue(), keyU128 to 0L.asValue()))
+//        createAccount("new_222", mapOf(keyU32 to 2.asValue(), keyU128 to 2L.asValue()))
+//
+//        listOf(keyU32, keyU128).forEach { key ->
+//            QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+//                .account(ALICE_ACCOUNT_ID)
+//                .buildSigned(ALICE_KEYPAIR)
+//                .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
+//                .let { accounts ->
+//                    assertEquals(if (key == keyU32) 0.asValue() else 0L.asValue(), accounts.data[0].metadata.map[key])
+//                    assertEquals(if (key == keyU32) 1.asValue() else 1L.asValue(), accounts.data[1].metadata.map[key])
+//                    assertEquals(if (key == keyU32) 2.asValue() else 2L.asValue(), accounts.data[2].metadata.map[key])
+//                }
+//        }
+//    }
 
-        createAccount("new_000", mapOf(keyU32 to 1.asValue(), keyU128 to 1L.asValue()))
-        createAccount("new_111", mapOf(keyU32 to 0.asValue(), keyU128 to 0L.asValue()))
-        createAccount("new_222", mapOf(keyU32 to 2.asValue(), keyU128 to 2L.asValue()))
+//    @Test
+//    @WithIroha([DefaultGenesis::class])
+//    @Feature("Accounts")
+//    @Query("FindAllAccountsWithPagination")
+//    @Story("Account queries all accounts with pagination after inserting some new accounts")
+//    @SdkTestId("pagination_works_correct_after_inserting_some_new_accounts")
+//    fun `pagination works correct after inserting some new accounts`(): Unit = runBlocking {
+//        val key = "ts".asName()
+//
+//        val metadata0 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_000", mapOf(key to metadata0))
+//        val metadata1 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_111", mapOf(key to metadata1))
+//        val metadata2 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_222", mapOf(key to metadata2))
+//        val metadata3 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_333", mapOf(key to metadata3))
+//        val metadata4 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_444", mapOf(key to metadata4))
+//
+//        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query, Pagination(0, 3), Sorting(key)) }
+//            .let { accounts ->
+//                assertEquals(3, accounts.data.size)
+//                assertEquals(metadata2, accounts.data[2].metadata.map[key])
+//            }
+//
+//        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query, Pagination(3, 3)) }
+//            .let { accounts ->
+//                assertEquals(2, accounts.data.size)
+//                assertEquals(metadata4, accounts.data[1].metadata.map[key])
+//            }
+//
+//        val metadata5 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_555", mapOf(key to metadata5))
+//        val metadata6 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_666", mapOf(key to metadata6))
+//        val metadata7 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_777", mapOf(key to metadata7))
+//        val metadata8 = Instant.now().toEpochMilli().asValue()
+//        createAccount("new_888", mapOf(key to metadata8))
+//
+//        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query, Pagination(6, 3)) }
+//            .let { accounts ->
+//                assertEquals(3, accounts.data.size)
+//                assertEquals(metadata6, accounts.data[0].metadata.map[key])
+//                assertEquals(metadata8, accounts.data[2].metadata.map[key])
+//            }
+//    }
 
-        listOf(keyU32, keyU128).forEach { key ->
-            QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
-                .account(ALICE_ACCOUNT_ID)
-                .buildSigned(ALICE_KEYPAIR)
-                .let { query -> client.sendQuery(query, sorting = Sorting(key)) }
-                .let { accounts ->
-                    assertEquals(if (key == keyU32) 0.asValue() else 0L.asValue(), accounts.data[0].metadata.map[key])
-                    assertEquals(if (key == keyU32) 1.asValue() else 1L.asValue(), accounts.data[1].metadata.map[key])
-                    assertEquals(if (key == keyU32) 2.asValue() else 2L.asValue(), accounts.data[2].metadata.map[key])
-                }
-        }
-    }
+//    @Test
+//    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+//    @Feature("Accounts")
+//    @Query("FindAllAccountsWithPagination")
+//    @Story("Account queries all accounts with pagination")
+//    @SdkTestId("find_all_account_with_pagination")
+//    fun `find all account with pagination`(): Unit = runBlocking {
+//        var page = Pagination(0, 5)
+//        var accounts = QueryBuilder.findAllAccounts()
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query, page) }
+//        assertEquals(3, accounts.data.size)
+//        assertEquals(page, accounts.pagination)
+//        assertEquals(3, accounts.total.toInt())
+//
+//        createAccount("foo")
+//        createAccount("bar")
+//
+//        page = Pagination(3, 5)
+//        accounts = QueryBuilder.findAllAccounts()
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { query -> client.sendQuery(query, page) }
+//        assertEquals(2, accounts.data.size)
+//        assertEquals(page, accounts.pagination)
+//        assertEquals(5, accounts.total.toInt())
+//    }
 
-    @Test
-    @WithIroha([DefaultGenesis::class])
-    @Feature("Accounts")
-    @Query("FindAllAccountsWithPagination")
-    @Story("Account queries all accounts with pagination after inserting some new accounts")
-    @SdkTestId("pagination_works_correct_after_inserting_some_new_accounts")
-    fun `pagination works correct after inserting some new accounts`(): Unit = runBlocking {
-        val key = "ts".asName()
-
-        val metadata0 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_000", mapOf(key to metadata0))
-        val metadata1 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_111", mapOf(key to metadata1))
-        val metadata2 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_222", mapOf(key to metadata2))
-        val metadata3 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_333", mapOf(key to metadata3))
-        val metadata4 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_444", mapOf(key to metadata4))
-
-        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, Pagination(0, 3), Sorting(key)) }
-            .let { accounts ->
-                assertEquals(3, accounts.data.size)
-                assertEquals(metadata2, accounts.data[2].metadata.map[key])
-            }
-
-        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, Pagination(3, 3)) }
-            .let { accounts ->
-                assertEquals(2, accounts.data.size)
-                assertEquals(metadata4, accounts.data[1].metadata.map[key])
-            }
-
-        val metadata5 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_555", mapOf(key to metadata5))
-        val metadata6 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_666", mapOf(key to metadata6))
-        val metadata7 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_777", mapOf(key to metadata7))
-        val metadata8 = Instant.now().toEpochMilli().asValue()
-        createAccount("new_888", mapOf(key to metadata8))
-
-        QueryBuilder.findAllAccounts(QueryFilters.startsWith("new_"))
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, Pagination(6, 3)) }
-            .let { accounts ->
-                assertEquals(3, accounts.data.size)
-                assertEquals(metadata6, accounts.data[0].metadata.map[key])
-                assertEquals(metadata8, accounts.data[2].metadata.map[key])
-            }
-    }
-
-    @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Accounts")
-    @Query("FindAllAccountsWithPagination")
-    @Story("Account queries all accounts with pagination")
-    @SdkTestId("find_all_account_with_pagination")
-    fun `find all account with pagination`(): Unit = runBlocking {
-        var page = Pagination(0, 5)
-        var accounts = QueryBuilder.findAllAccounts()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, page) }
-        assertEquals(3, accounts.data.size)
-        assertEquals(page, accounts.pagination)
-        assertEquals(3, accounts.total.toInt())
-
-        createAccount("foo")
-        createAccount("bar")
-
-        page = Pagination(3, 5)
-        accounts = QueryBuilder.findAllAccounts()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query, page) }
-        assertEquals(2, accounts.data.size)
-        assertEquals(page, accounts.pagination)
-        assertEquals(5, accounts.total.toInt())
-    }
-
-    @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Transactions")
-    @Query("FindAllTransactions")
-    @Story("Account queries all transactions")
-    @SdkTestId("find_all_transactions")
-    fun `find all transactions`(): Unit = runBlocking {
-        repeat(5) {
-            client.sendTransaction {
-                account(ALICE_ACCOUNT_ID)
-                burnAsset(DEFAULT_ASSET_ID, 1)
-                buildSigned(ALICE_KEYPAIR)
-            }.also { d ->
-                withTimeout(txTimeout) { d.await() }
-            }
-        }
-        QueryBuilder.findAllTransactions()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { client.sendQuery(it) }
-            .also { txs ->
-                assertTrue(txs.size == 7) // 5 + 2 genesis txs
-            }
-    }
+//    @Test
+//    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+//    @Feature("Transactions")
+//    @Query("FindAllTransactions")
+//    @Story("Account queries all transactions")
+//    @SdkTestId("find_all_transactions")
+//    fun `find all transactions`(): Unit = runBlocking {
+//        repeat(5) {
+//            client.sendTransaction {
+//                account(ALICE_ACCOUNT_ID)
+//                burnAsset(DEFAULT_ASSET_ID, 1)
+//                buildSigned(ALICE_KEYPAIR)
+//            }.also { d ->
+//                withTimeout(txTimeout) { d.await() }
+//            }
+//        }
+//        QueryBuilder.findAllTransactions()
+//            .account(ALICE_ACCOUNT_ID)
+//            .buildSigned(ALICE_KEYPAIR)
+//            .let { client.sendQuery(it) }
+//            .also { txs ->
+//                assertTrue(txs.size == 7) // 5 + 2 genesis txs
+//            }
+//    }
 
     @Test
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])

@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllBlockHeaders
@@ -19,13 +20,13 @@ import kotlin.Int
  */
 public class FindAllBlockHeaders {
     public companion object : ScaleReader<FindAllBlockHeaders>, ScaleWriter<FindAllBlockHeaders> {
-        public override fun read(reader: ScaleCodecReader): FindAllBlockHeaders = try {
+        override fun read(reader: ScaleCodecReader): FindAllBlockHeaders = try {
             FindAllBlockHeaders()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllBlockHeaders) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllBlockHeaders): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -35,6 +36,6 @@ public class FindAllBlockHeaders {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllBlockHeaders".hashCode()
+        override fun hashCode(): Int = ".FindAllBlockHeaders".hashCode()
     }
 }

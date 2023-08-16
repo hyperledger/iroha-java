@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -18,10 +19,10 @@ import kotlin.collections.List
  */
 public data class Role(
     public val id: RoleId,
-    public val permissions: List<PermissionToken>
+    public val permissions: List<PermissionToken>,
 ) {
     public companion object : ScaleReader<Role>, ScaleWriter<Role> {
-        public override fun read(reader: ScaleCodecReader): Role = try {
+        override fun read(reader: ScaleCodecReader): Role = try {
             Role(
                 RoleId.read(reader),
                 reader.readVec(reader.readCompactInt()) { PermissionToken.read(reader) },
@@ -30,11 +31,11 @@ public data class Role(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Role) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Role): Unit = try {
             RoleId.write(writer, instance.id)
             writer.writeCompact(instance.permissions.size)
             instance.permissions.sortedWith(
-                PermissionToken.comparator()
+                PermissionToken.comparator(),
             ).forEach { value ->
                 PermissionToken.write(writer, value)
             }

@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * ValidatorMode
@@ -27,14 +28,16 @@ public sealed class ValidatorMode : ModelEnum {
      * 'Path' variant
      */
     public data class Path(
-        public val string: String
+        public val string: String,
     ) : ValidatorMode() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Path>, ScaleWriter<Path> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidatorMode.Path>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidatorMode.Path> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Path = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidatorMode.Path = try {
                 Path(
                     reader.readString(),
                 )
@@ -42,7 +45,10 @@ public sealed class ValidatorMode : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Path) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidatorMode.Path,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -54,14 +60,16 @@ public sealed class ValidatorMode : ModelEnum {
      * 'Inline' variant
      */
     public data class Inline(
-        public val validator: Validator
+        public val validator: Validator,
     ) : ValidatorMode() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Inline>, ScaleWriter<Inline> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidatorMode.Inline>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidatorMode.Inline> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Inline = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidatorMode.Inline = try {
                 Inline(
                     Validator.read(reader),
                 )
@@ -69,7 +77,10 @@ public sealed class ValidatorMode : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Inline) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidatorMode.Inline,
+            ): Unit = try {
                 Validator.write(writer, instance.validator)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -78,22 +89,20 @@ public sealed class ValidatorMode : ModelEnum {
     }
 
     public companion object : ScaleReader<ValidatorMode>, ScaleWriter<ValidatorMode> {
-        public override fun read(reader: ScaleCodecReader): ValidatorMode = when (
+        override fun read(reader: ScaleCodecReader): ValidatorMode = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> Path.read(reader)
             1 -> Inline.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ValidatorMode) {
+        override fun write(writer: ScaleCodecWriter, instance: ValidatorMode) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Path.write(writer, instance as Path)
                 1 -> Inline.write(writer, instance as Inline)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

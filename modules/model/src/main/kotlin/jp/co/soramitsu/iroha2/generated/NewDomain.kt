@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * NewDomain
@@ -17,10 +18,10 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class NewDomain(
     public val id: DomainId,
     public val logo: IpfsPath? = null,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<NewDomain>, ScaleWriter<NewDomain> {
-        public override fun read(reader: ScaleCodecReader): NewDomain = try {
+        override fun read(reader: ScaleCodecReader): NewDomain = try {
             NewDomain(
                 DomainId.read(reader),
                 reader.readNullable(IpfsPath) as IpfsPath?,
@@ -30,7 +31,7 @@ public data class NewDomain(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NewDomain) = try {
+        override fun write(writer: ScaleCodecWriter, instance: NewDomain): Unit = try {
             DomainId.write(writer, instance.id)
             writer.writeNullable(IpfsPath, instance.logo)
             Metadata.write(writer, instance.metadata)

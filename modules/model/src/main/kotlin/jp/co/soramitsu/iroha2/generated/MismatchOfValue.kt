@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * MismatchOfValue
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class MismatchOfValue(
     public val expected: Value,
-    public val `actual`: Value
+    public val `actual`: Value,
 ) {
     public companion object : ScaleReader<MismatchOfValue>, ScaleWriter<MismatchOfValue> {
-        public override fun read(reader: ScaleCodecReader): MismatchOfValue = try {
+        override fun read(reader: ScaleCodecReader): MismatchOfValue = try {
             MismatchOfValue(
                 Value.read(reader),
                 Value.read(reader),
@@ -28,7 +29,7 @@ public data class MismatchOfValue(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MismatchOfValue) = try {
+        override fun write(writer: ScaleCodecWriter, instance: MismatchOfValue): Unit = try {
             Value.write(writer, instance.expected)
             Value.write(writer, instance.`actual`)
         } catch (ex: Exception) {

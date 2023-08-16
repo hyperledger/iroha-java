@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Parameter
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Parameter(
     public val id: ParameterId,
-    public val `val`: Value
+    public val `val`: Value,
 ) {
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
-        public override fun read(reader: ScaleCodecReader): Parameter = try {
+        override fun read(reader: ScaleCodecReader): Parameter = try {
             Parameter(
                 ParameterId.read(reader),
                 Value.read(reader),
@@ -28,7 +29,7 @@ public data class Parameter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Parameter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit = try {
             ParameterId.write(writer, instance.id)
             Value.write(writer, instance.`val`)
         } catch (ex: Exception) {

@@ -13,6 +13,7 @@ import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * ValidationFail
@@ -25,30 +26,30 @@ public sealed class ValidationFail : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is TooComplex -> TooComplex.equals(this, other)
         is InternalError -> InternalError.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is TooComplex -> TooComplex.hashCode()
         is InternalError -> InternalError.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'NotPermitted' variant
      */
     public data class NotPermitted(
-        public val string: String
+        public val string: String,
     ) : ValidationFail() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<NotPermitted>, ScaleWriter<NotPermitted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidationFail.NotPermitted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidationFail.NotPermitted> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): NotPermitted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidationFail.NotPermitted = try {
                 NotPermitted(
                     reader.readString(),
                 )
@@ -56,7 +57,10 @@ public sealed class ValidationFail : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: NotPermitted) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidationFail.NotPermitted,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -68,23 +72,28 @@ public sealed class ValidationFail : ModelEnum {
      * 'InstructionFailed' variant
      */
     public data class InstructionFailed(
-        public val instructionExecutionFailure: InstructionExecutionFailure
+        public val instructionExecutionError: InstructionExecutionError,
     ) : ValidationFail() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<InstructionFailed>, ScaleWriter<InstructionFailed> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidationFail.InstructionFailed>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidationFail.InstructionFailed> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): InstructionFailed = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidationFail.InstructionFailed = try {
                 InstructionFailed(
-                    InstructionExecutionFailure.read(reader),
+                    InstructionExecutionError.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: InstructionFailed) = try {
-                InstructionExecutionFailure.write(writer, instance.instructionExecutionFailure)
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidationFail.InstructionFailed,
+            ): Unit = try {
+                InstructionExecutionError.write(writer, instance.instructionExecutionError)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -95,23 +104,28 @@ public sealed class ValidationFail : ModelEnum {
      * 'QueryFailed' variant
      */
     public data class QueryFailed(
-        public val queryExecutionFailure: QueryExecutionFailure
+        public val queryExecutionFail: QueryExecutionFail,
     ) : ValidationFail() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<QueryFailed>, ScaleWriter<QueryFailed> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidationFail.QueryFailed>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidationFail.QueryFailed> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): QueryFailed = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidationFail.QueryFailed = try {
                 QueryFailed(
-                    QueryExecutionFailure.read(reader),
+                    QueryExecutionFail.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: QueryFailed) = try {
-                QueryExecutionFailure.write(writer, instance.queryExecutionFailure)
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidationFail.QueryFailed,
+            ): Unit = try {
+                QueryExecutionFail.write(writer, instance.queryExecutionFail)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -122,28 +136,33 @@ public sealed class ValidationFail : ModelEnum {
      * 'TooComplex' variant
      */
     public class TooComplex : ValidationFail() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<TooComplex>, ScaleWriter<TooComplex> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidationFail.TooComplex>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidationFail.TooComplex> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): TooComplex = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidationFail.TooComplex = try {
                 TooComplex()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: TooComplex) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidationFail.TooComplex,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: TooComplex, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.ValidationFail.TooComplex, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".ValidationFail.TooComplex".hashCode()
+            override fun hashCode(): Int = ".ValidationFail.TooComplex".hashCode()
         }
     }
 
@@ -151,33 +170,41 @@ public sealed class ValidationFail : ModelEnum {
      * 'InternalError' variant
      */
     public class InternalError : ValidationFail() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<InternalError>, ScaleWriter<InternalError> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.ValidationFail.InternalError>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.ValidationFail.InternalError> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): InternalError = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ValidationFail.InternalError = try {
                 InternalError()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: InternalError) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.ValidationFail.InternalError,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: InternalError, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.ValidationFail.InternalError,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".ValidationFail.InternalError".hashCode()
+            override fun hashCode(): Int = ".ValidationFail.InternalError".hashCode()
         }
     }
 
     public companion object : ScaleReader<ValidationFail>, ScaleWriter<ValidationFail> {
-        public override fun read(reader: ScaleCodecReader): ValidationFail = when (
+        override fun read(reader: ScaleCodecReader): ValidationFail = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -186,10 +213,9 @@ public sealed class ValidationFail : ModelEnum {
             2 -> QueryFailed.read(reader)
             3 -> TooComplex.read(reader)
             4 -> InternalError.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ValidationFail) {
+        override fun write(writer: ScaleCodecWriter, instance: ValidationFail) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> NotPermitted.write(writer, instance as NotPermitted)
@@ -197,8 +223,7 @@ public sealed class ValidationFail : ModelEnum {
                 2 -> QueryFailed.write(writer, instance as QueryFailed)
                 3 -> TooComplex.write(writer, instance as TooComplex)
                 4 -> InternalError.write(writer, instance as InternalError)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

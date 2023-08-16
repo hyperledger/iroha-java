@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * WasmInternalRepr
@@ -17,10 +18,10 @@ import kotlin.ByteArray
  */
 public data class WasmInternalRepr(
     public val serialized: ByteArray,
-    public val blobHash: HashOf<WasmSmartContract>
+    public val blobHash: HashOf<WasmSmartContract>,
 ) {
     public companion object : ScaleReader<WasmInternalRepr>, ScaleWriter<WasmInternalRepr> {
-        public override fun read(reader: ScaleCodecReader): WasmInternalRepr = try {
+        override fun read(reader: ScaleCodecReader): WasmInternalRepr = try {
             WasmInternalRepr(
                 reader.readByteArray(),
                 HashOf.read(reader) as HashOf<WasmSmartContract>,
@@ -29,7 +30,7 @@ public data class WasmInternalRepr(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: WasmInternalRepr) = try {
+        override fun write(writer: ScaleCodecWriter, instance: WasmInternalRepr): Unit = try {
             writer.writeAsList(instance.serialized)
             HashOf.write(writer, instance.blobHash)
         } catch (ex: Exception) {

@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.fromFixedPoint
 import jp.co.soramitsu.iroha2.toFixedPoint
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigDecimal
+import kotlin.Unit
 
 /**
  * Fixed
@@ -18,10 +19,10 @@ import java.math.BigDecimal
  * Generated from 'Fixed' regular structure
  */
 public data class Fixed(
-    public val fixedPointOfI64: BigDecimal
+    public val fixedPointOfI64: BigDecimal,
 ) {
     public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
-        public override fun read(reader: ScaleCodecReader): Fixed = try {
+        override fun read(reader: ScaleCodecReader): Fixed = try {
             Fixed(
                 reader.readInt64().toBigInteger().fromFixedPoint(),
             )
@@ -29,7 +30,7 @@ public data class Fixed(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Fixed): Unit = try {
             writer.writeInt64(instance.fixedPointOfI64.toFixedPoint().toLong())
         } catch (ex: Exception) {
             throw wrapException(ex)

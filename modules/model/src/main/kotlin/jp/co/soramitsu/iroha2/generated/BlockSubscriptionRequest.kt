@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import java.math.BigInteger
+import kotlin.Unit
 
 /**
  * BlockSubscriptionRequest
@@ -16,21 +16,21 @@ import java.math.BigInteger
  * Generated from 'BlockSubscriptionRequest' regular structure
  */
 public data class BlockSubscriptionRequest(
-    public val u64: BigInteger
+    public val nonZeroOfu64: NonZeroOfu64,
 ) {
     public companion object :
         ScaleReader<BlockSubscriptionRequest>,
         ScaleWriter<BlockSubscriptionRequest> {
-        public override fun read(reader: ScaleCodecReader): BlockSubscriptionRequest = try {
+        override fun read(reader: ScaleCodecReader): BlockSubscriptionRequest = try {
             BlockSubscriptionRequest(
-                reader.readUint64(),
+                NonZeroOfu64.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: BlockSubscriptionRequest) = try {
-            writer.writeUint64(instance.u64)
+        override fun write(writer: ScaleCodecWriter, instance: BlockSubscriptionRequest): Unit = try {
+            NonZeroOfu64.write(writer, instance.nonZeroOfu64)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

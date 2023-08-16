@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * IntervalOfu16
@@ -17,10 +18,10 @@ import kotlin.Int
  */
 public data class IntervalOfu16(
     public val start: Int,
-    public val limit: Int
+    public val limit: Int,
 ) {
     public companion object : ScaleReader<IntervalOfu16>, ScaleWriter<IntervalOfu16> {
-        public override fun read(reader: ScaleCodecReader): IntervalOfu16 = try {
+        override fun read(reader: ScaleCodecReader): IntervalOfu16 = try {
             IntervalOfu16(
                 reader.readUint16(),
                 reader.readUint16(),
@@ -29,7 +30,7 @@ public data class IntervalOfu16(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: IntervalOfu16) = try {
+        override fun write(writer: ScaleCodecWriter, instance: IntervalOfu16): Unit = try {
             writer.writeUint16(instance.start)
             writer.writeUint16(instance.limit)
         } catch (ex: Exception) {

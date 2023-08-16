@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * UpgradableBox
@@ -26,14 +27,16 @@ public sealed class UpgradableBox : ModelEnum {
      * 'Validator' variant
      */
     public data class Validator(
-        public val validator: jp.co.soramitsu.iroha2.generated.Validator
+        public val validator: jp.co.soramitsu.iroha2.generated.Validator,
     ) : UpgradableBox() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Validator>, ScaleWriter<Validator> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Validator = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator = try {
                 Validator(
                     jp.co.soramitsu.iroha2.generated.Validator.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class UpgradableBox : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Validator) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.Validator.write(writer, instance.validator)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -50,20 +56,18 @@ public sealed class UpgradableBox : ModelEnum {
     }
 
     public companion object : ScaleReader<UpgradableBox>, ScaleWriter<UpgradableBox> {
-        public override fun read(reader: ScaleCodecReader): UpgradableBox = when (
+        override fun read(reader: ScaleCodecReader): UpgradableBox = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> Validator.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: UpgradableBox) {
+        override fun write(writer: ScaleCodecWriter, instance: UpgradableBox) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Validator.write(writer, instance as Validator)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

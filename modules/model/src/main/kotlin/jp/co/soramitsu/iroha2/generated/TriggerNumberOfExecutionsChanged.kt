@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * TriggerNumberOfExecutionsChanged
@@ -17,12 +18,12 @@ import kotlin.Long
  */
 public data class TriggerNumberOfExecutionsChanged(
     public val triggerId: TriggerId,
-    public val `by`: Long
+    public val `by`: Long,
 ) {
     public companion object :
         ScaleReader<TriggerNumberOfExecutionsChanged>,
         ScaleWriter<TriggerNumberOfExecutionsChanged> {
-        public override fun read(reader: ScaleCodecReader): TriggerNumberOfExecutionsChanged = try {
+        override fun read(reader: ScaleCodecReader): TriggerNumberOfExecutionsChanged = try {
             TriggerNumberOfExecutionsChanged(
                 TriggerId.read(reader),
                 reader.readUint32(),
@@ -31,7 +32,7 @@ public data class TriggerNumberOfExecutionsChanged(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TriggerNumberOfExecutionsChanged) =
+        override fun write(writer: ScaleCodecWriter, instance: TriggerNumberOfExecutionsChanged): Unit =
             try {
                 TriggerId.write(writer, instance.triggerId)
                 writer.writeUint32(instance.`by`)

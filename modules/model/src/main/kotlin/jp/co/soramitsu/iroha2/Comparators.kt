@@ -5,10 +5,10 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SignatureOf
+import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
@@ -83,27 +83,21 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
 /**
  * Compare permission tokens
  */
-@JvmName("PermissionTokenIdComparator")
-fun PermissionTokenId.Companion.comparator() = compareBy<PermissionTokenId> { it.name.string }
-
-/**
- * Compare permission tokens
- */
 @JvmName("PermissionTokenComparator")
 fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
-    it.definitionId.name.string
+    it.definitionId.string
 }.thenComparator { o1, o2 ->
-    val keys1 = o1.params.map { it.key.string }
-    val keys2 = o2.params.map { it.key.string }
+    val a = o1.payload
+    val b = o2.payload
+    val size = min(a.size, b.size)
 
-    keys1.forEachIndexed { index, k1 ->
-        val result = keys2.getOrNull(index)
-            ?.let { k2 -> k1.compareTo(k2) }
-            ?: 1
-        if (result != 0) return@thenComparator result
+    for (i in 0 until size) {
+        val compare = a[i].compareTo(b[i])
+        if (compare != 0) {
+            return@thenComparator compare
+        }
     }
-
-    keys1.size.compareTo(keys2.size)
+    a.size.compareTo(b.size)
 }
 
 private fun KClass<ByteArray>.comparator() = Comparator<ByteArray> { o1, o2 ->

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Long
+import kotlin.Unit
 
 /**
  * SemiIntervalOfu32
@@ -17,10 +18,10 @@ import kotlin.Long
  */
 public data class SemiIntervalOfu32(
     public val start: Long,
-    public val limit: Long
+    public val limit: Long,
 ) {
     public companion object : ScaleReader<SemiIntervalOfu32>, ScaleWriter<SemiIntervalOfu32> {
-        public override fun read(reader: ScaleCodecReader): SemiIntervalOfu32 = try {
+        override fun read(reader: ScaleCodecReader): SemiIntervalOfu32 = try {
             SemiIntervalOfu32(
                 reader.readUint32(),
                 reader.readUint32(),
@@ -29,7 +30,7 @@ public data class SemiIntervalOfu32(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfu32) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfu32): Unit = try {
             writer.writeUint32(instance.start)
             writer.writeUint32(instance.limit)
         } catch (ex: Exception) {

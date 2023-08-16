@@ -41,22 +41,19 @@ import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.Pagination
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
-import jp.co.soramitsu.iroha2.generated.Sorting
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
-import jp.co.soramitsu.iroha2.model.Page
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
 import jp.co.soramitsu.iroha2.toHex
@@ -185,36 +182,33 @@ open class Iroha2Client(
         }
     }
 
-    /**
-     * Send a request to Iroha2 and extract payload.
-     */
-    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
-        val page = sendQuery(queryAndExtractor, null)
-        return page.data
-    }
+//    /**
+//     * Send a request to Iroha2 and extract payload.
+//     */
+//    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
+//        val page = sendQuery(queryAndExtractor, null)
+//        return page.data
+//    }
 
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
     suspend fun <T> sendQuery(
         queryAndExtractor: QueryAndExtractor<T>,
-        page: Pagination? = null,
-        sorting: Sorting? = null,
-    ): Page<T> {
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+    ): T {
         logger.debug("Sending query")
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
-            page?.also {
-                parameter("start", it.start)
-                parameter("limit", it.limit)
-            }
-            sorting?.also {
-                parameter("sort_by_metadata_key", it.sortByMetadataKey?.string)
-            }
+            start?.also { parameter("start", it) }
+            limit?.also { parameter("limit", it) }
+            sorting?.also { parameter("sort_by_metadata_key", it) }
         }
         return response.body<ByteArray>()
-            .let { VersionedPaginatedQueryResult.decode(it) }
-            .let { queryAndExtractor.resultExtractor.extract(it) }
+            .let { VersionedBatchedResponseOfValue.V1.decode(it) }
+            .let { queryAndExtractor.resultExtractor.extract(it.batchedResponseOfValue) }
     }
 
     /**

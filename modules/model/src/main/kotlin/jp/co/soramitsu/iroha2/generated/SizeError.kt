@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Unit
 
 /**
  * SizeError
@@ -17,10 +18,10 @@ import java.math.BigInteger
  */
 public data class SizeError(
     public val limits: Limits,
-    public val `actual`: BigInteger
+    public val `actual`: BigInteger,
 ) {
     public companion object : ScaleReader<SizeError>, ScaleWriter<SizeError> {
-        public override fun read(reader: ScaleCodecReader): SizeError = try {
+        override fun read(reader: ScaleCodecReader): SizeError = try {
             SizeError(
                 Limits.read(reader),
                 reader.readUint64(),
@@ -29,7 +30,7 @@ public data class SizeError(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SizeError) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SizeError): Unit = try {
             Limits.write(writer, instance.limits)
             writer.writeUint64(instance.`actual`)
         } catch (ex: Exception) {

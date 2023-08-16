@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * SemiRange
@@ -26,22 +27,28 @@ public sealed class SemiRange : ModelEnum {
      * 'U32' variant
      */
     public data class U32(
-        public val semiIntervalOfu32: SemiIntervalOfu32
+        public val semiIntervalOfu32: SemiIntervalOfu32,
     ) : SemiRange() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<U32>, ScaleWriter<U32> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.SemiRange.U32>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.SemiRange.U32> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): U32 = try {
-                U32(
-                    SemiIntervalOfu32.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.SemiRange.U32 =
+                try {
+                    U32(
+                        SemiIntervalOfu32.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U32) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.SemiRange.U32,
+            ): Unit = try {
                 SemiIntervalOfu32.write(writer, instance.semiIntervalOfu32)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,22 +60,28 @@ public sealed class SemiRange : ModelEnum {
      * 'U128' variant
      */
     public data class U128(
-        public val semiIntervalOfu128: SemiIntervalOfu128
+        public val semiIntervalOfu128: SemiIntervalOfu128,
     ) : SemiRange() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<U128>, ScaleWriter<U128> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.SemiRange.U128>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.SemiRange.U128> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): U128 = try {
-                U128(
-                    SemiIntervalOfu128.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.SemiRange.U128 =
+                try {
+                    U128(
+                        SemiIntervalOfu128.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: U128) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.SemiRange.U128,
+            ): Unit = try {
                 SemiIntervalOfu128.write(writer, instance.semiIntervalOfu128)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +93,16 @@ public sealed class SemiRange : ModelEnum {
      * 'Fixed' variant
      */
     public data class Fixed(
-        public val semiIntervalOfFixed: SemiIntervalOfFixed
+        public val semiIntervalOfFixed: SemiIntervalOfFixed,
     ) : SemiRange() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Fixed>, ScaleWriter<Fixed> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.SemiRange.Fixed>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.SemiRange.Fixed> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Fixed = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.SemiRange.Fixed = try {
                 Fixed(
                     SemiIntervalOfFixed.read(reader),
                 )
@@ -95,7 +110,10 @@ public sealed class SemiRange : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Fixed) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.SemiRange.Fixed,
+            ): Unit = try {
                 SemiIntervalOfFixed.write(writer, instance.semiIntervalOfFixed)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -104,24 +122,22 @@ public sealed class SemiRange : ModelEnum {
     }
 
     public companion object : ScaleReader<SemiRange>, ScaleWriter<SemiRange> {
-        public override fun read(reader: ScaleCodecReader): SemiRange = when (
+        override fun read(reader: ScaleCodecReader): SemiRange = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> U32.read(reader)
             1 -> U128.read(reader)
             2 -> Fixed.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SemiRange) {
+        override fun write(writer: ScaleCodecWriter, instance: SemiRange) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> U32.write(writer, instance as U32)
                 1 -> U128.write(writer, instance as U128)
                 2 -> Fixed.write(writer, instance as Fixed)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

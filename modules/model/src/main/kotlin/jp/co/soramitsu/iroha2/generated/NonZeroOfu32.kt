@@ -8,26 +8,28 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Long
+import kotlin.Unit
 
 /**
- * PermissionTokenId
+ * NonZeroOfu32
  *
- * Generated from 'PermissionTokenId' regular structure
+ * Generated from 'NonZeroOfu32' regular structure
  */
-public data class PermissionTokenId(
-    public val name: Name
+public data class NonZeroOfu32(
+    public val u32: Long,
 ) {
-    public companion object : ScaleReader<PermissionTokenId>, ScaleWriter<PermissionTokenId> {
-        public override fun read(reader: ScaleCodecReader): PermissionTokenId = try {
-            PermissionTokenId(
-                Name.read(reader),
+    public companion object : ScaleReader<NonZeroOfu32>, ScaleWriter<NonZeroOfu32> {
+        override fun read(reader: ScaleCodecReader): NonZeroOfu32 = try {
+            NonZeroOfu32(
+                reader.readUint32(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PermissionTokenId) = try {
-            Name.write(writer, instance.name)
+        override fun write(writer: ScaleCodecWriter, instance: NonZeroOfu32): Unit = try {
+            writer.writeUint32(instance.u32)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

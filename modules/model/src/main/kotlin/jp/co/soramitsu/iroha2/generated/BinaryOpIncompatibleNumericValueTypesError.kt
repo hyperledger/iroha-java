@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * BinaryOpIncompatibleNumericValueTypesError
@@ -16,25 +17,24 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class BinaryOpIncompatibleNumericValueTypesError(
     public val left: NumericValue,
-    public val right: NumericValue
+    public val right: NumericValue,
 ) {
     public companion object :
         ScaleReader<BinaryOpIncompatibleNumericValueTypesError>,
         ScaleWriter<BinaryOpIncompatibleNumericValueTypesError> {
-        public override fun read(reader: ScaleCodecReader): BinaryOpIncompatibleNumericValueTypesError =
-            try {
-                BinaryOpIncompatibleNumericValueTypesError(
-                    NumericValue.read(reader),
-                    NumericValue.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+        override fun read(reader: ScaleCodecReader): BinaryOpIncompatibleNumericValueTypesError = try {
+            BinaryOpIncompatibleNumericValueTypesError(
+                NumericValue.read(reader),
+                NumericValue.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(
+        override fun write(
             writer: ScaleCodecWriter,
-            instance: BinaryOpIncompatibleNumericValueTypesError
-        ) = try {
+            instance: BinaryOpIncompatibleNumericValueTypesError,
+        ): Unit = try {
             NumericValue.write(writer, instance.left)
             NumericValue.write(writer, instance.right)
         } catch (ex: Exception) {

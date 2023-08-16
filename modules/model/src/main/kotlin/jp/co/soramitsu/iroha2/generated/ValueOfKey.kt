@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ValueOfKey
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class ValueOfKey(
     public val key: Name,
-    public val predicate: ValuePredicate
+    public val predicate: ValuePredicate,
 ) {
     public companion object : ScaleReader<ValueOfKey>, ScaleWriter<ValueOfKey> {
-        public override fun read(reader: ScaleCodecReader): ValueOfKey = try {
+        override fun read(reader: ScaleCodecReader): ValueOfKey = try {
             ValueOfKey(
                 Name.read(reader),
                 ValuePredicate.read(reader),
@@ -28,7 +29,7 @@ public data class ValueOfKey(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ValueOfKey) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ValueOfKey): Unit = try {
             Name.write(writer, instance.key)
             ValuePredicate.write(writer, instance.predicate)
         } catch (ex: Exception) {

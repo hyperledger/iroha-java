@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ContextValue
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'ContextValue' regular structure
  */
 public data class ContextValue(
-    public val valueName: Name
+    public val valueName: Name,
 ) {
     public companion object : ScaleReader<ContextValue>, ScaleWriter<ContextValue> {
-        public override fun read(reader: ScaleCodecReader): ContextValue = try {
+        override fun read(reader: ScaleCodecReader): ContextValue = try {
             ContextValue(
                 Name.read(reader),
             )
@@ -26,7 +27,7 @@ public data class ContextValue(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ContextValue) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ContextValue): Unit = try {
             Name.write(writer, instance.valueName)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * TypeError
@@ -26,14 +27,16 @@ public sealed class TypeError : ModelEnum {
      * 'AssetValueType' variant
      */
     public data class AssetValueType(
-        public val mismatchOfAssetValueType: MismatchOfAssetValueType
+        public val mismatchOfAssetValueType: MismatchOfAssetValueType,
     ) : TypeError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AssetValueType>, ScaleWriter<AssetValueType> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TypeError.AssetValueType>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TypeError.AssetValueType> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): AssetValueType = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TypeError.AssetValueType = try {
                 AssetValueType(
                     MismatchOfAssetValueType.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class TypeError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AssetValueType) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TypeError.AssetValueType,
+            ): Unit = try {
                 MismatchOfAssetValueType.write(writer, instance.mismatchOfAssetValueType)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +59,16 @@ public sealed class TypeError : ModelEnum {
      * 'ParameterValueType' variant
      */
     public data class ParameterValueType(
-        public val mismatchOfValue: MismatchOfValue
+        public val mismatchOfValue: MismatchOfValue,
     ) : TypeError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ParameterValueType>, ScaleWriter<ParameterValueType> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TypeError.ParameterValueType>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TypeError.ParameterValueType> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): ParameterValueType = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TypeError.ParameterValueType = try {
                 ParameterValueType(
                     MismatchOfValue.read(reader),
                 )
@@ -68,7 +76,10 @@ public sealed class TypeError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ParameterValueType) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TypeError.ParameterValueType,
+            ): Unit = try {
                 MismatchOfValue.write(writer, instance.mismatchOfValue)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +91,16 @@ public sealed class TypeError : ModelEnum {
      * 'AssetDefinitionId' variant
      */
     public data class AssetDefinitionId(
-        public val mismatchOfAssetDefinitionId: MismatchOfAssetDefinitionId
+        public val mismatchOfAssetDefinitionId: MismatchOfAssetDefinitionId,
     ) : TypeError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TypeError.AssetDefinitionId>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TypeError.AssetDefinitionId> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): AssetDefinitionId = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TypeError.AssetDefinitionId = try {
                 AssetDefinitionId(
                     MismatchOfAssetDefinitionId.read(reader),
                 )
@@ -95,7 +108,10 @@ public sealed class TypeError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TypeError.AssetDefinitionId,
+            ): Unit = try {
                 MismatchOfAssetDefinitionId.write(writer, instance.mismatchOfAssetDefinitionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -104,24 +120,22 @@ public sealed class TypeError : ModelEnum {
     }
 
     public companion object : ScaleReader<TypeError>, ScaleWriter<TypeError> {
-        public override fun read(reader: ScaleCodecReader): TypeError = when (
+        override fun read(reader: ScaleCodecReader): TypeError = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> AssetValueType.read(reader)
             1 -> ParameterValueType.read(reader)
             2 -> AssetDefinitionId.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TypeError) {
+        override fun write(writer: ScaleCodecWriter, instance: TypeError) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AssetValueType.write(writer, instance as AssetValueType)
                 1 -> ParameterValueType.write(writer, instance as ParameterValueType)
                 2 -> AssetDefinitionId.write(writer, instance as AssetDefinitionId)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

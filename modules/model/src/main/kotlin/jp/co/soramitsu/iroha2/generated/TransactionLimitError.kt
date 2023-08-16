@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
+import kotlin.Unit
 
 /**
  * TransactionLimitError
@@ -16,10 +17,10 @@ import kotlin.String
  * Generated from 'TransactionLimitError' regular structure
  */
 public data class TransactionLimitError(
-    public val reason: String
+    public val reason: String,
 ) {
     public companion object : ScaleReader<TransactionLimitError>, ScaleWriter<TransactionLimitError> {
-        public override fun read(reader: ScaleCodecReader): TransactionLimitError = try {
+        override fun read(reader: ScaleCodecReader): TransactionLimitError = try {
             TransactionLimitError(
                 reader.readString(),
             )
@@ -27,7 +28,7 @@ public data class TransactionLimitError(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TransactionLimitError) = try {
+        override fun write(writer: ScaleCodecWriter, instance: TransactionLimitError): Unit = try {
             writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

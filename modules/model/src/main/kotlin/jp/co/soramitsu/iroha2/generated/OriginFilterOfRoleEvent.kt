@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * OriginFilterOfRoleEvent
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'OriginFilterOfRoleEvent' regular structure
  */
 public data class OriginFilterOfRoleEvent(
-    public val roleId: RoleId
+    public val roleId: RoleId,
 ) {
     public companion object :
         ScaleReader<OriginFilterOfRoleEvent>,
         ScaleWriter<OriginFilterOfRoleEvent> {
-        public override fun read(reader: ScaleCodecReader): OriginFilterOfRoleEvent = try {
+        override fun read(reader: ScaleCodecReader): OriginFilterOfRoleEvent = try {
             OriginFilterOfRoleEvent(
                 RoleId.read(reader),
             )
@@ -28,7 +29,7 @@ public data class OriginFilterOfRoleEvent(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfRoleEvent) = try {
+        override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfRoleEvent): Unit = try {
             RoleId.write(writer, instance.roleId)
         } catch (ex: Exception) {
             throw wrapException(ex)

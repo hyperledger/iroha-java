@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -16,10 +17,10 @@ import kotlin.collections.List
  * Generated from 'SequenceBox' regular structure
  */
 public data class SequenceBox(
-    public val instructions: List<InstructionBox>
+    public val instructions: List<InstructionBox>,
 ) {
     public companion object : ScaleReader<SequenceBox>, ScaleWriter<SequenceBox> {
-        public override fun read(reader: ScaleCodecReader): SequenceBox = try {
+        override fun read(reader: ScaleCodecReader): SequenceBox = try {
             SequenceBox(
                 reader.readVec(reader.readCompactInt()) { InstructionBox.read(reader) },
             )
@@ -27,7 +28,7 @@ public data class SequenceBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SequenceBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SequenceBox): Unit = try {
             writer.writeCompact(instance.instructions.size)
             instance.instructions.forEach { value ->
                 InstructionBox.write(writer, value)
