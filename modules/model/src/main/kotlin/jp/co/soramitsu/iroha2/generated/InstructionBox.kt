@@ -536,6 +536,38 @@ public sealed class InstructionBox : ModelEnum {
     }
 
     /**
+     * 'Log' variant
+     */
+    public data class Log(
+        public val logBox: LogBox,
+    ) : InstructionBox() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Log>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Log> {
+            public const val DISCRIMINANT: Int = 16
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Log = try {
+                Log(
+                    LogBox.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionBox.Log,
+            ): Unit = try {
+                LogBox.write(writer, instance.logBox)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'Fail' variant
      */
     public data class Fail(
@@ -546,7 +578,7 @@ public sealed class InstructionBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Fail>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Fail> {
-            public const val DISCRIMINANT: Int = 16
+            public const val DISCRIMINANT: Int = 17
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Fail = try {
                 Fail(
@@ -588,7 +620,8 @@ public sealed class InstructionBox : ModelEnum {
             13 -> SetParameter.read(reader)
             14 -> NewParameter.read(reader)
             15 -> Upgrade.read(reader)
-            16 -> Fail.read(reader)
+            16 -> Log.read(reader)
+            17 -> Fail.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: InstructionBox) {
@@ -610,7 +643,8 @@ public sealed class InstructionBox : ModelEnum {
                 13 -> SetParameter.write(writer, instance as SetParameter)
                 14 -> NewParameter.write(writer, instance as NewParameter)
                 15 -> Upgrade.write(writer, instance as Upgrade)
-                16 -> Fail.write(writer, instance as Fail)
+                16 -> Log.write(writer, instance as Log)
+                17 -> Fail.write(writer, instance as Fail)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

@@ -18,6 +18,7 @@ import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
@@ -227,7 +228,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val triggerId = TriggerId("wasm_trigger".asName())
 
         val currentTime = Date().time / 1000
-        val filter = Filters.time(
+        val filter = TriggeringFilterBox.Time(
             EventFilters.timeEventFilter(
                 Duration(BigInteger.valueOf(currentTime), 0),
                 Duration(BigInteger.valueOf(1L), 0),

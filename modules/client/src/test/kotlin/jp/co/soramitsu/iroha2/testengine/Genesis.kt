@@ -4,6 +4,8 @@ import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asString
+import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
@@ -31,7 +33,7 @@ open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterAnyPeer,
-            ByteArray(0),
+            "",
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -41,12 +43,12 @@ open class AliceAndBobHasPermissionToMintPublicKeys : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserPublicKeys,
-            AccountId.encode(ALICE_ACCOUNT_ID),
+            ALICE_ACCOUNT_ID.asString(),
             ALICE_ACCOUNT_ID,
         ),
         Instructions.grantPermissionToken(
             Permissions.CanMintUserPublicKeys,
-            AccountId.encode(BOB_ACCOUNT_ID),
+            BOB_ACCOUNT_ID.asString(),
             BOB_ACCOUNT_ID,
         ),
     ),
@@ -57,7 +59,7 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
         Instructions.registerDomain(NEW_DOMAIN_ID),
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterDomain,
-            DomainId.encode(NEW_DOMAIN_ID),
+            NEW_DOMAIN_ID.asString(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -76,11 +78,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
             ROLE_ID,
             PermissionToken(
                 Permissions.CanSetKeyValueInUserAccount.type,
-                ByteArray(0),
+                "".asStringWithJson(),
             ),
             PermissionToken(
                 Permissions.CanRemoveKeyValueInUserAccount.type,
-                ByteArray(0),
+                "".asStringWithJson(),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
@@ -100,7 +102,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.grantPermissionToken(
             Permissions.CanMintUserAssetDefinitionsToken,
-            AssetDefinitionId.encode(DEFAULT_ASSET_DEFINITION_ID),
+            DEFAULT_ASSET_DEFINITION_ID.asString(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -148,12 +150,12 @@ open class AliceAndBobEachHave100Xor : Genesis(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.grantPermissionToken(
             Permissions.CanTransferAssetsWithDefinition,
-            AssetDefinitionId.encode(DEFAULT_ASSET_DEFINITION_ID),
+            DEFAULT_ASSET_DEFINITION_ID.asString(),
             ALICE_ACCOUNT_ID,
         ),
         Instructions.grantPermissionToken(
             Permissions.CanTransferAssetsWithDefinition,
-            AssetDefinitionId.encode(DEFAULT_ASSET_DEFINITION_ID),
+            DEFAULT_ASSET_DEFINITION_ID.asString(),
             BOB_ACCOUNT_ID,
         ),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
@@ -190,7 +192,7 @@ open class AliceCanMintXor : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserAssetDefinitionsToken,
-            AssetDefinitionId.encode(XOR_DEFINITION_ID),
+            XOR_DEFINITION_ID.asString(),
             ALICE_ACCOUNT_ID,
         ),
     ),

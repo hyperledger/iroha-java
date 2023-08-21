@@ -5,7 +5,6 @@ import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
-import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -14,7 +13,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
@@ -32,6 +30,7 @@ import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.sign
@@ -156,7 +155,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerEventTrigger(
@@ -177,7 +176,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerWasmTrigger(
@@ -355,7 +354,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         algorithm: Algorithm = Algorithm.Ed25519(),
     ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
-    fun grantPermissionToken(permission: Permissions, payload: ByteArray, target: AccountId) = this.apply {
+    fun grantPermissionToken(permission: Permissions, payload: String, target: AccountId) = this.apply {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 

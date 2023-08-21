@@ -183,7 +183,7 @@
       }
     ]
   },
-  "Action<FilterBox, Executable>": {
+  "Action<TriggeringFilterBox, Executable>": {
     "Struct": [
       {
         "name": "executable",
@@ -199,7 +199,7 @@
       },
       {
         "name": "filter",
-        "type": "FilterBox"
+        "type": "TriggeringFilterBox"
       },
       {
         "name": "metadata",
@@ -207,7 +207,7 @@
       }
     ]
   },
-  "Action<FilterBox, OptimizedExecutable>": {
+  "Action<TriggeringFilterBox, OptimizedExecutable>": {
     "Struct": [
       {
         "name": "executable",
@@ -223,7 +223,7 @@
       },
       {
         "name": "filter",
-        "type": "FilterBox"
+        "type": "TriggeringFilterBox"
       },
       {
         "name": "metadata",
@@ -1143,6 +1143,14 @@
       }
     ]
   },
+  "EvaluatesTo<Level>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
   "EvaluatesTo<Name>": {
     "Struct": [
       {
@@ -1184,6 +1192,14 @@
     ]
   },
   "EvaluatesTo<RoleId>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
+  "EvaluatesTo<String>": {
     "Struct": [
       {
         "name": "expression",
@@ -1276,6 +1292,11 @@
         "tag": "ExecuteTrigger",
         "discriminant": 3,
         "type": "ExecuteTriggerEvent"
+      },
+      {
+        "tag": "Notification",
+        "discriminant": 4,
+        "type": "NotificationEvent"
       }
     ]
   },
@@ -1473,6 +1494,11 @@
         "tag": "ExecuteTrigger",
         "discriminant": 3,
         "type": "ExecuteTriggerEventFilter"
+      },
+      {
+        "tag": "Notification",
+        "discriminant": 4,
+        "type": "NotificationEventFilter"
       }
     ]
   },
@@ -2382,8 +2408,13 @@
         "type": "UpgradeBox"
       },
       {
-        "tag": "Fail",
+        "tag": "Log",
         "discriminant": 16,
+        "type": "LogBox"
+      },
+      {
+        "tag": "Fail",
+        "discriminant": 17,
         "type": "FailBox"
       }
     ]
@@ -2550,8 +2581,12 @@
         "discriminant": 15
       },
       {
-        "tag": "Fail",
+        "tag": "Log",
         "discriminant": 16
+      },
+      {
+        "tag": "Fail",
+        "discriminant": 17
       }
     ]
   },
@@ -2633,6 +2668,30 @@
       }
     ]
   },
+  "Level": {
+    "Enum": [
+      {
+        "tag": "TRACE",
+        "discriminant": 0
+      },
+      {
+        "tag": "DEBUG",
+        "discriminant": 1
+      },
+      {
+        "tag": "INFO",
+        "discriminant": 2
+      },
+      {
+        "tag": "WARN",
+        "discriminant": 3
+      },
+      {
+        "tag": "ERROR",
+        "discriminant": 4
+      }
+    ]
+  },
   "Limits": {
     "Struct": [
       {
@@ -2642,6 +2701,18 @@
       {
         "name": "max_entry_byte_size",
         "type": "u32"
+      }
+    ]
+  },
+  "LogBox": {
+    "Struct": [
+      {
+        "name": "level",
+        "type": "EvaluatesTo<Level>"
+      },
+      {
+        "name": "msg",
+        "type": "EvaluatesTo<String>"
       }
     ]
   },
@@ -2970,6 +3041,28 @@
       }
     ]
   },
+  "NotificationEvent": {
+    "Enum": [
+      {
+        "tag": "TriggerCompleted",
+        "discriminant": 0,
+        "type": "TriggerCompletedEvent"
+      }
+    ]
+  },
+  "NotificationEventFilter": {
+    "Enum": [
+      {
+        "tag": "AcceptAll",
+        "discriminant": 0
+      },
+      {
+        "tag": "TriggerCompleted",
+        "discriminant": 1,
+        "type": "TriggerCompletedEventFilter"
+      }
+    ]
+  },
   "NumericValue": {
     "Enum": [
       {
@@ -3049,6 +3142,12 @@
   },
   "Option<TransactionRejectionReason>": {
     "Option": "TransactionRejectionReason"
+  },
+  "Option<TriggerCompletedOutcomeType>": {
+    "Option": "TriggerCompletedOutcomeType"
+  },
+  "Option<TriggerId>": {
+    "Option": "TriggerId"
   },
   "Or": {
     "Struct": [
@@ -3179,7 +3278,7 @@
       },
       {
         "name": "payload",
-        "type": "Vec<u8>"
+        "type": "StringWithJson"
       }
     ]
   },
@@ -3630,7 +3729,7 @@
       {
         "tag": "Trigger",
         "discriminant": 5,
-        "type": "Trigger<FilterBox, Executable>"
+        "type": "Trigger<TriggeringFilterBox, Executable>"
       },
       {
         "tag": "Role",
@@ -4053,6 +4152,7 @@
       }
     ]
   },
+  "StringWithJson": "String",
   "Subtract": {
     "Struct": [
       {
@@ -4215,7 +4315,7 @@
       }
     ]
   },
-  "Trigger<FilterBox, Executable>": {
+  "Trigger<TriggeringFilterBox, Executable>": {
     "Struct": [
       {
         "name": "id",
@@ -4223,11 +4323,11 @@
       },
       {
         "name": "action",
-        "type": "Action<FilterBox, Executable>"
+        "type": "Action<TriggeringFilterBox, Executable>"
       }
     ]
   },
-  "Trigger<FilterBox, OptimizedExecutable>": {
+  "Trigger<TriggeringFilterBox, OptimizedExecutable>": {
     "Struct": [
       {
         "name": "id",
@@ -4235,7 +4335,7 @@
       },
       {
         "name": "action",
-        "type": "Action<FilterBox, OptimizedExecutable>"
+        "type": "Action<TriggeringFilterBox, OptimizedExecutable>"
       }
     ]
   },
@@ -4244,12 +4344,61 @@
       {
         "tag": "Raw",
         "discriminant": 0,
-        "type": "Trigger<FilterBox, Executable>"
+        "type": "Trigger<TriggeringFilterBox, Executable>"
       },
       {
         "tag": "Optimized",
         "discriminant": 1,
-        "type": "Trigger<FilterBox, OptimizedExecutable>"
+        "type": "Trigger<TriggeringFilterBox, OptimizedExecutable>"
+      }
+    ]
+  },
+  "TriggerCompletedEvent": {
+    "Struct": [
+      {
+        "name": "trigger_id",
+        "type": "TriggerId"
+      },
+      {
+        "name": "outcome",
+        "type": "TriggerCompletedOutcome"
+      }
+    ]
+  },
+  "TriggerCompletedEventFilter": {
+    "Struct": [
+      {
+        "name": "trigger_id",
+        "type": "Option<TriggerId>"
+      },
+      {
+        "name": "outcome_type",
+        "type": "Option<TriggerCompletedOutcomeType>"
+      }
+    ]
+  },
+  "TriggerCompletedOutcome": {
+    "Enum": [
+      {
+        "tag": "Success",
+        "discriminant": 0
+      },
+      {
+        "tag": "Failure",
+        "discriminant": 1,
+        "type": "String"
+      }
+    ]
+  },
+  "TriggerCompletedOutcomeType": {
+    "Enum": [
+      {
+        "tag": "Success",
+        "discriminant": 0
+      },
+      {
+        "tag": "Failure",
+        "discriminant": 1
       }
     ]
   },
@@ -4330,6 +4479,30 @@
       {
         "name": "by",
         "type": "u32"
+      }
+    ]
+  },
+  "TriggeringFilterBox": {
+    "Enum": [
+      {
+        "tag": "Pipeline",
+        "discriminant": 0,
+        "type": "PipelineEventFilter"
+      },
+      {
+        "tag": "Data",
+        "discriminant": 1,
+        "type": "FilterOpt<DataEntityFilter>"
+      },
+      {
+        "tag": "Time",
+        "discriminant": 2,
+        "type": "TimeEventFilter"
+      },
+      {
+        "tag": "ExecuteTrigger",
+        "discriminant": 3,
+        "type": "ExecuteTriggerEventFilter"
       }
     ]
   },
@@ -4545,6 +4718,11 @@
         "tag": "Validator",
         "discriminant": 21,
         "type": "Validator"
+      },
+      {
+        "tag": "LogLevel",
+        "discriminant": 22,
+        "type": "Level"
       }
     ]
   },

@@ -746,40 +746,69 @@ public sealed class Value : ModelEnum {
         }
     }
 
-    public companion object : ScaleReader<Value>, ScaleWriter<Value> {
-        override fun read(reader: ScaleCodecReader): Value {
-            val discriminant = reader.readUByte()
-            return when (discriminant) {
-                0 -> Bool.read(reader)
-                1 -> String.read(reader)
-                2 -> Name.read(reader)
-                3 -> Vec.read(reader)
-                4 -> LimitedMetadata.read(reader)
-                5 -> MetadataLimits.read(reader)
-                6 -> TransactionLimits.read(reader)
-                7 -> LengthLimits.read(reader)
-                8 -> Id.read(reader)
-                9 -> Identifiable.read(reader)
-                10 -> PublicKey.read(reader)
-                11 -> SignatureCheckCondition.read(reader)
-                12 -> TransactionQueryOutput.read(reader)
-                13 -> PermissionToken.read(reader)
-                14 -> PermissionTokenSchema.read(reader)
-                15 -> Hash.read(reader)
-                16 -> Block.read(reader)
-                17 -> BlockHeader.read(reader)
-                18 -> Ipv4Addr.read(reader)
-                19 -> Ipv6Addr.read(reader)
-                20 -> Numeric.read(reader)
-                21 -> Validator.read(reader)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
+    /**
+     * 'LogLevel' variant
+     */
+    public data class LogLevel(
+        public val level: Level,
+    ) : Value() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Value.LogLevel>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Value.LogLevel> {
+            public const val DISCRIMINANT: Int = 22
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Value.LogLevel =
+                try {
+                    LogLevel(
+                        Level.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Value.LogLevel,
+            ): Unit = try {
+                Level.write(writer, instance.level)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
             }
         }
+    }
+
+    public companion object : ScaleReader<Value>, ScaleWriter<Value> {
+        override fun read(reader: ScaleCodecReader): Value = when (val discriminant = reader.readUByte()) {
+            0 -> Bool.read(reader)
+            1 -> String.read(reader)
+            2 -> Name.read(reader)
+            3 -> Vec.read(reader)
+            4 -> LimitedMetadata.read(reader)
+            5 -> MetadataLimits.read(reader)
+            6 -> TransactionLimits.read(reader)
+            7 -> LengthLimits.read(reader)
+            8 -> Id.read(reader)
+            9 -> Identifiable.read(reader)
+            10 -> PublicKey.read(reader)
+            11 -> SignatureCheckCondition.read(reader)
+            12 -> TransactionQueryOutput.read(reader)
+            13 -> PermissionToken.read(reader)
+            14 -> PermissionTokenSchema.read(reader)
+            15 -> Hash.read(reader)
+            16 -> Block.read(reader)
+            17 -> BlockHeader.read(reader)
+            18 -> Ipv4Addr.read(reader)
+            19 -> Ipv6Addr.read(reader)
+            20 -> Numeric.read(reader)
+            21 -> Validator.read(reader)
+            22 -> LogLevel.read(reader)
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: Value) {
             writer.directWrite(instance.discriminant())
-            val discriminant = instance.discriminant()
-            when (discriminant) {
+            when (val discriminant = instance.discriminant()) {
                 0 -> Bool.write(writer, instance as Bool)
                 1 -> String.write(writer, instance as String)
                 2 -> Name.write(writer, instance as Name)
@@ -802,6 +831,7 @@ public sealed class Value : ModelEnum {
                 19 -> Ipv6Addr.write(writer, instance as Ipv6Addr)
                 20 -> Numeric.write(writer, instance as Numeric)
                 21 -> Validator.write(writer, instance as Validator)
+                22 -> LogLevel.write(writer, instance as LogLevel)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

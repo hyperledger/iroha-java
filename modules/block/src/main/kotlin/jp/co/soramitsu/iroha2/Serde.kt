@@ -346,7 +346,7 @@ private fun getRegisterBox(arg: Any): RegisterBox {
         is Asset -> RegisterBox(RegistrableBox.Asset(arg).evaluatesTo())
         is NewRole -> RegisterBox(RegistrableBox.Role(arg).evaluatesTo())
         is TriggerBox -> when (arg) {
-            is TriggerBox.Raw -> RegistrableBox.Trigger(arg.triggerOfFilterBoxAndExecutable)
+            is TriggerBox.Raw -> RegistrableBox.Trigger(arg.triggerOfTriggeringFilterBoxAndExecutable)
             else -> throw IrohaSdkException("Unsupported trigger type")
         }.let {
             RegisterBox(it.evaluatesTo())
@@ -708,7 +708,7 @@ object PermissionTokenSerializer : JsonSerializer<PermissionToken>() {
     override fun serialize(token: PermissionToken, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
         gen.writeObjectField(PermissionToken::definitionId.name.toSnakeCase(), token.definitionId)
-        gen.writeObjectField(PermissionToken::payload.name, token.payload.map { it.toInt() }.toIntArray())
+        gen.writeObjectField(PermissionToken::payload.name, token.payload.string)
         gen.writeEndObject()
     }
 }

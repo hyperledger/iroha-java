@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha:
-    image: hyperledger/iroha2:dev-nightly-170e6e2bd85bce207571dbdb8e7afe4dc5078c89
+    image: hyperledger/iroha2:stable-2.0.0-pre-rc.19
     environment:
       TORII_P2P_ADDR: iroha:1337
       TORII_API_URL: iroha:8080
@@ -19,10 +19,12 @@ services:
       - "8180:8180"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
+      - "../modules/test-tools/src/main/resources:/app/.cache/wasmtime"
+    init: true
     command: iroha --submit-genesis
 
   iroha1:
-    image: hyperledger/iroha2:dev-nightly-170e6e2bd85bce207571dbdb8e7afe4dc5078c89
+    image: hyperledger/iroha2:stable-2.0.0-pre-rc.19
     environment:
       TORII_P2P_ADDR: iroha1:1338
       TORII_API_URL: iroha1:8081
@@ -39,9 +41,12 @@ services:
       - "8181:8181"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
+      - "../modules/test-tools/src/main/resources:/app/.cache/wasmtime"
+    init: true
+    command: iroha
 
   iroha2:
-    image: hyperledger/iroha2:dev-nightly-170e6e2bd85bce207571dbdb8e7afe4dc5078c89
+    image: hyperledger/iroha2:stable-2.0.0-pre-rc.19
     environment:
       TORII_P2P_ADDR: iroha2:1339
       TORII_API_URL: iroha2:8082
@@ -58,9 +63,12 @@ services:
       - "8182:8182"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
+      - "../modules/test-tools/src/main/resources:/app/.cache/wasmtime"
+    init: true
+    command: iroha
 
   iroha3:
-    image: hyperledger/iroha2:dev-nightly-170e6e2bd85bce207571dbdb8e7afe4dc5078c89
+    image: hyperledger/iroha2:stable-2.0.0-pre-rc.19
     environment:
       TORII_P2P_ADDR: iroha3:1340
       TORII_API_URL: iroha3:8083
@@ -77,3 +85,6 @@ services:
       - "8183:8183"
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
+      - "../modules/test-tools/src/main/resources:/app/.cache/wasmtime"
+    init: true
+    command: iroha

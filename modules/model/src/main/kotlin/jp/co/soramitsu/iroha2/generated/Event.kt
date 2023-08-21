@@ -152,12 +152,45 @@ public sealed class Event : ModelEnum {
         }
     }
 
+    /**
+     * 'Notification' variant
+     */
+    public data class Notification(
+        public val notificationEvent: NotificationEvent,
+    ) : Event() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Event.Notification>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Event.Notification> {
+            public const val DISCRIMINANT: Int = 4
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Event.Notification = try {
+                Notification(
+                    NotificationEvent.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Event.Notification,
+            ): Unit = try {
+                NotificationEvent.write(writer, instance.notificationEvent)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<Event>, ScaleWriter<Event> {
         override fun read(reader: ScaleCodecReader): Event = when (val discriminant = reader.readUByte()) {
             0 -> Pipeline.read(reader)
             1 -> Data.read(reader)
             2 -> Time.read(reader)
             3 -> ExecuteTrigger.read(reader)
+            4 -> Notification.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: Event) {
@@ -167,6 +200,7 @@ public sealed class Event : ModelEnum {
                 1 -> Data.write(writer, instance as Data)
                 2 -> Time.write(writer, instance as Time)
                 3 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
+                4 -> Notification.write(writer, instance as Notification)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

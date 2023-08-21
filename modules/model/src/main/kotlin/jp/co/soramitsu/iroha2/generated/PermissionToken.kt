@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.ByteArray
 import kotlin.Unit
 
 /**
@@ -18,13 +17,13 @@ import kotlin.Unit
  */
 public data class PermissionToken(
     public val definitionId: Name,
-    public val payload: ByteArray,
+    public val payload: StringWithJson,
 ) {
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
         override fun read(reader: ScaleCodecReader): PermissionToken = try {
             PermissionToken(
                 Name.read(reader),
-                reader.readByteArray(),
+                StringWithJson.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -32,7 +31,7 @@ public data class PermissionToken(
 
         override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit = try {
             Name.write(writer, instance.definitionId)
-            writer.writeAsList(instance.payload)
+            StringWithJson.write(writer, instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
