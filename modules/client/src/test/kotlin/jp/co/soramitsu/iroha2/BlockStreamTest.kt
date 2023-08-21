@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
-import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 

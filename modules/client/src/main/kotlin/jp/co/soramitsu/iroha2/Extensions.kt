@@ -7,8 +7,8 @@ import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -45,8 +45,8 @@ import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
