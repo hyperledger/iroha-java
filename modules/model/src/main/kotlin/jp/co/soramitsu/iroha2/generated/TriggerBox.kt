@@ -27,7 +27,7 @@ public sealed class TriggerBox : ModelEnum {
      * 'Raw' variant
      */
     public data class Raw(
-        public val triggerOfFilterBoxAndExecutable: TriggerOfFilterBoxAndExecutable,
+        public val triggerOfTriggeringFilterBoxAndExecutable: TriggerOfTriggeringFilterBoxAndExecutable,
     ) : TriggerBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -39,7 +39,7 @@ public sealed class TriggerBox : ModelEnum {
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerBox.Raw =
                 try {
                     Raw(
-                        TriggerOfFilterBoxAndExecutable.read(reader),
+                        TriggerOfTriggeringFilterBoxAndExecutable.read(reader),
                     )
                 } catch (ex: Exception) {
                     throw wrapException(ex)
@@ -49,7 +49,10 @@ public sealed class TriggerBox : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.TriggerBox.Raw,
             ): Unit = try {
-                TriggerOfFilterBoxAndExecutable.write(writer, instance.triggerOfFilterBoxAndExecutable)
+                TriggerOfTriggeringFilterBoxAndExecutable.write(
+                    writer,
+                    instance.triggerOfTriggeringFilterBoxAndExecutable,
+                )
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -60,7 +63,8 @@ public sealed class TriggerBox : ModelEnum {
      * 'Optimized' variant
      */
     public data class Optimized(
-        public val triggerOfFilterBoxAndOptimizedExecutable: TriggerOfFilterBoxAndOptimizedExecutable,
+        public val triggerOfTriggeringFilterBoxAndOptimizedExecutable:
+        TriggerOfTriggeringFilterBoxAndOptimizedExecutable,
     ) : TriggerBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -71,7 +75,7 @@ public sealed class TriggerBox : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerBox.Optimized = try {
                 Optimized(
-                    TriggerOfFilterBoxAndOptimizedExecutable.read(reader),
+                    TriggerOfTriggeringFilterBoxAndOptimizedExecutable.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -81,9 +85,9 @@ public sealed class TriggerBox : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.TriggerBox.Optimized,
             ): Unit = try {
-                TriggerOfFilterBoxAndOptimizedExecutable.write(
+                TriggerOfTriggeringFilterBoxAndOptimizedExecutable.write(
                     writer,
-                    instance.triggerOfFilterBoxAndOptimizedExecutable,
+                    instance.triggerOfTriggeringFilterBoxAndOptimizedExecutable,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

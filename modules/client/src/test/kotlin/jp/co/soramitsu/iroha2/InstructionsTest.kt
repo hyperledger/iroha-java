@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
@@ -199,7 +198,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(joeId, joeKeyPair) {
             grantPermissionToken(
                 Permissions.CanUnregisterAccount,
-                AccountId.encode(joeId),
+                joeId.asString(),
                 ALICE_ACCOUNT_ID,
             )
             unregisterAccount(joeId)
@@ -420,7 +419,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             // grant by Alice to Bob permissions to set key value in Asset.Store
             grantPermissionToken(
                 Permissions.CanSetKeyValueUserAssetsToken,
-                AssetId.encode(aliceAssetId),
+                aliceAssetId.asString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -516,7 +515,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             mintAsset(DEFAULT_ASSET_ID, 100)
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
-                AssetDefinitionId.encode(DEFAULT_ASSET_DEFINITION_ID),
+                DEFAULT_ASSET_DEFINITION_ID.asString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -617,7 +616,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             account(BOB_ACCOUNT_ID)
             grantPermissionToken(
                 Permissions.CanSetKeyValueInUserAccount,
-                AccountId.encode(BOB_ACCOUNT_ID),
+                BOB_ACCOUNT_ID.asString(),
                 ALICE_ACCOUNT_ID,
             )
             buildSigned(BOB_KEYPAIR)
@@ -668,7 +667,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             grantPermissionToken(
                 Permissions.CanTransferUserAssetsToken,
-                AssetId.encode(aliceAssetId),
+                aliceAssetId.asString(),
                 joeId,
             )
         }
@@ -910,11 +909,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 roleId,
                 PermissionToken(
                     Permissions.CanSetKeyValueUserAssetsToken.type,
-                    RoleId.encode(roleId),
+                    roleId.asStringWithJson(),
                 ),
                 PermissionToken(
                     Permissions.CanRemoveKeyValueInUserAssets.type,
-                    ByteArray(0),
+                    "".asStringWithJson(),
                 ),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)

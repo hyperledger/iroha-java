@@ -2,11 +2,13 @@ package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asString
+import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.ActionOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.ActionOfTriggeringFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -19,7 +21,6 @@ import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.FailBox
-import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.GrantBox
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
@@ -49,7 +50,8 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransferBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.WasmSmartContract
@@ -96,13 +98,13 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
-                    FilterBox.Time(filter),
+                    TriggeringFilterBox.Time(filter),
                     metadata,
                 ),
             ),
@@ -120,9 +122,9 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
@@ -142,12 +144,12 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
@@ -167,12 +169,12 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Wasm(WasmSmartContract(wasm)),
                     repeats,
                     accountId,
@@ -194,13 +196,13 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
-                    Filters.time(EventFilters.timeEventFilter()),
+                    TriggeringFilterBox.Time(EventFilters.timeEventFilter()),
                     metadata,
                 ),
             ),
@@ -417,9 +419,9 @@ object Instructions {
      */
     fun grantPermissionToken(
         permission: Permissions,
-        payload: ByteArray,
+        payload: String,
         target: AccountId,
-    ) = grantSome(IdBox.AccountId(target), PermissionToken(permission.type, payload).asValue())
+    ) = grantSome(IdBox.AccountId(target), PermissionToken(permission.type, payload.asStringWithJson()).asValue())
 
     /**
      * Grant an account a given role.
@@ -473,7 +475,7 @@ object Instructions {
         return revokeSome(IdBox.AccountId(target)) {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueUserAssetsToken.type,
-                payload = AssetId.encode(assetId)
+                payload = assetId.asString().asStringWithJson(),
             )
         }
     }

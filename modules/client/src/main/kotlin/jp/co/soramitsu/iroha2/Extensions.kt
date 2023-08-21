@@ -37,6 +37,7 @@ import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.generated.StringWithJson
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
@@ -316,7 +317,7 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.AssetDefinition -> IdentifiableBox.NewAssetDefinition(this.newAssetDefinition)
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
-    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfFilterBoxAndExecutable))
+    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfTriggeringFilterBoxAndExecutable))
 }
 
 inline fun <reified T> T.asValue() = when (this) {
@@ -600,8 +601,8 @@ fun Asset.metadata() = this.value.cast<AssetValue.Store>().metadata.map
 fun TransactionBuilder.merge(other: TransactionBuilder) = this.instructions.value.addAll(other.instructions.value)
 
 fun TriggerBox.id() = when (this) {
-    is TriggerBox.Raw -> this.triggerOfFilterBoxAndExecutable.id
-    is TriggerBox.Optimized -> this.triggerOfFilterBoxAndOptimizedExecutable.id
+    is TriggerBox.Raw -> this.triggerOfTriggeringFilterBoxAndExecutable.id
+    is TriggerBox.Optimized -> this.triggerOfTriggeringFilterBoxAndOptimizedExecutable.id
 }
 
 fun String.toSocketAddr() = this.split(":").let { parts ->
@@ -662,3 +663,11 @@ fun String.toSnakeCase() = this
     .split("(?<=.)(?=\\p{Lu})|\\s".toRegex())
     .joinToString("_")
     .lowercase(Locale.getDefault())
+
+fun String.asStringWithJson() = StringWithJson(this)
+
+fun AssetId.asStringWithJson() = this.asString().asStringWithJson()
+
+fun AccountId.asStringWithJson() = this.asString().asStringWithJson()
+
+fun RoleId.asStringWithJson() = this.asString().asStringWithJson()

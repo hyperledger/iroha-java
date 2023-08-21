@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SignatureOf
-import kotlin.math.min
 import kotlin.reflect.KClass
 
 /**
@@ -87,17 +86,7 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
 fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
     it.definitionId.string
 }.thenComparator { o1, o2 ->
-    val a = o1.payload
-    val b = o2.payload
-    val size = min(a.size, b.size)
-
-    for (i in 0 until size) {
-        val compare = a[i].compareTo(b[i])
-        if (compare != 0) {
-            return@thenComparator compare
-        }
-    }
-    a.size.compareTo(b.size)
+    o1.payload.string.compareTo(o2.payload.string)
 }
 
 private fun KClass<ByteArray>.comparator() = Comparator<ByteArray> { o1, o2 ->
