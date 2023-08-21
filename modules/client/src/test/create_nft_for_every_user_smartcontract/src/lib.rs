@@ -6,9 +6,9 @@
 #![no_std]
 #![no_main]
 #![allow(clippy::all)]
+extern crate alloc;
 #[cfg(not(test))]
 extern crate panic_halt;
-extern crate alloc;
 
 use alloc::{format, string::ToString, vec::Vec};
 use core::str::FromStr;
@@ -29,8 +29,8 @@ fn smartcontract_entry_point() {
             account.id().name(),
             account.id().domain_id()
         )
-            .parse()
-            .dbg_unwrap();
+        .parse()
+        .dbg_unwrap();
         metadata
             .insert_with_limits(name, true.into(), limits)
             .dbg_unwrap();
@@ -41,13 +41,16 @@ fn smartcontract_entry_point() {
             .with_metadata(metadata);
         let account_nft_id = <Asset as Identifiable>::Id::new(nft_id, account.id().clone());
 
-        InstructionBox::Register(RegisterBox::new(nft_definition)).execute();
+        InstructionBox::Register(RegisterBox::new(nft_definition))
+            .execute()
+            .dbg_unwrap();
         InstructionBox::SetKeyValue(SetKeyValueBox::new(
             account_nft_id,
             Name::from_str("has_this_nft").dbg_unwrap(),
             Value::Bool(true),
         ))
-            .execute();
+        .execute()
+        .dbg_unwrap();
     }
 }
 
@@ -63,8 +66,11 @@ fn generate_new_nft_id(account_id: &<Account as Identifiable>::Id) -> AssetDefin
 
     format!(
         "nft_number_{}_for_{}#{}",
-        new_number, account_id.name(), account_id.domain_id()
+        new_number,
+        account_id.name(),
+        account_id.domain_id()
     )
-        .parse()
-        .dbg_unwrap()
+    .parse()
+    .dbg_unwrap()
 }
+

@@ -107,42 +107,6 @@
     }
   }, {
     "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_set_key_value_in_user_assets",
-        "params" : {
-          "asset_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_mint_user_asset_definitions",
-        "params" : {
-          "asset_definition_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_burn_asset_with_definition",
-        "params" : {
-          "asset_definition_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_burn_user_assets",
-        "params" : {
-          "asset_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
       "Asset" : {
         "id" : "wonderland_asset#admin#bob@admin",
         "value" : {
@@ -250,8 +214,8 @@
   }, {
     "Grant" : {
       "PermissionToken" : {
-        "definition_id" : "can_set_key_value_in_user_assets",
-        "params" : {
+        "definition_id" : "CanSetKeyValueInUserAssets",
+        "payload" : {
           "asset_id" : {
             "AssetId" : "123#test#alice@wonderland"
           }

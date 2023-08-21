@@ -249,7 +249,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceHasPermissionToUnregisterDomain::class])
     @Feature("Domains")
     @Story("Account unregisters a domain")
-    @Permission("can_unregister_domain")
+    @Permission("CanUnregisterDomain")
     @SdkTestId("unregister_domain")
     fun `unregister domain`(): Unit = runBlocking {
         client.tx { unregisterDomain(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID) }
@@ -409,7 +409,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Accounts")
     @Story("Account sets key value pair")
-    @Permission("can_set_key_value_in_user_asset")
+    @Permission("CanSetKeyValueInUserAsset")
     @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
     fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
@@ -507,7 +507,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Assets")
     @Story("Account burns an asset")
-    @Permission("can_burn_assets_with_definition")
+    @Permission("CanBurnAssetsWithDefinition")
     @SdkTestId("burn_other_user_asset")
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
@@ -606,7 +606,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Accounts")
     @Story("Account changes account metadata")
-    @Permission("can_set_key_value_in_user_account")
+    @Permission("CanSetKeyValueInUserAccount")
     @SdkTestId("change_account_metadata_by_granted_account")
     fun `change user account metadata`(): Unit = runBlocking {
         val saltKey = "salt"
@@ -640,7 +640,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceAndBobEachHave100Xor::class])
     @Feature("Assets")
     @Story("Account transfers assets")
-    @Permission("can_transfer_user_asset")
+    @Permission("CanTransferUserAsset")
     @SdkTestId("transfer_asset")
     fun `transfer asset`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
@@ -888,13 +888,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Feature("Assets")
     @Story("Account registers an asset definition")
     @SdkTestId("register_asset_definition_with_store_value_type")
-    @Permission("can_remove_key_value_in_user_asset")
+    @Permission("CanRemoveKeyValueInUserAsset")
     @Story("Account registers a role")
     @SdkTestId("register_role")
     @SdkTestId("attach_permissions_to_role")
     @SdkTestId("grant_role_to_account")
     @Story("Account sets key value pair")
-    @Permission("can_set_key_value_in_user_asset")
+    @Permission("CanSetKeyValueInUserAsset")
     @Feature("Accounts")
     @SdkTestId("set_key_value_in_foreign_asset_after_granting_role")
     fun `register and grant role to account and then revoke it`(): Unit = runBlocking {

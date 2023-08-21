@@ -1,10 +1,9 @@
 [package]
 name = "create_nft_for_every_user_smartcontract"
 version = "2.0.0-pre-rc.3"
+# TODO: teams are being deprecated update the authors URL
 authors = ["Iroha 2 team <https://github.com/orgs/soramitsu/teams/iroha2>"]
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
 # Smartcontract should be linked dynamically so that it may link to functions exported
@@ -23,5 +22,5 @@ opt-level = "z"     # Optimize for size vs speed with "s"/"z"(removes vectorizat
 codegen-units = 1   # Further reduces binary size but increases compilation time
 
 [dependencies]
-iroha_wasm = { git = "https://github.com/hyperledger/iroha/", rev="2f371c9", features = ["debug"] }
+iroha_wasm = { git = "https://github.com/hyperledger/iroha/", branch = "iroha2-stable", features = ["debug"] }
 panic-halt = "0.2.0"

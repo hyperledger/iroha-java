@@ -103,33 +103,6 @@
     }
   }, {
     "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_burn_asset_with_definition",
-        "params" : {
-          "asset_definition_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_set_key_value_in_user_metadata",
-        "params" : {
-          "account_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
-      "PermissionTokenDefinition" : {
-        "id" : "can_remove_key_value_in_user_metadata",
-        "params" : {
-          "account_id" : "Id"
-        }
-      }
-    }
-  }, {
-    "Register" : {
       "NewRole" : {
         "id" : "USER_METADATA_ACCESS",
         "permissions" : [ {
@@ -159,8 +132,8 @@
   }, {
     "Grant" : {
       "PermissionToken" : {
-        "definition_id" : "can_burn_asset_with_definition",
-        "params" : {
+        "definition_id" : "CanBurnAssetWithDefinition",
+        "payload" : {
           "asset_definition_id" : {
             "AssetDefinitionId" : "xor#wonderland"
           }

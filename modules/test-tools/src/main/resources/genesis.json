@@ -47,23 +47,7 @@
         "Grant": {
           "PermissionToken": {
             "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": [
-              12,
-              120,
-              111,
-              114,
-              40,
-              119,
-              111,
-              110,
-              100,
-              101,
-              114,
-              108,
-              97,
-              110,
-              100
-            ]
+            "payload": {}
           },
           "destination_id": {
             "AccountId": "alice@wonderland"
@@ -74,23 +58,7 @@
         "Grant": {
           "PermissionToken": {
             "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": [
-              12,
-              120,
-              111,
-              114,
-              40,
-              119,
-              111,
-              110,
-              100,
-              101,
-              114,
-              108,
-              97,
-              110,
-              100
-            ]
+            "payload": {}
           },
           "destination_id": {
             "AccountId": "bob@wonderland"
