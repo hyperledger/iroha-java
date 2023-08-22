@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.SingletonHolder
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
@@ -100,7 +101,13 @@ open class BlockStreamSubscription private constructor(
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun run() = launch {
-        val request = VersionedBlockSubscriptionRequest.V1(BlockSubscriptionRequest(BigInteger.valueOf(context.from)))
+        val request = VersionedBlockSubscriptionRequest.V1(
+            BlockSubscriptionRequest(
+                NonZeroOfu64(
+                    BigInteger.valueOf(context.from),
+                ),
+            ),
+        )
 
         context.client.webSocket(
             host = context.apiUrl.host,
@@ -122,7 +129,11 @@ open class BlockStreamSubscription private constructor(
                         logger.debug("{} action result: {}", id, result)
                         val channel = storage.channel.value
                         when (channel.isClosedForSend) {
-                            true -> logger.warn("Block stream channel#{} is already closed, not sending the action result", id)
+                            true -> logger.warn(
+                                "Block stream channel#{} is already closed, not sending the action result",
+                                id,
+                            )
+
                             false -> channel.send(result)
                         }
                         if (storage.cancelIf?.let { it(block) } == true) {
