@@ -448,12 +448,6 @@ fun InstructionBox.Mint.extractPublicKey() = this
     .cast<Value.PublicKey>().publicKey
     .payload.toHex()
 
-fun VersionedValidTransaction.extractInstruction() = this.extractInstructionVec().first()
-
-fun VersionedValidTransaction.extractInstructionVec() = this
-    .cast<VersionedValidTransaction.V1>().validTransaction.payload.instructions
-    .cast<Executable.Instructions>().vec
-
 inline fun <reified I : InstructionBox> VersionedSignedTransaction.extractInstruction() = this
     .cast<VersionedSignedTransaction.V1>()
     .extractInstruction<I>()

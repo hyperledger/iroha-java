@@ -113,7 +113,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val isi = mutableListOf<InstructionBox>()
         subscription.subscribeAndReceive<InstructionBox>(
             BlockStreamStorage(
-                onBlock = { it.extractBlock().transactions.first().extractInstruction() },
+                onBlock = { it.extractBlock().transactions.first().value.extractInstruction() },
             ),
             collector = { isi.add(it) },
         )

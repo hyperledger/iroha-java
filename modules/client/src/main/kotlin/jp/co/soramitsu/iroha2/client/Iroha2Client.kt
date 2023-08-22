@@ -422,12 +422,9 @@ open class Iroha2Client(
             is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                 "Genesis account can sign only transactions in the genesis block"
 
-            is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
-                reason.unsatisfiedSignatureConditionFail.reason
-
             is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
-            is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+            is TransactionRejectionReason.Expired -> reason.toString()
             is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
             is TransactionRejectionReason.Validation -> reason.validationFail.toString()
         }

@@ -33,7 +33,7 @@ open class AliceCanUpgradeValidator : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanUpgradeValidator,
-            ByteArray(0),
+            "",
             ALICE_ACCOUNT_ID,
         ),
     ),
