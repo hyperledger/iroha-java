@@ -77,7 +77,7 @@ class ScaleCodecReader(private val source: ByteArray) {
         }
     }
 
-    inline fun <reified T : Number> readNullable(): T? {
+    inline fun <reified T : Any> readNullable(): T? {
         return when (T::class) {
             Long::class -> when (readBoolean()) {
                 true -> readUint32()
