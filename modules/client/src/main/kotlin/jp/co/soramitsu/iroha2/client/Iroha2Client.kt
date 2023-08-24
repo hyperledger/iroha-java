@@ -207,8 +207,8 @@ open class Iroha2Client(
             sorting?.also { parameter("sort_by_metadata_key", it) }
         }
         return response.body<ByteArray>()
-            .let { VersionedBatchedResponseOfValue.V1.decode(it) }
-            .let { queryAndExtractor.resultExtractor.extract(it.batchedResponseOfValue) }
+            .let { VersionedBatchedResponseOfValue.decode(it) }
+            .let { queryAndExtractor.resultExtractor.extract(it) }
     }
 
     /**

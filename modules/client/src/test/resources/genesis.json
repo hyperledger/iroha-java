@@ -30,17 +30,6 @@
             "metadata": {}
           }
         }
-      },
-      {
-        "Grant": {
-          "PermissionToken": {
-            "definition_id": "CanRegisterDomains",
-            "payload": null
-          },
-          "destination_id": {
-            "AccountId": "alice@wonderland"
-          }
-        }
       }
     ]
   ],
