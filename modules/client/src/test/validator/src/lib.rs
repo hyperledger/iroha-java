@@ -9,6 +9,7 @@ use alloc::string::String;
 use iroha_schema::IntoSchema;
 use iroha_validator::{
     data_model::evaluate::{EvaluationError, ExpressionEvaluator},
+    default,
     permission::Token as _,
     prelude::*,
 };
@@ -42,8 +43,64 @@ macro_rules! delegate {
 }
 
 impl Visit for CustomValidator {
-    fn visit_register_domain(&mut self, authority: &AccountId, _register_domain: Register<Domain>) {
-        if token::CanRegisterDomains.is_owned_by(authority) {
+    fn visit_transaction(
+        &mut self,
+        authority: &AccountId,
+        transaction: &VersionedSignedTransaction,
+    ) {
+        default::visit_transaction(self, authority, transaction);
+    }
+
+    fn visit_instruction(&mut self, authority: &AccountId, isi: &InstructionBox) {
+        default::visit_instruction(self, authority, isi);
+    }
+
+    fn visit_expression<V>(&mut self, authority: &AccountId, isi: &EvaluatesTo<V>) {
+        default::visit_expression(self, authority, isi)
+    }
+
+    fn visit_sequence(&mut self, authority: &AccountId, isi: &SequenceBox) {
+        default::visit_sequence(self, authority, isi)
+    }
+
+    fn visit_if(&mut self, authority: &AccountId, isi: &Conditional) {
+        default::visit_if(self, authority, isi)
+    }
+
+    fn visit_pair(&mut self, authority: &AccountId, isi: &Pair) {
+        default::visit_pair(self, authority, isi)
+    }
+
+    fn visit_grant_account_permission(
+        &mut self,
+        authority: &AccountId,
+        isi: Grant<Account, PermissionToken>,
+    ) {
+        let token = isi.object.clone();
+
+        if self.block_height() == 0 {
+            // FIXME: default validator doesn't allow genesis to grant tokens to other accounts
+            pass!(self);
+        }
+
+        if let Ok(token) = token::CanRegisterDomains::try_from(token) {
+            if let Err(error) = iroha_validator::permission::ValidateGrantRevoke::validate_grant(
+                &token,
+                authority,
+                self.block_height(),
+            ) {
+                deny!(self, error);
+            }
+
+            pass!(self);
+        } else {
+            default::permission_token::visit_grant_account_permission(self, authority, isi);
+        }
+    }
+
+    fn visit_register_domain(&mut self, authority: &AccountId, _isi: Register<Domain>) {
+        // FIXME: default validator doesn't allow genesis to grant tokens to other accounts
+        if self.block_height() == 0 || token::CanRegisterDomains.is_owned_by(authority) {
             pass!(self);
         }
 
@@ -51,18 +108,11 @@ impl Visit for CustomValidator {
     }
 
     delegate! {
-        visit_expression<V>(&EvaluatesTo<V>),
-
-        visit_sequence(&SequenceBox),
-        visit_if(&Conditional),
-        visit_pair(&Pair),
-
-        visit_instruction(&InstructionBox),
-
         // Peer validation
         visit_unregister_peer(Unregister<Peer>),
 
         // Domain validation
+        visit_unregister_domain(Unregister<Domain>),
         visit_set_domain_key_value(SetKeyValue<Domain>),
         visit_remove_domain_key_value(RemoveKeyValue<Domain>),
 
@@ -90,10 +140,10 @@ impl Visit for CustomValidator {
         visit_remove_asset_definition_key_value(RemoveKeyValue<AssetDefinition>),
 
         // Permission validation
-        visit_grant_account_permission(Grant<Account, PermissionToken>),
         visit_revoke_account_permission(Revoke<Account, PermissionToken>),
 
         // Role validation
+        visit_register_role(Register<Role>),
         visit_unregister_role(Unregister<Role>),
         visit_grant_account_role(Grant<Account, RoleId>),
         visit_revoke_account_role(Revoke<Account, RoleId>),

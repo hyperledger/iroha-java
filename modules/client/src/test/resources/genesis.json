@@ -30,6 +30,30 @@
             "metadata": {}
           }
         }
+      },
+      {
+        "Grant": {
+          "PermissionToken": {
+            "definition_id": "CanSetKeyValueInUserAccount",
+            "payload": {
+              "account_id": "alice@wonderland"
+            }
+          },
+          "destination_id": {
+            "AccountId": "bob@wonderland"
+          }
+        }
+      },
+      {
+        "Grant": {
+          "PermissionToken": {
+            "definition_id": "CanRegisterDomains",
+            "payload": null
+          },
+          "destination_id": {
+            "AccountId": "alice@wonderland"
+          }
+        }
       }
     ]
   ],

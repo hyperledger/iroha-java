@@ -875,7 +875,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Story("Account registers a domain")
     @Permission("no_permission_required")
     @SdkTestId("register_existence_domain")
-    fun `double domain registration should fails`(): Unit = runBlocking {
+    fun `double domain registration should fail`(): Unit = runBlocking {
         val domainId = UUID.randomUUID().toString().asDomainId()
         client.tx { registerDomain(domainId) }
         assertThrows<TransactionRejectedException> {
