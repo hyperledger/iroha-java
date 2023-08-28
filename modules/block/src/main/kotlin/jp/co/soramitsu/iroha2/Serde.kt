@@ -61,6 +61,7 @@ import jp.co.soramitsu.iroha2.generated.SequenceBox
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.StringWithJson
 import jp.co.soramitsu.iroha2.generated.TransactionLimits
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TransactionValue
@@ -131,6 +132,7 @@ val JSON_SERDE by lazy {
         module.addSerializer(ValidatorMode::class.java, ValidatorModeSerializer)
         module.addSerializer(SequenceBox::class.java, SequenceBoxSerializer)
         module.addSerializer(NewParameterBox::class.java, NewParameterBoxSerializer)
+        module.addSerializer(StringWithJson::class.java, StringWithJsonSerializer)
 
         mapper.registerModule(module)
         mapper.registerModule(
@@ -708,7 +710,7 @@ object PermissionTokenSerializer : JsonSerializer<PermissionToken>() {
     override fun serialize(token: PermissionToken, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
         gen.writeObjectField(PermissionToken::definitionId.name.toSnakeCase(), token.definitionId)
-        gen.writeObjectField(PermissionToken::payload.name, token.payload.string)
+        gen.writeObjectField(PermissionToken::payload.name, token.payload)
         gen.writeEndObject()
     }
 }
@@ -768,6 +770,19 @@ object NewParameterBoxSerializer : JsonSerializer<NewParameterBox>() {
             .value.cast<Value.Identifiable>().identifiableBox.cast<IdentifiableBox.Parameter>().parameter
         gen.writeStartObject()
         gen.writeObjectField(Parameter::class.simpleName, parameter)
+        gen.writeEndObject()
+    }
+}
+
+/**
+ * Serializer for [StringWithJson]
+ */
+object StringWithJsonSerializer : JsonSerializer<StringWithJson>() {
+    override fun serialize(value: StringWithJson, gen: JsonGenerator, serializers: SerializerProvider) {
+        val tree = ObjectMapper().readTree(value.string)
+        val node = tree.fields().next()
+        gen.writeStartObject()
+        gen.writeObjectField(node.key, node.value.asText())
         gen.writeEndObject()
     }
 }
