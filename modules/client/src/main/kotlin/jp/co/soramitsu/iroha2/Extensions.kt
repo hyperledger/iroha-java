@@ -336,11 +336,22 @@ inline fun <reified T> T.asValue() = when (this) {
 
 fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
 
+fun AssetId.asJsonString() = "{\"${AssetId::class.java.simpleName.toSnakeCase()}\": " +
+    "\"${this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()}\"}"
+
 fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
+
+fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpleName.toSnakeCase()}\": " +
+    "\"${this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string}\"}"
 
 fun AccountId.asString() = this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string
 
+fun AccountId.asJsonString() = "{\"${AccountId::class.java.simpleName.toSnakeCase()}\": " +
+    "\"${this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string}\"}"
+
 fun DomainId.asString() = this.name.string
+fun DomainId.asJsonString() = "{\"${DomainId::class.java.simpleName.toSnakeCase()}\": " +
+    "\"${this.name.string}\"}"
 
 fun RoleId.asString() = this.name.string
 

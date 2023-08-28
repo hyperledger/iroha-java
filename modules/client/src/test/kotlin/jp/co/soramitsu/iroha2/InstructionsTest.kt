@@ -198,7 +198,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(joeId, joeKeyPair) {
             grantPermissionToken(
                 Permissions.CanUnregisterAccount,
-                joeId.asString(),
+                joeId.asJsonString(),
                 ALICE_ACCOUNT_ID,
             )
             unregisterAccount(joeId)
@@ -419,7 +419,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             // grant by Alice to Bob permissions to set key value in Asset.Store
             grantPermissionToken(
                 Permissions.CanSetKeyValueUserAssetsToken,
-                aliceAssetId.asString(),
+                aliceAssetId.asJsonString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -515,7 +515,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             mintAsset(DEFAULT_ASSET_ID, 100)
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
-                DEFAULT_ASSET_DEFINITION_ID.asString(),
+                DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -616,7 +616,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             account(BOB_ACCOUNT_ID)
             grantPermissionToken(
                 Permissions.CanSetKeyValueInUserAccount,
-                BOB_ACCOUNT_ID.asString(),
+                BOB_ACCOUNT_ID.asJsonString(),
                 ALICE_ACCOUNT_ID,
             )
             buildSigned(BOB_KEYPAIR)
@@ -667,7 +667,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             grantPermissionToken(
                 Permissions.CanTransferUserAssetsToken,
-                aliceAssetId.asString(),
+                aliceAssetId.asJsonString(),
                 joeId,
             )
         }
