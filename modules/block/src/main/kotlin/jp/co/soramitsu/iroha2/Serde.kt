@@ -710,7 +710,12 @@ object PermissionTokenSerializer : JsonSerializer<PermissionToken>() {
     override fun serialize(token: PermissionToken, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
         gen.writeObjectField(PermissionToken::definitionId.name.toSnakeCase(), token.definitionId)
-        gen.writeObjectField(PermissionToken::payload.name, token.payload)
+
+        val payload = when (token.payload.string.isEmpty()) {
+            true -> null
+            false -> token.payload
+        }
+        gen.writeObjectField(PermissionToken::payload.name, payload)
         gen.writeEndObject()
     }
 }
