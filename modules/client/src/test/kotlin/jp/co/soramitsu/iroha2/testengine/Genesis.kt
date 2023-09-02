@@ -88,11 +88,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
             ROLE_ID,
             PermissionToken(
                 Permissions.CanSetKeyValueInUserAccount.type,
-                "".asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
             ),
             PermissionToken(
                 Permissions.CanRemoveKeyValueInUserAccount.type,
-                "".asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
