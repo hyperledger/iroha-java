@@ -19,8 +19,8 @@ codegen-units = 1   # Further reduces binary size but increases compilation time
 crate-type = ['cdylib']
 
 [dependencies]
-iroha_validator = { git = "https://github.com/hyperledger/iroha/", branch = "iroha2-stable", features = ["default-validator"] }
 iroha_wasm = { git = "https://github.com/hyperledger/iroha/", branch = "iroha2-stable", features = ["debug"] }
+iroha_validator = { git = "https://github.com/hyperledger/iroha/", branch = "iroha2-stable" }
 iroha_schema = { git = "https://github.com/hyperledger/iroha/", branch = "iroha2-stable" }
 
 parity-scale-codec = { version = "3.2.1", default-features = false }

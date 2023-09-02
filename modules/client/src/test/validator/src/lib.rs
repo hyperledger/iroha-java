@@ -1,113 +1,65 @@
 //! Runtime Validator for client tests
-
 #![no_std]
+#![allow(missing_docs, clippy::missing_errors_doc)]
 
 extern crate alloc;
-
-use alloc::string::String;
-
-use iroha_schema::IntoSchema;
-use iroha_validator::{
-    data_model::evaluate::{EvaluationError, ExpressionEvaluator},
-    default,
-    permission::Token as _,
-    prelude::*,
-};
-use parity_scale_codec::{Decode, Encode};
-use serde::{Deserialize, Serialize};
-
 #[cfg(not(test))]
 extern crate panic_halt;
 
-use alloc::format;
+use alloc::borrow::ToOwned as _;
 
-mod token {
-    //! Module with custom token.
+use iroha_validator::{
+    data_model::evaluate::ExpressionEvaluator, default::default_permission_token_schema,
+    iroha_wasm, prelude::*,
+};
 
-    use super::*;
-
-    /// Token to identify if user can register domains.
-    #[derive(Token, ValidateGrantRevoke, Decode, Encode, IntoSchema, Serialize, Deserialize)]
-    #[validate(iroha_validator::permission::OnlyGenesis)]
-    pub struct CanRegisterDomains;
+#[derive(Debug, Clone)]
+pub struct Validator {
+    verdict: Result,
+    block_height: u64,
+    host: iroha_wasm::Host,
 }
 
-struct CustomValidator(DefaultValidator);
+impl Validator {
+    /// Construct [`Self`]
+    pub fn new(block_height: u64) -> Self {
+        Self {
+            verdict: Ok(()),
+            block_height,
+            host: iroha_wasm::Host,
+        }
+    }
 
-macro_rules! delegate {
-    ( $($visitor:ident$(<$bound:ident>)?($operation:ty)),+ $(,)? ) => { $(
-        fn $visitor $(<$bound>)?(&mut self, authority: &AccountId, operation: $operation) {
-            self.0.$visitor(authority, operation);
+    fn ensure_genesis(block_height: u64) -> MigrationResult {
+        if block_height != 0 {
+            return Err("Default Validator is intended to be used only in genesis. \
+                 Write your own validator if you need to upgrade validator on existing chain."
+                .to_owned());
+        }
+
+        Ok(())
+    }
+}
+
+macro_rules! defaults {
+    ( $($validator:ident $(<$param:ident $(: $bound:path)?>)?($operation:ty)),+ $(,)? ) => { $(
+        fn $validator $(<$param $(: $bound)?>)?(&mut self, authority: &AccountId, operation: $operation) {
+            iroha_validator::default::$validator(self, authority, operation)
         } )+
-    }
+    };
 }
 
-impl Visit for CustomValidator {
-    fn visit_transaction(
-        &mut self,
-        authority: &AccountId,
-        transaction: &VersionedSignedTransaction,
-    ) {
-        default::visit_transaction(self, authority, transaction);
-    }
+impl Visit for Validator {
+    defaults! {
+        visit_unsupported<T: core::fmt::Debug>(T),
 
-    fn visit_instruction(&mut self, authority: &AccountId, isi: &InstructionBox) {
-        default::visit_instruction(self, authority, isi);
-    }
+        visit_transaction(&VersionedSignedTransaction),
+        visit_instruction(&InstructionBox),
+        visit_expression<V>(&EvaluatesTo<V>),
+        visit_sequence(&SequenceBox),
+        visit_if(&Conditional),
+        visit_pair(&Pair),
 
-    fn visit_expression<V>(&mut self, authority: &AccountId, isi: &EvaluatesTo<V>) {
-        default::visit_expression(self, authority, isi)
-    }
-
-    fn visit_sequence(&mut self, authority: &AccountId, isi: &SequenceBox) {
-        default::visit_sequence(self, authority, isi)
-    }
-
-    fn visit_if(&mut self, authority: &AccountId, isi: &Conditional) {
-        default::visit_if(self, authority, isi)
-    }
-
-    fn visit_pair(&mut self, authority: &AccountId, isi: &Pair) {
-        default::visit_pair(self, authority, isi)
-    }
-
-    fn visit_grant_account_permission(
-        &mut self,
-        authority: &AccountId,
-        isi: Grant<Account, PermissionToken>,
-    ) {
-        let token = isi.object.clone();
-
-        if self.block_height() == 0 {
-            // FIXME: default validator doesn't allow genesis to grant tokens to other accounts
-            pass!(self);
-        }
-
-        if let Ok(token) = token::CanRegisterDomains::try_from(token) {
-            if let Err(error) = iroha_validator::permission::ValidateGrantRevoke::validate_grant(
-                &token,
-                authority,
-                self.block_height(),
-            ) {
-                deny!(self, error);
-            }
-
-            pass!(self);
-        } else {
-            default::permission_token::visit_grant_account_permission(self, authority, isi);
-        }
-    }
-
-    fn visit_register_domain(&mut self, authority: &AccountId, _isi: Register<Domain>) {
-        // FIXME: default validator doesn't allow genesis to grant tokens to other accounts
-        if self.block_height() == 0 || token::CanRegisterDomains.is_owned_by(authority) {
-            pass!(self);
-        }
-
-        deny!(self, "You don't have permission to register a new domain");
-    }
-
-    delegate! {
         // Peer validation
         visit_unregister_peer(Unregister<Peer>),
 
@@ -140,6 +92,7 @@ impl Visit for CustomValidator {
         visit_remove_asset_definition_key_value(RemoveKeyValue<AssetDefinition>),
 
         // Permission validation
+        visit_grant_account_permission(Grant<Account, PermissionToken>),
         visit_revoke_account_permission(Revoke<Account, PermissionToken>),
 
         // Role validation
@@ -162,47 +115,49 @@ impl Visit for CustomValidator {
     }
 }
 
-impl Validate for CustomValidator {
-    /// Migration should be applied on blockchain with [`DefaultValidator`]
-    fn migrate(_block_height: u64) -> MigrationResult {
-        let mut schema = DefaultValidator::permission_token_schema();
-        schema.insert::<token::CanRegisterDomains>();
-
-        let (token_ids, schema_str) = schema.serialize();
-        iroha_validator::iroha_wasm::set_permission_token_schema(
-            &iroha_validator::data_model::permission::PermissionTokenSchema::new(
-                token_ids, schema_str,
-            ),
-        );
-
-        Ok(())
-    }
-
+impl Validate for Validator {
     fn verdict(&self) -> &Result {
-        self.0.verdict()
+        &self.verdict
     }
 
     fn block_height(&self) -> u64 {
-        self.0.block_height()
+        self.block_height
     }
 
     fn deny(&mut self, reason: ValidationFail) {
-        self.0.deny(reason);
+        self.verdict = Err(reason);
     }
 }
 
-impl ExpressionEvaluator for CustomValidator {
+impl ExpressionEvaluator for Validator {
     fn evaluate<E: Evaluate>(
         &self,
         expression: &E,
-    ) -> core::result::Result<E::Value, EvaluationError> {
-        self.0.evaluate(expression)
+    ) -> core::result::Result<E::Value, iroha_wasm::data_model::evaluate::EvaluationError> {
+        self.host.evaluate(expression)
     }
 }
 
+/// Migrate previous validator to the current version.
+/// Called by Iroha once just before upgrading validator.
+///
+/// # Errors
+///
+/// Concrete errors are specific to the implementation.
+///
+/// If `migrate()` entrypoint fails then the whole `Upgrade` instruction
+/// will be denied and previous validator will stay unchanged.
 #[entrypoint]
 pub fn migrate(block_height: u64) -> MigrationResult {
-    CustomValidator::migrate(block_height)
+    Validator::ensure_genesis(block_height)?;
+
+    let schema = default_permission_token_schema();
+    let (token_ids, schema_str) = schema.serialize();
+    iroha_validator::iroha_wasm::set_permission_token_schema(
+        &iroha_validator::data_model::permission::PermissionTokenSchema::new(token_ids, schema_str),
+    );
+
+    Ok(())
 }
 
 #[entrypoint]
@@ -211,9 +166,9 @@ pub fn validate_transaction(
     transaction: VersionedSignedTransaction,
     block_height: u64,
 ) -> Result {
-    let mut validator = CustomValidator(DefaultValidator::new(block_height));
+    let mut validator = Validator::new(block_height);
     validator.visit_transaction(&authority, &transaction);
-    validator.0.verdict
+    validator.verdict
 }
 
 #[entrypoint]
@@ -222,14 +177,14 @@ pub fn validate_instruction(
     instruction: InstructionBox,
     block_height: u64,
 ) -> Result {
-    let mut validator = CustomValidator(DefaultValidator::new(block_height));
+    let mut validator = Validator::new(block_height);
     validator.visit_instruction(&authority, &instruction);
-    validator.0.verdict
+    validator.verdict
 }
 
 #[entrypoint]
 pub fn validate_query(authority: AccountId, query: QueryBox, block_height: u64) -> Result {
-    let mut validator = CustomValidator(DefaultValidator::new(block_height));
+    let mut validator = Validator::new(block_height);
     validator.visit_query(&authority, &query);
-    validator.0.verdict
+    validator.verdict
 }
