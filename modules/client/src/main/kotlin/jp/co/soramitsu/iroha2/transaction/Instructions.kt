@@ -1,8 +1,8 @@
 package jp.co.soramitsu.iroha2.transaction
 
 import jp.co.soramitsu.iroha2.Permissions
+import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
-import jp.co.soramitsu.iroha2.asString
 import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.cast
@@ -475,7 +475,7 @@ object Instructions {
         return revokeSome(IdBox.AccountId(target)) {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueUserAssetsToken.type,
-                payload = assetId.asString().asStringWithJson(),
+                payload = assetId.asJsonString().asStringWithJson(),
             )
         }
     }

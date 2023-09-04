@@ -909,11 +909,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 roleId,
                 PermissionToken(
                     Permissions.CanSetKeyValueUserAssetsToken.type,
-                    roleId.asStringWithJson(),
+                    assetId.asStringWithJson(),
                 ),
                 PermissionToken(
                     Permissions.CanRemoveKeyValueInUserAssets.type,
-                    "".asStringWithJson(),
+                    assetId.asStringWithJson(),
                 ),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)

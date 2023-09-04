@@ -355,6 +355,8 @@ fun DomainId.asJsonString() = "{\"${DomainId::class.java.simpleName.toSnakeCase(
 
 fun RoleId.asString() = this.name.string
 
+fun RoleId.asJsonString() = "{\"${RoleId::class.java.simpleName.toSnakeCase()}\": \"${this.name.string}\"}"
+
 fun SocketAddr.asString() = when (this) {
     is SocketAddr.Host -> this.socketAddrHost.let { "${it.host}:${it.port}" }
     is SocketAddr.Ipv4 -> this.socketAddrV4.let { "${it.ip}:${it.port}" }
@@ -671,8 +673,8 @@ fun String.toSnakeCase() = this
 
 fun String.asStringWithJson() = StringWithJson(this)
 
-fun AssetId.asStringWithJson() = this.asString().asStringWithJson()
+fun AssetId.asStringWithJson() = this.asJsonString().asStringWithJson()
 
-fun AccountId.asStringWithJson() = this.asString().asStringWithJson()
+fun AccountId.asStringWithJson() = this.asJsonString().asStringWithJson()
 
-fun RoleId.asStringWithJson() = this.asString().asStringWithJson()
+fun RoleId.asStringWithJson() = this.asJsonString().asStringWithJson()
