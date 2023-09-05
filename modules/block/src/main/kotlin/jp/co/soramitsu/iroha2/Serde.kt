@@ -535,7 +535,7 @@ object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
         val node = p.readValueAsTree<JsonNode>().fields().next()
 
         return StringWithJson(
-            string = "{\"${node.key}\":\"${node.value.asText()}\"}"
+            string = "{\"${node.key}\":\"${node.value.asText()}\"}",
         )
     }
 }
@@ -558,7 +558,7 @@ object PermissionTokenDeserializer : JsonDeserializer<PermissionToken>() {
 
         return PermissionToken(
             definitionId = definitionId.value.asText().asName(),
-            payload = payload
+            payload = payload,
         )
     }
 }
