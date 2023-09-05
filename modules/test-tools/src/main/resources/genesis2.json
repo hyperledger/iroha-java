@@ -216,9 +216,7 @@
       "PermissionToken" : {
         "definition_id" : "CanSetKeyValueInUserAssets",
         "payload" : {
-          "asset_id" : {
-            "AssetId" : "123#test#alice@wonderland"
-          }
+          "asset_id" : "123#test#alice@wonderland"
         }
       },
       "destination_id" : {

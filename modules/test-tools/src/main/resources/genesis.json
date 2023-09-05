@@ -47,7 +47,7 @@
         "Grant": {
           "PermissionToken": {
             "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": {}
+            "payload": null
           },
           "destination_id": {
             "AccountId": "alice@wonderland"
@@ -58,7 +58,7 @@
         "Grant": {
           "PermissionToken": {
             "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": {}
+            "payload": null
           },
           "destination_id": {
             "AccountId": "bob@wonderland"

@@ -106,6 +106,8 @@ val JSON_SERDE by lazy {
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addDeserializer(NewParameterBox::class.java, NewParameterBoxDeserializer)
+        module.addDeserializer(PermissionToken::class.java, PermissionTokenDeserializer)
+        module.addDeserializer(StringWithJson::class.java, StringWithJsonDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
@@ -525,6 +527,39 @@ object MintBoxDeserializer : JsonDeserializer<MintBox>() {
 object NewParameterBoxDeserializer : JsonDeserializer<NewParameterBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewParameterBox {
         return sealedDeserializeNewParameterBox(p, JSON_SERDE)
+    }
+}
+
+object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): StringWithJson {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+
+        return StringWithJson(
+            string = "{\"${node.key}\":\"${node.value.asText()}\"}"
+        )
+    }
+}
+
+object PermissionTokenDeserializer : JsonDeserializer<PermissionToken>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PermissionToken {
+        val jsonNode = p.readValueAsTree<JsonNode>()
+        val iter = jsonNode.iterator()
+        val nodes = mutableListOf<JsonNode>()
+        while (iter.hasNext()) {
+            val node = iter.next()
+            nodes.add(node)
+        }
+
+        val definitionId = jsonNode.fields().next()
+        val payload = when (nodes[1].isNull) {
+            true -> StringWithJson("")
+            false -> JSON_SERDE.convertValue(nodes[1], StringWithJson::class.java)
+        }
+
+        return PermissionToken(
+            definitionId = definitionId.value.asText().asName(),
+            payload = payload
+        )
     }
 }
 

@@ -106,18 +106,14 @@
       "NewRole" : {
         "id" : "USER_METADATA_ACCESS",
         "permissions" : [ {
-          "definition_id" : "can_set_key_value_in_user_metadata",
-          "params" : {
-            "account_id" : {
-              "AccountId" : "alice@wonderland"
-            }
+          "definition_id" : "CanSetKeyValueInUserAsset",
+          "payload" : {
+            "account_id" : "alice@wonderland"
           }
         }, {
-          "definition_id" : "can_remove_key_value_in_user_metadata",
-          "params" : {
-            "account_id" : {
-              "AccountId" : "alice@wonderland"
-            }
+          "definition_id" : "CanRemoveKeyValueInUserAsset",
+          "payload" : {
+            "account_id" : "alice@wonderland"
           }
         } ]
       }
@@ -134,9 +130,7 @@
       "PermissionToken" : {
         "definition_id" : "CanBurnAssetWithDefinition",
         "payload" : {
-          "asset_definition_id" : {
-            "AssetDefinitionId" : "xor#wonderland"
-          }
+          "asset_definition_id" : "xor#wonderland"
         }
       },
       "destination_id" : {
