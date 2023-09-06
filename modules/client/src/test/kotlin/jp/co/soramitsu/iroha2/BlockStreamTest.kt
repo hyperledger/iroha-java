@@ -33,6 +33,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.rand
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
@@ -57,8 +58,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         var blocks = mutableListOf<VersionedBlockMessage>()
         subscription.receive<VersionedBlockMessage>(actionId).collect { block -> blocks.add(block) }
 
-        val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size }
-        var isi = checkBlockStructure(blocks[0], 1, GENESIS, GENESIS, expectedSize)
+        val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size } + 1 // plus wasm
+        var isi = blocks[0].validate(1, GENESIS, GENESIS, expectedSize)
         val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
@@ -69,7 +70,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             isi[3].extractAccount().id.asString(),
         )
 
-        isi = checkBlockStructure(blocks[1], 2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
+        isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
         var newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
@@ -127,27 +128,31 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
         subscription.stop()
     }
-    private fun getInstructionPayload(committedBlock: CommittedBlock): TransactionPayload {
-        return committedBlock.transactions[0].value
+
+    private fun CommittedBlock.payloads(): List<TransactionPayload> = this.transactions.map { tx ->
+        tx.value
             .cast<VersionedSignedTransaction.V1>()
             .signedTransaction
             .payload
     }
 
-    private fun checkBlockStructure(
-        blockMessage: VersionedBlockMessage,
-        height: Long,
-        instructionAccountDomain: String,
-        instructionAccount: String,
-        instructionSize: Int,
+    private fun VersionedBlockMessage.validate(
+        expectedHeight: Long,
+        expectedDomain: String,
+        expectedAccount: String,
+        expectedIsiSize: Int,
     ): List<InstructionBox> {
-        val committedBlock = blockMessage.extractBlock()
-        assertEquals(height, committedBlock.header.height.toLong())
-        val payload = getInstructionPayload(committedBlock)
-        assertEquals(instructionAccountDomain, payload.authority.domainId.name.string)
-        assertEquals(instructionAccount, payload.authority.name.string)
-        val instructions = payload.instructions.cast<Executable.Instructions>().vec
-        assertEquals(instructionSize, instructions.size)
+        val committedBlock = this.extractBlock()
+        assertEquals(expectedHeight, committedBlock.header.height.toLong())
+
+        val payloads = committedBlock.payloads()
+        assertTrue { payloads.any { it.authority.domainId.name.string == expectedDomain } }
+        assertTrue { payloads.any { it.authority.name.string == expectedAccount } }
+
+        val instructions = payloads.reversed().map {
+            it.instructions.cast<Executable.Instructions>().vec
+        }.flatten() // wasm isi in the end
+        assertEquals(expectedIsiSize, instructions.size)
 
         return instructions
     }
