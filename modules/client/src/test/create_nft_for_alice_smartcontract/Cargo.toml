@@ -1,5 +1,5 @@
 [package]
-name = "create_nft_for_every_user_smartcontract"
+name = "create_nft_for_alice_smartcontract"
 version = "2.0.0-pre-rc.3"
 # TODO: teams are being deprecated update the authors URL
 authors = ["Iroha 2 team <https://github.com/orgs/soramitsu/teams/iroha2>"]
