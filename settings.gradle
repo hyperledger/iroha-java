@@ -21,3 +21,6 @@ project(':admin-client').projectDir = 'modules/admin-client' as File
 
 include 'test-tools'
 project(':test-tools').projectDir = 'modules/test-tools' as File
+
+include 'tutorial'
+project(':tutorial').projectDir = 'examples/tutorial' as File
