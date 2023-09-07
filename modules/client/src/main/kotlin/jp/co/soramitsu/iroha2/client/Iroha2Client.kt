@@ -211,10 +211,10 @@ open class Iroha2Client(
                 val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
                 resultList.addAll(
                     responseDecoded.cast<VersionedBatchedResponseOfValue.V1>()
-                        .batchedResponseOfValue.batch.cast<Value.Vec>().vec
+                        .batchedResponseOfValue.batch.cast<Value.Vec>().vec,
                 )
                 VersionedBatchedResponseOfValue.V1(
-                    BatchedResponseOfValue(Value.Vec(resultList), ForwardCursor())
+                    BatchedResponseOfValue(Value.Vec(resultList), ForwardCursor()),
                 ).let { queryAndExtractor.resultExtractor.extract(it) }
             }
         }

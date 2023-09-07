@@ -82,7 +82,7 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
 open class WithManyDomains : Genesis(
     rawGenesisBlock(
         *registerDomains(25),
-    )
+    ),
 )
 
 fun registerDomains(count: Int): Array<InstructionBox> {
