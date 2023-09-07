@@ -43,6 +43,7 @@ import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
+import jp.co.soramitsu.iroha2.testengine.WithManyDomains
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
@@ -1002,6 +1003,18 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asValue(),
                 )
             }
+    }
+
+    @Test
+    @WithIroha([WithManyDomains::class])
+    @Story("Check query cursor")
+    @SdkTestId("query_cursor_test")
+    fun `cursor test`(): Unit = runBlocking {
+        val domains = QueryBuilder.findAllDomains()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(27, domains.size)
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {

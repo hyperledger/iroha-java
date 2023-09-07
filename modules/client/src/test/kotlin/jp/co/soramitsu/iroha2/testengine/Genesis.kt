@@ -79,6 +79,20 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
     }
 }
 
+open class WithManyDomains : Genesis(
+    rawGenesisBlock(
+        *registerDomains(25),
+    )
+)
+
+fun registerDomains(count: Int): Array<InstructionBox> {
+    val instructions = mutableListOf<InstructionBox>()
+    for (i in 1..count) {
+        instructions.add(Instructions.registerDomain(DomainId("NEW_DOMAIN$i".asName())))
+    }
+    return instructions.toTypedArray()
+}
+
 /**
  * Give Alice access to Bob's metadata
  */

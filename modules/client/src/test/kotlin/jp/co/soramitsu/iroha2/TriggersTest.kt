@@ -235,7 +235,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             ),
         )
         val wasm = this.javaClass.classLoader
-            .getResource("create_nft_for_alice.wasm")
+            .getResource("create_nft_for_alice_smartcontract.wasm")
             .readBytes()
 
         client.sendTransaction {

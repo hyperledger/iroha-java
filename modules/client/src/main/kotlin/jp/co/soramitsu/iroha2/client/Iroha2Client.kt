@@ -37,14 +37,17 @@ import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.extractBlock
+import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.ForwardCursor
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
@@ -200,15 +203,61 @@ open class Iroha2Client(
         sorting: String? = null,
     ): T {
         logger.debug("Sending query")
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting)
+        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        val finalResult = when (cursor.cursor) {
+            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
+            else -> {
+                val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
+                resultList.addAll(
+                    responseDecoded.cast<VersionedBatchedResponseOfValue.V1>()
+                        .batchedResponseOfValue.batch.cast<Value.Vec>().vec
+                )
+                VersionedBatchedResponseOfValue.V1(
+                    BatchedResponseOfValue(Value.Vec(resultList), ForwardCursor())
+                ).let { queryAndExtractor.resultExtractor.extract(it) }
+            }
+        }
+        return finalResult
+    }
+
+    private suspend fun <T> sendQueryRequest(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): VersionedBatchedResponseOfValue {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
             start?.also { parameter("start", it) }
             limit?.also { parameter("limit", it) }
             sorting?.also { parameter("sort_by_metadata_key", it) }
+            queryCursor?.queryId?.also { parameter("query_id", it) }
+            queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         return response.body<ByteArray>()
             .let { VersionedBatchedResponseOfValue.decode(it) }
-            .let { queryAndExtractor.resultExtractor.extract(it) }
+    }
+
+    private suspend fun <T> getQueryResultWithCursor(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): MutableList<Value> {
+        val resultList = mutableListOf<Value>()
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
+        resultList.addAll(responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.batch.cast<Value.Vec>().vec)
+        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        return when (cursor.cursor) {
+            null -> resultList
+            else -> {
+                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor))
+                resultList
+            }
+        }
     }
 
     /**
