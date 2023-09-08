@@ -53,6 +53,7 @@ import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.Role
@@ -114,6 +115,7 @@ val JSON_SERDE by lazy {
         module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
 
         // serializers
+        module.addSerializer(RawGenesisBlock::class.java, RawGenesisBlockSerializer)
         module.addSerializer(PermissionToken::class.java, PermissionTokenSerializer)
         module.addKeySerializer(Name::class.java, NameAsKeySerializer)
         module.addSerializer(DomainId::class.java, DomainIdSerializer)
@@ -710,6 +712,21 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 }
 
 // ==================================================
+
+/**
+ * Serializer for [RawGenesisBlock]
+ */
+object RawGenesisBlockSerializer : JsonSerializer<RawGenesisBlock>() {
+    override fun serialize(block: RawGenesisBlock, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
+        when (block.transactions[0].isEmpty()) {
+            true -> gen.writeObjectField("transactions", listOf<InstructionBox>())
+            false -> gen.writeObjectField("transactions", block.transactions)
+        }
+        gen.writeObjectField("validator", block.validator)
+        gen.writeEndObject()
+    }
+}
 
 /**
  * Serializer for [AssetDefinitionId]
