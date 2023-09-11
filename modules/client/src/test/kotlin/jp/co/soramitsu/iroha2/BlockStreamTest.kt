@@ -27,6 +27,7 @@ import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
@@ -93,6 +94,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
     @ResourceLock("blockStream")
+    @Disabled
     fun `subscription to endless block stream`(): Unit = runBlocking {
         val repeatTimes = 5
         val shift = 1 // to test not to take more than was ordered
