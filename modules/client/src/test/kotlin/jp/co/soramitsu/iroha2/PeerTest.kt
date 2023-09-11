@@ -38,7 +38,6 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
-@Disabled
 class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     companion object {
@@ -50,6 +49,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Story("Account registers a peer")
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
+    @Disabled
     fun `register peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
