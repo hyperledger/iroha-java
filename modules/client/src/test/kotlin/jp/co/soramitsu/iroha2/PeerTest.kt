@@ -24,7 +24,6 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -49,7 +48,6 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Story("Account registers a peer")
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
-    @Disabled
     fun `register peer`(): Unit = runBlocking {
         val ports = findFreePorts(3)
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]

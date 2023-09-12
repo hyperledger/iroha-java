@@ -185,14 +185,6 @@ open class Iroha2Client(
         }
     }
 
-//    /**
-//     * Send a request to Iroha2 and extract payload.
-//     */
-//    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
-//        val page = sendQuery(queryAndExtractor, null)
-//        return page.data
-//    }
-
     /**
      * Send a request to Iroha2 and extract paginated payload
      */

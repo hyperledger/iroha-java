@@ -17,6 +17,8 @@ import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
 import jp.co.soramitsu.iroha2.RoleIdsExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
+import jp.co.soramitsu.iroha2.TransactionValueExtractor
+import jp.co.soramitsu.iroha2.TransactionValuesExtractor
 import jp.co.soramitsu.iroha2.TriggerBoxExtractor
 import jp.co.soramitsu.iroha2.TriggerBoxesExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
@@ -24,6 +26,7 @@ import jp.co.soramitsu.iroha2.U32Extractor
 import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
+import jp.co.soramitsu.iroha2.fromHex
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
@@ -39,7 +42,9 @@ import jp.co.soramitsu.iroha2.generated.SignedQuery
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
+import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
+import jp.co.soramitsu.iroha2.toIrohaHash
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigInteger
 import java.security.KeyPair
@@ -268,15 +273,15 @@ class QueryBuilder<R>(
         fun findAllPeers(queryFilter: GenericPredicateBox<ValuePredicate>? = null) =
             QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
 
-//        @JvmStatic
-//        fun findTransactionsByAccountId(
-//            accountId: AccountId,
-//            queryFilter: GenericPredicateBox<ValuePredicate>? = null,
-//        ) = QueryBuilder(
-//            Queries.findTransactionsByAccountId(accountId),
-//            TransactionValuesExtractor,
-//            queryFilter,
-//        )
+        @JvmStatic
+        fun findTransactionsByAccountId(
+            accountId: AccountId,
+            queryFilter: GenericPredicateBox<ValuePredicate>? = null,
+        ) = QueryBuilder(
+            Queries.findTransactionsByAccountId(accountId),
+            TransactionValuesExtractor,
+            queryFilter,
+        )
 
         @JvmStatic
         @JvmOverloads
@@ -332,24 +337,24 @@ class QueryBuilder<R>(
                 queryFilter,
             )
 
-//        @JvmStatic
-//        fun findTransactionByHash(hash: Hash) = QueryBuilder(
-//            Queries.findTransactionByHash(hash),
-//            TransactionValueExtractor,
-//        )
+        @JvmStatic
+        fun findTransactionByHash(hash: Hash) = QueryBuilder(
+            Queries.findTransactionByHash(hash),
+            TransactionValueExtractor,
+        )
 
-//        @JvmStatic
-//        fun findTransactionByHash(bytes: ByteArray) = findTransactionByHash(bytes.toIrohaHash())
+        @JvmStatic
+        fun findTransactionByHash(bytes: ByteArray) = findTransactionByHash(bytes.toIrohaHash())
 
-//        @JvmStatic
-//        fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
+        @JvmStatic
+        fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
 
-//        @JvmStatic
-//        fun findAllTransactions(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
-//            Queries.findAllTransactions(),
-//            TransactionQueryResultExtractor,
-//            queryFilter,
-//        )
+        @JvmStatic
+        fun findAllTransactions(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
+            Queries.findAllTransactions(),
+            TransactionValuesExtractor,
+            queryFilter,
+        )
 
         @JvmStatic
         @JvmOverloads

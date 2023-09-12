@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
@@ -174,52 +175,25 @@ object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
     }
 }
 
-// /**
-// * Extract a list of permission token definitions from a query [result]
-// */
-// object PermissionTokenDefinitionsExtractor : ResultExtractor<List<PermissionTokenDefinition>> {
-//    override fun extract(result: BatchedResponseOfValue): List<PermissionTokenDefinition> {
-//        return extractVec(result.batch) {
-//            extractIdentifiable(it, IdentifiableBox.PermissionTokenDefinition::permissionTokenDefinition)
-//        }
-//    }
-// }
-//
-// /**
-// * Extract a list of transaction values from a query [result]
-// */
-// object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
-//    override fun extract(result: BatchedResponseOfValue): List<TransactionValue> {
-//        return extractVec(result.batch) {
-//            extractValue(it, Value.TransactionValue::transactionValue)
-//        }
-//    }
-// }
-//
-// /**
-// * Extract a transaction value from a query [result]
-// */
-// object TransactionValueExtractor : ResultExtractor<TransactionValue> {
-//    override fun extract(result: BatchedResponseOfValue): TransactionValue {
-//        return extractValue(result.batch, Value.TransactionValue::transactionValue)
-//    }
-// }
-//
-// object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
-//    override fun extract(result: BatchedResponseOfValue): List<TransactionValue> {
-//        return extractVec(result.batch) {
-//            extractValue(it, Value.TransactionValue::transactionValue)
-//        }
-//    }
-// }
-//
-// object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryResult>> {
-//    override fun extract(result: BatchedResponseOfValue): List<TransactionQueryResult> {
-//        return extractVec(result.batch) {
-//            extractValue(it, Value.TransactionQueryResult::transactionQueryResult)
-//        }
-//    }
-// }
+/**
+* Extract a list of transaction values from a query [result]
+*/
+object TransactionValuesExtractor : ResultExtractor<List<TransactionQueryOutput>> {
+    override fun extract(result: BatchedResponseOfValue): List<TransactionQueryOutput> {
+        return extractVec(result.batch) {
+            extractValue(it, Value.TransactionQueryOutput::transactionQueryOutput)
+        }
+    }
+}
+
+/**
+* Extract a transaction value from a query [result]
+*/
+object TransactionValueExtractor : ResultExtractor<TransactionQueryOutput> {
+    override fun extract(result: BatchedResponseOfValue): TransactionQueryOutput {
+        return extractValue(result.batch, Value.TransactionQueryOutput::transactionQueryOutput)
+    }
+}
 
 object BlocksValueExtractor : ResultExtractor<List<VersionedCommittedBlock>> {
     override fun extract(result: BatchedResponseOfValue): List<VersionedCommittedBlock> {

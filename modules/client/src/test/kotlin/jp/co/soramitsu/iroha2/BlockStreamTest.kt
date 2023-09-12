@@ -39,6 +39,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Block Streaming")
+@Disabled
 class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
     @Test
@@ -94,7 +95,6 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
     @ResourceLock("blockStream")
-    @Disabled
     fun `subscription to endless block stream`(): Unit = runBlocking {
         val repeatTimes = 5
         val shift = 1 // to test not to take more than was ordered

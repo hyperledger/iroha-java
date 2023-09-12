@@ -18,6 +18,7 @@ import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashOf
 import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
@@ -292,6 +293,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is TriggerId -> Value.Id(IdBox.TriggerId(this))
         is IdBox -> Value.Id(this)
         is HashValue -> Value.Hash(this)
+        is HashOf<*> -> Value.Hash(HashValue.Transaction(this.hash.cast<HashOf<VersionedSignedTransaction>>()))
         is Name -> Value.Name(this)
         is PermissionToken -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
