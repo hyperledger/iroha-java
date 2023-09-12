@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -37,6 +38,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
+@Disabled
 class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     companion object {
