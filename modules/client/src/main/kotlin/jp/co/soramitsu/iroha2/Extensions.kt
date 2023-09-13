@@ -528,6 +528,11 @@ fun FilterBox.extractSchedule() = this
     .timeEventFilter.executionTime
     .cast<ExecutionTime.Schedule>().schedule
 
+fun TriggerBox.extractSchedule() = when (this) {
+    is TriggerBox.Raw -> this.triggerOfTriggeringFilterBoxAndExecutable.extractSchedule()
+    is TriggerBox.Optimized -> this.triggerOfTriggeringFilterBoxAndOptimizedExecutable.extractSchedule()
+}
+
 fun VersionedBlockMessage.extractBlock() = this
     .cast<VersionedBlockMessage.V1>().blockMessage.versionedCommittedBlock
     .extractBlock()
