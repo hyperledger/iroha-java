@@ -47,6 +47,8 @@ import jp.co.soramitsu.iroha2.generated.FindTriggerKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.FindTriggersByDomainId
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.HashOf
+import jp.co.soramitsu.iroha2.generated.HashOfVersionedCommittedBlock
+import jp.co.soramitsu.iroha2.generated.HashOfVersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.QueryBox
 import jp.co.soramitsu.iroha2.generated.RoleId
@@ -232,8 +234,8 @@ object Queries {
     /**
      * Return the transaction by [Hash]
      */
-    fun findTransactionByHash(hash: Hash) = QueryBox.FindTransactionByHash(
-        FindTransactionByHash(HashOf<VersionedSignedTransaction>(hash).evaluatesTo()),
+    fun findTransactionByHash(hash: HashOfVersionedSignedTransaction) = QueryBox.FindTransactionByHash(
+        FindTransactionByHash(hash.evaluatesTo()),
     )
 
     /**
@@ -301,7 +303,7 @@ object Queries {
      * Return the block header corresponding to the given [Hash]
      */
     fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(
-        FindBlockHeaderByHash(HashOf<VersionedCommittedBlock>(hash).evaluatesTo()),
+        FindBlockHeaderByHash(HashOfVersionedCommittedBlock(hash).evaluatesTo()),
     )
 
     /**

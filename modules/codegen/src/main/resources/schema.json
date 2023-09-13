@@ -674,15 +674,15 @@
       },
       {
         "name": "previous_block_hash",
-        "type": "Option<HashOf<VersionedCommittedBlock>>"
+        "type": "Option<HashOfVersionedCommittedBlock>"
       },
       {
         "name": "transactions_hash",
-        "type": "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>"
+        "type": "Option<HashOfMerkleTreeVersionedSignedTransaction>"
       },
       {
         "name": "rejected_transactions_hash",
-        "type": "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>"
+        "type": "Option<HashOfMerkleTreeVersionedSignedTransaction>"
       },
       {
         "name": "committed_with_topology",
@@ -1107,7 +1107,7 @@
       }
     ]
   },
-  "EvaluatesTo<HashOf<VersionedCommittedBlock>>": {
+  "EvaluatesTo<HashOfVersionedCommittedBlock>": {
     "Struct": [
       {
         "name": "expression",
@@ -1115,7 +1115,7 @@
       }
     ]
   },
-  "EvaluatesTo<HashOf<VersionedSignedTransaction>>": {
+  "EvaluatesTo<HashOfVersionedSignedTransaction>": {
     "Struct": [
       {
         "name": "expression",
@@ -1920,7 +1920,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<HashOf<VersionedCommittedBlock>>"
+        "type": "EvaluatesTo<HashOfVersionedCommittedBlock>"
       }
     ]
   },
@@ -1974,12 +1974,12 @@
       {
         "tag": "Block",
         "discriminant": 5,
-        "type": "HashOf<VersionedCommittedBlock>"
+        "type": "HashOfVersionedCommittedBlock"
       },
       {
         "tag": "Transaction",
         "discriminant": 6,
-        "type": "HashOf<VersionedSignedTransaction>"
+        "type": "HashOfVersionedSignedTransaction"
       },
       {
         "tag": "Peer",
@@ -2050,7 +2050,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<HashOf<VersionedSignedTransaction>>"
+        "type": "EvaluatesTo<HashOfVersionedSignedTransaction>"
       }
     ]
   },
@@ -2158,21 +2158,21 @@
     ]
   },
   "Hash": "Array<u8, 32>",
-  "HashOf<MerkleTree<VersionedSignedTransaction>>": "Hash",
-  "HashOf<VersionedCommittedBlock>": "Hash",
-  "HashOf<VersionedSignedTransaction>": "Hash",
-  "HashOf<WasmSmartContract>": "Hash",
+  "HashOfMerkleTreeVersionedSignedTransaction": "Hash",
+  "HashOfVersionedCommittedBlock": "Hash",
+  "HashOfVersionedSignedTransaction": "Hash",
+  "HashOfWasmSmartContract": "Hash",
   "HashValue": {
     "Enum": [
       {
         "tag": "Transaction",
         "discriminant": 0,
-        "type": "HashOf<VersionedSignedTransaction>"
+        "type": "HashOfVersionedSignedTransaction"
       },
       {
         "tag": "Block",
         "discriminant": 1,
-        "type": "HashOf<VersionedCommittedBlock>"
+        "type": "HashOfVersionedCommittedBlock"
       }
     ]
   },
@@ -2735,7 +2735,7 @@
     ]
   },
   "MerkleTree<VersionedSignedTransaction>": {
-    "Vec": "HashOf<VersionedSignedTransaction>"
+    "Vec": "HashOfVersionedSignedTransaction"
   },
   "Metadata": {
     "Struct": [
@@ -3090,11 +3090,11 @@
   "Option<Hash>": {
     "Option": "Hash"
   },
-  "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>": {
-    "Option": "HashOf<MerkleTree<VersionedSignedTransaction>>"
+  "Option<HashOfMerkleTreeVersionedSignedTransaction>": {
+    "Option": "HashOfMerkleTreeVersionedSignedTransaction"
   },
-  "Option<HashOf<VersionedCommittedBlock>>": {
-    "Option": "HashOf<VersionedCommittedBlock>"
+  "Option<HashOfVersionedCommittedBlock>": {
+    "Option": "HashOfVersionedCommittedBlock"
   },
   "Option<InstructionBox>": {
     "Option": "InstructionBox"
@@ -4221,7 +4221,7 @@
       },
       {
         "name": "block_hash",
-        "type": "HashOf<VersionedCommittedBlock>"
+        "type": "HashOfVersionedCommittedBlock"
       }
     ]
   },
@@ -4883,7 +4883,7 @@
       },
       {
         "name": "blob_hash",
-        "type": "HashOf<WasmSmartContract>"
+        "type": "HashOfWasmSmartContract"
       }
     ]
   },
