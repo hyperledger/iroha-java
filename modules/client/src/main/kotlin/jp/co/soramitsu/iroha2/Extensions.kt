@@ -44,6 +44,9 @@ import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndOptimizedExecutable
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
@@ -115,31 +118,6 @@ fun String.asParameter() = this.split(PARAMETER_DELIMITER).takeIf {
 fun String.asName() = Name(this)
 
 fun String.asValue() = Value.String(this)
-
-// fun String.asValueKind() = when (this) {
-//    ValueKind.Id::class.java.simpleName -> ValueKind.Id()
-//    ValueKind.Bool::class.java.simpleName -> ValueKind.Bool()
-//    ValueKind.String::class.java.simpleName -> ValueKind.String()
-//    ValueKind.Name::class.java.simpleName -> ValueKind.Name()
-//    ValueKind.Vec::class.java.simpleName -> ValueKind.Vec()
-//    ValueKind.LimitedMetadata::class.java.simpleName -> ValueKind.LimitedMetadata()
-//    ValueKind.MetadataLimits::class.java.simpleName -> ValueKind.MetadataLimits()
-//    ValueKind.TransactionLimits::class.java.simpleName -> ValueKind.TransactionLimits()
-//    ValueKind.LengthLimits::class.java.simpleName -> ValueKind.LengthLimits()
-//    ValueKind.Identifiable::class.java.simpleName -> ValueKind.Identifiable()
-//    ValueKind.PublicKey::class.java.simpleName -> ValueKind.PublicKey()
-//    ValueKind.SignatureCheckCondition::class.java.simpleName -> ValueKind.SignatureCheckCondition()
-//    ValueKind.TransactionValue::class.java.simpleName -> ValueKind.TransactionValue()
-//    ValueKind.TransactionQueryResult::class.java.simpleName -> ValueKind.TransactionQueryResult()
-//    ValueKind.PermissionToken::class.java.simpleName -> ValueKind.PermissionToken()
-//    ValueKind.Hash::class.java.simpleName -> ValueKind.Hash()
-//    ValueKind.Block::class.java.simpleName -> ValueKind.Block()
-//    ValueKind.BlockHeader::class.java.simpleName -> ValueKind.BlockHeader()
-//    ValueKind.Ipv4Addr::class.java.simpleName -> ValueKind.Ipv4Addr()
-//    ValueKind.Ipv6Addr::class.java.simpleName -> ValueKind.Ipv6Addr()
-//    ValueKind.Numeric::class.java.simpleName -> ValueKind.Numeric()
-//    else -> throw IllegalArgumentException("Unsupported value kind type: $this")
-// }
 
 fun Int.asValue() = Value.Numeric(NumericValue.U32(this.toLong()))
 
@@ -532,9 +510,23 @@ fun TriggerOfFilterBoxAndOptimizedExecutable.extractIsi() = this.action.executab
 
 fun TriggerOfFilterBoxAndExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
 
+fun TriggerOfTriggeringFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
+fun TriggerOfTriggeringFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
 fun TriggerOfFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
 
 fun TriggerOfFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
+
+fun TriggeringFilterBox.extractSchedule() = this
+    .cast<TriggeringFilterBox.Time>()
+    .timeEventFilter.executionTime
+    .cast<ExecutionTime.Schedule>().schedule
+
+fun FilterBox.extractSchedule() = this
+    .cast<FilterBox.Time>()
+    .timeEventFilter.executionTime
+    .cast<ExecutionTime.Schedule>().schedule
 
 fun VersionedBlockMessage.extractBlock() = this
     .cast<VersionedBlockMessage.V1>().blockMessage.versionedCommittedBlock
@@ -543,11 +535,6 @@ fun VersionedBlockMessage.extractBlock() = this
 fun VersionedCommittedBlock.extractBlock() = this.cast<VersionedCommittedBlock.V1>().committedBlock
 
 fun CommittedBlock.height() = this.header.height
-
-fun FilterBox.extractSchedule() = this
-    .cast<FilterBox.Time>()
-    .timeEventFilter.executionTime
-    .cast<ExecutionTime.Schedule>().schedule
 
 fun Metadata.getStringValue(key: String) = this.map.getStringValue(key)
 
