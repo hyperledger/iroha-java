@@ -187,7 +187,7 @@ public sealed class FindError : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val hashOf: HashOf<VersionedCommittedBlock>,
+        public val hashOfVersionedCommittedBlock: HashOfVersionedCommittedBlock,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -198,7 +198,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Block = try {
                 Block(
-                    HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
+                    HashOfVersionedCommittedBlock.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -208,7 +208,7 @@ public sealed class FindError : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.FindError.Block,
             ): Unit = try {
-                HashOf.write(writer, instance.hashOf)
+                HashOfVersionedCommittedBlock.write(writer, instance.hashOfVersionedCommittedBlock)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -219,7 +219,7 @@ public sealed class FindError : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val hashOf: HashOf<VersionedSignedTransaction>,
+        public val hashOfVersionedSignedTransaction: HashOfVersionedSignedTransaction,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -230,7 +230,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Transaction = try {
                 Transaction(
-                    HashOf.read(reader) as HashOf<VersionedSignedTransaction>,
+                    HashOfVersionedSignedTransaction.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -240,7 +240,7 @@ public sealed class FindError : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.FindError.Transaction,
             ): Unit = try {
-                HashOf.write(writer, instance.hashOf)
+                HashOfVersionedSignedTransaction.write(writer, instance.hashOfVersionedSignedTransaction)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
