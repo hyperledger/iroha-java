@@ -16,12 +16,12 @@ import kotlin.Unit
  * Generated from 'FindTransactionByHash' regular structure
  */
 public data class FindTransactionByHash(
-    public val hash: EvaluatesTo<HashOfVersionedSignedTransaction>,
+    public val hash: EvaluatesTo<HashOf<VersionedSignedTransaction>>,
 ) {
     public companion object : ScaleReader<FindTransactionByHash>, ScaleWriter<FindTransactionByHash> {
         override fun read(reader: ScaleCodecReader): FindTransactionByHash = try {
             FindTransactionByHash(
-                EvaluatesTo.read(reader) as EvaluatesTo<HashOfVersionedSignedTransaction>,
+                EvaluatesTo.read(reader) as EvaluatesTo<HashOf<VersionedSignedTransaction>>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

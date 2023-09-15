@@ -19,7 +19,6 @@ import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.HashOf
-import jp.co.soramitsu.iroha2.generated.HashOfVersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
@@ -272,7 +271,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is TriggerId -> Value.Id(IdBox.TriggerId(this))
         is IdBox -> Value.Id(this)
         is HashValue -> Value.Hash(this)
-        is HashOfVersionedSignedTransaction -> Value.Hash(HashValue.Transaction(this))
+        is HashOf<*> -> Value.Hash(HashValue.Transaction(HashOf(this.hash)))
         is Name -> Value.Name(this)
         is PermissionToken -> Value.PermissionToken(this)
         is IdentifiableBox -> Value.Identifiable(this)
@@ -441,6 +440,12 @@ fun InstructionBox.Mint.extractPublicKey() = this
     .cast<Expression.Raw>().value
     .cast<Value.PublicKey>().publicKey
     .payload.toHex()
+
+fun <T> EvaluatesTo<T>.extractNewAssetDefinition() = this
+    .expression
+    .cast<Expression.Raw>().value
+    .cast<Value.Identifiable>().identifiableBox
+    .cast<IdentifiableBox.NewAssetDefinition>().newAssetDefinition
 
 inline fun <reified I : InstructionBox> VersionedSignedTransaction.extractInstruction() = this
     .cast<VersionedSignedTransaction.V1>()
@@ -623,14 +628,14 @@ fun FindError.extract() = when (this) {
     is FindError.AssetDefinition -> this.assetDefinitionId.asString()
     is FindError.Domain -> this.domainId.asString()
     is FindError.Role -> this.roleId.asString()
-    is FindError.Block -> this.hashOfVersionedCommittedBlock.hash.arrayOfU8.toHex()
+    is FindError.Block -> this.hashOf.hash.arrayOfU8.toHex()
     is FindError.MetadataKey -> this.name.string
     is FindError.Parameter -> this.parameterId.name.string
     is FindError.Peer -> this.peerId.address.toString()
     is FindError.PermissionToken -> this.name.string
     is FindError.PublicKey -> this.publicKey.payload.toString()
     is FindError.Trigger -> this.triggerId.asString()
-    is FindError.Transaction -> this.hashOfVersionedSignedTransaction.hash.arrayOfU8.toHex()
+    is FindError.Transaction -> this.hashOf.hash.arrayOfU8.toHex()
 }
 
 fun String.toCamelCase(name: String): String {

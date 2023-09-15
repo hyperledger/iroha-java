@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Container
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
-import jp.co.soramitsu.iroha2.generated.HashOfVersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.StringPredicate
@@ -523,22 +523,35 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Query("FindTransactionByHash")
     @Story("Transaction queries transaction by hash")
     @SdkTestId("find_transaction_by_hash")
-//    @Disabled
     fun `find transaction by hash`(): Unit = runBlocking {
-        val hash = client.sendTransaction {
+        client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
             buildSigned(ALICE_KEYPAIR)
         }.let { d ->
             withTimeout(txTimeout) { d.await() }
         }
-        QueryBuilder.findTransactionByHash(HashOfVersionedSignedTransaction(hash.toIrohaHash()))
+
+        val transactions = QueryBuilder.findAllTransactions()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-//            .cast<TransactionValue>()
-//            .value.hash()
-//            .also { assertContentEquals(hash, it) }
+
+        val hash = VersionedSignedTransaction.encode(transactions[2].transaction.value).hash()
+
+        val txByHash = QueryBuilder.findTransactionByHash(hash)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(
+            DEFAULT_ASSET_DEFINITION_ID,
+            txByHash.transaction.value
+                .extractInstruction<InstructionBox.Register>()
+                .registerBox.`object`.extractNewAssetDefinition().id,
+        )
+        txByHash.transaction.value
+            .let { VersionedSignedTransaction.encode(it).hash() }
+            .also { assertContentEquals(hash, it) }
     }
 
     @Test

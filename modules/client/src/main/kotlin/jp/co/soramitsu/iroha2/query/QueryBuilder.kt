@@ -33,7 +33,6 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.Hash
-import jp.co.soramitsu.iroha2.generated.HashOfVersionedSignedTransaction
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.QueryBox
 import jp.co.soramitsu.iroha2.generated.QueryPayload
@@ -339,16 +338,16 @@ class QueryBuilder<R>(
             )
 
         @JvmStatic
-        fun findTransactionByHash(hash: HashOfVersionedSignedTransaction) = QueryBuilder(
+        fun findTransactionByHash(hash: Hash) = QueryBuilder(
             Queries.findTransactionByHash(hash),
             TransactionValueExtractor,
         )
 
-//        @JvmStatic
-//        fun findTransactionByHash(bytes: ByteArray) = findTransactionByHash(bytes.toIrohaHash())
+        @JvmStatic
+        fun findTransactionByHash(bytes: ByteArray) = findTransactionByHash(bytes.toIrohaHash())
 
-//        @JvmStatic
-//        fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
+        @JvmStatic
+        fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
 
         @JvmStatic
         fun findAllTransactions(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
