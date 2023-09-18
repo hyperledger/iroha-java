@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.NumericValue
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PermissionTokenSchema
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
@@ -172,6 +173,15 @@ object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
         return extractVec(result.batch) {
             extractValue(it, Value.PermissionToken::permissionToken)
         }
+    }
+}
+
+/**
+ * Extract a permission token schema from a query [result]
+ */
+object PermissionTokenSchemaExtractor : ResultExtractor<PermissionTokenSchema> {
+    override fun extract(result: BatchedResponseOfValue): PermissionTokenSchema {
+        return extractValue(result.batch, Value.PermissionTokenSchema::permissionTokenSchema)
     }
 }
 

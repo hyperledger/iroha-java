@@ -100,8 +100,6 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")
 
-// fun String.asTokenId() = PermissionTokenId(Name(this))
-
 fun String.asDomainId() = DomainId(Name(this))
 
 fun String.asRoleId() = RoleId(Name(this))

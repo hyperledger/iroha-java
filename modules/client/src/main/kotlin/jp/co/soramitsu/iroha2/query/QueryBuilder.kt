@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
+import jp.co.soramitsu.iroha2.PermissionTokenSchemaExtractor
 import jp.co.soramitsu.iroha2.PermissionTokensExtractor
 import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
@@ -294,14 +295,14 @@ class QueryBuilder<R>(
             queryFilter,
         )
 
-//        @JvmStatic
-//        fun findAllPermissionTokenDefinitions(
-//            queryFilter: GenericPredicateBox<ValuePredicate>? = null,
-//        ) = QueryBuilder(
-//            Queries.findAllPermissionTokenDefinitions(),
-//            PermissionTokenDefinitionsExtractor,
-//            queryFilter,
-//        )
+        @JvmStatic
+        fun findPermissionTokenIdsSchema(
+            queryFilter: GenericPredicateBox<ValuePredicate>? = null,
+        ) = QueryBuilder(
+            Queries.findPermissionTokenIdsSchema(),
+            PermissionTokenSchemaExtractor,
+            queryFilter,
+        )
 
         @JvmStatic
         @JvmOverloads

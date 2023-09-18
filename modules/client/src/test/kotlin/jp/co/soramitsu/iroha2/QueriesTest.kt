@@ -893,6 +893,23 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Permissions")
+    @Query("FindPermissionTokenSchema")
+    @Story("Transaction queries all permission token ids")
+    @SdkTestId("find_all_permission_token_ids")
+    fun `find all permission token ids`(): Unit = runBlocking {
+        val permissionTokenSchema = QueryBuilder.findPermissionTokenIdsSchema()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(Permissions.values().size, permissionTokenSchema.tokenIds.size)
+
+        val expectedPermissions = Permissions.values().map { it.type }.toList()
+        assertTrue(permissionTokenSchema.tokenIds.containsAll(expectedPermissions))
+    }
+
     private suspend fun createAccount(
         name: String,
         metadata: Map<Name, Value> = mapOf(),

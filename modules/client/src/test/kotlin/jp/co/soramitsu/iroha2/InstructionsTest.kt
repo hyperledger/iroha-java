@@ -1007,9 +1007,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([WithManyDomains::class])
-    @Story("Check query cursor")
-    @SdkTestId("query_cursor_test")
-    fun `cursor test`(): Unit = runBlocking {
+    @Story(
+        "Iroha2 returns 10 results per request. This test checks new internal implementation of cursor mechanism" +
+            "that is also implemented in Iroha2. Without it this test would fail with only 10 results returned",
+    )
+    @SdkTestId("querying_multiple_domains_with_cursor_test")
+    fun `querying multiple domains with cursor test`(): Unit = runBlocking {
         val domains = QueryBuilder.findAllDomains()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

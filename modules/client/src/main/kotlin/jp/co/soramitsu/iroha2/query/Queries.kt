@@ -223,9 +223,9 @@ object Queries {
     )
 
     /**
-     * Return all permission token definitions
+     * Return permission token ids schema
      */
-    fun findAllPermissionTokenDefinitions() = QueryBox.FindPermissionTokenSchema(
+    fun findPermissionTokenIdsSchema() = QueryBox.FindPermissionTokenSchema(
         FindPermissionTokenSchema(),
     )
 
