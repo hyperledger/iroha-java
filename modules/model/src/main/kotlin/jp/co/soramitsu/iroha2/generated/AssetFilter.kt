@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * AssetFilter
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AssetFilter(
     public val originFilter: FilterOptOfOriginFilterOfAssetEvent,
-    public val eventFilter: FilterOptOfAssetEventFilter
+    public val eventFilter: FilterOptOfAssetEventFilter,
 ) {
     public companion object : ScaleReader<AssetFilter>, ScaleWriter<AssetFilter> {
-        public override fun read(reader: ScaleCodecReader): AssetFilter = try {
+        override fun read(reader: ScaleCodecReader): AssetFilter = try {
             AssetFilter(
                 FilterOptOfOriginFilterOfAssetEvent.read(reader),
                 FilterOptOfAssetEventFilter.read(reader),
@@ -28,7 +29,7 @@ public data class AssetFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetFilter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: AssetFilter): Unit = try {
             FilterOptOfOriginFilterOfAssetEvent.write(writer, instance.originFilter)
             FilterOptOfAssetEventFilter.write(writer, instance.eventFilter)
         } catch (ex: Exception) {

@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -17,10 +18,10 @@ import kotlin.collections.List
  * Generated from 'NonTrivial<GenericPredicateBox<ValuePredicate>>' regular structure
  */
 public data class NonTrivial<T0>(
-    public val vecOfValuePredicate: List<GenericPredicateBox<ValuePredicate>>
+    public val vecOfValuePredicate: List<GenericPredicateBox<ValuePredicate>>,
 ) {
     public companion object : ScaleReader<NonTrivial<out Any>>, ScaleWriter<NonTrivial<out Any>> {
-        public override fun read(reader: ScaleCodecReader): NonTrivial<out Any> = try {
+        override fun read(reader: ScaleCodecReader): NonTrivial<out Any> = try {
             NonTrivial(
                 reader.readVec(reader.readCompactInt()) {
                     GenericPredicateBox.read(reader) as
@@ -31,7 +32,7 @@ public data class NonTrivial<T0>(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NonTrivial<out Any>) = try {
+        override fun write(writer: ScaleCodecWriter, instance: NonTrivial<out Any>): Unit = try {
             writer.writeCompact(instance.vecOfValuePredicate.size)
             instance.vecOfValuePredicate.forEach { value ->
                 GenericPredicateBox.write(writer, value)

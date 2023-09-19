@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.ByteArray
+import kotlin.Unit
 
 /**
  * PublicKey
@@ -17,10 +18,10 @@ import kotlin.ByteArray
  */
 public data class PublicKey(
     public val digestFunction: Algorithm,
-    public val payload: ByteArray
+    public val payload: ByteArray,
 ) {
     public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
-        public override fun read(reader: ScaleCodecReader): PublicKey = try {
+        override fun read(reader: ScaleCodecReader): PublicKey = try {
             PublicKey(
                 Algorithm.read(reader),
                 reader.readByteArray(),
@@ -29,7 +30,7 @@ public data class PublicKey(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PublicKey) = try {
+        override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit = try {
             Algorithm.write(writer, instance.digestFunction)
             writer.writeAsList(instance.payload)
         } catch (ex: Exception) {

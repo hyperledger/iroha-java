@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Array
+import kotlin.Unit
 
 /**
  * Ipv4Predicate
@@ -16,10 +17,10 @@ import kotlin.Array
  * Generated from 'Ipv4Predicate' regular structure
  */
 public data class Ipv4Predicate(
-    public val arrayOfIntervalOfu8: Array<IntervalOfu8>
+    public val arrayOfIntervalOfu8: Array<IntervalOfu8>,
 ) {
     public companion object : ScaleReader<Ipv4Predicate>, ScaleWriter<Ipv4Predicate> {
-        public override fun read(reader: ScaleCodecReader): Ipv4Predicate = try {
+        override fun read(reader: ScaleCodecReader): Ipv4Predicate = try {
             Ipv4Predicate(
                 reader.readArray(4) { IntervalOfu8.read(reader) },
             )
@@ -27,7 +28,7 @@ public data class Ipv4Predicate(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Ipv4Predicate) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Ipv4Predicate): Unit = try {
             instance.arrayOfIntervalOfu8.forEach { value ->
                 IntervalOfu8.write(writer, value)
             }

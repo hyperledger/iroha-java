@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * PermissionRemoved
@@ -16,21 +17,21 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class PermissionRemoved(
     public val roleId: RoleId,
-    public val permissionDefinitionId: PermissionTokenId
+    public val permissionTokenId: Name,
 ) {
     public companion object : ScaleReader<PermissionRemoved>, ScaleWriter<PermissionRemoved> {
-        public override fun read(reader: ScaleCodecReader): PermissionRemoved = try {
+        override fun read(reader: ScaleCodecReader): PermissionRemoved = try {
             PermissionRemoved(
                 RoleId.read(reader),
-                PermissionTokenId.read(reader),
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PermissionRemoved) = try {
+        override fun write(writer: ScaleCodecWriter, instance: PermissionRemoved): Unit = try {
             RoleId.write(writer, instance.roleId)
-            PermissionTokenId.write(writer, instance.permissionDefinitionId)
+            Name.write(writer, instance.permissionTokenId)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

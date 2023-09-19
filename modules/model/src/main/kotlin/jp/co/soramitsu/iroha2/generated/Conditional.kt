@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Boolean
+import kotlin.Unit
 
 /**
  * Conditional
@@ -18,10 +19,10 @@ import kotlin.Boolean
 public data class Conditional(
     public val condition: EvaluatesTo<Boolean>,
     public val then: InstructionBox,
-    public val otherwise: InstructionBox? = null
+    public val otherwise: InstructionBox? = null,
 ) {
     public companion object : ScaleReader<Conditional>, ScaleWriter<Conditional> {
-        public override fun read(reader: ScaleCodecReader): Conditional = try {
+        override fun read(reader: ScaleCodecReader): Conditional = try {
             Conditional(
                 EvaluatesTo.read(reader) as EvaluatesTo<Boolean>,
                 InstructionBox.read(reader),
@@ -31,7 +32,7 @@ public data class Conditional(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Conditional) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Conditional): Unit = try {
             EvaluatesTo.write(writer, instance.condition)
             InstructionBox.write(writer, instance.then)
             writer.writeNullable(InstructionBox, instance.otherwise)

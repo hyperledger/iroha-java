@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.Map
 
 /**
@@ -22,20 +23,22 @@ public data class Domain(
     public val assetDefinitions: Map<AssetDefinitionId, AssetDefinition>,
     public val assetTotalQuantities: Map<AssetDefinitionId, NumericValue>,
     public val logo: IpfsPath? = null,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<Domain>, ScaleWriter<Domain> {
-        public override fun read(reader: ScaleCodecReader): Domain = try {
+        override fun read(reader: ScaleCodecReader): Domain = try {
             Domain(
                 DomainId.read(reader),
                 reader.readMap(reader.readCompactInt(), { AccountId.read(reader) }, { Account.read(reader) }),
                 reader.readMap(
-                    reader.readCompactInt(), { AssetDefinitionId.read(reader) },
-                    { AssetDefinition.read(reader) }
+                    reader.readCompactInt(),
+                    { AssetDefinitionId.read(reader) },
+                    { AssetDefinition.read(reader) },
                 ),
                 reader.readMap(
-                    reader.readCompactInt(), { AssetDefinitionId.read(reader) },
-                    { NumericValue.read(reader) }
+                    reader.readCompactInt(),
+                    { AssetDefinitionId.read(reader) },
+                    { NumericValue.read(reader) },
                 ),
                 reader.readNullable(IpfsPath) as IpfsPath?,
                 Metadata.read(reader),
@@ -44,25 +47,25 @@ public data class Domain(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Domain) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Domain): Unit = try {
             DomainId.write(writer, instance.id)
             writer.writeCompact(instance.accounts.size)
             instance.accounts.toSortedMap(
-                AccountId.comparator()
+                AccountId.comparator(),
             ).forEach { (key, value) ->
                 AccountId.write(writer, key)
                 Account.write(writer, value)
             }
             writer.writeCompact(instance.assetDefinitions.size)
             instance.assetDefinitions.toSortedMap(
-                AssetDefinitionId.comparator()
+                AssetDefinitionId.comparator(),
             ).forEach { (key, value) ->
                 AssetDefinitionId.write(writer, key)
                 AssetDefinition.write(writer, value)
             }
             writer.writeCompact(instance.assetTotalQuantities.size)
             instance.assetTotalQuantities.toSortedMap(
-                AssetDefinitionId.comparator()
+                AssetDefinitionId.comparator(),
             ).forEach { (key, value) ->
                 AssetDefinitionId.write(writer, key)
                 NumericValue.write(writer, value)

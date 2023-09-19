@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * EventSubscriptionRequest
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'EventSubscriptionRequest' regular structure
  */
 public data class EventSubscriptionRequest(
-    public val filterBox: FilterBox
+    public val filterBox: FilterBox,
 ) {
     public companion object :
         ScaleReader<EventSubscriptionRequest>,
         ScaleWriter<EventSubscriptionRequest> {
-        public override fun read(reader: ScaleCodecReader): EventSubscriptionRequest = try {
+        override fun read(reader: ScaleCodecReader): EventSubscriptionRequest = try {
             EventSubscriptionRequest(
                 FilterBox.read(reader),
             )
@@ -28,7 +29,7 @@ public data class EventSubscriptionRequest(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EventSubscriptionRequest) = try {
+        override fun write(writer: ScaleCodecWriter, instance: EventSubscriptionRequest): Unit = try {
             FilterBox.write(writer, instance.filterBox)
         } catch (ex: Exception) {
             throw wrapException(ex)

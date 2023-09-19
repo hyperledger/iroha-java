@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
+import kotlin.Unit
 
 /**
  * TransactionLimits
@@ -17,10 +18,10 @@ import java.math.BigInteger
  */
 public data class TransactionLimits(
     public val maxInstructionNumber: BigInteger,
-    public val maxWasmSizeBytes: BigInteger
+    public val maxWasmSizeBytes: BigInteger,
 ) {
     public companion object : ScaleReader<TransactionLimits>, ScaleWriter<TransactionLimits> {
-        public override fun read(reader: ScaleCodecReader): TransactionLimits = try {
+        override fun read(reader: ScaleCodecReader): TransactionLimits = try {
             TransactionLimits(
                 reader.readUint64(),
                 reader.readUint64(),
@@ -29,7 +30,7 @@ public data class TransactionLimits(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TransactionLimits) = try {
+        override fun write(writer: ScaleCodecWriter, instance: TransactionLimits): Unit = try {
             writer.writeUint64(instance.maxInstructionNumber)
             writer.writeUint64(instance.maxWasmSizeBytes)
         } catch (ex: Exception) {

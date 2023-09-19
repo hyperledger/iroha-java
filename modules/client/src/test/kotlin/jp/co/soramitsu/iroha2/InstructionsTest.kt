@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
@@ -16,7 +15,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Value
@@ -45,6 +43,7 @@ import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
+import jp.co.soramitsu.iroha2.testengine.WithManyDomains
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
@@ -200,7 +199,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(joeId, joeKeyPair) {
             grantPermissionToken(
                 Permissions.CanUnregisterAccount,
-                IdKey.AccountId.type.asName() to joeId.toValueId(),
+                joeId.asJsonString(),
                 ALICE_ACCOUNT_ID,
             )
             unregisterAccount(joeId)
@@ -251,7 +250,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceHasPermissionToUnregisterDomain::class])
     @Feature("Domains")
     @Story("Account unregisters a domain")
-    @Permission("can_unregister_domain")
+    @Permission("CanUnregisterDomain")
     @SdkTestId("unregister_domain")
     fun `unregister domain`(): Unit = runBlocking {
         client.tx { unregisterDomain(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID) }
@@ -411,7 +410,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Accounts")
     @Story("Account sets key value pair")
-    @Permission("can_set_key_value_in_user_asset")
+    @Permission("CanSetKeyValueInUserAsset")
     @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
     fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
@@ -421,7 +420,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             // grant by Alice to Bob permissions to set key value in Asset.Store
             grantPermissionToken(
                 Permissions.CanSetKeyValueUserAssetsToken,
-                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                aliceAssetId.asJsonString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -509,7 +508,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Assets")
     @Story("Account burns an asset")
-    @Permission("can_burn_assets_with_definition")
+    @Permission("CanBurnAssetsWithDefinition")
     @SdkTestId("burn_other_user_asset")
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
@@ -517,7 +516,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             mintAsset(DEFAULT_ASSET_ID, 100)
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
-                IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue(),
+                DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
                 BOB_ACCOUNT_ID,
             )
         }
@@ -608,7 +607,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class])
     @Feature("Accounts")
     @Story("Account changes account metadata")
-    @Permission("can_set_key_value_in_user_account")
+    @Permission("CanSetKeyValueInUserAccount")
     @SdkTestId("change_account_metadata_by_granted_account")
     fun `change user account metadata`(): Unit = runBlocking {
         val saltKey = "salt"
@@ -618,7 +617,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             account(BOB_ACCOUNT_ID)
             grantPermissionToken(
                 Permissions.CanSetKeyValueInUserAccount,
-                IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue(),
+                BOB_ACCOUNT_ID.asJsonString(),
                 ALICE_ACCOUNT_ID,
             )
             buildSigned(BOB_KEYPAIR)
@@ -642,7 +641,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceAndBobEachHave100Xor::class])
     @Feature("Assets")
     @Story("Account transfers assets")
-    @Permission("can_transfer_user_asset")
+    @Permission("CanTransferUserAsset")
     @SdkTestId("transfer_asset")
     fun `transfer asset`(): Unit = runBlocking {
         val aliceAssetId = DEFAULT_ASSET_ID
@@ -669,7 +668,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             grantPermissionToken(
                 Permissions.CanTransferUserAssetsToken,
-                IdKey.AssetId.type.asName() to aliceAssetId.asValue(),
+                aliceAssetId.asJsonString(),
                 joeId,
             )
         }
@@ -877,7 +876,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Story("Account registers a domain")
     @Permission("no_permission_required")
     @SdkTestId("register_existence_domain")
-    fun `double domain registration should fails`(): Unit = runBlocking {
+    fun `double domain registration should fail`(): Unit = runBlocking {
         val domainId = UUID.randomUUID().toString().asDomainId()
         client.tx { registerDomain(domainId) }
         assertThrows<TransactionRejectedException> {
@@ -890,13 +889,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Feature("Assets")
     @Story("Account registers an asset definition")
     @SdkTestId("register_asset_definition_with_store_value_type")
-    @Permission("can_remove_key_value_in_user_asset")
+    @Permission("CanRemoveKeyValueInUserAsset")
     @Story("Account registers a role")
     @SdkTestId("register_role")
     @SdkTestId("attach_permissions_to_role")
     @SdkTestId("grant_role_to_account")
     @Story("Account sets key value pair")
-    @Permission("can_set_key_value_in_user_asset")
+    @Permission("CanSetKeyValueInUserAsset")
     @Feature("Accounts")
     @SdkTestId("set_key_value_in_foreign_asset_after_granting_role")
     fun `register and grant role to account and then revoke it`(): Unit = runBlocking {
@@ -910,12 +909,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             registerRole(
                 roleId,
                 PermissionToken(
-                    PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
+                    Permissions.CanSetKeyValueUserAssetsToken.type,
+                    assetId.asStringWithJson(),
                 ),
                 PermissionToken(
-                    PermissionTokenId(Permissions.CanRemoveKeyValueInUserAssets.type),
-                    mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
+                    Permissions.CanRemoveKeyValueInUserAssets.type,
+                    assetId.asStringWithJson(),
                 ),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
@@ -1006,6 +1005,21 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             }
     }
 
+    @Test
+    @WithIroha([WithManyDomains::class])
+    @Story(
+        "Iroha2 returns 10 results per request. This test checks new internal implementation of cursor mechanism" +
+            "that is also implemented in Iroha2. Without it this test would fail with only 10 results returned",
+    )
+    @SdkTestId("querying_multiple_domains_with_cursor_test")
+    fun `querying multiple domains with cursor test`(): Unit = runBlocking {
+        val domains = QueryBuilder.findAllDomains()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(27, domains.size)
+    }
+
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
         client.sendTransaction {
             account(super.account)
@@ -1019,16 +1033,14 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     private suspend fun getAccountAmount(
         accountId: AccountId = ALICE_ACCOUNT_ID,
         assetId: AssetId = DEFAULT_ASSET_ID,
-    ): Long {
-        return QueryBuilder.findAccountById(accountId)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query).assets[assetId]?.value
-            }.let { value ->
-                (value as? AssetValue.Quantity)?.u32 ?: 0
-            }
-    }
+    ) = QueryBuilder.findAccountById(accountId)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { query ->
+            client.sendQuery(query).assets[assetId]?.value
+        }.let { value ->
+            (value as? AssetValue.Quantity)?.u32 ?: 0
+        }
 
     private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Int) {
         client.sendTransaction {
@@ -1044,12 +1056,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-    private suspend fun getAsset(assetId: AssetId? = null): Asset {
-        return QueryBuilder.findAssetById(assetId ?: DEFAULT_ASSET_ID)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }
-    }
+    private suspend fun getAsset(assetId: AssetId? = null) = QueryBuilder
+        .findAssetById(assetId ?: DEFAULT_ASSET_ID)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { query ->
+            client.sendQuery(query)
+        }
 }

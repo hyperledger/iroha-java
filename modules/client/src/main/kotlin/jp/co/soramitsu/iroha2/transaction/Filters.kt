@@ -58,6 +58,7 @@ import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
 import jp.co.soramitsu.iroha2.toIrohaHash
 
@@ -70,7 +71,7 @@ object Filters {
     /**
      * Create a data filter
      */
-    fun data(entityFilter: DataEntityFilter? = null) = FilterBox.Data(
+    fun data(entityFilter: DataEntityFilter? = null) = TriggeringFilterBox.Data(
         entityFilter?.let { FilterOptOfDataEntityFilter.BySome(it) }
             ?: FilterOptOfDataEntityFilter.AcceptAll(),
     )
@@ -86,7 +87,7 @@ object Filters {
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId,
-    ) = FilterBox.ExecuteTrigger(
+    ) = TriggeringFilterBox.ExecuteTrigger(
         ExecuteTriggerEventFilter(triggerId, authority),
     )
 

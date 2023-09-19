@@ -3,62 +3,52 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.Account
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BlockHeader
 import jp.co.soramitsu.iroha2.generated.Domain
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.NumericValue
-import jp.co.soramitsu.iroha2.generated.PaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
+import jp.co.soramitsu.iroha2.generated.PermissionTokenSchema
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.TransactionQueryResult
-import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
-import jp.co.soramitsu.iroha2.model.Page
 import java.math.BigInteger
 
 /**
  * Extractors are used by [QueryBuilder] to extract data from query results
  */
 interface ResultExtractor<T> {
-    fun extract(result: VersionedPaginatedQueryResult): Page<T> {
+    fun extract(result: VersionedBatchedResponseOfValue): T {
         return when (result) {
-            is VersionedPaginatedQueryResult.V1 -> {
-                val data = extract(result.paginatedQueryResult)
-                Page(
-                    data,
-                    result.paginatedQueryResult.pagination,
-                    result.paginatedQueryResult.total,
-                )
-            }
-
+            is VersionedBatchedResponseOfValue.V1 -> extract(result.batchedResponseOfValue)
             else -> throw IrohaSdkException("Unexpected type ${result::class}")
         }
     }
 
-    fun extract(result: PaginatedQueryResult): T
+    fun extract(result: BatchedResponseOfValue): T
 }
 
 /**
  * @return the query result as it is
  */
-object AsIs : ResultExtractor<PaginatedQueryResult> {
-    override fun extract(result: PaginatedQueryResult) = result
+object AsIs : ResultExtractor<BatchedResponseOfValue> {
+    override fun extract(result: BatchedResponseOfValue): BatchedResponseOfValue = result
 }
 
 /**
  * Extract an asset from a query [result]
  */
 object AssetExtractor : ResultExtractor<Asset> {
-    override fun extract(result: PaginatedQueryResult): Asset {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Asset::asset)
+    override fun extract(result: BatchedResponseOfValue): Asset {
+        return extractIdentifiable(result.batch, IdentifiableBox.Asset::asset)
     }
 }
 
@@ -66,8 +56,8 @@ object AssetExtractor : ResultExtractor<Asset> {
  * Extract an asset definition from a query [result]
  */
 object AssetDefinitionExtractor : ResultExtractor<AssetDefinition> {
-    override fun extract(result: PaginatedQueryResult): AssetDefinition {
-        return extractIdentifiable(result.result.value, IdentifiableBox.AssetDefinition::assetDefinition)
+    override fun extract(result: BatchedResponseOfValue): AssetDefinition {
+        return extractIdentifiable(result.batch, IdentifiableBox.AssetDefinition::assetDefinition)
     }
 }
 
@@ -75,8 +65,8 @@ object AssetDefinitionExtractor : ResultExtractor<AssetDefinition> {
  * Extract an account from a query [result]
  */
 object AccountExtractor : ResultExtractor<Account> {
-    override fun extract(result: PaginatedQueryResult): Account {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Account::account)
+    override fun extract(result: BatchedResponseOfValue): Account {
+        return extractIdentifiable(result.batch, IdentifiableBox.Account::account)
     }
 }
 
@@ -84,8 +74,8 @@ object AccountExtractor : ResultExtractor<Account> {
  * Extract a list of accounts from a query [result]
  */
 object AccountsExtractor : ResultExtractor<List<Account>> {
-    override fun extract(result: PaginatedQueryResult): List<Account> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<Account> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Account::account)
         }
     }
@@ -95,8 +85,8 @@ object AccountsExtractor : ResultExtractor<List<Account>> {
  * Extract a list of assets from a query [result]
  */
 object AssetsExtractor : ResultExtractor<List<Asset>> {
-    override fun extract(result: PaginatedQueryResult): List<Asset> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<Asset> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Asset::asset)
         }
     }
@@ -106,8 +96,8 @@ object AssetsExtractor : ResultExtractor<List<Asset>> {
  * Extract a list of asset definitions from a query [result]
  */
 object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
-    override fun extract(result: PaginatedQueryResult): List<AssetDefinition> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<AssetDefinition> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition)
         }
     }
@@ -117,8 +107,8 @@ object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
  * Extract a domain from a query [result]
  */
 object DomainExtractor : ResultExtractor<Domain> {
-    override fun extract(result: PaginatedQueryResult): Domain {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Domain::domain)
+    override fun extract(result: BatchedResponseOfValue): Domain {
+        return extractIdentifiable(result.batch, IdentifiableBox.Domain::domain)
     }
 }
 
@@ -126,8 +116,8 @@ object DomainExtractor : ResultExtractor<Domain> {
  * Extract a list of domains from a query [result]
  */
 object DomainsExtractor : ResultExtractor<List<Domain>> {
-    override fun extract(result: PaginatedQueryResult): List<Domain> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<Domain> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Domain::domain)
         }
     }
@@ -137,8 +127,8 @@ object DomainsExtractor : ResultExtractor<List<Domain>> {
  * Extract a lost of peers from a query [result]
  */
 object PeersExtractor : ResultExtractor<List<Peer>> {
-    override fun extract(result: PaginatedQueryResult): List<Peer> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<Peer> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Peer::peer)
         }
     }
@@ -148,8 +138,8 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
  * Extract a trigger from a query [result]
  */
 object TriggerBoxExtractor : ResultExtractor<TriggerBox> {
-    override fun extract(result: PaginatedQueryResult): TriggerBox {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Trigger::triggerBox)
+    override fun extract(result: BatchedResponseOfValue): TriggerBox {
+        return extractIdentifiable(result.batch, IdentifiableBox.Trigger::triggerBox)
     }
 }
 
@@ -157,8 +147,8 @@ object TriggerBoxExtractor : ResultExtractor<TriggerBox> {
  * Extract a list of triggers from a query [result]
  */
 object TriggerBoxesExtractor : ResultExtractor<List<TriggerBox>> {
-    override fun extract(result: PaginatedQueryResult): List<TriggerBox> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<TriggerBox> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Trigger::triggerBox)
         }
     }
@@ -168,8 +158,8 @@ object TriggerBoxesExtractor : ResultExtractor<List<TriggerBox>> {
  * Extract a list of trigger IDs from a query [result]
  */
 object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
-    override fun extract(result: PaginatedQueryResult): List<TriggerId> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<TriggerId> {
+        return extractVec(result.batch) {
             extractValue(it, Value.Id::idBox).cast<IdBox.TriggerId>().triggerId
         }
     }
@@ -179,79 +169,61 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
  * Extract a list of permission tokens from a query [result]
  */
 object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
-    override fun extract(result: PaginatedQueryResult): List<PermissionToken> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<PermissionToken> {
+        return extractVec(result.batch) {
             extractValue(it, Value.PermissionToken::permissionToken)
         }
     }
 }
 
 /**
- * Extract a list of permission token definitions from a query [result]
+ * Extract a permission token schema from a query [result]
  */
-object PermissionTokenDefinitionsExtractor : ResultExtractor<List<PermissionTokenDefinition>> {
-    override fun extract(result: PaginatedQueryResult): List<PermissionTokenDefinition> {
-        return extractVec(result.result.value) {
-            extractIdentifiable(it, IdentifiableBox.PermissionTokenDefinition::permissionTokenDefinition)
+object PermissionTokenSchemaExtractor : ResultExtractor<PermissionTokenSchema> {
+    override fun extract(result: BatchedResponseOfValue): PermissionTokenSchema {
+        return extractValue(result.batch, Value.PermissionTokenSchema::permissionTokenSchema)
+    }
+}
+
+/**
+* Extract a list of transaction values from a query [result]
+*/
+object TransactionValuesExtractor : ResultExtractor<List<TransactionQueryOutput>> {
+    override fun extract(result: BatchedResponseOfValue): List<TransactionQueryOutput> {
+        return extractVec(result.batch) {
+            extractValue(it, Value.TransactionQueryOutput::transactionQueryOutput)
         }
     }
 }
 
 /**
- * Extract a list of transaction values from a query [result]
- */
-object TransactionValuesExtractor : ResultExtractor<List<TransactionValue>> {
-    override fun extract(result: PaginatedQueryResult): List<TransactionValue> {
-        return extractVec(result.result.value) {
-            extractValue(it, Value.TransactionValue::transactionValue)
-        }
-    }
-}
-
-/**
- * Extract a transaction value from a query [result]
- */
-object TransactionValueExtractor : ResultExtractor<TransactionValue> {
-    override fun extract(result: PaginatedQueryResult): TransactionValue {
-        return extractValue(result.result.value, Value.TransactionValue::transactionValue)
-    }
-}
-
-object TransactionsValueExtractor : ResultExtractor<List<TransactionValue>> {
-    override fun extract(result: PaginatedQueryResult): List<TransactionValue> {
-        return extractVec(result.result.value) {
-            extractValue(it, Value.TransactionValue::transactionValue)
-        }
-    }
-}
-
-object TransactionQueryResultExtractor : ResultExtractor<List<TransactionQueryResult>> {
-    override fun extract(result: PaginatedQueryResult): List<TransactionQueryResult> {
-        return extractVec(result.result.value) {
-            extractValue(it, Value.TransactionQueryResult::transactionQueryResult)
-        }
+* Extract a transaction value from a query [result]
+*/
+object TransactionValueExtractor : ResultExtractor<TransactionQueryOutput> {
+    override fun extract(result: BatchedResponseOfValue): TransactionQueryOutput {
+        return extractValue(result.batch, Value.TransactionQueryOutput::transactionQueryOutput)
     }
 }
 
 object BlocksValueExtractor : ResultExtractor<List<VersionedCommittedBlock>> {
-    override fun extract(result: PaginatedQueryResult): List<VersionedCommittedBlock> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<VersionedCommittedBlock> {
+        return extractVec(result.batch) {
             extractValue(it, Value.Block::versionedCommittedBlock)
         }
     }
 }
 
 object BlockHeadersExtractor : ResultExtractor<List<BlockHeader>> {
-    override fun extract(result: PaginatedQueryResult): List<BlockHeader> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<BlockHeader> {
+        return extractVec(result.batch) {
             extractValue(it, Value.BlockHeader::blockHeader)
         }
     }
 }
 
 object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
-    override fun extract(result: PaginatedQueryResult): BlockHeader {
-        return extractValue(result.result.value, Value.BlockHeader::blockHeader)
+    override fun extract(result: BatchedResponseOfValue): BlockHeader {
+        return extractValue(result.batch, Value.BlockHeader::blockHeader)
     }
 }
 
@@ -259,8 +231,8 @@ object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
  * Extract `Value.U32` from a query [result]
  */
 object U32Extractor : ResultExtractor<Long> {
-    override fun extract(result: PaginatedQueryResult): Long {
-        return extractValue(result.result.value) { v: Value ->
+    override fun extract(result: BatchedResponseOfValue): Long {
+        return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U32>().u32
         }
     }
@@ -270,8 +242,8 @@ object U32Extractor : ResultExtractor<Long> {
  * Extract `Value.U64` from a query [result]
  */
 object U64Extractor : ResultExtractor<BigInteger> {
-    override fun extract(result: PaginatedQueryResult): BigInteger {
-        return extractValue(result.result.value) { v: Value ->
+    override fun extract(result: BatchedResponseOfValue): BigInteger {
+        return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U64>().u64
         }
     }
@@ -281,8 +253,8 @@ object U64Extractor : ResultExtractor<BigInteger> {
  * Extract `Value.U128` from a query [result]
  */
 object U128Extractor : ResultExtractor<BigInteger> {
-    override fun extract(result: PaginatedQueryResult): BigInteger {
-        return extractValue(result.result.value) { v: Value ->
+    override fun extract(result: BatchedResponseOfValue): BigInteger {
+        return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U128>().u128
         }
     }
@@ -292,8 +264,8 @@ object U128Extractor : ResultExtractor<BigInteger> {
  * Extract `Value` from a query [result]
  */
 object ValueExtractor : ResultExtractor<Value> {
-    override fun extract(result: PaginatedQueryResult): Value {
-        return result.result.value
+    override fun extract(result: BatchedResponseOfValue): Value {
+        return result.batch
     }
 }
 
@@ -301,8 +273,8 @@ object ValueExtractor : ResultExtractor<Value> {
  * Extract a list of roles from a query [result]
  */
 object RolesExtractor : ResultExtractor<List<Role>> {
-    override fun extract(result: PaginatedQueryResult): List<Role> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<Role> {
+        return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Role::role)
         }
     }
@@ -312,8 +284,8 @@ object RolesExtractor : ResultExtractor<List<Role>> {
  * Extract a role from a query [result]
  */
 object RoleExtractor : ResultExtractor<Role> {
-    override fun extract(result: PaginatedQueryResult): Role {
-        return extractIdentifiable(result.result.value, IdentifiableBox.Role::role)
+    override fun extract(result: BatchedResponseOfValue): Role {
+        return extractIdentifiable(result.batch, IdentifiableBox.Role::role)
     }
 }
 
@@ -321,8 +293,8 @@ object RoleExtractor : ResultExtractor<Role> {
  * Extract a list of role IDs from a query [result]
  */
 object RoleIdsExtractor : ResultExtractor<List<RoleId>> {
-    override fun extract(result: PaginatedQueryResult): List<RoleId> {
-        return extractVec(result.result.value) {
+    override fun extract(result: BatchedResponseOfValue): List<RoleId> {
+        return extractVec(result.batch) {
             extractValue(it, Value.Id::idBox).cast<IdBox.RoleId>().roleId
         }
     }

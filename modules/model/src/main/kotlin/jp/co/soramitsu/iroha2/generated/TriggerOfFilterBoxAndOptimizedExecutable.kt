@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * TriggerOfFilterBoxAndOptimizedExecutable
@@ -16,25 +17,24 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class TriggerOfFilterBoxAndOptimizedExecutable(
     public val id: TriggerId,
-    public val action: ActionOfFilterBoxAndOptimizedExecutable
+    public val action: ActionOfFilterBoxAndOptimizedExecutable,
 ) {
     public companion object :
         ScaleReader<TriggerOfFilterBoxAndOptimizedExecutable>,
         ScaleWriter<TriggerOfFilterBoxAndOptimizedExecutable> {
-        public override fun read(reader: ScaleCodecReader): TriggerOfFilterBoxAndOptimizedExecutable =
-            try {
-                TriggerOfFilterBoxAndOptimizedExecutable(
-                    TriggerId.read(reader),
-                    ActionOfFilterBoxAndOptimizedExecutable.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+        override fun read(reader: ScaleCodecReader): TriggerOfFilterBoxAndOptimizedExecutable = try {
+            TriggerOfFilterBoxAndOptimizedExecutable(
+                TriggerId.read(reader),
+                ActionOfFilterBoxAndOptimizedExecutable.read(reader),
+            )
+        } catch (ex: Exception) {
+            throw wrapException(ex)
+        }
 
-        public override fun write(
+        override fun write(
             writer: ScaleCodecWriter,
-            instance: TriggerOfFilterBoxAndOptimizedExecutable
-        ) = try {
+            instance: TriggerOfFilterBoxAndOptimizedExecutable,
+        ): Unit = try {
             TriggerId.write(writer, instance.id)
             ActionOfFilterBoxAndOptimizedExecutable.write(writer, instance.action)
         } catch (ex: Exception) {

@@ -1,13 +1,14 @@
 package jp.co.soramitsu.iroha2.transaction
 
-import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
+import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.evaluatesTo
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.ActionOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.ActionOfTriggeringFilterBoxAndExecutable
 import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -20,7 +21,6 @@ import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerBox
 import jp.co.soramitsu.iroha2.generated.FailBox
-import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.GrantBox
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
@@ -37,8 +37,6 @@ import jp.co.soramitsu.iroha2.generated.Pair
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenDefinition
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
@@ -52,13 +50,12 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransferBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndExecutable
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.ValueKind
 import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import jp.co.soramitsu.iroha2.toSocketAddr
-import jp.co.soramitsu.iroha2.toValueId
 import java.math.BigDecimal
 
 /**
@@ -90,32 +87,6 @@ object Instructions {
     }
 
     /**
-     * Register a permission token
-     */
-    fun registerPermissionToken(
-        permissionsId: PermissionTokenId,
-        params: Map<Name, ValueKind> = mapOf(),
-    ) = registerSome {
-        RegistrableBox.PermissionTokenDefinition(PermissionTokenDefinition(permissionsId, params))
-    }
-
-    fun registerPermissionToken(
-        permission: Permissions,
-    ) = registerPermissionToken(permission.type, null)
-
-    fun registerPermissionToken(
-        permission: Permissions,
-        idKey: IdKey,
-    ) = registerPermissionToken(permission.type, idKey.type)
-
-    fun registerPermissionToken(name: Name, idKey: IdKey) = registerPermissionToken(name, idKey.type)
-
-    fun registerPermissionToken(name: Name, idKey: String?) = registerPermissionToken(
-        PermissionTokenId(name),
-        idKey?.let { mapOf(it.asName() to ValueKind.Id()) } ?: emptyMap(),
-    )
-
-    /**
      * Register a time trigger
      */
     fun registerTimeTrigger(
@@ -127,13 +98,13 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
-                    FilterBox.Time(filter),
+                    TriggeringFilterBox.Time(filter),
                     metadata,
                 ),
             ),
@@ -151,9 +122,9 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
@@ -173,12 +144,12 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
@@ -198,12 +169,12 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: FilterBox,
+        filter: TriggeringFilterBox,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Wasm(WasmSmartContract(wasm)),
                     repeats,
                     accountId,
@@ -225,13 +196,13 @@ object Instructions {
         metadata: Metadata,
     ) = registerSome {
         RegistrableBox.Trigger(
-            TriggerOfFilterBoxAndExecutable(
+            TriggerOfTriggeringFilterBoxAndExecutable(
                 triggerId,
-                ActionOfFilterBoxAndExecutable(
+                ActionOfTriggeringFilterBoxAndExecutable(
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
-                    Filters.time(EventFilters.timeEventFilter()),
+                    TriggeringFilterBox.Time(EventFilters.timeEventFilter()),
                     metadata,
                 ),
             ),
@@ -448,11 +419,9 @@ object Instructions {
      */
     fun grantPermissionToken(
         permission: Permissions,
-        params: Map<Name, Value>,
+        payload: String,
         target: AccountId,
-    ) = grantSome(IdBox.AccountId(target)) {
-        PermissionToken(definitionId = PermissionTokenId(permission.type), params = params)
-    }
+    ) = grantSome(IdBox.AccountId(target), PermissionToken(permission.type, payload.asStringWithJson()).asValue())
 
     /**
      * Grant an account a given role.
@@ -505,8 +474,8 @@ object Instructions {
     fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId): InstructionBox {
         return revokeSome(IdBox.AccountId(target)) {
             PermissionToken(
-                definitionId = PermissionTokenId(Permissions.CanSetKeyValueUserAssetsToken.type),
-                params = mapOf(IdKey.AssetId.type.asName() to assetId.toValueId()),
+                definitionId = Permissions.CanSetKeyValueUserAssetsToken.type,
+                payload = assetId.asJsonString().asStringWithJson(),
             )
         }
     }
@@ -531,13 +500,10 @@ object Instructions {
         regBox: () -> RegistrableBox,
     ) = InstructionBox.Register(RegisterBox(regBox().evaluatesTo()))
 
-    private inline fun grantSome(
-        idBox: IdBox,
-        permissionToken: () -> PermissionToken,
-    ) = InstructionBox.Grant(
+    private fun grantSome(idBox: IdBox, value: Value) = InstructionBox.Grant(
         GrantBox(
+            `object` = value.evaluatesTo(),
             destinationId = idBox.evaluatesTo(),
-            `object` = Value.PermissionToken(permissionToken()).evaluatesTo(),
         ),
     )
 

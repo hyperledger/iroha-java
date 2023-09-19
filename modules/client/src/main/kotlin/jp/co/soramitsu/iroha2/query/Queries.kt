@@ -19,7 +19,6 @@ import jp.co.soramitsu.iroha2.generated.FindAllBlocks
 import jp.co.soramitsu.iroha2.generated.FindAllDomains
 import jp.co.soramitsu.iroha2.generated.FindAllParameters
 import jp.co.soramitsu.iroha2.generated.FindAllPeers
-import jp.co.soramitsu.iroha2.generated.FindAllPermissionTokenDefinitions
 import jp.co.soramitsu.iroha2.generated.FindAllRoleIds
 import jp.co.soramitsu.iroha2.generated.FindAllRoles
 import jp.co.soramitsu.iroha2.generated.FindAllTransactions
@@ -36,6 +35,7 @@ import jp.co.soramitsu.iroha2.generated.FindAssetsByName
 import jp.co.soramitsu.iroha2.generated.FindBlockHeaderByHash
 import jp.co.soramitsu.iroha2.generated.FindDomainById
 import jp.co.soramitsu.iroha2.generated.FindDomainKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindPermissionTokenSchema
 import jp.co.soramitsu.iroha2.generated.FindPermissionTokensByAccountId
 import jp.co.soramitsu.iroha2.generated.FindRoleByRoleId
 import jp.co.soramitsu.iroha2.generated.FindRolesByAccountId
@@ -46,10 +46,13 @@ import jp.co.soramitsu.iroha2.generated.FindTriggerById
 import jp.co.soramitsu.iroha2.generated.FindTriggerKeyValueByIdAndKey
 import jp.co.soramitsu.iroha2.generated.FindTriggersByDomainId
 import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashOf
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.QueryBox
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
+import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.
@@ -220,16 +223,18 @@ object Queries {
     )
 
     /**
-     * Return all permission token definitions
+     * Return permission token ids schema
      */
-    fun findAllPermissionTokenDefinitions() = QueryBox.FindAllPermissionTokenDefinitions(
-        FindAllPermissionTokenDefinitions(),
+    fun findPermissionTokenIdsSchema() = QueryBox.FindPermissionTokenSchema(
+        FindPermissionTokenSchema(),
     )
 
     /**
      * Return the transaction by [Hash]
      */
-    fun findTransactionByHash(hash: Hash) = QueryBox.FindTransactionByHash(FindTransactionByHash(hash.evaluatesTo()))
+    fun findTransactionByHash(hash: Hash) = QueryBox.FindTransactionByHash(
+        FindTransactionByHash(HashOf<VersionedSignedTransaction>(hash).evaluatesTo()),
+    )
 
     /**
      * Return all the role IDs that are attached to the given [AccountId]
@@ -295,7 +300,9 @@ object Queries {
     /**
      * Return the block header corresponding to the given [Hash]
      */
-    fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(FindBlockHeaderByHash(hash.evaluatesTo()))
+    fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(
+        FindBlockHeaderByHash(HashOf<VersionedCommittedBlock>(hash).evaluatesTo()),
+    )
 
     /**
      * Return all transactions

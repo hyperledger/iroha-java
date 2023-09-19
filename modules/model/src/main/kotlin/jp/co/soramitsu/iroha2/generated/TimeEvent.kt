@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * TimeEvent
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class TimeEvent(
     public val prevInterval: TimeInterval? = null,
-    public val interval: TimeInterval
+    public val interval: TimeInterval,
 ) {
     public companion object : ScaleReader<TimeEvent>, ScaleWriter<TimeEvent> {
-        public override fun read(reader: ScaleCodecReader): TimeEvent = try {
+        override fun read(reader: ScaleCodecReader): TimeEvent = try {
             TimeEvent(
                 reader.readNullable(TimeInterval) as TimeInterval?,
                 TimeInterval.read(reader),
@@ -28,7 +29,7 @@ public data class TimeEvent(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TimeEvent) = try {
+        override fun write(writer: ScaleCodecWriter, instance: TimeEvent): Unit = try {
             writer.writeNullable(TimeInterval, instance.prevInterval)
             TimeInterval.write(writer, instance.interval)
         } catch (ex: Exception) {

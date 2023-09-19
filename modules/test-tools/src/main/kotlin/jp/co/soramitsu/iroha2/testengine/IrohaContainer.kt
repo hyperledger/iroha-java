@@ -72,7 +72,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withCopyToContainer(
                 forHostPath(configDirLocation),
                 "/$DEFAULT_CONFIG_DIR",
-            ).also {
+            )
+            .withCopyToContainer(
+                forHostPath(configDirLocation),
+                "/app/.cache/wasmtime",
+            )
+            .also {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
@@ -149,7 +154,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "dev-nightly-0a9fc8ede7a126da87628ae306a845a29f89094c"
+        const val DEFAULT_IMAGE_TAG = "stable-2.0.0-pre-rc.19"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_VALIDATOR_FILE_NAME = "validator.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"

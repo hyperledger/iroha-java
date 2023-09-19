@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * AssetDefinitionTotalQuantityChanged
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AssetDefinitionTotalQuantityChanged(
     public val assetDefinitionId: AssetDefinitionId,
-    public val totalAmount: NumericValue
+    public val totalAmount: NumericValue,
 ) {
     public companion object :
         ScaleReader<AssetDefinitionTotalQuantityChanged>,
         ScaleWriter<AssetDefinitionTotalQuantityChanged> {
-        public override fun read(reader: ScaleCodecReader): AssetDefinitionTotalQuantityChanged = try {
+        override fun read(reader: ScaleCodecReader): AssetDefinitionTotalQuantityChanged = try {
             AssetDefinitionTotalQuantityChanged(
                 AssetDefinitionId.read(reader),
                 NumericValue.read(reader),
@@ -30,10 +31,7 @@ public data class AssetDefinitionTotalQuantityChanged(
             throw wrapException(ex)
         }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: AssetDefinitionTotalQuantityChanged
-        ) = try {
+        override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionTotalQuantityChanged): Unit = try {
             AssetDefinitionId.write(writer, instance.assetDefinitionId)
             NumericValue.write(writer, instance.totalAmount)
         } catch (ex: Exception) {

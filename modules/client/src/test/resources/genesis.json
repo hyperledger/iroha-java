@@ -5,7 +5,6 @@
         "Register": {
           "NewDomain": {
             "id": "wonderland",
-            "logo": null,
             "metadata": {}
           }
         }
@@ -33,43 +32,12 @@
         }
       },
       {
-        "Register": {
-          "PermissionTokenDefinition": {
-            "id": "can_set_key_value_in_user_metadata",
-            "params": {
-              "account_id": "Id"
-            }
-          }
-        }
-      },
-      {
         "Grant": {
           "PermissionToken": {
-            "definition_id": "can_set_key_value_in_user_metadata",
-            "params": {
-              "account_id": {
-                "AccountId": "alice@wonderland"
-              }
+            "definition_id": "CanSetKeyValueInUserAccount",
+            "payload": {
+              "account_id": "alice@wonderland"
             }
-          },
-          "destination_id": {
-            "AccountId": "bob@wonderland"
-          }
-        }
-      },
-      {
-        "Register": {
-          "PermissionTokenDefinition": {
-            "id": "can_register_domains",
-            "params": {}
-          }
-        }
-      },
-      {
-        "Grant": {
-          "PermissionToken": {
-            "definition_id": "can_register_domains",
-            "params": {}
           },
           "destination_id": {
             "AccountId": "bob@wonderland"

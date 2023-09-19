@@ -1,10 +1,11 @@
 package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
-import jp.co.soramitsu.iroha2.IdKey
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asDomainId
+import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
@@ -15,7 +16,6 @@ import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenId
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
@@ -33,7 +33,7 @@ open class AliceCanUpgradeValidator : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanUpgradeValidator,
-            mapOf(),
+            "",
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -43,7 +43,7 @@ open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterAnyPeer,
-            mapOf(),
+            "",
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -53,12 +53,12 @@ open class AliceAndBobHasPermissionToMintPublicKeys : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserPublicKeys,
-            mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
+            ALICE_ACCOUNT_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
         ),
         Instructions.grantPermissionToken(
             Permissions.CanMintUserPublicKeys,
-            mapOf(IdKey.AccountId.type.asName() to BOB_ACCOUNT_ID.asValue()),
+            BOB_ACCOUNT_ID.asJsonString(),
             BOB_ACCOUNT_ID,
         ),
     ),
@@ -69,7 +69,7 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
         Instructions.registerDomain(NEW_DOMAIN_ID),
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterDomain,
-            mapOf(IdKey.DomainId.type.asName() to NEW_DOMAIN_ID.asValue()),
+            NEW_DOMAIN_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -77,6 +77,20 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
     companion object {
         val NEW_DOMAIN_ID = DomainId("NEW_DOMAIN".asName())
     }
+}
+
+open class WithManyDomains : Genesis(
+    rawGenesisBlock(
+        *registerDomains(25),
+    ),
+)
+
+fun registerDomains(count: Int): Array<InstructionBox> {
+    val instructions = mutableListOf<InstructionBox>()
+    for (i in 1..count) {
+        instructions.add(Instructions.registerDomain(DomainId("NEW_DOMAIN$i".asName())))
+    }
+    return instructions.toTypedArray()
 }
 
 /**
@@ -87,12 +101,12 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             PermissionToken(
-                PermissionTokenId(Permissions.CanSetKeyValueInUserAccount.type),
-                mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
+                Permissions.CanSetKeyValueInUserAccount.type,
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
             ),
             PermissionToken(
-                PermissionTokenId(Permissions.CanRemoveKeyValueInUserAccount.type),
-                mapOf(IdKey.AccountId.type.asName() to ALICE_ACCOUNT_ID.asValue()),
+                Permissions.CanRemoveKeyValueInUserAccount.type,
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
@@ -112,7 +126,7 @@ open class AliceHas100XorAndPermissionToBurn : Genesis(
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
         Instructions.grantPermissionToken(
             Permissions.CanMintUserAssetDefinitionsToken,
-            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -160,12 +174,12 @@ open class AliceAndBobEachHave100Xor : Genesis(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
         Instructions.grantPermissionToken(
             Permissions.CanTransferAssetsWithDefinition,
-            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
         ),
         Instructions.grantPermissionToken(
             Permissions.CanTransferAssetsWithDefinition,
-            mapOf(IdKey.AssetDefinitionId.type.asName() to DEFAULT_ASSET_DEFINITION_ID.asValue()),
+            DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
             BOB_ACCOUNT_ID,
         ),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),
@@ -202,7 +216,7 @@ open class AliceCanMintXor : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             Permissions.CanMintUserAssetDefinitionsToken,
-            mapOf(IdKey.AssetDefinitionId.type.asName() to XOR_DEFINITION_ID.asValue()),
+            XOR_DEFINITION_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -318,22 +332,6 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
             BOB_ACCOUNT_ID,
             listOf(BOB_KEYPAIR.public.toIrohaPublicKey()),
         ),
-        Instructions.registerPermissionToken(Permissions.CanUnregisterAccount, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanUnregisterDomain, IdKey.DomainId),
-        Instructions.registerPermissionToken(Permissions.CanSetKeyValueInUserAccount.type, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAccount.type, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanBurnAssetWithDefinition.type, IdKey.AssetDefinitionId),
-        Instructions.registerPermissionToken(
-            Permissions.CanMintUserAssetDefinitionsToken.type,
-            IdKey.AssetDefinitionId,
-        ),
-        Instructions.registerPermissionToken(Permissions.CanSetKeyValueUserAssetsToken.type, IdKey.AssetId),
-        Instructions.registerPermissionToken(Permissions.CanRemoveKeyValueInUserAssets.type, IdKey.AssetId),
-        Instructions.registerPermissionToken(Permissions.CanTransferAssetsWithDefinition, IdKey.AssetDefinitionId),
-        Instructions.registerPermissionToken(Permissions.CanTransferUserAssetsToken, IdKey.AssetId),
-        Instructions.registerPermissionToken(Permissions.CanMintUserPublicKeys, IdKey.AccountId),
-        Instructions.registerPermissionToken(Permissions.CanUnregisterAnyPeer),
-        Instructions.registerPermissionToken(Permissions.CanUpgradeValidator),
         *isi,
     ).let { listOf(it) },
     Genesis.validatorMode,

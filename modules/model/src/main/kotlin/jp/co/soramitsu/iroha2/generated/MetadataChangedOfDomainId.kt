@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * MetadataChangedOfDomainId
@@ -17,12 +18,12 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class MetadataChangedOfDomainId(
     public val targetId: DomainId,
     public val key: Name,
-    public val `value`: Value
+    public val `value`: Value,
 ) {
     public companion object :
         ScaleReader<MetadataChangedOfDomainId>,
         ScaleWriter<MetadataChangedOfDomainId> {
-        public override fun read(reader: ScaleCodecReader): MetadataChangedOfDomainId = try {
+        override fun read(reader: ScaleCodecReader): MetadataChangedOfDomainId = try {
             MetadataChangedOfDomainId(
                 DomainId.read(reader),
                 Name.read(reader),
@@ -32,7 +33,7 @@ public data class MetadataChangedOfDomainId(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfDomainId) = try {
+        override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfDomainId): Unit = try {
             DomainId.write(writer, instance.targetId)
             Name.write(writer, instance.key)
             Value.write(writer, instance.`value`)

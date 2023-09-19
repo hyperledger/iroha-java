@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * NewAssetDefinition
@@ -19,10 +20,10 @@ public data class NewAssetDefinition(
     public val valueType: AssetValueType,
     public val mintable: Mintable,
     public val logo: IpfsPath? = null,
-    public val metadata: Metadata
+    public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<NewAssetDefinition>, ScaleWriter<NewAssetDefinition> {
-        public override fun read(reader: ScaleCodecReader): NewAssetDefinition = try {
+        override fun read(reader: ScaleCodecReader): NewAssetDefinition = try {
             NewAssetDefinition(
                 AssetDefinitionId.read(reader),
                 AssetValueType.read(reader),
@@ -34,7 +35,7 @@ public data class NewAssetDefinition(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NewAssetDefinition) = try {
+        override fun write(writer: ScaleCodecWriter, instance: NewAssetDefinition): Unit = try {
             AssetDefinitionId.write(writer, instance.id)
             AssetValueType.write(writer, instance.valueType)
             Mintable.write(writer, instance.mintable)

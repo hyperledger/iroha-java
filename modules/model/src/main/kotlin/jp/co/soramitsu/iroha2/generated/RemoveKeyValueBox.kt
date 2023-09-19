@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RemoveKeyValueBox
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class RemoveKeyValueBox(
     public val objectId: EvaluatesTo<IdBox>,
-    public val key: EvaluatesTo<Name>
+    public val key: EvaluatesTo<Name>,
 ) {
     public companion object : ScaleReader<RemoveKeyValueBox>, ScaleWriter<RemoveKeyValueBox> {
-        public override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = try {
+        override fun read(reader: ScaleCodecReader): RemoveKeyValueBox = try {
             RemoveKeyValueBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
                 EvaluatesTo.read(reader) as EvaluatesTo<Name>,
@@ -28,7 +29,7 @@ public data class RemoveKeyValueBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueBox): Unit = try {
             EvaluatesTo.write(writer, instance.objectId)
             EvaluatesTo.write(writer, instance.key)
         } catch (ex: Exception) {

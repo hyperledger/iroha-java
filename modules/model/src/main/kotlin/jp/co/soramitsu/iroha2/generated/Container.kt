@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * Container
@@ -26,22 +27,28 @@ public sealed class Container : ModelEnum {
      * 'Any' variant
      */
     public data class Any(
-        public val valuePredicate: ValuePredicate
+        public val valuePredicate: ValuePredicate,
     ) : Container() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Any>, ScaleWriter<Any> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Container.Any>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Container.Any> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Any = try {
-                Any(
-                    ValuePredicate.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Container.Any =
+                try {
+                    Any(
+                        ValuePredicate.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Any) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Container.Any,
+            ): Unit = try {
                 ValuePredicate.write(writer, instance.valuePredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,22 +60,28 @@ public sealed class Container : ModelEnum {
      * 'All' variant
      */
     public data class All(
-        public val valuePredicate: ValuePredicate
+        public val valuePredicate: ValuePredicate,
     ) : Container() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<All>, ScaleWriter<All> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Container.All>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Container.All> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): All = try {
-                All(
-                    ValuePredicate.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Container.All =
+                try {
+                    All(
+                        ValuePredicate.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public override fun write(writer: ScaleCodecWriter, instance: All) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Container.All,
+            ): Unit = try {
                 ValuePredicate.write(writer, instance.valuePredicate)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +93,16 @@ public sealed class Container : ModelEnum {
      * 'AtIndex' variant
      */
     public data class AtIndex(
-        public val atIndex: jp.co.soramitsu.iroha2.generated.AtIndex
+        public val atIndex: jp.co.soramitsu.iroha2.generated.AtIndex,
     ) : Container() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AtIndex>, ScaleWriter<AtIndex> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Container.AtIndex>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Container.AtIndex> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): AtIndex = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Container.AtIndex = try {
                 AtIndex(
                     jp.co.soramitsu.iroha2.generated.AtIndex.read(reader),
                 )
@@ -95,7 +110,10 @@ public sealed class Container : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AtIndex) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Container.AtIndex,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.AtIndex.write(writer, instance.atIndex)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -107,14 +125,16 @@ public sealed class Container : ModelEnum {
      * 'ValueOfKey' variant
      */
     public data class ValueOfKey(
-        public val valueOfKey: jp.co.soramitsu.iroha2.generated.ValueOfKey
+        public val valueOfKey: jp.co.soramitsu.iroha2.generated.ValueOfKey,
     ) : Container() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ValueOfKey>, ScaleWriter<ValueOfKey> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Container.ValueOfKey>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Container.ValueOfKey> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): ValueOfKey = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Container.ValueOfKey = try {
                 ValueOfKey(
                     jp.co.soramitsu.iroha2.generated.ValueOfKey.read(reader),
                 )
@@ -122,7 +142,10 @@ public sealed class Container : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ValueOfKey) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Container.ValueOfKey,
+            ): Unit = try {
                 jp.co.soramitsu.iroha2.generated.ValueOfKey.write(writer, instance.valueOfKey)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -134,14 +157,16 @@ public sealed class Container : ModelEnum {
      * 'HasKey' variant
      */
     public data class HasKey(
-        public val name: Name
+        public val name: Name,
     ) : Container() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<HasKey>, ScaleWriter<HasKey> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Container.HasKey>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Container.HasKey> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): HasKey = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Container.HasKey = try {
                 HasKey(
                     Name.read(reader),
                 )
@@ -149,7 +174,10 @@ public sealed class Container : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: HasKey) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Container.HasKey,
+            ): Unit = try {
                 Name.write(writer, instance.name)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -158,7 +186,7 @@ public sealed class Container : ModelEnum {
     }
 
     public companion object : ScaleReader<Container>, ScaleWriter<Container> {
-        public override fun read(reader: ScaleCodecReader): Container = when (
+        override fun read(reader: ScaleCodecReader): Container = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -167,10 +195,9 @@ public sealed class Container : ModelEnum {
             2 -> AtIndex.read(reader)
             3 -> ValueOfKey.read(reader)
             4 -> HasKey.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Container) {
+        override fun write(writer: ScaleCodecWriter, instance: Container) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Any.write(writer, instance as Any)
@@ -178,8 +205,7 @@ public sealed class Container : ModelEnum {
                 2 -> AtIndex.write(writer, instance as AtIndex)
                 3 -> ValueOfKey.write(writer, instance as ValueOfKey)
                 4 -> HasKey.write(writer, instance as HasKey)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

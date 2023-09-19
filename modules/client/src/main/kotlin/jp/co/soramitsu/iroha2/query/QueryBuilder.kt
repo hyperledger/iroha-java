@@ -12,13 +12,12 @@ import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
-import jp.co.soramitsu.iroha2.PermissionTokenDefinitionsExtractor
+import jp.co.soramitsu.iroha2.PermissionTokenSchemaExtractor
 import jp.co.soramitsu.iroha2.PermissionTokensExtractor
 import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
 import jp.co.soramitsu.iroha2.RoleIdsExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
-import jp.co.soramitsu.iroha2.TransactionQueryResultExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
 import jp.co.soramitsu.iroha2.TriggerBoxExtractor
@@ -74,16 +73,11 @@ class QueryBuilder<R>(
 
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
         val filter = queryFilter ?: GenericPredicateBox.Raw(ValuePredicate.Pass())
-        val payload = QueryPayload(
-            creationTimeMillis ?: fallbackCreationTime(),
-            query,
-            checkNotNull(accountId) { "Account Id of the sender is mandatory" },
-            filter,
-        )
+        val payload = QueryPayload(checkNotNull(accountId) { "Account Id of the sender is mandatory" }, query, filter)
         val encodedPayload = QueryPayload.encode(payload)
         val signature = Signature(keyPair.public.toIrohaPublicKey(), keyPair.private.sign(encodedPayload))
 
-        val query = VersionedSignedQuery.V1(SignedQuery(payload, signature.asSignatureOf()))
+        val query = VersionedSignedQuery.V1(SignedQuery(signature.asSignatureOf(), payload))
         return QueryAndExtractor(query, resultExtractor)
     }
 
@@ -281,7 +275,6 @@ class QueryBuilder<R>(
             QueryBuilder(Queries.findAllPeers(), PeersExtractor, queryFilter)
 
         @JvmStatic
-        @JvmOverloads
         fun findTransactionsByAccountId(
             accountId: AccountId,
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
@@ -303,12 +296,11 @@ class QueryBuilder<R>(
         )
 
         @JvmStatic
-        @JvmOverloads
-        fun findAllPermissionTokenDefinitions(
+        fun findPermissionTokenIdsSchema(
             queryFilter: GenericPredicateBox<ValuePredicate>? = null,
         ) = QueryBuilder(
-            Queries.findAllPermissionTokenDefinitions(),
-            PermissionTokenDefinitionsExtractor,
+            Queries.findPermissionTokenIdsSchema(),
+            PermissionTokenSchemaExtractor,
             queryFilter,
         )
 
@@ -359,10 +351,9 @@ class QueryBuilder<R>(
         fun findTransactionByHash(hex: String) = findTransactionByHash(hex.fromHex().hash().toIrohaHash())
 
         @JvmStatic
-        @JvmOverloads
         fun findAllTransactions(queryFilter: GenericPredicateBox<ValuePredicate>? = null) = QueryBuilder(
             Queries.findAllTransactions(),
-            TransactionQueryResultExtractor,
+            TransactionValuesExtractor,
             queryFilter,
         )
 

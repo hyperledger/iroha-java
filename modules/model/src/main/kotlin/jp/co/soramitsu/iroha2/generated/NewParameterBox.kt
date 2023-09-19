@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * NewParameterBox
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'NewParameterBox' regular structure
  */
 public data class NewParameterBox(
-    public val parameter: EvaluatesTo<Parameter>
+    public val parameter: EvaluatesTo<Parameter>,
 ) {
     public companion object : ScaleReader<NewParameterBox>, ScaleWriter<NewParameterBox> {
-        public override fun read(reader: ScaleCodecReader): NewParameterBox = try {
+        override fun read(reader: ScaleCodecReader): NewParameterBox = try {
             NewParameterBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<Parameter>,
             )
@@ -26,7 +27,7 @@ public data class NewParameterBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: NewParameterBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: NewParameterBox): Unit = try {
             EvaluatesTo.write(writer, instance.parameter)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * OriginFilterOfPeerEvent
@@ -15,12 +16,12 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'OriginFilterOfPeerEvent' regular structure
  */
 public data class OriginFilterOfPeerEvent(
-    public val peerId: PeerId
+    public val peerId: PeerId,
 ) {
     public companion object :
         ScaleReader<OriginFilterOfPeerEvent>,
         ScaleWriter<OriginFilterOfPeerEvent> {
-        public override fun read(reader: ScaleCodecReader): OriginFilterOfPeerEvent = try {
+        override fun read(reader: ScaleCodecReader): OriginFilterOfPeerEvent = try {
             OriginFilterOfPeerEvent(
                 PeerId.read(reader),
             )
@@ -28,7 +29,7 @@ public data class OriginFilterOfPeerEvent(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfPeerEvent) = try {
+        override fun write(writer: ScaleCodecWriter, instance: OriginFilterOfPeerEvent): Unit = try {
             PeerId.write(writer, instance.peerId)
         } catch (ex: Exception) {
             throw wrapException(ex)

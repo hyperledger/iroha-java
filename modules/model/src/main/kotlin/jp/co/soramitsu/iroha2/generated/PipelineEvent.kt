@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * PipelineEvent
@@ -17,10 +18,10 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class PipelineEvent(
     public val entityKind: PipelineEntityKind,
     public val status: PipelineStatus,
-    public val hash: Hash
+    public val hash: Hash,
 ) {
     public companion object : ScaleReader<PipelineEvent>, ScaleWriter<PipelineEvent> {
-        public override fun read(reader: ScaleCodecReader): PipelineEvent = try {
+        override fun read(reader: ScaleCodecReader): PipelineEvent = try {
             PipelineEvent(
                 PipelineEntityKind.read(reader),
                 PipelineStatus.read(reader),
@@ -30,7 +31,7 @@ public data class PipelineEvent(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PipelineEvent) = try {
+        override fun write(writer: ScaleCodecWriter, instance: PipelineEvent): Unit = try {
             PipelineEntityKind.write(writer, instance.entityKind)
             PipelineStatus.write(writer, instance.status)
             Hash.write(writer, instance.hash)

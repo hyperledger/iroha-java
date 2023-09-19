@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * FindTriggerById
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'FindTriggerById' regular structure
  */
 public data class FindTriggerById(
-    public val id: EvaluatesTo<TriggerId>
+    public val id: EvaluatesTo<TriggerId>,
 ) {
     public companion object : ScaleReader<FindTriggerById>, ScaleWriter<FindTriggerById> {
-        public override fun read(reader: ScaleCodecReader): FindTriggerById = try {
+        override fun read(reader: ScaleCodecReader): FindTriggerById = try {
             FindTriggerById(
                 EvaluatesTo.read(reader) as EvaluatesTo<TriggerId>,
             )
@@ -26,7 +27,7 @@ public data class FindTriggerById(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindTriggerById) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindTriggerById): Unit = try {
             EvaluatesTo.write(writer, instance.id)
         } catch (ex: Exception) {
             throw wrapException(ex)

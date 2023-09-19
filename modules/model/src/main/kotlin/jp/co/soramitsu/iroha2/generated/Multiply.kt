@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Multiply
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Multiply(
     public val left: EvaluatesTo<NumericValue>,
-    public val right: EvaluatesTo<NumericValue>
+    public val right: EvaluatesTo<NumericValue>,
 ) {
     public companion object : ScaleReader<Multiply>, ScaleWriter<Multiply> {
-        public override fun read(reader: ScaleCodecReader): Multiply = try {
+        override fun read(reader: ScaleCodecReader): Multiply = try {
             Multiply(
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
                 EvaluatesTo.read(reader) as EvaluatesTo<NumericValue>,
@@ -28,7 +29,7 @@ public data class Multiply(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Multiply) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Multiply): Unit = try {
             EvaluatesTo.write(writer, instance.left)
             EvaluatesTo.write(writer, instance.right)
         } catch (ex: Exception) {

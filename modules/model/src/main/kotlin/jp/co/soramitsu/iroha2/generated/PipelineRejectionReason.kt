@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * PipelineRejectionReason
@@ -26,14 +27,16 @@ public sealed class PipelineRejectionReason : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val blockRejectionReason: BlockRejectionReason
+        public val blockRejectionReason: BlockRejectionReason,
     ) : PipelineRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Block>, ScaleWriter<Block> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Block>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Block> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Block = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Block = try {
                 Block(
                     BlockRejectionReason.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class PipelineRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Block,
+            ): Unit = try {
                 BlockRejectionReason.write(writer, instance.blockRejectionReason)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +59,16 @@ public sealed class PipelineRejectionReason : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val transactionRejectionReason: TransactionRejectionReason
+        public val transactionRejectionReason: TransactionRejectionReason,
     ) : PipelineRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Transaction>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Transaction> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Transaction = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Transaction = try {
                 Transaction(
                     TransactionRejectionReason.read(reader),
                 )
@@ -68,33 +76,35 @@ public sealed class PipelineRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
-                TransactionRejectionReason.write(writer, instance.transactionRejectionReason)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PipelineRejectionReason.Transaction,
+            ): Unit =
+                try {
+                    TransactionRejectionReason.write(writer, instance.transactionRejectionReason)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
     public companion object :
         ScaleReader<PipelineRejectionReason>,
         ScaleWriter<PipelineRejectionReason> {
-        public override fun read(reader: ScaleCodecReader): PipelineRejectionReason = when (
-            val
-            discriminant = reader.readUByte()
+        override fun read(reader: ScaleCodecReader): PipelineRejectionReason = when (
+            val discriminant =
+                reader.readUByte()
         ) {
             0 -> Block.read(reader)
             1 -> Transaction.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PipelineRejectionReason) {
+        override fun write(writer: ScaleCodecWriter, instance: PipelineRejectionReason) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Block.write(writer, instance as Block)
                 1 -> Transaction.write(writer, instance as Transaction)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

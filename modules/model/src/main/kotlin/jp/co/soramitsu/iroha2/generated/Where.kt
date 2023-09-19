@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.Map
 
 /**
@@ -18,10 +19,10 @@ import kotlin.collections.Map
  */
 public data class Where(
     public val expression: EvaluatesTo<Value>,
-    public val values: Map<Name, EvaluatesTo<Value>>
+    public val values: Map<Name, EvaluatesTo<Value>>,
 ) {
     public companion object : ScaleReader<Where>, ScaleWriter<Where> {
-        public override fun read(reader: ScaleCodecReader): Where = try {
+        override fun read(reader: ScaleCodecReader): Where = try {
             Where(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 reader.readMap(reader.readCompactInt(), { Name.read(reader) }, {
@@ -33,11 +34,11 @@ public data class Where(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Where) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Where): Unit = try {
             EvaluatesTo.write(writer, instance.expression)
             writer.writeCompact(instance.values.size)
             instance.values.toSortedMap(
-                Name.comparator()
+                Name.comparator(),
             ).forEach { (key, value) ->
                 Name.write(writer, key)
                 EvaluatesTo.write(writer, value)

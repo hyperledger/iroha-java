@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * AssetEventFilter
@@ -24,52 +25,55 @@ public sealed class AssetEventFilter : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is ByCreated -> ByCreated.equals(this, other)
         is ByDeleted -> ByDeleted.equals(this, other)
         is ByAdded -> ByAdded.equals(this, other)
         is ByRemoved -> ByRemoved.equals(this, other)
         is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
         is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is ByCreated -> ByCreated.hashCode()
         is ByDeleted -> ByDeleted.hashCode()
         is ByAdded -> ByAdded.hashCode()
         is ByRemoved -> ByRemoved.hashCode()
         is ByMetadataInserted -> ByMetadataInserted.hashCode()
         is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'ByCreated' variant
      */
     public class ByCreated : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByCreated>, ScaleWriter<ByCreated> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByCreated>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByCreated> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): ByCreated = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByCreated = try {
                 ByCreated()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByCreated) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByCreated,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByCreated, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByCreated, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByCreated".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByCreated".hashCode()
         }
     }
 
@@ -77,28 +81,33 @@ public sealed class AssetEventFilter : ModelEnum {
      * 'ByDeleted' variant
      */
     public class ByDeleted : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByDeleted>, ScaleWriter<ByDeleted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByDeleted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByDeleted> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): ByDeleted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByDeleted = try {
                 ByDeleted()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByDeleted) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByDeleted,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByDeleted, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByDeleted, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByDeleted".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByDeleted".hashCode()
         }
     }
 
@@ -106,28 +115,33 @@ public sealed class AssetEventFilter : ModelEnum {
      * 'ByAdded' variant
      */
     public class ByAdded : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByAdded>, ScaleWriter<ByAdded> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByAdded>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByAdded> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): ByAdded = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByAdded = try {
                 ByAdded()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByAdded) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByAdded,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByAdded, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByAdded, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByAdded".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByAdded".hashCode()
         }
     }
 
@@ -135,28 +149,33 @@ public sealed class AssetEventFilter : ModelEnum {
      * 'ByRemoved' variant
      */
     public class ByRemoved : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByRemoved>, ScaleWriter<ByRemoved> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByRemoved>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByRemoved> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): ByRemoved = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByRemoved = try {
                 ByRemoved()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByRemoved) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByRemoved,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByRemoved, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByRemoved, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByRemoved".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByRemoved".hashCode()
         }
     }
 
@@ -164,28 +183,37 @@ public sealed class AssetEventFilter : ModelEnum {
      * 'ByMetadataInserted' variant
      */
     public class ByMetadataInserted : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByMetadataInserted>, ScaleWriter<ByMetadataInserted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataInserted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataInserted> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): ByMetadataInserted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataInserted = try {
                 ByMetadataInserted()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByMetadataInserted) = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataInserted,
+            ): Unit =
+                try {
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
-            public fun equals(o1: ByMetadataInserted, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataInserted,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByMetadataInserted".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByMetadataInserted".hashCode()
         }
     }
 
@@ -193,33 +221,41 @@ public sealed class AssetEventFilter : ModelEnum {
      * 'ByMetadataRemoved' variant
      */
     public class ByMetadataRemoved : AssetEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<ByMetadataRemoved>, ScaleWriter<ByMetadataRemoved> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataRemoved>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataRemoved> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): ByMetadataRemoved = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataRemoved = try {
                 ByMetadataRemoved()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: ByMetadataRemoved) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataRemoved,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: ByMetadataRemoved, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.AssetEventFilter.ByMetadataRemoved,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".AssetEventFilter.ByMetadataRemoved".hashCode()
+            override fun hashCode(): Int = ".AssetEventFilter.ByMetadataRemoved".hashCode()
         }
     }
 
     public companion object : ScaleReader<AssetEventFilter>, ScaleWriter<AssetEventFilter> {
-        public override fun read(reader: ScaleCodecReader): AssetEventFilter = when (
+        override fun read(reader: ScaleCodecReader): AssetEventFilter = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -229,10 +265,9 @@ public sealed class AssetEventFilter : ModelEnum {
             3 -> ByRemoved.read(reader)
             4 -> ByMetadataInserted.read(reader)
             5 -> ByMetadataRemoved.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AssetEventFilter) {
+        override fun write(writer: ScaleCodecWriter, instance: AssetEventFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> ByCreated.write(writer, instance as ByCreated)
@@ -241,8 +276,7 @@ public sealed class AssetEventFilter : ModelEnum {
                 3 -> ByRemoved.write(writer, instance as ByRemoved)
                 4 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
                 5 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

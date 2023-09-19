@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * MintBox
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class MintBox(
     public val `object`: EvaluatesTo<Value>,
-    public val destinationId: EvaluatesTo<IdBox>
+    public val destinationId: EvaluatesTo<IdBox>,
 ) {
     public companion object : ScaleReader<MintBox>, ScaleWriter<MintBox> {
-        public override fun read(reader: ScaleCodecReader): MintBox = try {
+        override fun read(reader: ScaleCodecReader): MintBox = try {
             MintBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
@@ -28,7 +29,7 @@ public data class MintBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MintBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: MintBox): Unit = try {
             EvaluatesTo.write(writer, instance.`object`)
             EvaluatesTo.write(writer, instance.destinationId)
         } catch (ex: Exception) {

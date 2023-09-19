@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * AccountRoleChanged
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class AccountRoleChanged(
     public val accountId: AccountId,
-    public val roleId: RoleId
+    public val roleId: RoleId,
 ) {
     public companion object : ScaleReader<AccountRoleChanged>, ScaleWriter<AccountRoleChanged> {
-        public override fun read(reader: ScaleCodecReader): AccountRoleChanged = try {
+        override fun read(reader: ScaleCodecReader): AccountRoleChanged = try {
             AccountRoleChanged(
                 AccountId.read(reader),
                 RoleId.read(reader),
@@ -28,7 +29,7 @@ public data class AccountRoleChanged(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: AccountRoleChanged) = try {
+        override fun write(writer: ScaleCodecWriter, instance: AccountRoleChanged): Unit = try {
             AccountId.write(writer, instance.accountId)
             RoleId.write(writer, instance.roleId)
         } catch (ex: Exception) {

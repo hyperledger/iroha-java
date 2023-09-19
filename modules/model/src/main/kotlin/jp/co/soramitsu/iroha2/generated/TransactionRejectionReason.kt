@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * TransactionRejectionReason
@@ -24,28 +25,30 @@ public sealed class TransactionRejectionReason : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is UnexpectedGenesisAccountSignature -> UnexpectedGenesisAccountSignature.equals(this, other)
-        else -> super.equals(other)
-    }
+        is Expired -> Expired.equals(this, other)
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is UnexpectedGenesisAccountSignature -> UnexpectedGenesisAccountSignature.hashCode()
-        else -> super.hashCode()
-    }
+        is Expired -> Expired.hashCode()
+        else -> super.hashCode() }
 
     /**
      * 'AccountDoesNotExist' variant
      */
     public data class AccountDoesNotExist(
-        public val findError: FindError
+        public val findError: FindError,
     ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AccountDoesNotExist>, ScaleWriter<AccountDoesNotExist> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.AccountDoesNotExist>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.AccountDoesNotExist> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): AccountDoesNotExist = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.AccountDoesNotExist = try {
                 AccountDoesNotExist(
                     FindError.read(reader),
                 )
@@ -53,7 +56,10 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AccountDoesNotExist) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.AccountDoesNotExist,
+            ): Unit = try {
                 FindError.write(writer, instance.findError)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -65,14 +71,16 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'LimitCheck' variant
      */
     public data class LimitCheck(
-        public val transactionLimitError: TransactionLimitError
+        public val transactionLimitError: TransactionLimitError,
     ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<LimitCheck>, ScaleWriter<LimitCheck> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.LimitCheck>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.LimitCheck> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): LimitCheck = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.LimitCheck = try {
                 LimitCheck(
                     TransactionLimitError.read(reader),
                 )
@@ -80,11 +88,15 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: LimitCheck) = try {
-                TransactionLimitError.write(writer, instance.transactionLimitError)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.LimitCheck,
+            ): Unit =
+                try {
+                    TransactionLimitError.write(writer, instance.transactionLimitError)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
@@ -92,14 +104,16 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'Validation' variant
      */
     public data class Validation(
-        public val validationFail: ValidationFail
+        public val validationFail: ValidationFail,
     ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Validation>, ScaleWriter<Validation> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Validation>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Validation> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Validation = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Validation = try {
                 Validation(
                     ValidationFail.read(reader),
                 )
@@ -107,38 +121,12 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Validation) = try {
-                ValidationFail.write(writer, instance.validationFail)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
-     * 'UnsatisfiedSignatureCondition' variant
-     */
-    public data class UnsatisfiedSignatureCondition(
-        public val unsatisfiedSignatureConditionFail: UnsatisfiedSignatureConditionFail
-    ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<UnsatisfiedSignatureCondition>,
-            ScaleWriter<UnsatisfiedSignatureCondition> {
-            public const val DISCRIMINANT: Int = 3
-
-            public override fun read(reader: ScaleCodecReader): UnsatisfiedSignatureCondition = try {
-                UnsatisfiedSignatureCondition(
-                    UnsatisfiedSignatureConditionFail.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public override fun write(writer: ScaleCodecWriter, instance: UnsatisfiedSignatureCondition) =
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Validation,
+            ): Unit =
                 try {
-                    UnsatisfiedSignatureConditionFail.write(writer, instance.unsatisfiedSignatureConditionFail)
+                    ValidationFail.write(writer, instance.validationFail)
                 } catch (ex: Exception) {
                     throw wrapException(ex)
                 }
@@ -149,14 +137,16 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'InstructionExecution' variant
      */
     public data class InstructionExecution(
-        public val instructionExecutionFail: InstructionExecutionFail
+        public val instructionExecutionFail: InstructionExecutionFail,
     ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<InstructionExecution>, ScaleWriter<InstructionExecution> {
-            public const val DISCRIMINANT: Int = 4
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.InstructionExecution>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.InstructionExecution> {
+            public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): InstructionExecution = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.InstructionExecution = try {
                 InstructionExecution(
                     InstructionExecutionFail.read(reader),
                 )
@@ -164,7 +154,10 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: InstructionExecution) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.InstructionExecution,
+            ): Unit = try {
                 InstructionExecutionFail.write(writer, instance.instructionExecutionFail)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -176,14 +169,16 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'WasmExecution' variant
      */
     public data class WasmExecution(
-        public val wasmExecutionFail: WasmExecutionFail
+        public val wasmExecutionFail: WasmExecutionFail,
     ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<WasmExecution>, ScaleWriter<WasmExecution> {
-            public const val DISCRIMINANT: Int = 5
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.WasmExecution>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.WasmExecution> {
+            public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): WasmExecution = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.WasmExecution = try {
                 WasmExecution(
                     WasmExecutionFail.read(reader),
                 )
@@ -191,7 +186,10 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: WasmExecution) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.WasmExecution,
+            ): Unit = try {
                 WasmExecutionFail.write(writer, instance.wasmExecutionFail)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -203,33 +201,36 @@ public sealed class TransactionRejectionReason : ModelEnum {
      * 'UnexpectedGenesisAccountSignature' variant
      */
     public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<UnexpectedGenesisAccountSignature>,
-            ScaleWriter<UnexpectedGenesisAccountSignature> {
-            public const val DISCRIMINANT: Int = 6
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature> {
+            public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): UnexpectedGenesisAccountSignature = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature = try {
                 UnexpectedGenesisAccountSignature()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(
+            override fun write(
                 writer: ScaleCodecWriter,
-                instance: UnexpectedGenesisAccountSignature
-            ) = try {
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: UnexpectedGenesisAccountSignature, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int =
+            override fun hashCode(): Int =
                 ".TransactionRejectionReason.UnexpectedGenesisAccountSignature".hashCode()
         }
     }
@@ -237,65 +238,71 @@ public sealed class TransactionRejectionReason : ModelEnum {
     /**
      * 'Expired' variant
      */
-    public data class Expired(
-        public val transactionExpired: TransactionExpired
-    ) : TransactionRejectionReason() {
-        public override fun discriminant(): Int = DISCRIMINANT
+    public class Expired : TransactionRejectionReason() {
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Expired>, ScaleWriter<Expired> {
-            public const val DISCRIMINANT: Int = 7
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired> {
+            public const val DISCRIMINANT: Int = 6
 
-            public override fun read(reader: ScaleCodecReader): Expired = try {
-                Expired(
-                    TransactionExpired.read(reader),
-                )
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired = try {
+                Expired()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Expired) = try {
-                TransactionExpired.write(writer, instance.transactionExpired)
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".TransactionRejectionReason.Expired".hashCode()
         }
     }
 
     public companion object :
         ScaleReader<TransactionRejectionReason>,
         ScaleWriter<TransactionRejectionReason> {
-        public override fun read(reader: ScaleCodecReader): TransactionRejectionReason = when (
-            val
-            discriminant = reader.readUByte()
+        override fun read(reader: ScaleCodecReader): TransactionRejectionReason = when (
+            val discriminant =
+                reader.readUByte()
         ) {
             0 -> AccountDoesNotExist.read(reader)
             1 -> LimitCheck.read(reader)
             2 -> Validation.read(reader)
-            3 -> UnsatisfiedSignatureCondition.read(reader)
-            4 -> InstructionExecution.read(reader)
-            5 -> WasmExecution.read(reader)
-            6 -> UnexpectedGenesisAccountSignature.read(reader)
-            7 -> Expired.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            3 -> InstructionExecution.read(reader)
+            4 -> WasmExecution.read(reader)
+            5 -> UnexpectedGenesisAccountSignature.read(reader)
+            6 -> Expired.read(reader)
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason) {
+        override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AccountDoesNotExist.write(writer, instance as AccountDoesNotExist)
                 1 -> LimitCheck.write(writer, instance as LimitCheck)
                 2 -> Validation.write(writer, instance as Validation)
-                3 -> UnsatisfiedSignatureCondition.write(writer, instance as UnsatisfiedSignatureCondition)
-                4 -> InstructionExecution.write(writer, instance as InstructionExecution)
-                5 -> WasmExecution.write(writer, instance as WasmExecution)
-                6 -> UnexpectedGenesisAccountSignature.write(
+                3 -> InstructionExecution.write(writer, instance as InstructionExecution)
+                4 -> WasmExecution.write(writer, instance as WasmExecution)
+                5 -> UnexpectedGenesisAccountSignature.write(
                     writer,
                     instance as
-                        UnexpectedGenesisAccountSignature
+                        UnexpectedGenesisAccountSignature,
                 )
-                7 -> Expired.write(writer, instance as Expired)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                6 -> Expired.write(writer, instance as Expired)
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

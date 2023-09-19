@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FilterOptOfTriggerEventFilter
@@ -24,42 +25,48 @@ public sealed class FilterOptOfTriggerEventFilter : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is AcceptAll -> AcceptAll.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is AcceptAll -> AcceptAll.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'AcceptAll' variant
      */
     public class AcceptAll : FilterOptOfTriggerEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AcceptAll>, ScaleWriter<AcceptAll> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.AcceptAll>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.AcceptAll> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): AcceptAll = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.AcceptAll = try {
                 AcceptAll()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AcceptAll) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.AcceptAll,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: AcceptAll, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.AcceptAll,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".FilterOptOfTriggerEventFilter.AcceptAll".hashCode()
+            override fun hashCode(): Int = ".FilterOptOfTriggerEventFilter.AcceptAll".hashCode()
         }
     }
 
@@ -67,14 +74,16 @@ public sealed class FilterOptOfTriggerEventFilter : ModelEnum {
      * 'BySome' variant
      */
     public data class BySome(
-        public val triggerEventFilter: TriggerEventFilter
+        public val triggerEventFilter: TriggerEventFilter,
     ) : FilterOptOfTriggerEventFilter() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<BySome>, ScaleWriter<BySome> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.BySome>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.BySome> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): BySome = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.BySome = try {
                 BySome(
                     TriggerEventFilter.read(reader),
                 )
@@ -82,33 +91,35 @@ public sealed class FilterOptOfTriggerEventFilter : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: BySome) = try {
-                TriggerEventFilter.write(writer, instance.triggerEventFilter)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter.BySome,
+            ): Unit =
+                try {
+                    TriggerEventFilter.write(writer, instance.triggerEventFilter)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
     public companion object :
         ScaleReader<FilterOptOfTriggerEventFilter>,
         ScaleWriter<FilterOptOfTriggerEventFilter> {
-        public override fun read(reader: ScaleCodecReader): FilterOptOfTriggerEventFilter = when (
+        override fun read(reader: ScaleCodecReader): FilterOptOfTriggerEventFilter = when (
             val
             discriminant = reader.readUByte()
         ) {
             0 -> AcceptAll.read(reader)
             1 -> BySome.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FilterOptOfTriggerEventFilter) {
+        override fun write(writer: ScaleCodecWriter, instance: FilterOptOfTriggerEventFilter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> AcceptAll.write(writer, instance as AcceptAll)
                 1 -> BySome.write(writer, instance as BySome)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

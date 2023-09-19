@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * TriggerOfFilterBoxAndExecutable
@@ -16,12 +17,12 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class TriggerOfFilterBoxAndExecutable(
     public val id: TriggerId,
-    public val action: ActionOfFilterBoxAndExecutable
+    public val action: ActionOfFilterBoxAndExecutable,
 ) {
     public companion object :
         ScaleReader<TriggerOfFilterBoxAndExecutable>,
         ScaleWriter<TriggerOfFilterBoxAndExecutable> {
-        public override fun read(reader: ScaleCodecReader): TriggerOfFilterBoxAndExecutable = try {
+        override fun read(reader: ScaleCodecReader): TriggerOfFilterBoxAndExecutable = try {
             TriggerOfFilterBoxAndExecutable(
                 TriggerId.read(reader),
                 ActionOfFilterBoxAndExecutable.read(reader),
@@ -30,7 +31,7 @@ public data class TriggerOfFilterBoxAndExecutable(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: TriggerOfFilterBoxAndExecutable) =
+        override fun write(writer: ScaleCodecWriter, instance: TriggerOfFilterBoxAndExecutable): Unit =
             try {
                 TriggerId.write(writer, instance.id)
                 ActionOfFilterBoxAndExecutable.write(writer, instance.action)

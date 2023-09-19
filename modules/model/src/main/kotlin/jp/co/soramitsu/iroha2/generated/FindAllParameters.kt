@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllParameters
@@ -19,13 +20,13 @@ import kotlin.Int
  */
 public class FindAllParameters {
     public companion object : ScaleReader<FindAllParameters>, ScaleWriter<FindAllParameters> {
-        public override fun read(reader: ScaleCodecReader): FindAllParameters = try {
+        override fun read(reader: ScaleCodecReader): FindAllParameters = try {
             FindAllParameters()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllParameters) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllParameters): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -35,6 +36,6 @@ public class FindAllParameters {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllParameters".hashCode()
+        override fun hashCode(): Int = ".FindAllParameters".hashCode()
     }
 }

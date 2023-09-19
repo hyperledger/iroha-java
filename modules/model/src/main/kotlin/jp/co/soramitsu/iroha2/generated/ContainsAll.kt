@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -17,10 +18,10 @@ import kotlin.collections.List
  */
 public data class ContainsAll(
     public val collection: EvaluatesTo<List<Value>>,
-    public val elements: EvaluatesTo<List<Value>>
+    public val elements: EvaluatesTo<List<Value>>,
 ) {
     public companion object : ScaleReader<ContainsAll>, ScaleWriter<ContainsAll> {
-        public override fun read(reader: ScaleCodecReader): ContainsAll = try {
+        override fun read(reader: ScaleCodecReader): ContainsAll = try {
             ContainsAll(
                 EvaluatesTo.read(reader) as EvaluatesTo<List<Value>>,
                 EvaluatesTo.read(reader) as EvaluatesTo<List<Value>>,
@@ -29,7 +30,7 @@ public data class ContainsAll(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ContainsAll) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ContainsAll): Unit = try {
             EvaluatesTo.write(writer, instance.collection)
             EvaluatesTo.write(writer, instance.elements)
         } catch (ex: Exception) {

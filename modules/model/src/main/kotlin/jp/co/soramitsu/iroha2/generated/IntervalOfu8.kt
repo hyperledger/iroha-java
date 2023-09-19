@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Short
+import kotlin.Unit
 
 /**
  * IntervalOfu8
@@ -17,10 +18,10 @@ import kotlin.Short
  */
 public data class IntervalOfu8(
     public val start: Short,
-    public val limit: Short
+    public val limit: Short,
 ) {
     public companion object : ScaleReader<IntervalOfu8>, ScaleWriter<IntervalOfu8> {
-        public override fun read(reader: ScaleCodecReader): IntervalOfu8 = try {
+        override fun read(reader: ScaleCodecReader): IntervalOfu8 = try {
             IntervalOfu8(
                 reader.readUByte().toShort(),
                 reader.readUByte().toShort(),
@@ -29,7 +30,7 @@ public data class IntervalOfu8(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: IntervalOfu8) = try {
+        override fun write(writer: ScaleCodecWriter, instance: IntervalOfu8): Unit = try {
             writer.writeUByte(instance.start)
             writer.writeUByte(instance.limit)
         } catch (ex: Exception) {

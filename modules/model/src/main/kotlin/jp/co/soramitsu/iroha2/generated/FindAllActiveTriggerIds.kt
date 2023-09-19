@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * FindAllActiveTriggerIds
@@ -21,13 +22,13 @@ public class FindAllActiveTriggerIds {
     public companion object :
         ScaleReader<FindAllActiveTriggerIds>,
         ScaleWriter<FindAllActiveTriggerIds> {
-        public override fun read(reader: ScaleCodecReader): FindAllActiveTriggerIds = try {
+        override fun read(reader: ScaleCodecReader): FindAllActiveTriggerIds = try {
             FindAllActiveTriggerIds()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FindAllActiveTriggerIds) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindAllActiveTriggerIds): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
@@ -37,6 +38,6 @@ public class FindAllActiveTriggerIds {
             else -> o2::class == o1::class
         }
 
-        public override fun hashCode(): Int = ".FindAllActiveTriggerIds".hashCode()
+        override fun hashCode(): Int = ".FindAllActiveTriggerIds".hashCode()
     }
 }

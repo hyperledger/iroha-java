@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * ExecuteTriggerBox
@@ -15,10 +16,10 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'ExecuteTriggerBox' regular structure
  */
 public data class ExecuteTriggerBox(
-    public val triggerId: EvaluatesTo<TriggerId>
+    public val triggerId: EvaluatesTo<TriggerId>,
 ) {
     public companion object : ScaleReader<ExecuteTriggerBox>, ScaleWriter<ExecuteTriggerBox> {
-        public override fun read(reader: ScaleCodecReader): ExecuteTriggerBox = try {
+        override fun read(reader: ScaleCodecReader): ExecuteTriggerBox = try {
             ExecuteTriggerBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<TriggerId>,
             )
@@ -26,7 +27,7 @@ public data class ExecuteTriggerBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: ExecuteTriggerBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: ExecuteTriggerBox): Unit = try {
             EvaluatesTo.write(writer, instance.triggerId)
         } catch (ex: Exception) {
             throw wrapException(ex)

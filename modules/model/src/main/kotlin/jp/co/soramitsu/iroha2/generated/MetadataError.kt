@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * MetadataError
@@ -24,28 +25,28 @@ public sealed class MetadataError : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is EmptyPath -> EmptyPath.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is EmptyPath -> EmptyPath.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'EntryTooBig' variant
      */
     public data class EntryTooBig(
-        public val sizeError: SizeError
+        public val sizeError: SizeError,
     ) : MetadataError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<EntryTooBig>, ScaleWriter<EntryTooBig> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.MetadataError.EntryTooBig>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.MetadataError.EntryTooBig> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): EntryTooBig = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MetadataError.EntryTooBig = try {
                 EntryTooBig(
                     SizeError.read(reader),
                 )
@@ -53,7 +54,10 @@ public sealed class MetadataError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: EntryTooBig) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.MetadataError.EntryTooBig,
+            ): Unit = try {
                 SizeError.write(writer, instance.sizeError)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -65,14 +69,16 @@ public sealed class MetadataError : ModelEnum {
      * 'OverallSize' variant
      */
     public data class OverallSize(
-        public val sizeError: SizeError
+        public val sizeError: SizeError,
     ) : MetadataError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<OverallSize>, ScaleWriter<OverallSize> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.MetadataError.OverallSize>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.MetadataError.OverallSize> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): OverallSize = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MetadataError.OverallSize = try {
                 OverallSize(
                     SizeError.read(reader),
                 )
@@ -80,7 +86,10 @@ public sealed class MetadataError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: OverallSize) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.MetadataError.OverallSize,
+            ): Unit = try {
                 SizeError.write(writer, instance.sizeError)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -92,28 +101,33 @@ public sealed class MetadataError : ModelEnum {
      * 'EmptyPath' variant
      */
     public class EmptyPath : MetadataError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<EmptyPath>, ScaleWriter<EmptyPath> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.MetadataError.EmptyPath>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.MetadataError.EmptyPath> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): EmptyPath = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MetadataError.EmptyPath = try {
                 EmptyPath()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: EmptyPath) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.MetadataError.EmptyPath,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: EmptyPath, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.MetadataError.EmptyPath, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".MetadataError.EmptyPath".hashCode()
+            override fun hashCode(): Int = ".MetadataError.EmptyPath".hashCode()
         }
     }
 
@@ -121,14 +135,16 @@ public sealed class MetadataError : ModelEnum {
      * 'MissingSegment' variant
      */
     public data class MissingSegment(
-        public val name: Name
+        public val name: Name,
     ) : MetadataError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<MissingSegment>, ScaleWriter<MissingSegment> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.MetadataError.MissingSegment>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.MetadataError.MissingSegment> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): MissingSegment = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MetadataError.MissingSegment = try {
                 MissingSegment(
                     Name.read(reader),
                 )
@@ -136,7 +152,10 @@ public sealed class MetadataError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: MissingSegment) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.MetadataError.MissingSegment,
+            ): Unit = try {
                 Name.write(writer, instance.name)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -148,14 +167,16 @@ public sealed class MetadataError : ModelEnum {
      * 'InvalidSegment' variant
      */
     public data class InvalidSegment(
-        public val name: Name
+        public val name: Name,
     ) : MetadataError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<InvalidSegment>, ScaleWriter<InvalidSegment> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.MetadataError.InvalidSegment>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.MetadataError.InvalidSegment> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): InvalidSegment = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MetadataError.InvalidSegment = try {
                 InvalidSegment(
                     Name.read(reader),
                 )
@@ -163,7 +184,10 @@ public sealed class MetadataError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: InvalidSegment) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.MetadataError.InvalidSegment,
+            ): Unit = try {
                 Name.write(writer, instance.name)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -172,7 +196,7 @@ public sealed class MetadataError : ModelEnum {
     }
 
     public companion object : ScaleReader<MetadataError>, ScaleWriter<MetadataError> {
-        public override fun read(reader: ScaleCodecReader): MetadataError = when (
+        override fun read(reader: ScaleCodecReader): MetadataError = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -181,10 +205,9 @@ public sealed class MetadataError : ModelEnum {
             2 -> EmptyPath.read(reader)
             3 -> MissingSegment.read(reader)
             4 -> InvalidSegment.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: MetadataError) {
+        override fun write(writer: ScaleCodecWriter, instance: MetadataError) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> EntryTooBig.write(writer, instance as EntryTooBig)
@@ -192,8 +215,7 @@ public sealed class MetadataError : ModelEnum {
                 2 -> EmptyPath.write(writer, instance as EmptyPath)
                 3 -> MissingSegment.write(writer, instance as MissingSegment)
                 4 -> InvalidSegment.write(writer, instance as InvalidSegment)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

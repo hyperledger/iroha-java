@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * DomainEvent
@@ -26,14 +27,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'Account' variant
      */
     public data class Account(
-        public val accountEvent: AccountEvent
+        public val accountEvent: AccountEvent,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Account>, ScaleWriter<Account> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.Account>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.Account> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Account = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.Account = try {
                 Account(
                     AccountEvent.read(reader),
                 )
@@ -41,7 +44,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Account) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.Account,
+            ): Unit = try {
                 AccountEvent.write(writer, instance.accountEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -53,14 +59,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'AssetDefinition' variant
      */
     public data class AssetDefinition(
-        public val assetDefinitionEvent: AssetDefinitionEvent
+        public val assetDefinitionEvent: AssetDefinitionEvent,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<AssetDefinition>, ScaleWriter<AssetDefinition> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.AssetDefinition>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.AssetDefinition> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): AssetDefinition = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.AssetDefinition = try {
                 AssetDefinition(
                     AssetDefinitionEvent.read(reader),
                 )
@@ -68,7 +76,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: AssetDefinition) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.AssetDefinition,
+            ): Unit = try {
                 AssetDefinitionEvent.write(writer, instance.assetDefinitionEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -80,14 +91,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'Created' variant
      */
     public data class Created(
-        public val domain: Domain
+        public val domain: Domain,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Created>, ScaleWriter<Created> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.Created>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.Created> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Created = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.Created = try {
                 Created(
                     Domain.read(reader),
                 )
@@ -95,7 +108,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Created) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.Created,
+            ): Unit = try {
                 Domain.write(writer, instance.domain)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -107,14 +123,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'Deleted' variant
      */
     public data class Deleted(
-        public val domainId: DomainId
+        public val domainId: DomainId,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Deleted>, ScaleWriter<Deleted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.Deleted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.Deleted> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Deleted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.Deleted = try {
                 Deleted(
                     DomainId.read(reader),
                 )
@@ -122,7 +140,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Deleted) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.Deleted,
+            ): Unit = try {
                 DomainId.write(writer, instance.domainId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -134,14 +155,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'MetadataInserted' variant
      */
     public data class MetadataInserted(
-        public val metadataChangedOfDomainId: MetadataChangedOfDomainId
+        public val metadataChangedOfDomainId: MetadataChangedOfDomainId,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<MetadataInserted>, ScaleWriter<MetadataInserted> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataInserted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataInserted> {
             public const val DISCRIMINANT: Int = 4
 
-            public override fun read(reader: ScaleCodecReader): MetadataInserted = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataInserted = try {
                 MetadataInserted(
                     MetadataChangedOfDomainId.read(reader),
                 )
@@ -149,7 +172,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: MetadataInserted) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataInserted,
+            ): Unit = try {
                 MetadataChangedOfDomainId.write(writer, instance.metadataChangedOfDomainId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -161,14 +187,16 @@ public sealed class DomainEvent : ModelEnum {
      * 'MetadataRemoved' variant
      */
     public data class MetadataRemoved(
-        public val metadataChangedOfDomainId: MetadataChangedOfDomainId
+        public val metadataChangedOfDomainId: MetadataChangedOfDomainId,
     ) : DomainEvent() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<MetadataRemoved>, ScaleWriter<MetadataRemoved> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataRemoved>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataRemoved> {
             public const val DISCRIMINANT: Int = 5
 
-            public override fun read(reader: ScaleCodecReader): MetadataRemoved = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataRemoved = try {
                 MetadataRemoved(
                     MetadataChangedOfDomainId.read(reader),
                 )
@@ -176,7 +204,10 @@ public sealed class DomainEvent : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: MetadataRemoved) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.MetadataRemoved,
+            ): Unit = try {
                 MetadataChangedOfDomainId.write(writer, instance.metadataChangedOfDomainId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -185,7 +216,7 @@ public sealed class DomainEvent : ModelEnum {
     }
 
     public companion object : ScaleReader<DomainEvent>, ScaleWriter<DomainEvent> {
-        public override fun read(reader: ScaleCodecReader): DomainEvent = when (
+        override fun read(reader: ScaleCodecReader): DomainEvent = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -195,10 +226,9 @@ public sealed class DomainEvent : ModelEnum {
             3 -> Deleted.read(reader)
             4 -> MetadataInserted.read(reader)
             5 -> MetadataRemoved.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: DomainEvent) {
+        override fun write(writer: ScaleCodecWriter, instance: DomainEvent) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Account.write(writer, instance as Account)
@@ -207,8 +237,7 @@ public sealed class DomainEvent : ModelEnum {
                 3 -> Deleted.write(writer, instance as Deleted)
                 4 -> MetadataInserted.write(writer, instance as MetadataInserted)
                 5 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

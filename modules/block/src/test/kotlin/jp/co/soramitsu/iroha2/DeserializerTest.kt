@@ -13,21 +13,13 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 
         assert(block.transactions.isNotEmpty())
-        // genesis.json has 50 instructions ("isi")
+        // genesis.json has 8 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewAccount (2)
         // Register -> NewAssetDefinition
-        // Register -> NewDomain
-        // Register -> NewAccount
-        // Register -> NewAssetDefinition
-        // Mint -> AssetId (2)
-        // Register -> PermissionTokenDefinition (35)
         // Grant -> PermissionToken (2)
-        // Register -> NewRole
-        // Grant -> RoleId
-        // Sequence -> NewParameter
-        // Register -> NewRole
-        assert(block.transactions.flatten().size == 50)
+        // Mint -> AssetId (2)
+        assert(block.transactions.flatten().size == 8)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
@@ -42,7 +34,7 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 
         assert(block.transactions.isNotEmpty())
-        // genesis.json has 27 instructions ("isi")
+        // genesis.json has 23 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewDomain
         // Register -> NewDomain
@@ -55,10 +47,6 @@ class DeserializerTest {
         // Register -> NewAssetDefinition
         // Register -> NewAssetDefinition
         // Register -> NewAssetDefinition
-        // Register -> PermissionTokenDefinition
-        // Register -> PermissionTokenDefinition
-        // Register -> PermissionTokenDefinition
-        // Register -> PermissionTokenDefinition
         // Register -> Asset
         // Register -> Asset
         // SetKeyValue -> AssetId
@@ -70,7 +58,7 @@ class DeserializerTest {
         // SetKeyValue -> AssetId
         // SetKeyValue -> AssetId
         // Grant -> PermissionToken
-        assert(block.transactions.flatten().size == 27)
+        assert(block.transactions.flatten().size == 23)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
@@ -85,28 +73,16 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlock::class.java)
 
         assert(block.transactions.isNotEmpty())
-        // genesis.json has 20 instructions ("isi")
+        // genesis.json has 17 instructions ("isi")
         // Register -> NewDomain
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> PermissionTokenDefinition
-        // Register -> PermissionTokenDefinition
-        // Register -> PermissionTokenDefinition
+        // Register -> NewAccount (3)
+        // Register -> NewAssetDefinition (5)
         // Register -> NewRole
         // Mint -> AssetId
         // Grant -> PermissionToken
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // Mint -> AssetId
-        // Mint -> AssetId
-        // Mint -> AssetId
-        assert(block.transactions.flatten().size == 20)
+        // SetKeyValue -> AssetId (2)
+        // Mint -> AssetId (3)
+        assert(block.transactions.flatten().size == 17)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())

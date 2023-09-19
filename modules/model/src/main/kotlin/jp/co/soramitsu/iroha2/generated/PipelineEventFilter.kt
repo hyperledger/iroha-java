@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * PipelineEventFilter
@@ -17,10 +18,10 @@ import jp.co.soramitsu.iroha2.wrapException
 public data class PipelineEventFilter(
     public val entityKind: PipelineEntityKind? = null,
     public val statusKind: PipelineStatusKind? = null,
-    public val hash: Hash? = null
+    public val hash: Hash? = null,
 ) {
     public companion object : ScaleReader<PipelineEventFilter>, ScaleWriter<PipelineEventFilter> {
-        public override fun read(reader: ScaleCodecReader): PipelineEventFilter = try {
+        override fun read(reader: ScaleCodecReader): PipelineEventFilter = try {
             PipelineEventFilter(
                 reader.readNullable(PipelineEntityKind) as PipelineEntityKind?,
                 reader.readNullable(PipelineStatusKind) as PipelineStatusKind?,
@@ -30,7 +31,7 @@ public data class PipelineEventFilter(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PipelineEventFilter) = try {
+        override fun write(writer: ScaleCodecWriter, instance: PipelineEventFilter): Unit = try {
             writer.writeNullable(PipelineEntityKind, instance.entityKind)
             writer.writeNullable(PipelineStatusKind, instance.statusKind)
             writer.writeNullable(Hash, instance.hash)

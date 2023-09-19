@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * VersionedBlockSubscriptionRequest
@@ -26,14 +27,16 @@ public sealed class VersionedBlockSubscriptionRequest : ModelEnum {
      * 'V1' variant
      */
     public data class V1(
-        public val blockSubscriptionRequest: BlockSubscriptionRequest
+        public val blockSubscriptionRequest: BlockSubscriptionRequest,
     ) : VersionedBlockSubscriptionRequest() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<V1>, ScaleWriter<V1> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest.V1>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest.V1> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): V1 = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest.V1 = try {
                 V1(
                     BlockSubscriptionRequest.read(reader),
                 )
@@ -41,34 +44,33 @@ public sealed class VersionedBlockSubscriptionRequest : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: V1) = try {
-                BlockSubscriptionRequest.write(writer, instance.blockSubscriptionRequest)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest.V1,
+            ): Unit =
+                try {
+                    BlockSubscriptionRequest.write(writer, instance.blockSubscriptionRequest)
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
         }
     }
 
     public companion object :
         ScaleReader<VersionedBlockSubscriptionRequest>,
         ScaleWriter<VersionedBlockSubscriptionRequest> {
-        public override fun read(reader: ScaleCodecReader): VersionedBlockSubscriptionRequest = when (
+        override fun read(reader: ScaleCodecReader): VersionedBlockSubscriptionRequest = when (
             val
             discriminant = reader.readUByte()
         ) {
             1 -> V1.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(
-            writer: ScaleCodecWriter,
-            instance: VersionedBlockSubscriptionRequest
-        ) {
+        override fun write(writer: ScaleCodecWriter, instance: VersionedBlockSubscriptionRequest) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 1 -> V1.write(writer, instance as V1)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

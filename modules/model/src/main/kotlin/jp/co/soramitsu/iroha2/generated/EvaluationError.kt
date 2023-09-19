@@ -11,6 +11,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
 import kotlin.String
+import kotlin.Unit
 
 /**
  * EvaluationError
@@ -27,14 +28,16 @@ public sealed class EvaluationError : ModelEnum {
      * 'Math' variant
      */
     public data class Math(
-        public val mathError: MathError
+        public val mathError: MathError,
     ) : EvaluationError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Math>, ScaleWriter<Math> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.EvaluationError.Math>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.EvaluationError.Math> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Math = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.EvaluationError.Math = try {
                 Math(
                     MathError.read(reader),
                 )
@@ -42,7 +45,10 @@ public sealed class EvaluationError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Math) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.EvaluationError.Math,
+            ): Unit = try {
                 MathError.write(writer, instance.mathError)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -54,14 +60,16 @@ public sealed class EvaluationError : ModelEnum {
      * 'Validation' variant
      */
     public data class Validation(
-        public val validationFail: ValidationFail
+        public val validationFail: ValidationFail,
     ) : EvaluationError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Validation>, ScaleWriter<Validation> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.EvaluationError.Validation>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.EvaluationError.Validation> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Validation = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.EvaluationError.Validation = try {
                 Validation(
                     ValidationFail.read(reader),
                 )
@@ -69,7 +77,10 @@ public sealed class EvaluationError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Validation) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.EvaluationError.Validation,
+            ): Unit = try {
                 ValidationFail.write(writer, instance.validationFail)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -81,14 +92,16 @@ public sealed class EvaluationError : ModelEnum {
      * 'Find' variant
      */
     public data class Find(
-        public val string: String
+        public val string: String,
     ) : EvaluationError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Find>, ScaleWriter<Find> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.EvaluationError.Find>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.EvaluationError.Find> {
             public const val DISCRIMINANT: Int = 2
 
-            public override fun read(reader: ScaleCodecReader): Find = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.EvaluationError.Find = try {
                 Find(
                     reader.readString(),
                 )
@@ -96,7 +109,10 @@ public sealed class EvaluationError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Find) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.EvaluationError.Find,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -108,14 +124,16 @@ public sealed class EvaluationError : ModelEnum {
      * 'Conversion' variant
      */
     public data class Conversion(
-        public val string: String
+        public val string: String,
     ) : EvaluationError() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Conversion>, ScaleWriter<Conversion> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.EvaluationError.Conversion>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.EvaluationError.Conversion> {
             public const val DISCRIMINANT: Int = 3
 
-            public override fun read(reader: ScaleCodecReader): Conversion = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.EvaluationError.Conversion = try {
                 Conversion(
                     reader.readString(),
                 )
@@ -123,7 +141,10 @@ public sealed class EvaluationError : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Conversion) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.EvaluationError.Conversion,
+            ): Unit = try {
                 writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -132,7 +153,7 @@ public sealed class EvaluationError : ModelEnum {
     }
 
     public companion object : ScaleReader<EvaluationError>, ScaleWriter<EvaluationError> {
-        public override fun read(reader: ScaleCodecReader): EvaluationError = when (
+        override fun read(reader: ScaleCodecReader): EvaluationError = when (
             val discriminant =
                 reader.readUByte()
         ) {
@@ -140,18 +161,16 @@ public sealed class EvaluationError : ModelEnum {
             1 -> Validation.read(reader)
             2 -> Find.read(reader)
             3 -> Conversion.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: EvaluationError) {
+        override fun write(writer: ScaleCodecWriter, instance: EvaluationError) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Math.write(writer, instance as Math)
                 1 -> Validation.write(writer, instance as Validation)
                 2 -> Find.write(writer, instance as Find)
                 3 -> Conversion.write(writer, instance as Conversion)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

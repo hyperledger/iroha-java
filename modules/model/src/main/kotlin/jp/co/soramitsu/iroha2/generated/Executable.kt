@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Int
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -27,14 +28,16 @@ public sealed class Executable : ModelEnum {
      * 'Instructions' variant
      */
     public data class Instructions(
-        public val vec: List<InstructionBox>
+        public val vec: List<InstructionBox>,
     ) : Executable() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Instructions>, ScaleWriter<Instructions> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Executable.Instructions>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Executable.Instructions> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Instructions = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Executable.Instructions = try {
                 Instructions(
                     reader.readVec(reader.readCompactInt()) { InstructionBox.read(reader) },
                 )
@@ -42,7 +45,10 @@ public sealed class Executable : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Instructions) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Executable.Instructions,
+            ): Unit = try {
                 writer.writeCompact(instance.vec.size)
                 instance.vec.forEach { value ->
                     InstructionBox.write(writer, value)
@@ -57,14 +63,16 @@ public sealed class Executable : ModelEnum {
      * 'Wasm' variant
      */
     public data class Wasm(
-        public val wasmSmartContract: WasmSmartContract
+        public val wasmSmartContract: WasmSmartContract,
     ) : Executable() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Wasm>, ScaleWriter<Wasm> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Executable.Wasm>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Executable.Wasm> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Wasm = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Executable.Wasm = try {
                 Wasm(
                     WasmSmartContract.read(reader),
                 )
@@ -72,7 +80,10 @@ public sealed class Executable : ModelEnum {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Wasm) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.Executable.Wasm,
+            ): Unit = try {
                 WasmSmartContract.write(writer, instance.wasmSmartContract)
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -81,22 +92,20 @@ public sealed class Executable : ModelEnum {
     }
 
     public companion object : ScaleReader<Executable>, ScaleWriter<Executable> {
-        public override fun read(reader: ScaleCodecReader): Executable = when (
+        override fun read(reader: ScaleCodecReader): Executable = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> Instructions.read(reader)
             1 -> Wasm.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Executable) {
+        override fun write(writer: ScaleCodecWriter, instance: Executable) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Instructions.write(writer, instance as Instructions)
                 1 -> Wasm.write(writer, instance as Wasm)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

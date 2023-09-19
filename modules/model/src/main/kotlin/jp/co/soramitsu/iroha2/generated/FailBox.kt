@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
+import kotlin.Unit
 
 /**
  * FailBox
@@ -16,10 +17,10 @@ import kotlin.String
  * Generated from 'FailBox' regular structure
  */
 public data class FailBox(
-    public val message: String
+    public val message: String,
 ) {
     public companion object : ScaleReader<FailBox>, ScaleWriter<FailBox> {
-        public override fun read(reader: ScaleCodecReader): FailBox = try {
+        override fun read(reader: ScaleCodecReader): FailBox = try {
             FailBox(
                 reader.readString(),
             )
@@ -27,7 +28,7 @@ public data class FailBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: FailBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: FailBox): Unit = try {
             writer.writeAsList(instance.message.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

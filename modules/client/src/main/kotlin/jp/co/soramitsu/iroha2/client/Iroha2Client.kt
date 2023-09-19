@@ -37,26 +37,26 @@ import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.extractBlock
+import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.Pagination
+import jp.co.soramitsu.iroha2.generated.ForwardCursor
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
-import jp.co.soramitsu.iroha2.generated.Sorting
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
 import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.VersionedPaginatedQueryResult
 import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
-import jp.co.soramitsu.iroha2.model.Page
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import jp.co.soramitsu.iroha2.toFrame
 import jp.co.soramitsu.iroha2.toHex
@@ -186,35 +186,70 @@ open class Iroha2Client(
     }
 
     /**
-     * Send a request to Iroha2 and extract payload.
-     */
-    suspend fun <T> sendQuery(queryAndExtractor: QueryAndExtractor<T>): T {
-        val page = sendQuery(queryAndExtractor, null)
-        return page.data
-    }
-
-    /**
      * Send a request to Iroha2 and extract paginated payload
      */
     suspend fun <T> sendQuery(
         queryAndExtractor: QueryAndExtractor<T>,
-        page: Pagination? = null,
-        sorting: Sorting? = null,
-    ): Page<T> {
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+    ): T {
         logger.debug("Sending query")
-        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
-            setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
-            page?.also {
-                parameter("start", it.start)
-                parameter("limit", it.limit)
-            }
-            sorting?.also {
-                parameter("sort_by_metadata_key", it.sortByMetadataKey?.string)
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting)
+        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        val finalResult = when (cursor.cursor) {
+            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
+            else -> {
+                val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
+                resultList.addAll(
+                    responseDecoded.cast<VersionedBatchedResponseOfValue.V1>()
+                        .batchedResponseOfValue.batch.cast<Value.Vec>().vec,
+                )
+                VersionedBatchedResponseOfValue.V1(
+                    BatchedResponseOfValue(Value.Vec(resultList), ForwardCursor()),
+                ).let { queryAndExtractor.resultExtractor.extract(it) }
             }
         }
+        return finalResult
+    }
+
+    private suspend fun <T> sendQueryRequest(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): VersionedBatchedResponseOfValue {
+        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
+            setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
+            start?.also { parameter("start", it) }
+            limit?.also { parameter("limit", it) }
+            sorting?.also { parameter("sort_by_metadata_key", it) }
+            queryCursor?.queryId?.also { parameter("query_id", it) }
+            queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
+        }
         return response.body<ByteArray>()
-            .let { VersionedPaginatedQueryResult.decode(it) }
-            .let { queryAndExtractor.resultExtractor.extract(it) }
+            .let { VersionedBatchedResponseOfValue.decode(it) }
+    }
+
+    private suspend fun <T> getQueryResultWithCursor(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): MutableList<Value> {
+        val resultList = mutableListOf<Value>()
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
+        resultList.addAll(responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.batch.cast<Value.Vec>().vec)
+        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        return when (cursor.cursor) {
+            null -> resultList
+            else -> {
+                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor))
+                resultList
+            }
+        }
     }
 
     /**
@@ -428,12 +463,9 @@ open class Iroha2Client(
             is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
                 "Genesis account can sign only transactions in the genesis block"
 
-            is TransactionRejectionReason.UnsatisfiedSignatureCondition ->
-                reason.unsatisfiedSignatureConditionFail.reason
-
             is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
-            is TransactionRejectionReason.Expired -> reason.transactionExpired.timeToLiveMs.toString()
+            is TransactionRejectionReason.Expired -> reason.toString()
             is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
             is TransactionRejectionReason.Validation -> reason.validationFail.toString()
         }

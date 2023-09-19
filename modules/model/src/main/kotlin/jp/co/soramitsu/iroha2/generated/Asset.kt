@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * Asset
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class Asset(
     public val id: AssetId,
-    public val `value`: AssetValue
+    public val `value`: AssetValue,
 ) {
     public companion object : ScaleReader<Asset>, ScaleWriter<Asset> {
-        public override fun read(reader: ScaleCodecReader): Asset = try {
+        override fun read(reader: ScaleCodecReader): Asset = try {
             Asset(
                 AssetId.read(reader),
                 AssetValue.read(reader),
@@ -28,7 +29,7 @@ public data class Asset(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: Asset) = try {
+        override fun write(writer: ScaleCodecWriter, instance: Asset): Unit = try {
             AssetId.write(writer, instance.id)
             AssetValue.write(writer, instance.`value`)
         } catch (ex: Exception) {

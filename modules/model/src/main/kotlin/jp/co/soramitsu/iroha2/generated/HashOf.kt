@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
+import kotlin.Unit
 
 /**
  * HashOf
@@ -16,10 +17,10 @@ import kotlin.Any
  * Generated from 'HashOf<WasmSmartContract>' regular structure
  */
 public data class HashOf<T0>(
-    public val hash: Hash
+    public val hash: Hash,
 ) {
     public companion object : ScaleReader<HashOf<out Any>>, ScaleWriter<HashOf<out Any>> {
-        public override fun read(reader: ScaleCodecReader): HashOf<out Any> = try {
+        override fun read(reader: ScaleCodecReader): HashOf<out Any> = try {
             HashOf(
                 Hash.read(reader),
             )
@@ -27,7 +28,7 @@ public data class HashOf<T0>(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: HashOf<out Any>) = try {
+        override fun write(writer: ScaleCodecWriter, instance: HashOf<out Any>): Unit = try {
             Hash.write(writer, instance.hash)
         } catch (ex: Exception) {
             throw wrapException(ex)

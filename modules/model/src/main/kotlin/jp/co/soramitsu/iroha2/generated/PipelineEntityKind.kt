@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Any
 import kotlin.Boolean
 import kotlin.Int
+import kotlin.Unit
 
 /**
  * PipelineEntityKind
@@ -24,44 +25,47 @@ public sealed class PipelineEntityKind : ModelEnum {
      */
     public abstract fun discriminant(): Int
 
-    public override fun equals(other: Any?) = when (this) {
+    override fun equals(other: Any?): Boolean = when (this) {
         is Block -> Block.equals(this, other)
         is Transaction -> Transaction.equals(this, other)
-        else -> super.equals(other)
-    }
+        else -> super.equals(other) }
 
-    public override fun hashCode() = when (this) {
+    override fun hashCode(): Int = when (this) {
         is Block -> Block.hashCode()
         is Transaction -> Transaction.hashCode()
-        else -> super.hashCode()
-    }
+        else -> super.hashCode() }
 
     /**
      * 'Block' variant
      */
     public class Block : PipelineEntityKind() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Block>, ScaleWriter<Block> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Block>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Block> {
             public const val DISCRIMINANT: Int = 0
 
-            public override fun read(reader: ScaleCodecReader): Block = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Block = try {
                 Block()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Block) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Block,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Block, o2: Any?): Boolean = when (o2) {
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Block, o2: Any?): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".PipelineEntityKind.Block".hashCode()
+            override fun hashCode(): Int = ".PipelineEntityKind.Block".hashCode()
         }
     }
 
@@ -69,48 +73,54 @@ public sealed class PipelineEntityKind : ModelEnum {
      * 'Transaction' variant
      */
     public class Transaction : PipelineEntityKind() {
-        public override fun discriminant(): Int = DISCRIMINANT
+        override fun discriminant(): Int = DISCRIMINANT
 
-        public companion object : ScaleReader<Transaction>, ScaleWriter<Transaction> {
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Transaction>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Transaction> {
             public const val DISCRIMINANT: Int = 1
 
-            public override fun read(reader: ScaleCodecReader): Transaction = try {
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Transaction = try {
                 Transaction()
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public override fun write(writer: ScaleCodecWriter, instance: Transaction) = try {
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Transaction,
+            ): Unit = try {
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
 
-            public fun equals(o1: Transaction, o2: Any?): Boolean = when (o2) {
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.PipelineEntityKind.Transaction,
+                o2: Any?,
+            ): Boolean = when (o2) {
                 null -> false
                 else -> o2::class == o1::class
             }
 
-            public override fun hashCode(): Int = ".PipelineEntityKind.Transaction".hashCode()
+            override fun hashCode(): Int = ".PipelineEntityKind.Transaction".hashCode()
         }
     }
 
     public companion object : ScaleReader<PipelineEntityKind>, ScaleWriter<PipelineEntityKind> {
-        public override fun read(reader: ScaleCodecReader): PipelineEntityKind = when (
+        override fun read(reader: ScaleCodecReader): PipelineEntityKind = when (
             val discriminant =
                 reader.readUByte()
         ) {
             0 -> Block.read(reader)
             1 -> Transaction.read(reader)
-            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-        }
+            else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        public override fun write(writer: ScaleCodecWriter, instance: PipelineEntityKind) {
+        override fun write(writer: ScaleCodecWriter, instance: PipelineEntityKind) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
                 0 -> Block.write(writer, instance as Block)
                 1 -> Transaction.write(writer, instance as Transaction)
-                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant")
-            }
+                else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
 }

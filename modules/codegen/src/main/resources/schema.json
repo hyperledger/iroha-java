@@ -167,7 +167,7 @@
       },
       {
         "name": "permission_id",
-        "type": "PermissionTokenId"
+        "type": "Name"
       }
     ]
   },
@@ -183,7 +183,7 @@
       }
     ]
   },
-  "Action<FilterBox, Executable>": {
+  "Action<TriggeringFilterBox, Executable>": {
     "Struct": [
       {
         "name": "executable",
@@ -194,12 +194,12 @@
         "type": "Repeats"
       },
       {
-        "name": "technical_account",
+        "name": "authority",
         "type": "AccountId"
       },
       {
         "name": "filter",
-        "type": "FilterBox"
+        "type": "TriggeringFilterBox"
       },
       {
         "name": "metadata",
@@ -207,7 +207,7 @@
       }
     ]
   },
-  "Action<FilterBox, OptimizedExecutable>": {
+  "Action<TriggeringFilterBox, OptimizedExecutable>": {
     "Struct": [
       {
         "name": "executable",
@@ -218,12 +218,12 @@
         "type": "Repeats"
       },
       {
-        "name": "technical_account",
+        "name": "authority",
         "type": "AccountId"
       },
       {
         "name": "filter",
-        "type": "FilterBox"
+        "type": "TriggeringFilterBox"
       },
       {
         "name": "metadata",
@@ -618,6 +618,30 @@
       }
     ]
   },
+  "BatchedResponse<Value>": {
+    "Struct": [
+      {
+        "name": "batch",
+        "type": "Value"
+      },
+      {
+        "name": "cursor",
+        "type": "ForwardCursor"
+      }
+    ]
+  },
+  "BatchedResponse<Vec<VersionedSignedTransaction>>": {
+    "Struct": [
+      {
+        "name": "batch",
+        "type": "Vec<VersionedSignedTransaction>"
+      },
+      {
+        "name": "cursor",
+        "type": "ForwardCursor"
+      }
+    ]
+  },
   "BinaryOpIncompatibleNumericValueTypesError": {
     "Struct": [
       {
@@ -675,7 +699,7 @@
       }
     ]
   },
-  "BlockSubscriptionRequest": "u64",
+  "BlockSubscriptionRequest": "NonZero<u64>",
   "BurnBox": {
     "Struct": [
       {
@@ -695,12 +719,8 @@
         "type": "BlockHeader"
       },
       {
-        "name": "rejected_transactions",
-        "type": "Vec<VersionedRejectedTransaction>"
-      },
-      {
         "name": "transactions",
-        "type": "Vec<VersionedValidTransaction>"
+        "type": "Vec<TransactionValue>"
       },
       {
         "name": "event_recommendations",
@@ -711,9 +731,6 @@
         "type": "SignaturesOf<CommittedBlock>"
       }
     ]
-  },
-  "Compact<u128>": {
-    "Int": "Compact"
   },
   "Conditional": {
     "Struct": [
@@ -902,7 +919,7 @@
       {
         "tag": "PermissionToken",
         "discriminant": 7,
-        "type": "PermissionTokenEvent"
+        "type": "PermissionTokenSchemaUpdateEvent"
       },
       {
         "tag": "Configuration",
@@ -925,18 +942,6 @@
       {
         "name": "right",
         "type": "EvaluatesTo<NumericValue>"
-      }
-    ]
-  },
-  "DoesAccountHavePermissionToken": {
-    "Struct": [
-      {
-        "name": "account_id",
-        "type": "EvaluatesTo<AccountId>"
-      },
-      {
-        "name": "permission_token",
-        "type": "PermissionToken"
       }
     ]
   },
@@ -1102,7 +1107,15 @@
       }
     ]
   },
-  "EvaluatesTo<Hash>": {
+  "EvaluatesTo<HashOf<VersionedCommittedBlock>>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
+  "EvaluatesTo<HashOf<VersionedSignedTransaction>>": {
     "Struct": [
       {
         "name": "expression",
@@ -1111,6 +1124,14 @@
     ]
   },
   "EvaluatesTo<IdBox>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
+  "EvaluatesTo<Level>": {
     "Struct": [
       {
         "name": "expression",
@@ -1151,6 +1172,14 @@
     ]
   },
   "EvaluatesTo<RoleId>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
+  "EvaluatesTo<String>": {
     "Struct": [
       {
         "name": "expression",
@@ -1243,6 +1272,11 @@
         "tag": "ExecuteTrigger",
         "discriminant": 3,
         "type": "ExecuteTriggerEvent"
+      },
+      {
+        "tag": "Notification",
+        "discriminant": 4,
+        "type": "NotificationEvent"
       }
     ]
   },
@@ -1440,6 +1474,11 @@
         "tag": "ExecuteTrigger",
         "discriminant": 3,
         "type": "ExecuteTriggerEventFilter"
+      },
+      {
+        "tag": "Notification",
+        "discriminant": 4,
+        "type": "NotificationEventFilter"
       }
     ]
   },
@@ -1782,7 +1821,6 @@
   "FindAllDomains": null,
   "FindAllParameters": null,
   "FindAllPeers": null,
-  "FindAllPermissionTokenDefinitions": null,
   "FindAllRoleIds": null,
   "FindAllRoles": null,
   "FindAllTransactions": null,
@@ -1882,7 +1920,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<Hash>"
+        "type": "EvaluatesTo<HashOf<VersionedCommittedBlock>>"
       }
     ]
   },
@@ -1959,27 +1997,23 @@
         "type": "RoleId"
       },
       {
-        "tag": "PermissionTokenDefinition",
-        "discriminant": 10,
-        "type": "PermissionTokenId"
-      },
-      {
         "tag": "PermissionToken",
-        "discriminant": 11,
-        "type": "PermissionTokenFindError"
+        "discriminant": 10,
+        "type": "Name"
       },
       {
         "tag": "Parameter",
-        "discriminant": 12,
+        "discriminant": 11,
         "type": "ParameterId"
       },
       {
         "tag": "PublicKey",
-        "discriminant": 13,
+        "discriminant": 12,
         "type": "PublicKey"
       }
     ]
   },
+  "FindPermissionTokenSchema": null,
   "FindPermissionTokensByAccountId": {
     "Struct": [
       {
@@ -2016,7 +2050,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<Hash>"
+        "type": "EvaluatesTo<HashOf<VersionedSignedTransaction>>"
       }
     ]
   },
@@ -2062,6 +2096,18 @@
       "base": "i64",
       "decimal_places": 9
     }
+  },
+  "ForwardCursor": {
+    "Struct": [
+      {
+        "name": "query_id",
+        "type": "Option<String>"
+      },
+      {
+        "name": "cursor",
+        "type": "Option<NonZero<u64>>"
+      }
+    ]
   },
   "GenericPredicateBox<ValuePredicate>": {
     "Enum": [
@@ -2116,6 +2162,20 @@
   "HashOf<VersionedCommittedBlock>": "Hash",
   "HashOf<VersionedSignedTransaction>": "Hash",
   "HashOf<WasmSmartContract>": "Hash",
+  "HashValue": {
+    "Enum": [
+      {
+        "tag": "Transaction",
+        "discriminant": 0,
+        "type": "HashOf<VersionedSignedTransaction>"
+      },
+      {
+        "tag": "Block",
+        "discriminant": 1,
+        "type": "HashOf<VersionedCommittedBlock>"
+      }
+    ]
+  },
   "IdBox": {
     "Enum": [
       {
@@ -2154,9 +2214,9 @@
         "type": "RoleId"
       },
       {
-        "tag": "PermissionTokenDefinitionId",
+        "tag": "PermissionTokenId",
         "discriminant": 7,
-        "type": "PermissionTokenId"
+        "type": "Name"
       },
       {
         "tag": "ParameterId",
@@ -2223,13 +2283,8 @@
         "type": "Role"
       },
       {
-        "tag": "PermissionTokenDefinition",
-        "discriminant": 11,
-        "type": "PermissionTokenDefinition"
-      },
-      {
         "tag": "Parameter",
-        "discriminant": 12,
+        "discriminant": 11,
         "type": "Parameter"
       }
     ]
@@ -2333,8 +2388,13 @@
         "type": "UpgradeBox"
       },
       {
-        "tag": "Fail",
+        "tag": "Log",
         "discriminant": 16,
+        "type": "LogBox"
+      },
+      {
+        "tag": "Fail",
+        "discriminant": 17,
         "type": "FailBox"
       }
     ]
@@ -2363,19 +2423,7 @@
       }
     ]
   },
-  "InstructionExecutionFail": {
-    "Struct": [
-      {
-        "name": "instruction",
-        "type": "InstructionBox"
-      },
-      {
-        "name": "reason",
-        "type": "String"
-      }
-    ]
-  },
-  "InstructionExecutionFailure": {
+  "InstructionExecutionError": {
     "Enum": [
       {
         "tag": "Evaluate",
@@ -2385,7 +2433,7 @@
       {
         "tag": "Query",
         "discriminant": 1,
-        "type": "QueryExecutionFailure"
+        "type": "QueryExecutionFail"
       },
       {
         "tag": "Conversion",
@@ -2430,6 +2478,18 @@
       {
         "tag": "InvariantViolation",
         "discriminant": 10,
+        "type": "String"
+      }
+    ]
+  },
+  "InstructionExecutionFail": {
+    "Struct": [
+      {
+        "name": "instruction",
+        "type": "InstructionBox"
+      },
+      {
+        "name": "reason",
         "type": "String"
       }
     ]
@@ -2501,8 +2561,12 @@
         "discriminant": 15
       },
       {
-        "tag": "Fail",
+        "tag": "Log",
         "discriminant": 16
+      },
+      {
+        "tag": "Fail",
+        "discriminant": 17
       }
     ]
   },
@@ -2539,8 +2603,7 @@
       },
       {
         "tag": "NameLength",
-        "discriminant": 1,
-        "type": "RangeInclusive<u32>"
+        "discriminant": 1
       }
     ]
   },
@@ -2585,6 +2648,30 @@
       }
     ]
   },
+  "Level": {
+    "Enum": [
+      {
+        "tag": "TRACE",
+        "discriminant": 0
+      },
+      {
+        "tag": "DEBUG",
+        "discriminant": 1
+      },
+      {
+        "tag": "INFO",
+        "discriminant": 2
+      },
+      {
+        "tag": "WARN",
+        "discriminant": 3
+      },
+      {
+        "tag": "ERROR",
+        "discriminant": 4
+      }
+    ]
+  },
   "Limits": {
     "Struct": [
       {
@@ -2594,6 +2681,18 @@
       {
         "name": "max_entry_byte_size",
         "type": "u32"
+      }
+    ]
+  },
+  "LogBox": {
+    "Struct": [
+      {
+        "name": "level",
+        "type": "EvaluatesTo<Level>"
+      },
+      {
+        "name": "msg",
+        "type": "EvaluatesTo<String>"
       }
     ]
   },
@@ -2912,11 +3011,35 @@
     ]
   },
   "NonTrivial<GenericPredicateBox<ValuePredicate>>": "Vec<GenericPredicateBox<ValuePredicate>>",
+  "NonZero<u32>": "u32",
+  "NonZero<u64>": "u64",
   "Not": {
     "Struct": [
       {
         "name": "expression",
         "type": "EvaluatesTo<bool>"
+      }
+    ]
+  },
+  "NotificationEvent": {
+    "Enum": [
+      {
+        "tag": "TriggerCompleted",
+        "discriminant": 0,
+        "type": "TriggerCompletedEvent"
+      }
+    ]
+  },
+  "NotificationEventFilter": {
+    "Enum": [
+      {
+        "tag": "AcceptAll",
+        "discriminant": 0
+      },
+      {
+        "tag": "TriggerCompleted",
+        "discriminant": 1,
+        "type": "TriggerCompletedEventFilter"
       }
     ]
   },
@@ -2979,8 +3102,11 @@
   "Option<IpfsPath>": {
     "Option": "IpfsPath"
   },
-  "Option<Name>": {
-    "Option": "Name"
+  "Option<NonZero<u32>>": {
+    "Option": "NonZero<u32>"
+  },
+  "Option<NonZero<u64>>": {
+    "Option": "NonZero<u64>"
   },
   "Option<PipelineEntityKind>": {
     "Option": "PipelineEntityKind"
@@ -2988,11 +3114,20 @@
   "Option<PipelineStatusKind>": {
     "Option": "PipelineStatusKind"
   },
+  "Option<String>": {
+    "Option": "String"
+  },
   "Option<TimeInterval>": {
     "Option": "TimeInterval"
   },
-  "Option<u32>": {
-    "Option": "u32"
+  "Option<TransactionRejectionReason>": {
+    "Option": "TransactionRejectionReason"
+  },
+  "Option<TriggerCompletedOutcomeType>": {
+    "Option": "TriggerCompletedOutcomeType"
+  },
+  "Option<TriggerId>": {
+    "Option": "TriggerId"
   },
   "Or": {
     "Struct": [
@@ -3013,42 +3148,6 @@
   "OriginFilter<PeerEvent>": "PeerId",
   "OriginFilter<RoleEvent>": "RoleId",
   "OriginFilter<TriggerEvent>": "TriggerId",
-  "PaginatedQueryResult": {
-    "Struct": [
-      {
-        "name": "result",
-        "type": "QueryResult"
-      },
-      {
-        "name": "filter",
-        "type": "GenericPredicateBox<ValuePredicate>"
-      },
-      {
-        "name": "pagination",
-        "type": "Pagination"
-      },
-      {
-        "name": "sorting",
-        "type": "Sorting"
-      },
-      {
-        "name": "total",
-        "type": "u64"
-      }
-    ]
-  },
-  "Pagination": {
-    "Struct": [
-      {
-        "name": "start",
-        "type": "Option<u32>"
-      },
-      {
-        "name": "limit",
-        "type": "Option<u32>"
-      }
-    ]
-  },
   "Pair": {
     "Struct": [
       {
@@ -3139,7 +3238,6 @@
       }
     ]
   },
-  "PendingTransactions": "Vec<SignedTransaction>",
   "PermissionRemoved": {
     "Struct": [
       {
@@ -3147,8 +3245,8 @@
         "type": "RoleId"
       },
       {
-        "name": "permission_definition_id",
-        "type": "PermissionTokenId"
+        "name": "permission_token_id",
+        "type": "Name"
       }
     ]
   },
@@ -3156,57 +3254,35 @@
     "Struct": [
       {
         "name": "definition_id",
-        "type": "PermissionTokenId"
-      },
-      {
-        "name": "params",
-        "type": "SortedMap<Name, Value>"
-      }
-    ]
-  },
-  "PermissionTokenDefinition": {
-    "Struct": [
-      {
-        "name": "id",
-        "type": "PermissionTokenId"
-      },
-      {
-        "name": "params",
-        "type": "SortedMap<Name, ValueKind>"
-      }
-    ]
-  },
-  "PermissionTokenEvent": {
-    "Enum": [
-      {
-        "tag": "DefinitionCreated",
-        "discriminant": 0,
-        "type": "PermissionTokenDefinition"
-      },
-      {
-        "tag": "DefinitionDeleted",
-        "discriminant": 1,
-        "type": "PermissionTokenDefinition"
-      }
-    ]
-  },
-  "PermissionTokenFindError": {
-    "Struct": [
-      {
-        "name": "account_id",
-        "type": "AccountId"
-      },
-      {
-        "name": "permission_token_id",
-        "type": "PermissionTokenId"
-      }
-    ]
-  },
-  "PermissionTokenId": {
-    "Struct": [
-      {
-        "name": "name",
         "type": "Name"
+      },
+      {
+        "name": "payload",
+        "type": "StringWithJson"
+      }
+    ]
+  },
+  "PermissionTokenSchema": {
+    "Struct": [
+      {
+        "name": "token_ids",
+        "type": "Vec<Name>"
+      },
+      {
+        "name": "schema",
+        "type": "String"
+      }
+    ]
+  },
+  "PermissionTokenSchemaUpdateEvent": {
+    "Struct": [
+      {
+        "name": "old_schema",
+        "type": "PermissionTokenSchema"
+      },
+      {
+        "name": "new_schema",
+        "type": "PermissionTokenSchema"
       }
     ]
   },
@@ -3471,63 +3547,58 @@
         "type": "FindPermissionTokensByAccountId"
       },
       {
-        "tag": "FindAllPermissionTokenDefinitions",
+        "tag": "FindPermissionTokenSchema",
         "discriminant": 31,
-        "type": "FindAllPermissionTokenDefinitions"
-      },
-      {
-        "tag": "DoesAccountHavePermissionToken",
-        "discriminant": 32,
-        "type": "DoesAccountHavePermissionToken"
+        "type": "FindPermissionTokenSchema"
       },
       {
         "tag": "FindAllActiveTriggerIds",
-        "discriminant": 33,
+        "discriminant": 32,
         "type": "FindAllActiveTriggerIds"
       },
       {
         "tag": "FindTriggerById",
-        "discriminant": 34,
+        "discriminant": 33,
         "type": "FindTriggerById"
       },
       {
         "tag": "FindTriggerKeyValueByIdAndKey",
-        "discriminant": 35,
+        "discriminant": 34,
         "type": "FindTriggerKeyValueByIdAndKey"
       },
       {
         "tag": "FindTriggersByDomainId",
-        "discriminant": 36,
+        "discriminant": 35,
         "type": "FindTriggersByDomainId"
       },
       {
         "tag": "FindAllRoles",
-        "discriminant": 37,
+        "discriminant": 36,
         "type": "FindAllRoles"
       },
       {
         "tag": "FindAllRoleIds",
-        "discriminant": 38,
+        "discriminant": 37,
         "type": "FindAllRoleIds"
       },
       {
         "tag": "FindRoleByRoleId",
-        "discriminant": 39,
+        "discriminant": 38,
         "type": "FindRoleByRoleId"
       },
       {
         "tag": "FindRolesByAccountId",
-        "discriminant": 40,
+        "discriminant": 39,
         "type": "FindRolesByAccountId"
       },
       {
         "tag": "FindAllParameters",
-        "discriminant": 41,
+        "discriminant": 40,
         "type": "FindAllParameters"
       }
     ]
   },
-  "QueryExecutionFailure": {
+  "QueryExecutionFail": {
     "Enum": [
       {
         "tag": "Signature",
@@ -3558,16 +3629,12 @@
   "QueryPayload": {
     "Struct": [
       {
-        "name": "timestamp_ms",
-        "type": "Compact<u128>"
+        "name": "authority",
+        "type": "AccountId"
       },
       {
         "name": "query",
         "type": "QueryBox"
-      },
-      {
-        "name": "account_id",
-        "type": "AccountId"
       },
       {
         "name": "filter",
@@ -3575,7 +3642,6 @@
       }
     ]
   },
-  "QueryResult": "Value",
   "RaiseTo": {
     "Struct": [
       {
@@ -3586,12 +3652,6 @@
         "name": "right",
         "type": "EvaluatesTo<NumericValue>"
       }
-    ]
-  },
-  "RangeInclusive<u32>": {
-    "Tuple": [
-      "u32",
-      "u32"
     ]
   },
   "RawGenesisBlock": {
@@ -3644,33 +3704,12 @@
       {
         "tag": "Trigger",
         "discriminant": 5,
-        "type": "Trigger<FilterBox, Executable>"
+        "type": "Trigger<TriggeringFilterBox, Executable>"
       },
       {
         "tag": "Role",
         "discriminant": 6,
         "type": "NewRole"
-      },
-      {
-        "tag": "PermissionTokenDefinition",
-        "discriminant": 7,
-        "type": "PermissionTokenDefinition"
-      }
-    ]
-  },
-  "RejectedTransaction": {
-    "Struct": [
-      {
-        "name": "payload",
-        "type": "TransactionPayload"
-      },
-      {
-        "name": "signatures",
-        "type": "SignaturesOf<TransactionPayload>"
-      },
-      {
-        "name": "rejection_reason",
-        "type": "TransactionRejectionReason"
       }
     ]
   },
@@ -3924,24 +3963,24 @@
   "SignedQuery": {
     "Struct": [
       {
-        "name": "payload",
-        "type": "QueryPayload"
-      },
-      {
         "name": "signature",
         "type": "SignatureOf<QueryPayload>"
+      },
+      {
+        "name": "payload",
+        "type": "QueryPayload"
       }
     ]
   },
   "SignedTransaction": {
     "Struct": [
       {
-        "name": "payload",
-        "type": "TransactionPayload"
-      },
-      {
         "name": "signatures",
         "type": "SignaturesOf<TransactionPayload>"
+      },
+      {
+        "name": "payload",
+        "type": "TransactionPayload"
       }
     ]
   },
@@ -4048,12 +4087,6 @@
       "value": "Value"
     }
   },
-  "SortedMap<Name, ValueKind>": {
-    "Map": {
-      "key": "Name",
-      "value": "ValueKind"
-    }
-  },
   "SortedVec<PermissionToken>": {
     "Vec": "PermissionToken"
   },
@@ -4068,14 +4101,6 @@
   },
   "SortedVec<SignatureOf<TransactionPayload>>": {
     "Vec": "SignatureOf<TransactionPayload>"
-  },
-  "Sorting": {
-    "Struct": [
-      {
-        "name": "sort_by_metadata_key",
-        "type": "Option<Name>"
-      }
-    ]
   },
   "String": "String",
   "StringPredicate": {
@@ -4102,6 +4127,7 @@
       }
     ]
   },
+  "StringWithJson": "String",
   "Subtract": {
     "Struct": [
       {
@@ -4139,14 +4165,6 @@
       }
     ]
   },
-  "TransactionExpired": {
-    "Struct": [
-      {
-        "name": "time_to_live_ms",
-        "type": "u64"
-      }
-    ]
-  },
   "TransactionLimitError": {
     "Struct": [
       {
@@ -4170,7 +4188,11 @@
   "TransactionPayload": {
     "Struct": [
       {
-        "name": "account_id",
+        "name": "creation_time_ms",
+        "type": "u64"
+      },
+      {
+        "name": "authority",
         "type": "AccountId"
       },
       {
@@ -4178,16 +4200,12 @@
         "type": "Executable"
       },
       {
-        "name": "creation_time",
-        "type": "u64"
-      },
-      {
         "name": "time_to_live_ms",
-        "type": "u64"
+        "type": "Option<NonZero<u64>>"
       },
       {
         "name": "nonce",
-        "type": "Option<u32>"
+        "type": "Option<NonZero<u32>>"
       },
       {
         "name": "metadata",
@@ -4195,15 +4213,15 @@
       }
     ]
   },
-  "TransactionQueryResult": {
+  "TransactionQueryOutput": {
     "Struct": [
       {
-        "name": "tx_value",
+        "name": "transaction",
         "type": "TransactionValue"
       },
       {
         "name": "block_hash",
-        "type": "Hash"
+        "type": "HashOf<VersionedCommittedBlock>"
       }
     ]
   },
@@ -4225,42 +4243,34 @@
         "type": "ValidationFail"
       },
       {
-        "tag": "UnsatisfiedSignatureCondition",
-        "discriminant": 3,
-        "type": "UnsatisfiedSignatureConditionFail"
-      },
-      {
         "tag": "InstructionExecution",
-        "discriminant": 4,
+        "discriminant": 3,
         "type": "InstructionExecutionFail"
       },
       {
         "tag": "WasmExecution",
-        "discriminant": 5,
+        "discriminant": 4,
         "type": "WasmExecutionFail"
       },
       {
         "tag": "UnexpectedGenesisAccountSignature",
-        "discriminant": 6
+        "discriminant": 5
       },
       {
         "tag": "Expired",
-        "discriminant": 7,
-        "type": "TransactionExpired"
+        "discriminant": 6
       }
     ]
   },
   "TransactionValue": {
-    "Enum": [
+    "Struct": [
       {
-        "tag": "Transaction",
-        "discriminant": 0,
+        "name": "value",
         "type": "VersionedSignedTransaction"
       },
       {
-        "tag": "RejectedTransaction",
-        "discriminant": 1,
-        "type": "VersionedRejectedTransaction"
+        "name": "error",
+        "type": "Option<TransactionRejectionReason>"
       }
     ]
   },
@@ -4280,7 +4290,7 @@
       }
     ]
   },
-  "Trigger<FilterBox, Executable>": {
+  "Trigger<TriggeringFilterBox, Executable>": {
     "Struct": [
       {
         "name": "id",
@@ -4288,11 +4298,11 @@
       },
       {
         "name": "action",
-        "type": "Action<FilterBox, Executable>"
+        "type": "Action<TriggeringFilterBox, Executable>"
       }
     ]
   },
-  "Trigger<FilterBox, OptimizedExecutable>": {
+  "Trigger<TriggeringFilterBox, OptimizedExecutable>": {
     "Struct": [
       {
         "name": "id",
@@ -4300,7 +4310,7 @@
       },
       {
         "name": "action",
-        "type": "Action<FilterBox, OptimizedExecutable>"
+        "type": "Action<TriggeringFilterBox, OptimizedExecutable>"
       }
     ]
   },
@@ -4309,12 +4319,61 @@
       {
         "tag": "Raw",
         "discriminant": 0,
-        "type": "Trigger<FilterBox, Executable>"
+        "type": "Trigger<TriggeringFilterBox, Executable>"
       },
       {
         "tag": "Optimized",
         "discriminant": 1,
-        "type": "Trigger<FilterBox, OptimizedExecutable>"
+        "type": "Trigger<TriggeringFilterBox, OptimizedExecutable>"
+      }
+    ]
+  },
+  "TriggerCompletedEvent": {
+    "Struct": [
+      {
+        "name": "trigger_id",
+        "type": "TriggerId"
+      },
+      {
+        "name": "outcome",
+        "type": "TriggerCompletedOutcome"
+      }
+    ]
+  },
+  "TriggerCompletedEventFilter": {
+    "Struct": [
+      {
+        "name": "trigger_id",
+        "type": "Option<TriggerId>"
+      },
+      {
+        "name": "outcome_type",
+        "type": "Option<TriggerCompletedOutcomeType>"
+      }
+    ]
+  },
+  "TriggerCompletedOutcome": {
+    "Enum": [
+      {
+        "tag": "Success",
+        "discriminant": 0
+      },
+      {
+        "tag": "Failure",
+        "discriminant": 1,
+        "type": "String"
+      }
+    ]
+  },
+  "TriggerCompletedOutcomeType": {
+    "Enum": [
+      {
+        "tag": "Success",
+        "discriminant": 0
+      },
+      {
+        "tag": "Failure",
+        "discriminant": 1
       }
     ]
   },
@@ -4398,6 +4457,30 @@
       }
     ]
   },
+  "TriggeringFilterBox": {
+    "Enum": [
+      {
+        "tag": "Pipeline",
+        "discriminant": 0,
+        "type": "PipelineEventFilter"
+      },
+      {
+        "tag": "Data",
+        "discriminant": 1,
+        "type": "FilterOpt<DataEntityFilter>"
+      },
+      {
+        "tag": "Time",
+        "discriminant": 2,
+        "type": "TimeEventFilter"
+      },
+      {
+        "tag": "ExecuteTrigger",
+        "discriminant": 3,
+        "type": "ExecuteTriggerEventFilter"
+      }
+    ]
+  },
   "TypeError": {
     "Enum": [
       {
@@ -4425,14 +4508,6 @@
       }
     ]
   },
-  "UnsatisfiedSignatureConditionFail": {
-    "Struct": [
-      {
-        "name": "reason",
-        "type": "String"
-      }
-    ]
-  },
   "UpgradableBox": {
     "Enum": [
       {
@@ -4450,18 +4525,6 @@
       }
     ]
   },
-  "ValidTransaction": {
-    "Struct": [
-      {
-        "name": "payload",
-        "type": "TransactionPayload"
-      },
-      {
-        "name": "signatures",
-        "type": "SignaturesOf<TransactionPayload>"
-      }
-    ]
-  },
   "ValidationFail": {
     "Enum": [
       {
@@ -4472,12 +4535,12 @@
       {
         "tag": "InstructionFailed",
         "discriminant": 1,
-        "type": "InstructionExecutionFailure"
+        "type": "InstructionExecutionError"
       },
       {
         "tag": "QueryFailed",
         "discriminant": 2,
-        "type": "QueryExecutionFailure"
+        "type": "QueryExecutionFail"
       },
       {
         "tag": "TooComplex",
@@ -4582,24 +4645,24 @@
         "type": "SignatureCheckCondition"
       },
       {
-        "tag": "TransactionValue",
+        "tag": "TransactionQueryOutput",
         "discriminant": 12,
-        "type": "TransactionValue"
-      },
-      {
-        "tag": "TransactionQueryResult",
-        "discriminant": 13,
-        "type": "TransactionQueryResult"
+        "type": "TransactionQueryOutput"
       },
       {
         "tag": "PermissionToken",
-        "discriminant": 14,
+        "discriminant": 13,
         "type": "PermissionToken"
+      },
+      {
+        "tag": "PermissionTokenSchema",
+        "discriminant": 14,
+        "type": "PermissionTokenSchema"
       },
       {
         "tag": "Hash",
         "discriminant": 15,
-        "type": "Hash"
+        "type": "HashValue"
       },
       {
         "tag": "Block",
@@ -4630,98 +4693,11 @@
         "tag": "Validator",
         "discriminant": 21,
         "type": "Validator"
-      }
-    ]
-  },
-  "ValueKind": {
-    "Enum": [
-      {
-        "tag": "Bool",
-        "discriminant": 0
       },
       {
-        "tag": "String",
-        "discriminant": 1
-      },
-      {
-        "tag": "Name",
-        "discriminant": 2
-      },
-      {
-        "tag": "Vec",
-        "discriminant": 3
-      },
-      {
-        "tag": "LimitedMetadata",
-        "discriminant": 4
-      },
-      {
-        "tag": "MetadataLimits",
-        "discriminant": 5
-      },
-      {
-        "tag": "TransactionLimits",
-        "discriminant": 6
-      },
-      {
-        "tag": "LengthLimits",
-        "discriminant": 7
-      },
-      {
-        "tag": "Id",
-        "discriminant": 8
-      },
-      {
-        "tag": "Identifiable",
-        "discriminant": 9
-      },
-      {
-        "tag": "PublicKey",
-        "discriminant": 10
-      },
-      {
-        "tag": "SignatureCheckCondition",
-        "discriminant": 11
-      },
-      {
-        "tag": "TransactionValue",
-        "discriminant": 12
-      },
-      {
-        "tag": "TransactionQueryResult",
-        "discriminant": 13
-      },
-      {
-        "tag": "PermissionToken",
-        "discriminant": 14
-      },
-      {
-        "tag": "Hash",
-        "discriminant": 15
-      },
-      {
-        "tag": "Block",
-        "discriminant": 16
-      },
-      {
-        "tag": "BlockHeader",
-        "discriminant": 17
-      },
-      {
-        "tag": "Ipv4Addr",
-        "discriminant": 18
-      },
-      {
-        "tag": "Ipv6Addr",
-        "discriminant": 19
-      },
-      {
-        "tag": "Numeric",
-        "discriminant": 20
-      },
-      {
-        "tag": "Validator",
-        "discriminant": 21
+        "tag": "LogLevel",
+        "discriminant": 22,
+        "type": "Level"
       }
     ]
   },
@@ -4789,11 +4765,14 @@
   "Vec<InstructionBox>": {
     "Vec": "InstructionBox"
   },
+  "Vec<Name>": {
+    "Vec": "Name"
+  },
   "Vec<PeerId>": {
     "Vec": "PeerId"
   },
-  "Vec<SignedTransaction>": {
-    "Vec": "SignedTransaction"
+  "Vec<TransactionValue>": {
+    "Vec": "TransactionValue"
   },
   "Vec<Value>": {
     "Vec": "Value"
@@ -4801,14 +4780,29 @@
   "Vec<Vec<InstructionBox>>": {
     "Vec": "Vec<InstructionBox>"
   },
-  "Vec<VersionedRejectedTransaction>": {
-    "Vec": "VersionedRejectedTransaction"
-  },
-  "Vec<VersionedValidTransaction>": {
-    "Vec": "VersionedValidTransaction"
+  "Vec<VersionedSignedTransaction>": {
+    "Vec": "VersionedSignedTransaction"
   },
   "Vec<u8>": {
     "Vec": "u8"
+  },
+  "VersionedBatchedResponse<Value>": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "BatchedResponse<Value>"
+      }
+    ]
+  },
+  "VersionedBatchedResponse<Vec<VersionedSignedTransaction>>": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "BatchedResponse<Vec<VersionedSignedTransaction>>"
+      }
+    ]
   },
   "VersionedBlockMessage": {
     "Enum": [
@@ -4855,33 +4849,6 @@
       }
     ]
   },
-  "VersionedPaginatedQueryResult": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "PaginatedQueryResult"
-      }
-    ]
-  },
-  "VersionedPendingTransactions": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "PendingTransactions"
-      }
-    ]
-  },
-  "VersionedRejectedTransaction": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "RejectedTransaction"
-      }
-    ]
-  },
   "VersionedSignedQuery": {
     "Enum": [
       {
@@ -4897,15 +4864,6 @@
         "tag": "V1",
         "discriminant": 1,
         "type": "SignedTransaction"
-      }
-    ]
-  },
-  "VersionedValidTransaction": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "ValidTransaction"
       }
     ]
   },

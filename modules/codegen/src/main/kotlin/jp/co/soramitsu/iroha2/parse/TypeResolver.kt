@@ -87,10 +87,9 @@ interface Resolver<T : Type> {
  */
 object BooleanResolver : Resolver<BooleanType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): BooleanType? {
-        return if (name == "bool") {
-            BooleanType
-        } else {
-            null
+        return when (name) {
+            "bool" -> BooleanType
+            else -> null
         }
     }
 }
@@ -357,10 +356,9 @@ object QueryResolver : Resolver<StructType> {
  */
 object StringResolver : Resolver<StringType> {
     override fun resolve(name: String, typeValue: Any?, schemaParser: SchemaParser): StringType? {
-        return if (name.endsWith("String")) {
-            StringType
-        } else {
-            null
+        return when {
+            name.endsWith("String") -> StringType
+            else -> null
         }
     }
 }

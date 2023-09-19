@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * RevokeBox
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class RevokeBox(
     public val `object`: EvaluatesTo<Value>,
-    public val destinationId: EvaluatesTo<IdBox>
+    public val destinationId: EvaluatesTo<IdBox>,
 ) {
     public companion object : ScaleReader<RevokeBox>, ScaleWriter<RevokeBox> {
-        public override fun read(reader: ScaleCodecReader): RevokeBox = try {
+        override fun read(reader: ScaleCodecReader): RevokeBox = try {
             RevokeBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
@@ -28,7 +29,7 @@ public data class RevokeBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: RevokeBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: RevokeBox): Unit = try {
             EvaluatesTo.write(writer, instance.`object`)
             EvaluatesTo.write(writer, instance.destinationId)
         } catch (ex: Exception) {

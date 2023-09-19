@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * SignedTransaction
@@ -15,22 +16,22 @@ import jp.co.soramitsu.iroha2.wrapException
  * Generated from 'SignedTransaction' regular structure
  */
 public data class SignedTransaction(
+    public val signatures: SignaturesOfOfTransactionPayload,
     public val payload: TransactionPayload,
-    public val signatures: SignaturesOfOfTransactionPayload
 ) {
     public companion object : ScaleReader<SignedTransaction>, ScaleWriter<SignedTransaction> {
-        public override fun read(reader: ScaleCodecReader): SignedTransaction = try {
+        override fun read(reader: ScaleCodecReader): SignedTransaction = try {
             SignedTransaction(
-                TransactionPayload.read(reader),
                 SignaturesOfOfTransactionPayload.read(reader),
+                TransactionPayload.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SignedTransaction) = try {
-            TransactionPayload.write(writer, instance.payload)
+        override fun write(writer: ScaleCodecWriter, instance: SignedTransaction): Unit = try {
             SignaturesOfOfTransactionPayload.write(writer, instance.signatures)
+            TransactionPayload.write(writer, instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

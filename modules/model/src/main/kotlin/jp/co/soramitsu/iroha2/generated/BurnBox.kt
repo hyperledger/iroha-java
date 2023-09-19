@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * BurnBox
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class BurnBox(
     public val `object`: EvaluatesTo<Value>,
-    public val destinationId: EvaluatesTo<IdBox>
+    public val destinationId: EvaluatesTo<IdBox>,
 ) {
     public companion object : ScaleReader<BurnBox>, ScaleWriter<BurnBox> {
-        public override fun read(reader: ScaleCodecReader): BurnBox = try {
+        override fun read(reader: ScaleCodecReader): BurnBox = try {
             BurnBox(
                 EvaluatesTo.read(reader) as EvaluatesTo<Value>,
                 EvaluatesTo.read(reader) as EvaluatesTo<IdBox>,
@@ -28,7 +29,7 @@ public data class BurnBox(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: BurnBox) = try {
+        override fun write(writer: ScaleCodecWriter, instance: BurnBox): Unit = try {
             EvaluatesTo.write(writer, instance.`object`)
             EvaluatesTo.write(writer, instance.destinationId)
         } catch (ex: Exception) {

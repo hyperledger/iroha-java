@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 
 /**
  * SemiIntervalOfFixed
@@ -16,10 +17,10 @@ import jp.co.soramitsu.iroha2.wrapException
  */
 public data class SemiIntervalOfFixed(
     public val start: Fixed,
-    public val limit: Fixed
+    public val limit: Fixed,
 ) {
     public companion object : ScaleReader<SemiIntervalOfFixed>, ScaleWriter<SemiIntervalOfFixed> {
-        public override fun read(reader: ScaleCodecReader): SemiIntervalOfFixed = try {
+        override fun read(reader: ScaleCodecReader): SemiIntervalOfFixed = try {
             SemiIntervalOfFixed(
                 Fixed.read(reader),
                 Fixed.read(reader),
@@ -28,7 +29,7 @@ public data class SemiIntervalOfFixed(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfFixed) = try {
+        override fun write(writer: ScaleCodecWriter, instance: SemiIntervalOfFixed): Unit = try {
             Fixed.write(writer, instance.start)
             Fixed.write(writer, instance.limit)
         } catch (ex: Exception) {

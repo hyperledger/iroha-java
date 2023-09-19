@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.Unit
 import kotlin.collections.List
 
 /**
@@ -16,18 +17,16 @@ import kotlin.collections.List
  * Generated from 'CommittedBlock' regular structure
  */
 public data class CommittedBlock(
-    public val header: BlockHeader,
-    public val rejectedTransactions: List<VersionedRejectedTransaction>,
-    public val transactions: List<VersionedValidTransaction>,
+    public val `header`: BlockHeader,
+    public val transactions: List<TransactionValue>,
     public val eventRecommendations: List<Event>,
-    public val signatures: SignaturesOfOfCommittedBlock
+    public val signatures: SignaturesOfOfCommittedBlock,
 ) {
     public companion object : ScaleReader<CommittedBlock>, ScaleWriter<CommittedBlock> {
-        public override fun read(reader: ScaleCodecReader): CommittedBlock = try {
+        override fun read(reader: ScaleCodecReader): CommittedBlock = try {
             CommittedBlock(
                 BlockHeader.read(reader),
-                reader.readVec(reader.readCompactInt()) { VersionedRejectedTransaction.read(reader) },
-                reader.readVec(reader.readCompactInt()) { VersionedValidTransaction.read(reader) },
+                reader.readVec(reader.readCompactInt()) { TransactionValue.read(reader) },
                 reader.readVec(reader.readCompactInt()) { Event.read(reader) },
                 SignaturesOfOfCommittedBlock.read(reader),
             )
@@ -35,15 +34,11 @@ public data class CommittedBlock(
             throw wrapException(ex)
         }
 
-        public override fun write(writer: ScaleCodecWriter, instance: CommittedBlock) = try {
-            BlockHeader.write(writer, instance.header)
-            writer.writeCompact(instance.rejectedTransactions.size)
-            instance.rejectedTransactions.forEach { value ->
-                VersionedRejectedTransaction.write(writer, value)
-            }
+        override fun write(writer: ScaleCodecWriter, instance: CommittedBlock): Unit = try {
+            BlockHeader.write(writer, instance.`header`)
             writer.writeCompact(instance.transactions.size)
             instance.transactions.forEach { value ->
-                VersionedValidTransaction.write(writer, value)
+                TransactionValue.write(writer, value)
             }
             writer.writeCompact(instance.eventRecommendations.size)
             instance.eventRecommendations.forEach { value ->
