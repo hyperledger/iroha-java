@@ -16,6 +16,7 @@ import org.testcontainers.containers.output.OutputFrame
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.images.ImagePullPolicy
 import org.testcontainers.images.PullPolicy
+import java.net.ServerSocket
 import java.security.KeyPair
 import java.time.Duration
 import java.util.function.Consumer
@@ -38,6 +39,7 @@ class IrohaConfig(
         PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey()),
     ),
     var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
+    var sockets: List<ServerSocket> = emptyList(),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,
     var submitGenesis: Boolean = true,

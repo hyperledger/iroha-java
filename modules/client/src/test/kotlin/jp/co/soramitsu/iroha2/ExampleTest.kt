@@ -23,7 +23,7 @@ class ExampleTest {
      */
     @Test
     fun `register domain instruction committed`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
+        val ports = findFreePorts(3).map { it.port }
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
 
         val container = IrohaContainer {

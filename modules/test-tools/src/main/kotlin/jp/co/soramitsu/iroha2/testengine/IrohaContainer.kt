@@ -13,6 +13,7 @@ import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
+import java.net.ServerSocket
 import java.net.URL
 import java.nio.file.Files
 import java.time.Duration
@@ -39,6 +40,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         val genesisPublicKey = config.genesisKeyPair.public.bytes().toHex()
         val genesisPrivateKey = config.genesisKeyPair.private.bytes().toHex()
 
+        this.sockets = config.sockets
         this.p2pPort = config.ports[IrohaConfig.P2P_PORT_IDX]
         this.apiPort = config.ports[IrohaConfig.API_PORT_IDX]
         this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
@@ -112,6 +114,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     val config: IrohaConfig
 
+    private var sockets: List<ServerSocket>
     private val p2pPort: Int
     private val apiPort: Int
     private val telemetryPort: Int
@@ -149,6 +152,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     fun getApiUrl(): URL = URL("http", host, apiPort, "")
 
     fun getTelemetryUrl(): URL = URL("http", host, telemetryPort, "")
+
+    fun getSockets() = this.sockets
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 
