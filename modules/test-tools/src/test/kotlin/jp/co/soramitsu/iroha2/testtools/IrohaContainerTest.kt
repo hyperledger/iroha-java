@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testtools
 
+import jp.co.soramitsu.iroha2.PortToSocket
 import jp.co.soramitsu.iroha2.findFreePorts
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -14,14 +15,13 @@ import kotlin.test.assertEquals
 @Timeout(60)
 internal class IrohaContainerTest {
 
-    // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/338
     @Test
     @Disabled
     fun `findFreePorts returns unique free ports`(): Unit = runBlocking {
-        val dList = mutableListOf<Deferred<List<Int>>>()
+        val dList = mutableListOf<Deferred<List<PortToSocket>>>()
         repeat(10) {
             async {
-                val all = mutableListOf<Int>()
+                val all = mutableListOf<PortToSocket>()
                 repeat(100) {
                     delay(Random.nextLong(10, 20))
                     all.addAll(findFreePorts(3, false))
@@ -30,7 +30,7 @@ internal class IrohaContainerTest {
             }.let { dList.add(it) }
         }
 
-        val all = mutableListOf<Int>()
+        val all = mutableListOf<PortToSocket>()
         dList.forEach { all.addAll(it.await()) }
 
         assertEquals(all.size, all.toSet().size)
