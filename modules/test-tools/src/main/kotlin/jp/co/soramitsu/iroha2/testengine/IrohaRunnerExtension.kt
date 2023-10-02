@@ -17,10 +17,9 @@ import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
@@ -44,6 +43,8 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     private val resources: MutableMap<String, List<AutoCloseable>> = Collections.synchronizedMap(mutableMapOf())
 
     private val yaml = Yaml()
+
+    private val mutex = Mutex()
 
     override fun beforeEach(context: ExtensionContext) = runBlocking {
         // init container and client if annotation was passed on test method
@@ -224,40 +225,35 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         }
         val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
-            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
-            kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort.port)
+            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX].port
+            kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
         }
-        val deferredSet = mutableSetOf<Deferred<*>>()
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
-            async {
-                val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX].port
-                val container = IrohaContainer {
-                    networkToJoin = network
-                    when {
-                        withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
-                        else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
-                    }
-                    alias = IrohaContainer.NETWORK_ALIAS + p2pPort
-                    keyPair = keyPairs[n]
-                    this.genesisKeyPair = genesisKeyPair
-                    trustedPeers = peerIds
-                    ports = portsList[n].map { it.port }
-                    sockets = portsList[n].map { it.socket }
-                    envs = withIroha.configs.associate { config ->
-                        config.split(IROHA_CONFIG_DELIMITER).let {
-                            it.first() to it.last()
-                        }
-                    }
-                    // only first peer should have --submit-genesis in peer start command
-                    submitGenesis = n == 0
+            val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX].port
+            val container = IrohaContainer {
+                networkToJoin = network
+                when {
+                    withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
+                    else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
                 }
-                container.start()
-                containers.add(container)
-            }.let { deferredSet.add(it) }
+                alias = IrohaContainer.NETWORK_ALIAS + p2pPort
+                keyPair = keyPairs[n]
+                this.genesisKeyPair = genesisKeyPair
+                trustedPeers = peerIds
+                ports = portsList[n].map { it.port }
+                sockets = portsList[n].map { it.socket }
+                envs = withIroha.configs.associate { config ->
+                    config.split(IROHA_CONFIG_DELIMITER).let {
+                        it.first() to it.last()
+                    }
+                }
+                // only first peer should have --submit-genesis in peer start command
+                submitGenesis = n == 0
+            }
+            container.start()
+            containers.add(container)
         }
-
-        deferredSet.forEach { it.await() }
 
         containers
     }

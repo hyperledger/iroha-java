@@ -19,7 +19,6 @@ data class PortToSocket(
 suspend fun findFreePorts(
     amount: Int,
     lock: Boolean = true,
-    retries: Int = 3,
 ): List<PortToSocket> {
     fun find(): PortToSocket {
         val busyPorts = dockerClient.listContainersCmd().exec().map { container ->
@@ -27,21 +26,16 @@ suspend fun findFreePorts(
         }.flatten()
 
         var socket: ServerSocket? = null
-        var retriesLeft = retries
-
-        while (retriesLeft > 0) {
-            try {
+        try {
+            socket = ServerSocket(0)
+            while (socket?.localPort in busyPorts || socket?.localPort in taken) {
                 socket = ServerSocket(0)
-                while (socket?.localPort in busyPorts || socket?.localPort in taken) {
-                    socket = ServerSocket(0)
-                }
-                return PortToSocket(socket!!.localPort, socket).also { taken.add(it.port) }
-            } catch (e: IOException) {
-                // Port not available
-            } finally {
-                socket?.close() // To let docker take it
             }
-            retriesLeft--
+            return PortToSocket(socket!!.localPort, socket).also { taken.add(it.port) }
+        } catch (e: IOException) {
+            // Port not available
+        } finally {
+            socket?.close() // To let docker take it
         }
 
         throw IrohaSdkException("Could not find a free port")
