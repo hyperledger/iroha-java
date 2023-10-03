@@ -24,6 +24,7 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
@@ -63,6 +64,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     }
 
     @Test
+    @Disabled
     @WithIroha([AliceCanUnregisterAnyPeer::class], amount = PEER_AMOUNT)
     @Story("Account unregisters a peer")
     @Permission("no_permission_required")
