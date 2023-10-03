@@ -75,8 +75,11 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-
-        startNewContainer(keyPair, alias, ports).use {
+        startNewContainer(
+            keyPair,
+            alias,
+            ports,
+        ).use {
             registerPeer(address, payload)
             repeat(PEER_AMOUNT) { assertTrue(isPeerAvailable(address, payload)) }
 
