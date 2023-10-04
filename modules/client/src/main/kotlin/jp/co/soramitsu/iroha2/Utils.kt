@@ -11,16 +11,11 @@ val mutex = Mutex()
 val taken = mutableSetOf<Int>()
 val dockerClient: DockerClient = DockerClientBuilder.getInstance().build()
 
-data class PortToSocket(
-    val port: Int,
-    val socket: ServerSocket,
-)
-
 suspend fun findFreePorts(
     amount: Int,
     lock: Boolean = true,
-): List<PortToSocket> {
-    fun find(): PortToSocket {
+): List<ServerSocket> {
+    fun find(): ServerSocket {
         val busyPorts = dockerClient.listContainersCmd().exec().map { container ->
             container.ports.map { p -> p.publicPort }
         }.flatten()
@@ -28,14 +23,18 @@ suspend fun findFreePorts(
         var socket: ServerSocket? = null
         try {
             socket = ServerSocket(0)
-            while (socket?.localPort in busyPorts || socket?.localPort in taken) {
+            val localPort = socket.localPort
+            while (localPort in busyPorts || localPort in taken) {
                 socket = ServerSocket(0)
             }
-            return PortToSocket(socket!!.localPort, socket).also { taken.add(it.port) }
+            return socket!!.also {
+                it.reuseAddress = true
+                taken.add(it.localPort)
+            }
         } catch (e: IOException) {
             // Port not available
         } finally {
-            socket?.close() // To let docker take it
+            socket?.close()
         }
 
         throw IrohaSdkException("Could not find a free port")

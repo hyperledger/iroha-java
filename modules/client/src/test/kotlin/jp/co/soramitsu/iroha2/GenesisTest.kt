@@ -27,7 +27,7 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
 
     @Test
     fun `manual IrohaContainer initialization`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.port }
+        val ports = findFreePorts(3).map { it.localPort }
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
 
         val path = javaClass.getResource("../../genesis.json")!!.path

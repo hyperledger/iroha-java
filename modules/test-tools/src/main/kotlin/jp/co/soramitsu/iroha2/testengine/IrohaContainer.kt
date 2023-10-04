@@ -6,6 +6,7 @@ import com.github.dockerjava.api.model.Ports
 import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
+import jp.co.soramitsu.iroha2.taken
 import jp.co.soramitsu.iroha2.toHex
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
@@ -144,6 +145,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 "Could not remove temporary genesis file '${genesisFileLocation.absolute()}', error: $ex",
             )
         }
+        config.ports.forEach { taken.remove(it) }
         logger().debug("Iroha container stopped")
     }
 

@@ -4,7 +4,6 @@ import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
 import jp.co.soramitsu.iroha2.IrohaSdkException
-import jp.co.soramitsu.iroha2.PortToSocket
 import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
@@ -19,7 +18,6 @@ import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.sync.Mutex
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
@@ -28,6 +26,7 @@ import org.testcontainers.containers.Network
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.lang.reflect.Method
+import java.net.ServerSocket
 import java.security.KeyPair
 import java.util.Collections
 import kotlin.reflect.KMutableProperty1
@@ -43,8 +42,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     private val resources: MutableMap<String, List<AutoCloseable>> = Collections.synchronizedMap(mutableMapOf())
 
     private val yaml = Yaml()
-
-    private val mutex = Mutex()
 
     override fun beforeEach(context: ExtensionContext) = runBlocking {
         // init container and client if annotation was passed on test method
@@ -217,7 +214,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         network: Network,
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
-        val portsList = mutableListOf<List<PortToSocket>>()
+        val portsList = mutableListOf<List<ServerSocket>>()
 
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
@@ -225,12 +222,12 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         }
         val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
-            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX].port
+            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX].localPort
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
         }
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
-            val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX].port
+            val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX].localPort
             val container = IrohaContainer {
                 networkToJoin = network
                 when {
@@ -241,8 +238,8 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                 keyPair = keyPairs[n]
                 this.genesisKeyPair = genesisKeyPair
                 trustedPeers = peerIds
-                ports = portsList[n].map { it.port }
-                sockets = portsList[n].map { it.socket }
+                ports = portsList[n].map { it.localPort }
+                sockets = portsList[n]
                 envs = withIroha.configs.associate { config ->
                     config.split(IROHA_CONFIG_DELIMITER).let {
                         it.first() to it.last()

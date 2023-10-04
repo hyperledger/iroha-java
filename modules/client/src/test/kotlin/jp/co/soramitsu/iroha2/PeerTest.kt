@@ -50,7 +50,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.port }
+        val ports = findFreePorts(3).map { it.localPort }
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
@@ -70,7 +70,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("unregister_peer")
     fun `unregister peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.port }
+        val ports = findFreePorts(3).map { it.localPort }
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
@@ -89,7 +89,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `registered peer should return consistent data`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.port }
+        val ports = findFreePorts(3).map { it.localPort }
         val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
