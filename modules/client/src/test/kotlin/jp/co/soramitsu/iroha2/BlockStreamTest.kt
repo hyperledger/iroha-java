@@ -27,7 +27,6 @@ import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
-import org.apache.commons.lang3.RandomStringUtils.random
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import java.math.BigInteger
@@ -107,7 +106,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         subscription.receive<BigInteger>(initialActionId) { heightSum += it }
 
         repeat(repeatTimes + shift) {
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, "test1_key$it".asName(), "value$it".asValue()) }
         }
         assertEquals((1..repeatTimes.toLong()).sum(), heightSum.toLong())
 
@@ -119,11 +118,10 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             collector = { isi.add(it) },
         )
 
-        lateinit var lastValue: String
         repeat(repeatTimes * 2) {
-            lastValue = random(16)
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), lastValue.asValue()) }
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, "test2_key$it".asName(), "value$it".asValue()) }
         }
+        val lastValue = "value${repeatTimes * 2 - 1}"
         assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
 
         subscription.stop()
