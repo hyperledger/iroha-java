@@ -27,9 +27,9 @@ import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
+import org.apache.commons.lang3.RandomStringUtils.random
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

@@ -50,11 +50,11 @@ import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.apache.commons.lang3.RandomStringUtils.random
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -402,7 +402,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     fun `account metadata limit increased`(): Unit = runBlocking {
         client.tx {
             // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
-            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), RandomStringUtils.random(5000).asValue())
+            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), random(5000).asValue())
         }
     }
 
@@ -626,7 +626,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         // add/update salt value in Bob's account metadata
-        val salt = RandomStringUtils.random(10).asValue()
+        val salt = random(10).asValue()
         client.tx { setKeyValue(BOB_ACCOUNT_ID, saltKey.asName(), salt) }
 
         // check new metadata in Bob's account
