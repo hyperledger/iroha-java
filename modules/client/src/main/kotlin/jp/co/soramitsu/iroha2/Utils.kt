@@ -11,7 +11,7 @@ val mutex = Mutex()
 val taken = mutableSetOf<Int>()
 val dockerClient: DockerClient = DockerClientBuilder.getInstance().build()
 
-suspend fun findFreePorts(
+suspend fun findFreeSockets(
     amount: Int,
     lock: Boolean = true,
 ): List<ServerSocket> {

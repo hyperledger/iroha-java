@@ -38,13 +38,17 @@ class IrohaConfig(
     var trustedPeers: List<PeerId> = listOf(
         PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey()),
     ),
-    var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
     var sockets: List<ServerSocket> = emptyList(),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,
     var submitGenesis: Boolean = true,
     var envs: Map<String, String> = emptyMap(),
 ) {
+    val ports: List<Int> = when (sockets.isEmpty()) {
+        true -> listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT)
+        else -> sockets.map { it.localPort }
+    }
+
     companion object {
         const val P2P_PORT_IDX = 0
         const val API_PORT_IDX = 1

@@ -23,11 +23,11 @@ class ExampleTest {
      */
     @Test
     fun `register domain instruction committed`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.localPort }
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val sockets = findFreeSockets(3)
+        val p2pPort = sockets[IrohaConfig.P2P_PORT_IDX].localPort
 
         val container = IrohaContainer {
-            this.ports = ports
+            this.sockets = sockets
             this.alias = "iroha$p2pPort"
             this.genesis = DefaultGenesis::class.createInstance()
         }.also { it.start() }

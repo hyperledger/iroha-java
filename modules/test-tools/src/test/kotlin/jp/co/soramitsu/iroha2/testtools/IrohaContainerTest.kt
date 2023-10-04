@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.testtools
 
-import jp.co.soramitsu.iroha2.findFreePorts
+import jp.co.soramitsu.iroha2.findFreeSockets
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -24,7 +24,7 @@ internal class IrohaContainerTest {
                 val all = mutableListOf<ServerSocket>()
                 repeat(100) {
                     delay(Random.nextLong(10, 20))
-                    all.addAll(findFreePorts(3, false))
+                    all.addAll(findFreeSockets(3, false))
                 }
                 all
             }.let { dList.add(it) }

@@ -27,6 +27,7 @@ import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
+import java.net.ServerSocket
 import java.security.KeyPair
 import java.time.Duration
 import kotlin.reflect.full.createInstance
@@ -50,14 +51,14 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.localPort }
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val sockets = findFreeSockets(3)
+        val p2pPort = sockets[IrohaConfig.P2P_PORT_IDX].localPort
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use {
+        startNewContainer(keyPair, alias, sockets).use {
             registerPeer(address, payload)
             assertTrue(isPeerAvailable(address, payload))
         }
@@ -70,14 +71,14 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("unregister_peer")
     fun `unregister peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.localPort }
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val sockets = findFreeSockets(3)
+        val p2pPort = sockets[IrohaConfig.P2P_PORT_IDX].localPort
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use {
+        startNewContainer(keyPair, alias, sockets).use {
             registerPeer(address, payload)
             repeat(PEER_AMOUNT) { assertTrue(isPeerAvailable(address, payload)) }
 
@@ -89,14 +90,14 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `registered peer should return consistent data`(): Unit = runBlocking {
-        val ports = findFreePorts(3).map { it.localPort }
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val sockets = findFreeSockets(3)
+        val p2pPort = sockets[IrohaConfig.P2P_PORT_IDX].localPort
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use { container ->
+        startNewContainer(keyPair, alias, sockets).use { container ->
             registerPeer(address, payload)
             assertTrue(isPeerAvailable(address, payload))
 
@@ -139,12 +140,12 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
     private fun startNewContainer(
         keyPair: KeyPair,
         alias: String,
-        ports: List<Int>,
+        sockets: List<ServerSocket>,
     ): IrohaContainer {
         return IrohaContainer {
             this.waitStrategy = false
             this.keyPair = keyPair
-            this.ports = ports
+            this.sockets = sockets
             this.alias = alias
             this.networkToJoin = containers.first().network ?: throw IrohaSdkException("Container network not found")
             this.genesis = DefaultGenesis::class.createInstance()

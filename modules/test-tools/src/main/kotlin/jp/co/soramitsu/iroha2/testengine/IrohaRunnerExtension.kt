@@ -8,7 +8,7 @@ import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.findFreePorts
+import jp.co.soramitsu.iroha2.findFreeSockets
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
@@ -214,20 +214,20 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         network: Network,
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
-        val portsList = mutableListOf<List<ServerSocket>>()
+        val socketsList = mutableListOf<List<ServerSocket>>()
 
         repeat(withIroha.amount) {
             keyPairs.add(generateKeyPair())
-            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
+            socketsList.add(findFreeSockets(3)) // P2P + API + TELEMETRY
         }
         val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
-            val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX].localPort
+            val p2pPort = socketsList[i][IrohaConfig.P2P_PORT_IDX].localPort
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
         }
         val containers = Collections.synchronizedList(ArrayList<IrohaContainer>(withIroha.amount))
         repeat(withIroha.amount) { n ->
-            val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX].localPort
+            val p2pPort = socketsList[n][IrohaConfig.P2P_PORT_IDX].localPort
             val container = IrohaContainer {
                 networkToJoin = network
                 when {
@@ -238,8 +238,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                 keyPair = keyPairs[n]
                 this.genesisKeyPair = genesisKeyPair
                 trustedPeers = peerIds
-                ports = portsList[n].map { it.localPort }
-                sockets = portsList[n]
+                sockets = socketsList[n]
                 envs = withIroha.configs.associate { config ->
                     config.split(IROHA_CONFIG_DELIMITER).let {
                         it.first() to it.last()
