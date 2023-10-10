@@ -1,8 +1,5 @@
 package jp.co.soramitsu.iroha2.testengine
 
-import com.github.dockerjava.api.model.ExposedPort
-import com.github.dockerjava.api.model.PortBinding
-import com.github.dockerjava.api.model.Ports
 import jp.co.soramitsu.iroha2.JSON_SERDE
 import jp.co.soramitsu.iroha2.bytes
 import jp.co.soramitsu.iroha2.client.Iroha2Client.Companion.STATUS_ENDPOINT
@@ -60,13 +57,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("WSV_WASM_RUNTIME_CONFIG", "{\"FUEL_LIMIT\":20000000, \"MAX_MEMORY\": 524288000}")
             .also { container -> config.envs.forEach { (k, v) -> container.withEnv(k, v) } }
             .withExposedPorts(p2pPort, apiPort, telemetryPort)
-            .withCreateContainerCmdModifier {
-                it.hostConfig!!.withPortBindings(
-                    PortBinding(Ports.Binding.bindPort(p2pPort), ExposedPort(p2pPort)),
-                    PortBinding(Ports.Binding.bindPort(apiPort), ExposedPort(apiPort)),
-                    PortBinding(Ports.Binding.bindPort(telemetryPort), ExposedPort(telemetryPort)),
-                )
-            }
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyToContainer(
@@ -144,11 +134,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         logger().debug("Iroha container stopped")
     }
 
-    fun getP2pUrl(): URL = URL("http", host, p2pPort, "")
+    fun getP2pUrl(): URL = URL("http", host, this.getMappedPort(p2pPort), "")
 
-    fun getApiUrl(): URL = URL("http", host, apiPort, "")
+    fun getApiUrl(): URL = URL("http", host, this.getMappedPort(apiPort), "")
 
-    fun getTelemetryUrl(): URL = URL("http", host, telemetryPort, "")
+    fun getTelemetryUrl(): URL = URL("http", host, this.getMappedPort(telemetryPort), "")
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 

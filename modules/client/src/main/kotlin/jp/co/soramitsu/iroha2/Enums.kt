@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.Name
 
 enum class Permissions(val type: Name) {
+    CanBurnUserTrigger("CanBurnUserTrigger".asName()),
     CanUnregisterAccount("CanUnregisterAccount".asName()),
     CanMintUserPublicKeys("CanMintUserPublicKeys".asName()),
     CanBurnUserPublicKeys("CanBurnUserPublicKeys".asName()),

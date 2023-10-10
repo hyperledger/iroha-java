@@ -29,7 +29,7 @@ import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.random
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -107,7 +107,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         subscription.receive<BigInteger>(initialActionId) { heightSum += it }
 
         repeat(repeatTimes + shift) {
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), random(16).asValue()) }
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), randomAlphabetic(16).asValue()) }
         }
         assertEquals((1..repeatTimes.toLong()).sum(), heightSum.toLong())
 
@@ -121,8 +121,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
         lateinit var lastValue: String
         repeat(repeatTimes * 2) {
-            lastValue = random(16)
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, random(16).asName(), lastValue.asValue()) }
+            lastValue = randomAlphabetic(16)
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), lastValue.asValue()) }
         }
         assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
 

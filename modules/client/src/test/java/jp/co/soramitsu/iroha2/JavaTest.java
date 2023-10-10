@@ -20,7 +20,6 @@ import kotlin.*;
 import kotlin.Pair;
 import kotlin.coroutines.*;
 import kotlinx.coroutines.flow.*;
-import static org.apache.commons.lang3.RandomStringUtils.random;
 import org.jetbrains.annotations.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_DEFIN
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_ASSET_ID;
 import static jp.co.soramitsu.iroha2.testengine.TestConstsKt.DEFAULT_DOMAIN_ID;
 import org.junit.jupiter.api.parallel.ResourceLock;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
 
@@ -182,7 +182,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         for (int i = 0; i <= count + 1; i++) {
             final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
                 .account(ALICE_ACCOUNT_ID)
-                .setKeyValue(ALICE_ACCOUNT_ID, new Name(random(10)), new Value.String(random(10)))
+                .setKeyValue(ALICE_ACCOUNT_ID, new Name(randomAlphabetic(10)), new Value.String(randomAlphabetic(10)))
                 .buildSigned(ALICE_KEYPAIR);
             client.sendTransactionAsync(transaction);
         }

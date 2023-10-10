@@ -30,6 +30,7 @@ public sealed class DomainEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.equals(this, other)
         is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
         is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
+        is ByOwnerChanged -> ByOwnerChanged.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
@@ -37,6 +38,7 @@ public sealed class DomainEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.hashCode()
         is ByMetadataInserted -> ByMetadataInserted.hashCode()
         is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
+        is ByOwnerChanged -> ByOwnerChanged.hashCode()
         else -> super.hashCode() }
 
     /**
@@ -184,6 +186,43 @@ public sealed class DomainEventFilter : ModelEnum {
     }
 
     /**
+     * 'ByOwnerChanged' variant
+     */
+    public class ByOwnerChanged : DomainEventFilter() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByOwnerChanged>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByOwnerChanged> {
+            public const val DISCRIMINANT: Int = 4
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByOwnerChanged = try {
+                ByOwnerChanged()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByOwnerChanged,
+            ): Unit = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByOwnerChanged,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".DomainEventFilter.ByOwnerChanged".hashCode()
+        }
+    }
+
+    /**
      * 'ByAccount' variant
      */
     public data class ByAccount(
@@ -194,7 +233,7 @@ public sealed class DomainEventFilter : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAccount>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAccount> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 5
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAccount = try {
                 ByAccount(
@@ -226,7 +265,7 @@ public sealed class DomainEventFilter : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAssetDefinition>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAssetDefinition> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 6
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEventFilter.ByAssetDefinition = try {
                 ByAssetDefinition(
@@ -257,8 +296,9 @@ public sealed class DomainEventFilter : ModelEnum {
             1 -> ByDeleted.read(reader)
             2 -> ByMetadataInserted.read(reader)
             3 -> ByMetadataRemoved.read(reader)
-            4 -> ByAccount.read(reader)
-            5 -> ByAssetDefinition.read(reader)
+            4 -> ByOwnerChanged.read(reader)
+            5 -> ByAccount.read(reader)
+            6 -> ByAssetDefinition.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: DomainEventFilter) {
@@ -268,8 +308,9 @@ public sealed class DomainEventFilter : ModelEnum {
                 1 -> ByDeleted.write(writer, instance as ByDeleted)
                 2 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
                 3 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
-                4 -> ByAccount.write(writer, instance as ByAccount)
-                5 -> ByAssetDefinition.write(writer, instance as ByAssetDefinition)
+                4 -> ByOwnerChanged.write(writer, instance as ByOwnerChanged)
+                5 -> ByAccount.write(writer, instance as ByAccount)
+                6 -> ByAssetDefinition.write(writer, instance as ByAssetDefinition)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
