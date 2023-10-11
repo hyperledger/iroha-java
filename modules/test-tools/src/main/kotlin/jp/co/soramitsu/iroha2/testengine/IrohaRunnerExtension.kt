@@ -2,13 +2,15 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
+import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
+import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
 import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.findFreePorts
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
@@ -211,9 +213,9 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
 
-        repeat(withIroha.amount) {
+        repeat(withIroha.amount) { n ->
             keyPairs.add(generateKeyPair())
-            portsList.add(findFreePorts(3)) // P2P + API + TELEMETRY
+            portsList.add(listOf(DEFAULT_P2P_PORT + n, DEFAULT_API_PORT + n, DEFAULT_TELEMETRY_PORT + n))
         }
         val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->

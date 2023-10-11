@@ -4,7 +4,6 @@ import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.testengine.IrohaConfig
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
@@ -27,13 +26,9 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
 
     @Test
     fun `manual IrohaContainer initialization`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
-
         val path = javaClass.getResource("../../genesis.json")!!.path
         val container = IrohaContainer {
-            this.ports = ports
-            this.alias = "iroha$p2pPort"
+            this.alias = "iroha$DEFAULT_P2P_PORT"
             this.genesisPath = path
         }.also { it.start() }
 
