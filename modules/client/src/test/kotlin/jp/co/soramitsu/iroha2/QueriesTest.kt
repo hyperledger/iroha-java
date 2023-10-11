@@ -904,7 +904,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-        assertEquals(Permissions.values().size, permissionTokenSchema.tokenIds.size)
+        assertEquals(permissionTokenSchema.tokenIds.size, Permissions.values().size)
 
         val expectedPermissions = Permissions.values().map { it.type }.toList()
         assertTrue(permissionTokenSchema.tokenIds.containsAll(expectedPermissions))

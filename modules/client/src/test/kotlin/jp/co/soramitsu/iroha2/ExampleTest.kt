@@ -5,7 +5,6 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-import jp.co.soramitsu.iroha2.testengine.IrohaConfig
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
@@ -23,12 +22,8 @@ class ExampleTest {
      */
     @Test
     fun `register domain instruction committed`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
-
         val container = IrohaContainer {
-            this.ports = ports
-            this.alias = "iroha$p2pPort"
+            this.alias = "iroha$DEFAULT_P2P_PORT"
             this.genesis = DefaultGenesis::class.createInstance()
         }.also { it.start() }
 

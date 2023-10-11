@@ -215,6 +215,38 @@ public sealed class DomainEvent : ModelEnum {
         }
     }
 
+    /**
+     * 'OwnerChanged' variant
+     */
+    public data class OwnerChanged(
+        public val domainOwnerChanged: DomainOwnerChanged,
+    ) : DomainEvent() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DomainEvent.OwnerChanged>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DomainEvent.OwnerChanged> {
+            public const val DISCRIMINANT: Int = 6
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DomainEvent.OwnerChanged = try {
+                OwnerChanged(
+                    DomainOwnerChanged.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.DomainEvent.OwnerChanged,
+            ): Unit = try {
+                DomainOwnerChanged.write(writer, instance.domainOwnerChanged)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
     public companion object : ScaleReader<DomainEvent>, ScaleWriter<DomainEvent> {
         override fun read(reader: ScaleCodecReader): DomainEvent = when (
             val discriminant =
@@ -226,6 +258,7 @@ public sealed class DomainEvent : ModelEnum {
             3 -> Deleted.read(reader)
             4 -> MetadataInserted.read(reader)
             5 -> MetadataRemoved.read(reader)
+            6 -> OwnerChanged.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: DomainEvent) {
@@ -237,6 +270,7 @@ public sealed class DomainEvent : ModelEnum {
                 3 -> Deleted.write(writer, instance as Deleted)
                 4 -> MetadataInserted.write(writer, instance as MetadataInserted)
                 5 -> MetadataRemoved.write(writer, instance as MetadataRemoved)
+                6 -> OwnerChanged.write(writer, instance as OwnerChanged)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
