@@ -1,0 +1,48 @@
+name: Iroha2-java upload tests results to Soramitsu TestOps
+
+on:
+  workflow_dispatch:
+    inputs:
+      GITHUB_TESTS_ENDPOINT:
+        description: "Endpoint for tests"
+        required: true
+        default: https://soramitsu.testops.cloud
+      GITHUB_TESTS_BROWSER:
+        description: "Browser for tests"
+        required: true
+        default: chrome
+      ALLURE_JOB_RUN_ID:
+        description: "ALLURE_JOB_RUN_ID service parameter. Leave blank."
+        required: false
+      ALLURE_USERNAME:
+        description: "ALLURE_USERNAME service parameter. Leave blank"
+        required: false
+
+env:
+  ALLURE_RESULTS: "${{ github.workspace }}/modules/client/build/allure-results"
+  ALLURE_JOB_RUN_ID: ${{ github.event.inputs.ALLURE_JOB_RUN_ID }}
+
+jobs:
+  java-sdk-tests:
+    runs-on: [iroha-ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3.11.0
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Install and configure allurectl
+        uses: allure-framework/setup-allurectl@v1
+        with:
+          allure-endpoint: https://soramitsu.testops.cloud
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+          allure-project-id: 1
+      - name: Build with Gradle
+        run: |
+          allurectl watch -- ./gradlew clean test --continue
+          printenv | grep GITHUB_TESTS_
+        env:
+          GITHUB_TESTS_ENDPOINT: ${{ github.event.inputs.GITHUB_TESTS_ENDPOINT }}
+          GITHUB_TESTS_BROWSER: ${{ github.event.inputs.GITHUB_TESTS_BROWSER }}
+          GITHUB_TESTS_REF_NAME: ${{ github.ref_name }}
