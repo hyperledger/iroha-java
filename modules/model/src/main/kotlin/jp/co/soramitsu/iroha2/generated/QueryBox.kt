@@ -1132,6 +1132,42 @@ public sealed class QueryBox : ModelEnum {
     }
 
     /**
+     * 'DoesAccountHavePermissionToken' variant
+     */
+    public data class DoesAccountHavePermissionToken(
+        public val doesAccountHavePermissionToken:
+        jp.co.soramitsu.iroha2.generated.DoesAccountHavePermissionToken,
+    ) : QueryBox() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.DoesAccountHavePermissionToken>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.DoesAccountHavePermissionToken> {
+            public const val DISCRIMINANT: Int = 32
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.DoesAccountHavePermissionToken = try {
+                DoesAccountHavePermissionToken(
+                    jp.co.soramitsu.iroha2.generated.DoesAccountHavePermissionToken.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.QueryBox.DoesAccountHavePermissionToken,
+            ): Unit = try {
+                jp.co.soramitsu.iroha2.generated.DoesAccountHavePermissionToken.write(
+                    writer,
+                    instance.doesAccountHavePermissionToken,
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
      * 'FindAllActiveTriggerIds' variant
      */
     public data class FindAllActiveTriggerIds(
@@ -1142,7 +1178,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllActiveTriggerIds>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllActiveTriggerIds> {
-            public const val DISCRIMINANT: Int = 32
+            public const val DISCRIMINANT: Int = 33
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindAllActiveTriggerIds = try {
                 FindAllActiveTriggerIds(
@@ -1177,7 +1213,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerById>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerById> {
-            public const val DISCRIMINANT: Int = 33
+            public const val DISCRIMINANT: Int = 34
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerById = try {
                 FindTriggerById(
@@ -1210,7 +1246,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerKeyValueByIdAndKey>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerKeyValueByIdAndKey> {
-            public const val DISCRIMINANT: Int = 34
+            public const val DISCRIMINANT: Int = 35
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggerKeyValueByIdAndKey = try {
                 FindTriggerKeyValueByIdAndKey(
@@ -1246,7 +1282,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggersByDomainId>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggersByDomainId> {
-            public const val DISCRIMINANT: Int = 35
+            public const val DISCRIMINANT: Int = 36
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindTriggersByDomainId = try {
                 FindTriggersByDomainId(
@@ -1281,7 +1317,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoles>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoles> {
-            public const val DISCRIMINANT: Int = 36
+            public const val DISCRIMINANT: Int = 37
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoles = try {
                 FindAllRoles(
@@ -1313,7 +1349,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoleIds>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoleIds> {
-            public const val DISCRIMINANT: Int = 37
+            public const val DISCRIMINANT: Int = 38
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindAllRoleIds = try {
                 FindAllRoleIds(
@@ -1345,7 +1381,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindRoleByRoleId>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindRoleByRoleId> {
-            public const val DISCRIMINANT: Int = 38
+            public const val DISCRIMINANT: Int = 39
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindRoleByRoleId = try {
                 FindRoleByRoleId(
@@ -1377,7 +1413,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindRolesByAccountId>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindRolesByAccountId> {
-            public const val DISCRIMINANT: Int = 39
+            public const val DISCRIMINANT: Int = 40
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindRolesByAccountId = try {
                 FindRolesByAccountId(
@@ -1412,7 +1448,7 @@ public sealed class QueryBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllParameters>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryBox.FindAllParameters> {
-            public const val DISCRIMINANT: Int = 40
+            public const val DISCRIMINANT: Int = 41
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryBox.FindAllParameters = try {
                 FindAllParameters(
@@ -1470,15 +1506,16 @@ public sealed class QueryBox : ModelEnum {
             29 -> FindTransactionByHash.read(reader)
             30 -> FindPermissionTokensByAccountId.read(reader)
             31 -> FindPermissionTokenSchema.read(reader)
-            32 -> FindAllActiveTriggerIds.read(reader)
-            33 -> FindTriggerById.read(reader)
-            34 -> FindTriggerKeyValueByIdAndKey.read(reader)
-            35 -> FindTriggersByDomainId.read(reader)
-            36 -> FindAllRoles.read(reader)
-            37 -> FindAllRoleIds.read(reader)
-            38 -> FindRoleByRoleId.read(reader)
-            39 -> FindRolesByAccountId.read(reader)
-            40 -> FindAllParameters.read(reader)
+            32 -> DoesAccountHavePermissionToken.read(reader)
+            33 -> FindAllActiveTriggerIds.read(reader)
+            34 -> FindTriggerById.read(reader)
+            35 -> FindTriggerKeyValueByIdAndKey.read(reader)
+            36 -> FindTriggersByDomainId.read(reader)
+            37 -> FindAllRoles.read(reader)
+            38 -> FindAllRoleIds.read(reader)
+            39 -> FindRoleByRoleId.read(reader)
+            40 -> FindRolesByAccountId.read(reader)
+            41 -> FindAllParameters.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: QueryBox) {
@@ -1532,15 +1569,20 @@ public sealed class QueryBox : ModelEnum {
                         FindPermissionTokensByAccountId,
                 )
                 31 -> FindPermissionTokenSchema.write(writer, instance as FindPermissionTokenSchema)
-                32 -> FindAllActiveTriggerIds.write(writer, instance as FindAllActiveTriggerIds)
-                33 -> FindTriggerById.write(writer, instance as FindTriggerById)
-                34 -> FindTriggerKeyValueByIdAndKey.write(writer, instance as FindTriggerKeyValueByIdAndKey)
-                35 -> FindTriggersByDomainId.write(writer, instance as FindTriggersByDomainId)
-                36 -> FindAllRoles.write(writer, instance as FindAllRoles)
-                37 -> FindAllRoleIds.write(writer, instance as FindAllRoleIds)
-                38 -> FindRoleByRoleId.write(writer, instance as FindRoleByRoleId)
-                39 -> FindRolesByAccountId.write(writer, instance as FindRolesByAccountId)
-                40 -> FindAllParameters.write(writer, instance as FindAllParameters)
+                32 -> DoesAccountHavePermissionToken.write(
+                    writer,
+                    instance as
+                        DoesAccountHavePermissionToken,
+                )
+                33 -> FindAllActiveTriggerIds.write(writer, instance as FindAllActiveTriggerIds)
+                34 -> FindTriggerById.write(writer, instance as FindTriggerById)
+                35 -> FindTriggerKeyValueByIdAndKey.write(writer, instance as FindTriggerKeyValueByIdAndKey)
+                36 -> FindTriggersByDomainId.write(writer, instance as FindTriggersByDomainId)
+                37 -> FindAllRoles.write(writer, instance as FindAllRoles)
+                38 -> FindAllRoleIds.write(writer, instance as FindAllRoleIds)
+                39 -> FindRoleByRoleId.write(writer, instance as FindRoleByRoleId)
+                40 -> FindRolesByAccountId.write(writer, instance as FindRolesByAccountId)
+                41 -> FindAllParameters.write(writer, instance as FindAllParameters)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

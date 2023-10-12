@@ -945,6 +945,18 @@
       }
     ]
   },
+  "DoesAccountHavePermissionToken": {
+    "Struct": [
+      {
+        "name": "account_id",
+        "type": "EvaluatesTo<AccountId>"
+      },
+      {
+        "name": "permission_token",
+        "type": "EvaluatesTo<PermissionToken>"
+      }
+    ]
+  },
   "Domain": {
     "Struct": [
       {
@@ -970,10 +982,6 @@
       {
         "name": "metadata",
         "type": "Metadata"
-      },
-      {
-        "name": "owned_by",
-        "type": "AccountId"
       }
     ]
   },
@@ -1008,11 +1016,6 @@
         "tag": "MetadataRemoved",
         "discriminant": 5,
         "type": "MetadataChanged<DomainId>"
-      },
-      {
-        "tag": "OwnerChanged",
-        "discriminant": 6,
-        "type": "DomainOwnerChanged"
       }
     ]
   },
@@ -1035,17 +1038,13 @@
         "discriminant": 3
       },
       {
-        "tag": "ByOwnerChanged",
-        "discriminant": 4
-      },
-      {
         "tag": "ByAccount",
-        "discriminant": 5,
+        "discriminant": 4,
         "type": "FilterOpt<AccountFilter>"
       },
       {
         "tag": "ByAssetDefinition",
-        "discriminant": 6,
+        "discriminant": 5,
         "type": "FilterOpt<AssetDefinitionFilter>"
       }
     ]
@@ -1067,18 +1066,6 @@
       {
         "name": "name",
         "type": "Name"
-      }
-    ]
-  },
-  "DomainOwnerChanged": {
-    "Struct": [
-      {
-        "name": "domain_id",
-        "type": "DomainId"
-      },
-      {
-        "name": "new_owner",
-        "type": "AccountId"
       }
     ]
   },
@@ -1181,6 +1168,14 @@
     ]
   },
   "EvaluatesTo<Parameter>": {
+    "Struct": [
+      {
+        "name": "expression",
+        "type": "Expression"
+      }
+    ]
+  },
+  "EvaluatesTo<PermissionToken>": {
     "Struct": [
       {
         "name": "expression",
@@ -3577,48 +3572,53 @@
         "type": "FindPermissionTokenSchema"
       },
       {
-        "tag": "FindAllActiveTriggerIds",
+        "tag": "DoesAccountHavePermissionToken",
         "discriminant": 32,
+        "type": "DoesAccountHavePermissionToken"
+      },
+      {
+        "tag": "FindAllActiveTriggerIds",
+        "discriminant": 33,
         "type": "FindAllActiveTriggerIds"
       },
       {
         "tag": "FindTriggerById",
-        "discriminant": 33,
+        "discriminant": 34,
         "type": "FindTriggerById"
       },
       {
         "tag": "FindTriggerKeyValueByIdAndKey",
-        "discriminant": 34,
+        "discriminant": 35,
         "type": "FindTriggerKeyValueByIdAndKey"
       },
       {
         "tag": "FindTriggersByDomainId",
-        "discriminant": 35,
+        "discriminant": 36,
         "type": "FindTriggersByDomainId"
       },
       {
         "tag": "FindAllRoles",
-        "discriminant": 36,
+        "discriminant": 37,
         "type": "FindAllRoles"
       },
       {
         "tag": "FindAllRoleIds",
-        "discriminant": 37,
+        "discriminant": 38,
         "type": "FindAllRoleIds"
       },
       {
         "tag": "FindRoleByRoleId",
-        "discriminant": 38,
+        "discriminant": 39,
         "type": "FindRoleByRoleId"
       },
       {
         "tag": "FindRolesByAccountId",
-        "discriminant": 39,
+        "discriminant": 40,
         "type": "FindRolesByAccountId"
       },
       {
         "tag": "FindAllParameters",
-        "discriminant": 40,
+        "discriminant": 41,
         "type": "FindAllParameters"
       }
     ]
