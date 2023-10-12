@@ -24,7 +24,7 @@ env:
 
 jobs:
   java-sdk-tests:
-    runs-on: ubuntu-latest
+    runs-on: [iroha-ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 11
