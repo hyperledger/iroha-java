@@ -224,7 +224,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
-    fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
+    fun `wasm trigger to mint nft for every user and then unregister it`(): Unit = runBlocking {
         val triggerId = TriggerId("wasm_trigger".asName())
 
         val currentTime = Date().time / 1000
@@ -280,6 +280,14 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                     },
                 )
             }
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            unregisterTrigger(triggerId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
     }
 
     @Test
