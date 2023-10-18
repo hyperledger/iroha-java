@@ -445,6 +445,18 @@ object Instructions {
     )
 
     /**
+     * Transfer domain ownership.
+     */
+    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) =
+        InstructionBox.Transfer(
+            TransferBox(
+                sourceId = IdBox.AccountId(sourceId).evaluatesTo(),
+                `object` = Value.Id(value).evaluatesTo(),
+                destinationId = IdBox.AccountId(destinationId).evaluatesTo(),
+            ),
+        )
+
+    /**
      * Evaluate one instruction if a [condition] is met and another one otherwise.
      */
     fun `if`(
@@ -476,6 +488,30 @@ object Instructions {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueUserAssetsToken.type,
                 payload = assetId.asJsonString().asStringWithJson(),
+            )
+        }
+    }
+
+    /**
+     * Revoke an account the [Permissions.CanSetKeyValueInUserAccount] permission
+     */
+    fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId): InstructionBox {
+        return revokeSome(IdBox.AccountId(target)) {
+            PermissionToken(
+                definitionId = Permissions.CanSetKeyValueInUserAccount.type,
+                payload = accountId.asJsonString().asStringWithJson(),
+            )
+        }
+    }
+
+    /**
+     * Revoke an account the [Permissions.CanSetKeyValueInDomain] permission
+     */
+    fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionBox {
+        return revokeSome(IdBox.AccountId(target)) {
+            PermissionToken(
+                definitionId = Permissions.CanSetKeyValueInDomain.type,
+                payload = domainId.asJsonString().asStringWithJson(),
             )
         }
     }
