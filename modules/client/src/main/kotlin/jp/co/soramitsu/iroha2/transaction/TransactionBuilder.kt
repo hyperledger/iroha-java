@@ -394,7 +394,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
-    fun transferDomain(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) = this.apply {
+    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) = this.apply {
         instructions.value.add(Instructions.transferDomainOwnership(sourceId, value, destinationId))
     }
 

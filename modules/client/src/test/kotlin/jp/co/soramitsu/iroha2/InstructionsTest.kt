@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -35,6 +36,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -1018,6 +1020,37 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
         assertEquals(27, domains.size)
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Domains")
+    @Story("Account transfers domain ownership")
+    @SdkTestId("transfer_domain_ownership")
+    fun `transfer domain ownership`(): Unit = runBlocking {
+        val genesisAccountId = AccountId(GENESIS.asName(), GENESIS.asDomainId())
+        var domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query ->
+                client.sendQuery(query)
+            }
+        assertEquals(genesisAccountId, domain.ownedBy)
+
+        client.tx {
+            transferDomainOwnership(
+                genesisAccountId,
+                IdBox.DomainId(DEFAULT_DOMAIN_ID),
+                BOB_ACCOUNT_ID,
+            )
+        }
+        domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query ->
+                client.sendQuery(query)
+            }
+        assertEquals(BOB_ACCOUNT_ID, domain.ownedBy)
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
