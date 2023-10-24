@@ -4,7 +4,9 @@ import jp.co.soramitsu.iroha2.generated.Account
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
+import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
 import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.Domain
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
@@ -14,40 +16,33 @@ import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PermissionTokenSchema
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
-import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
-import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
 import java.math.BigInteger
 
 /**
  * Extractors are used by [QueryBuilder] to extract data from query results
  */
 interface ResultExtractor<T> {
-    fun extract(result: VersionedBatchedResponseOfValue): T {
-        return when (result) {
-            is VersionedBatchedResponseOfValue.V1 -> extract(result.batchedResponseOfValue)
-            else -> throw IrohaSdkException("Unexpected type ${result::class}")
-        }
-    }
-
-    fun extract(result: BatchedResponseOfValue): T
+    fun extract(result: BatchedResponseV1OfValue): T
 }
 
 /**
  * @return the query result as it is
  */
-object AsIs : ResultExtractor<BatchedResponseOfValue> {
-    override fun extract(result: BatchedResponseOfValue): BatchedResponseOfValue = result
+object AsIs : ResultExtractor<BatchedResponseV1OfValue> {
+    override fun extract(result: BatchedResponseV1OfValue): BatchedResponseV1OfValue = result
 }
 
 /**
  * Extract an asset from a query [result]
  */
 object AssetExtractor : ResultExtractor<Asset> {
-    override fun extract(result: BatchedResponseOfValue): Asset {
+    override fun extract(result: BatchedResponseV1OfValue): Asset {
         return extractIdentifiable(result.batch, IdentifiableBox.Asset::asset)
     }
 }
@@ -56,7 +51,7 @@ object AssetExtractor : ResultExtractor<Asset> {
  * Extract an asset definition from a query [result]
  */
 object AssetDefinitionExtractor : ResultExtractor<AssetDefinition> {
-    override fun extract(result: BatchedResponseOfValue): AssetDefinition {
+    override fun extract(result: BatchedResponseV1OfValue): AssetDefinition {
         return extractIdentifiable(result.batch, IdentifiableBox.AssetDefinition::assetDefinition)
     }
 }
@@ -65,7 +60,7 @@ object AssetDefinitionExtractor : ResultExtractor<AssetDefinition> {
  * Extract an account from a query [result]
  */
 object AccountExtractor : ResultExtractor<Account> {
-    override fun extract(result: BatchedResponseOfValue): Account {
+    override fun extract(result: BatchedResponseV1OfValue): Account {
         return extractIdentifiable(result.batch, IdentifiableBox.Account::account)
     }
 }
@@ -74,7 +69,7 @@ object AccountExtractor : ResultExtractor<Account> {
  * Extract a list of accounts from a query [result]
  */
 object AccountsExtractor : ResultExtractor<List<Account>> {
-    override fun extract(result: BatchedResponseOfValue): List<Account> {
+    override fun extract(result: BatchedResponseV1OfValue): List<Account> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Account::account)
         }
@@ -85,7 +80,7 @@ object AccountsExtractor : ResultExtractor<List<Account>> {
  * Extract a list of assets from a query [result]
  */
 object AssetsExtractor : ResultExtractor<List<Asset>> {
-    override fun extract(result: BatchedResponseOfValue): List<Asset> {
+    override fun extract(result: BatchedResponseV1OfValue): List<Asset> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Asset::asset)
         }
@@ -96,7 +91,7 @@ object AssetsExtractor : ResultExtractor<List<Asset>> {
  * Extract a list of asset definitions from a query [result]
  */
 object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
-    override fun extract(result: BatchedResponseOfValue): List<AssetDefinition> {
+    override fun extract(result: BatchedResponseV1OfValue): List<AssetDefinition> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.AssetDefinition::assetDefinition)
         }
@@ -107,7 +102,7 @@ object AssetDefinitionsExtractor : ResultExtractor<List<AssetDefinition>> {
  * Extract a domain from a query [result]
  */
 object DomainExtractor : ResultExtractor<Domain> {
-    override fun extract(result: BatchedResponseOfValue): Domain {
+    override fun extract(result: BatchedResponseV1OfValue): Domain {
         return extractIdentifiable(result.batch, IdentifiableBox.Domain::domain)
     }
 }
@@ -116,7 +111,7 @@ object DomainExtractor : ResultExtractor<Domain> {
  * Extract a list of domains from a query [result]
  */
 object DomainsExtractor : ResultExtractor<List<Domain>> {
-    override fun extract(result: BatchedResponseOfValue): List<Domain> {
+    override fun extract(result: BatchedResponseV1OfValue): List<Domain> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Domain::domain)
         }
@@ -127,7 +122,7 @@ object DomainsExtractor : ResultExtractor<List<Domain>> {
  * Extract a lost of peers from a query [result]
  */
 object PeersExtractor : ResultExtractor<List<Peer>> {
-    override fun extract(result: BatchedResponseOfValue): List<Peer> {
+    override fun extract(result: BatchedResponseV1OfValue): List<Peer> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Peer::peer)
         }
@@ -137,19 +132,20 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
 /**
  * Extract a trigger from a query [result]
  */
-object TriggerBoxExtractor : ResultExtractor<TriggerBox> {
-    override fun extract(result: BatchedResponseOfValue): TriggerBox {
-        return extractIdentifiable(result.batch, IdentifiableBox.Trigger::triggerBox)
+object TriggerBoxExtractor : ResultExtractor<TriggerOfTriggeringFilterBox> {
+    override fun extract(result: BatchedResponseV1OfValue): TriggerOfTriggeringFilterBox {
+        return extractIdentifiable(result.batch,
+            IdentifiableBox.Trigger::triggerOfTriggeringFilterBox)
     }
 }
 
 /**
  * Extract a list of triggers from a query [result]
  */
-object TriggerBoxesExtractor : ResultExtractor<List<TriggerBox>> {
-    override fun extract(result: BatchedResponseOfValue): List<TriggerBox> {
+object TriggerBoxesExtractor : ResultExtractor<List<TriggerOfTriggeringFilterBox>> {
+    override fun extract(result: BatchedResponseV1OfValue): List<TriggerOfTriggeringFilterBox> {
         return extractVec(result.batch) {
-            extractIdentifiable(it, IdentifiableBox.Trigger::triggerBox)
+            extractIdentifiable(it, IdentifiableBox.Trigger::triggerOfTriggeringFilterBox)
         }
     }
 }
@@ -158,7 +154,7 @@ object TriggerBoxesExtractor : ResultExtractor<List<TriggerBox>> {
  * Extract a list of trigger IDs from a query [result]
  */
 object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
-    override fun extract(result: BatchedResponseOfValue): List<TriggerId> {
+    override fun extract(result: BatchedResponseV1OfValue): List<TriggerId> {
         return extractVec(result.batch) {
             extractValue(it, Value.Id::idBox).cast<IdBox.TriggerId>().triggerId
         }
@@ -169,7 +165,7 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
  * Extract a list of permission tokens from a query [result]
  */
 object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
-    override fun extract(result: BatchedResponseOfValue): List<PermissionToken> {
+    override fun extract(result: BatchedResponseV1OfValue): List<PermissionToken> {
         return extractVec(result.batch) {
             extractValue(it, Value.PermissionToken::permissionToken)
         }
@@ -180,7 +176,7 @@ object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
  * Extract a permission token schema from a query [result]
  */
 object PermissionTokenSchemaExtractor : ResultExtractor<PermissionTokenSchema> {
-    override fun extract(result: BatchedResponseOfValue): PermissionTokenSchema {
+    override fun extract(result: BatchedResponseV1OfValue): PermissionTokenSchema {
         return extractValue(result.batch, Value.PermissionTokenSchema::permissionTokenSchema)
     }
 }
@@ -189,7 +185,7 @@ object PermissionTokenSchemaExtractor : ResultExtractor<PermissionTokenSchema> {
 * Extract a list of transaction values from a query [result]
 */
 object TransactionValuesExtractor : ResultExtractor<List<TransactionQueryOutput>> {
-    override fun extract(result: BatchedResponseOfValue): List<TransactionQueryOutput> {
+    override fun extract(result: BatchedResponseV1OfValue): List<TransactionQueryOutput> {
         return extractVec(result.batch) {
             extractValue(it, Value.TransactionQueryOutput::transactionQueryOutput)
         }
@@ -200,21 +196,21 @@ object TransactionValuesExtractor : ResultExtractor<List<TransactionQueryOutput>
 * Extract a transaction value from a query [result]
 */
 object TransactionValueExtractor : ResultExtractor<TransactionQueryOutput> {
-    override fun extract(result: BatchedResponseOfValue): TransactionQueryOutput {
+    override fun extract(result: BatchedResponseV1OfValue): TransactionQueryOutput {
         return extractValue(result.batch, Value.TransactionQueryOutput::transactionQueryOutput)
     }
 }
 
-object BlocksValueExtractor : ResultExtractor<List<VersionedCommittedBlock>> {
-    override fun extract(result: BatchedResponseOfValue): List<VersionedCommittedBlock> {
+object BlocksValueExtractor : ResultExtractor<List<SignedBlock>> {
+    override fun extract(result: BatchedResponseV1OfValue): List<SignedBlock> {
         return extractVec(result.batch) {
-            extractValue(it, Value.Block::versionedCommittedBlock)
+            extractValue(it, Value.Block::signedBlock)
         }
     }
 }
 
 object BlockHeadersExtractor : ResultExtractor<List<BlockHeader>> {
-    override fun extract(result: BatchedResponseOfValue): List<BlockHeader> {
+    override fun extract(result: BatchedResponseV1OfValue): List<BlockHeader> {
         return extractVec(result.batch) {
             extractValue(it, Value.BlockHeader::blockHeader)
         }
@@ -222,7 +218,7 @@ object BlockHeadersExtractor : ResultExtractor<List<BlockHeader>> {
 }
 
 object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
-    override fun extract(result: BatchedResponseOfValue): BlockHeader {
+    override fun extract(result: BatchedResponseV1OfValue): BlockHeader {
         return extractValue(result.batch, Value.BlockHeader::blockHeader)
     }
 }
@@ -231,7 +227,7 @@ object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
  * Extract `Value.U32` from a query [result]
  */
 object U32Extractor : ResultExtractor<Long> {
-    override fun extract(result: BatchedResponseOfValue): Long {
+    override fun extract(result: BatchedResponseV1OfValue): Long {
         return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U32>().u32
         }
@@ -242,7 +238,7 @@ object U32Extractor : ResultExtractor<Long> {
  * Extract `Value.U64` from a query [result]
  */
 object U64Extractor : ResultExtractor<BigInteger> {
-    override fun extract(result: BatchedResponseOfValue): BigInteger {
+    override fun extract(result: BatchedResponseV1OfValue): BigInteger {
         return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U64>().u64
         }
@@ -253,7 +249,7 @@ object U64Extractor : ResultExtractor<BigInteger> {
  * Extract `Value.U128` from a query [result]
  */
 object U128Extractor : ResultExtractor<BigInteger> {
-    override fun extract(result: BatchedResponseOfValue): BigInteger {
+    override fun extract(result: BatchedResponseV1OfValue): BigInteger {
         return extractValue(result.batch) { v: Value ->
             v.cast<Value.Numeric>().numericValue.cast<NumericValue.U128>().u128
         }
@@ -264,7 +260,7 @@ object U128Extractor : ResultExtractor<BigInteger> {
  * Extract `Value` from a query [result]
  */
 object ValueExtractor : ResultExtractor<Value> {
-    override fun extract(result: BatchedResponseOfValue): Value {
+    override fun extract(result: BatchedResponseV1OfValue): Value {
         return result.batch
     }
 }
@@ -273,7 +269,7 @@ object ValueExtractor : ResultExtractor<Value> {
  * Extract a list of roles from a query [result]
  */
 object RolesExtractor : ResultExtractor<List<Role>> {
-    override fun extract(result: BatchedResponseOfValue): List<Role> {
+    override fun extract(result: BatchedResponseV1OfValue): List<Role> {
         return extractVec(result.batch) {
             extractIdentifiable(it, IdentifiableBox.Role::role)
         }
@@ -284,7 +280,7 @@ object RolesExtractor : ResultExtractor<List<Role>> {
  * Extract a role from a query [result]
  */
 object RoleExtractor : ResultExtractor<Role> {
-    override fun extract(result: BatchedResponseOfValue): Role {
+    override fun extract(result: BatchedResponseV1OfValue): Role {
         return extractIdentifiable(result.batch, IdentifiableBox.Role::role)
     }
 }
@@ -293,7 +289,7 @@ object RoleExtractor : ResultExtractor<Role> {
  * Extract a list of role IDs from a query [result]
  */
 object RoleIdsExtractor : ResultExtractor<List<RoleId>> {
-    override fun extract(result: BatchedResponseOfValue): List<RoleId> {
+    override fun extract(result: BatchedResponseV1OfValue): List<RoleId> {
         return extractVec(result.batch) {
             extractValue(it, Value.Id::idBox).cast<IdBox.RoleId>().roleId
         }

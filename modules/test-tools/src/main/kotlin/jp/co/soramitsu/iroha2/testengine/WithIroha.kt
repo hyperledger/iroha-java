@@ -43,7 +43,7 @@ annotation class WithIrohaManual(
  * Empty genesis with no instructions
  */
 open class EmptyGenesis : Genesis(
-    RawGenesisBlock(listOf(emptyList()), validatorMode),
+    RawGenesisBlock(listOf(emptyList()), executorMode),
 )
 
 const val IROHA_CONFIG_DELIMITER = "="

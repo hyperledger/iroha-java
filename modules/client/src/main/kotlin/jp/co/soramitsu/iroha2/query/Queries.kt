@@ -50,9 +50,9 @@ import jp.co.soramitsu.iroha2.generated.HashOf
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.QueryBox
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.
@@ -233,7 +233,7 @@ object Queries {
      * Return the transaction by [Hash]
      */
     fun findTransactionByHash(hash: Hash) = QueryBox.FindTransactionByHash(
-        FindTransactionByHash(HashOf<VersionedSignedTransaction>(hash).evaluatesTo()),
+        FindTransactionByHash(HashOf<SignedTransaction>(hash).evaluatesTo()),
     )
 
     /**
@@ -301,7 +301,7 @@ object Queries {
      * Return the block header corresponding to the given [Hash]
      */
     fun findBlockHeaderByHash(hash: Hash) = QueryBox.FindBlockHeaderByHash(
-        FindBlockHeaderByHash(HashOf<VersionedCommittedBlock>(hash).evaluatesTo()),
+        FindBlockHeaderByHash(HashOf<SignedBlock>(hash).evaluatesTo()),
     )
 
     /**

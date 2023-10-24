@@ -314,21 +314,21 @@ public sealed class DataEvent : ModelEnum {
     }
 
     /**
-     * 'Validator' variant
+     * 'Executor' variant
      */
-    public data class Validator(
-        public val validatorEvent: ValidatorEvent,
+    public data class Executor(
+        public val executorEvent: ExecutorEvent,
     ) : DataEvent() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEvent.Validator>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEvent.Validator> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEvent.Executor>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEvent.Executor> {
             public const val DISCRIMINANT: Int = 9
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEvent.Validator = try {
-                Validator(
-                    ValidatorEvent.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEvent.Executor = try {
+                Executor(
+                    ExecutorEvent.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -336,9 +336,9 @@ public sealed class DataEvent : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.DataEvent.Validator,
+                instance: jp.co.soramitsu.iroha2.generated.DataEvent.Executor,
             ): Unit = try {
-                ValidatorEvent.write(writer, instance.validatorEvent)
+                ExecutorEvent.write(writer, instance.executorEvent)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -359,7 +359,7 @@ public sealed class DataEvent : ModelEnum {
             6 -> Role.read(reader)
             7 -> PermissionToken.read(reader)
             8 -> Configuration.read(reader)
-            9 -> Validator.read(reader)
+            9 -> Executor.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: DataEvent) {
@@ -374,7 +374,7 @@ public sealed class DataEvent : ModelEnum {
                 6 -> Role.write(writer, instance as Role)
                 7 -> PermissionToken.write(writer, instance as PermissionToken)
                 8 -> Configuration.write(writer, instance as Configuration)
-                9 -> Validator.write(writer, instance as Validator)
+                9 -> Executor.write(writer, instance as Executor)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

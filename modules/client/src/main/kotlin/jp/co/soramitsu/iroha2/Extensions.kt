@@ -7,8 +7,6 @@ import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.CommittedBlock
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -22,7 +20,7 @@ import jp.co.soramitsu.iroha2.generated.HashOf
 import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
@@ -40,18 +38,16 @@ import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.generated.StringWithJson
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
-import jp.co.soramitsu.iroha2.generated.TriggerBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndExecutable
-import jp.co.soramitsu.iroha2.generated.TriggerOfFilterBoxAndOptimizedExecutable
-import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndExecutable
-import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBoxAndOptimizedExecutable
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.VersionedCommittedBlock
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.BlockMessage
+import jp.co.soramitsu.iroha2.generated.BlockPayload
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.SignedBlock
+import jp.co.soramitsu.iroha2.generated.SignedBlockV1
+import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
@@ -67,16 +63,14 @@ import java.util.StringTokenizer
 import kotlin.experimental.or
 import jp.co.soramitsu.iroha2.generated.PublicKey as IrohaPublicKey
 
-fun VersionedBlockSubscriptionRequest.V1.Companion.of(from: Long) = VersionedBlockSubscriptionRequest.V1(
-    BlockSubscriptionRequest(NonZeroOfu64(BigInteger.valueOf(from))),
-)
+fun BlockSubscriptionRequest.Companion.of(from: Long) = BlockSubscriptionRequest(NonZeroOfu64(BigInteger.valueOf(from)))
 
 fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 
 fun String.asAccountId() = this.split(ACCOUNT_ID_DELIMITER).takeIf {
     it.size == 2
 }?.let { parts ->
-    AccountId(parts[0].asName(), parts[1].asDomainId())
+    AccountId(parts[1].asDomainId(), parts[0].asName())
 } ?: throw IllegalArgumentException("Incorrect account ID: $this")
 
 fun String.asAssetDefinitionId() = this.split(ASSET_ID_DELIMITER).takeIf {
@@ -202,8 +196,8 @@ fun ByteArray.hash(): ByteArray {
 /**
  * Hash the given versioned transaction (`VersionedTransaction.V1`)
  */
-fun VersionedSignedTransaction.V1.hash(): ByteArray {
-    return this.signedTransaction
+fun SignedTransaction.V1.hash(): ByteArray {
+    return this.signedTransactionV1
         .payload
         .let { TransactionPayload.encode(it) }
         .hash()
@@ -212,17 +206,17 @@ fun VersionedSignedTransaction.V1.hash(): ByteArray {
 /**
  * Hash the given versioned transaction. Maintains only `VersionedTransaction.V1`
  */
-fun VersionedSignedTransaction.hash() = when (this) {
-    is VersionedSignedTransaction.V1 -> this.hash()
+fun SignedTransaction.hash() = when (this) {
+    is SignedTransaction.V1 -> this.hash()
 }
 
 /**
  * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
  */
-fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): VersionedSignedTransaction {
+fun SignedTransaction.appendSignatures(vararg keypairs: KeyPair): SignedTransaction {
     return when (this) {
-        is VersionedSignedTransaction.V1 -> {
-            val encodedPayload = signedTransaction
+        is SignedTransaction.V1 -> {
+            val encodedPayload = signedTransactionV1
                 .payload
                 .let { TransactionPayload.encode(it) }
             val signatures = keypairs.map {
@@ -232,10 +226,10 @@ fun VersionedSignedTransaction.appendSignatures(vararg keypairs: KeyPair): Versi
                 ).asSignatureOf<TransactionPayload>()
             }.toSet()
 
-            VersionedSignedTransaction.V1(
-                SignedTransaction(
-                    signedTransaction.signatures.plus(signatures),
-                    signedTransaction.payload,
+            SignedTransaction.V1(
+                SignedTransactionV1(
+                    signedTransactionV1.signatures.plus(signatures),
+                    signedTransactionV1.payload,
                 ),
             )
         }
@@ -295,7 +289,7 @@ fun RegistrableBox.toIdentifiableBox() = when (this) {
     is RegistrableBox.AssetDefinition -> IdentifiableBox.NewAssetDefinition(this.newAssetDefinition)
     is RegistrableBox.Role -> IdentifiableBox.NewRole(this.newRole)
     is RegistrableBox.Domain -> IdentifiableBox.NewDomain(this.newDomain)
-    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(TriggerBox.Raw(this.triggerOfTriggeringFilterBoxAndExecutable))
+    is RegistrableBox.Trigger -> IdentifiableBox.Trigger(this.triggerOfTriggeringFilterBox)
 }
 
 inline fun <reified T> T.asValue() = when (this) {
@@ -352,15 +346,15 @@ fun Metadata.merge(extra: Metadata) = Metadata(
     this.map.toMutableMap().also { it.putAll(extra.map) },
 )
 
-fun InstructionBox.Register.extractIdentifiableBox() = runCatching {
-    this.registerBox.`object`.expression
+fun InstructionExpr.Register.extractIdentifiableBox() = runCatching {
+    this.registerExpr.`object`.expression
         .cast<Expression.Raw>().value
         .cast<Value.Identifiable>().identifiableBox
 }.getOrNull()
 
-fun Iterable<InstructionBox>.extractIdentifiableBoxes() = this.asSequence()
-    .filterIsInstance<InstructionBox.Register>()
-    .map { it.registerBox.`object`.expression }
+fun Iterable<InstructionExpr>.extractIdentifiableBoxes() = this.asSequence()
+    .filterIsInstance<InstructionExpr.Register>()
+    .map { it.registerExpr.`object`.expression }
     .filterIsInstance<Expression.Raw>()
     .map { it.value }
     .filterIsInstance<Value.Identifiable>()
@@ -378,42 +372,42 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.ParameterId -> this.parameterId
 }
 
-fun InstructionBox.extractAccount() = this
-    .cast<InstructionBox.Register>()
-    .registerBox.`object`.expression
+fun InstructionExpr.extractAccount() = this
+    .cast<InstructionExpr.Register>()
+    .registerExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewAccount>().newAccount
 
-fun InstructionBox.Register.extractAccount() = this
-    .registerBox.`object`.expression
+fun InstructionExpr.Register.extractAccount() = this
+    .registerExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewAccount>().newAccount
 
-fun InstructionBox.Register.extractDomain() = this
-    .registerBox.`object`.expression
+fun InstructionExpr.Register.extractDomain() = this
+    .registerExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewDomain>().newDomain
 
-fun InstructionBox.Register.extractAssetDefinition() = this
-    .registerBox.`object`.expression
+fun InstructionExpr.Register.extractAssetDefinition() = this
+    .registerExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewAssetDefinition>().newAssetDefinition
 
-fun InstructionBox.SetKeyValue.extractKey() = this
-    .setKeyValueBox.key.expression
+fun InstructionExpr.SetKeyValue.extractKey() = this
+    .setKeyValueExpr.key.expression
     .cast<Expression.Raw>().value
     .cast<Value.Name>().name
     .string
 
-fun InstructionBox.SetKeyValue.extractAccountId() = this.setKeyValueBox.objectId.extractAccountId()
+fun InstructionExpr.SetKeyValue.extractAccountId() = this.setKeyValueExpr.objectId.extractAccountId()
 
-fun InstructionBox.Unregister.extractAccountId() = this.unregisterBox.objectId.extractAccountId()
+fun InstructionExpr.Unregister.extractAccountId() = this.unregisterExpr.objectId.extractAccountId()
 
-fun InstructionBox.Unregister.extractDomainId() = this.unregisterBox.objectId.extractDomainId()
+fun InstructionExpr.Unregister.extractDomainId() = this.unregisterExpr.objectId.extractDomainId()
 
 fun <T> EvaluatesTo<T>.extractAssetId() = this
     .expression
@@ -433,8 +427,8 @@ fun <T> EvaluatesTo<T>.extractDomainId() = this
     .cast<Value.Id>().idBox
     .cast<IdBox.DomainId>().domainId
 
-fun InstructionBox.Mint.extractPublicKey() = this
-    .mintBox.`object`.expression
+fun InstructionExpr.Mint.extractPublicKey() = this
+    .mintExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.PublicKey>().publicKey
     .payload.toHex()
@@ -445,64 +439,64 @@ fun <T> EvaluatesTo<T>.extractNewAssetDefinition() = this
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewAssetDefinition>().newAssetDefinition
 
-inline fun <reified I : InstructionBox> VersionedSignedTransaction.extractInstruction() = this
-    .cast<VersionedSignedTransaction.V1>()
+inline fun <reified I : InstructionExpr> SignedTransaction.extractInstruction() = this
+    .cast<SignedTransaction.V1>()
     .extractInstruction<I>()
 
-inline fun <reified I : InstructionBox> VersionedSignedTransaction.V1.extractInstruction() = this
+inline fun <reified I : InstructionExpr> SignedTransaction.V1.extractInstruction() = this
     .extractInstructionVec<I>()
     .first().cast<I>()
 
-inline fun <reified I : InstructionBox> VersionedSignedTransaction.V1.extractInstructions() = this
+inline fun <reified I : InstructionExpr> SignedTransaction.V1.extractInstructions() = this
     .extractInstructionVec<I>()
     .cast<List<I>>()
 
-inline fun <reified I : InstructionBox> VersionedSignedTransaction.V1.extractInstructionVec() = this
-    .signedTransaction.payload.instructions
+inline fun <reified I : InstructionExpr> SignedTransaction.V1.extractInstructionVec() = this
+    .signedTransactionV1.payload.instructions
     .cast<Executable.Instructions>()
     .vec.filterIsInstance<I>()
 
-fun InstructionBox.Register.extractNewDomainMetadata() = this
-    .registerBox.`object`.expression
+fun InstructionExpr.Register.extractNewDomainMetadata() = this
+    .registerExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.Identifiable>().identifiableBox
     .cast<IdentifiableBox.NewDomain>().newDomain.metadata
 
-fun InstructionBox.SetKeyValue.extractDomainId() = this
-    .setKeyValueBox.objectId.expression
+fun InstructionExpr.SetKeyValue.extractDomainId() = this
+    .setKeyValueExpr.objectId.expression
     .cast<Expression.Raw>().value
     .cast<Value.Id>().idBox
     .cast<IdBox.DomainId>().domainId
 
-fun InstructionBox.SetKeyValue.key() = this
-    .setKeyValueBox.key.expression
+fun InstructionExpr.SetKeyValue.key() = this
+    .setKeyValueExpr.key.expression
     .cast<Expression.Raw>().value
     .cast<Value.Name>().name.string
 
-fun InstructionBox.SetKeyValue.extractValueString() = this
-    .setKeyValueBox.value.expression
+fun InstructionExpr.SetKeyValue.extractValueString() = this
+    .setKeyValueExpr.value.expression
     .cast<Expression.Raw>().value
     .cast<Value.String>().string
 
-fun InstructionBox.SetKeyValue.extractValueU32() = this.setKeyValueBox.value.extractValueU32()
+fun InstructionExpr.SetKeyValue.extractValueU32() = this.setKeyValueExpr.value.extractValueU32()
 
-fun InstructionBox.SetKeyValue.extractValueU128() = this
-    .setKeyValueBox.value.expression
+fun InstructionExpr.SetKeyValue.extractValueU128() = this
+    .setKeyValueExpr.value.expression
     .cast<Expression.Raw>().value
     .getValue<Value.Numeric>().numericValue
     .getValue<BigInteger>()
 
-fun InstructionBox.SetKeyValue.extractValueBoolean() = this
-    .setKeyValueBox.value.expression
+fun InstructionExpr.SetKeyValue.extractValueBoolean() = this
+    .setKeyValueExpr.value.expression
     .cast<Expression.Raw>().value
     .cast<Value.Bool>().bool
 
-fun InstructionBox.Grant.extractValuePermissionToken() = this
-    .grantBox.`object`.expression
+fun InstructionExpr.Grant.extractValuePermissionToken() = this
+    .grantExpr.`object`.expression
     .cast<Expression.Raw>().value
     .cast<Value.PermissionToken>().permissionToken
 
-fun InstructionBox.Burn.extractValueU32() = this.burnBox.`object`.extractValueU32()
+fun InstructionExpr.Burn.extractValueU32() = this.burnExpr.`object`.extractValueU32()
 
 fun EvaluatesTo<Value>.extractValueU32() = this
     .expression
@@ -510,17 +504,7 @@ fun EvaluatesTo<Value>.extractValueU32() = this
     .getValue<Value.Numeric>().numericValue
     .getValue<Long>()
 
-fun TriggerOfFilterBoxAndOptimizedExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
-
-fun TriggerOfFilterBoxAndExecutable.extractIsi() = this.action.executable.cast<Executable.Instructions>().vec
-
-fun TriggerOfTriggeringFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
-
-fun TriggerOfTriggeringFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
-
-fun TriggerOfFilterBoxAndOptimizedExecutable.extractSchedule() = this.action.filter.extractSchedule()
-
-fun TriggerOfFilterBoxAndExecutable.extractSchedule() = this.action.filter.extractSchedule()
+fun TriggerOfTriggeringFilterBox.extractSchedule() = this.action.filter.extractSchedule()
 
 fun TriggeringFilterBox.extractSchedule() = this
     .cast<TriggeringFilterBox.Time>()
@@ -532,18 +516,13 @@ fun FilterBox.extractSchedule() = this
     .timeEventFilter.executionTime
     .cast<ExecutionTime.Schedule>().schedule
 
-fun TriggerBox.extractSchedule() = when (this) {
-    is TriggerBox.Raw -> this.triggerOfTriggeringFilterBoxAndExecutable.extractSchedule()
-    is TriggerBox.Optimized -> this.triggerOfTriggeringFilterBoxAndOptimizedExecutable.extractSchedule()
-}
-
-fun VersionedBlockMessage.extractBlock() = this
-    .cast<VersionedBlockMessage.V1>().blockMessage.versionedCommittedBlock
+fun BlockMessage.extractBlock() = this
+    .cast<BlockMessage>().signedBlock.cast<SignedBlock.V1>().signedBlockV1
     .extractBlock()
 
-fun VersionedCommittedBlock.extractBlock() = this.cast<VersionedCommittedBlock.V1>().committedBlock
+fun SignedBlockV1.extractBlock() = this.cast<SignedBlockV1>().payload
 
-fun CommittedBlock.height() = this.header.height
+fun BlockPayload.height() = this.header.height
 
 fun Metadata.getStringValue(key: String) = this.map.getStringValue(key)
 
@@ -604,11 +583,6 @@ inline fun <reified T> Metadata.extract(key: String) = this.map.extract<T>(key)
 fun Asset.metadata() = this.value.cast<AssetValue.Store>().metadata.map
 
 fun TransactionBuilder.merge(other: TransactionBuilder) = this.instructions.value.addAll(other.instructions.value)
-
-fun TriggerBox.id() = when (this) {
-    is TriggerBox.Raw -> this.triggerOfTriggeringFilterBoxAndExecutable.id
-    is TriggerBox.Optimized -> this.triggerOfTriggeringFilterBoxAndOptimizedExecutable.id
-}
 
 fun String.toSocketAddr() = this.split(":").let { parts ->
     if (parts.size != 2) throw IrohaSdkException("Incorrect address")

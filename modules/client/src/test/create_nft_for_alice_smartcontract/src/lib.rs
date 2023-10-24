@@ -37,8 +37,8 @@ fn smartcontract_entry_point() {
         .mintable_once()
         .with_metadata(metadata);
 
-    RegisterBox::new(nft_definition).execute().dbg_unwrap();
-    SetKeyValueBox::new(
+    RegisterExpr::new(nft_definition).execute().dbg_unwrap();
+    SetKeyValueExpr::new(
         AssetId::new(nft_id, account_id),
         Name::from_str("has_this_nft").dbg_unwrap(),
         Value::Bool(true),

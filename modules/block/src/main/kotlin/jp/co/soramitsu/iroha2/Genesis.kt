@@ -2,15 +2,15 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
-import jp.co.soramitsu.iroha2.generated.RegisterBox
+import jp.co.soramitsu.iroha2.generated.RegisterExpr
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.ValidatorMode
+import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Value
 import java.nio.file.Files
 import java.nio.file.Path
@@ -37,31 +37,31 @@ open class Genesis(open val block: RawGenesisBlock) {
 
     companion object {
 
-        val validatorMode = this::class.java.classLoader.getResource("validator.wasm")
-            ?.let { ValidatorMode.Path("validator.wasm") }
+        val executorMode = this::class.java.classLoader.getResource("validator.wasm")
+            ?.let { ExecutorMode.Path("validator.wasm") }
             ?: throw IrohaSdkException("validator.wasm not found")
 
         /**
          * Return empty genesis
          */
-        fun getEmpty() = Genesis(RawGenesisBlock(listOf(listOf()), validatorMode))
+        fun getEmpty() = Genesis(RawGenesisBlock(listOf(listOf()), executorMode))
 
         /**
          * List of genesis blocks to single block with unique instructions
          */
         fun List<Genesis>.toSingle(): Genesis {
-            val uniqueIsi: MutableSet<InstructionBox> = mutableSetOf()
+            val uniqueIsi: MutableSet<InstructionExpr> = mutableSetOf()
             this.forEach { genesis ->
                 uniqueIsi.addAll(genesis.block.transactions.flatten())
             }
 
-            return Genesis(RawGenesisBlock(listOf(uniqueIsi.mergeMetadata()), validatorMode))
+            return Genesis(RawGenesisBlock(listOf(uniqueIsi.mergeMetadata()), executorMode))
         }
 
-        private fun MutableSet<InstructionBox>.mergeMetadata(): List<InstructionBox> {
+        private fun MutableSet<InstructionExpr>.mergeMetadata(): List<InstructionExpr> {
             val metadataMap = mutableMapOf<Any, Metadata>()
 
-            // only for InstructionBox.Register
+            // only for InstructionExpr.Register
             this.extractIdentifiableBoxes().forEach { idBox ->
                 metadataMap.putMergedMetadata(idBox)
             }
@@ -71,16 +71,16 @@ open class Genesis(open val block: RawGenesisBlock) {
                 val idBox = toReplace.first().extractIdentifiableBox()
                 val registrableBox = idBox?.toRegisterBox(metadata)
                     ?: throw RuntimeException("IdentifiableBox shouldn't be null")
-                this.add(InstructionBox.Register(RegisterBox(registrableBox.evaluatesTo())))
+                this.add(InstructionExpr.Register(RegisterExpr(registrableBox.evaluatesTo())))
             }
 
             return this.sorted()
         }
 
-        private fun MutableSet<InstructionBox>.sorted() = this.sortedWith(
+        private fun MutableSet<InstructionExpr>.sorted() = this.sortedWith(
             compareByDescending { instruction ->
                 when (instruction) {
-                    is InstructionBox.Register -> when (instruction.extractIdentifiableBox()) {
+                    is InstructionExpr.Register -> when (instruction.extractIdentifiableBox()) {
                         is IdentifiableBox.NewDomain -> 5
                         is IdentifiableBox.NewAccount -> 4
                         is IdentifiableBox.NewAssetDefinition -> 3
@@ -142,15 +142,15 @@ open class Genesis(open val block: RawGenesisBlock) {
             }
         }
 
-        private fun MutableSet<InstructionBox>.findIsiToReplace(
+        private fun MutableSet<InstructionExpr>.findIsiToReplace(
             metadata: Map<Any, Metadata>,
-        ): MutableMap<Metadata, MutableList<InstructionBox.Register>> {
-            val isiToReplace = mutableMapOf<Metadata, MutableList<InstructionBox.Register>>()
+        ): MutableMap<Metadata, MutableList<InstructionExpr.Register>> {
+            val isiToReplace = mutableMapOf<Metadata, MutableList<InstructionExpr.Register>>()
 
             this.forEach { instruction ->
                 runCatching {
-                    instruction.cast<InstructionBox.Register>()
-                        .registerBox.`object`.expression
+                    instruction.cast<InstructionExpr.Register>()
+                        .registerExpr.`object`.expression
                         .cast<Expression.Raw>().value
                         .cast<Value.Identifiable>().identifiableBox
                 }.onSuccess { idBox ->

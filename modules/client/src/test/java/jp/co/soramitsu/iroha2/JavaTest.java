@@ -37,7 +37,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(sources = DefaultGenesis.class)
     public void instructionFailed() {
-        final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
+        final SignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .fail("FAIL MESSAGE")
             .buildSigned(ALICE_KEYPAIR);
@@ -49,7 +49,7 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @WithIroha(sources = DefaultGenesis.class)
     public void registerDomain() throws ExecutionException, InterruptedException, TimeoutException {
         final DomainId domainId = new DomainId(new Name("new_domain_name"));
-        final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
+        final SignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerDomain(domainId)
             .buildSigned(ALICE_KEYPAIR);
@@ -66,8 +66,8 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(sources = DefaultGenesis.class)
     public void registerAccount() throws Exception {
-        final AccountId accountId = new AccountId(new Name("new_account"), DEFAULT_DOMAIN_ID);
-        final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
+        final AccountId accountId = new AccountId(DEFAULT_DOMAIN_ID, new Name("new_account"));
+        final SignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAccount(accountId, new ArrayList<>())
             .buildSigned(ALICE_KEYPAIR);
@@ -84,13 +84,13 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(sources = DefaultGenesis.class)
     public void mintAsset() throws Exception {
-        final VersionedSignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Quantity())
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
-        final VersionedSignedTransaction mintAssetTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction mintAssetTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .mintAsset(DEFAULT_ASSET_ID, 5)
             .buildSigned(ALICE_KEYPAIR);
@@ -115,14 +115,14 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
             put(assetMetadataKey, assetMetadataValue);
         }});
 
-        final VersionedSignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store(), metadata)
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
         final AssetId assetId = new AssetId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID);
-        final VersionedSignedTransaction keyValueTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction keyValueTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .setKeyValue(assetId, assetMetadataKey, assetMetadataValue2)
             .buildSigned(ALICE_KEYPAIR);
@@ -144,13 +144,13 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         final Value.String assetValue = new Value.String("some string value");
         final Name assetKey = new Name("asset_metadata_key");
 
-        final VersionedSignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction registerAssetTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, new AssetValueType.Store())
             .buildSigned(ALICE_KEYPAIR);
         client.sendTransactionAsync(registerAssetTx).get(getTxTimeout().getSeconds(), TimeUnit.SECONDS);
 
-        final VersionedSignedTransaction keyValueTx = TransactionBuilder.Companion.builder()
+        final SignedTransaction keyValueTx = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .setKeyValue(DEFAULT_ASSET_DEFINITION_ID, assetKey, assetValue)
             .buildSigned(ALICE_KEYPAIR);
@@ -176,18 +176,18 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         UUID actionId = idToSubscription.component1().iterator().next().getId();
         BlockStreamSubscription subscription = idToSubscription.component2();
 
-        List<VersionedBlockMessage> blocks = new ArrayList<>();
+        List<BlockMessage> blocks = new ArrayList<>();
         subscription.receive(actionId, new BlockMessageCollector(blocks));
 
         for (int i = 0; i <= count + 1; i++) {
-            final VersionedSignedTransaction transaction = TransactionBuilder.Companion.builder()
+            final SignedTransaction transaction = TransactionBuilder.Companion.builder()
                 .account(ALICE_ACCOUNT_ID)
                 .setKeyValue(ALICE_ACCOUNT_ID, new Name(randomAlphabetic(10)), new Value.String(randomAlphabetic(10)))
                 .buildSigned(ALICE_KEYPAIR);
             client.sendTransactionAsync(transaction);
         }
 
-        QueryAndExtractor<List<VersionedCommittedBlock>> query = QueryBuilder.findAllBlocks()
+        QueryAndExtractor<List<SignedBlock>> query = QueryBuilder.findAllBlocks()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR);
         Integer blocksSize = client.sendQueryAsync(query).get().size();
@@ -197,21 +197,21 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
         subscription.close();
     }
 
-    static class BlockMessageCollector implements FlowCollector<VersionedBlockMessage> {
+    static class BlockMessageCollector implements FlowCollector<BlockMessage> {
 
-        List<VersionedBlockMessage> blocks;
+        List<BlockMessage> blocks;
 
-        public BlockMessageCollector(List<VersionedBlockMessage> blocks) {
+        public BlockMessageCollector(List<BlockMessage> blocks) {
             this.blocks = blocks;
         }
 
         @Nullable
         @Override
         public Object emit(
-            VersionedBlockMessage versionedBlockMessage,
+            BlockMessage blockMessage,
             @NotNull Continuation<? super Unit> continuation
         ) {
-            blocks.add(versionedBlockMessage);
+            blocks.add(blockMessage);
             return null;
         }
     }

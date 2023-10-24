@@ -7,10 +7,9 @@ import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.SingletonHolder
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
-import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedBlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.toFrame
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -101,11 +100,9 @@ open class BlockStreamSubscription private constructor(
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun run() = launch {
-        val request = VersionedBlockSubscriptionRequest.V1(
-            BlockSubscriptionRequest(
-                NonZeroOfu64(
-                    BigInteger.valueOf(context.from),
-                ),
+        val request = BlockSubscriptionRequest(
+            NonZeroOfu64(
+                BigInteger.valueOf(context.from),
             ),
         )
 
@@ -116,13 +113,13 @@ open class BlockStreamSubscription private constructor(
         ) {
             try {
                 logger.debug("WebSocket opened")
-                send(VersionedBlockSubscriptionRequest.encode(request).toFrame())
+                send(BlockSubscriptionRequest.encode(request).toFrame())
                 val idsToRemove = mutableListOf<UUID>()
 
                 for (frame in incoming) {
                     logger.debug("Received frame: {}", frame)
 
-                    val block = VersionedBlockMessage.decode(frame.readBytes())
+                    val block = BlockMessage.decode(frame.readBytes())
                     source.forEach { (id, storage) ->
                         logger.debug("Executing {} action", id)
                         val result = storage.onBlock(block)

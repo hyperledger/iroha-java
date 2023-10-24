@@ -554,7 +554,7 @@ public sealed class Value : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val versionedCommittedBlock: VersionedCommittedBlock,
+        public val signedBlock: SignedBlock,
     ) : Value() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -566,7 +566,7 @@ public sealed class Value : ModelEnum {
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Value.Block =
                 try {
                     Block(
-                        VersionedCommittedBlock.read(reader),
+                        SignedBlock.read(reader),
                     )
                 } catch (ex: Exception) {
                     throw wrapException(ex)
@@ -576,7 +576,7 @@ public sealed class Value : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.Value.Block,
             ): Unit = try {
-                VersionedCommittedBlock.write(writer, instance.versionedCommittedBlock)
+                SignedBlock.write(writer, instance.signedBlock)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -715,31 +715,32 @@ public sealed class Value : ModelEnum {
     }
 
     /**
-     * 'Validator' variant
+     * 'Executor' variant
      */
-    public data class Validator(
-        public val validator: jp.co.soramitsu.iroha2.generated.Validator,
+    public data class Executor(
+        public val executor: jp.co.soramitsu.iroha2.generated.Executor,
     ) : Value() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.Value.Validator>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.Value.Validator> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.Value.Executor>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.Value.Executor> {
             public const val DISCRIMINANT: Int = 21
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Value.Validator = try {
-                Validator(
-                    jp.co.soramitsu.iroha2.generated.Validator.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.Value.Executor =
+                try {
+                    Executor(
+                        jp.co.soramitsu.iroha2.generated.Executor.read(reader),
+                    )
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.Value.Validator,
+                instance: jp.co.soramitsu.iroha2.generated.Value.Executor,
             ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.Validator.write(writer, instance.validator)
+                jp.co.soramitsu.iroha2.generated.Executor.write(writer, instance.executor)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -802,7 +803,7 @@ public sealed class Value : ModelEnum {
             18 -> Ipv4Addr.read(reader)
             19 -> Ipv6Addr.read(reader)
             20 -> Numeric.read(reader)
-            21 -> Validator.read(reader)
+            21 -> Executor.read(reader)
             22 -> LogLevel.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
@@ -830,7 +831,7 @@ public sealed class Value : ModelEnum {
                 18 -> Ipv4Addr.write(writer, instance as Ipv4Addr)
                 19 -> Ipv6Addr.write(writer, instance as Ipv6Addr)
                 20 -> Numeric.write(writer, instance as Numeric)
-                21 -> Validator.write(writer, instance as Validator)
+                21 -> Executor.write(writer, instance as Executor)
                 22 -> LogLevel.write(writer, instance as LogLevel)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }

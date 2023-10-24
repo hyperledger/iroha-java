@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Container
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.StringPredicate
@@ -21,7 +21,7 @@ import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
@@ -485,8 +485,8 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
                 txValues.all { value ->
                     value.cast<TransactionValue>()
                         .value
-                        .cast<VersionedSignedTransaction.V1>()
-                        .signedTransaction
+                        .cast<SignedTransaction.V1>()
+                        .signedTransactionV1
                         .payload
                         .authority == ALICE_ACCOUNT_ID
                 }
@@ -537,7 +537,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
 
-        val hash = VersionedSignedTransaction.encode(transactions[2].transaction.value).hash()
+        val hash = SignedTransaction.encode(transactions[2].transaction.value).hash()
 
         val txByHash = QueryBuilder.findTransactionByHash(hash)
             .account(ALICE_ACCOUNT_ID)
@@ -546,11 +546,11 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         assertEquals(
             DEFAULT_ASSET_DEFINITION_ID,
             txByHash.transaction.value
-                .extractInstruction<InstructionBox.Register>()
-                .registerBox.`object`.extractNewAssetDefinition().id,
+                .extractInstruction<InstructionExpr.Register>()
+                .registerExpr.`object`.extractNewAssetDefinition().id,
         )
         txByHash.transaction.value
-            .let { VersionedSignedTransaction.encode(it).hash() }
+            .let { SignedTransaction.encode(it).hash() }
             .also { assertContentEquals(hash, it) }
     }
 
@@ -583,7 +583,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-            .also { trigger -> assertTrue { trigger.id() == triggerId } }
+            .also { trigger -> assertTrue { trigger.id == triggerId } }
     }
 
     @Test
@@ -598,7 +598,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { client.sendQuery(it) }
-            .also { triggers -> assert(triggers.all { it.id().domainId == domainId }) }
+            .also { triggers -> assert(triggers.all { it.id.domainId == domainId }) }
     }
 
     @Test
@@ -914,7 +914,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         name: String,
         metadata: Map<Name, Value> = mapOf(),
     ) {
-        val newAccountId = AccountId(name.asName(), DEFAULT_DOMAIN_ID)
+        val newAccountId = AccountId(DEFAULT_DOMAIN_ID, name.asName())
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
             registerAccount(newAccountId, listOf(), Metadata(metadata))

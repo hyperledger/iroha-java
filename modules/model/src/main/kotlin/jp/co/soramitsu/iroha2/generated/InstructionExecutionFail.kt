@@ -17,7 +17,7 @@ import kotlin.Unit
  * Generated from 'InstructionExecutionFail' regular structure
  */
 public data class InstructionExecutionFail(
-    public val instruction: InstructionBox,
+    public val instruction: InstructionExpr,
     public val reason: String,
 ) {
     public companion object :
@@ -25,7 +25,7 @@ public data class InstructionExecutionFail(
         ScaleWriter<InstructionExecutionFail> {
         override fun read(reader: ScaleCodecReader): InstructionExecutionFail = try {
             InstructionExecutionFail(
-                InstructionBox.read(reader),
+                InstructionExpr.read(reader),
                 reader.readString(),
             )
         } catch (ex: Exception) {
@@ -33,7 +33,7 @@ public data class InstructionExecutionFail(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: InstructionExecutionFail): Unit = try {
-            InstructionBox.write(writer, instance.instruction)
+            InstructionExpr.write(writer, instance.instruction)
             writer.writeAsList(instance.reason.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

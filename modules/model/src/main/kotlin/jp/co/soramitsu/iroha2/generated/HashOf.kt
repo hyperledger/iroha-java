@@ -14,7 +14,7 @@ import kotlin.Unit
 /**
  * HashOf
  *
- * Generated from 'HashOf<WasmSmartContract>' regular structure
+ * Generated from 'HashOf<SignedTransaction>' regular structure
  */
 public data class HashOf<T0>(
     public val hash: Hash,

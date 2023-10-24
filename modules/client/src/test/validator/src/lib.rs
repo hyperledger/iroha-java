@@ -53,10 +53,10 @@ impl Visit for Validator {
     defaults! {
         visit_unsupported<T: core::fmt::Debug>(T),
 
-        visit_transaction(&VersionedSignedTransaction),
-        visit_instruction(&InstructionBox),
+        visit_transaction(&SignedTransaction),
+        visit_instruction(&InstructionExpr),
         visit_expression<V>(&EvaluatesTo<V>),
-        visit_sequence(&SequenceBox),
+        visit_sequence(&SequenceExpr),
         visit_if(&Conditional),
         visit_pair(&Pair),
 

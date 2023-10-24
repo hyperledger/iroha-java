@@ -20,7 +20,7 @@ class SchemaReader {
         val lines = resource.bufferedReader().lines().toList()
 
         lines.forEach { line -> line.countRepeatedWithGenerics() }
-        repeated.entries.removeIf { it.value < 2 }
+        repeated.entries.removeIf { (it.key != "Trigger" && it.key != "Action") && it.value < 2 }
         toReplace.putAll(lines.mapNotNull { it.getReplacePairOrNull() }.toMap())
 
         lines.forEach { line -> sb.appendLine(line.replace()) }
