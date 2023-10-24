@@ -8,8 +8,8 @@ import jp.co.soramitsu.iroha2.SingletonHolder
 import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.BlockMessage
-import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.toFrame
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

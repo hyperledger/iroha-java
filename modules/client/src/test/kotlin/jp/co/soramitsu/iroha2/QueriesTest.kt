@@ -16,12 +16,12 @@ import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.StringPredicate
 import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.ValueOfKey
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
-import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME

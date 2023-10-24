@@ -39,6 +39,7 @@ import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.extractBlock
 import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
+import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
@@ -47,11 +48,10 @@ import jp.co.soramitsu.iroha2.generated.ForwardCursor
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
-import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.SignedQuery
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
+import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls

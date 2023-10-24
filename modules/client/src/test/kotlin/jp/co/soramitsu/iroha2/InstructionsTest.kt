@@ -18,8 +18,8 @@ import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID_VALUE

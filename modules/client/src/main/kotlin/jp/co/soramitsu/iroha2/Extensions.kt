@@ -7,6 +7,9 @@ import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.BlockMessage
+import jp.co.soramitsu.iroha2.generated.BlockPayload
+import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -33,7 +36,10 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
 import jp.co.soramitsu.iroha2.generated.SignatureOf
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
+import jp.co.soramitsu.iroha2.generated.SignedBlock
+import jp.co.soramitsu.iroha2.generated.SignedBlockV1
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.generated.StringWithJson
@@ -42,12 +48,6 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.BlockMessage
-import jp.co.soramitsu.iroha2.generated.BlockPayload
-import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.SignedBlock
-import jp.co.soramitsu.iroha2.generated.SignedBlockV1
-import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b

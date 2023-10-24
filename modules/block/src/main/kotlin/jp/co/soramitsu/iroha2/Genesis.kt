@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
@@ -10,7 +11,6 @@ import jp.co.soramitsu.iroha2.generated.NewDomain
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.generated.RegisterExpr
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Value
 import java.nio.file.Files
 import java.nio.file.Path

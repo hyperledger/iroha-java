@@ -28,6 +28,7 @@ import jp.co.soramitsu.iroha2.generated.BlockHeader
 import jp.co.soramitsu.iroha2.generated.BurnExpr
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.GrantExpr
 import jp.co.soramitsu.iroha2.generated.Hash
@@ -61,16 +62,15 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SequenceExpr
 import jp.co.soramitsu.iroha2.generated.SetKeyValueExpr
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.StringWithJson
 import jp.co.soramitsu.iroha2.generated.TransactionLimits
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TransactionValue
-import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.ExecutorMode
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.SignedBlock
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance

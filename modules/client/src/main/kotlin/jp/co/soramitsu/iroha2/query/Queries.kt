@@ -51,8 +51,8 @@ import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.QueryBox
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SignedBlock
-import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.TriggerId
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.

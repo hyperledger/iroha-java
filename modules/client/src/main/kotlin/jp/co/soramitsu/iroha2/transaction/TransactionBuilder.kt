@@ -28,12 +28,12 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal

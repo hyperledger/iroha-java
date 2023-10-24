@@ -3,10 +3,8 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.Account
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
 import jp.co.soramitsu.iroha2.generated.BlockHeader
-import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.Domain
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
@@ -20,7 +18,6 @@ import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
-import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import java.math.BigInteger
 
@@ -134,8 +131,10 @@ object PeersExtractor : ResultExtractor<List<Peer>> {
  */
 object TriggerBoxExtractor : ResultExtractor<TriggerOfTriggeringFilterBox> {
     override fun extract(result: BatchedResponseV1OfValue): TriggerOfTriggeringFilterBox {
-        return extractIdentifiable(result.batch,
-            IdentifiableBox.Trigger::triggerOfTriggeringFilterBox)
+        return extractIdentifiable(
+            result.batch,
+            IdentifiableBox.Trigger::triggerOfTriggeringFilterBox,
+        )
     }
 }
 
