@@ -13,6 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
@@ -393,6 +394,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
+    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) = this.apply {
+        instructions.value.add(Instructions.transferDomainOwnership(sourceId, value, destinationId))
+    }
+
     fun `if`(condition: Boolean, then: InstructionBox, otherwise: InstructionBox) = this.apply {
         instructions.value.add(Instructions.`if`(condition, then, otherwise))
     }
@@ -411,6 +416,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.revokeSetKeyValueAsset(assetId, target)) }
+
+    fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.revokeSetKeyValueAccount(accountId, target)) }
+
+    fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.revokeSetKeyValueDomain(domainId, target)) }
 
     fun revokeRole(
         roleId: RoleId,
