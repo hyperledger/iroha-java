@@ -29,10 +29,10 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
-open class AliceCanUpgradeValidator : Genesis(
+open class AliceCanUpgradeExecutor : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
-            Permissions.CanUpgradeValidator,
+            Permissions.CanUpgradeExecutor,
             "",
             ALICE_ACCOUNT_ID,
         ),

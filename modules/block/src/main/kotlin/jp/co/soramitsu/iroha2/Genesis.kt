@@ -37,9 +37,9 @@ open class Genesis(open val block: RawGenesisBlock) {
 
     companion object {
 
-        val executorMode = this::class.java.classLoader.getResource("validator.wasm")
-            ?.let { ExecutorMode.Path("validator.wasm") }
-            ?: throw IrohaSdkException("validator.wasm not found")
+        val executorMode = this::class.java.classLoader.getResource("executor.wasm")
+            ?.let { ExecutorMode.Path("executor.wasm") }
+            ?: throw IrohaSdkException("executor.wasm not found")
 
         /**
          * Return empty genesis

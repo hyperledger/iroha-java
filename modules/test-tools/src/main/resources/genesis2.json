@@ -224,5 +224,5 @@
       }
     }
   } ] ],
-  "validator": "./validator.wasm"
+  "executor": "./executor.wasm"
 }
