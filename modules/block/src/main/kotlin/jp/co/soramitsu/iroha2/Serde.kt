@@ -1027,7 +1027,9 @@ private fun GrantExpr.serializeExpr(gen: JsonGenerator) {
         is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
         else -> throw IrohaSdkException("Grant InstructionExpr serialization error")
     }
+    gen.writeObjectFieldStart("object")
     gen.writeObjectField(fieldData.first, fieldData.second)
+    gen.writeEndObject()
     gen.writeObjectField("destination_id", this.destinationId)
 }
 

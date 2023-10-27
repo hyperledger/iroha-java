@@ -91,7 +91,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                         // await genesis was applied and seen in status
                         HttpWaitStrategy()
                             .forStatusCode(200)
-                            .forPort(telemetryPort)
+                            .forPort(apiPort)
                             .forPath(STATUS_ENDPOINT)
                             .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
                             .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT),

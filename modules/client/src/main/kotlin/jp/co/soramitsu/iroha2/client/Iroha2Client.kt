@@ -203,8 +203,12 @@ open class Iroha2Client(
                     responseDecoded.cast<BatchedResponseOfValue.V1>()
                         .batchedResponseV1OfValue.batch.cast<Value.Vec>().vec,
                 )
-                BatchedResponseV1OfValue(Value.Vec(resultList), ForwardCursor())
-                    .let { queryAndExtractor.resultExtractor.extract(it) }
+                BatchedResponseOfValue.V1(
+                    BatchedResponseV1OfValue(
+                        Value.Vec(resultList),
+                        ForwardCursor(),
+                    ),
+                ).let { queryAndExtractor.resultExtractor.extract(it) }
             }
         }
         return finalResult
@@ -216,7 +220,7 @@ open class Iroha2Client(
         limit: Long? = null,
         sorting: String? = null,
         queryCursor: ForwardCursor? = null,
-    ): BatchedResponseV1OfValue {
+    ): BatchedResponseOfValue {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(SignedQuery.encode(queryAndExtractor.query))
             start?.also { parameter("start", it) }
@@ -226,7 +230,7 @@ open class Iroha2Client(
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         return response.body<ByteArray>()
-            .let { BatchedResponseV1OfValue.decode(it) }
+            .let { BatchedResponseOfValue.decode(it) }
     }
 
     private suspend fun <T> getQueryResultWithCursor(
