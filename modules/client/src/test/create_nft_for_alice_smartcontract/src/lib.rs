@@ -2,21 +2,22 @@
 //!
 //! This module isn't included in the build-tree,
 //! but instead it is being built by a `client/build.rs`
-
 #![no_std]
-#![no_main]
-#![allow(clippy::all)]
+
 extern crate alloc;
 #[cfg(not(test))]
 extern crate panic_halt;
 
 use alloc::{format, string::ToString, vec::Vec};
-use core::str::FromStr;
+use lol_alloc::{FreeListAllocator, LockedAllocator};
 
-use iroha_wasm::{data_model::prelude::*, debug::DebugUnwrapExt, QueryHost};
+#[global_allocator]
+static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeListAllocator::new());
 
-#[iroha_wasm::main]
-fn smartcontract_entry_point() {
+use iroha_trigger::{data_model::prelude::*, debug::DebugUnwrapExt, smart_contract::QueryHost};
+
+#[iroha_trigger::main]
+fn smartcontract_entry_point(_owner: AccountId, _event: Event) {
     let account_id: AccountId = "alice@wonderland".parse().unwrap();
     let limits = MetadataLimits::new(256, 256);
     let mut metadata = Metadata::new();
@@ -40,7 +41,7 @@ fn smartcontract_entry_point() {
     RegisterExpr::new(nft_definition).execute().dbg_unwrap();
     SetKeyValueExpr::new(
         AssetId::new(nft_id, account_id),
-        Name::from_str("has_this_nft").dbg_unwrap(),
+        "has_this_nft".parse::<Name>().dbg_unwrap(),
         Value::Bool(true),
     )
     .execute()
