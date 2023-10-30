@@ -1,5 +1,7 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.junit.jupiter.api.Test
@@ -35,6 +37,41 @@ class SerializerTest {
                     },
                     "destination_id" : {
                       "AccountId" : "alice@wonderland"
+                    }
+                  }
+                } ] ],
+                "executor" : "executor.wasm"
+              }
+            }
+        """.trimIndent()
+        val json = JSON_SERDE.writeValueAsString(genesis).trimIndent()
+        assertEquals(expectedJson, json)
+    }
+
+    @Test
+    fun `should serialize mint asset genesis block`() {
+        val genesis = Genesis(
+            RawGenesisBlock(
+                listOf(
+                    Instructions.mintAsset(
+                        AssetId(
+                            AssetDefinitionId("xor".asName(), "wonderland".asDomainId()),
+                            "alice${ACCOUNT_ID_DELIMITER}wonderland".asAccountId(),
+                        ),
+                        100,
+                    ),
+                ).let { listOf(it) },
+                Genesis.executorMode,
+            ),
+        )
+        val expectedJson = """
+            {
+              "block" : {
+                "transactions" : [ [ {
+                  "Mint" : {
+                    "object" : "100_u32",
+                    "destination_id" : {
+                      "AssetId" : "xor#wonderland#alice@wonderland"
                     }
                   }
                 } ] ],

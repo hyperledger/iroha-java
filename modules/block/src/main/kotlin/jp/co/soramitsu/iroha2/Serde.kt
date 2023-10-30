@@ -1052,13 +1052,13 @@ private fun mintBurnSerialize(
         .cast<Expression.Raw>().value
         .cast<Value.Numeric>().numericValue
     val fieldData = when (rawValue) {
-        is NumericValue.U32 -> NumericValue.U32::class.simpleName to rawValue.u32
-        is NumericValue.U64 -> NumericValue.U64::class.simpleName to rawValue.u64
-        is NumericValue.U128 -> NumericValue.U128::class.simpleName to rawValue.u128
-        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPointOfI64
+        is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${rawValue.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
+        is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${rawValue.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
+        is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${rawValue.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
+        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPointOfI64.toString()
         else -> throw IrohaSdkException("Grant InstructionExpr serialization error")
     }
-    gen.writeObjectField(fieldData.first, fieldData.second)
+    gen.writeObjectField("object", fieldData.second)
     gen.writeObjectField("destination_id", destinationId)
 }
 
