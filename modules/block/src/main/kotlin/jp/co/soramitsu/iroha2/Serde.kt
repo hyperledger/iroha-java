@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
+import io.ktor.util.toUpperCasePreservingASCIIRules
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Algorithm
@@ -191,7 +193,7 @@ private fun sealedDeserializeGrantExpr(p: JsonParser, mapper: ObjectMapper): Gra
         nodes.add(node)
     }
 
-    val node = jsonNode.fields().next()
+    val node = jsonNode.fields().next().value.fields().next()
     val destination = nodes[1]
     val paramAndValueToConvert = if (RoleId::class.java.simpleName == node.key) {
         Pair(
@@ -364,10 +366,10 @@ private fun sealedDeserializeMintExpr(p: JsonParser, mapper: ObjectMapper): Mint
         val node = iter.next()
         nodes.add(node)
     }
-
+    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
     val newNode = mapper.createObjectNode().set<ObjectNode>(
-        jsonNode.fields().next().key,
-        jsonNode.fields().next().value,
+        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
+        IntNode(numericTypeAndValue[0].toInt()),
     )
     val objectId = mapper.convertValue(
         newNode,

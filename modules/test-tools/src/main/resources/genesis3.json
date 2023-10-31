@@ -120,17 +120,19 @@
     }
   }, {
     "Mint" : {
-      "U32" : 100,
+      "object" : "100_u32",
       "destination_id" : {
         "AssetId" : "xor#wonderland#alice@wonderland"
       }
     }
   }, {
     "Grant" : {
-      "PermissionToken" : {
-        "definition_id" : "CanBurnAssetWithDefinition",
-        "payload" : {
-          "asset_definition_id" : "xor#wonderland"
+      "object": {
+        "PermissionToken" : {
+          "definition_id" : "CanBurnAssetWithDefinition",
+          "payload" : {
+            "asset_definition_id" : "xor#wonderland"
+          }
         }
       },
       "destination_id" : {
@@ -162,21 +164,21 @@
       }
     },{
       "Mint" : {
-        "U32" : 100,
+        "object" : "100_u32",
         "destination_id" : {
           "AssetId" : "xor#wonderland#bob@wonderland"
         }
       }
     }, {
       "Mint" : {
-        "U32" : 1,
+        "object" : "1_u32",
         "destination_id" : {
           "AssetId" : "xor#wonderland#alice@wonderland"
         }
       }
     }, {
       "Mint" : {
-        "U32" : 1,
+        "object" : "1_u32",
         "destination_id" : {
           "AssetId" : "val#wonderland#alice@wonderland"
         }

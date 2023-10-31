@@ -213,10 +213,12 @@
     }
   }, {
     "Grant" : {
-      "PermissionToken" : {
-        "definition_id" : "CanSetKeyValueInUserAssets",
-        "payload" : {
-          "asset_id" : "123#test#alice@wonderland"
+      "object":  {
+        "PermissionToken" : {
+          "definition_id" : "CanSetKeyValueInUserAssets",
+          "payload" : {
+            "asset_id" : "123#test#alice@wonderland"
+          }
         }
       },
       "destination_id" : {
