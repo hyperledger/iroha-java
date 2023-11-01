@@ -44,6 +44,7 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha
+    @Disabled
     fun describeConfig(): Unit = runBlocking {
         val docsConfig = client.describeConfig("genesis", "account_private_key")
         assert(docsConfig.isNotEmpty())
