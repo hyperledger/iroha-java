@@ -115,6 +115,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             lastValue = randomAlphabetic(16)
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), lastValue.asValue()) }
         }
+        Thread.sleep(5000)
         assertEquals(lastValue, isi.last().cast<InstructionExpr.SetKeyValue>().extractValueString())
 
         subscription.stop()
