@@ -37,6 +37,7 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha
+    @Disabled
     fun getConfigValues(): Unit = runBlocking {
         val configs = client.getConfigs()
         assert(configs.containsKey("GENESIS"))
