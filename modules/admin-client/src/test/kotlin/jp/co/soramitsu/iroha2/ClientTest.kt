@@ -15,7 +15,6 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha
-    @Disabled
     fun health(): Unit = runBlocking {
         val health = client.health()
         assert(health == HttpStatusCode.OK.value)
