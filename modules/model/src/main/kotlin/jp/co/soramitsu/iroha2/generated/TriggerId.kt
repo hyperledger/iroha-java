@@ -16,22 +16,22 @@ import kotlin.Unit
  * Generated from 'TriggerId' regular structure
  */
 public data class TriggerId(
-    public val name: Name,
     public val domainId: DomainId? = null,
+    public val name: Name,
 ) {
     public companion object : ScaleReader<TriggerId>, ScaleWriter<TriggerId> {
         override fun read(reader: ScaleCodecReader): TriggerId = try {
             TriggerId(
-                Name.read(reader),
                 reader.readNullable(DomainId) as DomainId?,
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TriggerId): Unit = try {
-            Name.write(writer, instance.name)
             writer.writeNullable(DomainId, instance.domainId)
+            Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

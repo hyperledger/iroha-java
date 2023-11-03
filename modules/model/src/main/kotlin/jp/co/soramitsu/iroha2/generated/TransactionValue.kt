@@ -16,13 +16,13 @@ import kotlin.Unit
  * Generated from 'TransactionValue' regular structure
  */
 public data class TransactionValue(
-    public val `value`: VersionedSignedTransaction,
+    public val `value`: SignedTransaction,
     public val error: TransactionRejectionReason? = null,
 ) {
     public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
         override fun read(reader: ScaleCodecReader): TransactionValue = try {
             TransactionValue(
-                VersionedSignedTransaction.read(reader),
+                SignedTransaction.read(reader),
                 reader.readNullable(TransactionRejectionReason) as TransactionRejectionReason?,
             )
         } catch (ex: Exception) {
@@ -30,7 +30,7 @@ public data class TransactionValue(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit = try {
-            VersionedSignedTransaction.write(writer, instance.`value`)
+            SignedTransaction.write(writer, instance.`value`)
             writer.writeNullable(TransactionRejectionReason, instance.error)
         } catch (ex: Exception) {
             throw wrapException(ex)

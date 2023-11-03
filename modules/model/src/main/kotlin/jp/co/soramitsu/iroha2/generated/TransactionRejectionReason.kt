@@ -26,12 +26,10 @@ public sealed class TransactionRejectionReason : ModelEnum {
     public abstract fun discriminant(): Int
 
     override fun equals(other: Any?): Boolean = when (this) {
-        is UnexpectedGenesisAccountSignature -> UnexpectedGenesisAccountSignature.equals(this, other)
         is Expired -> Expired.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
-        is UnexpectedGenesisAccountSignature -> UnexpectedGenesisAccountSignature.hashCode()
         is Expired -> Expired.hashCode()
         else -> super.hashCode() }
 
@@ -198,44 +196,6 @@ public sealed class TransactionRejectionReason : ModelEnum {
     }
 
     /**
-     * 'UnexpectedGenesisAccountSignature' variant
-     */
-    public class UnexpectedGenesisAccountSignature : TransactionRejectionReason() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature> {
-            public const val DISCRIMINANT: Int = 5
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature = try {
-                UnexpectedGenesisAccountSignature()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(
-                o1: jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.UnexpectedGenesisAccountSignature,
-                o2: Any?,
-            ): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int =
-                ".TransactionRejectionReason.UnexpectedGenesisAccountSignature".hashCode()
-        }
-    }
-
-    /**
      * 'Expired' variant
      */
     public class Expired : TransactionRejectionReason() {
@@ -244,7 +204,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 5
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TransactionRejectionReason.Expired = try {
                 Expired()
@@ -284,8 +244,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
             2 -> Validation.read(reader)
             3 -> InstructionExecution.read(reader)
             4 -> WasmExecution.read(reader)
-            5 -> UnexpectedGenesisAccountSignature.read(reader)
-            6 -> Expired.read(reader)
+            5 -> Expired.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: TransactionRejectionReason) {
@@ -296,12 +255,7 @@ public sealed class TransactionRejectionReason : ModelEnum {
                 2 -> Validation.write(writer, instance as Validation)
                 3 -> InstructionExecution.write(writer, instance as InstructionExecution)
                 4 -> WasmExecution.write(writer, instance as WasmExecution)
-                5 -> UnexpectedGenesisAccountSignature.write(
-                    writer,
-                    instance as
-                        UnexpectedGenesisAccountSignature,
-                )
-                6 -> Expired.write(writer, instance as Expired)
+                5 -> Expired.write(writer, instance as Expired)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

@@ -9,8 +9,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.Any
-import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
 import kotlin.Unit
@@ -25,14 +23,6 @@ public sealed class QueryExecutionFail : ModelEnum {
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
-
-    override fun equals(other: Any?): Boolean = when (this) {
-        is Unauthorized -> Unauthorized.equals(this, other)
-        else -> super.equals(other) }
-
-    override fun hashCode(): Int = when (this) {
-        is Unauthorized -> Unauthorized.hashCode()
-        else -> super.hashCode() }
 
     /**
      * 'Signature' variant
@@ -162,43 +152,6 @@ public sealed class QueryExecutionFail : ModelEnum {
         }
     }
 
-    /**
-     * 'Unauthorized' variant
-     */
-    public class Unauthorized : QueryExecutionFail() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Unauthorized>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Unauthorized> {
-            public const val DISCRIMINANT: Int = 4
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Unauthorized = try {
-                Unauthorized()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Unauthorized,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(
-                o1: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Unauthorized,
-                o2: Any?,
-            ): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int = ".QueryExecutionFail.Unauthorized".hashCode()
-        }
-    }
-
     public companion object : ScaleReader<QueryExecutionFail>, ScaleWriter<QueryExecutionFail> {
         override fun read(reader: ScaleCodecReader): QueryExecutionFail = when (
             val discriminant =
@@ -208,7 +161,6 @@ public sealed class QueryExecutionFail : ModelEnum {
             1 -> Evaluate.read(reader)
             2 -> Find.read(reader)
             3 -> Conversion.read(reader)
-            4 -> Unauthorized.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: QueryExecutionFail) {
@@ -218,7 +170,6 @@ public sealed class QueryExecutionFail : ModelEnum {
                 1 -> Evaluate.write(writer, instance as Evaluate)
                 2 -> Find.write(writer, instance as Find)
                 3 -> Conversion.write(writer, instance as Conversion)
-                4 -> Unauthorized.write(writer, instance as Unauthorized)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

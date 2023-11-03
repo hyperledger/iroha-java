@@ -16,19 +16,19 @@ import kotlin.Unit
  * Generated from 'BlockMessage' regular structure
  */
 public data class BlockMessage(
-    public val versionedCommittedBlock: VersionedCommittedBlock,
+    public val signedBlock: SignedBlock,
 ) {
     public companion object : ScaleReader<BlockMessage>, ScaleWriter<BlockMessage> {
         override fun read(reader: ScaleCodecReader): BlockMessage = try {
             BlockMessage(
-                VersionedCommittedBlock.read(reader),
+                SignedBlock.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: BlockMessage): Unit = try {
-            VersionedCommittedBlock.write(writer, instance.versionedCommittedBlock)
+            SignedBlock.write(writer, instance.signedBlock)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

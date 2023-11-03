@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
@@ -29,10 +29,10 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
  */
 open class DefaultGenesis : Genesis(rawGenesisBlock())
 
-open class AliceCanUpgradeValidator : Genesis(
+open class AliceCanUpgradeExecutor : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
-            Permissions.CanUpgradeValidator,
+            Permissions.CanUpgradeExecutor,
             "",
             ALICE_ACCOUNT_ID,
         ),
@@ -85,8 +85,8 @@ open class WithManyDomains : Genesis(
     ),
 )
 
-fun registerDomains(count: Int): Array<InstructionBox> {
-    val instructions = mutableListOf<InstructionBox>()
+fun registerDomains(count: Int): Array<InstructionExpr> {
+    val instructions = mutableListOf<InstructionExpr>()
     for (i in 1..count) {
         instructions.add(Instructions.registerDomain(DomainId("NEW_DOMAIN$i".asName())))
     }
@@ -162,7 +162,7 @@ open class WithExecutableTrigger : Genesis(
     ),
 ) {
     companion object {
-        val TRIGGER_ID = TriggerId("some_trigger".asName(), DEFAULT_DOMAIN_ID)
+        val TRIGGER_ID = TriggerId(DEFAULT_DOMAIN_ID, "some_trigger".asName())
     }
 }
 
@@ -257,7 +257,7 @@ open class NewAccountWithMetadata : Genesis(
         val KEY = "key".asName()
 
         val VALUE = "value".asValue()
-        val ACCOUNT_ID = AccountId(ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
+        val ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, ACCOUNT_NAME)
         val KEYPAIR = generateKeyPair()
     }
 }
@@ -321,7 +321,7 @@ open class RubbishToTestMultipleGenesis : Genesis(
 /**
  * Return [RawGenesisBlock] with instructions to init genesis block
  */
-fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
+fun rawGenesisBlock(vararg isi: InstructionExpr) = RawGenesisBlock(
     listOf(
         Instructions.registerDomain(DEFAULT_DOMAIN_ID),
         Instructions.registerAccount(
@@ -334,5 +334,5 @@ fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
         ),
         *isi,
     ).let { listOf(it) },
-    Genesis.validatorMode,
+    Genesis.executorMode,
 )

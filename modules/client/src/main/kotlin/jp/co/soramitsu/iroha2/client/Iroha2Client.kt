@@ -38,6 +38,8 @@ import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.extractBlock
 import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
+import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
+import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
 import jp.co.soramitsu.iroha2.generated.Event
 import jp.co.soramitsu.iroha2.generated.EventMessage
@@ -46,14 +48,10 @@ import jp.co.soramitsu.iroha2.generated.ForwardCursor
 import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
 import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
 import jp.co.soramitsu.iroha2.generated.PipelineStatus
+import jp.co.soramitsu.iroha2.generated.SignedQuery
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedBatchedResponseOfValue
-import jp.co.soramitsu.iroha2.generated.VersionedBlockMessage
-import jp.co.soramitsu.iroha2.generated.VersionedEventMessage
-import jp.co.soramitsu.iroha2.generated.VersionedEventSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
@@ -196,17 +194,20 @@ open class Iroha2Client(
     ): T {
         logger.debug("Sending query")
         val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting)
-        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
         val finalResult = when (cursor.cursor) {
             null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
             else -> {
                 val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
                 resultList.addAll(
-                    responseDecoded.cast<VersionedBatchedResponseOfValue.V1>()
-                        .batchedResponseOfValue.batch.cast<Value.Vec>().vec,
+                    responseDecoded.cast<BatchedResponseOfValue.V1>()
+                        .batchedResponseV1OfValue.batch.cast<Value.Vec>().vec,
                 )
-                VersionedBatchedResponseOfValue.V1(
-                    BatchedResponseOfValue(Value.Vec(resultList), ForwardCursor()),
+                BatchedResponseOfValue.V1(
+                    BatchedResponseV1OfValue(
+                        Value.Vec(resultList),
+                        ForwardCursor(),
+                    ),
                 ).let { queryAndExtractor.resultExtractor.extract(it) }
             }
         }
@@ -219,9 +220,9 @@ open class Iroha2Client(
         limit: Long? = null,
         sorting: String? = null,
         queryCursor: ForwardCursor? = null,
-    ): VersionedBatchedResponseOfValue {
+    ): BatchedResponseOfValue {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
-            setBody(VersionedSignedQuery.encode(queryAndExtractor.query))
+            setBody(SignedQuery.encode(queryAndExtractor.query))
             start?.also { parameter("start", it) }
             limit?.also { parameter("limit", it) }
             sorting?.also { parameter("sort_by_metadata_key", it) }
@@ -229,7 +230,7 @@ open class Iroha2Client(
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         return response.body<ByteArray>()
-            .let { VersionedBatchedResponseOfValue.decode(it) }
+            .let { BatchedResponseOfValue.decode(it) }
     }
 
     private suspend fun <T> getQueryResultWithCursor(
@@ -241,8 +242,8 @@ open class Iroha2Client(
     ): MutableList<Value> {
         val resultList = mutableListOf<Value>()
         val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
-        resultList.addAll(responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.batch.cast<Value.Vec>().vec)
-        val cursor = responseDecoded.cast<VersionedBatchedResponseOfValue.V1>().batchedResponseOfValue.cursor
+        resultList.addAll(responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec)
+        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
         return when (cursor.cursor) {
             null -> resultList
             else -> {
@@ -258,12 +259,12 @@ open class Iroha2Client(
      * With this method, the state of the transaction is not tracked after the peer responses with 2xx status code,
      * which means that the peer accepted the transaction and the transaction passed the stateless validation.
      */
-    suspend fun fireAndForget(transaction: TransactionBuilder.() -> VersionedSignedTransaction): ByteArray {
+    suspend fun fireAndForget(transaction: TransactionBuilder.() -> SignedTransaction): ByteArray {
         val signedTransaction = transaction(TransactionBuilder.builder())
         val hash = signedTransaction.hash()
         logger.debug("Sending transaction with hash {}", hash.toHex())
         val response: HttpResponse = client.post("${getApiUrl()}$TRANSACTION_ENDPOINT") {
-            setBody(VersionedSignedTransaction.encode(signedTransaction))
+            setBody(SignedTransaction.encode(signedTransaction))
         }
         response.body<Unit>()
         return hash
@@ -273,7 +274,7 @@ open class Iroha2Client(
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     suspend fun sendTransaction(
-        transaction: TransactionBuilder.() -> VersionedSignedTransaction,
+        transaction: TransactionBuilder.() -> SignedTransaction,
     ): CompletableDeferred<ByteArray> = coroutineScope {
         val signedTransaction = transaction(TransactionBuilder())
 
@@ -313,11 +314,11 @@ open class Iroha2Client(
     @JvmOverloads
     fun subscribeToBlockStream(
         from: Long = 1,
-        onBlock: (block: VersionedBlockMessage) -> Any,
+        onBlock: (block: BlockMessage) -> Any,
         onFailure: suspend (t: Throwable) -> Unit = { throwable ->
             logger.error("Block stream was closed with an exception: {}", throwable.message)
         },
-        cancelIf: suspend (block: VersionedBlockMessage) -> Boolean = { false },
+        cancelIf: suspend (block: BlockMessage) -> Boolean = { false },
         onClose: () -> Unit = { logger.info("Block stream subscription execution was finished") },
         autoStart: Boolean = true,
     ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
@@ -378,7 +379,7 @@ open class Iroha2Client(
         logger.debug("Creating subscription to transaction status: {}", hexHash)
 
         val subscriptionRequest = eventSubscriberMessageOf(hash)
-        val payload = VersionedEventSubscriptionRequest.encode(subscriptionRequest)
+        val payload = EventSubscriptionRequest.encode(subscriptionRequest)
         val result: CompletableDeferred<ByteArray> = CompletableDeferred()
         val apiUrl = getApiUrl()
 
@@ -459,10 +460,6 @@ open class Iroha2Client(
                 val details = reason.instructionExecutionFail
                 "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
             }
-
-            is TransactionRejectionReason.UnexpectedGenesisAccountSignature ->
-                "Genesis account can sign only transactions in the genesis block"
-
             is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
             is TransactionRejectionReason.Expired -> reason.toString()
@@ -476,12 +473,7 @@ open class Iroha2Client(
      */
     private fun readMessage(frame: Frame): EventMessage = when (frame) {
         is Frame.Binary -> {
-            when (val versionedMessage = frame.readBytes().let { VersionedEventMessage.decode(it) }) {
-                is VersionedEventMessage.V1 -> versionedMessage.eventMessage
-                else -> throw WebSocketProtocolException(
-                    "Expected `${VersionedEventSubscriptionRequest.V1::class.qualifiedName}`, but was `${versionedMessage::class.qualifiedName}`",
-                )
-            }
+            frame.readBytes().let { EventMessage.decode(it) }
         }
 
         else -> throw WebSocketProtocolException(
@@ -492,10 +484,8 @@ open class Iroha2Client(
     private fun eventSubscriberMessageOf(
         hash: ByteArray,
         entityKind: PipelineEntityKind = PipelineEntityKind.Transaction(),
-    ) = VersionedEventSubscriptionRequest.V1(
-        EventSubscriptionRequest(
-            Filters.pipeline(entityKind, null, hash),
-        ),
+    ) = EventSubscriptionRequest(
+        Filters.pipeline(entityKind, null, hash),
     )
 
     object DurationDeserializer : JsonDeserializer<Duration>() {

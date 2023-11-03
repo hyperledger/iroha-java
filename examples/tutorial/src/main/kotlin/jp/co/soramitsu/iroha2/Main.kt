@@ -9,7 +9,7 @@ import java.net.URL
 fun main(args: Array<String>): Unit = runBlocking {
     val peerUrl = "http://127.0.0.1:8080"
     val telemetryUrl = "http://127.0.0.1:8180"
-    val admin = AccountId("bob".asName(), "wonderland".asDomainId())
+    val admin = AccountId("wonderland".asDomainId(), "bob".asName())
     val adminKeyPair = keyPairFromHex(
         "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",

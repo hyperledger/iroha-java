@@ -24,21 +24,21 @@ public sealed class UpgradableBox : ModelEnum {
     public abstract fun discriminant(): Int
 
     /**
-     * 'Validator' variant
+     * 'Executor' variant
      */
-    public data class Validator(
-        public val validator: jp.co.soramitsu.iroha2.generated.Validator,
+    public data class Executor(
+        public val executor: jp.co.soramitsu.iroha2.generated.Executor,
     ) : UpgradableBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.UpgradableBox.Executor>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.UpgradableBox.Executor> {
             public const val DISCRIMINANT: Int = 0
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator = try {
-                Validator(
-                    jp.co.soramitsu.iroha2.generated.Validator.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.UpgradableBox.Executor = try {
+                Executor(
+                    jp.co.soramitsu.iroha2.generated.Executor.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -46,9 +46,9 @@ public sealed class UpgradableBox : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.UpgradableBox.Validator,
+                instance: jp.co.soramitsu.iroha2.generated.UpgradableBox.Executor,
             ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.Validator.write(writer, instance.validator)
+                jp.co.soramitsu.iroha2.generated.Executor.write(writer, instance.executor)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -60,13 +60,13 @@ public sealed class UpgradableBox : ModelEnum {
             val discriminant =
                 reader.readUByte()
         ) {
-            0 -> Validator.read(reader)
+            0 -> Executor.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: UpgradableBox) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Validator.write(writer, instance as Validator)
+                0 -> Executor.write(writer, instance as Executor)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

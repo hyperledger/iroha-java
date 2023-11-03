@@ -27,7 +27,7 @@ public sealed class HashValue : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val hashOf: HashOf<VersionedSignedTransaction>,
+        public val hashOf: HashOf<SignedTransaction>,
     ) : HashValue() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -38,7 +38,7 @@ public sealed class HashValue : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.HashValue.Transaction = try {
                 Transaction(
-                    HashOf.read(reader) as HashOf<VersionedSignedTransaction>,
+                    HashOf.read(reader) as HashOf<SignedTransaction>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -59,7 +59,7 @@ public sealed class HashValue : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val hashOf: HashOf<VersionedCommittedBlock>,
+        public val hashOf: HashOf<SignedBlock>,
     ) : HashValue() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -70,7 +70,7 @@ public sealed class HashValue : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.HashValue.Block = try {
                 Block(
-                    HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
+                    HashOf.read(reader) as HashOf<SignedBlock>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

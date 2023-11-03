@@ -40,9 +40,9 @@ import jp.co.soramitsu.iroha2.generated.QueryPayload
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
 import jp.co.soramitsu.iroha2.generated.SignedQuery
+import jp.co.soramitsu.iroha2.generated.SignedQueryV1
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
-import jp.co.soramitsu.iroha2.generated.VersionedSignedQuery
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaHash
@@ -62,7 +62,7 @@ class QueryBuilder<R>(
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(accountName, domainId))
+    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(domainId, accountName))
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -77,7 +77,7 @@ class QueryBuilder<R>(
         val encodedPayload = QueryPayload.encode(payload)
         val signature = Signature(keyPair.public.toIrohaPublicKey(), keyPair.private.sign(encodedPayload))
 
-        val query = VersionedSignedQuery.V1(SignedQuery(signature.asSignatureOf(), payload))
+        val query = SignedQuery.V1(SignedQueryV1(signature.asSignatureOf(), payload))
         return QueryAndExtractor(query, resultExtractor)
     }
 
@@ -431,4 +431,4 @@ class QueryBuilder<R>(
  *
  * [R] is a type of extracted value as a result of query execution
  */
-class QueryAndExtractor<R>(val query: VersionedSignedQuery, val resultExtractor: ResultExtractor<R>)
+class QueryAndExtractor<R>(val query: SignedQuery, val resultExtractor: ResultExtractor<R>)

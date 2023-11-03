@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.client
 
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import kotlinx.coroutines.future.asCompletableFuture
@@ -34,7 +34,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.
      */
     fun sendTransactionAsync(
-        transaction: VersionedSignedTransaction,
+        transaction: SignedTransaction,
     ): CompletableFuture<ByteArray> = runBlocking {
         sendTransaction { transaction }.asCompletableFuture()
     }
@@ -46,7 +46,7 @@ class Iroha2AsyncClient @JvmOverloads constructor(
      * which means that the peer accepted the transaction and the transaction passed the stateless validation.
      */
     fun fireAndForgetAsync(
-        transaction: VersionedSignedTransaction,
+        transaction: SignedTransaction,
     ): CompletableFuture<ByteArray> = future {
         fireAndForget { transaction }
     }

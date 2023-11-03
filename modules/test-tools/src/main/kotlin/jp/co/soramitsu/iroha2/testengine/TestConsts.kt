@@ -31,7 +31,7 @@ val ALICE_KEYPAIR = generateKeyPair()
 val BOB_ACCOUNT_NAME = BOB_ACCOUNT.asName()
 
 @JvmField
-val BOB_ACCOUNT_ID = AccountId(BOB_ACCOUNT_NAME, DEFAULT_DOMAIN_ID)
+val BOB_ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, BOB_ACCOUNT_NAME)
 
 @JvmField
 val BOB_KEYPAIR = generateKeyPair()

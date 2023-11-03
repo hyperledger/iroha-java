@@ -13,7 +13,8 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Mintable
@@ -27,12 +28,12 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
@@ -46,7 +47,7 @@ import kotlin.random.nextLong
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     var accountId: AccountId?
-    val instructions: Lazy<ArrayList<InstructionBox>>
+    val instructions: Lazy<ArrayList<InstructionExpr>>
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
     var nonce: Long?
@@ -64,14 +65,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(accountName, domainId))
+    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(domainId, accountName))
 
-    fun instructions(vararg instructions: InstructionBox) = this.apply { this.instructions.value.addAll(instructions) }
+    fun instructions(vararg instructions: InstructionExpr) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instructions(instructions: Iterable<InstructionBox>) =
+    fun instructions(instructions: Iterable<InstructionExpr>) =
         this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instruction(instruction: InstructionBox) = this.apply { this.instructions.value.add(instruction) }
+    fun instruction(instruction: InstructionExpr) = this.apply { this.instructions.value.add(instruction) }
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -85,7 +86,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toBigInteger()) }
 
-    fun buildSigned(vararg keyPairs: KeyPair): VersionedSignedTransaction {
+    fun buildSigned(vararg keyPairs: KeyPair): SignedTransaction {
         val payload = TransactionPayload(
             creationTimeMillis ?: fallbackCreationTime(),
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
@@ -103,15 +104,15 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             ).asSignatureOf<TransactionPayload>()
         }.toList()
 
-        return VersionedSignedTransaction.V1(
-            SignedTransaction(SignaturesOfOfTransactionPayload(signatures), payload),
+        return SignedTransaction.V1(
+            SignedTransactionV1(SignaturesOfOfTransactionPayload(signatures), payload),
         )
     }
 
     @JvmOverloads
     fun registerTimeTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionBox>,
+        isi: List<InstructionExpr>,
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
@@ -132,7 +133,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerExecutableTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionBox>,
+        isi: List<InstructionExpr>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
@@ -151,7 +152,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerEventTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionBox>,
+        isi: List<InstructionExpr>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
@@ -193,7 +194,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerPreCommitTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionBox>,
+        isi: List<InstructionExpr>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
@@ -393,15 +394,19 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
-    fun `if`(condition: Boolean, then: InstructionBox, otherwise: InstructionBox) = this.apply {
+    fun `if`(condition: Boolean, then: InstructionExpr, otherwise: InstructionExpr) = this.apply {
         instructions.value.add(Instructions.`if`(condition, then, otherwise))
     }
 
-    fun pair(left: InstructionBox, right: InstructionBox) = this.apply {
+    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) = this.apply {
+        instructions.value.add(Instructions.transferDomainOwnership(sourceId, value, destinationId))
+    }
+
+    fun pair(left: InstructionExpr, right: InstructionExpr) = this.apply {
         instructions.value.add(Instructions.pair(left, right))
     }
 
-    fun sequence(vararg instructions: InstructionBox) = this.apply {
+    fun sequence(vararg instructions: InstructionExpr) = this.apply {
         this.instructions.value.add(Instructions.sequence(instructions.toList()))
     }
 
@@ -411,6 +416,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId) =
         this.apply { instructions.value.add(Instructions.revokeSetKeyValueAsset(assetId, target)) }
+
+    fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.revokeSetKeyValueAccount(accountId, target)) }
+
+    fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId) =
+        this.apply { instructions.value.add(Instructions.revokeSetKeyValueDomain(domainId, target)) }
 
     fun revokeRole(
         roleId: RoleId,

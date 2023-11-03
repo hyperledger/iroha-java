@@ -24,7 +24,6 @@ public data class Account(
     public val signatories: List<PublicKey>,
     public val signatureCheckCondition: SignatureCheckCondition,
     public val metadata: Metadata,
-    public val roles: List<RoleId>,
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
         override fun read(reader: ScaleCodecReader): Account = try {
@@ -34,7 +33,6 @@ public data class Account(
                 reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
                 SignatureCheckCondition.read(reader),
                 Metadata.read(reader),
-                reader.readVec(reader.readCompactInt()) { RoleId.read(reader) },
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -57,12 +55,6 @@ public data class Account(
             }
             SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
-            writer.writeCompact(instance.roles.size)
-            instance.roles.sortedWith(
-                RoleId.comparator(),
-            ).forEach { value ->
-                RoleId.write(writer, value)
-            }
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

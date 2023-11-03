@@ -187,7 +187,7 @@ public sealed class FindError : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val hashOf: HashOf<VersionedCommittedBlock>,
+        public val hashOf: HashOf<SignedBlock>,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -198,7 +198,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Block = try {
                 Block(
-                    HashOf.read(reader) as HashOf<VersionedCommittedBlock>,
+                    HashOf.read(reader) as HashOf<SignedBlock>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -219,7 +219,7 @@ public sealed class FindError : ModelEnum {
      * 'Transaction' variant
      */
     public data class Transaction(
-        public val hashOf: HashOf<VersionedSignedTransaction>,
+        public val hashOf: HashOf<SignedTransaction>,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -230,7 +230,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Transaction = try {
                 Transaction(
-                    HashOf.read(reader) as HashOf<VersionedSignedTransaction>,
+                    HashOf.read(reader) as HashOf<SignedTransaction>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

@@ -12,13 +12,14 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.Value
-import jp.co.soramitsu.iroha2.generated.VersionedSignedTransaction
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID_VALUE
@@ -35,6 +36,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -160,7 +162,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_account")
     fun `register account`(): Unit = runBlocking {
-        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val newAccountId = AccountId(DEFAULT_DOMAIN_ID, "foo".asName())
         client.sendTransaction {
             account(super.account)
             registerAccount(newAccountId, listOf())
@@ -186,7 +188,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_account")
     @SdkTestId("unregister_account")
     fun `register and unregister account`(): Unit = runBlocking {
-        val joeId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val joeId = AccountId(DEFAULT_DOMAIN_ID, "foo".asName())
         val joeKeyPair = generateKeyPair()
         client.tx { registerAccount(joeId, listOf(joeKeyPair.public.toIrohaPublicKey())) }
 
@@ -272,7 +274,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_account_with_metadata")
     fun `register account with metadata`(): Unit = runBlocking {
-        val newAccountId = AccountId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val newAccountId = AccountId(DEFAULT_DOMAIN_ID, "foo".asName())
         val addressKey = "address".asName()
         val phoneKey = "phone".asName()
         val emailKey = "email".asName()
@@ -292,9 +294,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val encodedTx = TransactionBuilder {
             account(super.account)
             registerAccount(newAccountId, listOf(), metadata)
-        }.buildSigned().let { VersionedSignedTransaction.encode(it) }
+        }.buildSigned().let { SignedTransaction.encode(it) }
 
-        val decodedTx = encodedTx.let { VersionedSignedTransaction.decode(it) }
+        val decodedTx = encodedTx.let { SignedTransaction.decode(it) }
         val signedTx = decodedTx.appendSignatures(ALICE_KEYPAIR)
 
         client.sendTransaction { signedTx }.also { d ->
@@ -661,7 +663,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val joeDomain = "joe_domain".asDomainId()
         client.tx { registerDomain(joeDomain) }
 
-        val joeId = AccountId("joe".asName(), joeDomain)
+        val joeId = AccountId(joeDomain, "joe".asName())
         val joeKeyPair = generateKeyPair()
         registerAccount(joeId, joeKeyPair.public.toIrohaPublicKey())
 
@@ -1018,6 +1020,37 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
         assertEquals(27, domains.size)
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Domains")
+    @Story("Account transfers domain ownership")
+    @SdkTestId("transfer_domain_ownership")
+    fun `transfer domain ownership`(): Unit = runBlocking {
+        val genesisAccountId = AccountId(GENESIS.asDomainId(), GENESIS.asName())
+        var domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query ->
+                client.sendQuery(query)
+            }
+        assertEquals(genesisAccountId, domain.ownedBy)
+
+        client.tx {
+            transferDomainOwnership(
+                genesisAccountId,
+                IdBox.DomainId(DEFAULT_DOMAIN_ID),
+                BOB_ACCOUNT_ID,
+            )
+        }
+        domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query ->
+                client.sendQuery(query)
+            }
+        assertEquals(BOB_ACCOUNT_ID, domain.ownedBy)
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {

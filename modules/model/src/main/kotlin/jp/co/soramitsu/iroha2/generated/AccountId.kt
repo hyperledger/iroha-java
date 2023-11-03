@@ -16,22 +16,22 @@ import kotlin.Unit
  * Generated from 'AccountId' regular structure
  */
 public data class AccountId(
-    public val name: Name,
     public val domainId: DomainId,
+    public val name: Name,
 ) {
     public companion object : ScaleReader<AccountId>, ScaleWriter<AccountId> {
         override fun read(reader: ScaleCodecReader): AccountId = try {
             AccountId(
-                Name.read(reader),
                 DomainId.read(reader),
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: AccountId): Unit = try {
-            Name.write(writer, instance.name)
             DomainId.write(writer, instance.domainId)
+            Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

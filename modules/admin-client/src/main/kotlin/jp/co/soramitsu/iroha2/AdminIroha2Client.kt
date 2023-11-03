@@ -51,7 +51,7 @@ open class AdminIroha2Client(
     /**
      * Send metrics request
      */
-    suspend fun metrics(): String = client.get("${getTelemetryUrl()}$METRICS_ENDPOINT").body()
+    suspend fun metrics(): String = client.get("${getApiUrl()}$METRICS_ENDPOINT").body()
 
     /**
      * Send health check request
@@ -66,7 +66,7 @@ open class AdminIroha2Client(
     /**
      * Send status check request
      */
-    suspend fun status(): PeerStatus = client.get("${getTelemetryUrl()}$STATUS_ENDPOINT").body()
+    suspend fun status(): PeerStatus = client.get("${getApiUrl()}$STATUS_ENDPOINT").body()
 
     /**
      * Send schema request
