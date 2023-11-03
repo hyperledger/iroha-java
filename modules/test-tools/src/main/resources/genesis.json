@@ -45,9 +45,13 @@
       },
       {
         "Grant": {
-          "PermissionToken": {
-            "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": null
+          "object": {
+            "PermissionToken": {
+              "definition_id": "CanTransferAssetsWithDefinition",
+              "payload" : {
+                "asset_definition_id" : "xor#wonderland"
+              }
+            }
           },
           "destination_id": {
             "AccountId": "alice@wonderland"
@@ -56,9 +60,13 @@
       },
       {
         "Grant": {
-          "PermissionToken": {
-            "definition_id": "CanTransferAssetsWithDefinition",
-            "payload": null
+          "object": {
+            "PermissionToken": {
+              "definition_id": "CanTransferAssetsWithDefinition",
+              "payload" : {
+                "asset_definition_id" : "xor#wonderland"
+              }
+            }
           },
           "destination_id": {
             "AccountId": "bob@wonderland"
@@ -67,7 +75,7 @@
       },
       {
         "Mint": {
-          "U32": 100,
+          "object": "100_u32",
           "destination_id": {
             "AssetId": "xor#wonderland#alice@wonderland"
           }
@@ -75,7 +83,7 @@
       },
       {
         "Mint": {
-          "U32": 100,
+          "object": "100_u32",
           "destination_id": {
             "AssetId": "xor#wonderland#bob@wonderland"
           }
@@ -83,5 +91,5 @@
       }
     ]
   ],
-  "validator": "validator.wasm"
+  "executor": "./executor.wasm"
 }

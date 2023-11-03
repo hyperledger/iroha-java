@@ -33,10 +33,12 @@
       },
       {
         "Grant": {
-          "PermissionToken": {
-            "definition_id": "CanSetKeyValueInUserAccount",
-            "payload": {
-              "account_id": "alice@wonderland"
+          "object": {
+            "PermissionToken": {
+              "definition_id": "CanSetKeyValueInUserAccount",
+              "payload": {
+                "account_id": "alice@wonderland"
+              }
             }
           },
           "destination_id": {
@@ -46,5 +48,5 @@
       }
     ]
   ],
-  "validator": "./validator.wasm"
+  "executor": "./executor.wasm"
 }

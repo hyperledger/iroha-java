@@ -187,7 +187,7 @@ public sealed class RegistrableBox : ModelEnum {
      * 'Trigger' variant
      */
     public data class Trigger(
-        public val triggerOfTriggeringFilterBoxAndExecutable: TriggerOfTriggeringFilterBoxAndExecutable,
+        public val triggerOfTriggeringFilterBox: TriggerOfTriggeringFilterBox,
     ) : RegistrableBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -198,7 +198,7 @@ public sealed class RegistrableBox : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.RegistrableBox.Trigger = try {
                 Trigger(
-                    TriggerOfTriggeringFilterBoxAndExecutable.read(reader),
+                    TriggerOfTriggeringFilterBox.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -208,10 +208,7 @@ public sealed class RegistrableBox : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.RegistrableBox.Trigger,
             ): Unit = try {
-                TriggerOfTriggeringFilterBoxAndExecutable.write(
-                    writer,
-                    instance.triggerOfTriggeringFilterBoxAndExecutable,
-                )
+                TriggerOfTriggeringFilterBox.write(writer, instance.triggerOfTriggeringFilterBox)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

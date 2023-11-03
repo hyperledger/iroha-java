@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.Repeats
@@ -56,7 +56,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Data created trigger mints asset upon asset definition creation")
     @SdkTestId("data_created_trigger")
     fun `data created trigger`(): Unit = runBlocking {
-        val triggerId = TriggerId("data_trigger".asName())
+        val triggerId = TriggerId(name = "data_trigger".asName())
         val newAssetName = "token1"
 
         // check account assets before trigger
@@ -106,7 +106,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Pre commit trigger mints asset to account for every transaction")
     @SdkTestId("pre_commit_trigger_should_mint_asset_to_account_for_every_transaction")
     fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
-        val triggerId = TriggerId("pre_commit_trigger".asName())
+        val triggerId = TriggerId(name = "pre_commit_trigger".asName())
         val newAssetName = "token1"
 
         // check account assets before trigger
@@ -165,7 +165,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Executable trigger mints asset")
     @SdkTestId("executable_trigger")
     fun `executable trigger`(): Unit = runBlocking {
-        val triggerId = TriggerId("executable_trigger".asName())
+        val triggerId = TriggerId(name = "executable_trigger".asName())
 
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -189,7 +189,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Endless time trigger decreases asset quantity continuously")
     @SdkTestId("endless_time_trigger")
     fun `endless time trigger`(): Unit = runBlocking {
-        val triggerId = TriggerId(Name("endless_time_trigger"))
+        val triggerId = TriggerId(name = Name("endless_time_trigger"))
 
         sendAndAwaitTimeTrigger(
             triggerId,
@@ -207,7 +207,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Time trigger executes a limited number of times")
     @SdkTestId("time_trigger_execution_repeats_few_times")
     fun `time trigger execution repeats few times`(): Unit = runBlocking {
-        val triggerId = TriggerId(Name("time_trigger"))
+        val triggerId = TriggerId(name = Name("time_trigger"))
 
         sendAndAwaitTimeTrigger(
             triggerId,
@@ -225,7 +225,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
     fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
-        val triggerId = TriggerId("wasm_trigger".asName())
+        val triggerId = TriggerId(name = "wasm_trigger".asName())
 
         val currentTime = Date().time / 1000
         val filter = TriggeringFilterBox.Time(
@@ -288,7 +288,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("unregister_executable_trigger")
     fun `unregister executable trigger`(): Unit = runBlocking {
         val triggerName = "executable_trigger"
-        val triggerId = TriggerId(triggerName.asName())
+        val triggerId = TriggerId(name = triggerName.asName())
 
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -349,7 +349,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     private suspend fun sendAndAwaitTimeTrigger(
         triggerId: TriggerId,
         repeats: Repeats,
-        instruction: InstructionBox,
+        instruction: InstructionExpr,
         accountId: AccountId = ALICE_ACCOUNT_ID,
     ) {
         client.sendTransaction {

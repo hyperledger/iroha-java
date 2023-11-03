@@ -71,8 +71,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
-                getResource(DEFAULT_VALIDATOR_FILE_NAME).readBytes().let { content ->
-                    validatorFileLocation.toFile().writeBytes(content)
+                getResource(DEFAULT_EXECUTOR_FILE_NAME).readBytes().let { content ->
+                    executorFileLocation.toFile().writeBytes(content)
                 }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
                     configFileLocation.toFile().writeBytes(content)
@@ -91,7 +91,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                         // await genesis was applied and seen in status
                         HttpWaitStrategy()
                             .forStatusCode(200)
-                            .forPort(telemetryPort)
+                            .forPort(apiPort)
                             .forPath(STATUS_ENDPOINT)
                             .forResponsePredicate { it.readStatusBlocks()?.equals(1.0) ?: false }
                             .withStartupTimeout(CONTAINER_STARTUP_TIMEOUT),
@@ -110,7 +110,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     private val genesisFileLocation = Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
     private val configFileLocation = Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
-    private val validatorFileLocation = Path("$configDirLocation/$DEFAULT_VALIDATOR_FILE_NAME")
+    private val executorFileLocation = Path("$configDirLocation/$DEFAULT_EXECUTOR_FILE_NAME")
 
     override fun start() {
         logger().debug("Starting Iroha container")
@@ -144,9 +144,9 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable-2.0.0-pre-rc.19"
+        const val DEFAULT_IMAGE_TAG = "stable-2.0.0-pre-rc.20"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
-        const val DEFAULT_VALIDATOR_FILE_NAME = "validator.wasm"
+        const val DEFAULT_EXECUTOR_FILE_NAME = "executor.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"
