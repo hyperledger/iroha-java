@@ -20,10 +20,6 @@
       {
         "name": "metadata",
         "type": "Metadata"
-      },
-      {
-        "name": "roles",
-        "type": "SortedVec<RoleId>"
       }
     ]
   },
@@ -150,12 +146,12 @@
   "AccountId": {
     "Struct": [
       {
-        "name": "name",
-        "type": "Name"
-      },
-      {
         "name": "domain_id",
         "type": "DomainId"
+      },
+      {
+        "name": "name",
+        "type": "Name"
       }
     ]
   },
@@ -183,35 +179,11 @@
       }
     ]
   },
-  "Action<TriggeringFilterBox, Executable>": {
+  "Action<TriggeringFilterBox>": {
     "Struct": [
       {
         "name": "executable",
         "type": "Executable"
-      },
-      {
-        "name": "repeats",
-        "type": "Repeats"
-      },
-      {
-        "name": "authority",
-        "type": "AccountId"
-      },
-      {
-        "name": "filter",
-        "type": "TriggeringFilterBox"
-      },
-      {
-        "name": "metadata",
-        "type": "Metadata"
-      }
-    ]
-  },
-  "Action<TriggeringFilterBox, OptimizedExecutable>": {
-    "Struct": [
-      {
-        "name": "executable",
-        "type": "OptimizedExecutable"
       },
       {
         "name": "repeats",
@@ -619,6 +591,24 @@
     ]
   },
   "BatchedResponse<Value>": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "BatchedResponseV1<Value>"
+      }
+    ]
+  },
+  "BatchedResponse<Vec<SignedTransaction>>": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "BatchedResponseV1<Vec<SignedTransaction>>"
+      }
+    ]
+  },
+  "BatchedResponseV1<Value>": {
     "Struct": [
       {
         "name": "batch",
@@ -630,11 +620,11 @@
       }
     ]
   },
-  "BatchedResponse<Vec<VersionedSignedTransaction>>": {
+  "BatchedResponseV1<Vec<SignedTransaction>>": {
     "Struct": [
       {
         "name": "batch",
-        "type": "Vec<VersionedSignedTransaction>"
+        "type": "Vec<SignedTransaction>"
       },
       {
         "name": "cursor",
@@ -657,40 +647,52 @@
   "BlockHeader": {
     "Struct": [
       {
-        "name": "timestamp",
-        "type": "u128"
-      },
-      {
-        "name": "consensus_estimation",
-        "type": "u64"
-      },
-      {
         "name": "height",
         "type": "u64"
+      },
+      {
+        "name": "timestamp_ms",
+        "type": "u64"
+      },
+      {
+        "name": "previous_block_hash",
+        "type": "Option<HashOf<SignedBlock>>"
+      },
+      {
+        "name": "transactions_hash",
+        "type": "Option<HashOf<MerkleTree<SignedTransaction>>>"
       },
       {
         "name": "view_change_index",
         "type": "u64"
       },
       {
-        "name": "previous_block_hash",
-        "type": "Option<HashOf<VersionedCommittedBlock>>"
-      },
-      {
-        "name": "transactions_hash",
-        "type": "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>"
-      },
-      {
-        "name": "rejected_transactions_hash",
-        "type": "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>"
-      },
-      {
-        "name": "committed_with_topology",
-        "type": "Vec<PeerId>"
+        "name": "consensus_estimation_ms",
+        "type": "u64"
       }
     ]
   },
-  "BlockMessage": "VersionedCommittedBlock",
+  "BlockMessage": "SignedBlock",
+  "BlockPayload": {
+    "Struct": [
+      {
+        "name": "header",
+        "type": "BlockHeader"
+      },
+      {
+        "name": "commit_topology",
+        "type": "UniqueVec<PeerId>"
+      },
+      {
+        "name": "transactions",
+        "type": "Vec<TransactionValue>"
+      },
+      {
+        "name": "event_recommendations",
+        "type": "Vec<Event>"
+      }
+    ]
+  },
   "BlockRejectionReason": {
     "Enum": [
       {
@@ -700,7 +702,7 @@
     ]
   },
   "BlockSubscriptionRequest": "NonZero<u64>",
-  "BurnBox": {
+  "BurnExpr": {
     "Struct": [
       {
         "name": "object",
@@ -712,27 +714,7 @@
       }
     ]
   },
-  "CommittedBlock": {
-    "Struct": [
-      {
-        "name": "header",
-        "type": "BlockHeader"
-      },
-      {
-        "name": "transactions",
-        "type": "Vec<TransactionValue>"
-      },
-      {
-        "name": "event_recommendations",
-        "type": "Vec<Event>"
-      },
-      {
-        "name": "signatures",
-        "type": "SignaturesOf<CommittedBlock>"
-      }
-    ]
-  },
-  "Conditional": {
+  "ConditionalExpr": {
     "Struct": [
       {
         "name": "condition",
@@ -740,11 +722,11 @@
       },
       {
         "name": "then",
-        "type": "InstructionBox"
+        "type": "InstructionExpr"
       },
       {
         "name": "otherwise",
-        "type": "Option<InstructionBox>"
+        "type": "Option<InstructionExpr>"
       }
     ]
   },
@@ -927,9 +909,9 @@
         "type": "ConfigurationEvent"
       },
       {
-        "tag": "Validator",
+        "tag": "Executor",
         "discriminant": 9,
-        "type": "ValidatorEvent"
+        "type": "ExecutorEvent"
       }
     ]
   },
@@ -942,18 +924,6 @@
       {
         "name": "right",
         "type": "EvaluatesTo<NumericValue>"
-      }
-    ]
-  },
-  "DoesAccountHavePermissionToken": {
-    "Struct": [
-      {
-        "name": "account_id",
-        "type": "EvaluatesTo<AccountId>"
-      },
-      {
-        "name": "permission_token",
-        "type": "EvaluatesTo<PermissionToken>"
       }
     ]
   },
@@ -982,6 +952,10 @@
       {
         "name": "metadata",
         "type": "Metadata"
+      },
+      {
+        "name": "owned_by",
+        "type": "AccountId"
       }
     ]
   },
@@ -1016,6 +990,11 @@
         "tag": "MetadataRemoved",
         "discriminant": 5,
         "type": "MetadataChanged<DomainId>"
+      },
+      {
+        "tag": "OwnerChanged",
+        "discriminant": 6,
+        "type": "DomainOwnerChanged"
       }
     ]
   },
@@ -1038,13 +1017,17 @@
         "discriminant": 3
       },
       {
+        "tag": "ByOwnerChanged",
+        "discriminant": 4
+      },
+      {
         "tag": "ByAccount",
-        "discriminant": 4,
+        "discriminant": 5,
         "type": "FilterOpt<AccountFilter>"
       },
       {
         "tag": "ByAssetDefinition",
-        "discriminant": 5,
+        "discriminant": 6,
         "type": "FilterOpt<AssetDefinitionFilter>"
       }
     ]
@@ -1066,6 +1049,18 @@
       {
         "name": "name",
         "type": "Name"
+      }
+    ]
+  },
+  "DomainOwnerChanged": {
+    "Struct": [
+      {
+        "name": "domain_id",
+        "type": "DomainId"
+      },
+      {
+        "name": "new_owner",
+        "type": "AccountId"
       }
     ]
   },
@@ -1119,7 +1114,7 @@
       }
     ]
   },
-  "EvaluatesTo<HashOf<VersionedCommittedBlock>>": {
+  "EvaluatesTo<HashOf<SignedBlock>>": {
     "Struct": [
       {
         "name": "expression",
@@ -1127,7 +1122,7 @@
       }
     ]
   },
-  "EvaluatesTo<HashOf<VersionedSignedTransaction>>": {
+  "EvaluatesTo<HashOf<SignedTransaction>>": {
     "Struct": [
       {
         "name": "expression",
@@ -1168,14 +1163,6 @@
     ]
   },
   "EvaluatesTo<Parameter>": {
-    "Struct": [
-      {
-        "name": "expression",
-        "type": "Expression"
-      }
-    ]
-  },
-  "EvaluatesTo<PermissionToken>": {
     "Struct": [
       {
         "name": "expression",
@@ -1307,20 +1294,12 @@
       {
         "tag": "Instructions",
         "discriminant": 0,
-        "type": "Vec<InstructionBox>"
+        "type": "Vec<InstructionExpr>"
       },
       {
         "tag": "Wasm",
         "discriminant": 1,
         "type": "WasmSmartContract"
-      }
-    ]
-  },
-  "ExecuteTriggerBox": {
-    "Struct": [
-      {
-        "name": "trigger_id",
-        "type": "EvaluatesTo<TriggerId>"
       }
     ]
   },
@@ -1348,6 +1327,14 @@
       }
     ]
   },
+  "ExecuteTriggerExpr": {
+    "Struct": [
+      {
+        "name": "trigger_id",
+        "type": "EvaluatesTo<TriggerId>"
+      }
+    ]
+  },
   "ExecutionTime": {
     "Enum": [
       {
@@ -1358,6 +1345,36 @@
         "tag": "Schedule",
         "discriminant": 1,
         "type": "Schedule"
+      }
+    ]
+  },
+  "Executor": {
+    "Struct": [
+      {
+        "name": "wasm",
+        "type": "WasmSmartContract"
+      }
+    ]
+  },
+  "ExecutorEvent": {
+    "Enum": [
+      {
+        "tag": "Upgraded",
+        "discriminant": 0
+      }
+    ]
+  },
+  "ExecutorMode": {
+    "Enum": [
+      {
+        "tag": "Path",
+        "discriminant": 0,
+        "type": "String"
+      },
+      {
+        "tag": "Inline",
+        "discriminant": 1,
+        "type": "Executor"
       }
     ]
   },
@@ -1465,7 +1482,7 @@
       }
     ]
   },
-  "FailBox": {
+  "Fail": {
     "Struct": [
       {
         "name": "message",
@@ -1940,7 +1957,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<HashOf<VersionedCommittedBlock>>"
+        "type": "EvaluatesTo<HashOf<SignedBlock>>"
       }
     ]
   },
@@ -1994,12 +2011,12 @@
       {
         "tag": "Block",
         "discriminant": 5,
-        "type": "HashOf<VersionedCommittedBlock>"
+        "type": "HashOf<SignedBlock>"
       },
       {
         "tag": "Transaction",
         "discriminant": 6,
-        "type": "HashOf<VersionedSignedTransaction>"
+        "type": "HashOf<SignedTransaction>"
       },
       {
         "tag": "Peer",
@@ -2070,7 +2087,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "EvaluatesTo<HashOf<VersionedSignedTransaction>>"
+        "type": "EvaluatesTo<HashOf<SignedTransaction>>"
       }
     ]
   },
@@ -2153,7 +2170,7 @@
       }
     ]
   },
-  "GrantBox": {
+  "GrantExpr": {
     "Struct": [
       {
         "name": "object",
@@ -2161,7 +2178,7 @@
       },
       {
         "name": "destination_id",
-        "type": "EvaluatesTo<IdBox>"
+        "type": "EvaluatesTo<AccountId>"
       }
     ]
   },
@@ -2178,21 +2195,20 @@
     ]
   },
   "Hash": "Array<u8, 32>",
-  "HashOf<MerkleTree<VersionedSignedTransaction>>": "Hash",
-  "HashOf<VersionedCommittedBlock>": "Hash",
-  "HashOf<VersionedSignedTransaction>": "Hash",
-  "HashOf<WasmSmartContract>": "Hash",
+  "HashOf<MerkleTree<SignedTransaction>>": "Hash",
+  "HashOf<SignedBlock>": "Hash",
+  "HashOf<SignedTransaction>": "Hash",
   "HashValue": {
     "Enum": [
       {
         "tag": "Transaction",
         "discriminant": 0,
-        "type": "HashOf<VersionedSignedTransaction>"
+        "type": "HashOf<SignedTransaction>"
       },
       {
         "tag": "Block",
         "discriminant": 1,
-        "type": "HashOf<VersionedCommittedBlock>"
+        "type": "HashOf<SignedBlock>"
       }
     ]
   },
@@ -2295,7 +2311,7 @@
       {
         "tag": "Trigger",
         "discriminant": 9,
-        "type": "TriggerBox"
+        "type": "Trigger<TriggeringFilterBox>"
       },
       {
         "tag": "Role",
@@ -2322,100 +2338,6 @@
       {
         "name": "otherwise",
         "type": "EvaluatesTo<Value>"
-      }
-    ]
-  },
-  "InstructionBox": {
-    "Enum": [
-      {
-        "tag": "Register",
-        "discriminant": 0,
-        "type": "RegisterBox"
-      },
-      {
-        "tag": "Unregister",
-        "discriminant": 1,
-        "type": "UnregisterBox"
-      },
-      {
-        "tag": "Mint",
-        "discriminant": 2,
-        "type": "MintBox"
-      },
-      {
-        "tag": "Burn",
-        "discriminant": 3,
-        "type": "BurnBox"
-      },
-      {
-        "tag": "Transfer",
-        "discriminant": 4,
-        "type": "TransferBox"
-      },
-      {
-        "tag": "If",
-        "discriminant": 5,
-        "type": "Conditional"
-      },
-      {
-        "tag": "Pair",
-        "discriminant": 6,
-        "type": "Pair"
-      },
-      {
-        "tag": "Sequence",
-        "discriminant": 7,
-        "type": "SequenceBox"
-      },
-      {
-        "tag": "SetKeyValue",
-        "discriminant": 8,
-        "type": "SetKeyValueBox"
-      },
-      {
-        "tag": "RemoveKeyValue",
-        "discriminant": 9,
-        "type": "RemoveKeyValueBox"
-      },
-      {
-        "tag": "Grant",
-        "discriminant": 10,
-        "type": "GrantBox"
-      },
-      {
-        "tag": "Revoke",
-        "discriminant": 11,
-        "type": "RevokeBox"
-      },
-      {
-        "tag": "ExecuteTrigger",
-        "discriminant": 12,
-        "type": "ExecuteTriggerBox"
-      },
-      {
-        "tag": "SetParameter",
-        "discriminant": 13,
-        "type": "SetParameterBox"
-      },
-      {
-        "tag": "NewParameter",
-        "discriminant": 14,
-        "type": "NewParameterBox"
-      },
-      {
-        "tag": "Upgrade",
-        "discriminant": 15,
-        "type": "UpgradeBox"
-      },
-      {
-        "tag": "Log",
-        "discriminant": 16,
-        "type": "LogBox"
-      },
-      {
-        "tag": "Fail",
-        "discriminant": 17,
-        "type": "FailBox"
       }
     ]
   },
@@ -2506,11 +2428,105 @@
     "Struct": [
       {
         "name": "instruction",
-        "type": "InstructionBox"
+        "type": "InstructionExpr"
       },
       {
         "name": "reason",
         "type": "String"
+      }
+    ]
+  },
+  "InstructionExpr": {
+    "Enum": [
+      {
+        "tag": "Register",
+        "discriminant": 0,
+        "type": "RegisterExpr"
+      },
+      {
+        "tag": "Unregister",
+        "discriminant": 1,
+        "type": "UnregisterExpr"
+      },
+      {
+        "tag": "Mint",
+        "discriminant": 2,
+        "type": "MintExpr"
+      },
+      {
+        "tag": "Burn",
+        "discriminant": 3,
+        "type": "BurnExpr"
+      },
+      {
+        "tag": "Transfer",
+        "discriminant": 4,
+        "type": "TransferExpr"
+      },
+      {
+        "tag": "If",
+        "discriminant": 5,
+        "type": "ConditionalExpr"
+      },
+      {
+        "tag": "Pair",
+        "discriminant": 6,
+        "type": "PairExpr"
+      },
+      {
+        "tag": "Sequence",
+        "discriminant": 7,
+        "type": "SequenceExpr"
+      },
+      {
+        "tag": "SetKeyValue",
+        "discriminant": 8,
+        "type": "SetKeyValueExpr"
+      },
+      {
+        "tag": "RemoveKeyValue",
+        "discriminant": 9,
+        "type": "RemoveKeyValueExpr"
+      },
+      {
+        "tag": "Grant",
+        "discriminant": 10,
+        "type": "GrantExpr"
+      },
+      {
+        "tag": "Revoke",
+        "discriminant": 11,
+        "type": "RevokeExpr"
+      },
+      {
+        "tag": "ExecuteTrigger",
+        "discriminant": 12,
+        "type": "ExecuteTriggerExpr"
+      },
+      {
+        "tag": "SetParameter",
+        "discriminant": 13,
+        "type": "SetParameterExpr"
+      },
+      {
+        "tag": "NewParameter",
+        "discriminant": 14,
+        "type": "NewParameterExpr"
+      },
+      {
+        "tag": "Upgrade",
+        "discriminant": 15,
+        "type": "UpgradeExpr"
+      },
+      {
+        "tag": "Log",
+        "discriminant": 16,
+        "type": "LogExpr"
+      },
+      {
+        "tag": "Fail",
+        "discriminant": 17,
+        "type": "Fail"
       }
     ]
   },
@@ -2632,18 +2648,6 @@
   "Ipv4Predicate": "Array<Interval<u8>, 4>",
   "Ipv6Addr": "Array<u16, 8>",
   "Ipv6Predicate": "Array<Interval<u16>, 8>",
-  "IsAssetDefinitionOwner": {
-    "Struct": [
-      {
-        "name": "asset_definition_id",
-        "type": "EvaluatesTo<AssetDefinitionId>"
-      },
-      {
-        "name": "account_id",
-        "type": "EvaluatesTo<AccountId>"
-      }
-    ]
-  },
   "LengthLimits": {
     "Struct": [
       {
@@ -2704,7 +2708,7 @@
       }
     ]
   },
-  "LogBox": {
+  "LogExpr": {
     "Struct": [
       {
         "name": "level",
@@ -2754,8 +2758,8 @@
       }
     ]
   },
-  "MerkleTree<VersionedSignedTransaction>": {
-    "Vec": "HashOf<VersionedSignedTransaction>"
+  "MerkleTree<SignedTransaction>": {
+    "Vec": "HashOf<SignedTransaction>"
   },
   "Metadata": {
     "Struct": [
@@ -2857,7 +2861,7 @@
       }
     ]
   },
-  "MintBox": {
+  "MintExpr": {
     "Struct": [
       {
         "name": "object",
@@ -3014,7 +3018,7 @@
       }
     ]
   },
-  "NewParameterBox": {
+  "NewParameterExpr": {
     "Struct": [
       {
         "name": "parameter",
@@ -3087,20 +3091,6 @@
       }
     ]
   },
-  "OptimizedExecutable": {
-    "Enum": [
-      {
-        "tag": "WasmInternalRepr",
-        "discriminant": 0,
-        "type": "WasmInternalRepr"
-      },
-      {
-        "tag": "Instructions",
-        "discriminant": 1,
-        "type": "Vec<InstructionBox>"
-      }
-    ]
-  },
   "Option<DomainId>": {
     "Option": "DomainId"
   },
@@ -3110,14 +3100,14 @@
   "Option<Hash>": {
     "Option": "Hash"
   },
-  "Option<HashOf<MerkleTree<VersionedSignedTransaction>>>": {
-    "Option": "HashOf<MerkleTree<VersionedSignedTransaction>>"
+  "Option<HashOf<MerkleTree<SignedTransaction>>>": {
+    "Option": "HashOf<MerkleTree<SignedTransaction>>"
   },
-  "Option<HashOf<VersionedCommittedBlock>>": {
-    "Option": "HashOf<VersionedCommittedBlock>"
+  "Option<HashOf<SignedBlock>>": {
+    "Option": "HashOf<SignedBlock>"
   },
-  "Option<InstructionBox>": {
-    "Option": "InstructionBox"
+  "Option<InstructionExpr>": {
+    "Option": "InstructionExpr"
   },
   "Option<IpfsPath>": {
     "Option": "IpfsPath"
@@ -3168,15 +3158,15 @@
   "OriginFilter<PeerEvent>": "PeerId",
   "OriginFilter<RoleEvent>": "RoleId",
   "OriginFilter<TriggerEvent>": "TriggerId",
-  "Pair": {
+  "PairExpr": {
     "Struct": [
       {
         "name": "left_instruction",
-        "type": "InstructionBox"
+        "type": "InstructionExpr"
       },
       {
         "name": "right_instruction",
-        "type": "InstructionBox"
+        "type": "InstructionExpr"
       }
     ]
   },
@@ -3497,128 +3487,118 @@
         "type": "FindTotalAssetQuantityByAssetDefinitionId"
       },
       {
-        "tag": "IsAssetDefinitionOwner",
-        "discriminant": 17,
-        "type": "IsAssetDefinitionOwner"
-      },
-      {
         "tag": "FindAssetKeyValueByIdAndKey",
-        "discriminant": 18,
+        "discriminant": 17,
         "type": "FindAssetKeyValueByIdAndKey"
       },
       {
         "tag": "FindAssetDefinitionKeyValueByIdAndKey",
-        "discriminant": 19,
+        "discriminant": 18,
         "type": "FindAssetDefinitionKeyValueByIdAndKey"
       },
       {
         "tag": "FindAllDomains",
-        "discriminant": 20,
+        "discriminant": 19,
         "type": "FindAllDomains"
       },
       {
         "tag": "FindDomainById",
-        "discriminant": 21,
+        "discriminant": 20,
         "type": "FindDomainById"
       },
       {
         "tag": "FindDomainKeyValueByIdAndKey",
-        "discriminant": 22,
+        "discriminant": 21,
         "type": "FindDomainKeyValueByIdAndKey"
       },
       {
         "tag": "FindAllPeers",
-        "discriminant": 23,
+        "discriminant": 22,
         "type": "FindAllPeers"
       },
       {
         "tag": "FindAllBlocks",
-        "discriminant": 24,
+        "discriminant": 23,
         "type": "FindAllBlocks"
       },
       {
         "tag": "FindAllBlockHeaders",
-        "discriminant": 25,
+        "discriminant": 24,
         "type": "FindAllBlockHeaders"
       },
       {
         "tag": "FindBlockHeaderByHash",
-        "discriminant": 26,
+        "discriminant": 25,
         "type": "FindBlockHeaderByHash"
       },
       {
         "tag": "FindAllTransactions",
-        "discriminant": 27,
+        "discriminant": 26,
         "type": "FindAllTransactions"
       },
       {
         "tag": "FindTransactionsByAccountId",
-        "discriminant": 28,
+        "discriminant": 27,
         "type": "FindTransactionsByAccountId"
       },
       {
         "tag": "FindTransactionByHash",
-        "discriminant": 29,
+        "discriminant": 28,
         "type": "FindTransactionByHash"
       },
       {
         "tag": "FindPermissionTokensByAccountId",
-        "discriminant": 30,
+        "discriminant": 29,
         "type": "FindPermissionTokensByAccountId"
       },
       {
         "tag": "FindPermissionTokenSchema",
-        "discriminant": 31,
+        "discriminant": 30,
         "type": "FindPermissionTokenSchema"
       },
       {
-        "tag": "DoesAccountHavePermissionToken",
-        "discriminant": 32,
-        "type": "DoesAccountHavePermissionToken"
-      },
-      {
         "tag": "FindAllActiveTriggerIds",
-        "discriminant": 33,
+        "discriminant": 31,
         "type": "FindAllActiveTriggerIds"
       },
       {
         "tag": "FindTriggerById",
-        "discriminant": 34,
+        "discriminant": 32,
         "type": "FindTriggerById"
       },
       {
         "tag": "FindTriggerKeyValueByIdAndKey",
-        "discriminant": 35,
+        "discriminant": 33,
         "type": "FindTriggerKeyValueByIdAndKey"
       },
       {
         "tag": "FindTriggersByDomainId",
-        "discriminant": 36,
+        "discriminant": 34,
         "type": "FindTriggersByDomainId"
       },
       {
         "tag": "FindAllRoles",
-        "discriminant": 37,
+        "discriminant": 35,
         "type": "FindAllRoles"
       },
       {
         "tag": "FindAllRoleIds",
-        "discriminant": 38,
+        "discriminant": 36,
         "type": "FindAllRoleIds"
       },
       {
         "tag": "FindRoleByRoleId",
-        "discriminant": 39,
+        "discriminant": 37,
         "type": "FindRoleByRoleId"
       },
       {
         "tag": "FindRolesByAccountId",
-        "discriminant": 40,
+        "discriminant": 38,
         "type": "FindRolesByAccountId"
       },
       {
         "tag": "FindAllParameters",
-        "discriminant": 41,
+        "discriminant": 39,
         "type": "FindAllParameters"
       }
     ]
@@ -3646,7 +3626,7 @@
         "type": "String"
       },
       {
-        "tag": "Unauthorized",
+        "tag": "UnknownCursor",
         "discriminant": 4
       }
     ]
@@ -3683,15 +3663,15 @@
     "Struct": [
       {
         "name": "transactions",
-        "type": "Vec<Vec<InstructionBox>>"
+        "type": "Vec<Vec<InstructionExpr>>"
       },
       {
-        "name": "validator",
-        "type": "ValidatorMode"
+        "name": "executor",
+        "type": "ExecutorMode"
       }
     ]
   },
-  "RegisterBox": {
+  "RegisterExpr": {
     "Struct": [
       {
         "name": "object",
@@ -3729,7 +3709,7 @@
       {
         "tag": "Trigger",
         "discriminant": 5,
-        "type": "Trigger<TriggeringFilterBox, Executable>"
+        "type": "Trigger<TriggeringFilterBox>"
       },
       {
         "tag": "Role",
@@ -3738,7 +3718,7 @@
       }
     ]
   },
-  "RemoveKeyValueBox": {
+  "RemoveKeyValueExpr": {
     "Struct": [
       {
         "name": "object_id",
@@ -3775,7 +3755,7 @@
       }
     ]
   },
-  "RevokeBox": {
+  "RevokeExpr": {
     "Struct": [
       {
         "name": "object",
@@ -3783,7 +3763,7 @@
       },
       {
         "name": "destination_id",
-        "type": "EvaluatesTo<IdBox>"
+        "type": "EvaluatesTo<AccountId>"
       }
     ]
   },
@@ -3921,15 +3901,15 @@
       }
     ]
   },
-  "SequenceBox": {
+  "SequenceExpr": {
     "Struct": [
       {
         "name": "instructions",
-        "type": "Vec<InstructionBox>"
+        "type": "Vec<InstructionExpr>"
       }
     ]
   },
-  "SetKeyValueBox": {
+  "SetKeyValueExpr": {
     "Struct": [
       {
         "name": "object_id",
@@ -3945,7 +3925,7 @@
       }
     ]
   },
-  "SetParameterBox": {
+  "SetParameterExpr": {
     "Struct": [
       {
         "name": "parameter",
@@ -3965,15 +3945,28 @@
       }
     ]
   },
-  "SignatureCheckCondition": "EvaluatesTo<bool>",
-  "SignatureOf<CommittedBlock>": "Signature",
+  "SignatureCheckCondition": {
+    "Enum": [
+      {
+        "tag": "AnyAccountSignatureOr",
+        "discriminant": 0,
+        "type": "Vec<PublicKey>"
+      },
+      {
+        "tag": "AllAccountSignaturesAnd",
+        "discriminant": 1,
+        "type": "Vec<PublicKey>"
+      }
+    ]
+  },
+  "SignatureOf<BlockPayload>": "Signature",
   "SignatureOf<QueryPayload>": "Signature",
   "SignatureOf<TransactionPayload>": "Signature",
-  "SignaturesOf<CommittedBlock>": {
+  "SignaturesOf<BlockPayload>": {
     "Struct": [
       {
         "name": "signatures",
-        "type": "SortedVec<SignatureOf<CommittedBlock>>"
+        "type": "SortedVec<SignatureOf<BlockPayload>>"
       }
     ]
   },
@@ -3985,7 +3978,37 @@
       }
     ]
   },
+  "SignedBlock": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "SignedBlockV1"
+      }
+    ]
+  },
+  "SignedBlockV1": {
+    "Struct": [
+      {
+        "name": "signatures",
+        "type": "SignaturesOf<BlockPayload>"
+      },
+      {
+        "name": "payload",
+        "type": "BlockPayload"
+      }
+    ]
+  },
   "SignedQuery": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "SignedQueryV1"
+      }
+    ]
+  },
+  "SignedQueryV1": {
     "Struct": [
       {
         "name": "signature",
@@ -3998,6 +4021,15 @@
     ]
   },
   "SignedTransaction": {
+    "Enum": [
+      {
+        "tag": "V1",
+        "discriminant": 1,
+        "type": "SignedTransactionV1"
+      }
+    ]
+  },
+  "SignedTransactionV1": {
     "Struct": [
       {
         "name": "signatures",
@@ -4118,11 +4150,8 @@
   "SortedVec<PublicKey>": {
     "Vec": "PublicKey"
   },
-  "SortedVec<RoleId>": {
-    "Vec": "RoleId"
-  },
-  "SortedVec<SignatureOf<CommittedBlock>>": {
-    "Vec": "SignatureOf<CommittedBlock>"
+  "SortedVec<SignatureOf<BlockPayload>>": {
+    "Vec": "SignatureOf<BlockPayload>"
   },
   "SortedVec<SignatureOf<TransactionPayload>>": {
     "Vec": "SignatureOf<TransactionPayload>"
@@ -4241,12 +4270,12 @@
   "TransactionQueryOutput": {
     "Struct": [
       {
-        "name": "transaction",
-        "type": "TransactionValue"
+        "name": "block_hash",
+        "type": "HashOf<SignedBlock>"
       },
       {
-        "name": "block_hash",
-        "type": "HashOf<VersionedCommittedBlock>"
+        "name": "transaction",
+        "type": "TransactionValue"
       }
     ]
   },
@@ -4278,12 +4307,8 @@
         "type": "WasmExecutionFail"
       },
       {
-        "tag": "UnexpectedGenesisAccountSignature",
-        "discriminant": 5
-      },
-      {
         "tag": "Expired",
-        "discriminant": 6
+        "discriminant": 5
       }
     ]
   },
@@ -4291,7 +4316,7 @@
     "Struct": [
       {
         "name": "value",
-        "type": "VersionedSignedTransaction"
+        "type": "SignedTransaction"
       },
       {
         "name": "error",
@@ -4299,7 +4324,7 @@
       }
     ]
   },
-  "TransferBox": {
+  "TransferExpr": {
     "Struct": [
       {
         "name": "source_id",
@@ -4315,7 +4340,7 @@
       }
     ]
   },
-  "Trigger<TriggeringFilterBox, Executable>": {
+  "Trigger<TriggeringFilterBox>": {
     "Struct": [
       {
         "name": "id",
@@ -4323,33 +4348,7 @@
       },
       {
         "name": "action",
-        "type": "Action<TriggeringFilterBox, Executable>"
-      }
-    ]
-  },
-  "Trigger<TriggeringFilterBox, OptimizedExecutable>": {
-    "Struct": [
-      {
-        "name": "id",
-        "type": "TriggerId"
-      },
-      {
-        "name": "action",
-        "type": "Action<TriggeringFilterBox, OptimizedExecutable>"
-      }
-    ]
-  },
-  "TriggerBox": {
-    "Enum": [
-      {
-        "tag": "Raw",
-        "discriminant": 0,
-        "type": "Trigger<TriggeringFilterBox, Executable>"
-      },
-      {
-        "tag": "Optimized",
-        "discriminant": 1,
-        "type": "Trigger<TriggeringFilterBox, OptimizedExecutable>"
+        "type": "Action<TriggeringFilterBox>"
       }
     ]
   },
@@ -4461,12 +4460,12 @@
   "TriggerId": {
     "Struct": [
       {
-        "name": "name",
-        "type": "Name"
-      },
-      {
         "name": "domain_id",
         "type": "Option<DomainId>"
+      },
+      {
+        "name": "name",
+        "type": "Name"
       }
     ]
   },
@@ -4525,7 +4524,8 @@
       }
     ]
   },
-  "UnregisterBox": {
+  "UniqueVec<PeerId>": "Vec<PeerId>",
+  "UnregisterExpr": {
     "Struct": [
       {
         "name": "object_id",
@@ -4536,13 +4536,13 @@
   "UpgradableBox": {
     "Enum": [
       {
-        "tag": "Validator",
+        "tag": "Executor",
         "discriminant": 0,
-        "type": "Validator"
+        "type": "Executor"
       }
     ]
   },
-  "UpgradeBox": {
+  "UpgradeExpr": {
     "Struct": [
       {
         "name": "object",
@@ -4574,36 +4574,6 @@
       {
         "tag": "InternalError",
         "discriminant": 4
-      }
-    ]
-  },
-  "Validator": {
-    "Struct": [
-      {
-        "name": "wasm",
-        "type": "WasmSmartContract"
-      }
-    ]
-  },
-  "ValidatorEvent": {
-    "Enum": [
-      {
-        "tag": "Upgraded",
-        "discriminant": 0
-      }
-    ]
-  },
-  "ValidatorMode": {
-    "Enum": [
-      {
-        "tag": "Path",
-        "discriminant": 0,
-        "type": "String"
-      },
-      {
-        "tag": "Inline",
-        "discriminant": 1,
-        "type": "Validator"
       }
     ]
   },
@@ -4692,7 +4662,7 @@
       {
         "tag": "Block",
         "discriminant": 16,
-        "type": "VersionedCommittedBlock"
+        "type": "SignedBlock"
       },
       {
         "tag": "BlockHeader",
@@ -4715,9 +4685,9 @@
         "type": "NumericValue"
       },
       {
-        "tag": "Validator",
+        "tag": "Executor",
         "discriminant": 21,
-        "type": "Validator"
+        "type": "Executor"
       },
       {
         "tag": "LogLevel",
@@ -4787,8 +4757,8 @@
   "Vec<GenericPredicateBox<ValuePredicate>>": {
     "Vec": "GenericPredicateBox<ValuePredicate>"
   },
-  "Vec<InstructionBox>": {
-    "Vec": "InstructionBox"
+  "Vec<InstructionExpr>": {
+    "Vec": "InstructionExpr"
   },
   "Vec<Name>": {
     "Vec": "Name"
@@ -4796,119 +4766,29 @@
   "Vec<PeerId>": {
     "Vec": "PeerId"
   },
+  "Vec<PublicKey>": {
+    "Vec": "PublicKey"
+  },
+  "Vec<SignedTransaction>": {
+    "Vec": "SignedTransaction"
+  },
   "Vec<TransactionValue>": {
     "Vec": "TransactionValue"
   },
   "Vec<Value>": {
     "Vec": "Value"
   },
-  "Vec<Vec<InstructionBox>>": {
-    "Vec": "Vec<InstructionBox>"
-  },
-  "Vec<VersionedSignedTransaction>": {
-    "Vec": "VersionedSignedTransaction"
+  "Vec<Vec<InstructionExpr>>": {
+    "Vec": "Vec<InstructionExpr>"
   },
   "Vec<u8>": {
     "Vec": "u8"
-  },
-  "VersionedBatchedResponse<Value>": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "BatchedResponse<Value>"
-      }
-    ]
-  },
-  "VersionedBatchedResponse<Vec<VersionedSignedTransaction>>": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "BatchedResponse<Vec<VersionedSignedTransaction>>"
-      }
-    ]
-  },
-  "VersionedBlockMessage": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "BlockMessage"
-      }
-    ]
-  },
-  "VersionedBlockSubscriptionRequest": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "BlockSubscriptionRequest"
-      }
-    ]
-  },
-  "VersionedCommittedBlock": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "CommittedBlock"
-      }
-    ]
-  },
-  "VersionedEventMessage": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "EventMessage"
-      }
-    ]
-  },
-  "VersionedEventSubscriptionRequest": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "EventSubscriptionRequest"
-      }
-    ]
-  },
-  "VersionedSignedQuery": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "SignedQuery"
-      }
-    ]
-  },
-  "VersionedSignedTransaction": {
-    "Enum": [
-      {
-        "tag": "V1",
-        "discriminant": 1,
-        "type": "SignedTransaction"
-      }
-    ]
   },
   "WasmExecutionFail": {
     "Struct": [
       {
         "name": "reason",
         "type": "String"
-      }
-    ]
-  },
-  "WasmInternalRepr": {
-    "Struct": [
-      {
-        "name": "serialized",
-        "type": "Vec<u8>"
-      },
-      {
-        "name": "blob_hash",
-        "type": "HashOf<WasmSmartContract>"
       }
     ]
   },
