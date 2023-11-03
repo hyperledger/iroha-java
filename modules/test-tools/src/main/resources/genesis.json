@@ -48,7 +48,9 @@
           "object": {
             "PermissionToken": {
               "definition_id": "CanTransferAssetsWithDefinition",
-              "payload": null
+              "payload" : {
+                "asset_definition_id" : "xor#wonderland"
+              }
             }
           },
           "destination_id": {
@@ -61,7 +63,9 @@
           "object": {
             "PermissionToken": {
               "definition_id": "CanTransferAssetsWithDefinition",
-              "payload": null
+              "payload" : {
+                "asset_definition_id" : "xor#wonderland"
+              }
             }
           },
           "destination_id": {
