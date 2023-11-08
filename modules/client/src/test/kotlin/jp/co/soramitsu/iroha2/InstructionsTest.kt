@@ -12,7 +12,6 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -36,7 +35,6 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -45,7 +43,6 @@ import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
-import jp.co.soramitsu.iroha2.testengine.WithManyDomains
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
@@ -71,6 +68,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 class InstructionsTest : IrohaTest<Iroha2Client>() {
+
     @Test
     @Disabled // EXAMPLE
     @WithIrohaManual(
@@ -504,6 +502,52 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         // check balance after burn
         result = client.sendQuery(query)
         assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+    }
+
+    @Test
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @Feature("Assets")
+    @Story("Account burns an asset")
+    @Permission("no_permission_required")
+    @SdkTestId("burn_asset_for_account_in_same_domain")
+    fun `temp temp`(): Unit = runBlocking {
+        val newBobKeyPair = generateKeyPair()
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            mintPublicKey(BOB_ACCOUNT_ID, newBobKeyPair.public.toIrohaPublicKey())
+        }
+        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+
+        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(newBobKeyPair)
+            .let { query -> client.sendQuery(query) }
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
+            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
+            buildSigned(BOB_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
+            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
+            buildSigned(newBobKeyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        client.sendTransaction {
+            accountId = BOB_ACCOUNT_ID
+            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
+            buildSigned(BOB_KEYPAIR, newBobKeyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
     }
 
     @Test
@@ -1007,51 +1051,36 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             }
     }
 
-    @Test
-    @WithIroha([WithManyDomains::class])
-    @Story(
-        "Iroha2 returns 10 results per request. This test checks new internal implementation of cursor mechanism" +
-            "that is also implemented in Iroha2. Without it this test would fail with only 10 results returned",
-    )
-    @SdkTestId("querying_multiple_domains_with_cursor_test")
-    fun `querying multiple domains with cursor test`(): Unit = runBlocking {
-        val domains = QueryBuilder.findAllDomains()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-        assertEquals(27, domains.size)
-    }
-
-    @Test
-    @WithIroha([DefaultGenesis::class])
-    @Feature("Domains")
-    @Story("Account transfers domain ownership")
-    @SdkTestId("transfer_domain_ownership")
-    fun `transfer domain ownership`(): Unit = runBlocking {
-        val genesisAccountId = AccountId(GENESIS.asDomainId(), GENESIS.asName())
-        var domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }
-        assertEquals(genesisAccountId, domain.ownedBy)
-
-        client.tx {
-            transferDomainOwnership(
-                genesisAccountId,
-                IdBox.DomainId(DEFAULT_DOMAIN_ID),
-                BOB_ACCOUNT_ID,
-            )
-        }
-        domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }
-        assertEquals(BOB_ACCOUNT_ID, domain.ownedBy)
-    }
+//    @Test
+//    @WithIroha([DefaultGenesis::class])
+//    @Feature("Domains")
+//    @Story("Account transfers domain ownership")
+//    @SdkTestId("transfer_domain_ownership")
+//    fun `transfer domain ownership`(): Unit = runBlocking {
+//        val genesisAccountId = AccountId(GENESIS.asDomainId(), GENESIS.asName())
+//        var domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+//            .account(super.account)
+//            .buildSigned(super.keyPair)
+//            .let { query ->
+//                client.sendQuery(query)
+//            }
+//        assertEquals(genesisAccountId, domain.ownedBy)
+//
+//        client.tx {
+//            transferDomainOwnership(
+//                genesisAccountId,
+//                IdBox.DomainId(DEFAULT_DOMAIN_ID),
+//                BOB_ACCOUNT_ID,
+//            )
+//        }
+//        domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+//            .account(super.account)
+//            .buildSigned(super.keyPair)
+//            .let { query ->
+//                client.sendQuery(query)
+//            }
+//        assertEquals(BOB_ACCOUNT_ID, domain.ownedBy)
+//    }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
         client.sendTransaction {

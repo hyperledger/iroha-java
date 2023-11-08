@@ -44,6 +44,7 @@ import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
 import jp.co.soramitsu.iroha2.testengine.VAL_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
 import jp.co.soramitsu.iroha2.testengine.WithIroha
+import jp.co.soramitsu.iroha2.testengine.WithManyDomains
 import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.QueryFilters
@@ -908,6 +909,20 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
 
         val expectedPermissions = Permissions.values().map { it.type }.toList()
         assertTrue(permissionTokenSchema.tokenIds.containsAll(expectedPermissions))
+    }
+
+    @WithIroha([WithManyDomains::class])
+    @Story(
+        "Iroha2 returns 10 results per request. This test checks new internal implementation of cursor mechanism" +
+            "that is also implemented in Iroha2. Without it this test would fail with only 10 results returned",
+    )
+    @SdkTestId("querying_multiple_domains_with_cursor_test")
+    fun `find multiple domains with cursor test`(): Unit = runBlocking {
+        val domains = QueryBuilder.findAllDomains()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(WithManyDomains.DOMAINS_COUNT + 2, domains.size)
     }
 
     private suspend fun createAccount(
