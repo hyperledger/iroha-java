@@ -26,6 +26,7 @@ import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
@@ -338,6 +339,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         assetId: AssetId,
         quantity: BigDecimal,
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
+
+    fun mintSignatureCheckCondition(
+        accountId: AccountId,
+        signature: SignatureCheckCondition,
+    ) = this.apply { instructions.value.add(Instructions.mintSignatureCheckCondition(accountId, signature)) }
 
     @JvmOverloads
     fun registerDomain(

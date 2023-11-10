@@ -214,45 +214,6 @@ open class Iroha2Client(
         return finalResult
     }
 
-    private suspend fun <T> sendQueryRequest(
-        queryAndExtractor: QueryAndExtractor<T>,
-        start: Long? = null,
-        limit: Long? = null,
-        sorting: String? = null,
-        queryCursor: ForwardCursor? = null,
-    ): BatchedResponseOfValue {
-        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
-            setBody(SignedQuery.encode(queryAndExtractor.query))
-            start?.also { parameter("start", it) }
-            limit?.also { parameter("limit", it) }
-            sorting?.also { parameter("sort_by_metadata_key", it) }
-            queryCursor?.queryId?.also { parameter("query_id", it) }
-            queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
-        }
-        return response.body<ByteArray>()
-            .let { BatchedResponseOfValue.decode(it) }
-    }
-
-    private suspend fun <T> getQueryResultWithCursor(
-        queryAndExtractor: QueryAndExtractor<T>,
-        start: Long? = null,
-        limit: Long? = null,
-        sorting: String? = null,
-        queryCursor: ForwardCursor? = null,
-    ): MutableList<Value> {
-        val resultList = mutableListOf<Value>()
-        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
-        resultList.addAll(responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec)
-        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
-        return when (cursor.cursor) {
-            null -> resultList
-            else -> {
-                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor))
-                resultList
-            }
-        }
-    }
-
     /**
      * Send a transaction to an Iroha peer without waiting for the final transaction status (committed or rejected).
      *
@@ -366,6 +327,45 @@ open class Iroha2Client(
      * Subscribe to track the transaction status
      */
     fun subscribeToTransactionStatus(hash: ByteArray) = subscribeToTransactionStatus(hash, null)
+
+    private suspend fun <T> sendQueryRequest(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): BatchedResponseOfValue {
+        val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
+            setBody(SignedQuery.encode(queryAndExtractor.query))
+            start?.also { parameter("start", it) }
+            limit?.also { parameter("limit", it) }
+            sorting?.also { parameter("sort_by_metadata_key", it) }
+            queryCursor?.queryId?.also { parameter("query_id", it) }
+            queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
+        }
+        return response.body<ByteArray>()
+            .let { BatchedResponseOfValue.decode(it) }
+    }
+
+    private suspend fun <T> getQueryResultWithCursor(
+        queryAndExtractor: QueryAndExtractor<T>,
+        start: Long? = null,
+        limit: Long? = null,
+        sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
+    ): MutableList<Value> {
+        val resultList = mutableListOf<Value>()
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
+        resultList.addAll(responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec)
+        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
+        return when (cursor.cursor) {
+            null -> resultList
+            else -> {
+                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor))
+                resultList
+            }
+        }
+    }
 
     /**
      * @param hash - Signed transaction hash

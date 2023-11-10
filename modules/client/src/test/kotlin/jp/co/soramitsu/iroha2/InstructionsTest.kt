@@ -17,6 +17,7 @@ import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -510,44 +511,31 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Story("Account burns an asset")
     @Permission("no_permission_required")
     @SdkTestId("burn_asset_for_account_in_same_domain")
-    fun `temp temp`(): Unit = runBlocking {
+    fun `multi signature transaction`(): Unit = runBlocking {
         val newBobKeyPair = generateKeyPair()
+        val newBobPublicKey = newBobKeyPair.public.toIrohaPublicKey()
+
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            mintPublicKey(BOB_ACCOUNT_ID, newBobKeyPair.public.toIrohaPublicKey())
+            mintSignatureCheckCondition(
+                BOB_ACCOUNT_ID,
+                SignatureCheckCondition.AllAccountSignaturesAnd(listOf(newBobPublicKey)),
+            )
         }
-        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR, newBobKeyPair) {
+            mintPublicKey(BOB_ACCOUNT_ID, newBobPublicKey)
+        }
+
+        val keyToSuccess = randomAlphabetic(5).asName()
+        val valueToSuccess = randomAlphabetic(5).asValue()
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR, newBobKeyPair) {
+            setKeyValue(BOB_ACCOUNT_ID, keyToSuccess, valueToSuccess)
+        }
+
+        val bob = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
             .account(BOB_ACCOUNT_ID)
             .buildSigned(BOB_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-
-        QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
-            .account(BOB_ACCOUNT_ID)
-            .buildSigned(newBobKeyPair)
-            .let { query -> client.sendQuery(query) }
-
-        client.sendTransaction {
-            accountId = BOB_ACCOUNT_ID
-            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
-            buildSigned(BOB_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        client.sendTransaction {
-            accountId = BOB_ACCOUNT_ID
-            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
-            buildSigned(newBobKeyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        client.sendTransaction {
-            accountId = BOB_ACCOUNT_ID
-            setKeyValue(BOB_ACCOUNT_ID, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
-            buildSigned(BOB_KEYPAIR, newBobKeyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
+            .let { client.sendQuery(it) }
+        assertEquals(bob.metadata.map[keyToSuccess], valueToSuccess)
     }
 
     @Test
@@ -718,7 +706,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 joeId,
             )
         }
-        client.tx(account = joeId, keyPair = joeKeyPair) {
+        client.tx(account = joeId, joeKeyPair) {
             transferAsset(aliceAssetId, 40, BOB_ACCOUNT_ID)
         }
         assertEquals(60, getAccountAmount(ALICE_ACCOUNT_ID, aliceAssetId))
