@@ -50,6 +50,7 @@ import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import jp.co.soramitsu.iroha2.transaction.Instructions.fail
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
@@ -61,6 +62,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.security.SecureRandom
+import java.time.Instant
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -528,20 +530,24 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val keyToSuccess = randomAlphabetic(5).asName()
         val valueToSuccess = randomAlphabetic(5).asValue()
 
-        client.fireAndForget {
+        val time = Instant.now().toEpochMilli().toBigInteger()
+        val tx = TransactionBuilder {
+            creationTimeMillis = time
             account(BOB_ACCOUNT_ID)
             setKeyValue(BOB_ACCOUNT_ID, keyToSuccess, valueToSuccess)
-            buildSigned(BOB_KEYPAIR)
+        }
+        client.fireAndForget { tx.buildSigned(BOB_KEYPAIR) }
+        delay(1000)
+        client.sendTransaction { tx.buildSigned(newBobKeyPair) }.also {
+            withTimeout(txTimeout) { it.await() }
         }
         // TODO: request /pending_transactions and extract our tx
-        // TODO: sign our tx with newBobKeyPair and send it to Iroha
-        // TODO: check that our tx was applied
 
-//        val bob = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
-//            .account(BOB_ACCOUNT_ID)
-//            .buildSigned(BOB_KEYPAIR)
-//            .let { client.sendQuery(it) }
-//        assertEquals(bob.metadata.map[keyToSuccess], valueToSuccess)
+        val bob = QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { client.sendQuery(it) }
+        assertEquals(bob.metadata.map[keyToSuccess], valueToSuccess)
     }
 
     @Test
