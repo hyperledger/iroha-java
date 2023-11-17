@@ -134,6 +134,7 @@ open class Iroha2Client(
 
     companion object {
         const val TRANSACTION_ENDPOINT = "/transaction"
+        const val PENDING_TRANSACTIONS_ENDPOINT = "/pending_transactions"
         const val QUERY_ENDPOINT = "/query"
         const val WS_ENDPOINT = "/events"
         const val WS_ENDPOINT_BLOCK_STREAM = "/block/stream"
@@ -356,7 +357,9 @@ open class Iroha2Client(
     ): MutableList<Value> {
         val resultList = mutableListOf<Value>()
         val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
-        resultList.addAll(responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec)
+        resultList.addAll(
+            responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec,
+        )
         val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
         return when (cursor.cursor) {
             null -> resultList
@@ -460,6 +463,7 @@ open class Iroha2Client(
                 val details = reason.instructionExecutionFail
                 "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
             }
+
             is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
             is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
             is TransactionRejectionReason.Expired -> reason.toString()
