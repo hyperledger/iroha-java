@@ -522,7 +522,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             mintSignatureCheckCondition(
                 BOB_ACCOUNT_ID,
-                SignatureCheckCondition.AllAccountSignaturesAnd(listOf(newBobPublicKey)),
+                SignatureCheckCondition.AllAccountSignaturesAnd(listOf()),
             )
             mintPublicKey(BOB_ACCOUNT_ID, newBobPublicKey)
         }
@@ -555,7 +555,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Feature("Assets")
     @Story("Account burns an asset")
     @Permission("CanBurnAssetsWithDefinition")
-    @SdkTestId("burn_other_user_asset")
+    @SdkTestId("burn_other_user_xasset")
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
