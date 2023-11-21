@@ -36,7 +36,6 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-import jp.co.soramitsu.iroha2.testengine.GENESIS
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -1028,29 +1027,37 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Story("Account transfers domain ownership")
     @SdkTestId("transfer_domain_ownership")
     fun `transfer domain ownership`(): Unit = runBlocking {
-        val genesisAccountId = AccountId(GENESIS.asDomainId(), GENESIS.asName())
-        var domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+        val domainId = "Kingdom".asDomainId()
+
+        client.sendTransaction {
+            account(super.account)
+            registerDomain(domainId)
+            buildSigned(super.keyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+        var kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query ->
                 client.sendQuery(query)
-            }
-        assertEquals(genesisAccountId, domain.ownedBy)
+            }.ownedBy
+        assertEquals(ALICE_ACCOUNT_ID, kingdomDomainOwnedBy)
 
         client.tx {
             transferDomainOwnership(
-                genesisAccountId,
-                IdBox.DomainId(DEFAULT_DOMAIN_ID),
+                ALICE_ACCOUNT_ID,
+                IdBox.DomainId(domainId),
                 BOB_ACCOUNT_ID,
             )
         }
-        domain = QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
+        kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query ->
                 client.sendQuery(query)
-            }
-        assertEquals(BOB_ACCOUNT_ID, domain.ownedBy)
+            }.ownedBy
+        assertEquals(BOB_ACCOUNT_ID, kingdomDomainOwnedBy)
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {
