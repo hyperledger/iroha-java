@@ -29,16 +29,17 @@ abstract class IrohaTest<T : Iroha2Client>(
 
     suspend fun Iroha2Client.tx(
         account: AccountId? = null,
-        keyPair: KeyPair? = null,
+        vararg keyPairs: KeyPair,
         builder: TransactionBuilder.() -> Unit = {},
     ) {
         val finalAccountId = account ?: this@IrohaTest.account
-        val finalKeyPair = keyPair ?: this@IrohaTest.keyPair
 
         this.sendTransaction {
             account(finalAccountId)
             builder(this)
-            buildSigned(finalKeyPair)
+            keyPairs.takeIf { it.isNotEmpty() }?.let {
+                buildSigned(*keyPairs)
+            } ?: buildSigned(this@IrohaTest.keyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }

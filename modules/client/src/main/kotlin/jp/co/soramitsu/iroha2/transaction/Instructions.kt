@@ -47,6 +47,7 @@ import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SequenceExpr
 import jp.co.soramitsu.iroha2.generated.SetKeyValueExpr
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransferExpr
 import jp.co.soramitsu.iroha2.generated.TriggerId
@@ -391,6 +392,14 @@ object Instructions {
      */
     fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = mintSome(
         Value.PublicKey(pubKey),
+        IdBox.AccountId(accountId),
+    )
+
+    /**
+     * Mint
+     */
+    fun mintSignatureCheckCondition(accountId: AccountId, signature: SignatureCheckCondition) = mintSome(
+        Value.SignatureCheckCondition(signature),
         IdBox.AccountId(accountId),
     )
 

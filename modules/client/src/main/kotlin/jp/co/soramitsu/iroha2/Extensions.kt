@@ -34,6 +34,7 @@ import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.RegistrableBox
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.Signature
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SignatureOf
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
 import jp.co.soramitsu.iroha2.generated.SignedBlock
@@ -269,6 +270,7 @@ inline fun <reified T> T.evaluatesTo(): EvaluatesTo<T> {
         is IdentifiableBox -> Value.Identifiable(this)
         is RegistrableBox -> Value.Identifiable(this.toIdentifiableBox())
         is Parameter -> Value.Identifiable(IdentifiableBox.Parameter(this))
+        is SignatureCheckCondition -> Value.SignatureCheckCondition(this)
         is Value -> this
         else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")
     }.let { value ->
