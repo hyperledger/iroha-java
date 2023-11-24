@@ -84,9 +84,13 @@ open class AliceHasPermissionToUnregisterDomain : Genesis(
 
 open class WithManyDomains : Genesis(
     rawGenesisBlock(
-        *registerDomains(25),
+        *registerDomains(DOMAINS_COUNT),
     ),
-)
+) {
+    companion object {
+        const val DOMAINS_COUNT = 25
+    }
+}
 
 fun registerDomains(count: Int): Array<InstructionExpr> {
     val instructions = mutableListOf<InstructionExpr>()
