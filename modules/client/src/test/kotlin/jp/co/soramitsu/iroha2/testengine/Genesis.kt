@@ -2,9 +2,11 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
+import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
+import jp.co.soramitsu.iroha2.asString
 import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
@@ -22,6 +24,7 @@ import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 
 /**
@@ -315,6 +318,61 @@ open class RubbishToTestMultipleGenesis : Genesis(
         val DOMAIN_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
         val ALICE_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
         val BOB_KEY_VALUE: String = RandomStringUtils.randomAlphabetic(10)
+    }
+}
+
+/**
+ * To test serializers
+ */
+open class FatGenesis : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(
+            randomAlphabetic(10).asDomainId(),
+            mapOf(randomAlphabetic(10).asName() to randomAlphabetic(10).asValue()),
+        ),
+        Instructions.registerAccount(
+            "${randomAlphabetic(10)}@${DEFAULT_DOMAIN_ID.asString()}".asAccountId(),
+            listOf(generateKeyPair().public.toIrohaPublicKey()),
+            Metadata(mapOf(randomAlphabetic(10).asName() to randomAlphabetic(10).asValue())),
+        ),
+        Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity()),
+        Instructions.grantPermissionToken(
+            Permissions.CanTransferAssetsWithDefinition,
+            DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
+            ALICE_ACCOUNT_ID,
+        ),
+        Instructions.grantPermissionToken(
+            Permissions.CanTransferAssetsWithDefinition,
+            DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
+            BOB_ACCOUNT_ID,
+        ),
+        Instructions.registerAssetDefinition(
+            DEFINITION_ID,
+            AssetValueType.Store(),
+            Metadata(mapOf(randomAlphabetic(10).asName() to randomAlphabetic(10).asValue())),
+        ),
+        Instructions.registerRole(
+            ROLE_ID,
+            PermissionToken(
+                Permissions.CanSetKeyValueInUserAccount.type,
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+            ),
+            PermissionToken(
+                Permissions.CanRemoveKeyValueInUserAccount.type,
+                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+            ),
+        ),
+        Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
+        Instructions.mintAsset(AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID), 100),
+        Instructions.burnAsset(AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID), 100),
+        Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), 100.asValue()),
+        Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue()),
+    ),
+) {
+    companion object {
+        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val ASSET_ID = AssetId(DEFINITION_ID, BOB_ACCOUNT_ID)
+        val ROLE_ID = RoleId("USER_METADATA_ACCESS".asName())
     }
 }
 

@@ -124,6 +124,7 @@ val JSON_SERDE by lazy {
         module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
+        module.addSerializer(NumericValue::class.java, NumericValueSerializer)
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
         module.addSerializer(SocketAddr::class.java, SocketAddrSerializer)
         module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
@@ -880,6 +881,15 @@ object UIntSerializer : JsonSerializer<UInt>() {
 }
 
 /**
+ * Custom serializer for [NumericValue]
+ */
+object NumericValueSerializer : JsonSerializer<NumericValue>() {
+    override fun serialize(value: NumericValue, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.format().second)
+    }
+}
+
+/**
  * Custom serializer for [PublicKey]
  */
 object PublicKeySerializer : JsonSerializer<PublicKey>() {
@@ -1042,7 +1052,12 @@ private fun SetKeyValueExpr.serializeExpr(gen: JsonGenerator) {
         .extractId()
     gen.writeObjectField(id::class.simpleName, id)
     gen.writeObjectField("key", this.key)
-    gen.writeObjectField("value", this.value)
+
+    val fieldValue = when (val value = this.value.expression.cast<Expression.Raw>().value) {
+        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
+        else -> value
+    }
+    gen.writeObjectField("value", fieldValue)
 }
 
 private fun mintBurnSerialize(
@@ -1050,18 +1065,24 @@ private fun mintBurnSerialize(
     expression: Expression,
     destinationId: EvaluatesTo<IdBox>,
 ) {
-    val rawValue = expression
-        .cast<Expression.Raw>().value
-        .cast<Value.Numeric>().numericValue
-    val fieldData = when (rawValue) {
-        is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${rawValue.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
-        is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${rawValue.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
-        is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${rawValue.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
-        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPointOfI64.toString()
-        else -> throw IrohaSdkException("Grant InstructionExpr serialization error")
-    }
-    gen.writeObjectField("object", fieldData.second)
+    val rawValue = expression.cast<Expression.Raw>().value.cast<Value.Numeric>().numericValue
+    gen.writeObjectField("object", rawValue)
     gen.writeObjectField("destination_id", destinationId)
+}
+
+private fun NumericValue.formatAsString() = when (this) {
+    is NumericValue.U32 -> this.u32
+    is NumericValue.U64 -> this.u64
+    is NumericValue.U128 -> this.u128
+    is NumericValue.Fixed -> this.fixed.fixedPointOfI64
+}.toString()
+
+private fun NumericValue.format() = when (this) {
+    is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${this.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
+    is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${this.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
+    is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${this.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
+    is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to this.fixed.fixedPointOfI64.toString()
+    else -> throw IrohaSdkException("Invalid numeric value")
 }
 
 /**
