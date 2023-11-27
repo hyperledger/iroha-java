@@ -139,11 +139,7 @@
       "key" : {
         "Name" : "wt"
       },
-      "value" : {
-        "Numeric" : {
-          "U32" : 123
-        }
-      }
+      "value" : "123"
     }
   }, {
     "SetKeyValue" : {
@@ -171,11 +167,7 @@
       "key" : {
         "Name" : "gh"
       },
-      "value" : {
-        "Numeric" : {
-          "U32" : 123
-        }
-      }
+      "value" : "123"
     }
   }, {
     "SetKeyValue" : {
@@ -183,11 +175,7 @@
       "key" : {
         "Name" : "ef"
       },
-      "value" : {
-        "Numeric" : {
-          "U32" : 1234
-        }
-      }
+      "value" : "1234"
     }
   }, {
     "SetKeyValue" : {
@@ -195,11 +183,7 @@
       "key" : {
         "Name" : "cd"
       },
-      "value" : {
-        "Numeric" : {
-          "U128" : 123
-        }
-      }
+      "value" : "123"
     }
   }, {
     "SetKeyValue" : {
