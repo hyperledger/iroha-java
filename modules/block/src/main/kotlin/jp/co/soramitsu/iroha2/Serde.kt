@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
@@ -74,6 +75,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import java.io.ByteArrayOutputStream
+import java.math.BigInteger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -124,6 +126,7 @@ val JSON_SERDE by lazy {
         module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
+        module.addSerializer(NumericValue::class.java, NumericValueSerializer)
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
         module.addSerializer(SocketAddr::class.java, SocketAddrSerializer)
         module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
@@ -151,302 +154,6 @@ val JSON_SERDE by lazy {
         mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
     }
-}
-
-private fun sealedDeserializeSequenceExpr(p: JsonParser, mapper: ObjectMapper): SequenceExpr {
-    val jsonNodes = p.readValueAsTree<JsonNode>()
-    val instructions = jsonNodes.map {
-        mapper.convertValue(it, InstructionExpr::class.java) as InstructionExpr
-    }
-    return SequenceExpr(instructions)
-}
-
-private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): InstructionExpr {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
-    val param = node.key
-
-    val subtype = InstructionExpr::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == param
-    } ?: throw DeserializationException("Class with constructor($param) not found")
-
-    val argTypeName = subtype.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $param")
-
-    val toConvert: JsonNode = node.value
-
-    val arg = mapper.convertValue(toConvert, argTypeName.asClass())
-    return subtype.primaryConstructor?.call(arg) as InstructionExpr
-}
-
-private fun sealedDeserializeValidator(p: JsonParser, mapper: ObjectMapper): ExecutorMode {
-    return ExecutorMode.Path(p.readValueAsTree<JsonNode>().asText())
-}
-
-private fun sealedDeserializeGrantExpr(p: JsonParser, mapper: ObjectMapper): GrantExpr {
-    val jsonNode = p.readValueAsTree<JsonNode>()
-
-    val iter = jsonNode.iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-
-    val node = jsonNode.fields().next().value.fields().next()
-    val destination = nodes[1]
-    val paramAndValueToConvert = if (RoleId::class.java.simpleName == node.key) {
-        Pair(
-            "Id",
-            mapper.createObjectNode().set<ObjectNode>(
-                jsonNode.fields().next().key,
-                jsonNode.fields().next().value,
-            ),
-        )
-    } else {
-        Pair(node.key, node.value)
-    }
-
-    val subtype = Value::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
-    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
-
-    val argTypeName = subtype.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
-
-    val grantObject = mapper.convertValue(paramAndValueToConvert.second, argTypeName.asClass())
-    val destinationId = mapper.convertValue(destination, IdBox::class.java)
-    return GrantExpr(
-        `object` = grantObject.evaluatesTo().cast(),
-        destinationId = destinationId.evaluatesTo().cast(),
-    )
-}
-
-private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
-    val param = when {
-        node.key.contains("Id") -> "Id"
-        "Numeric" == node.key -> node.value.fields().next().key
-        else -> node.key
-    }
-    val clazz = getClazzByParam(param)
-
-    return when (param) {
-        "Bool" -> Value.Bool(node.value.booleanValue())
-        "String" -> Value.String(node.value.asText())
-        else -> {
-            val name = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().key else node.key
-            val value = if (node.key == "Id" || node.key == "Numeric") node.value.fields().next().value else node.value
-            val subtype = clazz.nestedClasses.find {
-                !it.isCompanion && it.simpleName == name
-            } ?: throw DeserializationException("Class with constructor($param) not found")
-
-            val argTypeName = subtype.primaryConstructor?.parameters
-                ?.firstOrNull()?.type?.toString()
-                ?: throw DeserializationException("Subtype parameter not found by $param")
-
-            val arg = mapper.convertValue(value, argTypeName.asClass())
-            return getValueByClazz(clazz, subtype, arg, name, param)
-        }
-    }
-}
-
-private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any, name: String, param: String): Value {
-    return when (clazz) {
-        Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
-        Value::class -> throw DeserializationException("Value type $clazz not supported")
-        Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
-        Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
-        TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
-        LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
-        IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
-        IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
-        PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
-        SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
-        PermissionToken::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as PermissionToken)
-        HashValue::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as HashValue)
-        SignedBlock::class -> Value.Block(subtype.primaryConstructor?.call(arg) as SignedBlock)
-        BlockHeader::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeader)
-        Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
-        Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
-        NumericValue::class -> {
-            when (name) {
-                "U32" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U32)
-                "U64" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U64)
-                "U128" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U128)
-                "Fixed" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.Fixed)
-                else -> throw DeserializationException("Numeric value $param not found")
-            }
-        }
-
-        else -> throw DeserializationException("Value type $clazz not found")
-    }
-}
-
-private fun getClazzByParam(param: String): KClass<out Any> {
-    return when (param) {
-        "Bool" -> Boolean::class
-        "String" -> String::class
-        "Name" -> Name::class
-        "Vec" -> Value::class
-        "LimitedMetadata" -> Metadata::class
-        "MetadataLimits" -> Limits::class
-        "TransactionLimits" -> TransactionLimits::class
-        "LengthLimits" -> LengthLimits::class
-        "Id" -> IdBox::class
-        "Identifiable" -> IdentifiableBox::class
-        "PublicKey" -> PublicKey::class
-        "SignatureCheckCondition" -> SignatureCheckCondition::class
-        "TransactionValue" -> TransactionValue::class
-        "TransactionQueryOutput" -> TransactionQueryOutput::class
-        "PermissionToken" -> PermissionToken::class
-        "Hash" -> Hash::class
-        "Block" -> SignedBlock::class
-        "BlockHeader" -> BlockHeader::class
-        "Ipv4Addr" -> Ipv4Addr::class
-        "Ipv6Addr" -> Ipv6Addr::class
-        "U32" -> NumericValue::class
-        "U64" -> NumericValue::class
-        "U128" -> NumericValue::class
-        "Fixed" -> NumericValue::class
-        else -> throw DeserializationException("Value key $param not found")
-    }
-}
-
-private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
-    val param = node.key
-
-    val subtype = IdBox::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == param
-    } ?: throw DeserializationException("Class with constructor($param) not found")
-
-    val argTypeName = subtype.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $param")
-
-    val arg = mapper.convertValue(node.value, argTypeName.asClass())
-    return subtype.primaryConstructor?.call(arg) as IdBox
-}
-
-private fun sealedDeserializeRegisterExpr(p: JsonParser, mapper: ObjectMapper): RegisterExpr {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
-
-    val param = node.key.removePrefix("New")
-    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == param
-    }
-    val argTypeName = subtype?.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $param")
-
-    val arg = mapper.convertValue(node.value, argTypeName.asClass())
-    return getRegisterExpr(arg)
-}
-
-private fun getRegisterExpr(arg: Any): RegisterExpr {
-    return when (arg) {
-        is NewDomain -> RegisterExpr(RegistrableBox.Domain(arg).evaluatesTo())
-        is NewAccount -> RegisterExpr(RegistrableBox.Account(arg).evaluatesTo())
-        is Peer -> RegisterExpr(RegistrableBox.Peer(arg).evaluatesTo())
-        is NewAssetDefinition -> RegisterExpr(RegistrableBox.AssetDefinition(arg).evaluatesTo())
-        is Asset -> RegisterExpr(RegistrableBox.Asset(arg).evaluatesTo())
-        is NewRole -> RegisterExpr(RegistrableBox.Role(arg).evaluatesTo())
-        is TriggerOfTriggeringFilterBox -> RegisterExpr(RegistrableBox.Trigger(arg).evaluatesTo())
-        else -> throw DeserializationException("Register box `$arg` not found")
-    }
-}
-
-private fun sealedDeserializeMintExpr(p: JsonParser, mapper: ObjectMapper): MintExpr {
-    val jsonNode = p.readValueAsTree<JsonNode>()
-    val iter = jsonNode.iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
-    val newNode = mapper.createObjectNode().set<ObjectNode>(
-        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
-        IntNode(numericTypeAndValue[0].toInt()),
-    )
-    val objectId = mapper.convertValue(
-        newNode,
-        Value::class.java,
-    ) as Value
-    val destination = mapper.convertValue(
-        nodes[1],
-        IdBox::class.java,
-    ) as IdBox
-    return MintExpr(
-        `object` = objectId.evaluatesTo().cast(),
-        destinationId = destination.evaluatesTo().cast(),
-    )
-}
-
-private fun sealedDeserializeNewParameterExpr(p: JsonParser, mapper: ObjectMapper): NewParameterExpr {
-    val jsonNode = p.readValueAsTree<JsonNode>().fields().next()
-    val parameter = jsonNode.value.asText().asParameter()
-
-    return NewParameterExpr(
-        parameter = parameter.evaluatesTo().cast(),
-    )
-}
-
-private fun sealedDeserializeSetKeyValueExpr(p: JsonParser, mapper: ObjectMapper): SetKeyValueExpr {
-    val jsonNode = p.readValueAsTree<JsonNode>()
-    val iter = jsonNode.iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-
-    val objectId = jsonNode.fields().next()
-    val key = nodes[1].fields().next()
-    val subtype = IdBox::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == objectId.key
-    }
-    val argTypeName = subtype?.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $objectId")
-
-    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
-    val keyArg = mapper.convertValue(key.value, Name::class.java)
-    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
-    return SetKeyValueExpr(
-        objectId = objectIdArg.evaluatesTo().cast(),
-        key = keyArg.evaluatesTo().cast(),
-        value = valueArg.evaluatesTo().cast(),
-    )
-}
-
-private fun sealedDeserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
-    val iter = p.readValueAsTree<JsonNode>().iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-
-    val tokens = nodes[1].map {
-        mapper.convertValue(it, PermissionToken::class.java) as PermissionToken
-    }
-    val roleId = RoleId(nodes[0].asText().asName())
-    return NewRole(Role(id = roleId, permissions = tokens))
-}
-
-private fun sealedDeserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
-    val nodeMetadata = p.readValueAsTree<JsonNode>().fields()
-    if (!nodeMetadata.hasNext()) {
-        return Metadata(mapOf())
-    }
-    val node = nodeMetadata.next()
-    val key = node.key.asName()
-    val valueNode = node.value.fields().next()
-    val value = valueNode.value.asText().asValue()
-    return Metadata(mapOf(Pair(key, value)))
 }
 
 /**
@@ -518,13 +225,13 @@ object RegisterExprDeserializer : JsonDeserializer<RegisterExpr>() {
 
 object MintExprDeserializer : JsonDeserializer<MintExpr>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): MintExpr {
-        return sealedDeserializeMintExpr(p, JSON_SERDE)
+        return deserializeMintExpr(p, JSON_SERDE)
     }
 }
 
 object NewParameterExprDeserializer : JsonDeserializer<NewParameterExpr>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewParameterExpr {
-        return sealedDeserializeNewParameterExpr(p, JSON_SERDE)
+        return deserializeNewParameterExpr(p, JSON_SERDE)
     }
 }
 
@@ -563,19 +270,19 @@ object PermissionTokenDeserializer : JsonDeserializer<PermissionToken>() {
 
 object SetKeyValueExprDeserializer : JsonDeserializer<SetKeyValueExpr>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueExpr {
-        return sealedDeserializeSetKeyValueExpr(p, JSON_SERDE)
+        return deserializeSetKeyValueExpr(p, JSON_SERDE)
     }
 }
 
 object MetadataDeserializer : JsonDeserializer<Metadata>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Metadata {
-        return sealedDeserializeMetadata(p, JSON_SERDE)
+        return deserializeMetadata(p, JSON_SERDE)
     }
 }
 
 object NewRoleDeserializer : JsonDeserializer<NewRole>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewRole {
-        return sealedDeserializeNewRole(p, JSON_SERDE)
+        return deserializeNewRole(p, JSON_SERDE)
     }
 }
 
@@ -880,6 +587,15 @@ object UIntSerializer : JsonSerializer<UInt>() {
 }
 
 /**
+ * Custom serializer for [NumericValue]
+ */
+object NumericValueSerializer : JsonSerializer<NumericValue>() {
+    override fun serialize(value: NumericValue, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.format().second)
+    }
+}
+
+/**
  * Custom serializer for [PublicKey]
  */
 object PublicKeySerializer : JsonSerializer<PublicKey>() {
@@ -1042,7 +758,12 @@ private fun SetKeyValueExpr.serializeExpr(gen: JsonGenerator) {
         .extractId()
     gen.writeObjectField(id::class.simpleName, id)
     gen.writeObjectField("key", this.key)
-    gen.writeObjectField("value", this.value)
+
+    val fieldValue = when (val value = this.value.expression.cast<Expression.Raw>().value) {
+        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
+        else -> value
+    }
+    gen.writeObjectField("value", fieldValue)
 }
 
 private fun mintBurnSerialize(
@@ -1050,18 +771,24 @@ private fun mintBurnSerialize(
     expression: Expression,
     destinationId: EvaluatesTo<IdBox>,
 ) {
-    val rawValue = expression
-        .cast<Expression.Raw>().value
-        .cast<Value.Numeric>().numericValue
-    val fieldData = when (rawValue) {
-        is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${rawValue.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
-        is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${rawValue.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
-        is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${rawValue.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
-        is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to rawValue.fixed.fixedPointOfI64.toString()
-        else -> throw IrohaSdkException("Grant InstructionExpr serialization error")
-    }
-    gen.writeObjectField("object", fieldData.second)
+    val rawValue = expression.cast<Expression.Raw>().value.cast<Value.Numeric>().numericValue
+    gen.writeObjectField("object", rawValue)
     gen.writeObjectField("destination_id", destinationId)
+}
+
+private fun NumericValue.formatAsString() = when (this) {
+    is NumericValue.U32 -> this.u32
+    is NumericValue.U64 -> this.u64
+    is NumericValue.U128 -> this.u128
+    is NumericValue.Fixed -> this.fixed.fixedPointOfI64
+}.toString()
+
+private fun NumericValue.format() = when (this) {
+    is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${this.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
+    is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${this.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
+    is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${this.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
+    is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to this.fixed.fixedPointOfI64.toString()
+    else -> throw IrohaSdkException("Invalid numeric value")
 }
 
 /**
@@ -1104,3 +831,315 @@ private fun String.asClass() = runCatching {
         else -> null
     }
 } ?: throw DeserializationException("Class $this not found")
+
+private fun sealedDeserializeSequenceExpr(p: JsonParser, mapper: ObjectMapper): SequenceExpr {
+    val jsonNodes = p.readValueAsTree<JsonNode>()
+    val instructions = jsonNodes.map {
+        mapper.convertValue(it, InstructionExpr::class.java) as InstructionExpr
+    }
+    return SequenceExpr(instructions)
+}
+
+private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): InstructionExpr {
+    val node = p.readValueAsTree<JsonNode>().fields().next()
+    val param = node.key
+
+    val subtype = InstructionExpr::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == param
+    } ?: throw DeserializationException("Class with constructor($param) not found")
+
+    val argTypeName = subtype.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $param")
+
+    val toConvert: JsonNode = node.value
+
+    val arg = mapper.convertValue(toConvert, argTypeName.asClass())
+    return subtype.primaryConstructor?.call(arg) as InstructionExpr
+}
+
+private fun sealedDeserializeValidator(p: JsonParser, mapper: ObjectMapper): ExecutorMode {
+    return ExecutorMode.Path(p.readValueAsTree<JsonNode>().asText())
+}
+
+private fun sealedDeserializeGrantExpr(p: JsonParser, mapper: ObjectMapper): GrantExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+
+    val node = jsonNode.fields().next().value.fields().next()
+    val destination = nodes[1]
+    val paramAndValueToConvert = if (RoleId::class.java.simpleName == node.key) {
+        Pair(
+            "Id",
+            mapper.createObjectNode().set<ObjectNode>(
+                jsonNode.fields().next().key,
+                jsonNode.fields().next().value,
+            ),
+        )
+    } else {
+        Pair(node.key, node.value)
+    }
+
+    val subtype = Value::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
+    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
+
+    val argTypeName = subtype.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
+
+    val grantObject = mapper.convertValue(paramAndValueToConvert.second, argTypeName.asClass())
+    val destinationId = mapper.convertValue(destination, IdBox::class.java)
+    return GrantExpr(
+        `object` = grantObject.evaluatesTo().cast(),
+        destinationId = destinationId.evaluatesTo().cast(),
+    )
+}
+
+private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
+    val node = p.readValueAsTree<JsonNode>()
+    if (node is TextNode) {
+        return Value.Numeric(node.textValue().toNumericValue())
+    }
+
+    val field = node.fields().next()
+    val param = when {
+        field.key.contains("Id") -> "Id"
+        "Numeric" == field.key -> field.value.fields().next().key
+        else -> field.key
+    }
+    val clazz = getClazzByParam(param)
+
+    return when (param) {
+        "Bool" -> Value.Bool(field.value.booleanValue())
+        "String" -> Value.String(field.value.asText())
+        else -> {
+            val name = if (field.key == "Id" || field.key == "Numeric") field.value.fields().next().key else field.key
+            val value =
+                if (field.key == "Id" || field.key == "Numeric") field.value.fields().next().value else field.value
+            val subtype = clazz.nestedClasses.find {
+                !it.isCompanion && it.simpleName == name
+            } ?: throw DeserializationException("Class with constructor($param) not found")
+
+            val argTypeName = subtype.primaryConstructor?.parameters
+                ?.firstOrNull()?.type?.toString()
+                ?: throw DeserializationException("Subtype parameter not found by $param")
+
+            val arg = mapper.convertValue(value, argTypeName.asClass())
+            return getValueByClazz(clazz, subtype, arg, name, param)
+        }
+    }
+}
+
+private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any, name: String, param: String): Value {
+    return when (clazz) {
+        Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
+        Value::class -> throw DeserializationException("Value type $clazz not supported")
+        Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
+        Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
+        TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
+        LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
+        IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
+        IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
+        PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
+        SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
+        PermissionToken::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as PermissionToken)
+        HashValue::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as HashValue)
+        SignedBlock::class -> Value.Block(subtype.primaryConstructor?.call(arg) as SignedBlock)
+        BlockHeader::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeader)
+        Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
+        Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
+        NumericValue::class -> {
+            when (name) {
+                "U32" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U32)
+                "U64" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U64)
+                "U128" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U128)
+                "Fixed" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.Fixed)
+                else -> throw DeserializationException("Numeric value $param not found")
+            }
+        }
+
+        else -> throw DeserializationException("Value type $clazz not found")
+    }
+}
+
+private fun getClazzByParam(param: String): KClass<out Any> {
+    return when (param) {
+        "Bool" -> Boolean::class
+        "String" -> String::class
+        "Name" -> Name::class
+        "Vec" -> Value::class
+        "LimitedMetadata" -> Metadata::class
+        "MetadataLimits" -> Limits::class
+        "TransactionLimits" -> TransactionLimits::class
+        "LengthLimits" -> LengthLimits::class
+        "Id" -> IdBox::class
+        "Identifiable" -> IdentifiableBox::class
+        "PublicKey" -> PublicKey::class
+        "SignatureCheckCondition" -> SignatureCheckCondition::class
+        "TransactionValue" -> TransactionValue::class
+        "TransactionQueryOutput" -> TransactionQueryOutput::class
+        "PermissionToken" -> PermissionToken::class
+        "Hash" -> Hash::class
+        "Block" -> SignedBlock::class
+        "BlockHeader" -> BlockHeader::class
+        "Ipv4Addr" -> Ipv4Addr::class
+        "Ipv6Addr" -> Ipv6Addr::class
+        "U32" -> NumericValue::class
+        "U64" -> NumericValue::class
+        "U128" -> NumericValue::class
+        "Fixed" -> NumericValue::class
+        else -> throw DeserializationException("Value key $param not found")
+    }
+}
+
+private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
+    val node = p.readValueAsTree<JsonNode>().fields().next()
+    val param = node.key
+
+    val subtype = IdBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == param
+    } ?: throw DeserializationException("Class with constructor($param) not found")
+
+    val argTypeName = subtype.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $param")
+
+    val arg = mapper.convertValue(node.value, argTypeName.asClass())
+    return subtype.primaryConstructor?.call(arg) as IdBox
+}
+
+private fun sealedDeserializeRegisterExpr(p: JsonParser, mapper: ObjectMapper): RegisterExpr {
+    val node = p.readValueAsTree<JsonNode>().fields().next()
+
+    val param = node.key.removePrefix("New")
+    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == param
+    }
+    val argTypeName = subtype?.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $param")
+
+    val arg = mapper.convertValue(node.value, argTypeName.asClass())
+    return getRegisterExpr(arg)
+}
+
+private fun getRegisterExpr(arg: Any): RegisterExpr {
+    return when (arg) {
+        is NewDomain -> RegisterExpr(RegistrableBox.Domain(arg).evaluatesTo())
+        is NewAccount -> RegisterExpr(RegistrableBox.Account(arg).evaluatesTo())
+        is Peer -> RegisterExpr(RegistrableBox.Peer(arg).evaluatesTo())
+        is NewAssetDefinition -> RegisterExpr(RegistrableBox.AssetDefinition(arg).evaluatesTo())
+        is Asset -> RegisterExpr(RegistrableBox.Asset(arg).evaluatesTo())
+        is NewRole -> RegisterExpr(RegistrableBox.Role(arg).evaluatesTo())
+        is TriggerOfTriggeringFilterBox -> RegisterExpr(RegistrableBox.Trigger(arg).evaluatesTo())
+        else -> throw DeserializationException("Register box `$arg` not found")
+    }
+}
+
+private fun deserializeMintExpr(p: JsonParser, mapper: ObjectMapper): MintExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
+    val newNode = mapper.createObjectNode().set<ObjectNode>(
+        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
+        IntNode(numericTypeAndValue[0].toInt()),
+    )
+    val objectId = mapper.convertValue(
+        newNode,
+        Value::class.java,
+    ) as Value
+    val destination = mapper.convertValue(
+        nodes[1],
+        IdBox::class.java,
+    ) as IdBox
+    return MintExpr(
+        `object` = objectId.evaluatesTo().cast(),
+        destinationId = destination.evaluatesTo().cast(),
+    )
+}
+
+private fun deserializeNewParameterExpr(p: JsonParser, mapper: ObjectMapper): NewParameterExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>().fields().next()
+    val parameter = jsonNode.value.asText().asParameter()
+
+    return NewParameterExpr(
+        parameter = parameter.evaluatesTo().cast(),
+    )
+}
+
+private fun deserializeSetKeyValueExpr(p: JsonParser, mapper: ObjectMapper): SetKeyValueExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+
+    val objectId = jsonNode.fields().next()
+    val key = nodes[1].fields().next()
+    val subtype = IdBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == objectId.key
+    }
+    val argTypeName = subtype?.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $objectId")
+
+    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
+    val keyArg = mapper.convertValue(key.value, Name::class.java)
+    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
+    return SetKeyValueExpr(
+        objectId = objectIdArg.evaluatesTo().cast(),
+        key = keyArg.evaluatesTo().cast(),
+        value = valueArg.evaluatesTo().cast(),
+    )
+}
+
+private fun deserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
+    val iter = p.readValueAsTree<JsonNode>().iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+
+    val tokens = nodes[1].map {
+        mapper.convertValue(it, PermissionToken::class.java) as PermissionToken
+    }
+    val roleId = RoleId(nodes[0].asText().asName())
+    return NewRole(Role(id = roleId, permissions = tokens))
+}
+
+private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
+    val nodeMetadata = p.readValueAsTree<JsonNode>().fields()
+    if (!nodeMetadata.hasNext()) {
+        return Metadata(mapOf())
+    }
+    val node = nodeMetadata.next()
+    val key = node.key.asName()
+    val valueNode = node.value.fields().next()
+    val value = valueNode.value.asText().asValue()
+    return Metadata(mapOf(Pair(key, value)))
+}
+
+private fun String.toNumericValue(): NumericValue {
+    val number = BigInteger(this)
+    return when {
+        number >= BigInteger.ZERO && number <= "4294967295".toBigInteger() -> NumericValue.U32(number.toLong())
+        number <= "18446744073709551615".toBigInteger() -> NumericValue.U64(number)
+        number <= "340282366920938463463374607431768211455".toBigInteger() -> NumericValue.U128(number)
+        else -> throw IllegalArgumentException("Number out of range")
+    }
+}

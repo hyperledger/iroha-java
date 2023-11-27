@@ -37,6 +37,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.FatGenesis
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -1087,6 +1088,17 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 client.sendQuery(query)
             }.ownedBy
         assertEquals(BOB_ACCOUNT_ID, kingdomDomainOwnedBy)
+    }
+
+    @Test
+    @WithIroha([FatGenesis::class])
+    fun `fat genesis apply`(): Unit = runBlocking {
+        QueryBuilder.findAllAccounts()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { accounts -> assert(accounts.any { it.id == ALICE_ACCOUNT_ID }) }
+            .also { accounts -> assert(accounts.any { it.id == BOB_ACCOUNT_ID }) }
     }
 
     private suspend fun registerAccount(id: AccountId, publicKey: PublicKey) {

@@ -156,11 +156,7 @@
         "key" : {
           "Name" : "key2"
         },
-        "value" : {
-          "Numeric" : {
-            "U32" : 123
-          }
-        }
+        "value" : "123"
       }
     },{
       "Mint" : {
