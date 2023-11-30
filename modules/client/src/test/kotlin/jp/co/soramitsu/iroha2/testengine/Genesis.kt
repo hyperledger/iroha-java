@@ -26,6 +26,7 @@ import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
+import java.math.BigInteger
 
 /**
  * Create a default genesis where there is just one domain with only Alice and Bob in it
@@ -369,7 +370,13 @@ open class FatGenesis : Genesis(
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
         Instructions.mintAsset(AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID), 100),
         Instructions.burnAsset(AssetId(DEFAULT_ASSET_DEFINITION_ID, BOB_ACCOUNT_ID), 100),
-        Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), 100.asValue()),
+        Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), Int.MAX_VALUE.asValue()),
+        Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), Long.MAX_VALUE.asValue()),
+        Instructions.setKeyValue(
+            ASSET_ID,
+            randomAlphabetic(10).asName(),
+            (BigInteger.valueOf(Long.MAX_VALUE) * BigInteger.valueOf(2)).asValue(),
+        ),
         Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue()),
     ),
 ) {
