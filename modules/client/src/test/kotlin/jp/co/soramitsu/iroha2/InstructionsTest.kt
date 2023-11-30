@@ -37,6 +37,7 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.FatGenesis
 import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
@@ -1090,7 +1091,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class])
+    @WithIroha([FatGenesis::class])
     fun `fat genesis apply`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
