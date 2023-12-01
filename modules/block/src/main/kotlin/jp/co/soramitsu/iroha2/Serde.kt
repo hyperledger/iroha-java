@@ -33,6 +33,7 @@ import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.EvaluatesTo
 import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.GrantExpr
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.HashValue
@@ -75,7 +76,6 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Value
 import java.io.ByteArrayOutputStream
-import java.math.BigInteger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -1135,11 +1135,12 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
 }
 
 private fun String.toNumericValue(): NumericValue {
-    val number = BigInteger(this)
-    return when {
-        number >= BigInteger.ZERO && number <= "4294967295".toBigInteger() -> NumericValue.U32(number.toLong())
-        number <= "18446744073709551615".toBigInteger() -> NumericValue.U64(number)
-        number <= "340282366920938463463374607431768211455".toBigInteger() -> NumericValue.U128(number)
+    val (number, type) = this.split('_')
+    return when (type) {
+        NumericValue.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
+        NumericValue.U64::class.simpleName?.lowercase() -> NumericValue.U64(number.toBigInteger())
+        NumericValue.U128::class.simpleName?.lowercase() -> NumericValue.U128(number.toBigInteger())
+        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
         else -> throw IllegalArgumentException("Number out of range")
     }
 }
