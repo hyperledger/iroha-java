@@ -114,11 +114,13 @@ fun String.asValue() = Value.String(this)
 
 fun Int.asValue() = Value.Numeric(NumericValue.U32(this.toLong()))
 
-fun Long.asValue() = Value.Numeric(NumericValue.U128(BigInteger.valueOf(this)))
-
-fun BigInteger.asValue() = Value.Numeric(NumericValue.U128(this))
+fun Double.asValue() = Value.Numeric(NumericValue.Fixed(Fixed(this.toBigDecimal())))
 
 fun BigDecimal.asValue() = Value.Numeric(NumericValue.Fixed(Fixed(this)))
+
+fun Long.asValue() = Value.Numeric(NumericValue.U64(BigInteger.valueOf(this)))
+
+fun BigInteger.asValue() = Value.Numeric(NumericValue.U128(this))
 
 fun Boolean.asValue() = Value.Bool(this)
 
@@ -298,6 +300,7 @@ inline fun <reified T> T.asValue() = when (this) {
     is String -> this.asValue()
     is Long -> this.asValue()
     is Int -> this.asValue()
+    is Double -> this.asValue()
     is BigInteger -> this.asValue()
     is BigDecimal -> this.asValue()
     is Boolean -> this.asValue()

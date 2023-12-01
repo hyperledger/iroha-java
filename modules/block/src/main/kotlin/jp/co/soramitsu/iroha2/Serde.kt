@@ -777,10 +777,10 @@ private fun mintBurnSerialize(
 }
 
 private fun NumericValue.formatAsString() = when (this) {
-    is NumericValue.U32 -> this.u32
-    is NumericValue.U64 -> this.u64
-    is NumericValue.U128 -> this.u128
-    is NumericValue.Fixed -> this.fixed.fixedPointOfI64
+    is NumericValue.U32 -> "${this.u32}_u32"
+    is NumericValue.U64 -> "${this.u64}_u64"
+    is NumericValue.U128 -> "${this.u128}_u128"
+    is NumericValue.Fixed -> "${this.fixed.fixedPointOfI64}_fx"
 }.toString()
 
 private fun NumericValue.format() = when (this) {
