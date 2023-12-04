@@ -1093,8 +1093,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @WithIroha([FatGenesis::class])
     fun `fat genesis apply`(): Unit = runBlocking {
-//        val qwe = JSON_SERDE.writeValueAsString(FatGenesis::class.createInstance().block)
-//        print(qwe)
         QueryBuilder.findAllAccounts()
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
