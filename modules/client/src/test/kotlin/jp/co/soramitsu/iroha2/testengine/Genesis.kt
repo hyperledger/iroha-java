@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testengine
 
+import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asAccountId
@@ -15,6 +16,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -44,6 +46,21 @@ open class AliceCanUpgradeExecutor : Genesis(
         ),
     ),
 )
+
+open class WithDomainTransferredToBob : Genesis(
+    rawGenesisBlock(
+        Instructions.registerDomain(DOMAIN_ID),
+        Instructions.transferDomainOwnership(
+            "$GENESIS$ACCOUNT_ID_DELIMITER$GENESIS".asAccountId(),
+            IdBox.DomainId(DOMAIN_ID),
+            BOB_ACCOUNT_ID,
+        ),
+    ),
+) {
+    companion object {
+        val DOMAIN_ID = randomAlphabetic(10).asDomainId()
+    }
+}
 
 open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisBlock(
@@ -382,6 +399,7 @@ open class FatGenesis : Genesis(
             (BigInteger.valueOf(Long.MAX_VALUE) * BigInteger.valueOf(2)).asValue(),
         ),
         Instructions.setKeyValue(ASSET_ID, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue()),
+        Instructions.setKeyValue(DEFAULT_DOMAIN_ID, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue()),
     ),
 ) {
     companion object {

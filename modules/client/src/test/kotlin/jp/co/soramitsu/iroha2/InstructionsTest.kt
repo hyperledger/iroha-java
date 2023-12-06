@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
@@ -44,6 +45,7 @@ import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
 import jp.co.soramitsu.iroha2.testengine.RubbishToTestMultipleGenesis
 import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
+import jp.co.soramitsu.iroha2.testengine.WithDomainTransferredToBob
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
@@ -408,6 +410,24 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx {
             // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
             setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), randomAlphabetic(5000).asValue())
+        }
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `domain metadata set key value with permissions`(): Unit = runBlocking {
+        val domainId = DomainId(randomAlphabetic(10).asName())
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            registerDomain(domainId)
+            grantPermissionToken(
+                Permissions.CanSetKeyValueInDomain,
+                domainId.asJsonString(),
+                ALICE_ACCOUNT_ID,
+            )
+        }
+
+        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
+            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue())
         }
     }
 
@@ -1052,42 +1072,63 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @WithIroha([WithDomainTransferredToBob::class])
+    @Feature("Domains")
+    @Story("Account transfers domain ownership")
+    @SdkTestId("transfer_domain_ownership_in_genesis")
+    fun `transfer domain ownership in genesis`(): Unit = runBlocking {
+        val key = randomAlphabetic(5).asName()
+        val value = randomAlphabetic(5).asValue()
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            setKeyValue(WithDomainTransferredToBob.DOMAIN_ID, key, value)
+        }
+        val extractedValue = QueryBuilder.findDomainById(WithDomainTransferredToBob.DOMAIN_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .metadata.map[key]
+        assertEquals(value.string, extractedValue?.cast<Value.String>()?.string)
+    }
+
+    @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Domains")
     @Story("Account transfers domain ownership")
     @SdkTestId("transfer_domain_ownership")
     fun `transfer domain ownership`(): Unit = runBlocking {
         val domainId = "Kingdom".asDomainId()
+        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) { registerDomain(domainId) }
 
-        client.sendTransaction {
-            account(super.account)
-            registerDomain(domainId)
-            buildSigned(super.keyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
+        assertFailsWith(TransactionRejectedException::class) {
+            client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+                setKeyValue(domainId, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
+            }
         }
         var kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }.ownedBy
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }.ownedBy
         assertEquals(ALICE_ACCOUNT_ID, kingdomDomainOwnedBy)
 
-        client.tx {
-            transferDomainOwnership(
-                ALICE_ACCOUNT_ID,
-                IdBox.DomainId(domainId),
-                BOB_ACCOUNT_ID,
-            )
+        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
+            transferDomainOwnership(ALICE_ACCOUNT_ID, IdBox.DomainId(domainId), BOB_ACCOUNT_ID)
         }
         kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
-            .account(super.account)
-            .buildSigned(super.keyPair)
-            .let { query ->
-                client.sendQuery(query)
-            }.ownedBy
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }.ownedBy
         assertEquals(BOB_ACCOUNT_ID, kingdomDomainOwnedBy)
+
+        val key = randomAlphabetic(5).asName()
+        val value = randomAlphabetic(5).asValue()
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { setKeyValue(domainId, key, value) }
+
+        val extractedValue = QueryBuilder.findDomainById(domainId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .metadata.map[key]
+        assertEquals(value.string, extractedValue?.cast<Value.String>()?.string)
     }
 
     @Test
