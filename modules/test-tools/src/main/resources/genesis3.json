@@ -156,7 +156,7 @@
         "key" : {
           "Name" : "key2"
         },
-        "value" : "123"
+        "value" : "123_u32"
       }
     },{
       "Mint" : {

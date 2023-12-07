@@ -375,7 +375,9 @@ object Instructions {
     /**
      * Execute a trigger
      */
-    fun executeTrigger(triggerId: TriggerId) = InstructionExpr.ExecuteTrigger(ExecuteTriggerExpr(triggerId.evaluatesTo()))
+    fun executeTrigger(triggerId: TriggerId) = InstructionExpr.ExecuteTrigger(
+        ExecuteTriggerExpr(triggerId.evaluatesTo()),
+    )
 
     /**
      * Mint an asset of the [AssetValueType.Quantity] asset value type
@@ -516,6 +518,19 @@ object Instructions {
     /**
      * Revoke an account the [Permissions.CanSetKeyValueInDomain] permission
      */
+    fun grantSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionExpr {
+        return grantSome(
+            target,
+            PermissionToken(
+                definitionId = Permissions.CanSetKeyValueInDomain.type,
+                payload = domainId.asJsonString().asStringWithJson(),
+            ).asValue(),
+        )
+    }
+
+    /**
+     * Revoke an account the [Permissions.CanSetKeyValueInDomain] permission
+     */
     fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionExpr {
         return revokeSome(target) {
             PermissionToken(
@@ -552,7 +567,10 @@ object Instructions {
         ),
     )
 
-    private inline fun revokeSome(accountId: AccountId, permissionToken: () -> PermissionToken): InstructionExpr.Revoke {
+    private inline fun revokeSome(
+        accountId: AccountId,
+        permissionToken: () -> PermissionToken,
+    ): InstructionExpr.Revoke {
         return InstructionExpr.Revoke(
             RevokeExpr(
                 destinationId = accountId.evaluatesTo(),

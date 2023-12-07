@@ -130,7 +130,7 @@
         "Name" : "id"
       },
       "value" : {
-        "String" : "123"
+        "String" : "123_u32"
       }
     }
   }, {
@@ -139,7 +139,7 @@
       "key" : {
         "Name" : "wt"
       },
-      "value" : "123"
+      "value" : "123_u32"
     }
   }, {
     "SetKeyValue" : {
@@ -167,7 +167,7 @@
       "key" : {
         "Name" : "gh"
       },
-      "value" : "123"
+      "value" : "123_u32"
     }
   }, {
     "SetKeyValue" : {
@@ -175,7 +175,7 @@
       "key" : {
         "Name" : "ef"
       },
-      "value" : "1234"
+      "value" : "1234_u32"
     }
   }, {
     "SetKeyValue" : {
@@ -183,7 +183,7 @@
       "key" : {
         "Name" : "cd"
       },
-      "value" : "123"
+      "value" : "123_u32"
     }
   }, {
     "SetKeyValue" : {

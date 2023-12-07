@@ -26,12 +26,14 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceAndBobHasPermissionToMintPublicKeys
 import jp.co.soramitsu.iroha2.testengine.AliceCanMintXor
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
 import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_NAME
+import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
@@ -63,6 +65,33 @@ import kotlin.test.assertTrue
 @Sdk("Java/Kotlin")
 @Permission("no_permission_required")
 class QueriesTest : IrohaTest<Iroha2Client>() {
+
+    @Test
+    @WithIroha([AliceAndBobHasPermissionToMintPublicKeys::class])
+    @Feature("Accounts")
+    @Story("Account sets key value pair")
+    @Permission("CanSetKeyValueInUserAsset")
+    @SdkTestId("query_permission_tokens_by_accountId")
+    fun `query permission tokens by accountId`(): Unit = runBlocking {
+        val permissionsBefore = QueryBuilder.findPermissionTokensByAccountId(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(1, permissionsBefore.size)
+
+        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
+            grantPermissionToken(
+                Permissions.CanSetKeyValueInUserAccount,
+                ALICE_ACCOUNT_ID.asJsonString(),
+                BOB_ACCOUNT_ID,
+            )
+        }
+        val permissionsAfter = QueryBuilder.findPermissionTokensByAccountId(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+        assertEquals(2, permissionsAfter.size)
+    }
 
     @Test
     @WithIroha([NewAccountWithMetadata::class])
