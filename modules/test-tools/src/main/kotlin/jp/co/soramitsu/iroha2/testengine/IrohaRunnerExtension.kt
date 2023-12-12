@@ -228,23 +228,24 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             async {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
-                    networkToJoin = network
+                    this.networkToJoin = network
                     when {
                         withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
                         else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
                     }
-                    alias = IrohaContainer.NETWORK_ALIAS + p2pPort
-                    keyPair = keyPairs[n]
+                    this.alias = IrohaContainer.NETWORK_ALIAS + p2pPort
+                    this.keyPair = keyPairs[n]
                     this.genesisKeyPair = genesisKeyPair
-                    trustedPeers = peerIds
-                    ports = portsList[n]
-                    envs = withIroha.configs.associate { config ->
+                    this.trustedPeers = peerIds
+                    this.ports = portsList[n]
+                    this.fetchSize = withIroha.fetchSize
+                    this.envs = withIroha.configs.associate { config ->
                         config.split(IROHA_CONFIG_DELIMITER).let {
                             it.first() to it.last()
                         }
                     }
                     // only first peer should have --submit-genesis in peer start command
-                    submitGenesis = n == 0
+                    this.submitGenesis = n == 0
                 }
                 container.start()
                 containers.add(container)
