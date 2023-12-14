@@ -144,8 +144,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     companion object {
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "stable-2.0.0-pre-rc.20"
-        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_IMAGE_TAG = "fix_original_wasm"
+        const val DEFAULT_IMAGE_NAME = "erigara/iroha2"
         const val DEFAULT_EXECUTOR_FILE_NAME = "executor.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
         const val DEFAULT_CONFIG_FILE_NAME = "config.json"
