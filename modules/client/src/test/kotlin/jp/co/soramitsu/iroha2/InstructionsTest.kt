@@ -12,8 +12,11 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
+import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -66,6 +69,9 @@ import java.math.RoundingMode
 import java.security.SecureRandom
 import java.time.Instant
 import java.util.UUID
+import kotlin.reflect.full.callSuspend
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
@@ -934,6 +940,51 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     assetValue.string,
                 )
             }
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class], fetchSize = 111)
+    fun `iroha respond with given fetch size`(): Unit = runBlocking {
+        val fetchSize = 111
+        repeat(2) { i ->
+            val isi = mutableListOf<InstructionExpr>()
+            val tx = TransactionBuilder {
+                account(ALICE_ACCOUNT_ID)
+            }
+            repeat(100) { j ->
+                val definitionId = AssetDefinitionId("ASSET_${j}_$i".asName(), DEFAULT_DOMAIN_ID)
+                isi.add(Instructions.registerAssetDefinition(definitionId, AssetValueType.Store()))
+                isi.add(
+                    Instructions.setKeyValue(
+                        AssetId(definitionId, ALICE_ACCOUNT_ID),
+                        randomAlphabetic(10).asName(),
+                        randomAlphabetic(100).asValue(),
+                    ),
+                )
+            }
+            tx.instructions(isi)
+
+            client.sendTransaction { tx.buildSigned(ALICE_KEYPAIR) }.let {
+                withTimeout(txTimeout) {
+                    it.await()
+                }
+            }
+        }
+
+        val query = QueryBuilder.findAllAssets()
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+        val method = Iroha2Client::class.declaredMemberFunctions.firstOrNull { it.name == "sendQueryRequest" }
+
+        val response = method?.let {
+            it.isAccessible = true
+            it.callSuspend(client, query, null, null, null, null)
+        }
+        val vec = response?.cast<BatchedResponseOfValue.V1>()?.batchedResponseV1OfValue
+            ?.cast<BatchedResponseV1OfValue>()?.batch
+            ?.cast<Value.Vec>()?.vec
+
+        assertEquals(fetchSize, vec?.size)
     }
 
     @Test

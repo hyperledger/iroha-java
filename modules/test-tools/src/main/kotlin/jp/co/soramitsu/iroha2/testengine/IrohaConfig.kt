@@ -42,6 +42,7 @@ class IrohaConfig(
     var waitStrategy: Boolean = true,
     var submitGenesis: Boolean = true,
     var envs: Map<String, String> = emptyMap(),
+    var fetchSize: Int = 10,
 ) {
     companion object {
         const val P2P_PORT_IDX = 0
