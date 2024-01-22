@@ -9,6 +9,7 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
+import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
@@ -16,6 +17,7 @@ import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.readBytes
 
 /**
  * Docker container for Iroha
@@ -72,8 +74,16 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
-                getResource(DEFAULT_EXECUTOR_FILE_NAME).readBytes().let { content ->
-                    executorFileLocation.toFile().writeBytes(content)
+                if (config.useLocalTestExecutor) {
+                    val pathToCustomExecutor = "${System.getProperty("user.dir")}${File.separator}src${File.separator}test" +
+                        "${File.separator}resources${File.separator}$DEFAULT_EXECUTOR_FILE_NAME"
+                    Path(pathToCustomExecutor).readBytes().let { content ->
+                        executorFileLocation.toFile().writeBytes(content)
+                    }
+                } else {
+                    getResource(DEFAULT_EXECUTOR_FILE_NAME).readBytes().let { content ->
+                        executorFileLocation.toFile().writeBytes(content)
+                    }
                 }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
                     configFileLocation.toFile().writeBytes(content)

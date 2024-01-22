@@ -246,6 +246,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     }
                     // only first peer should have --submit-genesis in peer start command
                     this.submitGenesis = n == 0
+                    this.useLocalTestExecutor = withIroha.useLocalTestExecutor
                 }
                 container.start()
                 containers.add(container)
