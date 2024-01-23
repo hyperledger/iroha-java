@@ -1,14 +1,19 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class GenesisTest : IrohaTest<Iroha2Client>() {
     companion object {
@@ -34,6 +39,19 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
 
         val client = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl(), true)
         client.checkAliceAndBobExists()
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class], executorSource = "src/test/resources/executor.wasm")
+    fun `custom executor path`(): Unit = runBlocking {
+        val definitionId = AssetDefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
+        client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
+
+        QueryBuilder.findAssetDefinitionById(definitionId)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query -> client.sendQuery(query) }
+            .also { assetDefinition -> assertEquals(assetDefinition.id, definitionId) }
     }
 
     private suspend fun Iroha2Client.checkAliceAndBobExists() {
