@@ -43,7 +43,7 @@ class IrohaConfig(
     var submitGenesis: Boolean = true,
     var envs: Map<String, String> = emptyMap(),
     var fetchSize: Int = 10,
-    var useLocalTestExecutor: Boolean = false,
+    var executorPath: String? = null,
 ) {
     companion object {
         const val P2P_PORT_IDX = 0

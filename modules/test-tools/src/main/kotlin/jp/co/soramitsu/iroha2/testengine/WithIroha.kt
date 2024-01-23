@@ -23,7 +23,7 @@ annotation class WithIroha(
     val source: String = "",
     val amount: Int = 1,
     val fetchSize: Int = 10,
-    val useLocalTestExecutor: Boolean = false,
+    val executorSource: String = "",
 )
 
 @MustBeDocumented

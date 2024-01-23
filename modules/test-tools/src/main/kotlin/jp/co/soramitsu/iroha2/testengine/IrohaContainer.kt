@@ -9,7 +9,6 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
 import org.testcontainers.utility.MountableFile.forHostPath
-import java.io.File
 import java.io.IOException
 import java.net.URL
 import java.nio.file.Files
@@ -74,10 +73,8 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
-                if (config.useLocalTestExecutor) {
-                    val pathToCustomExecutor = "${System.getProperty("user.dir")}${File.separator}src${File.separator}test" +
-                        "${File.separator}resources${File.separator}$DEFAULT_EXECUTOR_FILE_NAME"
-                    Path(pathToCustomExecutor).readBytes().let { content ->
+                if (config.executorPath != null) {
+                    Path(config.executorPath!!).toAbsolutePath().readBytes().let { content ->
                         executorFileLocation.toFile().writeBytes(content)
                     }
                 } else {
