@@ -246,6 +246,9 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     }
                     // only first peer should have --submit-genesis in peer start command
                     this.submitGenesis = n == 0
+                    if (withIroha.executorSource.isNotEmpty()) {
+                        this.executorPath = withIroha.executorSource
+                    }
                 }
                 container.start()
                 containers.add(container)

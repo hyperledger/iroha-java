@@ -16,6 +16,7 @@ import java.time.Duration
 import java.util.UUID.randomUUID
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.readBytes
 
 /**
  * Docker container for Iroha
@@ -72,8 +73,14 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                 config.genesis?.writeToFile(genesisFileLocation)
                 config.genesisPath?.also { path -> Files.copy(Path(path).toAbsolutePath(), genesisFileLocation) }
 
-                getResource(DEFAULT_EXECUTOR_FILE_NAME).readBytes().let { content ->
-                    executorFileLocation.toFile().writeBytes(content)
+                if (config.executorPath != null) {
+                    Path(config.executorPath!!).toAbsolutePath().readBytes().let { content ->
+                        executorFileLocation.toFile().writeBytes(content)
+                    }
+                } else {
+                    getResource(DEFAULT_EXECUTOR_FILE_NAME).readBytes().let { content ->
+                        executorFileLocation.toFile().writeBytes(content)
+                    }
                 }
                 getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
                     configFileLocation.toFile().writeBytes(content)
