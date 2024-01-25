@@ -4,6 +4,7 @@ import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionExpr.Register
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
@@ -59,19 +60,20 @@ open class Genesis(open val block: RawGenesisBlock) {
         }
 
         private fun MutableSet<InstructionExpr>.mergeMetadata(): List<InstructionExpr> {
+            // entity id to its metadata
             val metadataMap = mutableMapOf<Any, Metadata>()
 
             // only for InstructionExpr.Register
             this.extractIdentifiableBoxes().forEach { idBox ->
                 metadataMap.putMergedMetadata(idBox)
             }
-            this.findIsiToReplace(metadataMap).forEach { (metadata, toReplace) ->
+            this.findIsiToReplace(metadataMap).forEach { (idToMetadata, toReplace) ->
                 toReplace.forEach { isi -> this.remove(isi) }
 
                 val idBox = toReplace.first().extractIdentifiableBox()
-                val registrableBox = idBox?.toRegisterBox(metadata)
+                val registrableBox = idBox?.toRegisterBox(idToMetadata.second)
                     ?: throw RuntimeException("IdentifiableBox shouldn't be null")
-                this.add(InstructionExpr.Register(RegisterExpr(registrableBox.evaluatesTo())))
+                this.add(Register(RegisterExpr(registrableBox.evaluatesTo())))
             }
 
             return this.sorted()
@@ -80,7 +82,7 @@ open class Genesis(open val block: RawGenesisBlock) {
         private fun MutableSet<InstructionExpr>.sorted() = this.sortedWith(
             compareByDescending { instruction ->
                 when (instruction) {
-                    is InstructionExpr.Register -> when (instruction.extractIdentifiableBox()) {
+                    is Register -> when (instruction.extractIdentifiableBox()) {
                         is IdentifiableBox.NewDomain -> 5
                         is IdentifiableBox.NewAccount -> 4
                         is IdentifiableBox.NewAssetDefinition -> 3
@@ -144,26 +146,37 @@ open class Genesis(open val block: RawGenesisBlock) {
 
         private fun MutableSet<InstructionExpr>.findIsiToReplace(
             metadata: Map<Any, Metadata>,
-        ): MutableMap<Metadata, MutableList<InstructionExpr.Register>> {
-            val isiToReplace = mutableMapOf<Metadata, MutableList<InstructionExpr.Register>>()
+        ): MutableMap<Pair<Any, Metadata>, MutableList<Register>> {
+            val isiToReplace =
+                mutableMapOf<Pair<Any, Metadata>, MutableList<Register>>()
 
             this.forEach { instruction ->
                 runCatching {
-                    instruction.cast<InstructionExpr.Register>()
+                    instruction.cast<Register>()
                         .registerExpr.`object`.expression
                         .cast<Expression.Raw>().value
                         .cast<Value.Identifiable>().identifiableBox
                 }.onSuccess { idBox ->
                     when (idBox) {
-                        is IdentifiableBox.NewAccount -> metadata[idBox.newAccount.id]
-                        is IdentifiableBox.NewDomain -> metadata[idBox.newDomain.id]
-                        is IdentifiableBox.NewAssetDefinition -> metadata[idBox.newAssetDefinition.id]
-                        else -> null
-                    }?.takeIf { it.map.isNotEmpty() }?.let { metadata ->
-                        isiToReplace.merge(metadata, mutableListOf(instruction.cast())) { old, new ->
-                            old.plus(new).toMutableList()
+                        is IdentifiableBox.NewAccount -> {
+                            val id = idBox.newAccount.id
+                            id to metadata[id]!!
                         }
-                    }
+                        is IdentifiableBox.NewDomain -> {
+                            val id = idBox.newDomain.id
+                            id to metadata[id]!!
+                        }
+                        is IdentifiableBox.NewAssetDefinition -> {
+                            val id = idBox.newAssetDefinition.id
+                            id to metadata[id]!!
+                        }
+                        else -> null
+                    }?.takeIf { it.second.map.isNotEmpty() }
+                        ?.let {
+                            isiToReplace.merge(it, mutableListOf(instruction.cast())) { old, new ->
+                                old.plus(new).toMutableList()
+                            }
+                        }
                 }
             }
             return isiToReplace
