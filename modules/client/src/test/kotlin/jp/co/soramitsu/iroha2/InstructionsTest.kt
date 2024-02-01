@@ -37,6 +37,7 @@ import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.BobCanUnregisterAnyRole
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
@@ -76,6 +77,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @Owner("akostyuchenko")
@@ -426,7 +429,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerDomain(domainId)
             grantPermissionToken(
-                Permissions.CanSetKeyValueInDomain,
+                Permissions.CanSetKeyValueInDomain.type.string,
                 domainId.asJsonString(),
                 ALICE_ACCOUNT_ID,
             )
@@ -1002,7 +1005,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class])
+    @WithIroha([BobCanUnregisterAnyRole::class])
     @Feature("Assets")
     @Story("Account registers an asset definition")
     @SdkTestId("register_asset_definition_with_store_value_type")
@@ -1062,6 +1065,22 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     roles.isEmpty(),
                 )
             }
+        QueryBuilder.findAllRoles()
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .firstOrNull { it.id == roleId }
+            .also { assertNotNull(it) }
+
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            unregisterRole(roleId)
+        }
+        QueryBuilder.findAllRoles()
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .firstOrNull { it.id == roleId }
+            .also { assertNull(it) }
     }
 
     @Test

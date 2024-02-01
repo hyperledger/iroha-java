@@ -410,6 +410,18 @@ open class FatGenesis : Genesis(
 }
 
 /**
+ * Grant permission token to unregister any role
+ */
+open class BobCanUnregisterAnyRole : Genesis(
+    rawGenesisBlock(
+        Instructions.grantPermissionToken(
+            permission = Permissions.CanUnregisterAnyRole.type.string,
+            target = BOB_ACCOUNT_ID,
+        ),
+    ),
+)
+
+/**
  * Return [RawGenesisBlock] with instructions to init genesis block
  */
 fun rawGenesisBlock(vararg isi: InstructionExpr) = RawGenesisBlock(
