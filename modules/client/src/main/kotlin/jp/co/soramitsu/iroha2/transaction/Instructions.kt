@@ -444,7 +444,7 @@ object Instructions {
      */
     fun grantPermissionToken(
         permission: String,
-        payload: String,
+        payload: String = "",
         target: AccountId,
     ) = grantSome(target, PermissionToken(permission.asName(), payload.asStringWithJson()).asValue())
 

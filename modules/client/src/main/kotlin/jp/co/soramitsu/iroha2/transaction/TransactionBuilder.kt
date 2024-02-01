@@ -382,7 +382,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 
-    fun grantPermissionToken(permission: String, payload: String, target: AccountId) = this.apply {
+    fun grantPermissionToken(permission: String, payload: String = "", target: AccountId) = this.apply {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 
