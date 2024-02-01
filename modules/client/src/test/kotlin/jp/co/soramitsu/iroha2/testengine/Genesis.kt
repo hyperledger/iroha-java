@@ -415,9 +415,8 @@ open class FatGenesis : Genesis(
 open class BobCanUnregisterAnyRole : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
-            Permissions.CanUnregisterAnyRole,
-            "",
-            BOB_ACCOUNT_ID,
+            permission = Permissions.CanUnregisterAnyRole.type.string,
+            target = BOB_ACCOUNT_ID,
         ),
     ),
 )
