@@ -241,6 +241,11 @@ object Instructions {
     fun unregisterDomain(id: DomainId) = unregisterSome { IdBox.DomainId(id) }
 
     /**
+     * Unregister a role
+     */
+    fun unregisterRole(id: RoleId) = unregisterSome { IdBox.RoleId(id) }
+
+    /**
      * Register an asset
      */
     @JvmOverloads
@@ -433,6 +438,15 @@ object Instructions {
         payload: String,
         target: AccountId,
     ) = grantSome(target, PermissionToken(permission.type, payload.asStringWithJson()).asValue())
+
+    /**
+     * Grant an account the custom permission
+     */
+    fun grantPermissionToken(
+        permission: String,
+        payload: String,
+        target: AccountId,
+    ) = grantSome(target, PermissionToken(permission.asName(), payload.asStringWithJson()).asValue())
 
     /**
      * Grant an account a given role.

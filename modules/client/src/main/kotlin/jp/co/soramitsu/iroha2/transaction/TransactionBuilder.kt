@@ -249,6 +249,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         vararg tokens: PermissionToken,
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
+    fun unregisterRole(
+        id: RoleId,
+    ) = this.apply { instructions.value.add(Instructions.unregisterRole(id)) }
+
     @JvmOverloads
     fun registerAccount(
         id: AccountId,
@@ -375,6 +379,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
 
     fun grantPermissionToken(permission: Permissions, payload: String, target: AccountId) = this.apply {
+        instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
+    }
+
+    fun grantPermissionToken(permission: String, payload: String, target: AccountId) = this.apply {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 
