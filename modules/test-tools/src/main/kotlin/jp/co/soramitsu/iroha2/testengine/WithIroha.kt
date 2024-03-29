@@ -24,8 +24,6 @@ annotation class WithIroha(
     val amount: Int = 1,
     val fetchSize: Int = 10,
     val executorSource: String = "",
-    val imageName: String = IrohaContainer.DEFAULT_IMAGE_NAME,
-    val imageTag: String = IrohaContainer.DEFAULT_IMAGE_TAG,
 )
 
 @MustBeDocumented

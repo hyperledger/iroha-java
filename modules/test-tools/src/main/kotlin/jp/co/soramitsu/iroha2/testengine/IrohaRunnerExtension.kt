@@ -26,7 +26,6 @@ import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
-import org.testcontainers.containers.Network
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.lang.reflect.Method
@@ -85,13 +84,11 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     }
 
     private suspend fun WithIroha.init(extensionContext: ExtensionContext): List<AutoCloseable> {
-        val testInstance = extensionContext.testInstance.get()
-        val network = testInstance.cast<IrohaTest<*>>().network
-
+        val testInstance = extensionContext.testInstance.get().cast<IrohaTest<*>>()
         val utilizedResources = mutableListOf<AutoCloseable>()
 
         // start containers
-        val containers = createContainers(this, network)
+        val containers = createContainers(this, testInstance)
         utilizedResources.addAll(containers)
 
         val properties = testInstance::class.memberProperties
@@ -208,7 +205,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
     private suspend fun createContainers(
         withIroha: WithIroha,
-        network: Network,
+        testInstance: IrohaTest<*>,
     ): List<IrohaContainer> = coroutineScope {
         val keyPairs = mutableListOf<KeyPair>()
         val portsList = mutableListOf<List<Int>>()
@@ -228,7 +225,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             async {
                 val p2pPort = portsList[n][IrohaConfig.P2P_PORT_IDX]
                 val container = IrohaContainer {
-                    this.networkToJoin = network
+                    this.networkToJoin = testInstance.network
                     when {
                         withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
                         else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
@@ -239,8 +236,8 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     this.trustedPeers = peerIds
                     this.ports = portsList[n]
                     this.fetchSize = withIroha.fetchSize
-                    this.imageName = withIroha.imageName
-                    this.imageTag = withIroha.imageTag
+                    this.imageName = testInstance.imageName
+                    this.imageTag = testInstance.imageTag
                     this.envs = withIroha.configs.associate { config ->
                         config.split(IROHA_CONFIG_DELIMITER).let {
                             it.first() to it.last()

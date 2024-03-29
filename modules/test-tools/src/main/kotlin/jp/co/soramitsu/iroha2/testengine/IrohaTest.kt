@@ -21,6 +21,8 @@ import java.time.Duration
 abstract class IrohaTest<T : Iroha2Client>(
     val txTimeout: Duration = Duration.ofSeconds(30),
     val network: Network = Network.newNetwork(),
+    val imageName: String = IrohaContainer.DEFAULT_IMAGE_NAME,
+    val imageTag: String = IrohaContainer.DEFAULT_IMAGE_TAG,
 ) {
     lateinit var client: T
     lateinit var containers: List<IrohaContainer>
