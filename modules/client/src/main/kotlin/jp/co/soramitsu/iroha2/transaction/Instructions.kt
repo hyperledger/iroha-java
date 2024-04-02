@@ -323,6 +323,21 @@ object Instructions {
     )
 
     /**
+     * Set key/value for a given trigger
+     */
+    fun setKeyValue(
+        triggerId: TriggerId,
+        key: Name,
+        value: Value,
+    ) = InstructionExpr.SetKeyValue(
+        SetKeyValueExpr(
+            objectId = IdBox.TriggerId(triggerId).evaluatesTo(),
+            key = key.evaluatesTo(),
+            value = value.evaluatesTo(),
+        ),
+    )
+
+    /**
      * Set key/value for a given asset definition
      */
     fun setKeyValue(

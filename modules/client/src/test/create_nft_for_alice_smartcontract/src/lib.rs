@@ -17,7 +17,7 @@ static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeList
 use iroha_trigger::{data_model::prelude::*, debug::DebugUnwrapExt, smart_contract::QueryHost};
 
 #[iroha_trigger::main]
-fn smartcontract_entry_point(_owner: AccountId, _event: Event) {
+fn smartcontract_entry_point(_id: TriggerId, _owner: AccountId, _event: Event) {
     let account_id: AccountId = "alice@wonderland".parse().unwrap();
     let limits = MetadataLimits::new(256, 256);
     let mut metadata = Metadata::new();
