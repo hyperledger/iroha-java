@@ -315,6 +315,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
 
     fun setKeyValue(
+        triggerId: TriggerId,
+        key: Name,
+        value: Value,
+    ) = this.apply { instructions.value.add(Instructions.setKeyValue(triggerId, key, value)) }
+
+    fun setKeyValue(
         domainId: DomainId,
         key: Name,
         value: Value,

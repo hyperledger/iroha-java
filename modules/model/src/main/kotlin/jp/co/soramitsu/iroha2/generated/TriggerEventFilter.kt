@@ -30,6 +30,8 @@ public sealed class TriggerEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.equals(this, other)
         is ByExtended -> ByExtended.equals(this, other)
         is ByShortened -> ByShortened.equals(this, other)
+        is ByMetadataInserted -> ByMetadataInserted.equals(this, other)
+        is ByMetadataRemoved -> ByMetadataRemoved.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
@@ -37,6 +39,8 @@ public sealed class TriggerEventFilter : ModelEnum {
         is ByDeleted -> ByDeleted.hashCode()
         is ByExtended -> ByExtended.hashCode()
         is ByShortened -> ByShortened.hashCode()
+        is ByMetadataInserted -> ByMetadataInserted.hashCode()
+        is ByMetadataRemoved -> ByMetadataRemoved.hashCode()
         else -> super.hashCode() }
 
     /**
@@ -187,6 +191,82 @@ public sealed class TriggerEventFilter : ModelEnum {
         }
     }
 
+    /**
+     * 'ByMetadataInserted' variant
+     */
+    public class ByMetadataInserted : TriggerEventFilter() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataInserted>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataInserted> {
+            public const val DISCRIMINANT: Int = 4
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataInserted = try {
+                ByMetadataInserted()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataInserted,
+            ): Unit =
+                try {
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataInserted,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".TriggerEventFilter.ByMetadataInserted".hashCode()
+        }
+    }
+
+    /**
+     * 'ByMetadataRemoved' variant
+     */
+    public class ByMetadataRemoved : TriggerEventFilter() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataRemoved>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataRemoved> {
+            public const val DISCRIMINANT: Int = 5
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataRemoved = try {
+                ByMetadataRemoved()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataRemoved,
+            ): Unit =
+                try {
+                } catch (ex: Exception) {
+                    throw wrapException(ex)
+                }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.TriggerEventFilter.ByMetadataRemoved,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".TriggerEventFilter.ByMetadataRemoved".hashCode()
+        }
+    }
+
     public companion object : ScaleReader<TriggerEventFilter>, ScaleWriter<TriggerEventFilter> {
         override fun read(reader: ScaleCodecReader): TriggerEventFilter = when (
             val discriminant =
@@ -196,6 +276,8 @@ public sealed class TriggerEventFilter : ModelEnum {
             1 -> ByDeleted.read(reader)
             2 -> ByExtended.read(reader)
             3 -> ByShortened.read(reader)
+            4 -> ByMetadataInserted.read(reader)
+            5 -> ByMetadataRemoved.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: TriggerEventFilter) {
@@ -205,6 +287,8 @@ public sealed class TriggerEventFilter : ModelEnum {
                 1 -> ByDeleted.write(writer, instance as ByDeleted)
                 2 -> ByExtended.write(writer, instance as ByExtended)
                 3 -> ByShortened.write(writer, instance as ByShortened)
+                4 -> ByMetadataInserted.write(writer, instance as ByMetadataInserted)
+                5 -> ByMetadataRemoved.write(writer, instance as ByMetadataRemoved)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

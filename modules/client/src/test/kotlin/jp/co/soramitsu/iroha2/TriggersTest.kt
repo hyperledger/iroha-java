@@ -224,7 +224,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     @WithIroha([AliceHas100XorAndPermissionToBurn::class])
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
-    fun `wasm trigger to mint nft for every user`(): Unit = runBlocking {
+    fun `wasm trigger to mint nft for every user and update trigger metadata`(): Unit = runBlocking {
         val triggerId = TriggerId(name = "wasm_trigger".asName())
 
         val currentTime = Date().time / 1000
@@ -280,6 +280,21 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                     },
                 )
             }
+
+        val testKey = "key"
+        val testValue = "value"
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            setKeyValue(triggerId, testKey.asName(), testValue.asValue())
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+        QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assertEquals(testValue, it.action.metadata.getStringValue(testKey)) }
     }
 
     @Test
