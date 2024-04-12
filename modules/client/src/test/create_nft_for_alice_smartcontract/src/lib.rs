@@ -10,6 +10,7 @@ extern crate panic_halt;
 
 use alloc::{format, string::ToString, vec::Vec};
 use lol_alloc::{FreeListAllocator, LockedAllocator};
+use iroha_trigger::debug::dbg;
 
 #[global_allocator]
 static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeListAllocator::new());
@@ -18,6 +19,7 @@ use iroha_trigger::{data_model::prelude::*, debug::DebugUnwrapExt, smart_contrac
 
 #[iroha_trigger::main]
 fn smartcontract_entry_point(_id: TriggerId, _owner: AccountId, _event: Event) {
+    dbg(&format!("Started smart contract. Owner: {_owner};\nEvent: {_event:?}"));
     let account_id: AccountId = "alice@wonderland".parse().unwrap();
     let limits = MetadataLimits::new(256, 256);
     let mut metadata = Metadata::new();
