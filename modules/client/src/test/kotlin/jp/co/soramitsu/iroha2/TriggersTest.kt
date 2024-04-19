@@ -12,11 +12,19 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.DataEntityFilter
 import jp.co.soramitsu.iroha2.generated.Duration
+import jp.co.soramitsu.iroha2.generated.FilterOptOfDataEntityFilter
+import jp.co.soramitsu.iroha2.generated.FilterOptOfOriginFilterOfTriggerEvent
+import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerFilter
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.OriginFilterOfTriggerEvent
 import jp.co.soramitsu.iroha2.generated.Repeats
+import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -253,33 +261,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             withTimeout(txTimeout) { d.await() }
         }
 
-        // send some transactions to keep Iroha2 network busy
-        repeat(2) { i ->
-            client.sendTransaction {
-                accountId = ALICE_ACCOUNT_ID
-                setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i".asValue())
-                buildSigned(ALICE_KEYPAIR)
-            }.also { d ->
-                withTimeout(txTimeout) { d.await() }
-            }
-        }
-        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-            .let { query -> client.sendQuery(query) }
-            .also { assets ->
-                assert(assets.size > 1)
-                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
-                assert(assets.any { it.id.definitionId == XOR_DEFINITION_ID })
-                assert(
-                    assets.any {
-                        it.id.definitionId == AssetDefinitionId(
-                            "nft_number_1_for_alice".asName(),
-                            DEFAULT_DOMAIN_ID,
-                        )
-                    },
-                )
-            }
+        keepNetworkBusyAndCheckAssetDefinitionIds()
 
         val testKey = "key"
         val testValue = "value"
@@ -291,6 +273,77 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             withTimeout(txTimeout) { d.await() }
         }
         QueryBuilder.findTriggerById(triggerId)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assertEquals(testValue, it.action.metadata.getStringValue(testKey)) }
+    }
+
+    @Test
+    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @Story("Wasm trigger mints NFT for every user when trigger metadata is updated")
+    @SdkTestId("wasm_trigger_to_mint_nft_for_every_user_on_update_trigger_metadata_event")
+    fun `wasm trigger to mint nft for every user on update trigger metadata event`(): Unit = runBlocking {
+        val wasmTriggerId = TriggerId(name = "wasm_trigger".asName())
+        val setKeyValueTriggerId = TriggerId(name = "update_trigger".asName())
+
+        val filter = TriggeringFilterBox.Data(
+            FilterOptOfDataEntityFilter.BySome(
+                DataEntityFilter.ByTrigger(
+                    FilterOptOfTriggerFilter.BySome(
+                        TriggerFilter(
+                            FilterOptOfOriginFilterOfTriggerEvent.BySome(
+                                OriginFilterOfTriggerEvent(
+                                    wasmTriggerId,
+                                ),
+                            ),
+                            FilterOptOfTriggerEventFilter.BySome(
+                                TriggerEventFilter.ByMetadataInserted(),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        )
+
+        val wasm = this.javaClass.classLoader
+            .getResource("create_nft_for_alice_smartcontract.wasm")
+            .readBytes()
+
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerWasmTrigger(
+                wasmTriggerId,
+                wasm,
+                Repeats.Indefinitely(),
+                ALICE_ACCOUNT_ID,
+                Metadata(mapOf()),
+                filter,
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        val testKey = "key"
+        val testValue = "value"
+        client.sendTransaction {
+            accountId = ALICE_ACCOUNT_ID
+            registerExecutableTrigger(
+                setKeyValueTriggerId,
+                listOf(Instructions.setKeyValue(wasmTriggerId, testKey.asName(), testValue.asValue())),
+                Repeats.Exactly(1L),
+                ALICE_ACCOUNT_ID,
+            )
+            executeTrigger(setKeyValueTriggerId)
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        keepNetworkBusyAndCheckAssetDefinitionIds()
+
+        QueryBuilder.findTriggerById(wasmTriggerId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
@@ -415,5 +468,35 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .map { it.value.assets[DEFAULT_ASSET_ID] }
             .map { (it?.value as AssetValue.Quantity).u32 }
             .first()
+    }
+
+    private suspend fun keepNetworkBusyAndCheckAssetDefinitionIds() {
+        // send some transactions to keep Iroha2 network busy
+        repeat(2) { i ->
+            client.sendTransaction {
+                accountId = ALICE_ACCOUNT_ID
+                setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i".asValue())
+                buildSigned(ALICE_KEYPAIR)
+            }.also { d ->
+                withTimeout(txTimeout) { d.await() }
+            }
+        }
+        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
+            .account(ALICE_ACCOUNT_ID)
+            .buildSigned(ALICE_KEYPAIR)
+            .let { query -> client.sendQuery(query) }
+            .also { assets ->
+                assert(assets.size > 1)
+                assert(assets.all { it.id.accountId == ALICE_ACCOUNT_ID })
+                assert(assets.any { it.id.definitionId == XOR_DEFINITION_ID })
+                assert(
+                    assets.any {
+                        it.id.definitionId == AssetDefinitionId(
+                            "nft_number_1_for_alice".asName(),
+                            DEFAULT_DOMAIN_ID,
+                        )
+                    },
+                )
+            }
     }
 }
