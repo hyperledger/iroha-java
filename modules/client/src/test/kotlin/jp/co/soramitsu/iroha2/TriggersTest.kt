@@ -12,18 +12,13 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.DataEntityFilter
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.FilterOptOfOriginFilterOfTriggerEvent
-import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter
-import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerFilter
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.OriginFilterOfTriggerEvent
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
-import jp.co.soramitsu.iroha2.generated.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
@@ -277,19 +272,11 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val setKeyValueTriggerId = TriggerId(name = "update_trigger".asName())
 
         val filter = Filters.data(
-            DataEntityFilter.ByTrigger(
-                FilterOptOfTriggerFilter.BySome(
-                    TriggerFilter(
-                        FilterOptOfOriginFilterOfTriggerEvent.BySome(
-                            OriginFilterOfTriggerEvent(
-                                wasmTriggerId,
-                            ),
-                        ),
-                        FilterOptOfTriggerEventFilter.BySome(
-                            TriggerEventFilter.ByMetadataInserted(),
-                        ),
-                    ),
+            EntityFilters.byTrigger(
+                OriginFilterOfTriggerEvent(
+                    wasmTriggerId,
                 ),
+                TriggerEventFilter.ByMetadataInserted(),
             ),
         )
 
