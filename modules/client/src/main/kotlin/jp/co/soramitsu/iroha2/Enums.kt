@@ -38,6 +38,8 @@ enum class Permissions(val type: Name) {
     CanUnregisterUserTrigger("CanUnregisterUserTrigger".asName()),
     CanMintUserTrigger("CanMintUserTrigger".asName()),
     CanUpgradeExecutor("CanUpgradeExecutor".asName()),
+    CanRemoveKeyValueInTrigger("CanRemoveKeyValueInTrigger".asName()),
+    CanSetKeyValueInTrigger("CanSetKeyValueInTrigger".asName()),
 }
 
 enum class IdKey(val type: String) {
