@@ -14,7 +14,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DataEntityFilter
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.FilterOptOfDataEntityFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfOriginFilterOfTriggerEvent
 import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfTriggerFilter
@@ -246,8 +245,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .getResource("create_nft_for_alice_smartcontract.wasm")
             .readBytes()
 
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
+        client.tx {
             registerWasmTrigger(
                 triggerId,
                 wasm,
@@ -256,22 +254,13 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Metadata(mapOf()),
                 filter,
             )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
         }
 
         keepNetworkBusyAndCheckAssetDefinitionIds()
 
         val testKey = "key"
         val testValue = "value"
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
-            setKeyValue(triggerId, testKey.asName(), testValue.asValue())
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
+        client.tx { setKeyValue(triggerId, testKey.asName(), testValue.asValue()) }
         QueryBuilder.findTriggerById(triggerId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -287,19 +276,17 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val wasmTriggerId = TriggerId(name = "wasm_trigger".asName())
         val setKeyValueTriggerId = TriggerId(name = "update_trigger".asName())
 
-        val filter = TriggeringFilterBox.Data(
-            FilterOptOfDataEntityFilter.BySome(
-                DataEntityFilter.ByTrigger(
-                    FilterOptOfTriggerFilter.BySome(
-                        TriggerFilter(
-                            FilterOptOfOriginFilterOfTriggerEvent.BySome(
-                                OriginFilterOfTriggerEvent(
-                                    wasmTriggerId,
-                                ),
+        val filter = Filters.data(
+            DataEntityFilter.ByTrigger(
+                FilterOptOfTriggerFilter.BySome(
+                    TriggerFilter(
+                        FilterOptOfOriginFilterOfTriggerEvent.BySome(
+                            OriginFilterOfTriggerEvent(
+                                wasmTriggerId,
                             ),
-                            FilterOptOfTriggerEventFilter.BySome(
-                                TriggerEventFilter.ByMetadataInserted(),
-                            ),
+                        ),
+                        FilterOptOfTriggerEventFilter.BySome(
+                            TriggerEventFilter.ByMetadataInserted(),
                         ),
                     ),
                 ),
@@ -310,8 +297,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .getResource("create_nft_for_alice_smartcontract.wasm")
             .readBytes()
 
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
+        client.tx {
             registerWasmTrigger(
                 wasmTriggerId,
                 wasm,
@@ -320,15 +306,11 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 Metadata(mapOf()),
                 filter,
             )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
         }
 
         val testKey = "key"
         val testValue = "value"
-        client.sendTransaction {
-            accountId = ALICE_ACCOUNT_ID
+        client.tx {
             registerExecutableTrigger(
                 setKeyValueTriggerId,
                 listOf(Instructions.setKeyValue(wasmTriggerId, testKey.asName(), testValue.asValue())),
@@ -336,9 +318,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 ALICE_ACCOUNT_ID,
             )
             executeTrigger(setKeyValueTriggerId)
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
         }
 
         keepNetworkBusyAndCheckAssetDefinitionIds()
