@@ -4,12 +4,12 @@ import com.squareup.kotlinpoet.FileSpec
 import jp.co.soramitsu.iroha2.codegen.blueprint.EnumBlueprint
 import jp.co.soramitsu.iroha2.codegen.blueprint.StructBlueprint
 import jp.co.soramitsu.iroha2.codegen.blueprint.TupleStructBlueprint
-import jp.co.soramitsu.iroha2.parse.Types
 import jp.co.soramitsu.iroha2.type.EnumType
 import jp.co.soramitsu.iroha2.type.IterableType
 import jp.co.soramitsu.iroha2.type.MapType
 import jp.co.soramitsu.iroha2.type.StructType
 import jp.co.soramitsu.iroha2.type.TupleStructType
+import jp.co.soramitsu.iroha2.type.Type
 import java.nio.file.Path
 
 /**
@@ -17,12 +17,12 @@ import java.nio.file.Path
  */
 object GeneratorEntryPoint {
     @OptIn(ExperimentalUnsignedTypes::class)
-    fun generate(types: Types, outputPath: Path) {
-        types.values.mapNotNull {
-            when (it) {
-                is StructType -> StructBlueprint(it)
-                is EnumType -> EnumBlueprint(it)
-                is TupleStructType -> TupleStructBlueprint(it)
+    fun generate(types: Map<String, Type>, outputPath: Path) {
+        types.values.mapNotNull { type ->
+            when (type) {
+                is StructType -> StructBlueprint(type)
+                is EnumType -> EnumBlueprint(type)
+                is TupleStructType -> TupleStructBlueprint(type)
                 else -> null
             }
         }.forEach { type ->
@@ -34,7 +34,7 @@ object GeneratorEntryPoint {
             }
             val builder = FileSpec.builder(type.packageName, type.className)
                 .addType(typeSpec)
-                .addComment("\nAuto-generated file. DO NOT EDIT!\n")
+                .addFileComment("\nAuto-generated file. DO NOT EDIT!\n")
 
             val isSortedMap = type.properties
                 .map { it.original as? MapType }

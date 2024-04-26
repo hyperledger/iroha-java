@@ -1,5 +1,12 @@
+plugins {
+    id("io.qameta.allure") version "2.11.2"
+}
+
 dependencies {
     api project(":model")
+
+    // https://mvnrepository.com/artifact/com.github.docker-java/docker-java
+    implementation("com.github.docker-java:docker-java:3.3.0")
 
     //kotlin support
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVer"
@@ -10,7 +17,7 @@ dependencies {
     api "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVer"
     api "net.i2p.crypto:eddsa:$i2pCryptoEddsa"
     api "com.github.multiformats:java-multihash:$multihashVersion"
-    
+
     //http client
     api "io.ktor:ktor-client-core:$ktorVer"
     api "io.ktor:ktor-client-cio:$ktorVer"

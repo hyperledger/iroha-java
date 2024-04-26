@@ -13,7 +13,7 @@ abstract class CompositeType(override val name: String, open val generics: List<
 data class EnumType(
     override val name: String,
     override val generics: List<TypeNest>,
-    val variants: List<Variant>
+    val variants: List<Variant>,
 ) : CompositeType(name, generics) {
 
     /**
@@ -42,7 +42,7 @@ data class EnumType(
 data class TupleStructType(
     override val name: String,
     override val generics: List<TypeNest>,
-    val types: List<TypeNest>
+    val types: List<TypeNest>,
 ) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
         return types.union(generics).flatMap {
@@ -57,7 +57,7 @@ data class TupleStructType(
 data class StructType(
     override val name: String,
     override val generics: List<TypeNest>,
-    val mapping: LinkedHashMap<String, TypeNest>
+    val mapping: Map<String, TypeNest>,
 ) : CompositeType(name, generics) {
     override fun notResolvedTypes(): Set<String> {
         return mapping.values.union(generics).flatMap {

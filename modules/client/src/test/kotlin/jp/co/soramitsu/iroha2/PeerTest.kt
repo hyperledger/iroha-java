@@ -1,12 +1,22 @@
 package jp.co.soramitsu.iroha2
 
+import io.qameta.allure.Feature
+import io.qameta.allure.Owner
+import io.qameta.allure.Story
+import jp.co.soramitsu.iroha2.annotations.Permission
+import jp.co.soramitsu.iroha2.annotations.Sdk
+import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
-import jp.co.soramitsu.iroha2.generated.datamodel.peer.PeerId
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.PeerId
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SocketAddrHost
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.AliceCanUnregisterAnyPeer
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-import jp.co.soramitsu.iroha2.testengine.IrohaConfig
 import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
@@ -24,8 +34,10 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @Timeout(100)
-@Disabled
-class PeerTest : IrohaTest<Iroha2Client>() {
+@Owner("akostyuchenko")
+@Sdk("Java/Kotlin")
+@Feature("Peers")
+class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     companion object {
         private const val PEER_AMOUNT = 4
@@ -33,53 +45,56 @@ class PeerTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @Story("Account registers a peer")
+    @Permission("no_permission_required")
+    @SdkTestId("register_peer")
     fun `register peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val p2pPort = DEFAULT_P2P_PORT
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use {
+        startNewContainer(keyPair, alias).use {
             registerPeer(address, payload)
             assertTrue(isPeerAvailable(address, payload))
         }
     }
 
+    @Disabled // https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/372
     @Test
-    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    @WithIroha([AliceCanUnregisterAnyPeer::class], amount = PEER_AMOUNT)
+    @Story("Account unregisters a peer")
+    @Permission("no_permission_required")
+    @SdkTestId("unregister_peer")
     fun `unregister peer`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val p2pPort = DEFAULT_P2P_PORT
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use {
+        startNewContainer(keyPair, alias).use {
             registerPeer(address, payload)
-            assertTrue(isPeerAvailable(address, payload))
-
-            delay(1000)
+            repeat(PEER_AMOUNT) { assertTrue(isPeerAvailable(address, payload)) }
 
             unregisterPeer(address, payload)
-            assertFalse(isPeerAvailable(address, payload))
+            repeat(PEER_AMOUNT) { assertFalse(isPeerAvailable(address, payload)) }
         }
     }
 
     @Test
     @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
     fun `registered peer should return consistent data`(): Unit = runBlocking {
-        val ports = findFreePorts(3)
-        val p2pPort = ports[IrohaConfig.P2P_PORT_IDX]
+        val p2pPort = DEFAULT_P2P_PORT
         val alias = "iroha$p2pPort"
         val address = "$alias:$p2pPort"
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-        startNewContainer(keyPair, alias, ports).use { container ->
+        startNewContainer(keyPair, alias).use { container ->
             registerPeer(address, payload)
+            assertTrue(isPeerAvailable(address, payload))
 
             delay(5000)
 
@@ -94,7 +109,13 @@ class PeerTest : IrohaTest<Iroha2Client>() {
                     QueryBuilder.findAllPeers()
                         .account(ALICE_ACCOUNT_ID)
                         .buildSigned(ALICE_KEYPAIR)
-                        .let { Iroha2Client(container.getApiUrl()).sendQuery(it) }
+                        .let {
+                            Iroha2Client(
+                                container.getApiUrl(),
+                                container.getTelemetryUrl(),
+                                container.getP2pUrl(),
+                            ).sendQuery(it)
+                        }
                         .also { peers -> assertEquals(peers.size, peersCount) }
                         .also { return@repeat }
                 }
@@ -103,17 +124,23 @@ class PeerTest : IrohaTest<Iroha2Client>() {
         }
     }
 
+    @Test
+    @WithIroha([DefaultGenesis::class], amount = PEER_AMOUNT)
+    fun `round-robin load balancing test`(): Unit = runBlocking {
+        repeat(PEER_AMOUNT + 1) {
+            assertEquals(findDomain(DEFAULT_DOMAIN_ID).id, DEFAULT_DOMAIN_ID)
+        }
+    }
+
     private fun startNewContainer(
         keyPair: KeyPair,
         alias: String,
-        ports: List<Int>
     ): IrohaContainer {
         return IrohaContainer {
             this.waitStrategy = false
             this.keyPair = keyPair
-            this.ports = ports
             this.alias = alias
-            this.networkToJoin = containers.first().network
+            this.networkToJoin = containers.first().network ?: throw IrohaSdkException("Container network not found")
             this.genesis = DefaultGenesis::class.createInstance()
             this.trustedPeers = containers.map { it.extractPeerId() }
         }.also { it.start() }
@@ -122,7 +149,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun isPeerAvailable(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ): Boolean {
         return QueryBuilder.findAllPeers()
             .account(ALICE_ACCOUNT_ID)
@@ -130,14 +157,15 @@ class PeerTest : IrohaTest<Iroha2Client>() {
             .let { query ->
                 client.sendQuery(query)
             }.any { peer ->
-                peer.id.address == address && peer.id.publicKey.payload.contentEquals(payload)
+                val peerAddr = peer.id.address.cast<SocketAddr.Host>().socketAddrHost
+                "${peerAddr.host}:${peerAddr.port}" == address && peer.id.publicKey.payload.contentEquals(payload)
             }
     }
 
     private suspend fun unregisterPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -151,7 +179,7 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     private suspend fun registerPeer(
         address: String,
         payload: ByteArray,
-        keyPair: KeyPair = ALICE_KEYPAIR
+        keyPair: KeyPair = ALICE_KEYPAIR,
     ) {
         client.sendTransaction {
             account(ALICE_ACCOUNT_ID)
@@ -163,7 +191,13 @@ class PeerTest : IrohaTest<Iroha2Client>() {
     }
 
     private fun IrohaContainer.extractPeerId() = PeerId(
-        this.getP2pUrl().toString(),
-        this.config.keyPair.public.toIrohaPublicKey()
+        SocketAddr.Host(SocketAddrHost(this.getP2pUrl().host, this.getP2pUrl().port)),
+        this.config.keyPair.public.toIrohaPublicKey(),
     )
+
+    private suspend fun findDomain(id: DomainId = DEFAULT_DOMAIN_ID) = QueryBuilder
+        .findDomainById(id)
+        .account(super.account)
+        .buildSigned(super.keyPair)
+        .let { client.sendQuery(it) }
 }

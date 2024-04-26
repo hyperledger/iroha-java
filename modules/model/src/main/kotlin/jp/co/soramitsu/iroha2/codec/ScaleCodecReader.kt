@@ -67,16 +67,6 @@ class ScaleCodecReader(private val source: ByteArray) {
         return scaleReader.read(this)
     }
 
-    /**
-     * Read Nullable Boolean
-     */
-    fun readNullable(_long: Long.Companion): Long? {
-        return when (readBoolean()) {
-            true -> readUint32()
-            else -> null
-        }
-    }
-
     fun <T> readNullable(scaleReader: ScaleReader<T>): T? {
         if (scaleReader is BoolReader || scaleReader is BoolNullableReader) {
             return BOOL_NULLABLE.read(this) as T?
@@ -87,7 +77,7 @@ class ScaleCodecReader(private val source: ByteArray) {
         }
     }
 
-    inline fun <reified T : Number> readNullable(): T? {
+    inline fun <reified T : Any> readNullable(): T? {
         return when (T::class) {
             Long::class -> when (readBoolean()) {
                 true -> readUint32()
@@ -95,6 +85,10 @@ class ScaleCodecReader(private val source: ByteArray) {
             } as T?
             Int::class -> when (readBoolean()) {
                 true -> readUint16()
+                else -> null
+            } as T?
+            String::class -> when (readBoolean()) {
+                true -> readString()
                 else -> null
             } as T?
             else -> throw IllegalArgumentException("Unsupported value type `${T::class.qualifiedName}`")

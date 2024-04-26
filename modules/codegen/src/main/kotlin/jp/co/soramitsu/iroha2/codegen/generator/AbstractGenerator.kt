@@ -55,10 +55,12 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
     open fun implCompanions(blueprint: T, clazz: TypeSpec.Builder): TypeSpec.Builder {
         val thisType = ClassName(
             blueprint.packageName,
-            blueprint.className
+            blueprint.className,
         ).let { className ->
             when (blueprint.source is CompositeType && blueprint.source.generics.isNotEmpty()) {
-                true -> className.parameterizedBy(WildcardTypeName.producerOf(ANY_TYPE))
+                true -> className.parameterizedBy(
+                    blueprint.source.generics.map { WildcardTypeName.producerOf(ANY_TYPE) },
+                )
                 false -> className
             }
         }
@@ -101,7 +103,7 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
         val codeBlocks = blueprint.properties.map {
             resolveScaleWriteImpl(
                 it.original,
-                CodeBlock.of("instance.%N", it.name)
+                CodeBlock.of("instance.%N", it.name),
             )
         }
         for (cb in codeBlocks) {
@@ -136,12 +138,12 @@ abstract class AbstractGenerator<T : Blueprint<*>> {
             constructorBuilder.addParameter(
                 ParameterSpec.builder(name, type)
                     .let { it.takeIf { type.isNullable }?.defaultValue("null") ?: it }
-                    .build()
+                    .build(),
             )
             clazz.addProperty(
                 PropertySpec.builder(name, type)
                     .initializer(name)
-                    .build()
+                    .build(),
             )
         }
         clazz.primaryConstructor(constructorBuilder.build())

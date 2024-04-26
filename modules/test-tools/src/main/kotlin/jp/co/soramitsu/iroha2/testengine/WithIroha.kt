@@ -1,8 +1,7 @@
 package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
-import jp.co.soramitsu.iroha2.generated.core.genesis.GenesisTransaction
-import jp.co.soramitsu.iroha2.generated.core.genesis.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
 import org.junit.jupiter.api.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
@@ -20,10 +19,33 @@ import kotlin.reflect.KClass
 @Inherited
 annotation class WithIroha(
     val sources: Array<KClass<out Genesis>> = [EmptyGenesis::class],
-    val amount: Int = 1
+    val configs: Array<String> = [],
+    val source: String = "",
+    val amount: Int = 1,
+    val fetchSize: Int = 10,
+    val executorSource: String = "",
+)
+
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Test
+@Inherited
+annotation class WithIrohaManual(
+    val apiUrls: Array<String> = [],
+    val telemetryUrls: Array<String> = [],
+    val peerUrls: Array<String> = [],
+    val account: String = "",
+    val publicKey: String = "",
+    val privateKey: String = "",
+    val dockerComposeFile: String = "",
 )
 
 /**
  * Empty genesis with no instructions
  */
-open class EmptyGenesis : Genesis(RawGenesisBlock(listOf(GenesisTransaction(emptyList()))))
+open class EmptyGenesis : Genesis(
+    RawGenesisBlock(listOf(emptyList()), executorMode),
+)
+
+const val IROHA_CONFIG_DELIMITER = "="

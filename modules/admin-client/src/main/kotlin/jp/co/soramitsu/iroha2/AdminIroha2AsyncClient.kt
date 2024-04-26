@@ -1,30 +1,17 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.model.IrohaUrls
 import kotlinx.coroutines.future.future
-import java.net.URL
 
 /**
  * Extension of [AdminIroha2Client] for Java. Functionality for monitoring peers and configuration support
  */
 @Suppress("unused")
 class AdminIroha2AsyncClient @JvmOverloads constructor(
-    peerUrl: URL,
-    telemetryUrl: URL = URL(
-        peerUrl.protocol,
-        peerUrl.host,
-        DEFAULT_TELEMETRY_PORT,
-        peerUrl.file
-    ),
+    urls: List<IrohaUrls>,
     log: Boolean = false,
-    credentials: String? = null
-) : AdminIroha2Client(peerUrl, telemetryUrl, log, credentials) {
-
-    @JvmOverloads
-    constructor(
-        peerUrl: String,
-        telemetryUrl: String,
-        log: Boolean = false
-    ) : this(URL(peerUrl), URL(telemetryUrl), log)
+    credentials: String? = null,
+) : AdminIroha2Client(urls, log, credentials) {
 
     /**
      * Send health check request

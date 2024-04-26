@@ -17,5 +17,6 @@ data class PeerStatus(
     val txs_accepted: Long,
     val txs_rejected: Long,
     val uptime: Duration,
-    val view_changes: Long
+    val view_changes: Long,
+    val queue_size: Long,
 )

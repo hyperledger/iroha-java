@@ -11,6 +11,8 @@ class UByteReader : ScaleReader<Int> {
         val x = reader.readByte()
         return if (x < 0) {
             256 + x.toInt()
-        } else x.toInt()
+        } else {
+            x.toInt()
+        }
     }
 }

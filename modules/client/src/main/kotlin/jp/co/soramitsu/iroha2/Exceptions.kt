@@ -19,7 +19,7 @@ class WebSocketProtocolException(message: String? = null, cause: Throwable? = nu
 class IrohaClientException(
     message: String? = null,
     cause: Throwable? = null,
-    val status: HttpStatusCode? = null
+    val status: HttpStatusCode? = null,
 ) : IrohaSdkException(message, cause)
 
 /**
