@@ -1,12 +1,12 @@
 version: "3.8"
 
 services:
-  iroha:
+  iroha0:
     image: hyperledger/iroha:2.0.0-pre-rc.21
     platform: linux/amd64
     environment:
-      P2P_ADDRESS: iroha:1337
-      API_ADDRESS: iroha:8080
+      P2P_ADDRESS: iroha0:1337
+      API_ADDRESS: iroha0:8080
       CHAIN_ID: 00000000-0000-0000-0000-000000000000
       PUBLIC_KEY: ed01208BA62848CF767D72E7F7F4B9D2D7BA07FEE33760F79ABE5597A51520E292A0CB
       PRIVATE_KEY_ALGORITHM: ed25519
@@ -42,7 +42,6 @@ services:
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
     init: true
-    command: iroha
 
   iroha2:
     image: hyperledger/iroha:2.0.0-pre-rc.21
@@ -62,7 +61,6 @@ services:
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
     init: true
-    command: iroha
 
   iroha3:
     image: hyperledger/iroha:2.0.0-pre-rc.21
@@ -82,4 +80,3 @@ services:
     volumes:
       - "../modules/test-tools/src/main/resources:/config"
     init: true
-    command: iroha
