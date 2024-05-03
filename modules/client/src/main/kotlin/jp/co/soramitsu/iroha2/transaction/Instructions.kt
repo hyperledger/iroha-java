@@ -3,60 +3,82 @@ package jp.co.soramitsu.iroha2.transaction
 import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
-import jp.co.soramitsu.iroha2.asStringWithJson
-import jp.co.soramitsu.iroha2.asValue
-import jp.co.soramitsu.iroha2.cast
-import jp.co.soramitsu.iroha2.evaluatesTo
+import jp.co.soramitsu.iroha2.asNumeric
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.ActionOfTriggeringFilterBox
-import jp.co.soramitsu.iroha2.generated.Algorithm
+import jp.co.soramitsu.iroha2.generated.AccountMintBox
+import jp.co.soramitsu.iroha2.generated.Action
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetTransferBox
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.BurnExpr
-import jp.co.soramitsu.iroha2.generated.ConditionalExpr
+import jp.co.soramitsu.iroha2.generated.BurnBox
+import jp.co.soramitsu.iroha2.generated.BurnOfNumericAndAsset
+import jp.co.soramitsu.iroha2.generated.BurnOfPublicKeyAndAccount
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.ExecuteTriggerExpr
+import jp.co.soramitsu.iroha2.generated.ExecuteTrigger
 import jp.co.soramitsu.iroha2.generated.Fail
-import jp.co.soramitsu.iroha2.generated.GrantExpr
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.GrantBox
+import jp.co.soramitsu.iroha2.generated.GrantOfPermissionTokenAndAccount
+import jp.co.soramitsu.iroha2.generated.GrantOfRoleIdAndAccount
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
-import jp.co.soramitsu.iroha2.generated.MintExpr
+import jp.co.soramitsu.iroha2.generated.MetadataValueBox
+import jp.co.soramitsu.iroha2.generated.MintBox
+import jp.co.soramitsu.iroha2.generated.MintOfNumericAndAsset
+import jp.co.soramitsu.iroha2.generated.MintOfPublicKeyAndAccount
+import jp.co.soramitsu.iroha2.generated.MintOfSignatureCheckConditionAndAccount
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
 import jp.co.soramitsu.iroha2.generated.NewRole
-import jp.co.soramitsu.iroha2.generated.PairExpr
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.RegisterExpr
-import jp.co.soramitsu.iroha2.generated.RegistrableBox
-import jp.co.soramitsu.iroha2.generated.RemoveKeyValueExpr
+import jp.co.soramitsu.iroha2.generated.RegisterBox
+import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
+import jp.co.soramitsu.iroha2.generated.RegisterOfAsset
+import jp.co.soramitsu.iroha2.generated.RegisterOfAssetDefinition
+import jp.co.soramitsu.iroha2.generated.RegisterOfDomain
+import jp.co.soramitsu.iroha2.generated.RegisterOfPeer
+import jp.co.soramitsu.iroha2.generated.RegisterOfRole
+import jp.co.soramitsu.iroha2.generated.RegisterOfTrigger
+import jp.co.soramitsu.iroha2.generated.RemoveKeyValueBox
+import jp.co.soramitsu.iroha2.generated.RemoveKeyValueOfAsset
 import jp.co.soramitsu.iroha2.generated.Repeats
-import jp.co.soramitsu.iroha2.generated.RevokeExpr
+import jp.co.soramitsu.iroha2.generated.RevokeBox
+import jp.co.soramitsu.iroha2.generated.RevokeOfPermissionTokenAndAccount
+import jp.co.soramitsu.iroha2.generated.RevokeOfRoleIdAndAccount
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.SequenceExpr
-import jp.co.soramitsu.iroha2.generated.SetKeyValueExpr
+import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
+import jp.co.soramitsu.iroha2.generated.SetKeyValueOfAccount
+import jp.co.soramitsu.iroha2.generated.SetKeyValueOfAsset
+import jp.co.soramitsu.iroha2.generated.SetKeyValueOfAssetDefinition
+import jp.co.soramitsu.iroha2.generated.SetKeyValueOfDomain
+import jp.co.soramitsu.iroha2.generated.SetKeyValueOfTrigger
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.TransferExpr
+import jp.co.soramitsu.iroha2.generated.TransferBox
+import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndDomainIdAndAccount
+import jp.co.soramitsu.iroha2.generated.TransferOfAssetAndNumericAndAccount
+import jp.co.soramitsu.iroha2.generated.Trigger
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
-import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
-import jp.co.soramitsu.iroha2.generated.UnregisterExpr
-import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
+import jp.co.soramitsu.iroha2.generated.UnregisterBox
+import jp.co.soramitsu.iroha2.generated.UnregisterOfAccount
+import jp.co.soramitsu.iroha2.generated.UnregisterOfAsset
+import jp.co.soramitsu.iroha2.generated.UnregisterOfDomain
+import jp.co.soramitsu.iroha2.generated.UnregisterOfPeer
+import jp.co.soramitsu.iroha2.generated.UnregisterOfRole
+import jp.co.soramitsu.iroha2.generated.UnregisterOfTrigger
 import jp.co.soramitsu.iroha2.generated.WasmSmartContract
-import jp.co.soramitsu.iroha2.toSocketAddr
 import java.math.BigDecimal
 
 /**
@@ -71,9 +93,9 @@ object Instructions {
     fun registerRole(
         roleId: RoleId,
         vararg tokens: PermissionToken,
-    ) = registerSome {
-        RegistrableBox.Role(NewRole(Role(roleId, tokens.toList())))
-    }
+    ) = InstructionBox.Register(
+        RegisterBox.Role(RegisterOfRole(NewRole(Role(roleId, tokens.toList())))),
+    )
 
     /**
      * Register an account
@@ -83,137 +105,77 @@ object Instructions {
         id: AccountId,
         signatories: List<PublicKey>,
         metadata: Metadata = Metadata(mapOf()),
-    ) = registerSome {
-        RegistrableBox.Account(NewAccount(id, signatories, metadata))
-    }
-
-    /**
-     * Register a time trigger
-     */
-    fun registerTimeTrigger(
-        triggerId: TriggerId,
-        isi: List<InstructionExpr>,
-        repeats: Repeats,
-        accountId: AccountId,
-        filter: TimeEventFilter,
-        metadata: Metadata,
-    ) = registerSome {
-        RegistrableBox.Trigger(
-            TriggerOfTriggeringFilterBox(
-                triggerId,
-                ActionOfTriggeringFilterBox(
-                    Executable.Instructions(isi),
-                    repeats,
-                    accountId,
-                    TriggeringFilterBox.Time(filter),
-                    metadata,
-                ),
-            ),
-        )
-    }
-
-    /**
-     * Register an executable trigger
-     */
-    fun registerExecutableTrigger(
-        triggerId: TriggerId,
-        isi: List<InstructionExpr>,
-        repeats: Repeats,
-        accountId: AccountId,
-        metadata: Metadata,
-    ) = registerSome {
-        RegistrableBox.Trigger(
-            TriggerOfTriggeringFilterBox(
-                triggerId,
-                ActionOfTriggeringFilterBox(
-                    Executable.Instructions(isi),
-                    repeats,
-                    accountId,
-                    Filters.executeTrigger(triggerId, accountId),
-                    metadata,
-                ),
-            ),
-        )
-    }
-
-    /**
-     * Register an event trigger
-     */
-    fun registerEventTrigger(
-        triggerId: TriggerId,
-        isi: List<InstructionExpr>,
-        repeats: Repeats,
-        accountId: AccountId,
-        metadata: Metadata,
-        filter: TriggeringFilterBox,
-    ) = registerSome {
-        RegistrableBox.Trigger(
-            TriggerOfTriggeringFilterBox(
-                triggerId,
-                ActionOfTriggeringFilterBox(
-                    Executable.Instructions(isi),
-                    repeats,
-                    accountId,
-                    filter,
-                    metadata,
-                ),
-            ),
-        )
-    }
+    ) = InstructionBox.Register(
+        RegisterBox.Account(RegisterOfAccount(NewAccount(id, signatories, metadata))),
+    )
 
     /**
      * Register a WASM trigger
      */
-    fun registerWasmTrigger(
+    fun registerTrigger(
         triggerId: TriggerId,
         wasm: ByteArray,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringFilterBox,
-    ) = registerSome {
-        RegistrableBox.Trigger(
-            TriggerOfTriggeringFilterBox(
-                triggerId,
-                ActionOfTriggeringFilterBox(
-                    Executable.Wasm(WasmSmartContract(wasm)),
-                    repeats,
-                    accountId,
-                    filter,
-                    metadata,
+        filter: TriggeringEventFilterBox,
+    ) = InstructionBox.Register(
+        RegisterBox.Trigger(
+            RegisterOfTrigger(
+                Trigger(
+                    triggerId,
+                    Action(Executable.Wasm(WasmSmartContract(wasm)), repeats, accountId, filter, metadata),
                 ),
             ),
-        )
-    }
+        ),
+    )
 
     /**
-     * Register a pre-commit trigger to run after every transaction
+     * Register a instructions trigger to run after every transaction
      */
-    fun registerPreCommitTrigger(
+    fun registerTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionExpr>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-    ) = registerSome {
-        RegistrableBox.Trigger(
-            TriggerOfTriggeringFilterBox(
-                triggerId,
-                ActionOfTriggeringFilterBox(
-                    Executable.Instructions(isi),
-                    repeats,
-                    accountId,
-                    TriggeringFilterBox.Time(EventFilters.timeEventFilter()),
-                    metadata,
+        filter: TimeEventFilter,
+    ) = registerTrigger(
+        triggerId,
+        isi,
+        repeats,
+        accountId,
+        metadata,
+        TriggeringEventFilterBox.Time(TimeEventFilter(filter.executionTime)),
+    )
+
+    /**
+     * Register a instructions trigger to run after every transaction
+     */
+    fun registerTrigger(
+        triggerId: TriggerId,
+        isi: List<InstructionBox>,
+        repeats: Repeats,
+        accountId: AccountId,
+        metadata: Metadata,
+        filter: TriggeringEventFilterBox,
+    ) = InstructionBox.Register(
+        RegisterBox.Trigger(
+            RegisterOfTrigger(
+                Trigger(
+                    triggerId,
+                    Action(Executable.Instructions(isi), repeats, accountId, filter, metadata),
                 ),
             ),
-        )
-    }
+        ),
+    )
 
     /**
      * Unregister a trigger
      */
-    fun unregisterTrigger(id: TriggerId) = unregisterSome { IdBox.TriggerId(id) }
+    fun unregisterTrigger(id: TriggerId) = InstructionBox.Unregister(
+        UnregisterBox.Trigger(UnregisterOfTrigger(id)),
+    )
 
     /**
      * Unregister a trigger
@@ -221,29 +183,27 @@ object Instructions {
     fun unregisterTrigger(
         triggerName: String,
         domainId: DomainId? = null,
-    ) = unregisterSome {
-        IdBox.TriggerId(TriggerId(domainId, triggerName.asName()))
-    }
+    ) = unregisterTrigger(TriggerId(domainId, triggerName.asName()))
 
     /**
      * Unregister an asset
      */
-    fun unregisterAsset(id: AssetId) = unregisterSome { IdBox.AssetId(id) }
+    fun unregisterAsset(id: AssetId) = InstructionBox.Unregister(UnregisterBox.Asset(UnregisterOfAsset(id)))
 
     /**
      * Unregister an account
      */
-    fun unregisterAccount(id: AccountId) = unregisterSome { IdBox.AccountId(id) }
+    fun unregisterAccount(id: AccountId) = InstructionBox.Unregister(UnregisterBox.Account(UnregisterOfAccount(id)))
 
     /**
      * Unregister a domain
      */
-    fun unregisterDomain(id: DomainId) = unregisterSome { IdBox.DomainId(id) }
+    fun unregisterDomain(id: DomainId) = InstructionBox.Unregister(UnregisterBox.Domain(UnregisterOfDomain(id)))
 
     /**
      * Unregister a role
      */
-    fun unregisterRole(id: RoleId) = unregisterSome { IdBox.RoleId(id) }
+    fun unregisterRole(id: RoleId) = InstructionBox.Unregister(UnregisterBox.Role(UnregisterOfRole(id)))
 
     /**
      * Register an asset
@@ -254,18 +214,21 @@ object Instructions {
         assetValueType: AssetValueType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely(),
-    ) = registerSome {
-        RegistrableBox.AssetDefinition(
-            NewAssetDefinition(id, assetValueType, mintable, metadata = metadata),
-        )
-    }
+        logo: IpfsPath? = null,
+    ) = InstructionBox.Register(
+        RegisterBox.AssetDefinition(
+            RegisterOfAssetDefinition(
+                NewAssetDefinition(id, assetValueType, mintable, logo, metadata),
+            ),
+        ),
+    )
 
     /**
      * Register an asset
      */
-    fun registerAsset(id: AssetId, assetValue: AssetValue) = registerSome {
-        RegistrableBox.Asset(Asset(id, assetValue))
-    }
+    fun registerAsset(id: AssetId, assetValue: AssetValue) = InstructionBox.Register(
+        RegisterBox.Asset(RegisterOfAsset(Asset(id, assetValue))),
+    )
 
     /**
      * Register a domain
@@ -273,39 +236,27 @@ object Instructions {
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
-        metadata: Map<Name, Value> = mapOf(),
+        metadata: Map<Name, MetadataValueBox> = mapOf(),
         logo: IpfsPath? = null,
-    ) = registerSome {
-        RegistrableBox.Domain(NewDomain(domainId, logo, Metadata(metadata)))
-    }
+    ) = InstructionBox.Register(
+        RegisterBox.Domain(RegisterOfDomain(NewDomain(domainId, logo, Metadata(metadata)))),
+    )
 
     /**
      * Register a peer
      */
-    @JvmOverloads
     fun registerPeer(
-        address: String,
-        payload: ByteArray,
-        digestFunction: Algorithm = Algorithm.Ed25519(),
-    ) = registerSome {
-        RegistrableBox.Peer(
-            Peer(PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload))),
-        )
-    }
+        peerId: PeerId,
+    ) = InstructionBox.Register(
+        RegisterBox.Peer(RegisterOfPeer(Peer(peerId))),
+    )
 
     /**
      * Unregister a peer
      */
-    @JvmOverloads
-    fun unregisterPeer(
-        address: String,
-        payload: ByteArray,
-        digestFunction: Algorithm = Algorithm.Ed25519(),
-    ) = unregisterSome {
-        IdBox.PeerId(
-            PeerId(address.toSocketAddr(), PublicKey(digestFunction, payload)),
-        )
-    }
+    fun unregisterPeer(peerId: PeerId) = InstructionBox.Unregister(
+        UnregisterBox.Peer(UnregisterOfPeer(peerId)),
+    )
 
     /**
      * Set key/value for a given asset
@@ -313,12 +264,10 @@ object Instructions {
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: Value,
-    ) = InstructionExpr.SetKeyValue(
-        SetKeyValueExpr(
-            objectId = IdBox.AssetId(assetId).evaluatesTo(),
-            key = key.evaluatesTo(),
-            value = value.evaluatesTo(),
+        value: MetadataValueBox,
+    ) = InstructionBox.SetKeyValue(
+        SetKeyValueBox.Asset(
+            SetKeyValueOfAsset(assetId, key, value),
         ),
     )
 
@@ -328,12 +277,10 @@ object Instructions {
     fun setKeyValue(
         triggerId: TriggerId,
         key: Name,
-        value: Value,
-    ) = InstructionExpr.SetKeyValue(
-        SetKeyValueExpr(
-            objectId = IdBox.TriggerId(triggerId).evaluatesTo(),
-            key = key.evaluatesTo(),
-            value = value.evaluatesTo(),
+        value: MetadataValueBox,
+    ) = InstructionBox.SetKeyValue(
+        SetKeyValueBox.Trigger(
+            SetKeyValueOfTrigger(triggerId, key, value),
         ),
     )
 
@@ -343,37 +290,10 @@ object Instructions {
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: Value,
-    ) = InstructionExpr.SetKeyValue(
-        SetKeyValueExpr(
-            objectId = IdBox.AssetDefinitionId(definitionId).evaluatesTo(),
-            key = key.evaluatesTo(),
-            value = value.evaluatesTo(),
-        ),
-    )
-
-    /**
-     * Set key/value in the metadata of a given account
-     */
-    fun setKeyValue(
-        accountId: AccountId,
-        key: Name,
-        value: Value,
-    ) = InstructionExpr.SetKeyValue(
-        SetKeyValueExpr(
-            objectId = IdBox.AccountId(accountId).evaluatesTo(),
-            key = key.evaluatesTo(),
-            value = value.evaluatesTo(),
-        ),
-    )
-
-    /**
-     * Remove key/value from a given asset
-     */
-    fun removeKeyValue(assetId: AssetId, key: Name) = InstructionExpr.RemoveKeyValue(
-        RemoveKeyValueExpr(
-            objectId = IdBox.AssetId(assetId).evaluatesTo(),
-            key = key.evaluatesTo(),
+        value: MetadataValueBox,
+    ) = InstructionBox.SetKeyValue(
+        SetKeyValueBox.AssetDefinition(
+            SetKeyValueOfAssetDefinition(definitionId, key, value),
         ),
     )
 
@@ -383,76 +303,97 @@ object Instructions {
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: Value,
-    ) = InstructionExpr.SetKeyValue(
-        SetKeyValueExpr(
-            objectId = IdBox.DomainId(domainId).evaluatesTo(),
-            key = key.evaluatesTo(),
-            value = value.evaluatesTo(),
-        ),
+        value: MetadataValueBox,
+    ) = InstructionBox.SetKeyValue(
+        SetKeyValueBox.Domain(SetKeyValueOfDomain(domainId, key, value)),
+    )
+
+    /**
+     * Set key/value in the metadata of a given account
+     */
+    fun setKeyValue(
+        accountId: AccountId,
+        key: Name,
+        value: MetadataValueBox,
+    ) = InstructionBox.SetKeyValue(
+        SetKeyValueBox.Account(SetKeyValueOfAccount(accountId, key, value)),
+    )
+
+    /**
+     * Remove key/value from a given asset
+     */
+    fun removeKeyValue(assetId: AssetId, key: Name) = InstructionBox.RemoveKeyValue(
+        RemoveKeyValueBox.Asset(RemoveKeyValueOfAsset(assetId, key)),
     )
 
     /**
      * Execute a trigger
      */
-    fun executeTrigger(triggerId: TriggerId) = InstructionExpr.ExecuteTrigger(
-        ExecuteTriggerExpr(triggerId.evaluatesTo()),
-    )
+    fun executeTrigger(triggerId: TriggerId) = InstructionBox.ExecuteTrigger(ExecuteTrigger(triggerId))
 
     /**
      * Mint an asset of the [AssetValueType.Quantity] asset value type
      */
-    fun mintAsset(assetId: AssetId, quantity: Int) = mintSome(quantity.asValue(), assetId)
+    fun mintAsset(assetId: AssetId, quantity: Int) = InstructionBox.Mint(
+        MintBox.Asset(MintOfNumericAndAsset(quantity.asNumeric(), assetId)),
+    )
 
     /**
      * Mint an asset of the [AssetValueType.Fixed] asset value type
      */
-    fun mintAsset(assetId: AssetId, quantity: BigDecimal) = mintSome(quantity.asValue(), assetId)
+    fun mintAsset(assetId: AssetId, quantity: BigDecimal) = InstructionBox.Mint(
+        MintBox.Asset(MintOfNumericAndAsset(quantity.asNumeric(), assetId)),
+    )
 
     /**
      * Mint a public key
      */
-    fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = mintSome(
-        Value.PublicKey(pubKey),
-        IdBox.AccountId(accountId),
+    fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = InstructionBox.Mint(
+        MintBox.Account(AccountMintBox.PublicKey(MintOfPublicKeyAndAccount(pubKey, accountId))),
     )
 
     /**
      * Mint
      */
-    fun mintSignatureCheckCondition(accountId: AccountId, signature: SignatureCheckCondition) = mintSome(
-        Value.SignatureCheckCondition(signature),
-        IdBox.AccountId(accountId),
+    fun mintSignatureCheckCondition(accountId: AccountId, signature: SignatureCheckCondition) = InstructionBox.Mint(
+        MintBox.Account(
+            AccountMintBox.SignatureCheckCondition(
+                MintOfSignatureCheckConditionAndAccount(signature, accountId),
+            ),
+        ),
     )
 
     /**
      * Burn an asset of the [AssetValueType.Quantity] asset value type
      */
-    fun burnAsset(assetId: AssetId, value: Int) = burnSome(value.asValue(), IdBox.AssetId(assetId))
+    fun burnAsset(assetId: AssetId, value: Int) = InstructionBox.Burn(
+        BurnBox.Asset(BurnOfNumericAndAsset(value.asNumeric(), assetId)),
+    )
 
     /**
      * Burn an asset of the [AssetValueType.Fixed] asset value type
      */
-    fun burnAsset(assetId: AssetId, value: BigDecimal) = burnSome(value.asValue(), IdBox.AssetId(assetId))
+    fun burnAsset(assetId: AssetId, value: BigDecimal) = InstructionBox.Burn(
+        BurnBox.Asset(BurnOfNumericAndAsset(value.asNumeric(), assetId)),
+    )
 
     /**
      * Burn a public key
      */
-    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = burnSome(
-        Value.PublicKey(pubKey),
-        IdBox.AccountId(accountId),
+    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = InstructionBox.Burn(
+        BurnBox.AccountPublicKey(BurnOfPublicKeyAndAccount(pubKey, accountId)),
     )
 
     fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     /**
-     * Grant an account the [Permissions.CanTransferUserAssetsToken] permission
+     * Grant an account the custom permission
      */
     fun grantPermissionToken(
         permission: Permissions,
-        payload: String,
-        target: AccountId,
-    ) = grantSome(target, PermissionToken(permission.type, payload.asStringWithJson()).asValue())
+        payload: String = "",
+        destinationId: AccountId,
+    ) = grantPermissionToken(permission.type.string, payload, destinationId)
 
     /**
      * Grant an account the custom permission
@@ -460,74 +401,57 @@ object Instructions {
     fun grantPermissionToken(
         permission: String,
         payload: String = "",
-        target: AccountId,
-    ) = grantSome(target, PermissionToken(permission.asName(), payload.asStringWithJson()).asValue())
+        destinationId: AccountId,
+    ) = InstructionBox.Grant(
+        GrantBox.PermissionToken(
+            GrantOfPermissionTokenAndAccount(
+                PermissionToken(permission.asName(), payload.asJsonString()),
+                destinationId,
+            ),
+        ),
+    )
 
     /**
      * Grant an account a given role.
      */
-    fun grantRole(roleId: RoleId, accountId: AccountId) = InstructionExpr.Grant(
-        GrantExpr(
-            destinationId = accountId.evaluatesTo().cast(),
-            `object` = IdBox.RoleId(roleId).evaluatesTo().cast(),
-        ),
+    fun grantRole(roleId: RoleId, destinationId: AccountId) = InstructionBox.Grant(
+        GrantBox.Role(GrantOfRoleIdAndAccount(roleId, destinationId)),
     )
 
     /**
      * Transfer an asset from the identifiable source.
      */
-    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AccountId) = InstructionExpr.Transfer(
-        TransferExpr(
-            sourceId = IdBox.AssetId(sourceId).evaluatesTo(),
-            `object` = value.asValue().evaluatesTo(),
-            destinationId = IdBox.AccountId(destinationId).evaluatesTo(),
+    fun transferAsset(sourceId: AssetId, value: Int, destinationId: AccountId) = InstructionBox.Transfer(
+        TransferBox.Asset(
+            AssetTransferBox.Numeric(
+                TransferOfAssetAndNumericAndAccount(sourceId, value.asNumeric(), destinationId),
+            ),
         ),
     )
 
     /**
      * Transfer domain ownership.
      */
-    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) =
-        InstructionExpr.Transfer(
-            TransferExpr(
-                sourceId = IdBox.AccountId(sourceId).evaluatesTo(),
-                `object` = Value.Id(value).evaluatesTo(),
-                destinationId = IdBox.AccountId(destinationId).evaluatesTo(),
+    fun transferDomainOwnership(sourceId: AccountId, domainId: DomainId, destinationId: AccountId) =
+        InstructionBox.Transfer(
+            TransferBox.Domain(
+                TransferOfAccountAndDomainIdAndAccount(sourceId, domainId, destinationId),
             ),
         )
 
     /**
-     * Evaluate one instruction if a [condition] is met and another one otherwise.
-     */
-    fun `if`(
-        condition: Boolean,
-        then: InstructionExpr,
-        otherwise: InstructionExpr,
-    ) = InstructionExpr.If(ConditionalExpr(condition.evaluatesTo(), then, otherwise))
-
-    /**
-     * PairExpr two instructions together.
-     */
-    fun pair(left: InstructionExpr, right: InstructionExpr) = InstructionExpr.Pair(PairExpr(left, right))
-
-    /**
-     * Combine multiple [instructions] into a sequence.
-     */
-    fun sequence(instructions: List<InstructionExpr>) = InstructionExpr.Sequence(SequenceExpr(instructions))
-
-    /**
      * Fail a transaction with a given [message].
      */
-    fun fail(message: String) = InstructionExpr.Fail(Fail(message))
+    fun fail(message: String) = InstructionBox.Fail(Fail(message))
 
     /**
      * Revoke an account the [Permissions.CanSetKeyValueUserAssetsToken] permission
      */
-    fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId): InstructionExpr {
+    fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueUserAssetsToken.type,
-                payload = assetId.asJsonString().asStringWithJson(),
+                payload = assetId.asJsonString().asJsonString(),
             )
         }
     }
@@ -535,11 +459,11 @@ object Instructions {
     /**
      * Revoke an account the [Permissions.CanSetKeyValueInUserAccount] permission
      */
-    fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId): InstructionExpr {
+    fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueInUserAccount.type,
-                payload = accountId.asJsonString().asStringWithJson(),
+                payload = accountId.asJsonString().asJsonString(),
             )
         }
     }
@@ -547,24 +471,28 @@ object Instructions {
     /**
      * Revoke an account the [Permissions.CanSetKeyValueInDomain] permission
      */
-    fun grantSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionExpr {
-        return grantSome(
-            target,
-            PermissionToken(
-                definitionId = Permissions.CanSetKeyValueInDomain.type,
-                payload = domainId.asJsonString().asStringWithJson(),
-            ).asValue(),
+    fun grantSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionBox {
+        return InstructionBox.Grant(
+            GrantBox.PermissionToken(
+                GrantOfPermissionTokenAndAccount(
+                    PermissionToken(
+                        definitionId = Permissions.CanSetKeyValueInDomain.type,
+                        payload = domainId.asJsonString().asJsonString(),
+                    ),
+                    target,
+                ),
+            ),
         )
     }
 
     /**
      * Revoke an account the [Permissions.CanSetKeyValueInDomain] permission
      */
-    fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionExpr {
+    fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             PermissionToken(
                 definitionId = Permissions.CanSetKeyValueInDomain.type,
-                payload = domainId.asJsonString().asStringWithJson(),
+                payload = domainId.asJsonString().asJsonString(),
             )
         }
     }
@@ -572,60 +500,18 @@ object Instructions {
     /**
      * Revoke an account a given role.
      */
-    fun revokeRole(roleId: RoleId, accountId: AccountId): InstructionExpr {
-        return InstructionExpr.Revoke(
-            RevokeExpr(
-                destinationId = accountId.evaluatesTo().cast(),
-                `object` = IdBox.RoleId(roleId).evaluatesTo().cast(),
-            ),
+    fun revokeRole(roleId: RoleId, accountId: AccountId): InstructionBox {
+        return InstructionBox.Revoke(
+            RevokeBox.Role(RevokeOfRoleIdAndAccount(roleId, accountId)),
         )
     }
-
-    private inline fun unregisterSome(idBox: () -> IdBox) = InstructionExpr.Unregister(
-        UnregisterExpr(idBox().evaluatesTo()),
-    )
-
-    private inline fun registerSome(
-        regBox: () -> RegistrableBox,
-    ) = InstructionExpr.Register(RegisterExpr(regBox().evaluatesTo()))
-
-    private fun grantSome(accountId: AccountId, value: Value) = InstructionExpr.Grant(
-        GrantExpr(
-            `object` = value.evaluatesTo(),
-            destinationId = accountId.evaluatesTo(),
-        ),
-    )
 
     private inline fun revokeSome(
         accountId: AccountId,
         permissionToken: () -> PermissionToken,
-    ): InstructionExpr.Revoke {
-        return InstructionExpr.Revoke(
-            RevokeExpr(
-                destinationId = accountId.evaluatesTo(),
-                `object` = Value.PermissionToken(permissionToken()).evaluatesTo(),
-            ),
-        )
-    }
-
-    private fun burnSome(value: Value, idBox: IdBox) = InstructionExpr.Burn(
-        BurnExpr(
-            `object` = value.evaluatesTo(),
-            destinationId = idBox.evaluatesTo(),
-        ),
-    )
-
-    private fun mintSome(value: Value, idBox: IdBox) = InstructionExpr.Mint(
-        MintExpr(
-            `object` = value.evaluatesTo(),
-            destinationId = idBox.evaluatesTo(),
-        ),
-    )
-
-    private fun mintSome(value: Value, assetId: AssetId) = InstructionExpr.Mint(
-        MintExpr(
-            `object` = value.evaluatesTo(),
-            destinationId = IdBox.AssetId(assetId).evaluatesTo(),
+    ) = InstructionBox.Revoke(
+        RevokeBox.PermissionToken(
+            RevokeOfPermissionTokenAndAccount(permissionToken(), accountId),
         ),
     )
 }

@@ -24,9 +24,11 @@ import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.JsonString
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
+import jp.co.soramitsu.iroha2.generated.Numeric
 import jp.co.soramitsu.iroha2.generated.NumericValue
 import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.ParameterId
@@ -43,7 +45,6 @@ import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
-import jp.co.soramitsu.iroha2.generated.StringWithJson
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
@@ -648,10 +649,18 @@ fun String.toSnakeCase() = this
     .joinToString("_")
     .lowercase(Locale.getDefault())
 
-fun String.asStringWithJson() = StringWithJson(this)
+fun String.asJsonString() = JsonString(this)
 
-fun AssetId.asStringWithJson() = this.asJsonString().asStringWithJson()
+fun AssetId.asStringWithJson() = this.asJsonString().asJsonString()
 
-fun AccountId.asStringWithJson() = this.asJsonString().asStringWithJson()
+fun AccountId.asStringWithJson() = this.asJsonString().asJsonString()
 
-fun RoleId.asStringWithJson() = this.asJsonString().asStringWithJson()
+fun RoleId.asStringWithJson() = this.asJsonString().asJsonString()
+
+fun Int.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
+
+fun Long.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
+
+fun BigInteger.asNumeric() = Numeric(mantissa = this, scale = 0)
+
+fun BigDecimal.asNumeric() = Numeric(mantissa = this.unscaledValue(), scale = this.scale().toLong())

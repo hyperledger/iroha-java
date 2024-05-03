@@ -82,6 +82,18 @@
       }
     ]
   },
+  "AccountEventFilter": {
+    "Struct": [
+      {
+        "name": "id_matcher",
+        "type": "Option<AccountId>"
+      },
+      {
+        "name": "event_set",
+        "type": "AccountEventSet"
+      }
+    ]
+  },
   "AccountEventSet": {
     "Bitmap": {
       "repr": "u32",
@@ -132,18 +144,6 @@
         }
       ]
     }
-  },
-  "AccountEventFilter": {
-    "Struct": [
-      {
-        "name": "id_matcher",
-        "type": "Option<AccountId>"
-      },
-      {
-        "name": "event_set",
-        "type": "AccountEventSet"
-      }
-    ]
   },
   "AccountId": {
     "Struct": [
@@ -1592,6 +1592,14 @@
       }
     ]
   },
+  "GenesisTransactionBuilder": {
+    "Struct": [
+      {
+        "name": "isi",
+        "type": "Vec<InstructionBox>"
+      }
+    ]
+  },
   "Grant<PermissionToken, Account>": {
     "Struct": [
       {
@@ -2497,9 +2505,6 @@
   "Option<NonZero<u64>>": {
     "Option": "NonZero<u64>"
   },
-  "Option<Option<u64>>": {
-    "Option": "Option<u64>"
-  },
   "Option<ParameterId>": {
     "Option": "ParameterId"
   },
@@ -3045,6 +3050,18 @@
       {
         "name": "filter",
         "type": "GenericPredicateBox<QueryOutputPredicate>"
+      }
+    ]
+  },
+  "RawGenesisBlock": {
+    "Struct": [
+      {
+        "name": "transactions",
+        "type": "Vec<GenesisTransactionBuilder>"
+      },
+      {
+        "name": "executor",
+        "type": "Executor"
       }
     ]
   },
@@ -4416,6 +4433,9 @@
   },
   "Vec<GenericPredicateBox<QueryOutputPredicate>>": {
     "Vec": "GenericPredicateBox<QueryOutputPredicate>"
+  },
+  "Vec<GenesisTransactionBuilder>": {
+    "Vec": "GenesisTransactionBuilder"
   },
   "Vec<InstructionBox>": {
     "Vec": "InstructionBox"

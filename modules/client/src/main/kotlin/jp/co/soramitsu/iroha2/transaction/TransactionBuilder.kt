@@ -6,21 +6,22 @@ import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.IpfsPath
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu32
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
+import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.Repeats
@@ -33,8 +34,7 @@ import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
-import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
@@ -47,14 +47,16 @@ import kotlin.random.nextLong
 
 class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
+    var chainId: ChainId?
     var accountId: AccountId?
-    val instructions: Lazy<ArrayList<InstructionExpr>>
+    val instructions: Lazy<ArrayList<InstructionBox>>
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
     var nonce: Long?
-    var metadata: Lazy<HashMap<Name, Value>>
+    var metadata: Lazy<HashMap<Name, MetadataValueBox>>
 
     init {
+        chainId = null
         accountId = null
         instructions = lazy { ArrayList() }
         creationTimeMillis = null
@@ -68,12 +70,12 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(domainId, accountName))
 
-    fun instructions(vararg instructions: InstructionExpr) = this.apply { this.instructions.value.addAll(instructions) }
+    fun instructions(vararg instructions: InstructionBox) = this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instructions(instructions: Iterable<InstructionExpr>) =
+    fun instructions(instructions: Iterable<InstructionBox>) =
         this.apply { this.instructions.value.addAll(instructions) }
 
-    fun instruction(instruction: InstructionExpr) = this.apply { this.instructions.value.add(instruction) }
+    fun instruction(instruction: InstructionBox) = this.apply { this.instructions.value.add(instruction) }
 
     fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
 
@@ -89,8 +91,9 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun buildSigned(vararg keyPairs: KeyPair): SignedTransaction {
         val payload = TransactionPayload(
+            checkNotNull(chainId) { "Chain ID is required" },
+            checkNotNull(accountId) { "Account Id is required" },
             creationTimeMillis ?: fallbackCreationTime(),
-            checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             Executable.Instructions(instructions.value),
             NonZeroOfu64(timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS),
             NonZeroOfu32(nonce ?: throw IrohaClientException("Nonce must not be null")),
@@ -113,20 +116,20 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerTimeTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionExpr>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         filter: TimeEventFilter,
         metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerTimeTrigger(
+            Instructions.registerTrigger(
                 triggerId,
                 isi,
                 repeats,
                 accountId,
-                filter,
                 metadata,
+                filter,
             ),
         )
     }
@@ -134,18 +137,19 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerExecutableTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionExpr>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerExecutableTrigger(
+            Instructions.registerTrigger(
                 triggerId,
                 isi,
                 repeats,
                 accountId,
                 metadata,
+                null,
             ),
         )
     }
@@ -153,14 +157,14 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerEventTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionExpr>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringFilterBox,
+        filter: TriggeringEventFilterBox,
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerEventTrigger(
+            Instructions.registerTrigger(
                 triggerId,
                 isi,
                 repeats,
@@ -178,10 +182,10 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringFilterBox,
+        filter: TriggeringEventFilterBox,
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerWasmTrigger(
+            Instructions.registerTrigger(
                 triggerId,
                 wasm,
                 repeats,
@@ -195,18 +199,19 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerPreCommitTrigger(
         triggerId: TriggerId,
-        isi: List<InstructionExpr>,
+        isi: List<InstructionBox>,
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerPreCommitTrigger(
+            Instructions.registerTrigger(
                 triggerId,
                 isi,
                 repeats,
                 accountId,
                 metadata,
+                null,
             ),
         )
     }
@@ -281,7 +286,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         mintable: Mintable = Mintable.Infinitely(),
     ) = this.apply {
         instructions.value.add(
-            Instructions.registerAssetDefinition(AssetDefinitionId(name, domainId), assetValueType, metadata, mintable),
+            Instructions.registerAssetDefinition(AssetDefinitionId(domainId, name), assetValueType, metadata, mintable),
         )
     }
 
@@ -293,37 +298,37 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun setKeyValue(
         assetId: AssetId,
         key: String,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key.asName(), value)) }
 
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
 
     fun setKeyValue(
         accountId: AccountId,
         key: Name,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
 
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
 
     fun setKeyValue(
         triggerId: TriggerId,
         key: Name,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(triggerId, key, value)) }
 
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: Value,
+        value: MetadataValueBox,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(domainId, key, value)) }
 
     fun removeKeyValue(
@@ -358,7 +363,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
-        metadata: Map<Name, Value> = mapOf(),
+        metadata: Map<Name, MetadataValueBox> = mapOf(),
         logo: IpfsPath? = null,
     ) = this.apply {
         instructions.value.add(
@@ -370,19 +375,11 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
     }
 
-    @JvmOverloads
-    fun registerPeer(
-        address: String,
-        payload: ByteArray,
-        algorithm: Algorithm = Algorithm.Ed25519(),
-    ) = this.apply { instructions.value.add(Instructions.registerPeer(address, payload, algorithm)) }
+    fun registerPeer(peerId: PeerId) = this.apply { instructions.value.add(Instructions.registerPeer(peerId)) }
 
-    @JvmOverloads
     fun unregisterPeer(
-        address: String,
-        payload: ByteArray,
-        algorithm: Algorithm = Algorithm.Ed25519(),
-    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(address, payload, algorithm)) }
+        peerId: PeerId,
+    ) = this.apply { instructions.value.add(Instructions.unregisterPeer(peerId)) }
 
     fun grantPermissionToken(permission: Permissions, payload: String, target: AccountId) = this.apply {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
@@ -414,20 +411,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))
     }
 
-    fun `if`(condition: Boolean, then: InstructionExpr, otherwise: InstructionExpr) = this.apply {
-        instructions.value.add(Instructions.`if`(condition, then, otherwise))
-    }
-
-    fun transferDomainOwnership(sourceId: AccountId, value: IdBox.DomainId, destinationId: AccountId) = this.apply {
+    fun transferDomainOwnership(sourceId: AccountId, value: DomainId, destinationId: AccountId) = this.apply {
         instructions.value.add(Instructions.transferDomainOwnership(sourceId, value, destinationId))
-    }
-
-    fun pair(left: InstructionExpr, right: InstructionExpr) = this.apply {
-        instructions.value.add(Instructions.pair(left, right))
-    }
-
-    fun sequence(vararg instructions: InstructionExpr) = this.apply {
-        this.instructions.value.add(Instructions.sequence(instructions.toList()))
     }
 
     fun fail(message: String) = this.apply {
