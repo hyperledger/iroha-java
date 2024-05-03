@@ -16,14 +16,14 @@ import kotlin.Unit
  * Generated from 'FindPermissionTokensByAccountId' regular structure
  */
 public data class FindPermissionTokensByAccountId(
-    public val id: EvaluatesTo<AccountId>,
+    public val id: AccountId,
 ) {
     public companion object :
         ScaleReader<FindPermissionTokensByAccountId>,
         ScaleWriter<FindPermissionTokensByAccountId> {
         override fun read(reader: ScaleCodecReader): FindPermissionTokensByAccountId = try {
             FindPermissionTokensByAccountId(
-                EvaluatesTo.read(reader) as EvaluatesTo<AccountId>,
+                AccountId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class FindPermissionTokensByAccountId(
 
         override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokensByAccountId): Unit =
             try {
-                EvaluatesTo.write(writer, instance.id)
+                AccountId.write(writer, instance.id)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

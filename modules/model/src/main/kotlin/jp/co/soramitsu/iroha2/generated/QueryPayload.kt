@@ -18,14 +18,14 @@ import kotlin.Unit
 public data class QueryPayload(
     public val authority: AccountId,
     public val query: QueryBox,
-    public val filter: GenericPredicateBox<ValuePredicate>,
+    public val filter: GenericPredicateBox<QueryOutputPredicate>,
 ) {
     public companion object : ScaleReader<QueryPayload>, ScaleWriter<QueryPayload> {
         override fun read(reader: ScaleCodecReader): QueryPayload = try {
             QueryPayload(
                 AccountId.read(reader),
                 QueryBox.read(reader),
-                GenericPredicateBox.read(reader) as GenericPredicateBox<ValuePredicate>,
+                GenericPredicateBox.read(reader) as GenericPredicateBox<QueryOutputPredicate>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -18,7 +18,7 @@ import kotlin.Unit
 public data class MetadataChangedOfDomainId(
     public val targetId: DomainId,
     public val key: Name,
-    public val `value`: Value,
+    public val `value`: MetadataValueBox,
 ) {
     public companion object :
         ScaleReader<MetadataChangedOfDomainId>,
@@ -27,7 +27,7 @@ public data class MetadataChangedOfDomainId(
             MetadataChangedOfDomainId(
                 DomainId.read(reader),
                 Name.read(reader),
-                Value.read(reader),
+                MetadataValueBox.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -36,7 +36,7 @@ public data class MetadataChangedOfDomainId(
         override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfDomainId): Unit = try {
             DomainId.write(writer, instance.targetId)
             Name.write(writer, instance.key)
-            Value.write(writer, instance.`value`)
+            MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

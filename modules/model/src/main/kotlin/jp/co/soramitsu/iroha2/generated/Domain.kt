@@ -21,7 +21,7 @@ public data class Domain(
     public val id: DomainId,
     public val accounts: Map<AccountId, Account>,
     public val assetDefinitions: Map<AssetDefinitionId, AssetDefinition>,
-    public val assetTotalQuantities: Map<AssetDefinitionId, NumericValue>,
+    public val assetTotalQuantities: Map<AssetDefinitionId, Numeric>,
     public val logo: IpfsPath? = null,
     public val metadata: Metadata,
     public val ownedBy: AccountId,
@@ -39,7 +39,7 @@ public data class Domain(
                 reader.readMap(
                     reader.readCompactInt(),
                     { AssetDefinitionId.read(reader) },
-                    { NumericValue.read(reader) },
+                    { Numeric.read(reader) },
                 ),
                 reader.readNullable(IpfsPath) as IpfsPath?,
                 Metadata.read(reader),
@@ -70,7 +70,7 @@ public data class Domain(
                 AssetDefinitionId.comparator(),
             ).forEach { (key, value) ->
                 AssetDefinitionId.write(writer, key)
-                NumericValue.write(writer, value)
+                Numeric.write(writer, value)
             }
             writer.writeNullable(IpfsPath, instance.logo)
             Metadata.write(writer, instance.metadata)

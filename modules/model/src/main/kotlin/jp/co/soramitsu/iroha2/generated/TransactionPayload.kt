@@ -19,30 +19,37 @@ import kotlin.collections.Map
  * Generated from 'TransactionPayload' regular structure
  */
 public data class TransactionPayload(
-    public val creationTimeMs: BigInteger,
+    public val chainId: ChainId,
     public val authority: AccountId,
+    public val creationTimeMs: BigInteger,
     public val instructions: Executable,
     public val timeToLiveMs: NonZeroOfu64? = null,
     public val nonce: NonZeroOfu32? = null,
-    public val metadata: Map<Name, Value>,
+    public val metadata: Map<Name, MetadataValueBox>,
 ) {
     public companion object : ScaleReader<TransactionPayload>, ScaleWriter<TransactionPayload> {
         override fun read(reader: ScaleCodecReader): TransactionPayload = try {
             TransactionPayload(
-                reader.readUint64(),
+                ChainId.read(reader),
                 AccountId.read(reader),
+                reader.readUint64(),
                 Executable.read(reader),
                 reader.readNullable(NonZeroOfu64) as NonZeroOfu64?,
                 reader.readNullable(NonZeroOfu32) as NonZeroOfu32?,
-                reader.readMap(reader.readCompactInt(), { Name.read(reader) }, { Value.read(reader) }),
+                reader.readMap(
+                    reader.readCompactInt(),
+                    { Name.read(reader) },
+                    { MetadataValueBox.read(reader) },
+                ),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransactionPayload): Unit = try {
-            writer.writeUint64(instance.creationTimeMs)
+            ChainId.write(writer, instance.chainId)
             AccountId.write(writer, instance.authority)
+            writer.writeUint64(instance.creationTimeMs)
             Executable.write(writer, instance.instructions)
             writer.writeNullable(NonZeroOfu64, instance.timeToLiveMs)
             writer.writeNullable(NonZeroOfu32, instance.nonce)
@@ -51,7 +58,7 @@ public data class TransactionPayload(
                 Name.comparator(),
             ).forEach { (key, value) ->
                 Name.write(writer, key)
-                Value.write(writer, value)
+                MetadataValueBox.write(writer, value)
             }
         } catch (ex: Exception) {
             throw wrapException(ex)

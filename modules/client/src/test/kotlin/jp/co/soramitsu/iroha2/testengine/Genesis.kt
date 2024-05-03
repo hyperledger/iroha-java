@@ -8,7 +8,6 @@ import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asString
-import jp.co.soramitsu.iroha2.asStringWithJson
 import jp.co.soramitsu.iroha2.asValue
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
@@ -17,7 +16,7 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
@@ -112,8 +111,8 @@ open class WithManyDomains : Genesis(
     }
 }
 
-fun registerDomains(count: Int): Array<InstructionExpr> {
-    val instructions = mutableListOf<InstructionExpr>()
+fun registerDomains(count: Int): Array<InstructionBox> {
+    val instructions = mutableListOf<InstructionBox>()
     for (i in 1..count) {
         instructions.add(Instructions.registerDomain(DomainId("NEW_DOMAIN$i".asName())))
     }
@@ -129,11 +128,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
             ROLE_ID,
             PermissionToken(
                 Permissions.CanSetKeyValueInUserAccount.type,
-                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asJsonString(),
             ),
             PermissionToken(
                 Permissions.CanRemoveKeyValueInUserAccount.type,
-                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asJsonString(),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
@@ -379,11 +378,11 @@ open class FatGenesis : Genesis(
             ROLE_ID,
             PermissionToken(
                 Permissions.CanSetKeyValueInUserAccount.type,
-                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asJsonString(),
             ),
             PermissionToken(
                 Permissions.CanRemoveKeyValueInUserAccount.type,
-                BOB_ACCOUNT_ID.asJsonString().asStringWithJson(),
+                BOB_ACCOUNT_ID.asJsonString().asJsonString(),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
@@ -403,7 +402,7 @@ open class FatGenesis : Genesis(
     ),
 ) {
     companion object {
-        val DEFINITION_ID = AssetDefinitionId("foo".asName(), DEFAULT_DOMAIN_ID)
+        val DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "foo".asName())
         val ASSET_ID = AssetId(DEFINITION_ID, BOB_ACCOUNT_ID)
         val ROLE_ID = RoleId("USER_METADATA_ACCESS".asName())
     }
@@ -416,7 +415,7 @@ open class BobCanUnregisterAnyRole : Genesis(
     rawGenesisBlock(
         Instructions.grantPermissionToken(
             permission = Permissions.CanUnregisterAnyRole.type.string,
-            target = BOB_ACCOUNT_ID,
+            destinationId = BOB_ACCOUNT_ID,
         ),
     ),
 )
@@ -424,7 +423,7 @@ open class BobCanUnregisterAnyRole : Genesis(
 /**
  * Return [RawGenesisBlock] with instructions to init genesis block
  */
-fun rawGenesisBlock(vararg isi: InstructionExpr) = RawGenesisBlock(
+fun rawGenesisBlock(vararg isi: InstructionBox) = RawGenesisBlock(
     listOf(
         Instructions.registerDomain(DEFAULT_DOMAIN_ID),
         Instructions.registerAccount(

@@ -17,8 +17,8 @@ import kotlin.Unit
  * Generated from 'Limits' regular structure
  */
 public data class Limits(
-    public val maxLen: Long,
-    public val maxEntryByteSize: Long,
+    public val capacity: Long,
+    public val maxEntryLen: Long,
 ) {
     public companion object : ScaleReader<Limits>, ScaleWriter<Limits> {
         override fun read(reader: ScaleCodecReader): Limits = try {
@@ -31,8 +31,8 @@ public data class Limits(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: Limits): Unit = try {
-            writer.writeUint32(instance.maxLen)
-            writer.writeUint32(instance.maxEntryByteSize)
+            writer.writeUint32(instance.capacity)
+            writer.writeUint32(instance.maxEntryLen)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

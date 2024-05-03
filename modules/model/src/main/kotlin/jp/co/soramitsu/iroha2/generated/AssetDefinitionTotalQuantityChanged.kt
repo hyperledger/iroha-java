@@ -17,7 +17,7 @@ import kotlin.Unit
  */
 public data class AssetDefinitionTotalQuantityChanged(
     public val assetDefinitionId: AssetDefinitionId,
-    public val totalAmount: NumericValue,
+    public val totalAmount: Numeric,
 ) {
     public companion object :
         ScaleReader<AssetDefinitionTotalQuantityChanged>,
@@ -25,7 +25,7 @@ public data class AssetDefinitionTotalQuantityChanged(
         override fun read(reader: ScaleCodecReader): AssetDefinitionTotalQuantityChanged = try {
             AssetDefinitionTotalQuantityChanged(
                 AssetDefinitionId.read(reader),
-                NumericValue.read(reader),
+                Numeric.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -33,7 +33,7 @@ public data class AssetDefinitionTotalQuantityChanged(
 
         override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionTotalQuantityChanged): Unit = try {
             AssetDefinitionId.write(writer, instance.assetDefinitionId)
-            NumericValue.write(writer, instance.totalAmount)
+            Numeric.write(writer, instance.totalAmount)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

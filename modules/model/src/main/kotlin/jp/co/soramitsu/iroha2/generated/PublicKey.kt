@@ -17,7 +17,7 @@ import kotlin.Unit
  * Generated from 'PublicKey' regular structure
  */
 public data class PublicKey(
-    public val digestFunction: Algorithm,
+    public val algorithm: Algorithm,
     public val payload: ByteArray,
 ) {
     public companion object : ScaleReader<PublicKey>, ScaleWriter<PublicKey> {
@@ -31,7 +31,7 @@ public data class PublicKey(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: PublicKey): Unit = try {
-            Algorithm.write(writer, instance.digestFunction)
+            Algorithm.write(writer, instance.algorithm)
             writer.writeAsList(instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)

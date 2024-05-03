@@ -17,13 +17,13 @@ import kotlin.Unit
  */
 public data class Parameter(
     public val id: ParameterId,
-    public val `val`: Value,
+    public val `val`: ParameterValueBox,
 ) {
     public companion object : ScaleReader<Parameter>, ScaleWriter<Parameter> {
         override fun read(reader: ScaleCodecReader): Parameter = try {
             Parameter(
                 ParameterId.read(reader),
-                Value.read(reader),
+                ParameterValueBox.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class Parameter(
 
         override fun write(writer: ScaleCodecWriter, instance: Parameter): Unit = try {
             ParameterId.write(writer, instance.id)
-            Value.write(writer, instance.`val`)
+            ParameterValueBox.write(writer, instance.`val`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

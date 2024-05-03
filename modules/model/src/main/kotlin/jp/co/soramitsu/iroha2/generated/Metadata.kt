@@ -18,24 +18,28 @@ import kotlin.collections.Map
  * Generated from 'Metadata' regular structure
  */
 public data class Metadata(
-    public val map: Map<Name, Value>,
+    public val sortedMapOfName: Map<Name, MetadataValueBox>,
 ) {
     public companion object : ScaleReader<Metadata>, ScaleWriter<Metadata> {
         override fun read(reader: ScaleCodecReader): Metadata = try {
             Metadata(
-                reader.readMap(reader.readCompactInt(), { Name.read(reader) }, { Value.read(reader) }),
+                reader.readMap(
+                    reader.readCompactInt(),
+                    { Name.read(reader) },
+                    { MetadataValueBox.read(reader) },
+                ),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: Metadata): Unit = try {
-            writer.writeCompact(instance.map.size)
-            instance.map.toSortedMap(
+            writer.writeCompact(instance.sortedMapOfName.size)
+            instance.sortedMapOfName.toSortedMap(
                 Name.comparator(),
             ).forEach { (key, value) ->
                 Name.write(writer, key)
-                Value.write(writer, value)
+                MetadataValueBox.write(writer, value)
             }
         } catch (ex: Exception) {
             throw wrapException(ex)

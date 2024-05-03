@@ -16,19 +16,19 @@ import kotlin.Unit
  * Generated from 'FindAccountsByName' regular structure
  */
 public data class FindAccountsByName(
-    public val name: EvaluatesTo<Name>,
+    public val name: Name,
 ) {
     public companion object : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName> {
         override fun read(reader: ScaleCodecReader): FindAccountsByName = try {
             FindAccountsByName(
-                EvaluatesTo.read(reader) as EvaluatesTo<Name>,
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit = try {
-            EvaluatesTo.write(writer, instance.name)
+            Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

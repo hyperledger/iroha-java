@@ -31,9 +31,6 @@ public sealed class InstructionType : ModelEnum {
         is Mint -> Mint.equals(this, other)
         is Burn -> Burn.equals(this, other)
         is Transfer -> Transfer.equals(this, other)
-        is If -> If.equals(this, other)
-        is Pair -> Pair.equals(this, other)
-        is Sequence -> Sequence.equals(this, other)
         is SetKeyValue -> SetKeyValue.equals(this, other)
         is RemoveKeyValue -> RemoveKeyValue.equals(this, other)
         is Grant -> Grant.equals(this, other)
@@ -52,9 +49,6 @@ public sealed class InstructionType : ModelEnum {
         is Mint -> Mint.hashCode()
         is Burn -> Burn.hashCode()
         is Transfer -> Transfer.hashCode()
-        is If -> If.hashCode()
-        is Pair -> Pair.hashCode()
-        is Sequence -> Sequence.hashCode()
         is SetKeyValue -> SetKeyValue.hashCode()
         is RemoveKeyValue -> RemoveKeyValue.hashCode()
         is Grant -> Grant.hashCode()
@@ -238,108 +232,6 @@ public sealed class InstructionType : ModelEnum {
     }
 
     /**
-     * 'If' variant
-     */
-    public class If : InstructionType() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.If>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.If> {
-            public const val DISCRIMINANT: Int = 5
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.If = try {
-                If()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.InstructionType.If,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.If, o2: Any?): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int = ".InstructionType.If".hashCode()
-        }
-    }
-
-    /**
-     * 'Pair' variant
-     */
-    public class Pair : InstructionType() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Pair>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Pair> {
-            public const val DISCRIMINANT: Int = 6
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Pair = try {
-                Pair()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Pair,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Pair, o2: Any?): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int = ".InstructionType.Pair".hashCode()
-        }
-    }
-
-    /**
-     * 'Sequence' variant
-     */
-    public class Sequence : InstructionType() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Sequence>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Sequence> {
-            public const val DISCRIMINANT: Int = 7
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Sequence = try {
-                Sequence()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Sequence,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Sequence, o2: Any?): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int = ".InstructionType.Sequence".hashCode()
-        }
-    }
-
-    /**
      * 'SetKeyValue' variant
      */
     public class SetKeyValue : InstructionType() {
@@ -348,7 +240,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 5
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.SetKeyValue = try {
                 SetKeyValue()
@@ -382,7 +274,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue> {
-            public const val DISCRIMINANT: Int = 9
+            public const val DISCRIMINANT: Int = 6
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.RemoveKeyValue = try {
                 RemoveKeyValue()
@@ -419,7 +311,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Grant>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Grant> {
-            public const val DISCRIMINANT: Int = 10
+            public const val DISCRIMINANT: Int = 7
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Grant = try {
                 Grant()
@@ -453,7 +345,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Revoke>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Revoke> {
-            public const val DISCRIMINANT: Int = 11
+            public const val DISCRIMINANT: Int = 8
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Revoke = try {
                 Revoke()
@@ -487,7 +379,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger> {
-            public const val DISCRIMINANT: Int = 12
+            public const val DISCRIMINANT: Int = 9
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.ExecuteTrigger = try {
                 ExecuteTrigger()
@@ -524,7 +416,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter> {
-            public const val DISCRIMINANT: Int = 13
+            public const val DISCRIMINANT: Int = 10
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.SetParameter = try {
                 SetParameter()
@@ -561,7 +453,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter> {
-            public const val DISCRIMINANT: Int = 14
+            public const val DISCRIMINANT: Int = 11
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.NewParameter = try {
                 NewParameter()
@@ -598,7 +490,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade> {
-            public const val DISCRIMINANT: Int = 15
+            public const val DISCRIMINANT: Int = 12
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Upgrade = try {
                 Upgrade()
@@ -632,7 +524,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Log>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Log> {
-            public const val DISCRIMINANT: Int = 16
+            public const val DISCRIMINANT: Int = 13
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Log = try {
                 Log()
@@ -666,7 +558,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Fail>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Fail> {
-            public const val DISCRIMINANT: Int = 17
+            public const val DISCRIMINANT: Int = 14
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Fail = try {
                 Fail()
@@ -701,19 +593,16 @@ public sealed class InstructionType : ModelEnum {
             2 -> Mint.read(reader)
             3 -> Burn.read(reader)
             4 -> Transfer.read(reader)
-            5 -> If.read(reader)
-            6 -> Pair.read(reader)
-            7 -> Sequence.read(reader)
-            8 -> SetKeyValue.read(reader)
-            9 -> RemoveKeyValue.read(reader)
-            10 -> Grant.read(reader)
-            11 -> Revoke.read(reader)
-            12 -> ExecuteTrigger.read(reader)
-            13 -> SetParameter.read(reader)
-            14 -> NewParameter.read(reader)
-            15 -> Upgrade.read(reader)
-            16 -> Log.read(reader)
-            17 -> Fail.read(reader)
+            5 -> SetKeyValue.read(reader)
+            6 -> RemoveKeyValue.read(reader)
+            7 -> Grant.read(reader)
+            8 -> Revoke.read(reader)
+            9 -> ExecuteTrigger.read(reader)
+            10 -> SetParameter.read(reader)
+            11 -> NewParameter.read(reader)
+            12 -> Upgrade.read(reader)
+            13 -> Log.read(reader)
+            14 -> Fail.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: InstructionType) {
@@ -724,19 +613,16 @@ public sealed class InstructionType : ModelEnum {
                 2 -> Mint.write(writer, instance as Mint)
                 3 -> Burn.write(writer, instance as Burn)
                 4 -> Transfer.write(writer, instance as Transfer)
-                5 -> If.write(writer, instance as If)
-                6 -> Pair.write(writer, instance as Pair)
-                7 -> Sequence.write(writer, instance as Sequence)
-                8 -> SetKeyValue.write(writer, instance as SetKeyValue)
-                9 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
-                10 -> Grant.write(writer, instance as Grant)
-                11 -> Revoke.write(writer, instance as Revoke)
-                12 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
-                13 -> SetParameter.write(writer, instance as SetParameter)
-                14 -> NewParameter.write(writer, instance as NewParameter)
-                15 -> Upgrade.write(writer, instance as Upgrade)
-                16 -> Log.write(writer, instance as Log)
-                17 -> Fail.write(writer, instance as Fail)
+                5 -> SetKeyValue.write(writer, instance as SetKeyValue)
+                6 -> RemoveKeyValue.write(writer, instance as RemoveKeyValue)
+                7 -> Grant.write(writer, instance as Grant)
+                8 -> Revoke.write(writer, instance as Revoke)
+                9 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
+                10 -> SetParameter.write(writer, instance as SetParameter)
+                11 -> NewParameter.write(writer, instance as NewParameter)
+                12 -> Upgrade.write(writer, instance as Upgrade)
+                13 -> Log.write(writer, instance as Log)
+                14 -> Fail.write(writer, instance as Fail)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

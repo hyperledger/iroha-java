@@ -17,13 +17,13 @@ import kotlin.Unit
  */
 public data class PermissionToken(
     public val definitionId: Name,
-    public val payload: StringWithJson,
+    public val payload: JsonString,
 ) {
     public companion object : ScaleReader<PermissionToken>, ScaleWriter<PermissionToken> {
         override fun read(reader: ScaleCodecReader): PermissionToken = try {
             PermissionToken(
                 Name.read(reader),
-                StringWithJson.read(reader),
+                JsonString.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class PermissionToken(
 
         override fun write(writer: ScaleCodecWriter, instance: PermissionToken): Unit = try {
             Name.write(writer, instance.definitionId)
-            StringWithJson.write(writer, instance.payload)
+            JsonString.write(writer, instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

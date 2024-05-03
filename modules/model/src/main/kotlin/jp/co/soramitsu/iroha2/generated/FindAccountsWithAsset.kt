@@ -16,19 +16,19 @@ import kotlin.Unit
  * Generated from 'FindAccountsWithAsset' regular structure
  */
 public data class FindAccountsWithAsset(
-    public val assetDefinitionId: EvaluatesTo<AssetDefinitionId>,
+    public val assetDefinitionId: AssetDefinitionId,
 ) {
     public companion object : ScaleReader<FindAccountsWithAsset>, ScaleWriter<FindAccountsWithAsset> {
         override fun read(reader: ScaleCodecReader): FindAccountsWithAsset = try {
             FindAccountsWithAsset(
-                EvaluatesTo.read(reader) as EvaluatesTo<AssetDefinitionId>,
+                AssetDefinitionId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: FindAccountsWithAsset): Unit = try {
-            EvaluatesTo.write(writer, instance.assetDefinitionId)
+            AssetDefinitionId.write(writer, instance.assetDefinitionId)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

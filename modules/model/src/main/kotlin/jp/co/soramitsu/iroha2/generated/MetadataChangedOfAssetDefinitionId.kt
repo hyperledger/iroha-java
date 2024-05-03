@@ -18,7 +18,7 @@ import kotlin.Unit
 public data class MetadataChangedOfAssetDefinitionId(
     public val targetId: AssetDefinitionId,
     public val key: Name,
-    public val `value`: Value,
+    public val `value`: MetadataValueBox,
 ) {
     public companion object :
         ScaleReader<MetadataChangedOfAssetDefinitionId>,
@@ -27,7 +27,7 @@ public data class MetadataChangedOfAssetDefinitionId(
             MetadataChangedOfAssetDefinitionId(
                 AssetDefinitionId.read(reader),
                 Name.read(reader),
-                Value.read(reader),
+                MetadataValueBox.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -36,7 +36,7 @@ public data class MetadataChangedOfAssetDefinitionId(
         override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfAssetDefinitionId): Unit = try {
             AssetDefinitionId.write(writer, instance.targetId)
             Name.write(writer, instance.key)
-            Value.write(writer, instance.`value`)
+            MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

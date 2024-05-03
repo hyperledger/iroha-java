@@ -16,22 +16,22 @@ import kotlin.Unit
  * Generated from 'AssetDefinitionId' regular structure
  */
 public data class AssetDefinitionId(
-    public val name: Name,
     public val domainId: DomainId,
+    public val name: Name,
 ) {
     public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
         override fun read(reader: ScaleCodecReader): AssetDefinitionId = try {
             AssetDefinitionId(
-                Name.read(reader),
                 DomainId.read(reader),
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit = try {
-            Name.write(writer, instance.name)
             DomainId.write(writer, instance.domainId)
+            Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
