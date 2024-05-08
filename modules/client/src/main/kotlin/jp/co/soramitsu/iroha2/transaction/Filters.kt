@@ -11,9 +11,9 @@ import jp.co.soramitsu.iroha2.generated.DataEntityFilter
 import jp.co.soramitsu.iroha2.generated.DomainEventFilter
 import jp.co.soramitsu.iroha2.generated.DomainFilter
 import jp.co.soramitsu.iroha2.generated.Duration
+import jp.co.soramitsu.iroha2.generated.EventFilterBox
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountEventFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAssetDefinitionEventFilter
@@ -58,7 +58,7 @@ import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
 import jp.co.soramitsu.iroha2.generated.ValuePredicate
 import jp.co.soramitsu.iroha2.toIrohaHash
 
@@ -71,7 +71,7 @@ object Filters {
     /**
      * Create a data filter
      */
-    fun data(entityFilter: DataEntityFilter? = null) = TriggeringFilterBox.Data(
+    fun data(entityFilter: DataEntityFilter? = null) = TriggeringEventFilterBox.Data(
         entityFilter?.let { FilterOptOfDataEntityFilter.BySome(it) }
             ?: FilterOptOfDataEntityFilter.AcceptAll(),
     )
@@ -79,7 +79,7 @@ object Filters {
     /**
      * Create a [time based event filter][TimeEventFilter]
      */
-    fun time(eventFilter: TimeEventFilter) = FilterBox.Time(eventFilter)
+    fun time(eventFilter: TimeEventFilter) = EventFilterBox.Time(eventFilter)
 
     /**
      * Execute a given trigger based on a specified [authority]
@@ -87,7 +87,7 @@ object Filters {
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId,
-    ) = TriggeringFilterBox.ExecuteTrigger(
+    ) = TriggeringEventFilterBox.ExecuteTrigger(
         ExecuteTriggerEventFilter(triggerId, authority),
     )
 
@@ -102,7 +102,7 @@ object Filters {
         entityKind: PipelineEntityKind? = null,
         statusKind: PipelineStatusKind? = null,
         hash: ByteArray? = null,
-    ) = FilterBox.Pipeline(
+    ) = EventFilterBox.Pipeline(
         PipelineEventFilter(
             entityKind,
             statusKind,

@@ -34,7 +34,7 @@ import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
 import jp.co.soramitsu.iroha2.sign
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
@@ -161,7 +161,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventFilterBox,
+        filter: TriggeringEventEventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(
@@ -182,7 +182,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventFilterBox,
+        filter: TriggeringEventEventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(

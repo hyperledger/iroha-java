@@ -38,8 +38,8 @@ fn smartcontract_entry_point(_id: TriggerId, _owner: AccountId, _event: Event) {
         .mintable_once()
         .with_metadata(metadata);
 
-    RegisterExpr::new(nft_definition).execute().dbg_unwrap();
-    SetKeyValueExpr::new(
+    Register::asset_definition(nft_definition).execute().dbg_unwrap();
+    SetKeyValue::asset(
         AssetId::new(nft_id, account_id),
         "has_this_nft".parse::<Name>().dbg_unwrap(),
         Value::Bool(true),
@@ -49,8 +49,9 @@ fn smartcontract_entry_point(_id: TriggerId, _owner: AccountId, _event: Event) {
 }
 
 fn generate_new_nft_id(account_id: &AccountId) -> AssetDefinitionId {
-    let query = FindAssetsByAccountId::new(account_id.clone());
-    let assets: Vec<Asset> = query.execute().dbg_unwrap();
+    let assets = FindAssetsByAccountId::new(account_id.clone())
+        .execute()
+        .dbg_unwrap();
 
     let new_number = assets
         .into_iter()

@@ -12,7 +12,7 @@ import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
@@ -60,7 +60,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
 
         val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.size } + 1 // plus wasm
         var isi = blocks[0].validate(1, GENESIS, GENESIS, expectedSize)
-        val registerDomain = isi[0].cast<InstructionExpr.Register>().extractDomain().id.name.string
+        val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
         assertEquals(ALICE_ACCOUNT_ID.asString(), isi[1].extractAccount().id.asString())
@@ -71,7 +71,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         )
 
         isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
-        var newAssetDefinition = isi[0].cast<InstructionExpr.Register>().extractAssetDefinition()
+        var newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
         assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
@@ -102,8 +102,8 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         }
         assertEquals((1..repeatTimes.toLong()).sum(), heightSum.toLong())
 
-        val isi = mutableListOf<InstructionExpr>()
-        subscription.subscribeAndReceive<InstructionExpr>(
+        val isi = mutableListOf<InstructionBox>()
+        subscription.subscribeAndReceive<InstructionBox>(
             BlockStreamStorage(
                 onBlock = { it.extractBlock().transactions.first().value.extractInstruction() },
             ),
@@ -116,7 +116,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), lastValue.asValue()) }
         }
         Thread.sleep(5000)
-        assertEquals(lastValue, isi.last().cast<InstructionExpr.SetKeyValue>().extractValueString())
+        assertEquals(lastValue, isi.last().cast<InstructionBox.SetKeyValue>().extractValueString())
 
         subscription.stop()
     }
@@ -133,7 +133,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         expectedDomain: String,
         expectedAccount: String,
         expectedIsiSize: Int,
-    ): List<InstructionExpr> {
+    ): List<InstructionBox> {
         val committedBlock = this.extractBlock()
         assertEquals(expectedHeight, committedBlock.header.height.toLong())
 

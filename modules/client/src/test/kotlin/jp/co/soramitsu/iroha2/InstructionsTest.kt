@@ -16,7 +16,7 @@ import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
 import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
@@ -950,7 +950,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     fun `iroha respond with given fetch size`(): Unit = runBlocking {
         val fetchSize = 111
         repeat(2) { i ->
-            val isi = mutableListOf<InstructionExpr>()
+            val isi = mutableListOf<InstructionBox>()
             val tx = TransactionBuilder {
                 account(ALICE_ACCOUNT_ID)
             }

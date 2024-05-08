@@ -13,7 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Container
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
@@ -576,7 +576,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         assertEquals(
             DEFAULT_ASSET_DEFINITION_ID,
             txByHash.transaction.value
-                .extractInstruction<InstructionExpr.Register>()
+                .extractInstruction<InstructionBox.Register>()
                 .registerExpr.`object`.extractNewAssetDefinition().id,
         )
         txByHash.transaction.value

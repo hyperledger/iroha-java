@@ -70,7 +70,7 @@ import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndDomainIdAndAccount
 import jp.co.soramitsu.iroha2.generated.TransferOfAssetAndNumericAndAccount
 import jp.co.soramitsu.iroha2.generated.Trigger
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterOfAccount
 import jp.co.soramitsu.iroha2.generated.UnregisterOfAsset
@@ -118,7 +118,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringEventFilterBox,
+        filter: TriggeringEventEventFilterBox,
     ) = InstructionBox.Register(
         RegisterBox.Trigger(
             RegisterOfTrigger(
@@ -146,7 +146,7 @@ object Instructions {
         repeats,
         accountId,
         metadata,
-        TriggeringEventFilterBox.Time(TimeEventFilter(filter.executionTime)),
+        TriggeringEventEventFilterBox.Time(TimeEventFilter(filter.executionTime)),
     )
 
     /**
@@ -158,7 +158,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringEventFilterBox,
+        filter: TriggeringEventEventFilterBox,
     ) = InstructionBox.Register(
         RegisterBox.Trigger(
             RegisterOfTrigger(

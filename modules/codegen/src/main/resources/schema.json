@@ -211,7 +211,7 @@
       },
       {
         "name": "filter",
-        "type": "TriggeringEventFilterBox"
+        "type": "TriggeringEventEventFilterBox"
       },
       {
         "name": "metadata",
@@ -1101,12 +1101,12 @@
       }
     ]
   },
-  "EventFilterBox": {
+  "EventEventFilterBox": {
     "Enum": [
       {
         "tag": "Pipeline",
         "discriminant": 0,
-        "type": "PipelineEventFilterBox"
+        "type": "PipelineEventEventFilterBox"
       },
       {
         "tag": "Data",
@@ -1131,7 +1131,7 @@
     ]
   },
   "EventMessage": "EventBox",
-  "EventSubscriptionRequest": "Vec<EventFilterBox>",
+  "EventSubscriptionRequest": "Vec<EventEventFilterBox>",
   "Executable": {
     "Enum": [
       {
@@ -2693,7 +2693,7 @@
       }
     ]
   },
-  "PipelineEventFilterBox": {
+  "PipelineEventEventFilterBox": {
     "Enum": [
       {
         "tag": "Transaction",
@@ -3053,15 +3053,15 @@
       }
     ]
   },
-  "RawGenesisBlock": {
+  "RawGenesisBlockFile": {
     "Struct": [
       {
         "name": "transactions",
         "type": "Vec<GenesisTransactionBuilder>"
       },
       {
-        "name": "executor",
-        "type": "Executor"
+        "name": "executor_file",
+        "type": "String"
       }
     ]
   },
@@ -4252,12 +4252,12 @@
       }
     ]
   },
-  "TriggeringEventFilterBox": {
+  "TriggeringEventEventFilterBox": {
     "Enum": [
       {
         "tag": "Pipeline",
         "discriminant": 0,
-        "type": "PipelineEventFilterBox"
+        "type": "PipelineEventEventFilterBox"
       },
       {
         "tag": "Data",
@@ -4428,8 +4428,8 @@
   "Vec<EventBox>": {
     "Vec": "EventBox"
   },
-  "Vec<EventFilterBox>": {
-    "Vec": "EventFilterBox"
+  "Vec<EventEventFilterBox>": {
+    "Vec": "EventEventFilterBox"
   },
   "Vec<GenericPredicateBox<QueryOutputPredicate>>": {
     "Vec": "GenericPredicateBox<QueryOutputPredicate>"
