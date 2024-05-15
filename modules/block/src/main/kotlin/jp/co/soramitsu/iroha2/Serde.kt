@@ -271,7 +271,7 @@ object TriggerOfTriggeringFilterBoxDeserializer : JsonDeserializer<TriggerOfTrig
                 val executable = Executable.Wasm(WasmSmartContract(wasm.asText().toByteArray()))
                 val repeats = getTriggerRepeats(triggerAction)
                 val accountId = getTriggerAuthority(triggerAction)
-                val filter = getTriggerFilter(triggerAction, true)
+                val filter = getTriggerFilter(triggerAction)
                 ActionOfTriggeringFilterBox(
                     executable = executable,
                     repeats = repeats,
@@ -287,7 +287,7 @@ object TriggerOfTriggeringFilterBoxDeserializer : JsonDeserializer<TriggerOfTrig
                 val executable = Executable.Instructions(instructions)
                 val repeats = getTriggerRepeats(triggerAction)
                 val accountId = getTriggerAuthority(triggerAction)
-                val filter = getTriggerFilter(triggerAction, false)
+                val filter = getTriggerFilter(triggerAction)
                 ActionOfTriggeringFilterBox(
                     executable = executable,
                     repeats = repeats,
@@ -1263,37 +1263,40 @@ private fun getTriggerRepeats(triggerAction: JsonNode): Repeats {
     }
 }
 
-private fun getTriggerFilter(triggerAction: JsonNode, wasmTrigger: Boolean): TriggeringFilterBox {
-    val filterNode = triggerAction.get("filter")
-    return when (wasmTrigger) {
-        true -> throw IrohaSdkException("Filter for Wasm not supported")
-        false -> {
-            when (filterNode.get("Time") == null) {
-                true -> {
-                    val executeTriggerNode = filterNode.get("ExecuteTrigger")
-                    val executeTrigger = JSON_SERDE.convertValue(executeTriggerNode, ExecuteTriggerEventFilter::class.java)
-                    TriggeringFilterBox.ExecuteTrigger(executeTrigger)
-                }
-                false -> {
-                    val scheduleNode = filterNode.get("Time").get("Schedule")
-                    val start = scheduleNode.get("start")
-                    val period = scheduleNode.get("period")
-                    val periodDuration = when (period.isNull) {
-                        true -> null
-                        false -> Duration(u64 = BigInteger.valueOf(period.get("secs").asLong()), u32 = period.get("nanos").asLong())
-                    }
-                    TriggeringFilterBox.Time(
-                        TimeEventFilter(
-                            ExecutionTime.Schedule(
-                                Schedule(
-                                    Duration(u64 = BigInteger.valueOf(start.get("secs").asLong()), u32 = start.get("nanos").asLong()),
-                                    periodDuration,
-                                ),
-                            ),
-                        ),
-                    )
-                }
+private fun getTriggerFilter(triggerAction: JsonNode): TriggeringFilterBox {
+    val filterNode = triggerAction.get("filter").fields().next()
+    return when (filterNode.key) {
+        "Data" -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
+        }
+        "Time" -> {
+            val scheduleNode = filterNode.value.get("Schedule")
+            val start = scheduleNode.get("start")
+            val period = scheduleNode.get("period")
+            val periodDuration = when (period.isNull) {
+                true -> null
+                false -> Duration(u64 = BigInteger.valueOf(period.get("secs").asLong()), u32 = period.get("nanos").asLong())
             }
+            TriggeringFilterBox.Time(
+                TimeEventFilter(
+                    ExecutionTime.Schedule(
+                        Schedule(
+                            Duration(u64 = BigInteger.valueOf(start.get("secs").asLong()), u32 = start.get("nanos").asLong()),
+                            periodDuration,
+                        ),
+                    ),
+                ),
+            )
+        }
+        "ExecuteTrigger" -> {
+            val executeTrigger = JSON_SERDE.convertValue(filterNode.value, ExecuteTriggerEventFilter::class.java)
+            TriggeringFilterBox.ExecuteTrigger(executeTrigger)
+        }
+        "Pipeline" -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
+        }
+        else -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
         }
     }
 }
