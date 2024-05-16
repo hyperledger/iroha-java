@@ -15,13 +15,14 @@ class DeserializerTest {
         val block = JSON_SERDE.convertValue(node, RawGenesisBlockFile::class.java)
 
         assert(block.transactions.isNotEmpty())
-        // genesis.json has 8 instructions ("isi")
+        // genesis.json has 10 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewAccount (2)
         // Register -> NewAssetDefinition
         // Grant -> PermissionToken (2)
         // Mint -> AssetId (2)
-        assert(block.transactions.size == 8)
+        // Register -> Trigger (2)
+        assert(block.transactions.flatten().size == 10)
 
         val genesis = Genesis(block)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())

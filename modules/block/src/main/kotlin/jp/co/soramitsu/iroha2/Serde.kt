@@ -18,6 +18,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.ActionOfTriggeringFilterBox
 import jp.co.soramitsu.iroha2.generated.Algorithm
 import jp.co.soramitsu.iroha2.generated.Asset
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
@@ -25,8 +26,17 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.GrantBox
-import jp.co.soramitsu.iroha2.generated.GrantOfPermissionTokenAndAccount
+import jp.co.soramitsu.iroha2.generated.Duration
+import jp.co.soramitsu.iroha2.generated.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.ExecutionTime
+import jp.co.soramitsu.iroha2.generated.ExecutorMode
+import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.Fixed
+import jp.co.soramitsu.iroha2.generated.GrantExpr
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashValue
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
@@ -43,21 +53,31 @@ import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.RawGenesisBlockFile
-import jp.co.soramitsu.iroha2.generated.RegisterBox
-import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
-import jp.co.soramitsu.iroha2.generated.RegisterOfAsset
-import jp.co.soramitsu.iroha2.generated.RegisterOfAssetDefinition
-import jp.co.soramitsu.iroha2.generated.RegisterOfDomain
-import jp.co.soramitsu.iroha2.generated.RegisterOfPeer
-import jp.co.soramitsu.iroha2.generated.RegisterOfRole
-import jp.co.soramitsu.iroha2.generated.RegisterOfTrigger
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RegisterExpr
+import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.Role
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Schedule
+import jp.co.soramitsu.iroha2.generated.SequenceExpr
+import jp.co.soramitsu.iroha2.generated.SetKeyValueExpr
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.SocketAddr
-import jp.co.soramitsu.iroha2.generated.Trigger
+import jp.co.soramitsu.iroha2.generated.StringWithJson
+import jp.co.soramitsu.iroha2.generated.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.TransactionLimits
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
+import jp.co.soramitsu.iroha2.generated.TransactionValue
 import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import java.io.ByteArrayOutputStream
+import java.math.BigInteger
+import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -65,7 +85,7 @@ import kotlin.reflect.full.primaryConstructor
 /**
  * This JSON mapper is configured to serialise and deserialise `Genesis block` in a format compatible with Iroha 2 peer
  */
-val JSON_SERDE by lazy {
+public val JSON_SERDE by lazy {
     ObjectMapper().also { mapper ->
         val module = SimpleModule()
 
@@ -94,9 +114,9 @@ val JSON_SERDE by lazy {
 //        module.addDeserializer(NewParameter::class.java, NewParameterBoxDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addDeserializer(PermissionToken::class.java, PermissionTokenDeserializer)
-        module.addDeserializer(JsonString::class.java, StringWithJsonDeserializer)
-
-        module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
+        module.addDeserializer(StringWithJson::class.java, StringWithJsonDeserializer)
+        module.addDeserializer(TriggerId::class.java, TriggerIdDeserializer)
+        module.addDeserializer(TriggerOfTriggeringFilterBox::class.java, TriggerOfTriggeringFilterBoxDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
@@ -119,11 +139,14 @@ val JSON_SERDE by lazy {
         module.addSerializer(PublicKey::class.java, PublicKeySerializer)
 //        module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
-//        module.addSerializer(Parameter::class.java, ParameterSerializer)
-        module.addSerializer(NewParameter::class.java, NewParameterBoxSerializer)
-        module.addSerializer(JsonString::class.java, JsonStringSerializer)
-
-        module.addKeySerializer(Name::class.java, NameAsKeySerializer)
+        module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
+        module.addSerializer(Parameter::class.java, ParameterSerializer)
+        module.addSerializer(ExecutorMode::class.java, ExecutorModeSerializer)
+        module.addSerializer(SequenceExpr::class.java, SequenceExprSerializer)
+        module.addSerializer(NewParameterExpr::class.java, NewParameterExprSerializer)
+        module.addSerializer(StringWithJson::class.java, StringWithJsonSerializer)
+        module.addSerializer(TimeEventFilter::class.java, TimeEventFilterSerializer)
+        module.addSerializer(Schedule::class.java, ScheduleSerializer)
 
         mapper.registerModule(module)
         mapper.registerModule(
@@ -141,9 +164,18 @@ val JSON_SERDE by lazy {
 /**
  * Deserializer for [Iroha Special Instructions][InstructionBox]
  */
-object InstructionDeserializer : JsonDeserializer<InstructionBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): InstructionBox {
-        return sealedDeserializeInstruction(p, JSON_SERDE)
+object SequenceExprDeserializer : JsonDeserializer<SequenceExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SequenceExpr {
+        return sealedDeserializeSequenceExpr(p, JSON_SERDE)
+    }
+}
+
+/**
+ * Deserializer for [Iroha Special Instructions][InstructionExpr]
+ */
+object InstructionDeserializer : JsonDeserializer<InstructionExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): InstructionExpr {
+        return sealedDeserializeInstruction(p.readValueAsTree(), JSON_SERDE)
     }
 }
 
@@ -200,6 +232,59 @@ object StringWithJsonDeserializer : JsonDeserializer<JsonString>() {
         return JsonString(
             string = "{\"${node.key}\":\"${node.value.asText()}\"}",
         )
+    }
+}
+
+object TriggerOfTriggeringFilterBoxDeserializer : JsonDeserializer<TriggerOfTriggeringFilterBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggerOfTriggeringFilterBox {
+        val node = p.readValueAsTree<JsonNode>()
+        val triggerName = node.get("id").asText()
+        val triggerAction = node.get("action")
+        val action = when (triggerAction.get("executable").get("Instructions") == null) {
+            true -> {
+                val wasm = triggerAction.get("executable").get("Wasm")
+                val executable = Executable.Wasm(WasmSmartContract(wasm.asText().toByteArray()))
+                val repeats = getTriggerRepeats(triggerAction)
+                val accountId = getTriggerAuthority(triggerAction)
+                val filter = getTriggerFilter(triggerAction)
+                ActionOfTriggeringFilterBox(
+                    executable = executable,
+                    repeats = repeats,
+                    authority = accountId,
+                    filter = filter,
+                    metadata = Metadata(mapOf()),
+                )
+            }
+            false -> {
+                val instructions = triggerAction.get("executable").get("Instructions").map {
+                    sealedDeserializeInstruction(it, JSON_SERDE)
+                }
+                val executable = Executable.Instructions(instructions)
+                val repeats = getTriggerRepeats(triggerAction)
+                val accountId = getTriggerAuthority(triggerAction)
+                val filter = getTriggerFilter(triggerAction)
+                ActionOfTriggeringFilterBox(
+                    executable = executable,
+                    repeats = repeats,
+                    authority = accountId,
+                    filter = filter,
+                    metadata = Metadata(mapOf()),
+                )
+            }
+        }
+
+        val triggerId = getTriggerId(triggerName)
+        return TriggerOfTriggeringFilterBox(
+            id = triggerId,
+            action = action,
+        )
+    }
+}
+
+object TriggerIdDeserializer : JsonDeserializer<TriggerId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggerId {
+        val triggerName = p.readValueAsTree<JsonNode>().asText()
+        return getTriggerId(triggerName)
     }
 }
 
@@ -269,7 +354,7 @@ object AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
 object PublicKeyDeserializer : JsonDeserializer<PublicKey>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
         val key = p.readValueAs(String::class.java)
-        return PublicKey(Algorithm.Ed25519(), key.fromHex())
+        return PublicKey(Algorithm.Ed25519(), key.substring(6, key.length).fromHex())
     }
 }
 
@@ -473,7 +558,27 @@ object TriggerIdSerializer : JsonSerializer<TriggerId>() {
 }
 
 /**
- * Serializer for [NewParameter]
+ * Serializer for [SequenceExpr]
+ */
+object SequenceExprSerializer : JsonSerializer<SequenceExpr>() {
+    override fun serialize(value: SequenceExpr, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartArray()
+        value.instructions.forEach { parameter ->
+            when (parameter) {
+                is InstructionExpr.Grant -> parameter.serialize(gen)
+                is InstructionExpr.Burn -> parameter.serialize(gen)
+                is InstructionExpr.Mint -> parameter.serialize(gen)
+                is InstructionExpr.SetKeyValue -> parameter.serialize(gen)
+                is InstructionExpr.Register -> parameter.serialize(gen)
+                else -> serializeSingleMember(gen, parameter)
+            }
+        }
+        gen.writeEndArray()
+    }
+}
+
+/**
+ * Serializer for [NewParameterExpr]
  */
 object NewParameterBoxSerializer : JsonSerializer<NewParameter>() {
     override fun serialize(value: NewParameter, gen: JsonGenerator, serializers: SerializerProvider) {
@@ -494,6 +599,27 @@ object JsonStringSerializer : JsonSerializer<JsonString>() {
         gen.writeStartObject()
         gen.writeObjectField(node.key, node.value.asText())
         gen.writeEndObject()
+    }
+}
+
+/**
+ * Serializer for [TimeEventFilter]
+ */
+object TimeEventFilterSerializer : JsonSerializer<TimeEventFilter>() {
+    override fun serialize(value: TimeEventFilter, gen: JsonGenerator, serializers: SerializerProvider) {
+        value.serializeEnum(gen)
+    }
+}
+
+/**
+ * Serializer for [Schedule]
+ */
+object ScheduleSerializer : JsonSerializer<Schedule>() {
+    override fun serialize(value: Schedule, gen: JsonGenerator, serializers: SerializerProvider) {
+        val start = value.start.let { mapOf(Pair("secs", it.u64), Pair("nanos", it.u32)) }
+        val period = value.period?.let { mapOf(Pair("secs", it.u64), Pair("nanos", it.u32)) }
+        val schedule = mapOf(Pair("start", start), Pair("period", period))
+        gen.writeObject(schedule)
     }
 }
 
@@ -724,8 +850,16 @@ private fun String.asClass() = runCatching {
     }
 } ?: throw DeserializationException("Class $this not found")
 
-private fun sealedDeserializeInstruction(p: JsonParser, mapper: ObjectMapper): InstructionBox {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
+private fun sealedDeserializeSequenceExpr(p: JsonParser, mapper: ObjectMapper): SequenceExpr {
+    val jsonNodes = p.readValueAsTree<JsonNode>()
+    val instructions = jsonNodes.map {
+        mapper.convertValue(it, InstructionExpr::class.java) as InstructionExpr
+    }
+    return SequenceExpr(instructions)
+}
+
+private fun sealedDeserializeInstruction(jsonNode: JsonNode, mapper: ObjectMapper): InstructionExpr {
+    val node = jsonNode.fields().next()
     val param = node.key
 
     val subtype = InstructionBox::class.nestedClasses.find { clazz ->
@@ -906,4 +1040,75 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
     val valueNode = node.value.fields().next()
     val value = valueNode.value.asText().asMetadataValueBox()
     return Metadata(mapOf(Pair(key, value)))
+}
+
+private fun String.toNumericValue(): NumericValue {
+    val (number, type) = this.split('_')
+    return when (type) {
+        NumericValue.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
+        NumericValue.U64::class.simpleName?.lowercase() -> NumericValue.U64(number.toBigInteger())
+        NumericValue.U128::class.simpleName?.lowercase() -> NumericValue.U128(number.toBigInteger())
+        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
+        else -> throw IllegalArgumentException("Number out of range")
+    }
+}
+
+private fun getTriggerAuthority(triggerAction: JsonNode): AccountId {
+    return triggerAction.get("authority").asText().asAccountId()
+}
+
+private fun getTriggerId(triggerName: String): TriggerId {
+    return when (triggerName.contains("$")) {
+        true -> {
+            val triggerNameWithDomain = triggerName.split("$")
+            TriggerId(name = triggerNameWithDomain[0].asName(), domainId = triggerNameWithDomain[1].asDomainId())
+        }
+        false -> TriggerId(name = triggerName.asName())
+    }
+}
+
+private fun getTriggerRepeats(triggerAction: JsonNode): Repeats {
+    val repeatsNodeFields = triggerAction.get("repeats").fields()
+    return when (repeatsNodeFields.hasNext()) {
+        true -> Repeats.Exactly(repeatsNodeFields.next().value.asLong())
+        false -> Repeats.Indefinitely()
+    }
+}
+
+private fun getTriggerFilter(triggerAction: JsonNode): TriggeringFilterBox {
+    val filterNode = triggerAction.get("filter").fields().next()
+    return when (filterNode.key) {
+        "Data" -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
+        }
+        "Time" -> {
+            val scheduleNode = filterNode.value.get("Schedule")
+            val start = scheduleNode.get("start")
+            val period = scheduleNode.get("period")
+            val periodDuration = when (period.isNull) {
+                true -> null
+                false -> Duration(u64 = BigInteger.valueOf(period.get("secs").asLong()), u32 = period.get("nanos").asLong())
+            }
+            TriggeringFilterBox.Time(
+                TimeEventFilter(
+                    ExecutionTime.Schedule(
+                        Schedule(
+                            Duration(u64 = BigInteger.valueOf(start.get("secs").asLong()), u32 = start.get("nanos").asLong()),
+                            periodDuration,
+                        ),
+                    ),
+                ),
+            )
+        }
+        "ExecuteTrigger" -> {
+            val executeTrigger = JSON_SERDE.convertValue(filterNode.value, ExecuteTriggerEventFilter::class.java)
+            TriggeringFilterBox.ExecuteTrigger(executeTrigger)
+        }
+        "Pipeline" -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
+        }
+        else -> {
+            throw IrohaSdkException("${filterNode.key} is not supported")
+        }
+    }
 }
