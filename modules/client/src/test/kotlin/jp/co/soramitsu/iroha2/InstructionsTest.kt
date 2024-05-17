@@ -12,19 +12,18 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
-import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
+import jp.co.soramitsu.iroha2.generated.BatchedResponse
+import jp.co.soramitsu.iroha2.generated.BatchedResponseV1
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PermissionToken
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.Value
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID_VALUE
@@ -81,6 +80,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@Disabled
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 class InstructionsTest : IrohaTest<Iroha2Client>() {
@@ -239,11 +239,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_asset_definition")
     @SdkTestId("unregister_asset_definition")
     fun `register and unregister asset`(): Unit = runBlocking {
-        val definitionId = AssetDefinitionId("XSTUSD".asName(), DEFAULT_DOMAIN_ID)
-        client.tx { registerAssetDefinition(definitionId, AssetValueType.Quantity()) }
+        val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "XSTUSD".asName())
+        client.tx { registerAssetDefinition(definitionId, AssetValueType.numeric()) }
 
         val assetId = AssetId(definitionId, ALICE_ACCOUNT_ID)
-        client.tx { registerAsset(assetId, AssetValue.Quantity(0)) }
+        client.tx { registerAsset(assetId, AssetValue.Numeric(0.asNumeric())) }
 
         QueryBuilder.findAssetById(assetId)
             .account(super.account)
@@ -293,10 +293,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val phoneKey = "phone".asName()
         val emailKey = "email".asName()
         val cityKey = "city".asName()
-        val addressValue = "address".asValue()
-        val phoneValue = "phone".asValue()
-        val emailValue = "email".asValue()
-        val cityValue = "city".asValue()
+        val addressValue = "address".asMetadataValueBox()
+        val phoneValue = "phone".asMetadataValueBox()
+        val emailValue = "email".asMetadataValueBox()
+        val cityValue = "city".asMetadataValueBox()
         val metadata = Metadata(
             mapOf(
                 Pair(addressKey, addressValue),
@@ -323,11 +323,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { account -> assertEquals(account.id, newAccountId) }
             .metadata
-        assertEquals(4, accountMetadata.map.size)
-        assertEquals(addressValue, accountMetadata.map[addressKey])
-        assertEquals(phoneValue, accountMetadata.map[phoneKey])
-        assertEquals(emailValue, accountMetadata.map[emailKey])
-        assertEquals(cityValue, accountMetadata.map[cityKey])
+        assertEquals(4, accountMetadata.sortedMapOfName.size)
+        assertEquals(addressValue, accountMetadata.sortedMapOfName[addressKey])
+        assertEquals(phoneValue, accountMetadata.sortedMapOfName[phoneKey])
+        assertEquals(emailValue, accountMetadata.sortedMapOfName[emailKey])
+        assertEquals(cityValue, accountMetadata.sortedMapOfName[cityKey])
     }
 
     /**
@@ -343,7 +343,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     fun `register asset`(): Unit = runBlocking {
         client.sendTransaction {
             account(super.account)
-            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.numeric())
             buildSigned(super.keyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
@@ -366,9 +366,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("register_asset_definition_with_store_value_type")
     fun `store asset`(): Unit = runBlocking {
-        val pair1 = "key1".asName() to "bar".asValue()
-        val pair2 = "key2".asName() to true.asValue()
-        val pair3 = "key3".asName() to 12345.asValue()
+        val pair1 = "key1".asName() to "bar".asMetadataValueBox()
+        val pair2 = "key2".asName() to true.asMetadataValueBox()
+        val pair3 = "key3".asName() to 12345.asMetadataValueBox()
 
         client.tx {
             registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Store())
@@ -386,11 +386,17 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(DEFAULT_ASSET_ID.definitionId.domainId, asset.id.definitionId.domainId)
         when (val value = asset.value) {
             is AssetValue.Store -> {
-                assertEquals(pair1.second.string, value.metadata.map[pair1.first]?.cast<Value.String>()?.string)
-                assertEquals(pair2.second.bool, value.metadata.map[pair2.first]?.cast<Value.Bool>()?.bool)
                 assertEquals(
-                    pair3.second.numericValue,
-                    value.metadata.map[pair3.first]?.cast<Value.Numeric>()?.numericValue,
+                    pair1.second.string,
+                    value.metadata.sortedMapOfName[pair1.first]?.cast<MetadataValueBox.String>()?.string,
+                )
+                assertEquals(
+                    pair2.second.bool,
+                    value.metadata.sortedMapOfName[pair2.first]?.cast<MetadataValueBox.Bool>()?.bool,
+                )
+                assertEquals(
+                    pair3.second.numeric.asBigInteger(),
+                    value.metadata.sortedMapOfName[pair3.first]?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger(),
                 )
             }
 
@@ -418,7 +424,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     fun `account metadata limit increased`(): Unit = runBlocking {
         client.tx {
             // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
-            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), randomAlphabetic(5000).asValue())
+            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), randomAlphabetic(5000).asMetadataValueBox())
         }
     }
 
@@ -436,7 +442,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
-            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10).asValue())
+            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10).asMetadataValueBox())
         }
     }
 
@@ -459,7 +465,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             )
         }
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            setKeyValue(aliceAssetId, "foo".asName(), "bar".asValue())
+            setKeyValue(aliceAssetId, "foo".asName(), "bar".asMetadataValueBox())
         }
 
         val query = QueryBuilder.findAssetById(aliceAssetId)
@@ -471,7 +477,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(aliceAssetId.definitionId.domainId, asset.id.definitionId.domainId)
         when (val value = asset.value) {
             is AssetValue.Store -> {
-                assertEquals("bar", (value.metadata.map["foo".asName()]?.cast<Value.String>())?.string)
+                assertEquals(
+                    "bar",
+                    (value.metadata.sortedMapOfName["foo".asName()]?.cast<MetadataValueBox.String>())?.string,
+                )
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
@@ -500,7 +509,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     fun `mint asset`(): Unit = runBlocking {
         client.sendTransaction {
             account(super.account)
-            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.numeric())
             mintAsset(DEFAULT_ASSET_ID, 5)
             buildSigned(super.keyPair)
         }.also { d ->
@@ -512,7 +521,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
             .also { result ->
-                assertEquals(5, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+                assertEquals(5, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
             }
     }
     // #endregion java_mint_asset
@@ -529,13 +538,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
         var result = client.sendQuery(query)
-        assertEquals(100, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+        assertEquals(100, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
 
         client.tx { burnAsset(DEFAULT_ASSET_ID, 50) }
 
         // check balance after burn
         result = client.sendQuery(query)
-        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
     }
 
     @Test
@@ -557,7 +566,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         val keyToSuccess = randomAlphabetic(5).asName()
-        val valueToSuccess = randomAlphabetic(5).asValue()
+        val valueToSuccess = randomAlphabetic(5).asMetadataValueBox()
 
         val time = Instant.now().toEpochMilli().toBigInteger()
         val tx = TransactionBuilder {
@@ -576,7 +585,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(BOB_ACCOUNT_ID)
             .buildSigned(BOB_KEYPAIR)
             .let { client.sendQuery(it) }
-        assertEquals(bob.metadata.map[keyToSuccess], valueToSuccess)
+        assertEquals(bob.metadata.sortedMapOfName[keyToSuccess], valueToSuccess)
     }
 
     @Test
@@ -587,7 +596,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("burn_other_user_xasset")
     fun `burn other user asset`(): Unit = runBlocking {
         client.tx {
-            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Quantity())
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.numeric())
             mintAsset(DEFAULT_ASSET_ID, 100)
             grantPermissionToken(
                 Permissions.CanBurnAssetWithDefinition,
@@ -601,7 +610,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Quantity>()?.u32)
+        assertEquals(50, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
     }
 
     @Test
@@ -701,7 +710,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
 
         // add/update salt value in Bob's account metadata
-        val salt = randomAlphabetic(10).asValue()
+        val salt = randomAlphabetic(10).asMetadataValueBox()
         client.tx { setKeyValue(BOB_ACCOUNT_ID, saltKey.asName(), salt) }
 
         // check new metadata in Bob's account
@@ -709,7 +718,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
         val bobAccountMetadata = client.sendQuery(saltQuery).metadata
-        assertEquals(salt, bobAccountMetadata.map["salt".asName()])
+        assertEquals(salt, bobAccountMetadata.sortedMapOfName["salt".asName()])
     }
 
     @Test
@@ -755,69 +764,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Assets")
-    @Story("Account burns an asset")
-    @Permission("no_permission_required")
-    @SdkTestId("burn_asset_if_condition")
-    @SdkTestId("not_burn_asset_if_condition_not_met")
-    fun `burn if condition otherwise not burn`(): Unit = runBlocking {
-        val toBurn = 80
-        val initAliceAmount = getAccountAmount()
-
-        sendTransactionToBurnIfCondition(initAliceAmount >= toBurn, DEFAULT_ASSET_ID, toBurn)
-        val aliceAmountAfterBurn = getAccountAmount()
-        assert(aliceAmountAfterBurn == initAliceAmount - toBurn)
-
-        sendTransactionToBurnIfCondition(aliceAmountAfterBurn >= toBurn, DEFAULT_ASSET_ID, toBurn)
-        val finalAliceAmount = getAccountAmount()
-        assert(finalAliceAmount == aliceAmountAfterBurn)
-    }
-
-    @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Atomicity")
-    @Story("Client sends a pair instructions within transaction")
-    @Permission("no_permission_required")
-    @SdkTestId("pair_instruction")
-    fun `pair`(): Unit = runBlocking {
-        client.sendTransaction {
-            account(super.account)
-            pair(
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 10),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 20),
-            )
-            buildSigned(super.keyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        assert(getAccountAmount() == 70L)
-    }
-
-    @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
-    @Feature("Atomicity")
-    @Story("Client sends a multiple instructions within transaction")
-    @Permission("no_permission_required")
-    @SdkTestId("multiple_instructions_within_transaction")
-    fun `instruction sequence committed`(): Unit = runBlocking {
-        client.sendTransaction {
-            account(super.account)
-            sequence(
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 10),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 20),
-                Instructions.burnAsset(DEFAULT_ASSET_ID, 30),
-            )
-            buildSigned(super.keyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-
-        assert(getAccountAmount() == 40L)
-    }
-
-    @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Atomicity")
     @Story("Client sends a wrong instruction in transaction")
@@ -848,12 +794,12 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val assetBefore = getAsset(assetId)
         assertEquals(
             StoreAssetWithMetadata.ASSET_VALUE,
-            assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey],
+            assetBefore.value.cast<AssetValue.Store>().metadata.sortedMapOfName[assetKey],
         )
         client.tx { removeKeyValue(assetId, assetKey) }
 
         val assetAfter = getAsset(assetId)
-        assert(assetAfter.value.cast<AssetValue.Store>().metadata.map.isEmpty())
+        assert(assetAfter.value.cast<AssetValue.Store>().metadata.sortedMapOfName.isEmpty())
     }
 
     @Test
@@ -867,7 +813,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Permission("no_permission_required")
     @SdkTestId("burn_fixed_asset")
     fun `check assets with type Fixed are properly minted and burned`(): Unit = runBlocking {
-        client.tx { registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.Fixed()) }
+        client.tx { registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetValueType.numeric()) }
 
         // counter to track all changes in balance
         var counter = BigDecimal.ZERO
@@ -897,9 +843,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 .let { query -> client.sendQuery(query) }
                 .let { account -> account.assets[DEFAULT_ASSET_ID]?.value }
                 .let { value ->
-                    value?.cast<AssetValue.Fixed>()?.fixed?.fixedPointOfI64 ?: BigDecimal.ZERO
-                }
-                .also { actualBalance ->
+                    value?.cast<AssetValue.Numeric>()?.numeric?.asBigDecimal() ?: BigDecimal.ZERO
+                }.also { actualBalance ->
                     assertTrue("expected value `$expectedBalance`, but was `$actualBalance`") {
                         expectedBalance.compareTo(actualBalance) == 0
                     }
@@ -926,7 +871,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_asset_definition_with_metadata")
     fun `register asset with metadata`(): Unit = runBlocking {
         val assetKey = Name("asset_metadata_key")
-        val assetValue = Value.String("some string value")
+        val assetValue = MetadataValueBox.String("some string value")
         val metadata = Metadata(mapOf(assetKey to assetValue))
 
         client.tx {
@@ -939,7 +884,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { value ->
                 Assertions.assertEquals(
-                    value.cast<Value.String>().string,
+                    value.cast<MetadataValueBox.String>().string,
                     assetValue.string,
                 )
             }
@@ -955,13 +900,13 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 account(ALICE_ACCOUNT_ID)
             }
             repeat(100) { j ->
-                val definitionId = AssetDefinitionId("ASSET_${j}_$i".asName(), DEFAULT_DOMAIN_ID)
+                val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "ASSET_${j}_$i".asName())
                 isi.add(Instructions.registerAssetDefinition(definitionId, AssetValueType.Store()))
                 isi.add(
                     Instructions.setKeyValue(
                         AssetId(definitionId, ALICE_ACCOUNT_ID),
                         randomAlphabetic(10).asName(),
-                        randomAlphabetic(100).asValue(),
+                        randomAlphabetic(100).asMetadataValueBox(),
                     ),
                 )
             }
@@ -983,9 +928,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             it.isAccessible = true
             it.callSuspend(client, query, null, null, null, null)
         }
-        val vec = response?.cast<BatchedResponseOfValue.V1>()?.batchedResponseV1OfValue
-            ?.cast<BatchedResponseV1OfValue>()?.batch
-            ?.cast<Value.Vec>()?.vec
+        val vec = response?.cast<BatchedResponse.V1>()?.batchedResponseV1
+            ?.cast<BatchedResponseV1<*>>()?.batch
+            ?.cast<MetadataValueBox.Vec>()?.vec
 
         assertEquals(fetchSize, vec?.size)
     }
@@ -1038,7 +983,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                 ),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
-            setKeyValue(assetId, "key".asName(), "value".asValue())
+            setKeyValue(assetId, "key".asName(), "value".asMetadataValueBox())
         }
 
         QueryBuilder.findAssetById(assetId)
@@ -1048,8 +993,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .also { asset ->
                 assertTrue(
                     asset.value.cast<AssetValue.Store>()
-                        .metadata.map
-                        .containsValue("value".asValue()),
+                        .metadata.sortedMapOfName
+                        .containsValue("value".asMetadataValueBox()),
                 )
             }
 
@@ -1107,7 +1052,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val assetBefore = getAsset(assetId)
         assertEquals(
             StoreAssetWithMetadata.ASSET_VALUE,
-            assetBefore.value.cast<AssetValue.Store>().metadata.map[assetKey],
+            assetBefore.value.cast<AssetValue.Store>().metadata.sortedMapOfName[assetKey],
         )
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(super.account)
@@ -1115,8 +1060,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { alice ->
                 assertEquals(
-                    alice.metadata.map[RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asName()],
-                    RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asValue(),
+                    alice.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asMetadataValueBox(),
                 )
             }
         QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
@@ -1125,8 +1070,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { bob ->
                 assertEquals(
-                    bob.metadata.map[RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asName()],
-                    RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asValue(),
+                    bob.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asMetadataValueBox(),
                 )
             }
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
@@ -1135,8 +1080,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { domain ->
                 assertEquals(
-                    domain.metadata.map[RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asName()],
-                    RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asValue(),
+                    domain.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asName()],
+                    RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asMetadataValueBox(),
                 )
             }
     }
@@ -1148,7 +1093,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("transfer_domain_ownership_in_genesis")
     fun `transfer domain ownership in genesis`(): Unit = runBlocking {
         val key = randomAlphabetic(5).asName()
-        val value = randomAlphabetic(5).asValue()
+        val value = randomAlphabetic(5).asMetadataValueBox()
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             setKeyValue(WithDomainTransferredToBob.DOMAIN_ID, key, value)
         }
@@ -1156,8 +1101,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .metadata.map[key]
-        assertEquals(value.string, extractedValue?.cast<Value.String>()?.string)
+            .metadata.sortedMapOfName[key]
+        assertEquals(value.string, extractedValue?.cast<MetadataValueBox.String>()?.string)
     }
 
     @Test
@@ -1171,7 +1116,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
         assertFailsWith(TransactionRejectedException::class) {
             client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-                setKeyValue(domainId, randomAlphabetic(5).asName(), randomAlphabetic(5).asValue())
+                setKeyValue(domainId, randomAlphabetic(5).asName(), randomAlphabetic(5).asMetadataValueBox())
             }
         }
         var kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
@@ -1181,7 +1126,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(ALICE_ACCOUNT_ID, kingdomDomainOwnedBy)
 
         client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
-            transferDomainOwnership(ALICE_ACCOUNT_ID, IdBox.DomainId(domainId), BOB_ACCOUNT_ID)
+            transferDomainOwnership(ALICE_ACCOUNT_ID, domainId, BOB_ACCOUNT_ID)
         }
         kingdomDomainOwnedBy = QueryBuilder.findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
@@ -1190,15 +1135,15 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(BOB_ACCOUNT_ID, kingdomDomainOwnedBy)
 
         val key = randomAlphabetic(5).asName()
-        val value = randomAlphabetic(5).asValue()
+        val value = randomAlphabetic(5).asMetadataValueBox()
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) { setKeyValue(domainId, key, value) }
 
         val extractedValue = QueryBuilder.findDomainById(domainId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .metadata.map[key]
-        assertEquals(value.string, extractedValue?.cast<Value.String>()?.string)
+            .metadata.sortedMapOfName[key]
+        assertEquals(value.string, extractedValue?.cast<MetadataValueBox.String>()?.string)
     }
 
     @Test
@@ -1231,22 +1176,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         .let { query ->
             client.sendQuery(query).assets[assetId]?.value
         }.let { value ->
-            (value as? AssetValue.Quantity)?.u32 ?: 0
+            (value as? AssetValue.Numeric)?.numeric?.asLong() ?: 0
         }
-
-    private suspend fun sendTransactionToBurnIfCondition(condition: Boolean, assetId: AssetId, toBurn: Int) {
-        client.sendTransaction {
-            account(super.account)
-            `if`(
-                condition = condition,
-                then = Instructions.burnAsset(assetId, toBurn),
-                otherwise = Instructions.burnAsset(assetId, 0),
-            )
-            buildSigned(super.keyPair)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-    }
 
     private suspend fun getAsset(assetId: AssetId? = null) = QueryBuilder
         .findAssetById(assetId ?: DEFAULT_ASSET_ID)

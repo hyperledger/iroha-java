@@ -10,6 +10,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinition
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
@@ -21,15 +22,18 @@ import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.GrantBox
 import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashOf
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.JsonString
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.MintBox
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.Numeric
+import jp.co.soramitsu.iroha2.generated.NumericSpec
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.Role
@@ -38,6 +42,7 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.Signature
 import jp.co.soramitsu.iroha2.generated.SignatureOf
 import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
+import jp.co.soramitsu.iroha2.generated.SignedBlock
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
 import jp.co.soramitsu.iroha2.generated.SocketAddr
@@ -154,6 +159,8 @@ fun ByteArray.toIrohaHash(): Hash {
     return Hash(this)
 }
 
+fun <T> ByteArray.asHashOf() = HashOf<T>(this.toIrohaHash())
+
 fun ByteArray.hash(): ByteArray {
     val bytes = Blake2b.Blake2b256().digest(this)
     bytes[bytes.size - 1] = bytes[bytes.size - 1] or 1
@@ -252,6 +259,7 @@ fun TriggerId.asString() = when (this.domainId) {
 fun Metadata.merge(extra: Metadata) = Metadata(
     this.sortedMapOfName.toMutableMap().also { it.putAll(extra.sortedMapOfName) },
 )
+
 fun InstructionBox.Register.extractIdentifiableBox() = runCatching {
     when (val discriminant = this.registerBox.discriminant()) {
         0 -> this.registerBox.cast<Peer>() as IdentifiableBox
@@ -280,6 +288,7 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.PermissionTokenId -> this.name
     is IdBox.ParameterId -> this.parameterId
 }
+
 fun InstructionBox.extractAccount() = this
     .cast<InstructionBox.Register>()
     .registerBox
@@ -356,7 +365,7 @@ fun EventEventFilterBox.extractSchedule() = this
     .timeEventFilter.executionTime
     .cast<ExecutionTime.Schedule>().schedule
 
-fun BlockMessage.extractBlock() = this.signedBlock
+fun BlockMessage.extractBlock() = this.signedBlock.cast<SignedBlock.V1>().signedBlockV1.payload
 
 fun BlockPayload.height() = this.header.height
 
@@ -431,10 +440,84 @@ fun AccountId.asStringWithJson() = this.asJsonString().asJsonString()
 
 fun RoleId.asStringWithJson() = this.asJsonString().asJsonString()
 
+fun Number.asNumeric() = when (this) {
+    is Int -> this.asNumeric()
+    is Long -> this.asNumeric()
+    is BigInteger -> this.asNumeric()
+    is Double -> this.asNumeric()
+    is BigDecimal -> this.asNumeric()
+    else -> throw IrohaSdkException("Unexpected type to extract numeric ${this::class}")
+}
+
 fun Int.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
 
 fun Long.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
 
 fun BigInteger.asNumeric() = Numeric(mantissa = this, scale = 0)
 
+fun Double.asNumeric() = this.toBigDecimal().asNumeric()
+
 fun BigDecimal.asNumeric() = Numeric(mantissa = this.unscaledValue(), scale = this.scale().toLong())
+
+fun Numeric.asInt() = this.mantissa.toInt()
+
+fun Numeric.asLong() = this.mantissa.toLong()
+
+fun Numeric.asBigInteger() = this.mantissa
+
+fun Numeric.asBigDecimal() = BigDecimal.valueOf(this.mantissa.toLong(), this.scale.toInt())
+
+fun AssetValueType.Companion.numeric(scale: Long? = null) = AssetValueType.Numeric(NumericSpec(scale))
+
+fun Boolean.asMetadataValueBox() = MetadataValueBox.Bool(this)
+
+fun String.asMetadataValueBox() = MetadataValueBox.String(this)
+
+fun Number.asMetadataValueBox() = MetadataValueBox.Numeric(this.asNumeric())
+
+fun Double.asMetadataValueBox() = MetadataValueBox.Numeric(this.asNumeric())
+
+fun Metadata.getStringValue(key: String) = this.sortedMapOfName.getStringValue(key)
+
+fun Metadata.getBooleanValue(key: String) = this.sortedMapOfName.getBooleanValue(key)
+
+fun Metadata.getNameValue(key: String) = this.sortedMapOfName.getNameValue(key)
+
+fun Metadata.getFixedValue(key: String) = this.sortedMapOfName.getFixedValue(key)
+
+fun Map<Name, MetadataValueBox>.getStringValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.String>()?.string
+
+fun Map<Name, MetadataValueBox>.getBooleanValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.Bool>()?.bool
+
+fun Map<Name, MetadataValueBox>.getU32Value(key: String) = this[key.asName()]
+    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asLong()
+
+fun Map<Name, MetadataValueBox>.getU64Value(key: String) = this[key.asName()]
+    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger()
+
+fun Map<Name, MetadataValueBox>.getU128Value(key: String) = this[key.asName()]
+    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger()
+
+fun Map<Name, MetadataValueBox>.getFixedValue(key: String) = this[key.asName()]
+    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigDecimal()
+
+fun Map<Name, MetadataValueBox>.getNameValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.Name>()?.name
+
+inline fun <reified T> MetadataValueBox.getValue() = when (this) {
+    is MetadataValueBox.Numeric -> this.numeric.cast()
+    is MetadataValueBox.Bool -> this.bool.cast()
+    is MetadataValueBox.String -> this.string.cast()
+    is MetadataValueBox.Name -> this.name.string.cast<T>()
+    else -> throw IllegalArgumentException("Value type is not supported")
+}
+
+inline fun <reified T> Map<Name, MetadataValueBox>.extract(key: String) = when (T::class) {
+    Int::class -> this.getU32Value(key)?.toInt()
+    BigInteger::class -> this.getU128Value(key)
+    String::class -> this.getStringValue(key)
+    Boolean::class -> this.getBooleanValue(key)
+    BigDecimal::class -> this.getFixedValue(key)
+    else -> throw RuntimeException("Unknown type ${T::class}")
+} as T?
+
+inline fun <reified T> Metadata.extract(key: String) = this.sortedMapOfName.extract<T>(key)

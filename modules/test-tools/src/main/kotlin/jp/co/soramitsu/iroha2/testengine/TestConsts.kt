@@ -37,13 +37,13 @@ val BOB_ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, BOB_ACCOUNT_NAME)
 val BOB_KEYPAIR = generateKeyPair()
 
 @JvmField
-val DEFAULT_ASSET_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+val DEFAULT_ASSET_DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "xor".asName())
 
 @JvmField
 val DEFAULT_ASSET_ID = AssetId(DEFAULT_ASSET_DEFINITION_ID, ALICE_ACCOUNT_ID)
 
 @JvmField
-val XOR_DEFINITION_ID = AssetDefinitionId("xor".asName(), DEFAULT_DOMAIN_ID)
+val XOR_DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "xor".asName())
 
 @JvmField
-val VAL_DEFINITION_ID = AssetDefinitionId("val".asName(), DEFAULT_DOMAIN_ID)
+val VAL_DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "val".asName())

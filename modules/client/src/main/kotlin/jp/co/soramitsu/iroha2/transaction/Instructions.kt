@@ -19,6 +19,7 @@ import jp.co.soramitsu.iroha2.generated.BurnOfPublicKeyAndAccount
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecuteTrigger
+import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.Fail
 import jp.co.soramitsu.iroha2.generated.GrantBox
 import jp.co.soramitsu.iroha2.generated.GrantOfPermissionTokenAndAccount
@@ -158,7 +159,9 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringEventEventFilterBox,
+        filter: TriggeringEventEventFilterBox = TriggeringEventEventFilterBox.ExecuteTrigger(
+            ExecuteTriggerEventFilter(triggerId, accountId),
+        ),
     ) = InstructionBox.Register(
         RegisterBox.Trigger(
             RegisterOfTrigger(

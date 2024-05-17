@@ -14,7 +14,6 @@ fun main(args: Array<String>): Unit = runBlocking {
         "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
     )
-
     val client = AdminIroha2Client(URL(peerUrl), URL(peerUrl), URL(telemetryUrl), log = true)
     val query = Query(client, admin, adminKeyPair)
     query.findAllDomains()
@@ -34,11 +33,11 @@ fun main(args: Array<String>): Unit = runBlocking {
         .also { println("ALL ACCOUNTS: ${it.map { a -> a.id.asString() }}") }
 
     val assetDefinition = "asset_time_${System.currentTimeMillis()}$ASSET_ID_DELIMITER$domain"
-    sendTransaction.registerAssetDefinition(assetDefinition, AssetValueType.Quantity())
+    sendTransaction.registerAssetDefinition(assetDefinition, AssetValueType.numeric())
         .also { println("ASSET DEFINITION $assetDefinition CREATED") }
 
     val madHatterAsset = "$assetDefinition$ASSET_ID_DELIMITER$madHatter"
-    sendTransaction.registerAsset(madHatterAsset, AssetValue.Quantity(100))
+    sendTransaction.registerAsset(madHatterAsset, AssetValue.Numeric(100.asNumeric()))
         .also { println("ASSET $madHatterAsset CREATED") }
 
     val whiteRabbit = "whiteRabbit_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
@@ -47,7 +46,7 @@ fun main(args: Array<String>): Unit = runBlocking {
         .also { println("ACCOUNT $whiteRabbit CREATED") }
 
     val whiteRabbitAsset = "$assetDefinition$ASSET_ID_DELIMITER$whiteRabbit"
-    sendTransaction.registerAsset(whiteRabbitAsset, AssetValue.Quantity(0))
+    sendTransaction.registerAsset(whiteRabbitAsset, AssetValue.Numeric(0.asNumeric()))
         .also { println("ASSET $whiteRabbitAsset CREATED") }
 
     sendTransaction.transferAsset(madHatterAsset, 10, whiteRabbit, madHatter.asAccountId(), madHatterKeyPair)

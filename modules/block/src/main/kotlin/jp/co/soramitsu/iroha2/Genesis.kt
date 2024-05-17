@@ -37,6 +37,8 @@ open class Genesis(open val block: RawGenesisBlockFile) {
 
     companion object {
 
+        const val EXECUTOR_FILE_NAME = "executor.wasm"
+
         /**
          * List of genesis blocks to single block with unique instructions
          */
@@ -47,7 +49,12 @@ open class Genesis(open val block: RawGenesisBlockFile) {
                 uniqueIsi.addAll(genesis.block.transactions.map { tx -> tx.isi }.flatten())
             }
 
-            return Genesis(RawGenesisBlockFile(listOf(GenesisTransactionBuilder(uniqueIsi.mergeMetadata())), "executor.wasm"))
+            return Genesis(
+                RawGenesisBlockFile(
+                    listOf(GenesisTransactionBuilder(uniqueIsi.mergeMetadata())),
+                    EXECUTOR_FILE_NAME,
+                ),
+            )
         }
 
         private fun MutableSet<InstructionBox>.mergeMetadata(): List<InstructionBox> {

@@ -6,7 +6,11 @@
           "Domain": {
             "id": "wonderland",
             "logo": null,
-            "metadata": {}
+            "metadata": {
+              "key": {
+                "String": "value"
+              }
+            }
           }
         }
       },
@@ -15,9 +19,13 @@
           "Account": {
             "id": "alice@wonderland",
             "signatories": [
-              "ed0120719ba8c6bf3f226b1fba2a91cd0136e5e9268cdfc7549389f28e18df8b3ca394"
+              "ed01207233BFC89DCBD68C19FDE6CE6158225298EC1131B6A130D1AEB454C1AB5183C0"
             ],
-            "metadata": {}
+            "metadata": {
+              "key": {
+                "String": "value"
+              }
+            }
           }
         }
       },
@@ -26,16 +34,20 @@
           "Account": {
             "id": "bob@wonderland",
             "signatories": [
-              "ed0120a9a0e6b5300e46aaa490d2b01fac1b892be74360e7ce87d9d5d329f1995646db"
+              "ed01207233BFC89DCBD68C19FDE6CE6158225298EC1131B6A130D1AEB454C1AB5183C0"
             ],
-            "metadata": {}
+            "metadata": {
+              "key": {
+                "String": "value"
+              }
+            }
           }
         }
       },
       {
         "Register": {
           "AssetDefinition": {
-            "id": "xor#wonderland",
+            "id": "rose#wonderland",
             "value_type": "Numeric",
             "mintable": "Infinitely",
             "logo": null,
@@ -44,44 +56,69 @@
         }
       },
       {
-        "Grant": {
-          "PermissionToken": {
-            "object": {
-              "definition_id": "CanTransferAssetsWithDefinition",
-              "payload" : {
-                "asset_definition_id" : "xor#wonderland"
-              }
-            },
-            "destination_id": "bob@wonderland"
+        "Register": {
+          "Domain": {
+            "id": "garden_of_live_flowers",
+            "logo": null,
+            "metadata": {}
           }
         }
       },
       {
-        "Grant": {
-          "PermissionToken": {
-            "object": {
-              "definition_id": "CanTransferAssetsWithDefinition",
-              "payload" : {
-                "asset_definition_id" : "xor#wonderland"
-              }
-            },
-            "destination_id": "bob@wonderland"
+        "Register": {
+          "Account": {
+            "id": "carpenter@garden_of_live_flowers",
+            "signatories": [
+              "ed01207233BFC89DCBD68C19FDE6CE6158225298EC1131B6A130D1AEB454C1AB5183C0"
+            ],
+            "metadata": {}
+          }
+        }
+      },
+      {
+        "Register": {
+          "AssetDefinition": {
+            "id": "cabbage#garden_of_live_flowers",
+            "value_type": "Numeric",
+            "mintable": "Infinitely",
+            "logo": null,
+            "metadata": {}
           }
         }
       },
       {
         "Mint": {
           "Asset": {
-            "object": "100",
-            "destination_id": "xor#wonderland#alice@wonderland"
+            "object": "13",
+            "destination_id": "rose##alice@wonderland"
           }
         }
       },
       {
         "Mint": {
           "Asset": {
-            "object": "100",
-            "destination_id": "xor#wonderland#bob@wonderland"
+            "object": "44",
+            "destination_id": "cabbage#garden_of_live_flowers#alice@wonderland"
+          }
+        }
+      },
+      {
+        "Transfer": {
+          "Domain": {
+            "source_id": "genesis@genesis",
+            "object": "wonderland",
+            "destination_id": "alice@wonderland"
+          }
+        }
+      },
+      {
+        "Grant": {
+          "PermissionToken": {
+            "object": {
+              "definition_id": "CanSetParameters",
+              "payload": null
+            },
+            "destination_id": "alice@wonderland"
           }
         }
       },
@@ -126,6 +163,27 @@
       },
       {
         "NewParameter": "?WASMMaxMemory=524288000"
+      },
+      {
+        "Register": {
+          "Role": {
+            "id": "ALICE_METADATA_ACCESS",
+            "permissions": [
+              {
+                "definition_id": "CanRemoveKeyValueInAccount",
+                "payload": {
+                  "account_id": "alice@wonderland"
+                }
+              },
+              {
+                "definition_id": "CanSetKeyValueInAccount",
+                "payload": {
+                  "account_id": "alice@wonderland"
+                }
+              }
+            ]
+          }
+        }
       }
     ]
   ],

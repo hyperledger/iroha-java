@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.Genesis
-import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlockFile
 import org.junit.jupiter.api.Test
 import java.lang.annotation.Inherited
 import kotlin.reflect.KClass
@@ -45,7 +45,7 @@ annotation class WithIrohaManual(
  * Empty genesis with no instructions
  */
 open class EmptyGenesis : Genesis(
-    RawGenesisBlock(listOf(emptyList()), executorMode),
+    RawGenesisBlockFile(emptyList(), executorFile = EXECUTOR_FILE_NAME),
 )
 
 const val IROHA_CONFIG_DELIMITER = "="

@@ -37,21 +37,19 @@ import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamSubscription
 import jp.co.soramitsu.iroha2.extract
 import jp.co.soramitsu.iroha2.extractBlock
-import jp.co.soramitsu.iroha2.generated.BatchedResponseOfValue
-import jp.co.soramitsu.iroha2.generated.BatchedResponseV1OfValue
+import jp.co.soramitsu.iroha2.generated.BatchedResponse
+import jp.co.soramitsu.iroha2.generated.BatchedResponseV1
 import jp.co.soramitsu.iroha2.generated.BlockMessage
-import jp.co.soramitsu.iroha2.generated.BlockRejectionReason
-import jp.co.soramitsu.iroha2.generated.Event
+import jp.co.soramitsu.iroha2.generated.EventBox
 import jp.co.soramitsu.iroha2.generated.EventMessage
 import jp.co.soramitsu.iroha2.generated.EventSubscriptionRequest
 import jp.co.soramitsu.iroha2.generated.ForwardCursor
-import jp.co.soramitsu.iroha2.generated.PipelineEntityKind
-import jp.co.soramitsu.iroha2.generated.PipelineRejectionReason
-import jp.co.soramitsu.iroha2.generated.PipelineStatus
+import jp.co.soramitsu.iroha2.generated.PipelineEventBox
+import jp.co.soramitsu.iroha2.generated.QueryOutputBox
 import jp.co.soramitsu.iroha2.generated.SignedQuery
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionRejectionReason
-import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.TransactionStatus
 import jp.co.soramitsu.iroha2.hash
 import jp.co.soramitsu.iroha2.height
 import jp.co.soramitsu.iroha2.model.IrohaUrls
@@ -195,18 +193,18 @@ open class Iroha2Client(
     ): T {
         logger.debug("Sending query")
         val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting)
-        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
+        val cursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
         val finalResult = when (cursor.cursor) {
             null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
             else -> {
                 val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
                 resultList.addAll(
-                    responseDecoded.cast<BatchedResponseOfValue.V1>()
-                        .batchedResponseV1OfValue.batch.cast<Value.Vec>().vec,
+                    responseDecoded.cast<BatchedResponse.V1>()
+                        .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
                 )
-                BatchedResponseOfValue.V1(
-                    BatchedResponseV1OfValue(
-                        Value.Vec(resultList),
+                BatchedResponse.V1(
+                    BatchedResponseV1(
+                        QueryOutputBox.Vec(resultList),
                         ForwardCursor(),
                     ),
                 ).let { queryAndExtractor.resultExtractor.extract(it) }
@@ -335,7 +333,7 @@ open class Iroha2Client(
         limit: Long? = null,
         sorting: String? = null,
         queryCursor: ForwardCursor? = null,
-    ): BatchedResponseOfValue {
+    ): BatchedResponse.V1 {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(SignedQuery.encode(queryAndExtractor.query))
             start?.also { parameter("start", it) }
@@ -345,7 +343,7 @@ open class Iroha2Client(
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         return response.body<ByteArray>()
-            .let { BatchedResponseOfValue.decode(it) }
+            .let { BatchedResponse.V1.decode(it) }
     }
 
     private suspend fun <T> getQueryResultWithCursor(
@@ -354,13 +352,13 @@ open class Iroha2Client(
         limit: Long? = null,
         sorting: String? = null,
         queryCursor: ForwardCursor? = null,
-    ): MutableList<Value> {
-        val resultList = mutableListOf<Value>()
+    ): MutableList<QueryOutputBox> {
+        val resultList = mutableListOf<QueryOutputBox>()
         val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
         resultList.addAll(
-            responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.batch.cast<Value.Vec>().vec,
+            responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
         )
-        val cursor = responseDecoded.cast<BatchedResponseOfValue.V1>().batchedResponseV1OfValue.cursor
+        val cursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
         return when (cursor.cursor) {
             null -> resultList
             else -> {
@@ -421,30 +419,31 @@ open class Iroha2Client(
         hash: ByteArray,
         hexHash: String,
     ): ByteArray? {
-        when (val event = eventPublisherMessage.event) {
-            is Event.Pipeline -> {
-                val eventInner = event.pipelineEvent
-                if (eventInner.entityKind is PipelineEntityKind.Transaction && hash.contentEquals(eventInner.hash.arrayOfU8)) {
-                    when (val status = eventInner.status) {
-                        is PipelineStatus.Committed -> {
-                            logger.debug("Transaction {} committed", hexHash)
+        when (val event = eventPublisherMessage.eventBox) {
+            is EventBox.Pipeline -> {
+                val eventBox = event.pipelineEventBox
+                if (eventBox is PipelineEventBox.Transaction && hash.contentEquals(eventBox.transactionEvent.hash.hash.arrayOfU8)) {
+                    when (val status = eventBox.transactionEvent.status) {
+                        is TransactionStatus.Approved -> {
+                            logger.debug("Transaction {} approved", hexHash)
                             return hash
                         }
 
-                        is PipelineStatus.Rejected -> {
-                            val reason = status.pipelineRejectionReason.message()
+                        is TransactionStatus.Rejected -> {
+                            val reason = status.transactionRejectionReason.message()
                             logger.error("Transaction {} was rejected by reason: `{}`", hexHash, reason)
                             throw TransactionRejectedException("Transaction rejected with reason '$reason'")
                         }
 
-                        is PipelineStatus.Validating -> logger.debug("Transaction {} is validating", hexHash)
+                        is TransactionStatus.Expired -> logger.debug("Transaction {} is expired", hexHash)
+                        is TransactionStatus.Queued -> logger.debug("Transaction {} is queued", hexHash)
                     }
                 }
                 return null
             }
 
             else -> throw WebSocketProtocolException(
-                "Expected message with type ${Event.Pipeline::class.qualifiedName}, " +
+                "Expected message with type ${EventBox.Pipeline::class.qualifiedName}, " +
                     "but was ${event::class.qualifiedName}",
             )
         }
@@ -453,23 +452,12 @@ open class Iroha2Client(
     /**
      * Extract the rejection reason
      */
-    private fun PipelineRejectionReason.message(): String = when (this) {
-        is PipelineRejectionReason.Block -> when (this.blockRejectionReason) {
-            is BlockRejectionReason.ConsensusBlockRejection -> "Block was rejected during consensus"
-        }
-
-        is PipelineRejectionReason.Transaction -> when (val reason = this.transactionRejectionReason) {
-            is TransactionRejectionReason.InstructionExecution -> {
-                val details = reason.instructionExecutionFail
-                "Failed: `${details.reason}` during execution of instruction: ${details.instruction::class.qualifiedName}"
-            }
-
-            is TransactionRejectionReason.WasmExecution -> reason.wasmExecutionFail.reason
-            is TransactionRejectionReason.LimitCheck -> reason.transactionLimitError.reason
-            is TransactionRejectionReason.Expired -> reason.toString()
-            is TransactionRejectionReason.AccountDoesNotExist -> reason.findError.extract()
-            is TransactionRejectionReason.Validation -> reason.validationFail.toString()
-        }
+    private fun TransactionRejectionReason.message(): String = when (this) {
+        is TransactionRejectionReason.InstructionExecution -> this.instructionExecutionFail.reason
+        is TransactionRejectionReason.WasmExecution -> this.wasmExecutionFail.reason
+        is TransactionRejectionReason.LimitCheck -> this.transactionLimitError.reason
+        is TransactionRejectionReason.AccountDoesNotExist -> this.findError.extract()
+        is TransactionRejectionReason.Validation -> this.validationFail.toString()
     }
 
     /**
@@ -487,9 +475,8 @@ open class Iroha2Client(
 
     private fun eventSubscriberMessageOf(
         hash: ByteArray,
-        entityKind: PipelineEntityKind = PipelineEntityKind.Transaction(),
     ) = EventSubscriptionRequest(
-        Filters.pipeline(entityKind, null, hash),
+        listOf(Filters.pipelineTransaction(hash)),
     )
 
     object DurationDeserializer : JsonDeserializer<Duration>() {

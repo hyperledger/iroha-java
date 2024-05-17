@@ -4,10 +4,10 @@ import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.Value
 import kotlinx.coroutines.withTimeout
 import java.security.KeyPair
 
@@ -20,7 +20,7 @@ class SendTransaction(
 
     suspend fun registerDomain(
         id: String,
-        metadata: Map<Name, Value> = mapOf(),
+        metadata: Map<Name, MetadataValueBox> = mapOf(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
     ) {
@@ -36,7 +36,7 @@ class SendTransaction(
     suspend fun registerAccount(
         id: String,
         signatories: List<PublicKey>,
-        metadata: Map<Name, Value> = mapOf(),
+        metadata: Map<Name, MetadataValueBox> = mapOf(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
     ) {
@@ -52,7 +52,7 @@ class SendTransaction(
     suspend fun registerAssetDefinition(
         id: String,
         type: AssetValueType = AssetValueType.Store(),
-        metadata: Map<Name, Value> = mapOf(),
+        metadata: Map<Name, MetadataValueBox> = mapOf(),
         mintable: Mintable = Mintable.Infinitely(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,

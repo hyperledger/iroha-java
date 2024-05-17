@@ -12,14 +12,51 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
-import io.ktor.util.toUpperCasePreservingASCIIRules
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.Algorithm
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.GrantBox
+import jp.co.soramitsu.iroha2.generated.GrantOfPermissionTokenAndAccount
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.JsonString
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.Mintable
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.NewParameter
+import jp.co.soramitsu.iroha2.generated.NewRole
+import jp.co.soramitsu.iroha2.generated.Parameter
+import jp.co.soramitsu.iroha2.generated.Peer
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlockFile
+import jp.co.soramitsu.iroha2.generated.RegisterBox
+import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
+import jp.co.soramitsu.iroha2.generated.RegisterOfAsset
+import jp.co.soramitsu.iroha2.generated.RegisterOfAssetDefinition
+import jp.co.soramitsu.iroha2.generated.RegisterOfDomain
+import jp.co.soramitsu.iroha2.generated.RegisterOfPeer
+import jp.co.soramitsu.iroha2.generated.RegisterOfRole
+import jp.co.soramitsu.iroha2.generated.RegisterOfTrigger
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.Trigger
+import jp.co.soramitsu.iroha2.generated.TriggerId
 import java.io.ByteArrayOutputStream
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
@@ -36,11 +73,11 @@ val JSON_SERDE by lazy {
         module.addDeserializer(Name::class.java, NameDeserializer)
 
         module.addDeserializer(InstructionBox::class.java, InstructionDeserializer)
-        module.addDeserializer(RegisterBox::class.java, RegisterBoxDeserializer)
-        module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
+//        module.addDeserializer(RegisterBox::class.java, RegisterBoxDeserializer)
+//        module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
-        module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
-        module.addDeserializer(RemoveKeyValueBox::class.java, RemoveKeyValueBoxDeserializer)
+//        module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
+//        module.addDeserializer(RemoveKeyValueBox::class.java, RemoveKeyValueBoxDeserializer)
 
         module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
         module.addDeserializer(DomainId::class.java, DomainIdDeserializer)
@@ -54,7 +91,7 @@ val JSON_SERDE by lazy {
         module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
-        module.addDeserializer(NewParameter::class.java, NewParameterBoxDeserializer)
+//        module.addDeserializer(NewParameter::class.java, NewParameterBoxDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addDeserializer(PermissionToken::class.java, PermissionTokenDeserializer)
         module.addDeserializer(JsonString::class.java, StringWithJsonDeserializer)
@@ -75,14 +112,14 @@ val JSON_SERDE by lazy {
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
 
         module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
-        module.addSerializer(RawGenesisBlock::class.java, RawGenesisBlockSerializer)
+        module.addSerializer(RawGenesisBlockFile::class.java, RawGenesisBlockSerializer)
         module.addSerializer(PermissionToken::class.java, PermissionTokenSerializer)
         module.addSerializer(SocketAddr::class.java, SocketAddrSerializer)
         module.addSerializer(UInt::class.java, UIntSerializer)
         module.addSerializer(PublicKey::class.java, PublicKeySerializer)
-        module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
+//        module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
-        module.addSerializer(Parameter::class.java, ParameterSerializer)
+//        module.addSerializer(Parameter::class.java, ParameterSerializer)
         module.addSerializer(NewParameter::class.java, NewParameterBoxSerializer)
         module.addSerializer(JsonString::class.java, JsonStringSerializer)
 
@@ -138,23 +175,23 @@ object IdBoxDeserializer : JsonDeserializer<IdBox>() {
     }
 }
 
-object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RegisterBox {
-        return sealedDeserializeRegisterBox(p, JSON_SERDE)
-    }
-}
-
-object MintBoxDeserializer : JsonDeserializer<MintBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): MintBox {
-        return deserializeMintBox(p, JSON_SERDE)
-    }
-}
-
-object NewParameterBoxDeserializer : JsonDeserializer<NewParameter>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewParameter {
-        return deserializeNewParameterBox(p, JSON_SERDE)
-    }
-}
+// object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
+//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RegisterBox {
+//        return sealedDeserializeRegisterBox(p, JSON_SERDE)
+//    }
+// }
+//
+// object MintBoxDeserializer : JsonDeserializer<MintBox>() {
+//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): MintBox {
+//        return deserializeMintBox(p, JSON_SERDE)
+//    }
+// }
+//
+// object NewParameterBoxDeserializer : JsonDeserializer<NewParameter>() {
+//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewParameter {
+//        return deserializeNewParameterBox(p, JSON_SERDE)
+//    }
+// }
 
 object StringWithJsonDeserializer : JsonDeserializer<JsonString>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): JsonString {
@@ -189,17 +226,17 @@ object PermissionTokenDeserializer : JsonDeserializer<PermissionToken>() {
     }
 }
 
-object RemoveKeyValueBoxDeserializer : JsonDeserializer<RemoveKeyValueBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RemoveKeyValueBox {
-        return deserializeRemoveKeyValueBox(p, JSON_SERDE)
-    }
-}
-
-object SetKeyValueBoxDeserializer : JsonDeserializer<SetKeyValueBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueBox {
-        return deserializeSetKeyValueBox(p, JSON_SERDE)
-    }
-}
+// object RemoveKeyValueBoxDeserializer : JsonDeserializer<RemoveKeyValueBox>() {
+//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RemoveKeyValueBox {
+//        return deserializeRemoveKeyValueBox(p, JSON_SERDE)
+//    }
+// }
+//
+// object SetKeyValueBoxDeserializer : JsonDeserializer<SetKeyValueBox>() {
+//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueBox {
+//        return deserializeSetKeyValueBox(p, JSON_SERDE)
+//    }
+// }
 
 object MetadataDeserializer : JsonDeserializer<Metadata>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Metadata {
@@ -521,46 +558,37 @@ object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole
 /**
  * Custom serializer for [Parameter]
  */
-object ParameterSerializer : JsonSerializer<Parameter>() {
-    override fun serialize(value: Parameter, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeString(value.asString())
-    }
-}
+// object ParameterSerializer : JsonSerializer<Parameter>() {
+//    override fun serialize(value: Parameter, gen: JsonGenerator, serializers: SerializerProvider) {
+//        gen.writeString(value.asString())
+//    }
+// }
 
 /**
  * Custom serializer for Iroha2 enumeration types
  */
-object EnumerationSerializer : JsonSerializer<ModelEnum>() {
-    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
-        when (value) {
-            is InstructionBox.Grant -> value.serialize(gen)
-            is InstructionBox.Burn -> value.serialize(gen)
-            is InstructionBox.Mint -> value.serialize(gen)
-            is InstructionBox.SetKeyValue -> value.serialize(gen)
-            is InstructionBox.Register -> value.serialize(gen)
-            else -> serializeSingleMember(gen, value)
-        }
-    }
-}
+// object EnumerationSerializer : JsonSerializer<ModelEnum>() {
+//    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
+//        when (value) {
+//            is InstructionBox.Grant -> value.serialize(gen)
+//            is InstructionBox.Burn -> value.serialize(gen)
+//            is InstructionBox.Mint -> value.serialize(gen)
+//            is InstructionBox.SetKeyValue -> value.serialize(gen)
+//            is InstructionBox.Register -> value.serialize(gen)
+//            else -> serializeSingleMember(gen, value)
+//        }
+//    }
+// }
 
-fun String.asParameter() = this.split(PARAMETER_DELIMITER).takeIf {
-    it.size == 2
-}?.let { parts ->
-    Parameter(
-        ParameterId(Name(parts[0])),
-        parts[1].asValue(),
-    )
-}
-
-private fun InstructionBox.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
-
-private fun InstructionBox.Grant.serialize(gen: JsonGenerator) {
-    return this.serializeBox<GrantBox>(gen)
-}
-
-private fun InstructionBox.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
-
-private fun InstructionBox.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
+// private fun InstructionBox.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
+//
+// private fun InstructionBox.Grant.serialize(gen: JsonGenerator) {
+//    return this.serializeBox<GrantBox>(gen)
+// }
+//
+// private fun InstructionBox.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
+//
+// private fun InstructionBox.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
 
 private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
     val clazz = this::class
@@ -571,9 +599,7 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
             gen.writeStartObject()
             gen.writeObjectField(
                 clazz.simpleName,
-                memberProperties.first().call(this)
-                    ?.cast<RegisterBox>()
-                    ?.`object`?.expression,
+                memberProperties.first().call(this)?.cast<RegisterBox>(), // todo
             )
             gen.writeEndObject()
         }
@@ -582,80 +608,80 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
     }
 }
 
-/**
- * Serializes BurnBox, MintBox, GrantBox etc...
- */
-private inline fun <reified B> InstructionBox.serializeBox(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
-    when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> {
-            gen.writeStartObject()
-            gen.writeObjectFieldStart(clazz.simpleName)
-            memberProperties.first().call(this)?.cast<B>()?.serializeBox(gen)
-            gen.writeEndObject()
-            gen.writeEndObject()
-        }
+// /**
+// * Serializes BurnBox, MintBox, GrantBox etc...
+// */
+// private inline fun <reified B> InstructionBox.serializeBox(gen: JsonGenerator) {
+//    val clazz = this::class
+//    val memberProperties = clazz.memberProperties
+//    when (memberProperties.size) {
+//        0 -> gen.writeString(clazz.simpleName)
+//        1 -> {
+//            gen.writeStartObject()
+//            gen.writeObjectFieldStart(clazz.simpleName)
+//            memberProperties.first().call(this)?.cast<B>()?.serializeBox(gen)
+//            gen.writeEndObject()
+//            gen.writeEndObject()
+//        }
+//
+//        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+//    }
+// }
 
-        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
+// private inline fun <reified B> B.serializeBox(
+//    gen: JsonGenerator,
+// ) = when (B::class) {
+//    BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
+//    MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
+//    GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
+//    SetKeyValueBox::class -> this?.cast<SetKeyValueBox>()?.serializeBox(gen)
+//    else -> throw IrohaSdkException("Unexpected type ${B::class}")
+// }
 
-private inline fun <reified B> B.serializeBox(
-    gen: JsonGenerator,
-) = when (B::class) {
-    BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
-    MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
-    GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
-    SetKeyValueBox::class -> this?.cast<SetKeyValueBox>()?.serializeBox(gen)
-    else -> throw IrohaSdkException("Unexpected type ${B::class}")
-}
-
-private fun BurnBox.serializeBox(
-    gen: JsonGenerator,
-) = mintBurnSerialize(gen, this.`object`, this.destinationId)
-
-private fun MintBox.serializeBox(
-    gen: JsonGenerator,
-) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
-
-private fun GrantBox.serializeBox(gen: JsonGenerator) {
-    val fieldData = when (val rawValue = this.`object`.expression.cast<Boxession.Raw>().value) {
-        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.permissionToken
-        is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
-        else -> throw IrohaSdkException("Grant InstructionBox serialization error")
-    }
-    gen.writeObjectFieldStart("object")
-    gen.writeObjectField(fieldData.first, fieldData.second)
-    gen.writeEndObject()
-    gen.writeObjectField("destination_id", this.destinationId)
-}
-
-private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
-    val id = this.objectId.expression
-        .cast<Boxession.Raw>().value
-        .cast<Value.Id>().idBox
-        .extractId()
-    gen.writeObjectField(id::class.simpleName, id)
-    gen.writeObjectField("key", this.key)
-
-    val fieldValue = when (val value = this.value.expression.cast<Boxession.Raw>().value) {
-        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
-        else -> value
-    }
-    gen.writeObjectField("value", fieldValue)
-}
-
-private fun mintBurnSerialize(
-    gen: JsonGenerator,
-    expression: Boxession,
-    destinationId: EvaluatesTo<IdBox>,
-) {
-    val rawValue = expression.cast<Boxession.Raw>().value.cast<Value.Numeric>().numericValue
-    gen.writeObjectField("object", rawValue)
-    gen.writeObjectField("destination_id", destinationId)
-}
+// private fun BurnBox.serializeBox(
+//    gen: JsonGenerator,
+// ) = mintBurnSerialize(gen, this.`object`, this.destinationId)
+//
+// private fun MintBox.serializeBox(
+//    gen: JsonGenerator,
+// ) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
+//
+// private fun GrantBox.serializeBox(gen: JsonGenerator) {
+//    val fieldData = when (val rawValue = this.`object`.expression.cast<Boxession.Raw>().value) {
+//        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.permissionToken
+//        is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
+//        else -> throw IrohaSdkException("Grant InstructionBox serialization error")
+//    }
+//    gen.writeObjectFieldStart("object")
+//    gen.writeObjectField(fieldData.first, fieldData.second)
+//    gen.writeEndObject()
+//    gen.writeObjectField("destination_id", this.destinationId)
+// }
+//
+// private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
+//    val id = this.objectId.expression
+//        .cast<Boxession.Raw>().value
+//        .cast<Value.Id>().idBox
+//        .extractId()
+//    gen.writeObjectField(id::class.simpleName, id)
+//    gen.writeObjectField("key", this.key)
+//
+//    val fieldValue = when (val value = this.value.expression.cast<Boxession.Raw>().value) {
+//        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
+//        else -> value
+//    }
+//    gen.writeObjectField("value", fieldValue)
+// }
+//
+// private fun mintBurnSerialize(
+//    gen: JsonGenerator,
+//    expression: Boxession,
+//    destinationId: EvaluatesTo<IdBox>,
+// ) {
+//    val rawValue = expression.cast<Boxession.Raw>().value.cast<Value.Numeric>().numericValue
+//    gen.writeObjectField("object", rawValue)
+//    gen.writeObjectField("destination_id", destinationId)
+// }
 
 /**
  * Serialise a single member object or nothing at all
@@ -740,19 +766,19 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
         Pair(node.key, node.value)
     }
 
-    val subtype = Value::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
-    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
+//    val subtype = Value::class.nestedClasses.find { clazz ->
+//        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
+//    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
+//
+//    val argTypeName = subtype.primaryConstructor?.parameters
+//        ?.firstOrNull()?.type?.toString()
+//        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
 
-    val argTypeName = subtype.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
-
-    val grantObject = mapper.convertValue(paramAndValueToConvert.second, argTypeName.asClass())
-    val destinationId = mapper.convertValue(destination, IdBox::class.java)
-    return GrantBox(
-        `object` = grantObject.evaluatesTo().cast(),
-        destinationId = destinationId.evaluatesTo().cast(),
+    return GrantBox.PermissionToken(
+        GrantOfPermissionTokenAndAccount(
+            PermissionToken("".asName(), JsonString("")),
+            AccountId("".asDomainId(), "".asName()),
+        ),
     )
 }
 
@@ -772,20 +798,20 @@ private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
     return subtype.primaryConstructor?.call(arg) as IdBox
 }
 
-private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): RegisterBox {
-    val node = p.readValueAsTree<JsonNode>().fields().next()
-
-    val param = node.key.removePrefix("New")
-    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == param
-    }
-    val argTypeName = subtype?.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $param")
-
-    val arg = mapper.convertValue(node.value, argTypeName.asClass())
-    return getRegisterBox(arg)
-}
+// private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): RegisterBox {
+//    val node = p.readValueAsTree<JsonNode>().fields().next()
+//
+//    val param = node.key.removePrefix("New")
+//    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
+//        !clazz.isCompanion && clazz.simpleName == param
+//    }
+//    val argTypeName = subtype?.primaryConstructor?.parameters
+//        ?.firstOrNull()?.type?.toString()
+//        ?: throw DeserializationException("Subtype parameter not found by $param")
+//
+//    val arg = mapper.convertValue(node.value, argTypeName.asClass())
+//    return getRegisterBox(arg)
+// }
 
 private fun getRegisterBox(arg: Any): RegisterBox {
     return when (arg) {
@@ -800,69 +826,60 @@ private fun getRegisterBox(arg: Any): RegisterBox {
     }
 }
 
-private fun deserializeMintBox(p: JsonParser, mapper: ObjectMapper): MintBox {
-    val jsonNode = p.readValueAsTree<JsonNode>()
-    val iter = jsonNode.iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
-    val newNode = mapper.createObjectNode().set<ObjectNode>(
-        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
-        IntNode(numericTypeAndValue[0].toInt()),
-    )
-    val objectId = mapper.convertValue(
-        newNode,
-        Value::class.java,
-    ) as Value
-    val destination = mapper.convertValue(
-        nodes[1],
-        IdBox::class.java,
-    ) as IdBox
-    return MintBox(
-        `object` = objectId.evaluatesTo().cast(),
-        destinationId = destination.evaluatesTo().cast(),
-    )
-}
+// private fun deserializeMintBox(p: JsonParser, mapper: ObjectMapper): MintBox {
+//    val jsonNode = p.readValueAsTree<JsonNode>()
+//    val iter = jsonNode.iterator()
+//    val nodes = mutableListOf<JsonNode>()
+//    while (iter.hasNext()) {
+//        val node = iter.next()
+//        nodes.add(node)
+//    }
+//    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
+//    val newNode = mapper.createObjectNode().set<ObjectNode>(
+//        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
+//        IntNode(numericTypeAndValue[0].toInt()),
+//    )
+//    val objectId = mapper.convertValue(
+//        newNode,
+//        Value::class.java,
+//    ) as Value
+//    val destination = mapper.convertValue(
+//        nodes[1],
+//        IdBox::class.java,
+//    ) as IdBox
+//    return MintBox(
+//        `object` = objectId.evaluatesTo().cast(),
+//        destinationId = destination.evaluatesTo().cast(),
+//    )
+// }
 
-private fun deserializeNewParameterBox(p: JsonParser, mapper: ObjectMapper): NewParameter {
-    val jsonNode = p.readValueAsTree<JsonNode>().fields().next()
-    val parameter = jsonNode.value.asText().asParameter()
-
-    return NewParameter(
-        parameter = parameter.evaluatesTo().cast(),
-    )
-}
-
-private fun deserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper): SetKeyValueBox {
-    val jsonNode = p.readValueAsTree<JsonNode>()
-    val iter = jsonNode.iterator()
-    val nodes = mutableListOf<JsonNode>()
-    while (iter.hasNext()) {
-        val node = iter.next()
-        nodes.add(node)
-    }
-
-    val objectId = jsonNode.fields().next()
-    val key = nodes[1].fields().next()
-    val subtype = IdBox::class.nestedClasses.find { clazz ->
-        !clazz.isCompanion && clazz.simpleName == objectId.key
-    }
-    val argTypeName = subtype?.primaryConstructor?.parameters
-        ?.firstOrNull()?.type?.toString()
-        ?: throw DeserializationException("Subtype parameter not found by $objectId")
-
-    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
-    val keyArg = mapper.convertValue(key.value, Name::class.java)
-    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
-    return SetKeyValueBox(
-        objectId = objectIdArg.evaluatesTo().cast(),
-        key = keyArg.evaluatesTo().cast(),
-        value = valueArg.evaluatesTo().cast(),
-    )
-}
+// private fun deserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper): SetKeyValueBox {
+//    val jsonNode = p.readValueAsTree<JsonNode>()
+//    val iter = jsonNode.iterator()
+//    val nodes = mutableListOf<JsonNode>()
+//    while (iter.hasNext()) {
+//        val node = iter.next()
+//        nodes.add(node)
+//    }
+//
+//    val objectId = jsonNode.fields().next()
+//    val key = nodes[1].fields().next()
+//    val subtype = IdBox::class.nestedClasses.find { clazz ->
+//        !clazz.isCompanion && clazz.simpleName == objectId.key
+//    }
+//    val argTypeName = subtype?.primaryConstructor?.parameters
+//        ?.firstOrNull()?.type?.toString()
+//        ?: throw DeserializationException("Subtype parameter not found by $objectId")
+//
+//    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
+//    val keyArg = mapper.convertValue(key.value, Name::class.java)
+//    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
+//    return SetKeyValueBox(
+//        objectId = objectIdArg.evaluatesTo().cast(),
+//        key = keyArg.evaluatesTo().cast(),
+//        value = valueArg.evaluatesTo().cast(),
+//    )
+// }
 
 private fun deserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
     val iter = p.readValueAsTree<JsonNode>().iterator()
@@ -887,17 +904,6 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
     val node = nodeMetadata.next()
     val key = node.key.asName()
     val valueNode = node.value.fields().next()
-    val value = valueNode.value.asText().asValue()
+    val value = valueNode.value.asText().asMetadataValueBox()
     return Metadata(mapOf(Pair(key, value)))
-}
-
-private fun String.toNumericValue(): NumericValue {
-    val (number, type) = this.split('_')
-    return when (type) {
-        NumericValue.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
-        NumericValue.U64::class.simpleName?.lowercase() -> NumericValue.U64(number.toBigInteger())
-        NumericValue.U128::class.simpleName?.lowercase() -> NumericValue.U128(number.toBigInteger())
-        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
-        else -> throw IllegalArgumentException("Number out of range")
-    }
 }

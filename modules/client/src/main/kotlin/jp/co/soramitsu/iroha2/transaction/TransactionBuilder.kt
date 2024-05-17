@@ -149,7 +149,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 metadata,
-                null,
             ),
         )
     }
@@ -211,7 +210,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 metadata,
-                null,
             ),
         )
     }
