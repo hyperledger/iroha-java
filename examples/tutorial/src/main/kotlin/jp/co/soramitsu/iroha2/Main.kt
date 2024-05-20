@@ -5,8 +5,10 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import kotlinx.coroutines.runBlocking
 import java.net.URL
+import java.util.UUID
 
 fun main(args: Array<String>): Unit = runBlocking {
+    val chainId = UUID.fromString("00000000-0000-0000-0000-000000000000")
     val peerUrl = "http://127.0.0.1:8080"
     val telemetryUrl = "http://127.0.0.1:8180"
     val admin = AccountId("wonderland".asDomainId(), "bob".asName())
@@ -18,8 +20,12 @@ fun main(args: Array<String>): Unit = runBlocking {
     val query = Query(client, admin, adminKeyPair)
     query.findAllDomains()
         .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
+    query.findAllAssets()
+        .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
+    query.findAllAssets()
+        .also { println("ALL ACCOUNTS: ${it.map { d -> d.id.asString() }}") }
 
-    val sendTransaction = SendTransaction(client, admin, adminKeyPair)
+    val sendTransaction = SendTransaction(client, admin, adminKeyPair, chainId)
 
     val domain = "looking_glass_${System.currentTimeMillis()}"
     sendTransaction.registerDomain(domain).also { println("DOMAIN $domain CREATED") }
@@ -28,9 +34,6 @@ fun main(args: Array<String>): Unit = runBlocking {
     val madHatterKeyPair = generateKeyPair()
     sendTransaction.registerAccount(madHatter, listOf(madHatterKeyPair.public.toIrohaPublicKey()))
         .also { println("ACCOUNT $madHatter CREATED") }
-
-    query.findAllAccounts()
-        .also { println("ALL ACCOUNTS: ${it.map { a -> a.id.asString() }}") }
 
     val assetDefinition = "asset_time_${System.currentTimeMillis()}$ASSET_ID_DELIMITER$domain"
     sendTransaction.registerAssetDefinition(assetDefinition, AssetValueType.numeric())

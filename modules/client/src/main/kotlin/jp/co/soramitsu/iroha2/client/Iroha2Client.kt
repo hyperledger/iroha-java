@@ -333,7 +333,7 @@ open class Iroha2Client(
         limit: Long? = null,
         sorting: String? = null,
         queryCursor: ForwardCursor? = null,
-    ): BatchedResponse.V1 {
+    ): BatchedResponse<QueryOutputBox> {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(SignedQuery.encode(queryAndExtractor.query))
             start?.also { parameter("start", it) }
@@ -342,8 +342,7 @@ open class Iroha2Client(
             queryCursor?.queryId?.also { parameter("query_id", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
-        return response.body<ByteArray>()
-            .let { BatchedResponse.V1.decode(it) }
+        return response.body<ByteArray>().let { BatchedResponse.decode(it) }.cast<BatchedResponse<QueryOutputBox>>()
     }
 
     private suspend fun <T> getQueryResultWithCursor(

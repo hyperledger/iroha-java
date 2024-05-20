@@ -10,11 +10,13 @@ import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import kotlinx.coroutines.withTimeout
 import java.security.KeyPair
+import java.util.UUID
 
 class SendTransaction(
     private val client: AdminIroha2Client,
     private val admin: AccountId,
     private val keyPair: KeyPair,
+    private val chainUuid: UUID,
     private val timeout: Long = 10000,
 ) {
 
@@ -26,7 +28,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.registerDomain(id.asDomainId(), metadata)
+            chainId(chainUuid)
+            registerDomain(id.asDomainId(), metadata)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -42,7 +45,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.registerAccount(id.asAccountId(), signatories, Metadata(metadata))
+            chainId(chainUuid)
+            registerAccount(id.asAccountId(), signatories, Metadata(metadata))
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -59,7 +63,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.registerAssetDefinition(id.asAssetDefinitionId(), type, Metadata(metadata), mintable)
+            chainId(chainUuid)
+            registerAssetDefinition(id.asAssetDefinitionId(), type, Metadata(metadata), mintable)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -74,7 +79,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.registerAsset(id.asAssetId(), value)
+            chainId(chainUuid)
+            registerAsset(id.asAssetId(), value)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -90,7 +96,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.transferAsset(from.asAssetId(), value, to.asAccountId())
+            chainId(chainUuid)
+            transferAsset(from.asAssetId(), value, to.asAccountId())
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -105,7 +112,8 @@ class SendTransaction(
     ) {
         client.sendTransaction {
             account(admin)
-            this.burnAsset(assetId.asAssetId(), value)
+            chainId(chainUuid)
+            burnAsset(assetId.asAssetId(), value)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }

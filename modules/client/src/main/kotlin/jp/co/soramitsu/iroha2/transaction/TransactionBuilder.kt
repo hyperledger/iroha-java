@@ -42,6 +42,7 @@ import java.math.BigInteger
 import java.security.KeyPair
 import java.time.Duration
 import java.time.Instant
+import java.util.UUID
 import kotlin.random.Random
 import kotlin.random.nextLong
 
@@ -65,6 +66,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         metadata = lazy { HashMap() }
         builder(this)
     }
+
+    fun chainId(uuid: UUID) = this.apply { chainId = ChainId(uuid.toString()) }
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
