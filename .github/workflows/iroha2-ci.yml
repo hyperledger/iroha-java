@@ -24,10 +24,10 @@ jobs:
         distribution: 'liberica'
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@v1
-    - name: Publish package
-      uses: gradle/gradle-build-action@v2.3.3
-      with:
-        arguments: publish
-      env:
-        NEXUS_USER: ${{ secrets.NEXUS_USER }}
-        NEXUS_PASS: ${{ secrets.NEXUS_PASS }}
+    #- name: Publish package
+    # uses: gradle/gradle-build-action@v2.3.3
+    # with:
+    #   arguments: publish
+    # env:
+    #   NEXUS_USER: ${{ secrets.NEXUS_USER }}
+    #   NEXUS_PASS: ${{ secrets.NEXUS_PASS }}
