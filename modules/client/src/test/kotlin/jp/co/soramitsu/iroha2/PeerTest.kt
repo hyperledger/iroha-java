@@ -57,7 +57,6 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
 
         startNewContainer(keyPair, alias).use {
             registerPeer(address, payload)
-            delay(3000)
             assertTrue(isPeerAvailable(address, payload))
         }
     }
@@ -95,7 +94,6 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
 
         startNewContainer(keyPair, alias).use { container ->
             registerPeer(address, payload)
-            delay(3000)
             assertTrue(isPeerAvailable(address, payload))
 
             delay(5000)
@@ -139,7 +137,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
         alias: String,
     ): IrohaContainer {
         return IrohaContainer {
-            this.waitStrategy = true
+            this.waitStrategy = false
             this.keyPair = keyPair
             this.alias = alias
             this.networkToJoin = containers.first().network ?: throw IrohaSdkException("Container network not found")
