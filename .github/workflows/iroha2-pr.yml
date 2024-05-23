@@ -5,7 +5,7 @@ on:
     branches: [ iroha2-dev, iroha2-main ]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: iroha-ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
