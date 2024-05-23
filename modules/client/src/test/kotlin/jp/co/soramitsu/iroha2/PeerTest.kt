@@ -57,6 +57,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
 
         startNewContainer(keyPair, alias).use {
             registerPeer(address, payload)
+            delay(3000)
             assertTrue(isPeerAvailable(address, payload))
         }
     }
