@@ -168,22 +168,9 @@ fun ByteArray.hash(): ByteArray {
 }
 
 /**
- * Hash the given versioned transaction (`VersionedTransaction.V1`)
- */
-fun SignedTransaction.V1.hash(): ByteArray {
-    return this.signedTransactionV1
-        .payload
-        .let { TransactionPayload.encode(it) }
-        .hash()
-}
-
-/**
  * Hash the given versioned transaction. Maintains only `VersionedTransaction.V1`
  */
-fun SignedTransaction.hash() = when (this) {
-    is SignedTransaction.V1 -> this.hash()
-}
-
+fun SignedTransaction.hash() = SignedTransaction.encode(this).hash()
 /**
  * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
  */
