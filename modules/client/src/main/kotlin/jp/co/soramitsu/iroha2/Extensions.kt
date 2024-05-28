@@ -171,6 +171,7 @@ fun ByteArray.hash(): ByteArray {
  * Hash the given versioned transaction. Maintains only `VersionedTransaction.V1`
  */
 fun SignedTransaction.hash() = SignedTransaction.encode(this).hash()
+
 /**
  * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
  */

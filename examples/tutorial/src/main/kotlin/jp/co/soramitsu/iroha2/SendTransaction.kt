@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Metadata
@@ -72,7 +73,7 @@ class SendTransaction(
     }
 
     suspend fun registerAsset(
-        id: String,
+        id: AssetId,
         value: AssetValue,
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
@@ -80,7 +81,7 @@ class SendTransaction(
         client.sendTransaction {
             account(admin)
             chainId(chainUuid)
-            registerAsset(id.asAssetId(), value)
+            registerAsset(id, value)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -88,7 +89,7 @@ class SendTransaction(
     }
 
     suspend fun transferAsset(
-        from: String,
+        from: AssetId,
         value: Int,
         to: String,
         admin: AccountId = this.admin,
@@ -97,7 +98,7 @@ class SendTransaction(
         client.sendTransaction {
             account(admin)
             chainId(chainUuid)
-            transferAsset(from.asAssetId(), value, to.asAccountId())
+            transferAsset(from, value, to.asAccountId())
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }
@@ -105,7 +106,7 @@ class SendTransaction(
     }
 
     suspend fun burnAssets(
-        assetId: String,
+        assetId: AssetId,
         value: Int,
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
@@ -113,7 +114,7 @@ class SendTransaction(
         client.sendTransaction {
             account(admin)
             chainId(chainUuid)
-            burnAsset(assetId.asAssetId(), value)
+            burnAsset(assetId, value)
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }

@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.AssetValueType
 import kotlinx.coroutines.runBlocking
@@ -39,7 +40,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     sendTransaction.registerAssetDefinition(assetDefinition, AssetValueType.numeric())
         .also { println("ASSET DEFINITION $assetDefinition CREATED") }
 
-    val madHatterAsset = "$assetDefinition$ASSET_ID_DELIMITER$madHatter"
+    val madHatterAsset = AssetId(assetDefinition.asAssetDefinitionId(), madHatter.asAccountId())
     sendTransaction.registerAsset(madHatterAsset, AssetValue.Numeric(100.asNumeric()))
         .also { println("ASSET $madHatterAsset CREATED") }
 
@@ -48,7 +49,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     sendTransaction.registerAccount(whiteRabbit, listOf(whiteRabbitKeyPair.public.toIrohaPublicKey()))
         .also { println("ACCOUNT $whiteRabbit CREATED") }
 
-    val whiteRabbitAsset = "$assetDefinition$ASSET_ID_DELIMITER$whiteRabbit"
+    val whiteRabbitAsset = AssetId(assetDefinition.asAssetDefinitionId(), whiteRabbit.asAccountId())
     sendTransaction.registerAsset(whiteRabbitAsset, AssetValue.Numeric(0.asNumeric()))
         .also { println("ASSET $whiteRabbitAsset CREATED") }
 
