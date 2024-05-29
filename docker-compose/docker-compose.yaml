@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   iroha0:
-    image: hyperledger/iroha:2.0.0-pre-rc.21.3
+    image: hyperledger/iroha:2.0.0-pre-rc.21.4
     platform: linux/amd64
     environment:
       P2P_ADDRESS: iroha0:1337
@@ -25,7 +25,7 @@ services:
     command: iroha --submit-genesis
 
   iroha1:
-    image: hyperledger/iroha:2.0.0-pre-rc.21.3
+    image: hyperledger/iroha:2.0.0-pre-rc.21.4
     platform: linux/amd64
     environment:
       CHAIN_ID: 00000000-0000-0000-0000-000000000000
@@ -44,7 +44,7 @@ services:
     init: true
 
   iroha2:
-    image: hyperledger/iroha:2.0.0-pre-rc.21.3
+    image: hyperledger/iroha:2.0.0-pre-rc.21.4
     platform: linux/amd64
     environment:
       CHAIN_ID: 00000000-0000-0000-0000-000000000000
@@ -63,7 +63,7 @@ services:
     init: true
 
   iroha3:
-    image: hyperledger/iroha:2.0.0-pre-rc.21.3
+    image: hyperledger/iroha:2.0.0-pre-rc.21.4
     platform: linux/amd64
     environment:
       CHAIN_ID: 00000000-0000-0000-0000-000000000000
