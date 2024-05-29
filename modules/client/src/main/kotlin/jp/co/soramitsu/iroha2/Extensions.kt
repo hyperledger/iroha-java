@@ -86,11 +86,12 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
     it.size == 3
 }?.let { parts ->
     parts[2].asAccountId().let { accountId ->
-        val domainId = parts[0].takeIf { it.isNotBlank() }?.asDomainId()
+        val domainId = parts[1].takeIf { it.isNotBlank() }?.asDomainId()
+
         AssetId(
             AssetDefinitionId(
                 domainId ?: accountId.domainId,
-                parts[1].asName(),
+                parts[0].asName(),
             ),
             accountId,
         )
