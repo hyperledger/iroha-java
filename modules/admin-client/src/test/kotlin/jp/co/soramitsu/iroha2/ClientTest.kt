@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2
 
+import io.ktor.http.HttpStatusCode
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
@@ -8,14 +9,14 @@ import org.junit.jupiter.api.Timeout
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-@Timeout(30)
+@Timeout(120)
 class ClientTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
     @WithIroha
     fun health(): Unit = runBlocking {
         val health = client.health()
-        assert(health == 200)
+        assert(health == HttpStatusCode.OK.value)
     }
 
     @Test
@@ -49,5 +50,21 @@ class ClientTest : IrohaTest<AdminIroha2Client>() {
         assertFailsWith<IrohaClientException> {
             client.describeConfig()
         }
+    }
+
+    @Test
+    @WithIroha(amount = PEER_AMOUNT)
+    fun `round-robin load balancing test`(): Unit = runBlocking {
+        val urls = mutableSetOf<String>()
+        repeat(PEER_AMOUNT * 2 + 1) {
+            val config = client.getConfigs()
+            urls.add(config["TORII"]!!.cast<Map<String, String>>()["API_URL"]!!)
+        }
+
+        assertEquals(PEER_AMOUNT, urls.size)
+    }
+
+    companion object {
+        private const val PEER_AMOUNT = 4
     }
 }

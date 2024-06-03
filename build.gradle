@@ -14,7 +14,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVer"
     id 'org.jmailen.kotlinter' version "$kotlinLinterVer"
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 allprojects {
@@ -58,6 +58,10 @@ subprojects {
     }
 
     java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+        }
+
         withJavadocJar()
         withSourcesJar()
     }
@@ -70,23 +74,18 @@ subprojects {
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 1.8
         }
     }
 
     compileTestKotlin {
         kotlinOptions {
             freeCompilerArgs = ["-Xjsr305=strict"]
-            jvmTarget = 1.8
         }
     }
 
     kotlinter {
         ignoreFailures = false
-        indentSize = 4
         reporters = ['checkstyle', 'plain']
-        experimentalRules = false
-        disabledRules = ['no-consecutive-blank-lines']
     }
 
     shadowJar {

@@ -34,7 +34,7 @@ val POWERS_OF_10: Array<Long> by lazy {
         1_000_000_000_000_000,
         10_000_000_000_000_000,
         100_000_000_000_000_000,
-        1_000_000_000_000_000_000
+        1_000_000_000_000_000_000,
     )
 }
 
@@ -61,7 +61,7 @@ fun BigDecimal.toFixedPoint(scale: Int = DEFAULT_SCALE): BigInteger = try {
     if (thisZeroStripped.scale() > scale) {
         throw FixedPointConversionException(
             "Scale of the original floating point number is ${thisZeroStripped.scale()}" +
-                " and it is greater than fixed point number scale: $scale. Need to decrease scale of the original floating point"
+                " and it is greater than fixed point number scale: $scale. Need to decrease scale of the original floating point",
         )
     }
     thisZeroStripped

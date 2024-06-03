@@ -10,7 +10,7 @@ import jp.co.soramitsu.iroha2.type.EnumType
 class EnumVariantBlueprint(
     val discriminant: Int,
     val parentBlueprint: EnumBlueprint,
-    source: EnumType.Variant
+    source: EnumType.Variant,
 ) : Blueprint<EnumType.Variant>(source) {
 
     override val className = defineClassName(source.name)
@@ -23,7 +23,7 @@ class EnumVariantBlueprint(
                 Property(
                     defineClassName(type.name).replaceFirstChar(Char::lowercase),
                     resolveKotlinType(type),
-                    type
+                    type,
                 )
             }?.let { property -> listOf(property) } ?: listOf()
     }

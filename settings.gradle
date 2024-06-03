@@ -1,3 +1,7 @@
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
+}
+
 rootProject.name = 'iroha2-java'
 
 include 'client'
@@ -17,3 +21,6 @@ project(':admin-client').projectDir = 'modules/admin-client' as File
 
 include 'test-tools'
 project(':test-tools').projectDir = 'modules/test-tools' as File
+
+include 'tutorial'
+project(':tutorial').projectDir = 'examples/tutorial' as File
