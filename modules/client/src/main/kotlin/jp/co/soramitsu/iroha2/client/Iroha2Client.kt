@@ -167,6 +167,9 @@ open class Iroha2Client(
                         credentials {
                             BasicAuthCredentials(pair[0], pair[1])
                         }
+                        sendWithoutRequest {
+                            true
+                        }
                     }
                 }
             }
