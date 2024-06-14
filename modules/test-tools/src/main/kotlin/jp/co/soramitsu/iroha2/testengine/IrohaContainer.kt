@@ -155,7 +155,7 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         }.let { DockerImageName.parse(it) }
 
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "sha256:4dfa7012d79479770e42a9d72ff04436da28cea71863a13907a4f6592e9c0d12"
+        const val DEFAULT_IMAGE_TAG = "sha256:fe46be1666b09e9e01a13c90d0ee29c56ea97af57296e05a473d7b6eb1f200a6"
         const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
         const val DEFAULT_EXECUTOR_FILE_NAME = "executor.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"

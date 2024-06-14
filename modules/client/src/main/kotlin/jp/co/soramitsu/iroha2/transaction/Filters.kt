@@ -16,6 +16,8 @@ import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.FilterBox
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountEventFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountFilter
+import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountId.AcceptAll
+import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountId.BySome
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAssetDefinitionEventFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAssetDefinitionFilter
 import jp.co.soramitsu.iroha2.generated.FilterOptOfAssetEventFilter
@@ -88,7 +90,13 @@ object Filters {
         triggerId: TriggerId,
         authority: AccountId,
     ) = TriggeringFilterBox.ExecuteTrigger(
-        ExecuteTriggerEventFilter(triggerId, authority),
+        ExecuteTriggerEventFilter(triggerId, BySome(authority)),
+    )
+
+    fun executeTrigger(
+        triggerId: TriggerId,
+    ) = TriggeringFilterBox.ExecuteTrigger(
+        ExecuteTriggerEventFilter(triggerId, AcceptAll()),
     )
 
     /**

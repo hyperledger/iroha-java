@@ -17,7 +17,7 @@ import kotlin.Unit
  */
 public data class ExecuteTriggerEventFilter(
     public val triggerId: TriggerId,
-    public val authority: AccountId,
+    public val authority: FilterOptOfAccountId,
 ) {
     public companion object :
         ScaleReader<ExecuteTriggerEventFilter>,
@@ -25,7 +25,7 @@ public data class ExecuteTriggerEventFilter(
         override fun read(reader: ScaleCodecReader): ExecuteTriggerEventFilter = try {
             ExecuteTriggerEventFilter(
                 TriggerId.read(reader),
-                AccountId.read(reader),
+                FilterOptOfAccountId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -33,7 +33,7 @@ public data class ExecuteTriggerEventFilter(
 
         override fun write(writer: ScaleCodecWriter, instance: ExecuteTriggerEventFilter): Unit = try {
             TriggerId.write(writer, instance.triggerId)
-            AccountId.write(writer, instance.authority)
+            FilterOptOfAccountId.write(writer, instance.authority)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
