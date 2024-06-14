@@ -260,6 +260,16 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
                     .let { query -> client.sendQuery(query) }
             }
         }
+
+        client.tx { unregisterAssetDefinition(definitionId) }
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAssetDefinitionById(definitionId)
+                    .account(super.account)
+                    .buildSigned(super.keyPair)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
     }
 
     @Test
