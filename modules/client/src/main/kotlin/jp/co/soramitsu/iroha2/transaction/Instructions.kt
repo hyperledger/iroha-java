@@ -231,6 +231,11 @@ object Instructions {
     fun unregisterAsset(id: AssetId) = unregisterSome { IdBox.AssetId(id) }
 
     /**
+     * Unregister an asset definition
+     */
+    fun unregisterAssetDefinition(id: AssetDefinitionId) = unregisterSome { IdBox.AssetDefinitionId(id) }
+
+    /**
      * Unregister an account
      */
     fun unregisterAccount(id: AccountId) = unregisterSome { IdBox.AccountId(id) }
