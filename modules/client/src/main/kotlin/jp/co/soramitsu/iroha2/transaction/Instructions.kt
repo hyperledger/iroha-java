@@ -129,7 +129,7 @@ object Instructions {
                     Executable.Instructions(isi),
                     repeats,
                     accountId,
-                    Filters.executeTrigger(triggerId, accountId),
+                    Filters.executeTrigger(triggerId),
                     metadata,
                 ),
             ),
