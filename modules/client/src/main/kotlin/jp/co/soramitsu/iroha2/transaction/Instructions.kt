@@ -75,6 +75,7 @@ import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterOfAccount
 import jp.co.soramitsu.iroha2.generated.UnregisterOfAsset
+import jp.co.soramitsu.iroha2.generated.UnregisterOfAssetDefinition
 import jp.co.soramitsu.iroha2.generated.UnregisterOfDomain
 import jp.co.soramitsu.iroha2.generated.UnregisterOfPeer
 import jp.co.soramitsu.iroha2.generated.UnregisterOfRole
@@ -196,7 +197,11 @@ object Instructions {
     /**
      * Unregister an asset definition
      */
-    fun unregisterAssetDefinition(id: AssetDefinitionId) = unregisterSome { IdBox.AssetDefinitionId(id) }
+    fun unregisterAssetDefinition(id: AssetDefinitionId) = InstructionBox.Unregister(
+        UnregisterBox.AssetDefinition(
+            UnregisterOfAssetDefinition(id),
+        ),
+    )
 
     /**
      * Unregister an account
