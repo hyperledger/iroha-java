@@ -266,8 +266,7 @@ object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
 object FilterOptOfAccountIdDeserializer : JsonDeserializer<FilterOptOfAccountId>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): FilterOptOfAccountId {
         val node = p.readValueAsTree<JsonNode>()
-        val text = node.textValue()
-        return FilterOptOfAccountId.BySome(text.asAccountId())
+        return FilterOptOfAccountId.BySome(node.textValue().asAccountId())
     }
 }
 
