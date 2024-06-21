@@ -38,6 +38,7 @@ import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.ExecutorMode
 import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountId
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.GrantExpr
 import jp.co.soramitsu.iroha2.generated.Hash
@@ -126,6 +127,7 @@ public val JSON_SERDE by lazy {
         module.addDeserializer(StringWithJson::class.java, StringWithJsonDeserializer)
         module.addDeserializer(TriggerId::class.java, TriggerIdDeserializer)
         module.addDeserializer(TriggerOfTriggeringFilterBox::class.java, TriggerOfTriggeringFilterBoxDeserializer)
+        module.addDeserializer(FilterOptOfAccountId::class.java, FilterOptOfAccountIdDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
@@ -157,6 +159,7 @@ public val JSON_SERDE by lazy {
         module.addSerializer(StringWithJson::class.java, StringWithJsonSerializer)
         module.addSerializer(TimeEventFilter::class.java, TimeEventFilterSerializer)
         module.addSerializer(Schedule::class.java, ScheduleSerializer)
+        module.addSerializer(FilterOptOfAccountId::class.java, FilterOptOfAccountIdSerializer)
 
         mapper.registerModule(module)
         mapper.registerModule(
@@ -257,6 +260,14 @@ object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
         return StringWithJson(
             string = "{\"${node.key}\":\"${node.value.asText()}\"}",
         )
+    }
+}
+
+object FilterOptOfAccountIdDeserializer : JsonDeserializer<FilterOptOfAccountId>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): FilterOptOfAccountId {
+        val node = p.readValueAsTree<JsonNode>()
+        val text = node.textValue()
+        return FilterOptOfAccountId.BySome(text.asAccountId())
     }
 }
 
@@ -640,6 +651,15 @@ object ScheduleSerializer : JsonSerializer<Schedule>() {
         val period = value.period?.let { mapOf(Pair("secs", it.u64), Pair("nanos", it.u32)) }
         val schedule = mapOf(Pair("start", start), Pair("period", period))
         gen.writeObject(schedule)
+    }
+}
+
+/**
+ * Serializer for [FilterOptOfAccountId]
+ */
+object FilterOptOfAccountIdSerializer : JsonSerializer<FilterOptOfAccountId>() {
+    override fun serialize(value: FilterOptOfAccountId, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asAccountIdOrNull()?.asString())
     }
 }
 
