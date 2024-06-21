@@ -1,7 +1,10 @@
 {
-  "transactions" : [ [ {
+  "chain": "00000000-0000-0000-0000-000000000000",
+  "executor": "./executor.wasm",
+  "instructions" : [
+  {
     "Register" : {
-      "NewDomain" : {
+      "Domain" : {
         "id" : "wonderland",
         "logo" : null,
         "metadata" : { }
@@ -9,7 +12,7 @@
     }
   }, {
     "Register" : {
-      "NewDomain" : {
+      "Domain" : {
         "id" : "dnalrednow",
         "logo" : null,
         "metadata" : { }
@@ -17,7 +20,7 @@
     }
   }, {
     "Register" : {
-      "NewDomain" : {
+      "Domain" : {
         "id" : "test",
         "logo" : null,
         "metadata" : { }
@@ -25,7 +28,7 @@
     }
   }, {
     "Register" : {
-      "NewDomain" : {
+      "Domain" : {
         "id" : "admin",
         "logo" : null,
         "metadata" : { }
@@ -33,15 +36,15 @@
     }
   }, {
     "Register" : {
-      "NewAccount" : {
-        "id" : "alice@wonderland",
+      "Account" : {
+        "id" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
         "signatories" : [ "ed01200851a1fa7e3f04a657299263e119975be4ab0d33631ec6ad4bd5b5e77594310e" ],
         "metadata" : { }
       }
     }
   }, {
     "Register" : {
-      "NewAccount" : {
+      "Account" : {
         "id" : "admin@wonderland",
         "signatories" : [ "ed01203161f2c70db3252505b90c0cce012c4cf4cb098da2a3b1475319ca5b3a1263f5" ],
         "metadata" : { }
@@ -49,7 +52,7 @@
     }
   }, {
     "Register" : {
-      "NewAccount" : {
+      "Account" : {
         "id" : "admin@dnalrednow",
         "signatories" : [ "ed0120d24280aadc7167e002b263620fe936e4103e13d59a02286190a6af6a45c7c2f7" ],
         "metadata" : { }
@@ -57,7 +60,7 @@
     }
   }, {
     "Register" : {
-      "NewAccount" : {
+      "Account" : {
         "id" : "admin2@wonderland",
         "signatories" : [ "ed01202611be069b48f6313d86a4e5c99deedaccc3046b4cb294849e11dadb27a701ca" ],
         "metadata" : { }
@@ -65,8 +68,8 @@
     }
   }, {
     "Register" : {
-      "NewAccount" : {
-        "id" : "bob@admin",
+      "Account" : {
+        "id" : "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@admin",
         "signatories" : [ "ed01207f7137560b2c1fefa36834f609953f8ad78903a7f21d3c84a69949991885ba1c" ],
         "metadata" : {
           "authentication" : {
@@ -77,7 +80,7 @@
     }
   }, {
     "Register" : {
-      "NewAssetDefinition" : {
+      "AssetDefinition" : {
         "id" : "test_asset#admin",
         "value_type" : "Store",
         "mintable" : "Once",
@@ -87,7 +90,7 @@
     }
   }, {
     "Register" : {
-      "NewAssetDefinition" : {
+      "AssetDefinition" : {
         "id" : "wonderland_asset#admin",
         "value_type" : "Store",
         "mintable" : "Once",
@@ -97,7 +100,7 @@
     }
   }, {
     "Register" : {
-      "NewAssetDefinition" : {
+      "AssetDefinition" : {
         "id" : "123#test",
         "value_type" : "Store",
         "mintable" : "Infinitely",
@@ -108,7 +111,7 @@
   }, {
     "Register" : {
       "Asset" : {
-        "id" : "wonderland_asset#admin#bob@admin",
+        "id" : "wonderland_asset#admin#ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@admin",
         "value" : {
           "Store" : { }
         }
@@ -117,7 +120,7 @@
   }, {
     "Register" : {
       "Asset" : {
-        "id" : "test_asset#admin#bob@admin",
+        "id" : "test_asset#admin#ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@admin",
         "value" : {
           "Store" : { }
         }
@@ -125,7 +128,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "id"
       },
@@ -135,7 +138,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "wt"
       },
@@ -143,7 +146,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "fg"
       },
@@ -153,7 +156,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "ij"
       },
@@ -163,7 +166,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "gh"
       },
@@ -171,7 +174,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "ef"
       },
@@ -179,7 +182,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "cd"
       },
@@ -187,7 +190,7 @@
     }
   }, {
     "SetKeyValue" : {
-      "AssetId" : "123#test#alice@wonderland",
+      "AssetId" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
       "key" : {
         "Name" : "ab"
       },
@@ -197,18 +200,15 @@
     }
   }, {
     "Grant" : {
-      "object":  {
-        "PermissionToken" : {
-          "definition_id" : "CanSetKeyValueInUserAssets",
+      "Permission" : {
+        "object":  {
+          "id" : "CanSetKeyValueInUserAssets",
           "payload" : {
-            "asset_id" : "123#test#alice@wonderland"
+            "asset" : "123#test#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"
           }
         }
       },
-      "destination_id" : {
-        "AccountId" : "bob@admin"
-      }
+      "destination" : "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@admin"
     }
-  } ] ],
-  "executor": "./executor.wasm"
+  }]
 }

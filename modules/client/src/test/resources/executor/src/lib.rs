@@ -5,7 +5,7 @@ extern crate alloc;
 #[cfg(not(test))]
 extern crate panic_halt;
 
-use iroha_executor::{default::default_permission_token_schema, prelude::*, smart_contract};
+use iroha_executor::{prelude::*, DataModelBuilder};
 use lol_alloc::{FreeListAllocator, LockedAllocator};
 
 #[global_allocator]
@@ -16,11 +16,10 @@ static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeList
 /// # Warning
 ///
 /// The defaults are not guaranteed to be stable.
-#[derive(Clone, Constructor, Debug, ValidateEntrypoints, ExpressionEvaluator, Validate, Visit)]
+#[derive(Debug, Clone, Constructor, Visit, Validate, ValidateEntrypoints)]
 pub struct Executor {
     verdict: Result,
     block_height: u64,
-    host: smart_contract::Host,
 }
 
 /// Migrate previous executor to the current version.
@@ -34,12 +33,7 @@ pub struct Executor {
 /// will be denied and previous executor will stay unchanged.
 #[entrypoint]
 pub fn migrate(_block_height: u64) -> MigrationResult {
-    let schema = default_permission_token_schema();
-    let (token_ids, schema_str) = schema.serialize();
-
-    iroha_executor::set_permission_token_schema(
-        &iroha_executor::data_model::permission::PermissionTokenSchema::new(token_ids, schema_str),
-    );
+    DataModelBuilder::with_default_permissions().build_and_set();
 
     Ok(())
 }

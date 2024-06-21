@@ -24,8 +24,8 @@ class SerializerTest {
                 listOf(
                     Instructions.grantPermissionToken(
                         Permissions.CanUnregisterAccount,
-                        "bob${ACCOUNT_ID_DELIMITER}wonderland".asAccountId().asJsonString(),
-                        "alice${ACCOUNT_ID_DELIMITER}wonderland".asAccountId(),
+                        "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016${ACCOUNT_ID_DELIMITER}wonderland".asAccountId().asJsonString(),
+                        "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId(),
                     ),
                 ).let { listOf(it) },
                 Genesis.executorMode,
@@ -34,22 +34,21 @@ class SerializerTest {
         val expectedJson = """
             {
               "block" : {
-                "transactions" : [ [ {
+                "chain": "00000000-0000-0000-0000-000000000000",
+                "executor" : "executor.wasm",
+                "instructions" : [ {
                   "Grant" : {
-                    "object" : {
-                      "PermissionToken" : {
-                        "definition_id" : "CanUnregisterAccount",
+                    "Permission" : {
+                      "object" : {
+                        "definition" : "CanUnregisterAccount",
                         "payload" : {
-                          "account_id" : "bob@wonderland"
+                          "account" : "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@wonderland"
                         }
                       }
                     },
-                    "destination_id" : {
-                      "AccountId" : "alice@wonderland"
-                    }
+                    "destination" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"
                   }
-                } ] ],
-                "executor" : "executor.wasm"
+                } ]
               }
             }
         """.trimIndent()
@@ -60,7 +59,7 @@ class SerializerTest {
     @Test
     fun `should serialize mint asset genesis block`() {
         val triggerId = TriggerId(name = Name("time_trigger"))
-        val aliceAccountId = "alice${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
+        val aliceAccountId = "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
         val assetId = AssetId(
             AssetDefinitionId("xor".asName(), "wonderland".asDomainId()),
             aliceAccountId,
@@ -106,17 +105,19 @@ class SerializerTest {
         val expectedJson = """
             {
               "block" : {
-                "transactions" : [ [ {
+                "chain": "00000000-0000-0000-0000-000000000000",
+                "executor" : "executor.wasm",
+                "instructions" : [ {
                   "Mint" : {
                     "object" : "100_u32",
-                    "destination_id" : {
-                      "AssetId" : "xor#wonderland#alice@wonderland"
+                    "destination" : {
+                      "AssetId" : "xor#wonderland#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"
                     }
                   }
                 }, {
                   "Sequence" : [ {
                     "SetKeyValue" : {
-                      "AssetId" : "xor#wonderland#alice@wonderland",
+                      "AssetId" : "xor#wonderland#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
                       "key" : {
                         "Name" : "key"
                       },
@@ -134,14 +135,14 @@ class SerializerTest {
                           "Instructions" : [ {
                             "Mint" : {
                               "object" : "1_u32",
-                              "destination_id" : {
-                                "AssetId" : "xor#wonderland#alice@wonderland"
+                              "destination" : {
+                                "AssetId" : "xor#wonderland#ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"
                               }
                             }
                           } ]
                         },
                         "repeats" : "Indefinitely",
-                        "authority" : "alice@wonderland",
+                        "authority" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
                         "filter" : {
                           "Time" : {
                             "Schedule" : {
@@ -160,8 +161,7 @@ class SerializerTest {
                       }
                     }
                   }
-                } ] ],
-                "executor" : "executor.wasm"
+                } ]
               }
             }
         """.trimIndent()

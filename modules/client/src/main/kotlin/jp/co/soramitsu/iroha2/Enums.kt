@@ -43,8 +43,8 @@ enum class Permissions(val type: Name) {
 }
 
 enum class IdKey(val type: String) {
-    AccountId("account_id"),
-    AssetId("asset_id"),
-    AssetDefinitionId("asset_definition_id"),
-    DomainId("domain_id"),
+    AccountId("account"),
+    AssetId("asset"),
+    AssetDefinitionId("asset_definition"),
+    DomainId("domain"),
 }

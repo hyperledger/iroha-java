@@ -765,7 +765,7 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
 //    gen.writeObjectFieldStart("object")
 //    gen.writeObjectField(fieldData.first, fieldData.second)
 //    gen.writeEndObject()
-//    gen.writeObjectField("destination_id", this.destinationId)
+//    gen.writeObjectField("destination", this.destinationId)
 // }
 //
 // private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
@@ -790,7 +790,7 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
 // ) {
 //    val rawValue = expression.cast<Boxession.Raw>().value.cast<Value.Numeric>().numericValue
 //    gen.writeObjectField("object", rawValue)
-//    gen.writeObjectField("destination_id", destinationId)
+//    gen.writeObjectField("destination", destinationId)
 // }
 
 /**

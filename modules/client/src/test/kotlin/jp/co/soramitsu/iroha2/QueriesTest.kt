@@ -118,8 +118,8 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("find_all_accounts_with_filter")
     fun `find all accounts with filter`(): Unit = runBlocking {
         val filter = QueryFilters.or(
-            StringPredicate.Is("alice@wonderland"),
-            StringPredicate.Is("bob@wonderland"),
+            StringPredicate.Is("ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"),
+            StringPredicate.Is("ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@wonderland"),
         )
         QueryBuilder.findAllAccounts(filter)
             .account(ALICE_ACCOUNT_ID)
@@ -525,7 +525,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
             }
             .let { tokens ->
                 tokens.any {
-                    "{\"asset_definition_id\":\"xor#wonderland\"}" == it.payload.string
+                    "{\"asset_definition\":\"xor#wonderland\"}" == it.payload.string
                 }
             }.also {
                 assert(it)
