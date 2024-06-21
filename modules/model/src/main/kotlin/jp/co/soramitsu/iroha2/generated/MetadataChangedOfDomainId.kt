@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'MetadataChangedOfDomainId' regular structure
  */
 public data class MetadataChangedOfDomainId(
-    public val targetId: DomainId,
+    public val target: DomainId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -34,7 +34,7 @@ public data class MetadataChangedOfDomainId(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfDomainId): Unit = try {
-            DomainId.write(writer, instance.targetId)
+            DomainId.write(writer, instance.target)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

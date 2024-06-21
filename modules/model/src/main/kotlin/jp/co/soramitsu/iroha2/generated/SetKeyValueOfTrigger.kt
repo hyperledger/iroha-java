@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'SetKeyValueOfTrigger' regular structure
  */
 public data class SetKeyValueOfTrigger(
-    public val objectId: TriggerId,
+    public val `object`: TriggerId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -32,7 +32,7 @@ public data class SetKeyValueOfTrigger(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: SetKeyValueOfTrigger): Unit = try {
-            TriggerId.write(writer, instance.objectId)
+            TriggerId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

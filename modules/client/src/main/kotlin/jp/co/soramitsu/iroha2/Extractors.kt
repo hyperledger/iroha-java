@@ -1,23 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.Account
-import jp.co.soramitsu.iroha2.generated.Asset
-import jp.co.soramitsu.iroha2.generated.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.BatchedResponse
-import jp.co.soramitsu.iroha2.generated.BlockHeader
-import jp.co.soramitsu.iroha2.generated.Domain
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.Peer
-import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PermissionTokenSchema
-import jp.co.soramitsu.iroha2.generated.QueryOutputBox
-import jp.co.soramitsu.iroha2.generated.Role
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.SignedBlock
-import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
-import jp.co.soramitsu.iroha2.generated.Trigger
-import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.*
 
 /**
  * Extractors are used by [QueryBuilder] to extract data from query results
@@ -161,10 +144,10 @@ object TriggerIdsExtractor : ResultExtractor<List<TriggerId>> {
 /**
  * Extract a list of permission tokens from a query [result]
  */
-object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
-    override fun extract(result: BatchedResponse<QueryOutputBox>): List<PermissionToken> {
+object PermissionTokensExtractor : ResultExtractor<List<Permission>> {
+    override fun extract(result: BatchedResponse<QueryOutputBox>): List<Permission> {
         return extractVec(result.cast<BatchedResponse.V1>().batchedResponseV1.batch) {
-            extractValue(it, QueryOutputBox.PermissionToken::permissionToken)
+            extractValue(it, QueryOutputBox.Permission::permission)
         }
     }
 }
@@ -172,9 +155,9 @@ object PermissionTokensExtractor : ResultExtractor<List<PermissionToken>> {
 /**
  * Extract a permission token schema from a query [result]
  */
-object PermissionTokenSchemaExtractor : ResultExtractor<PermissionTokenSchema> {
-    override fun extract(result: BatchedResponse<QueryOutputBox>): PermissionTokenSchema {
-        return extractValue(result.cast<BatchedResponse.V1>().batchedResponseV1.batch, QueryOutputBox.PermissionTokenSchema::permissionTokenSchema)
+object ExecutorDataModelExtractor : ResultExtractor<ExecutorDataModel> {
+    override fun extract(result: BatchedResponse<QueryOutputBox>): ExecutorDataModel {
+        return extractValue(result.cast<BatchedResponse.V1>().batchedResponseV1.batch, QueryOutputBox.ExecutorDataModel::executorDataModel)
     }
 }
 

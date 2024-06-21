@@ -1,78 +1,67 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.SignatureOf
+import jp.co.soramitsu.iroha2.generated.*
 import kotlin.reflect.KClass
 
 /**
- * Compare strings
- */
+* Compare strings
+*/
 @JvmName("StringComparator")
 fun String.Companion.comparator() = compareBy<String> { it }
 
 /**
- * Compare Names
- */
+* Compare Names
+*/
 @JvmName("NameComparator")
 fun Name.Companion.comparator() = compareBy<Name> { it.string }
 
 /**
- * Compare account IDs
- */
+* Compare account IDs
+*/
 @JvmName("AccountIdComparator")
-fun AccountId.Companion.comparator() = compareBy<AccountId> { it.name.string }
-    .thenBy { it.domainId.name.string }
-
-/**
- * Compare asset definition IDs
- */
-@JvmName("AssetDefinitionIdComparator")
-fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
-    .thenBy { it.domainId.name.string }
-
-/**
- * Compare asset IDs
- */
-@JvmName("AssetIdComparator")
-fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
-    AssetDefinitionId.comparator().compare(
-        o1.definitionId,
-        o2.definitionId,
-    )
-}.thenComparator { o1, o2 ->
-    AccountId.comparator().compare(o1.accountId, o2.accountId)
+fun AccountId.Companion.comparator() = compareBy<AccountId> { it.domain.name.string }.thenComparator { o1, o2 ->
+    PublicKey.comparator().compare(o1.signatory, o2.signatory)
 }
 
 /**
- * Compare role IDs
- */
+* Compare asset definition IDs
+*/
+@JvmName("AssetDefinitionIdComparator")
+fun AssetDefinitionId.Companion.comparator() = compareBy<AssetDefinitionId> { it.name.string }
+    .thenBy { it.domain.name.string }
+
+/**
+* Compare asset IDs
+*/
+@JvmName("AssetIdComparator")
+fun AssetId.Companion.comparator() = Comparator<AssetId> { o1, o2 ->
+    AssetDefinitionId.comparator().compare(
+        o1.definition,
+        o2.definition,
+    )
+}.thenComparator { o1, o2 ->
+    AccountId.comparator().compare(o1.account, o2.account)
+}
+
+/**
+* Compare role IDs
+*/
 @JvmName("RoleIdComparator")
 fun RoleId.Companion.comparator() = compareBy<RoleId> { it.name.string }
 
 /**
- * Compare public keys
- */
+* Compare public keys
+*/
 @JvmName("PublicKeyComparator")
 fun PublicKey.Companion.comparator() = Comparator<PublicKey> { o1, o2 ->
     ByteArray::class.comparator().compare(o1.payload, o2.payload)
 }
 
 /**
- * Compare signatures
- */
+* Compare signatures
+*/
 @JvmName("SignatureOfComparator")
 fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
-    PublicKey.comparator().compare(
-        o1.signature.publicKey,
-        o2.signature.publicKey,
-    )
-}.thenComparator { o1, o2 ->
     ByteArray::class.comparator().compare(
         o1.signature.payload,
         o2.signature.payload,
@@ -80,13 +69,21 @@ fun SignatureOf.Companion.comparator() = Comparator<SignatureOf<*>> { o1, o2 ->
 }
 
 /**
- * Compare permission tokens
+ * Compare permissions
  */
-@JvmName("PermissionTokenComparator")
-fun PermissionToken.Companion.comparator() = compareBy<PermissionToken> {
-    it.definitionId.string
+@JvmName("PermissionIdComparator")
+fun PermissionId.Companion.comparator() = compareBy<PermissionId> {
+    it.name.string
+}
+
+/**
+* Compare permissions
+*/
+@JvmName("PermissionComparator")
+fun Permission.Companion.comparator() = compareBy<Permission> {
+    it.id.name.string
 }.thenComparator { o1, o2 ->
-    o1.payload.string.compareTo(o2.payload.string)
+    o1.payload.compareTo(o2.payload)
 }
 
 private fun KClass<ByteArray>.comparator() = Comparator<ByteArray> { o1, o2 ->
@@ -102,6 +99,6 @@ private fun KClass<ByteArray>.comparator() = Comparator<ByteArray> { o1, o2 ->
 }
 
 /**
- * Throw if an exception occurs during comparison
- */
+* Throw if an exception occurs during comparison
+*/
 class ComparisonException(message: String) : RuntimeException(message)

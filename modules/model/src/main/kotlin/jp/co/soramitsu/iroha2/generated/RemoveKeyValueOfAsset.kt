@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'RemoveKeyValueOfAsset' regular structure
  */
 public data class RemoveKeyValueOfAsset(
-    public val objectId: AssetId,
+    public val `object`: AssetId,
     public val key: Name,
 ) {
     public companion object : ScaleReader<RemoveKeyValueOfAsset>, ScaleWriter<RemoveKeyValueOfAsset> {
@@ -30,7 +30,7 @@ public data class RemoveKeyValueOfAsset(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueOfAsset): Unit = try {
-            AssetId.write(writer, instance.objectId)
+            AssetId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Unit
-import kotlin.collections.List
 import kotlin.collections.Map
 
 /**
@@ -20,18 +19,18 @@ import kotlin.collections.Map
  */
 public data class Account(
     public val id: AccountId,
-    public val assets: Map<AssetId, Asset>,
-    public val signatories: List<PublicKey>,
-    public val signatureCheckCondition: SignatureCheckCondition,
+    public val assets: Map<AssetDefinitionId, Asset>,
     public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<Account>, ScaleWriter<Account> {
         override fun read(reader: ScaleCodecReader): Account = try {
             Account(
                 AccountId.read(reader),
-                reader.readMap(reader.readCompactInt(), { AssetId.read(reader) }, { Asset.read(reader) }),
-                reader.readVec(reader.readCompactInt()) { PublicKey.read(reader) },
-                SignatureCheckCondition.read(reader),
+                reader.readMap(
+                    reader.readCompactInt(),
+                    { AssetDefinitionId.read(reader) },
+                    { Asset.read(reader) },
+                ),
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {
@@ -42,18 +41,11 @@ public data class Account(
             AccountId.write(writer, instance.id)
             writer.writeCompact(instance.assets.size)
             instance.assets.toSortedMap(
-                AssetId.comparator(),
+                AssetDefinitionId.comparator(),
             ).forEach { (key, value) ->
-                AssetId.write(writer, key)
+                AssetDefinitionId.write(writer, key)
                 Asset.write(writer, value)
             }
-            writer.writeCompact(instance.signatories.size)
-            instance.signatories.sortedWith(
-                PublicKey.comparator(),
-            ).forEach { value ->
-                PublicKey.write(writer, value)
-            }
-            SignatureCheckCondition.write(writer, instance.signatureCheckCondition)
             Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)

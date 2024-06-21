@@ -1,63 +1,13 @@
 package jp.co.soramitsu.iroha2
 
 import io.ktor.websocket.Frame
-import jp.co.soramitsu.iroha2.generated.Account
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AccountMintBox
-import jp.co.soramitsu.iroha2.generated.Algorithm
-import jp.co.soramitsu.iroha2.generated.Asset
-import jp.co.soramitsu.iroha2.generated.AssetDefinition
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.BlockMessage
-import jp.co.soramitsu.iroha2.generated.BlockPayload
-import jp.co.soramitsu.iroha2.generated.BlockSubscriptionRequest
-import jp.co.soramitsu.iroha2.generated.Domain
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.EventEventFilterBox
-import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.ExecutionTime
-import jp.co.soramitsu.iroha2.generated.FindError
-import jp.co.soramitsu.iroha2.generated.GrantBox
-import jp.co.soramitsu.iroha2.generated.Hash
-import jp.co.soramitsu.iroha2.generated.HashOf
-import jp.co.soramitsu.iroha2.generated.IdBox
-import jp.co.soramitsu.iroha2.generated.IdentifiableBox
-import jp.co.soramitsu.iroha2.generated.InstructionBox
-import jp.co.soramitsu.iroha2.generated.JsonString
-import jp.co.soramitsu.iroha2.generated.Metadata
-import jp.co.soramitsu.iroha2.generated.MetadataValueBox
-import jp.co.soramitsu.iroha2.generated.MintBox
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
-import jp.co.soramitsu.iroha2.generated.Numeric
-import jp.co.soramitsu.iroha2.generated.NumericSpec
-import jp.co.soramitsu.iroha2.generated.Peer
-import jp.co.soramitsu.iroha2.generated.RegisterBox
-import jp.co.soramitsu.iroha2.generated.Role
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
-import jp.co.soramitsu.iroha2.generated.Signature
-import jp.co.soramitsu.iroha2.generated.SignatureOf
-import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
-import jp.co.soramitsu.iroha2.generated.SignedBlock
-import jp.co.soramitsu.iroha2.generated.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
-import jp.co.soramitsu.iroha2.generated.SocketAddr
-import jp.co.soramitsu.iroha2.generated.SocketAddrHost
-import jp.co.soramitsu.iroha2.generated.TransactionPayload
-import jp.co.soramitsu.iroha2.generated.Trigger
-import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
+import jp.co.soramitsu.iroha2.generated.*
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b
 import org.bouncycastle.util.encoders.Hex
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -73,7 +23,7 @@ fun <T> Signature.asSignatureOf() = SignatureOf<T>(this)
 fun String.asAccountId() = this.split(ACCOUNT_ID_DELIMITER).takeIf {
     it.size == 2
 }?.let { parts ->
-    AccountId(parts[1].asDomainId(), parts[0].asName())
+    AccountId(parts[1].asDomainId(), publicKeyFromHex(parts[0]).toIrohaPublicKey())
 } ?: throw IllegalArgumentException("Incorrect account ID: $this")
 
 fun String.asAssetDefinitionId() = this.split(ASSET_ID_DELIMITER).takeIf {
@@ -90,7 +40,7 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
 
         AssetId(
             AssetDefinitionId(
-                domainId ?: accountId.domainId,
+                domainId ?: accountId.domain,
                 parts[0].asName(),
             ),
             accountId,
@@ -174,36 +124,6 @@ fun ByteArray.hash(): ByteArray {
 fun SignedTransaction.hash() = SignedTransaction.encode(this).hash()
 
 /**
- * Append signatures to a transaction. Maintains only `VersionedTransaction.V1`
- */
-fun SignedTransaction.appendSignatures(vararg keypairs: KeyPair): SignedTransaction {
-    return when (this) {
-        is SignedTransaction.V1 -> {
-            val encodedPayload = signedTransactionV1
-                .payload
-                .let { TransactionPayload.encode(it) }
-            val signatures = keypairs.map {
-                Signature(
-                    it.public.toIrohaPublicKey(),
-                    it.private.sign(encodedPayload),
-                ).asSignatureOf<TransactionPayload>()
-            }.toSet()
-
-            SignedTransaction.V1(
-                SignedTransactionV1(
-                    signedTransactionV1.signatures.plus(signatures),
-                    signedTransactionV1.payload,
-                ),
-            )
-        }
-    }
-}
-
-fun SignaturesOfOfTransactionPayload.plus(
-    signatures: Set<SignatureOf<TransactionPayload>>,
-) = SignaturesOfOfTransactionPayload(this.signatures.plus(signatures))
-
-/**
  * Cast to another type
  */
 inline fun <reified B> Any.cast(): B {
@@ -211,20 +131,20 @@ inline fun <reified B> Any.cast(): B {
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
 }
 
-fun AssetId.asString() = this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()
+fun AssetId.asString() = this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString()
 
 fun AssetId.asJsonString() = "{\"${AssetId::class.java.simpleName.toSnakeCase()}\": " +
-    "\"${this.definitionId.asString() + ASSET_ID_DELIMITER + this.accountId.asString()}\"}"
+    "\"${this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString()}\"}"
 
-fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string
+fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domain.name.string
 
 fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpleName.toSnakeCase()}\": " +
-    "\"${this.name.string + ASSET_ID_DELIMITER + this.domainId.name.string}\"}"
+    "\"${this.name.string + ASSET_ID_DELIMITER + this.domain.name.string}\"}"
 
-fun AccountId.asString() = this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string
+fun AccountId.asString() = this.signatory.toString() + ACCOUNT_ID_DELIMITER + this.domain.name.string
 
 fun AccountId.asJsonString() = "{\"${AccountId::class.java.simpleName.toSnakeCase()}\": " +
-    "\"${this.name.string + ACCOUNT_ID_DELIMITER + this.domainId.name.string}\"}"
+    "\"${this.signatory.toString() + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
 
 fun DomainId.asString() = this.name.string
 fun DomainId.asJsonString() = "{\"${DomainId::class.java.simpleName.toSnakeCase()}\": " +
@@ -240,10 +160,7 @@ fun SocketAddr.asString() = when (this) {
     is SocketAddr.Ipv6 -> this.socketAddrV6.let { "${it.ip}:${it.port}" }
 }
 
-fun TriggerId.asString() = when (this.domainId) {
-    null -> this.name.string
-    else -> this.name.string + TRIGGER_ID_DELIMITER + this.domainId!!.name.string
-}
+fun TriggerId.asString() = this.name.string
 
 fun Metadata.merge(extra: Metadata) = Metadata(
     this.sortedMapOfName.toMutableMap().also { it.putAll(extra.sortedMapOfName) },
@@ -274,7 +191,7 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.DomainId -> this.domainId
     is IdBox.TriggerId -> this.triggerId
     is IdBox.PeerId -> this.peerId
-    is IdBox.PermissionTokenId -> this.name
+    is IdBox.PermissionId -> this.permissionId
     is IdBox.ParameterId -> this.parameterId
 }
 
@@ -301,16 +218,6 @@ fun InstructionBox.Register.extractAssetDefinition() = this
     .cast<RegisterBox.AssetDefinition>()
     .registerOfAssetDefinition.`object`
 
-fun InstructionBox.Mint.extractPublicKey() = this
-    .cast<InstructionBox.Mint>()
-    .mintBox
-    .cast<MintBox.Account>()
-    .accountMintBox
-    .cast<AccountMintBox.PublicKey>()
-    .mintOfPublicKeyAndAccount
-    .`object`
-    .payload.toHex()
-
 inline fun <reified I : InstructionBox> SignedTransaction.extractInstruction(): I = this
     .cast<SignedTransaction.V1>()
     .extractInstruction<I>()
@@ -333,24 +240,24 @@ fun InstructionBox.SetKeyValue.extractDomainId() = this
     .setKeyValueBox
     .cast<SetKeyValueBox.Domain>()
     .setKeyValueOfDomain
-    .objectId
+    .`object`
 
 fun InstructionBox.Grant.extractValuePermissionToken() = this
     .cast<InstructionBox.Grant>()
     .grantBox
-    .cast<GrantBox.PermissionToken>()
-    .grantOfPermissionTokenAndAccount
+    .cast<GrantBox.Permission>()
+    .grantOfPermissionAndAccount
     .`object`
 
-fun TriggeringEventEventFilterBox.extractSchedule() = this
-    .cast<TriggeringEventEventFilterBox.Time>()
+fun TriggeringEventFilterBox.extractSchedule() = this
+    .cast<TriggeringEventFilterBox.Time>()
     .timeEventFilter
     .executionTime
     .cast<ExecutionTime.Schedule>()
     .schedule
 
-fun EventEventFilterBox.extractSchedule() = this
-    .cast<EventEventFilterBox.Time>()
+fun EventFilterBox.extractSchedule() = this
+    .cast<EventFilterBox.Time>()
     .timeEventFilter.executionTime
     .cast<ExecutionTime.Schedule>().schedule
 
@@ -382,7 +289,7 @@ fun FindError.extract() = when (this) {
     is FindError.MetadataKey -> this.name.string
     is FindError.Parameter -> this.parameterId.name.string
     is FindError.Peer -> this.peerId.address.toString()
-    is FindError.PermissionToken -> this.name.string
+    is FindError.Permission -> this.permissionId.name.string
     is FindError.PublicKey -> this.publicKey.payload.toString()
     is FindError.Trigger -> this.triggerId.asString()
     is FindError.Transaction -> this.hashOf.hash.arrayOfU8.toHex()
@@ -420,14 +327,6 @@ fun String.toSnakeCase() = this
     .split("(?<=.)(?=\\p{Lu})|\\s".toRegex())
     .joinToString("_")
     .lowercase(Locale.getDefault())
-
-fun String.asJsonString() = JsonString(this)
-
-fun AssetId.asStringWithJson() = this.asJsonString().asJsonString()
-
-fun AccountId.asStringWithJson() = this.asJsonString().asJsonString()
-
-fun RoleId.asStringWithJson() = this.asJsonString().asJsonString()
 
 fun Number.asNumeric() = when (this) {
     is Int -> this.asNumeric()

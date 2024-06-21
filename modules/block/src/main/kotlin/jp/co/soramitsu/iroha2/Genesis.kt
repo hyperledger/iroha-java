@@ -1,13 +1,11 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.GenesisTransactionBuilder
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
-import jp.co.soramitsu.iroha2.generated.RawGenesisBlockFile
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
 import jp.co.soramitsu.iroha2.generated.RegisterOfAssetDefinition
@@ -96,7 +94,7 @@ open class Genesis(open val block: RawGenesisBlockFile) {
         private fun IdentifiableBox.toRegisterBox(metadata: Metadata) = when (this) {
             is IdentifiableBox.NewAccount -> RegisterBox.Account(
                 RegisterOfAccount(
-                    NewAccount(this.newAccount.id, this.newAccount.signatories, metadata),
+                    NewAccount(this.newAccount.id, metadata),
                 ),
             )
 

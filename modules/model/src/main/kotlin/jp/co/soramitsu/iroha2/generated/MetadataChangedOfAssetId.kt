@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'MetadataChangedOfAssetId' regular structure
  */
 public data class MetadataChangedOfAssetId(
-    public val targetId: AssetId,
+    public val target: AssetId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -34,7 +34,7 @@ public data class MetadataChangedOfAssetId(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfAssetId): Unit = try {
-            AssetId.write(writer, instance.targetId)
+            AssetId.write(writer, instance.target)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

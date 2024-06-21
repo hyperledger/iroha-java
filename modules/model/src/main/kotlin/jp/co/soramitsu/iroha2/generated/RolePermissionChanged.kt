@@ -16,22 +16,22 @@ import kotlin.Unit
  * Generated from 'RolePermissionChanged' regular structure
  */
 public data class RolePermissionChanged(
-    public val roleId: RoleId,
-    public val permissionTokenId: Name,
+    public val role: RoleId,
+    public val permission: PermissionId,
 ) {
     public companion object : ScaleReader<RolePermissionChanged>, ScaleWriter<RolePermissionChanged> {
         override fun read(reader: ScaleCodecReader): RolePermissionChanged = try {
             RolePermissionChanged(
                 RoleId.read(reader),
-                Name.read(reader),
+                PermissionId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: RolePermissionChanged): Unit = try {
-            RoleId.write(writer, instance.roleId)
-            Name.write(writer, instance.permissionTokenId)
+            RoleId.write(writer, instance.role)
+            PermissionId.write(writer, instance.permission)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

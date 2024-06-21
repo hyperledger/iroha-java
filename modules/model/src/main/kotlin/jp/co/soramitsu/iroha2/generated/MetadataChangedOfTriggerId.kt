@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'MetadataChangedOfTriggerId' regular structure
  */
 public data class MetadataChangedOfTriggerId(
-    public val targetId: TriggerId,
+    public val target: TriggerId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -34,7 +34,7 @@ public data class MetadataChangedOfTriggerId(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: MetadataChangedOfTriggerId): Unit = try {
-            TriggerId.write(writer, instance.targetId)
+            TriggerId.write(writer, instance.target)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfAccount' regular structure
  */
 public data class UnregisterOfAccount(
-    public val objectId: AccountId,
+    public val `object`: AccountId,
 ) {
     public companion object : ScaleReader<UnregisterOfAccount>, ScaleWriter<UnregisterOfAccount> {
         override fun read(reader: ScaleCodecReader): UnregisterOfAccount = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfAccount(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfAccount): Unit = try {
-            AccountId.write(writer, instance.objectId)
+            AccountId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

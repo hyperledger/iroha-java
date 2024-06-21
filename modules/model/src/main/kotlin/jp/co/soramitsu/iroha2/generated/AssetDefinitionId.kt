@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'AssetDefinitionId' regular structure
  */
 public data class AssetDefinitionId(
-    public val domainId: DomainId,
+    public val domain: DomainId,
     public val name: Name,
 ) {
     public companion object : ScaleReader<AssetDefinitionId>, ScaleWriter<AssetDefinitionId> {
@@ -30,7 +30,7 @@ public data class AssetDefinitionId(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionId): Unit = try {
-            DomainId.write(writer, instance.domainId)
+            DomainId.write(writer, instance.domain)
             Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)

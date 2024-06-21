@@ -11,17 +11,17 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Unit
 
 /**
- * TransactionValue
+ * CommittedTransaction
  *
- * Generated from 'TransactionValue' regular structure
+ * Generated from 'CommittedTransaction' regular structure
  */
-public data class TransactionValue(
+public data class CommittedTransaction(
     public val `value`: SignedTransaction,
     public val error: TransactionRejectionReason? = null,
 ) {
-    public companion object : ScaleReader<TransactionValue>, ScaleWriter<TransactionValue> {
-        override fun read(reader: ScaleCodecReader): TransactionValue = try {
-            TransactionValue(
+    public companion object : ScaleReader<CommittedTransaction>, ScaleWriter<CommittedTransaction> {
+        override fun read(reader: ScaleCodecReader): CommittedTransaction = try {
+            CommittedTransaction(
                 SignedTransaction.read(reader),
                 reader.readNullable(TransactionRejectionReason) as TransactionRejectionReason?,
             )
@@ -29,7 +29,7 @@ public data class TransactionValue(
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: TransactionValue): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: CommittedTransaction): Unit = try {
             SignedTransaction.write(writer, instance.`value`)
             writer.writeNullable(TransactionRejectionReason, instance.error)
         } catch (ex: Exception) {

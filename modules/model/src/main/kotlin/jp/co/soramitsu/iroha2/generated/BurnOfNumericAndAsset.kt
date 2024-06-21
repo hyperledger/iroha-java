@@ -17,7 +17,7 @@ import kotlin.Unit
  */
 public data class BurnOfNumericAndAsset(
     public val `object`: Numeric,
-    public val destinationId: AssetId,
+    public val destination: AssetId,
 ) {
     public companion object : ScaleReader<BurnOfNumericAndAsset>, ScaleWriter<BurnOfNumericAndAsset> {
         override fun read(reader: ScaleCodecReader): BurnOfNumericAndAsset = try {
@@ -31,7 +31,7 @@ public data class BurnOfNumericAndAsset(
 
         override fun write(writer: ScaleCodecWriter, instance: BurnOfNumericAndAsset): Unit = try {
             Numeric.write(writer, instance.`object`)
-            AssetId.write(writer, instance.destinationId)
+            AssetId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfAsset' regular structure
  */
 public data class UnregisterOfAsset(
-    public val objectId: AssetId,
+    public val `object`: AssetId,
 ) {
     public companion object : ScaleReader<UnregisterOfAsset>, ScaleWriter<UnregisterOfAsset> {
         override fun read(reader: ScaleCodecReader): UnregisterOfAsset = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfAsset(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfAsset): Unit = try {
-            AssetId.write(writer, instance.objectId)
+            AssetId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

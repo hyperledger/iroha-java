@@ -157,7 +157,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     @Story("Account queries accounts by name with a filter")
     @SdkTestId("find_accounts_by_name_with_filter")
     fun `find accounts by name with filter`(): Unit = runBlocking {
-        val filter = QueryFilters.startsWith("alice")
+        val filter = QueryFilters.startsWith("ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03")
         QueryBuilder.findAccountsByName(ALICE_ACCOUNT_NAME, filter)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)

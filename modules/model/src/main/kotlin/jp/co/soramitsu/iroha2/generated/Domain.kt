@@ -19,7 +19,6 @@ import kotlin.collections.Map
  */
 public data class Domain(
     public val id: DomainId,
-    public val accounts: Map<AccountId, Account>,
     public val assetDefinitions: Map<AssetDefinitionId, AssetDefinition>,
     public val assetTotalQuantities: Map<AssetDefinitionId, Numeric>,
     public val logo: IpfsPath? = null,
@@ -30,7 +29,6 @@ public data class Domain(
         override fun read(reader: ScaleCodecReader): Domain = try {
             Domain(
                 DomainId.read(reader),
-                reader.readMap(reader.readCompactInt(), { AccountId.read(reader) }, { Account.read(reader) }),
                 reader.readMap(
                     reader.readCompactInt(),
                     { AssetDefinitionId.read(reader) },
@@ -51,13 +49,6 @@ public data class Domain(
 
         override fun write(writer: ScaleCodecWriter, instance: Domain): Unit = try {
             DomainId.write(writer, instance.id)
-            writer.writeCompact(instance.accounts.size)
-            instance.accounts.toSortedMap(
-                AccountId.comparator(),
-            ).forEach { (key, value) ->
-                AccountId.write(writer, key)
-                Account.write(writer, value)
-            }
             writer.writeCompact(instance.assetDefinitions.size)
             instance.assetDefinitions.toSortedMap(
                 AssetDefinitionId.comparator(),

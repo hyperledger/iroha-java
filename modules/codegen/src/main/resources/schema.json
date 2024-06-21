@@ -157,7 +157,7 @@
       },
       {
         "name": "permission",
-        "type": "Permission"
+        "type": "PermissionId"
       }
     ]
   },
@@ -266,8 +266,8 @@
         "type": "AssetDefinitionId"
       },
       {
-        "name": "type_",
-        "type": "AssetType"
+        "name": "value_type",
+        "type": "AssetValueType"
       },
       {
         "name": "mintable",
@@ -512,19 +512,6 @@
       }
     ]
   },
-  "AssetType": {
-    "Enum": [
-      {
-        "tag": "Numeric",
-        "discriminant": 0,
-        "type": "NumericSpec"
-      },
-      {
-        "tag": "Store",
-        "discriminant": 1
-      }
-    ]
-  },
   "AssetValue": {
     "Enum": [
       {
@@ -536,6 +523,19 @@
         "tag": "Store",
         "discriminant": 1,
         "type": "Metadata"
+      }
+    ]
+  },
+  "AssetValueType": {
+    "Enum": [
+      {
+        "tag": "Numeric",
+        "discriminant": 0,
+        "type": "NumericSpec"
+      },
+      {
+        "tag": "Store",
+        "discriminant": 1
       }
     ]
   },
@@ -615,7 +615,7 @@
         "type": "HashOf<MerkleTree<SignedTransaction>>"
       },
       {
-        "name": "creation_time_ms",
+        "name": "timestamp_ms",
         "type": "u64"
       },
       {
@@ -1205,7 +1205,7 @@
     "Struct": [
       {
         "name": "permissions",
-        "type": "SortedVec<Name>"
+        "type": "SortedVec<PermissionId>"
       },
       {
         "name": "custom_instruction",
@@ -1492,7 +1492,7 @@
       {
         "tag": "Permission",
         "discriminant": 10,
-        "type": "Permission"
+        "type": "PermissionId"
       },
       {
         "tag": "Parameter",
@@ -1724,9 +1724,9 @@
         "type": "RoleId"
       },
       {
-        "tag": "Permission",
+        "tag": "PermissionId",
         "discriminant": 7,
-        "type": "Permission"
+        "type": "PermissionId"
       },
       {
         "tag": "ParameterId",
@@ -2372,15 +2372,15 @@
       }
     ]
   },
-  "Mismatch<AssetType>": {
+  "Mismatch<AssetValueType>": {
     "Struct": [
       {
         "name": "expected",
-        "type": "AssetType"
+        "type": "AssetValueType"
       },
       {
         "name": "actual",
-        "type": "AssetType"
+        "type": "AssetValueType"
       }
     ]
   },
@@ -2404,8 +2404,8 @@
         "type": "AssetDefinitionId"
       },
       {
-        "name": "type_",
-        "type": "AssetType"
+        "name": "value_type",
+        "type": "AssetValueType"
       },
       {
         "name": "mintable",
@@ -2668,12 +2668,20 @@
   "Permission": {
     "Struct": [
       {
-        "name": "name",
-        "type": "Name"
+        "name": "id",
+        "type": "PermissionId"
       },
       {
         "name": "payload",
         "type": "JsonString"
+      }
+    ]
+  },
+  "PermissionId": {
+    "Struct": [
+      {
+        "name": "name",
+        "type": "Name"
       }
     ]
   },
@@ -3235,7 +3243,7 @@
   "RepetitionError": {
     "Struct": [
       {
-        "name": "instruction",
+        "name": "instruction_type",
         "type": "InstructionType"
       },
       {
@@ -3386,7 +3394,7 @@
       },
       {
         "name": "permission",
-        "type": "Permission"
+        "type": "PermissionId"
       }
     ]
   },
@@ -3717,11 +3725,11 @@
       "value": "MetadataValueBox"
     }
   },
-  "SortedVec<Name>": {
-    "Vec": "Name"
-  },
   "SortedVec<Permission>": {
     "Vec": "Permission"
+  },
+  "SortedVec<PermissionId>": {
+    "Vec": "PermissionId"
   },
   "Sorting": {
     "Struct": [
@@ -4196,19 +4204,19 @@
   "TypeError": {
     "Enum": [
       {
-        "tag": "AssetType",
+        "tag": "AssetValueType",
         "discriminant": 0,
-        "type": "Mismatch<AssetType>"
+        "type": "Mismatch<AssetValueType>"
       },
       {
         "tag": "NumericAssetValueTypeExpected",
         "discriminant": 1,
-        "type": "AssetType"
+        "type": "AssetValueType"
       },
       {
         "tag": "StoreAssetValueTypeExpected",
         "discriminant": 2,
-        "type": "AssetType"
+        "type": "AssetValueType"
       }
     ]
   },

@@ -40,6 +40,7 @@ public sealed class InstructionType : ModelEnum {
         is NewParameter -> NewParameter.equals(this, other)
         is Upgrade -> Upgrade.equals(this, other)
         is Log -> Log.equals(this, other)
+        is Custom -> Custom.equals(this, other)
         is Fail -> Fail.equals(this, other)
         else -> super.equals(other) }
 
@@ -58,6 +59,7 @@ public sealed class InstructionType : ModelEnum {
         is NewParameter -> NewParameter.hashCode()
         is Upgrade -> Upgrade.hashCode()
         is Log -> Log.hashCode()
+        is Custom -> Custom.hashCode()
         is Fail -> Fail.hashCode()
         else -> super.hashCode() }
 
@@ -550,6 +552,40 @@ public sealed class InstructionType : ModelEnum {
     }
 
     /**
+     * 'Custom' variant
+     */
+    public class Custom : InstructionType() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Custom>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Custom> {
+            public const val DISCRIMINANT: Int = 14
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Custom = try {
+                Custom()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionType.Custom,
+            ): Unit = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(o1: jp.co.soramitsu.iroha2.generated.InstructionType.Custom, o2: Any?): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".InstructionType.Custom".hashCode()
+        }
+    }
+
+    /**
      * 'Fail' variant
      */
     public class Fail : InstructionType() {
@@ -558,7 +594,7 @@ public sealed class InstructionType : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionType.Fail>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionType.Fail> {
-            public const val DISCRIMINANT: Int = 14
+            public const val DISCRIMINANT: Int = 15
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionType.Fail = try {
                 Fail()
@@ -602,7 +638,8 @@ public sealed class InstructionType : ModelEnum {
             11 -> NewParameter.read(reader)
             12 -> Upgrade.read(reader)
             13 -> Log.read(reader)
-            14 -> Fail.read(reader)
+            14 -> Custom.read(reader)
+            15 -> Fail.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: InstructionType) {
@@ -622,7 +659,8 @@ public sealed class InstructionType : ModelEnum {
                 11 -> NewParameter.write(writer, instance as NewParameter)
                 12 -> Upgrade.write(writer, instance as Upgrade)
                 13 -> Log.write(writer, instance as Log)
-                14 -> Fail.write(writer, instance as Fail)
+                14 -> Custom.write(writer, instance as Custom)
+                15 -> Fail.write(writer, instance as Fail)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

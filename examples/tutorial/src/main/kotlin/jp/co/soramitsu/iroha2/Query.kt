@@ -1,10 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
-import jp.co.soramitsu.iroha2.generated.QueryOutputPredicate
+import jp.co.soramitsu.iroha2.generated.*
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import java.math.BigInteger
 import java.security.KeyPair
@@ -35,12 +31,12 @@ open class Query(
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
-    suspend fun getAccountAmount(accountId: String, assetId: AssetId): BigInteger =
+    suspend fun getAccountAmount(accountId: String, assetDefinitionId: AssetDefinitionId): BigInteger =
         QueryBuilder.findAccountById(accountId.asAccountId())
             .account(admin)
             .buildSigned(keyPair)
             .let { query ->
-                client.sendQuery(query).assets[assetId]?.value
+                client.sendQuery(query).assets[assetDefinitionId]?.value
             }.let { value ->
                 value?.cast<AssetValue.Numeric>()?.numeric?.mantissa
             } ?: throw RuntimeException("NOT FOUND")

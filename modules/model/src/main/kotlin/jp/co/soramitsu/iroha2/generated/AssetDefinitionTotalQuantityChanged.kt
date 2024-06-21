@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'AssetDefinitionTotalQuantityChanged' regular structure
  */
 public data class AssetDefinitionTotalQuantityChanged(
-    public val assetDefinitionId: AssetDefinitionId,
+    public val assetDefinition: AssetDefinitionId,
     public val totalAmount: Numeric,
 ) {
     public companion object :
@@ -32,7 +32,7 @@ public data class AssetDefinitionTotalQuantityChanged(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: AssetDefinitionTotalQuantityChanged): Unit = try {
-            AssetDefinitionId.write(writer, instance.assetDefinitionId)
+            AssetDefinitionId.write(writer, instance.assetDefinition)
             Numeric.write(writer, instance.totalAmount)
         } catch (ex: Exception) {
             throw wrapException(ex)

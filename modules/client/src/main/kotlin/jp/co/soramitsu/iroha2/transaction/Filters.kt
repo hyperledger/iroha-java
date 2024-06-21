@@ -11,14 +11,14 @@ import jp.co.soramitsu.iroha2.generated.DataEventFilter
 import jp.co.soramitsu.iroha2.generated.DomainEventFilter
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.EventEventFilterBox
+import jp.co.soramitsu.iroha2.generated.EventFilterBox
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.NonTrivial
 import jp.co.soramitsu.iroha2.generated.PeerEventFilter
 import jp.co.soramitsu.iroha2.generated.PeerId
-import jp.co.soramitsu.iroha2.generated.PipelineEventEventFilterBox
+import jp.co.soramitsu.iroha2.generated.PipelineEventFilterBox
 import jp.co.soramitsu.iroha2.generated.QueryOutputPredicate
 import jp.co.soramitsu.iroha2.generated.RoleEventFilter
 import jp.co.soramitsu.iroha2.generated.RoleId
@@ -29,7 +29,7 @@ import jp.co.soramitsu.iroha2.generated.TransactionEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionStatus
 import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
 import java.math.BigInteger
 
 /**
@@ -41,14 +41,14 @@ object Filters {
     /**
      * Create a data filter
      */
-    fun data(entityFilter: DataEventFilter) = TriggeringEventEventFilterBox.Data(
+    fun data(entityFilter: DataEventFilter) = TriggeringEventFilterBox.Data(
         entityFilter,
     )
 
     /**
      * Create a [time based event filter][TimeEventFilter]
      */
-    fun time(eventFilter: TimeEventFilter) = EventEventFilterBox.Time(eventFilter)
+    fun time(eventFilter: TimeEventFilter) = EventFilterBox.Time(eventFilter)
 
     /**
      * Execute a given trigger based on a specified [authority]
@@ -56,7 +56,7 @@ object Filters {
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId,
-    ) = TriggeringEventEventFilterBox.ExecuteTrigger(
+    ) = TriggeringEventFilterBox.ExecuteTrigger(
         ExecuteTriggerEventFilter(triggerId, authority),
     )
 
@@ -70,8 +70,8 @@ object Filters {
         hash: ByteArray? = null,
         blockHeight: BigInteger? = null,
         status: TransactionStatus? = null,
-    ) = EventEventFilterBox.Pipeline(
-        PipelineEventEventFilterBox.Transaction(
+    ) = EventFilterBox.Pipeline(
+        PipelineEventFilterBox.Transaction(
             TransactionEventFilter(
                 hash?.asHashOf(),
                 blockHeight,

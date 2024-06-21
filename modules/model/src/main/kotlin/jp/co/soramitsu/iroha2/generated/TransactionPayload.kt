@@ -19,7 +19,7 @@ import kotlin.collections.Map
  * Generated from 'TransactionPayload' regular structure
  */
 public data class TransactionPayload(
-    public val chainId: ChainId,
+    public val chain: ChainId,
     public val authority: AccountId,
     public val creationTimeMs: BigInteger,
     public val instructions: Executable,
@@ -47,7 +47,7 @@ public data class TransactionPayload(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransactionPayload): Unit = try {
-            ChainId.write(writer, instance.chainId)
+            ChainId.write(writer, instance.chain)
             AccountId.write(writer, instance.authority)
             writer.writeUint64(instance.creationTimeMs)
             Executable.write(writer, instance.instructions)

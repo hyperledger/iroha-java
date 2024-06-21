@@ -8,28 +8,27 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 import kotlin.Unit
 
 /**
- * JsonString
+ * PermissionId
  *
- * Generated from 'JsonString' regular structure
+ * Generated from 'PermissionId' regular structure
  */
-public data class JsonString(
-    public val string: String,
+public data class PermissionId(
+    public val name: Name,
 ) {
-    public companion object : ScaleReader<JsonString>, ScaleWriter<JsonString> {
-        override fun read(reader: ScaleCodecReader): JsonString = try {
-            JsonString(
-                reader.readString(),
+    public companion object : ScaleReader<PermissionId>, ScaleWriter<PermissionId> {
+        override fun read(reader: ScaleCodecReader): PermissionId = try {
+            PermissionId(
+                Name.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: JsonString): Unit = try {
-            writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
+        override fun write(writer: ScaleCodecWriter, instance: PermissionId): Unit = try {
+            Name.write(writer, instance.name)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

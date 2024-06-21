@@ -346,21 +346,21 @@ public sealed class FindError : ModelEnum {
     }
 
     /**
-     * 'PermissionToken' variant
+     * 'Permission' variant
      */
-    public data class PermissionToken(
-        public val name: Name,
+    public data class Permission(
+        public val permissionId: PermissionId,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.FindError.PermissionToken>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.FindError.PermissionToken> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.FindError.Permission>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.FindError.Permission> {
             public const val DISCRIMINANT: Int = 10
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.PermissionToken = try {
-                PermissionToken(
-                    Name.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Permission = try {
+                Permission(
+                    PermissionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -368,9 +368,9 @@ public sealed class FindError : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.FindError.PermissionToken,
+                instance: jp.co.soramitsu.iroha2.generated.FindError.Permission,
             ): Unit = try {
-                Name.write(writer, instance.name)
+                PermissionId.write(writer, instance.permissionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -456,7 +456,7 @@ public sealed class FindError : ModelEnum {
             7 -> Peer.read(reader)
             8 -> Trigger.read(reader)
             9 -> Role.read(reader)
-            10 -> PermissionToken.read(reader)
+            10 -> Permission.read(reader)
             11 -> Parameter.read(reader)
             12 -> PublicKey.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
@@ -474,7 +474,7 @@ public sealed class FindError : ModelEnum {
                 7 -> Peer.write(writer, instance as Peer)
                 8 -> Trigger.write(writer, instance as Trigger)
                 9 -> Role.write(writer, instance as Role)
-                10 -> PermissionToken.write(writer, instance as PermissionToken)
+                10 -> Permission.write(writer, instance as Permission)
                 11 -> Parameter.write(writer, instance as Parameter)
                 12 -> PublicKey.write(writer, instance as PublicKey)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }

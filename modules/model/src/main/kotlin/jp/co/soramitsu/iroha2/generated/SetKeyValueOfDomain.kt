@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'SetKeyValueOfDomain' regular structure
  */
 public data class SetKeyValueOfDomain(
-    public val objectId: DomainId,
+    public val `object`: DomainId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -32,7 +32,7 @@ public data class SetKeyValueOfDomain(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: SetKeyValueOfDomain): Unit = try {
-            DomainId.write(writer, instance.objectId)
+            DomainId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

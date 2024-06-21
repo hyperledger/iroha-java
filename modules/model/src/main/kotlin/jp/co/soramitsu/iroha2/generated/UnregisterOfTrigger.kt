@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfTrigger' regular structure
  */
 public data class UnregisterOfTrigger(
-    public val objectId: TriggerId,
+    public val `object`: TriggerId,
 ) {
     public companion object : ScaleReader<UnregisterOfTrigger>, ScaleWriter<UnregisterOfTrigger> {
         override fun read(reader: ScaleCodecReader): UnregisterOfTrigger = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfTrigger(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfTrigger): Unit = try {
-            TriggerId.write(writer, instance.objectId)
+            TriggerId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

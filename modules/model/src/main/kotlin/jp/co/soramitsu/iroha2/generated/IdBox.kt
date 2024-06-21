@@ -252,21 +252,21 @@ public sealed class IdBox : ModelEnum {
     }
 
     /**
-     * 'PermissionTokenId' variant
+     * 'PermissionId' variant
      */
-    public data class PermissionTokenId(
-        public val name: Name,
+    public data class PermissionId(
+        public val permissionId: jp.co.soramitsu.iroha2.generated.PermissionId,
     ) : IdBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.IdBox.PermissionTokenId>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.IdBox.PermissionTokenId> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.IdBox.PermissionId>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.IdBox.PermissionId> {
             public const val DISCRIMINANT: Int = 7
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.IdBox.PermissionTokenId = try {
-                PermissionTokenId(
-                    Name.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.IdBox.PermissionId = try {
+                PermissionId(
+                    jp.co.soramitsu.iroha2.generated.PermissionId.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -274,9 +274,9 @@ public sealed class IdBox : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.IdBox.PermissionTokenId,
+                instance: jp.co.soramitsu.iroha2.generated.IdBox.PermissionId,
             ): Unit = try {
-                Name.write(writer, instance.name)
+                jp.co.soramitsu.iroha2.generated.PermissionId.write(writer, instance.permissionId)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -324,7 +324,7 @@ public sealed class IdBox : ModelEnum {
             4 -> PeerId.read(reader)
             5 -> TriggerId.read(reader)
             6 -> RoleId.read(reader)
-            7 -> PermissionTokenId.read(reader)
+            7 -> PermissionId.read(reader)
             8 -> ParameterId.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
@@ -338,7 +338,7 @@ public sealed class IdBox : ModelEnum {
                 4 -> PeerId.write(writer, instance as PeerId)
                 5 -> TriggerId.write(writer, instance as TriggerId)
                 6 -> RoleId.write(writer, instance as RoleId)
-                7 -> PermissionTokenId.write(writer, instance as PermissionTokenId)
+                7 -> PermissionId.write(writer, instance as PermissionId)
                 8 -> ParameterId.write(writer, instance as ParameterId)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }

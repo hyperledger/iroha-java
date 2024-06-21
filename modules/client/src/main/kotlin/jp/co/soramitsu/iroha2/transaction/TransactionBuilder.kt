@@ -5,38 +5,8 @@ import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.AssetValueType
-import jp.co.soramitsu.iroha2.generated.ChainId
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.Executable
-import jp.co.soramitsu.iroha2.generated.InstructionBox
-import jp.co.soramitsu.iroha2.generated.IpfsPath
-import jp.co.soramitsu.iroha2.generated.Metadata
-import jp.co.soramitsu.iroha2.generated.MetadataValueBox
-import jp.co.soramitsu.iroha2.generated.Mintable
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.NonZeroOfu32
-import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
-import jp.co.soramitsu.iroha2.generated.PeerId
-import jp.co.soramitsu.iroha2.generated.PermissionToken
-import jp.co.soramitsu.iroha2.generated.PublicKey
-import jp.co.soramitsu.iroha2.generated.Repeats
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.Signature
-import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
-import jp.co.soramitsu.iroha2.generated.SignaturesOfOfTransactionPayload
-import jp.co.soramitsu.iroha2.generated.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.SignedTransactionV1
-import jp.co.soramitsu.iroha2.generated.TimeEventFilter
-import jp.co.soramitsu.iroha2.generated.TransactionPayload
-import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
+import jp.co.soramitsu.iroha2.generated.*
 import jp.co.soramitsu.iroha2.sign
-import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.security.KeyPair
@@ -71,7 +41,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(domainId, accountName))
+    fun account(signatory: PublicKey, domainId: DomainId) = this.account(AccountId(domainId, signatory))
 
     fun instructions(vararg instructions: InstructionBox) = this.apply { this.instructions.value.addAll(instructions) }
 
@@ -92,7 +62,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun timeToLive(ttlMillis: Long) = this.apply { this.timeToLive(ttlMillis.toBigInteger()) }
 
-    fun buildSigned(vararg keyPairs: KeyPair): SignedTransaction {
+    fun buildSigned(keyPair: KeyPair): SignedTransaction {
         val payload = TransactionPayload(
             checkNotNull(chainId) { "Chain ID is required" },
             checkNotNull(accountId) { "Account Id is required" },
@@ -104,15 +74,13 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         )
         val encodedPayload = TransactionPayload.encode(payload)
 
-        val signatures = keyPairs.map {
+        val signature =
             Signature(
-                it.public.toIrohaPublicKey(),
-                it.private.sign(encodedPayload),
+                keyPair.private.sign(encodedPayload),
             ).asSignatureOf<TransactionPayload>()
-        }.toList()
 
         return SignedTransaction.V1(
-            SignedTransactionV1(SignaturesOfOfTransactionPayload(signatures), payload),
+            SignedTransactionV1(TransactionSignature(signature), payload),
         )
     }
 
@@ -163,7 +131,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventEventFilterBox,
+        filter: TriggeringEventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(
@@ -184,7 +152,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventEventFilterBox,
+        filter: TriggeringEventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(
@@ -256,7 +224,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun registerRole(
         id: RoleId,
-        vararg tokens: PermissionToken,
+        vararg tokens: Permission,
     ) = this.apply { instructions.value.add(Instructions.registerRole(id, *tokens)) }
 
     fun unregisterRole(
@@ -360,11 +328,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         quantity: BigDecimal,
     ) = this.apply { instructions.value.add(Instructions.mintAsset(assetId, quantity)) }
 
-    fun mintSignatureCheckCondition(
-        accountId: AccountId,
-        signature: SignatureCheckCondition,
-    ) = this.apply { instructions.value.add(Instructions.mintSignatureCheckCondition(accountId, signature)) }
-
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
@@ -390,10 +353,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
     }
 
-    fun grantPermissionToken(permission: String, payload: String = "", target: AccountId) = this.apply {
-        instructions.value.add(Instructions.grantPermissionToken(permission, payload, target))
-    }
-
     fun burnAsset(assetId: AssetId, value: Int) = this.apply {
         instructions.value.add(Instructions.burnAsset(assetId, value))
     }
@@ -401,16 +360,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun burnAsset(assetId: AssetId, value: BigDecimal) = this.apply {
         instructions.value.add(Instructions.burnAsset(assetId, value))
     }
-
-    fun burnPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
-        instructions.value.add(Instructions.burnPublicKey(accountId, pubKey))
-    }
-
-    fun mintPublicKey(accountId: AccountId, pubKey: PublicKey) = this.apply {
-        instructions.value.add(Instructions.mintPublicKey(accountId, pubKey))
-    }
-
-    fun removePublicKey(accountId: AccountId, pubKey: PublicKey) = burnPublicKey(accountId, pubKey)
 
     fun transferAsset(sourceId: AssetId, value: Int, destinationId: AccountId) = this.apply {
         instructions.value.add(Instructions.transferAsset(sourceId, value, destinationId))

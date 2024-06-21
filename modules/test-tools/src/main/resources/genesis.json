@@ -205,45 +205,6 @@
           }
         }
       }
-    },
-    {
-      "Register" : {
-        "Trigger" : {
-          "id" : "time_trigger",
-          "action" : {
-            "executable" : {
-              "Instructions" : [ {
-                "SetKeyValue" : {
-                  "Domain" : {
-                    "object": "wonderland",
-                    "key" : "key",
-                    "value" : {
-                        "String" : "value"
-                    }
-                  }
-                }
-              } ]
-            },
-            "repeats" : "Indefinitely",
-            "authority" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
-            "filter" : {
-              "Time" : {
-                "Schedule" : {
-                  "start" : {
-                    "secs" : 1719045330,
-                    "nanos" : 0
-                  },
-                  "period" : {
-                    "secs" : 1,
-                    "nanos" : 0
-                  }
-                }
-              }
-            },
-            "metadata" : { }
-          }
-        }
-      }
     }
   ]
 }

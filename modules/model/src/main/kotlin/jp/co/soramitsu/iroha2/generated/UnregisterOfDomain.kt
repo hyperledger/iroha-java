@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfDomain' regular structure
  */
 public data class UnregisterOfDomain(
-    public val objectId: DomainId,
+    public val `object`: DomainId,
 ) {
     public companion object : ScaleReader<UnregisterOfDomain>, ScaleWriter<UnregisterOfDomain> {
         override fun read(reader: ScaleCodecReader): UnregisterOfDomain = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfDomain(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfDomain): Unit = try {
-            DomainId.write(writer, instance.objectId)
+            DomainId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

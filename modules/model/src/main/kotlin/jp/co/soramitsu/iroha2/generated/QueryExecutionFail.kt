@@ -29,44 +29,14 @@ public sealed class QueryExecutionFail : ModelEnum {
     override fun equals(other: Any?): Boolean = when (this) {
         is UnknownCursor -> UnknownCursor.equals(this, other)
         is FetchSizeTooBig -> FetchSizeTooBig.equals(this, other)
+        is InvalidSingularParameters -> InvalidSingularParameters.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
         is UnknownCursor -> UnknownCursor.hashCode()
         is FetchSizeTooBig -> FetchSizeTooBig.hashCode()
+        is InvalidSingularParameters -> InvalidSingularParameters.hashCode()
         else -> super.hashCode() }
-
-    /**
-     * 'Signature' variant
-     */
-    public data class Signature(
-        public val string: String,
-    ) : QueryExecutionFail() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Signature>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Signature> {
-            public const val DISCRIMINANT: Int = 0
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Signature = try {
-                Signature(
-                    reader.readString(),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Signature,
-            ): Unit = try {
-                writer.writeAsList(instance.string.toByteArray(Charsets.UTF_8))
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
 
     /**
      * 'Find' variant
@@ -79,7 +49,7 @@ public sealed class QueryExecutionFail : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Find>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Find> {
-            public const val DISCRIMINANT: Int = 1
+            public const val DISCRIMINANT: Int = 0
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Find = try {
                 Find(
@@ -111,7 +81,7 @@ public sealed class QueryExecutionFail : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Conversion>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Conversion> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.Conversion = try {
                 Conversion(
@@ -141,7 +111,7 @@ public sealed class QueryExecutionFail : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.UnknownCursor>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.UnknownCursor> {
-            public const val DISCRIMINANT: Int = 3
+            public const val DISCRIMINANT: Int = 2
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.UnknownCursor = try {
                 UnknownCursor()
@@ -178,7 +148,7 @@ public sealed class QueryExecutionFail : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.FetchSizeTooBig>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.FetchSizeTooBig> {
-            public const val DISCRIMINANT: Int = 4
+            public const val DISCRIMINANT: Int = 3
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.FetchSizeTooBig = try {
                 FetchSizeTooBig()
@@ -206,26 +176,63 @@ public sealed class QueryExecutionFail : ModelEnum {
         }
     }
 
+    /**
+     * 'InvalidSingularParameters' variant
+     */
+    public class InvalidSingularParameters : QueryExecutionFail() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.InvalidSingularParameters>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.InvalidSingularParameters> {
+            public const val DISCRIMINANT: Int = 4
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.InvalidSingularParameters = try {
+                InvalidSingularParameters()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.InvalidSingularParameters,
+            ): Unit = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.InvalidSingularParameters,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".QueryExecutionFail.InvalidSingularParameters".hashCode()
+        }
+    }
+
     public companion object : ScaleReader<QueryExecutionFail>, ScaleWriter<QueryExecutionFail> {
         override fun read(reader: ScaleCodecReader): QueryExecutionFail = when (
             val discriminant =
                 reader.readUByte()
         ) {
-            0 -> Signature.read(reader)
-            1 -> Find.read(reader)
-            2 -> Conversion.read(reader)
-            3 -> UnknownCursor.read(reader)
-            4 -> FetchSizeTooBig.read(reader)
+            0 -> Find.read(reader)
+            1 -> Conversion.read(reader)
+            2 -> UnknownCursor.read(reader)
+            3 -> FetchSizeTooBig.read(reader)
+            4 -> InvalidSingularParameters.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: QueryExecutionFail) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Signature.write(writer, instance as Signature)
-                1 -> Find.write(writer, instance as Find)
-                2 -> Conversion.write(writer, instance as Conversion)
-                3 -> UnknownCursor.write(writer, instance as UnknownCursor)
-                4 -> FetchSizeTooBig.write(writer, instance as FetchSizeTooBig)
+                0 -> Find.write(writer, instance as Find)
+                1 -> Conversion.write(writer, instance as Conversion)
+                2 -> UnknownCursor.write(writer, instance as UnknownCursor)
+                3 -> FetchSizeTooBig.write(writer, instance as FetchSizeTooBig)
+                4 -> InvalidSingularParameters.write(writer, instance as InvalidSingularParameters)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

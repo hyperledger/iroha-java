@@ -14,30 +14,28 @@ import kotlin.Int
 import kotlin.Unit
 
 /**
- * FindPermissionTokenSchema
+ * FindExecutorDataModel
  *
- * Generated from 'FindPermissionTokenSchema' regular structure
+ * Generated from 'FindExecutorDataModel' regular structure
  */
-public class FindPermissionTokenSchema {
-    public companion object :
-        ScaleReader<FindPermissionTokenSchema>,
-        ScaleWriter<FindPermissionTokenSchema> {
-        override fun read(reader: ScaleCodecReader): FindPermissionTokenSchema = try {
-            FindPermissionTokenSchema()
+public class FindExecutorDataModel {
+    public companion object : ScaleReader<FindExecutorDataModel>, ScaleWriter<FindExecutorDataModel> {
+        override fun read(reader: ScaleCodecReader): FindExecutorDataModel = try {
+            FindExecutorDataModel()
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: FindPermissionTokenSchema): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: FindExecutorDataModel): Unit = try {
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        public fun equals(o1: FindPermissionTokenSchema, o2: Any?): Boolean = when (o2) {
+        public fun equals(o1: FindExecutorDataModel, o2: Any?): Boolean = when (o2) {
             null -> false
             else -> o2::class == o1::class
         }
 
-        override fun hashCode(): Int = ".FindPermissionTokenSchema".hashCode()
+        override fun hashCode(): Int = ".FindExecutorDataModel".hashCode()
     }
 }

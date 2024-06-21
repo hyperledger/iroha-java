@@ -17,13 +17,11 @@ import kotlin.Unit
  * Generated from 'Signature' regular structure
  */
 public data class Signature(
-    public val publicKey: PublicKey,
     public val payload: ByteArray,
 ) {
     public companion object : ScaleReader<Signature>, ScaleWriter<Signature> {
         override fun read(reader: ScaleCodecReader): Signature = try {
             Signature(
-                PublicKey.read(reader),
                 reader.readByteArray(),
             )
         } catch (ex: Exception) {
@@ -31,7 +29,6 @@ public data class Signature(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: Signature): Unit = try {
-            PublicKey.write(writer, instance.publicKey)
             writer.writeAsList(instance.payload)
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'SetKeyValueOfAsset' regular structure
  */
 public data class SetKeyValueOfAsset(
-    public val objectId: AssetId,
+    public val `object`: AssetId,
     public val key: Name,
     public val `value`: MetadataValueBox,
 ) {
@@ -32,7 +32,7 @@ public data class SetKeyValueOfAsset(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: SetKeyValueOfAsset): Unit = try {
-            AssetId.write(writer, instance.objectId)
+            AssetId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
             MetadataValueBox.write(writer, instance.`value`)
         } catch (ex: Exception) {

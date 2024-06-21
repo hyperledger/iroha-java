@@ -1,82 +1,28 @@
 package jp.co.soramitsu.iroha2.query
 
-import jp.co.soramitsu.iroha2.AccountExtractor
-import jp.co.soramitsu.iroha2.AccountsExtractor
-import jp.co.soramitsu.iroha2.AssetDefinitionExtractor
-import jp.co.soramitsu.iroha2.AssetDefinitionsExtractor
-import jp.co.soramitsu.iroha2.AssetExtractor
-import jp.co.soramitsu.iroha2.AssetsExtractor
-import jp.co.soramitsu.iroha2.BlockHeaderExtractor
-import jp.co.soramitsu.iroha2.BlockHeadersExtractor
-import jp.co.soramitsu.iroha2.BlocksValueExtractor
-import jp.co.soramitsu.iroha2.DomainExtractor
-import jp.co.soramitsu.iroha2.DomainsExtractor
-import jp.co.soramitsu.iroha2.PeersExtractor
-import jp.co.soramitsu.iroha2.PermissionTokenSchemaExtractor
-import jp.co.soramitsu.iroha2.PermissionTokensExtractor
-import jp.co.soramitsu.iroha2.ResultExtractor
-import jp.co.soramitsu.iroha2.RoleExtractor
-import jp.co.soramitsu.iroha2.RoleIdsExtractor
-import jp.co.soramitsu.iroha2.RolesExtractor
-import jp.co.soramitsu.iroha2.TransactionValueExtractor
-import jp.co.soramitsu.iroha2.TransactionValuesExtractor
-import jp.co.soramitsu.iroha2.TriggerBoxExtractor
-import jp.co.soramitsu.iroha2.TriggerBoxesExtractor
-import jp.co.soramitsu.iroha2.TriggerIdsExtractor
-import jp.co.soramitsu.iroha2.ValueExtractor
-import jp.co.soramitsu.iroha2.asName
-import jp.co.soramitsu.iroha2.asSignatureOf
-import jp.co.soramitsu.iroha2.fromHex
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
-import jp.co.soramitsu.iroha2.generated.Hash
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.QueryBox
-import jp.co.soramitsu.iroha2.generated.QueryOutputPredicate
-import jp.co.soramitsu.iroha2.generated.QueryPayload
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.Signature
-import jp.co.soramitsu.iroha2.generated.SignedQuery
-import jp.co.soramitsu.iroha2.generated.SignedQueryV1
-import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.hash
-import jp.co.soramitsu.iroha2.sign
-import jp.co.soramitsu.iroha2.toIrohaHash
-import jp.co.soramitsu.iroha2.toIrohaPublicKey
+import jp.co.soramitsu.iroha2.*
+import jp.co.soramitsu.iroha2.generated.*
 import java.math.BigInteger
 import java.security.KeyPair
-import java.time.Instant
 
 class QueryBuilder<R>(
     private val query: QueryBox,
     private val resultExtractor: ResultExtractor<R>,
     private val queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
 ) {
-
     private var accountId: AccountId? = null
-    private var creationTimeMillis: BigInteger? = null
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
-    fun account(accountName: Name, domainId: DomainId) = this.account(AccountId(domainId, accountName))
-
-    fun creationTime(creationTimeMillis: BigInteger) = this.apply { this.creationTimeMillis = creationTimeMillis }
-
-    fun creationTime(creationTimeMillis: Instant) = this.apply { this.creationTime(creationTimeMillis.toEpochMilli()) }
-
-    fun creationTime(creationTimeMillis: Long) =
-        this.apply { this.creationTime(BigInteger.valueOf(creationTimeMillis)) }
+    fun account(signatory: PublicKey, domainId: DomainId) = this.account(AccountId(domainId, signatory))
 
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
         val filter = queryFilter ?: GenericPredicateBox.Raw(QueryOutputPredicate.Pass())
-        val payload = QueryPayload(checkNotNull(accountId) { "Account Id of the sender is mandatory" }, query, filter)
-        val encodedPayload = QueryPayload.encode(payload)
-        val signature = Signature(keyPair.public.toIrohaPublicKey(), keyPair.private.sign(encodedPayload))
+        val payload = ClientQueryPayload(checkNotNull(accountId) { "Account Id of the sender is mandatory" }, query, filter, Sorting(null), Pagination(null, null), FetchSize(null))
+        val encodedPayload = ClientQueryPayload.encode(payload)
+        val signature = QuerySignature(Signature(keyPair.private.sign(encodedPayload)).asSignatureOf())
 
-        val query = SignedQuery.V1(SignedQueryV1(signature.asSignatureOf(), payload))
+        val query = SignedQuery.V1(SignedQueryV1(signature, payload))
         return QueryAndExtractor(query, resultExtractor)
     }
 
@@ -102,17 +48,6 @@ class QueryBuilder<R>(
             accountId: AccountId,
             key: String,
         ) = findAccountKeyValueByIdAndKey(accountId, key.asName())
-
-        @JvmStatic
-        @JvmOverloads
-        fun findAccountsByName(
-            name: Name,
-            queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
-        ) = QueryBuilder(
-            Queries.findAccountsByName(name),
-            AccountsExtractor,
-            queryFilter,
-        )
 
         @JvmStatic
         @JvmOverloads
@@ -285,21 +220,21 @@ class QueryBuilder<R>(
 
         @JvmStatic
         @JvmOverloads
-        fun findPermissionTokensByAccountId(
+        fun findPermissionsByAccountId(
             accountId: AccountId,
             queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
         ) = QueryBuilder(
-            Queries.findPermissionTokensByAccountId(accountId),
+            Queries.findPermissionsByAccountId(accountId),
             PermissionTokensExtractor,
             queryFilter,
         )
 
         @JvmStatic
-        fun findPermissionTokenIdsSchema(
+        fun findExecutorDataModel(
             queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
         ) = QueryBuilder(
-            Queries.findPermissionTokenIdsSchema(),
-            PermissionTokenSchemaExtractor,
+            Queries.findExecutorDataModel(),
+            ExecutorDataModelExtractor,
             queryFilter,
         )
 
@@ -401,17 +336,6 @@ class QueryBuilder<R>(
         fun findAllActiveTriggerIds(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder(
             Queries.findAllActiveTriggerIds(),
             TriggerIdsExtractor,
-            queryFilter,
-        )
-
-        @JvmStatic
-        @JvmOverloads
-        fun findTriggersByDomainId(
-            domainId: DomainId,
-            queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
-        ) = QueryBuilder(
-            Queries.findTriggersByDomainId(domainId),
-            TriggerBoxesExtractor,
             queryFilter,
         )
 

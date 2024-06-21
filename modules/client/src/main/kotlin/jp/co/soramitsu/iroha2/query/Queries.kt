@@ -1,56 +1,6 @@
 package jp.co.soramitsu.iroha2.query
 
-import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetId
-import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.FindAccountById
-import jp.co.soramitsu.iroha2.generated.FindAccountKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.FindAccountsByDomainId
-import jp.co.soramitsu.iroha2.generated.FindAccountsByName
-import jp.co.soramitsu.iroha2.generated.FindAccountsWithAsset
-import jp.co.soramitsu.iroha2.generated.FindAllAccounts
-import jp.co.soramitsu.iroha2.generated.FindAllActiveTriggerIds
-import jp.co.soramitsu.iroha2.generated.FindAllAssets
-import jp.co.soramitsu.iroha2.generated.FindAllAssetsDefinitions
-import jp.co.soramitsu.iroha2.generated.FindAllBlockHeaders
-import jp.co.soramitsu.iroha2.generated.FindAllBlocks
-import jp.co.soramitsu.iroha2.generated.FindAllDomains
-import jp.co.soramitsu.iroha2.generated.FindAllParameters
-import jp.co.soramitsu.iroha2.generated.FindAllPeers
-import jp.co.soramitsu.iroha2.generated.FindAllRoleIds
-import jp.co.soramitsu.iroha2.generated.FindAllRoles
-import jp.co.soramitsu.iroha2.generated.FindAllTransactions
-import jp.co.soramitsu.iroha2.generated.FindAssetById
-import jp.co.soramitsu.iroha2.generated.FindAssetDefinitionById
-import jp.co.soramitsu.iroha2.generated.FindAssetDefinitionKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.FindAssetKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.FindAssetQuantityById
-import jp.co.soramitsu.iroha2.generated.FindAssetsByAccountId
-import jp.co.soramitsu.iroha2.generated.FindAssetsByAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.FindAssetsByDomainId
-import jp.co.soramitsu.iroha2.generated.FindAssetsByDomainIdAndAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.FindAssetsByName
-import jp.co.soramitsu.iroha2.generated.FindBlockHeaderByHash
-import jp.co.soramitsu.iroha2.generated.FindDomainById
-import jp.co.soramitsu.iroha2.generated.FindDomainKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.FindPermissionTokenSchema
-import jp.co.soramitsu.iroha2.generated.FindPermissionTokensByAccountId
-import jp.co.soramitsu.iroha2.generated.FindRoleByRoleId
-import jp.co.soramitsu.iroha2.generated.FindRolesByAccountId
-import jp.co.soramitsu.iroha2.generated.FindTotalAssetQuantityByAssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.FindTransactionByHash
-import jp.co.soramitsu.iroha2.generated.FindTransactionsByAccountId
-import jp.co.soramitsu.iroha2.generated.FindTriggerById
-import jp.co.soramitsu.iroha2.generated.FindTriggerKeyValueByIdAndKey
-import jp.co.soramitsu.iroha2.generated.FindTriggersByDomainId
-import jp.co.soramitsu.iroha2.generated.Hash
-import jp.co.soramitsu.iroha2.generated.HashOf
-import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.QueryBox
-import jp.co.soramitsu.iroha2.generated.RoleId
-import jp.co.soramitsu.iroha2.generated.SignedTransaction
-import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.*
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.
@@ -73,11 +23,6 @@ object Queries {
     fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBox.FindAccountKeyValueByIdAndKey(
         FindAccountKeyValueByIdAndKey(accountId, key),
     )
-
-    /**
-     * Return all the accounts that have the given [Name]
-     */
-    fun findAccountsByName(name: Name) = QueryBox.FindAccountsByName(FindAccountsByName(name))
 
     /**
      * Return all the accounts that belong to a specific domain [DomainId]
@@ -216,15 +161,15 @@ object Queries {
     /**
      * Return all the permission tokens granted to the specified [AccountId]
      */
-    fun findPermissionTokensByAccountId(accountId: AccountId) = QueryBox.FindPermissionTokensByAccountId(
-        FindPermissionTokensByAccountId(accountId),
+    fun findPermissionsByAccountId(accountId: AccountId) = QueryBox.FindPermissionsByAccountId(
+        FindPermissionsByAccountId(accountId),
     )
 
     /**
-     * Return permission token ids schema
+     * Return executor data model
      */
-    fun findPermissionTokenIdsSchema() = QueryBox.FindPermissionTokenSchema(
-        FindPermissionTokenSchema(),
+    fun findExecutorDataModel() = QueryBox.FindExecutorDataModel(
+        FindExecutorDataModel(),
     )
 
     /**
@@ -274,11 +219,6 @@ object Queries {
      * Return the trigger with the given [TriggerId]
      */
     fun findTriggerById(id: TriggerId) = QueryBox.FindTriggerById(FindTriggerById(id))
-
-    /**
-     * Return all the triggers that are attached to the given [DomainId]
-     */
-    fun findTriggersByDomainId(id: DomainId) = QueryBox.FindTriggersByDomainId(FindTriggersByDomainId(id))
 
     /**
      * Return all currently active triggers, that is, triggers that have not expired at the time of the query

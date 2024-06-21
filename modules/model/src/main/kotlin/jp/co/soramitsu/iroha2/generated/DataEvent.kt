@@ -154,38 +154,6 @@ public sealed class DataEvent : ModelEnum {
     }
 
     /**
-     * 'PermissionToken' variant
-     */
-    public data class PermissionToken(
-        public val permissionTokenSchemaUpdateEvent: PermissionTokenSchemaUpdateEvent,
-    ) : DataEvent() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEvent.PermissionToken>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEvent.PermissionToken> {
-            public const val DISCRIMINANT: Int = 4
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEvent.PermissionToken = try {
-                PermissionToken(
-                    PermissionTokenSchemaUpdateEvent.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.DataEvent.PermissionToken,
-            ): Unit = try {
-                PermissionTokenSchemaUpdateEvent.write(writer, instance.permissionTokenSchemaUpdateEvent)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Configuration' variant
      */
     public data class Configuration(
@@ -196,7 +164,7 @@ public sealed class DataEvent : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DataEvent.Configuration>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEvent.Configuration> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 4
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEvent.Configuration = try {
                 Configuration(
@@ -228,7 +196,7 @@ public sealed class DataEvent : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DataEvent.Executor>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEvent.Executor> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 5
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEvent.Executor = try {
                 Executor(
@@ -258,9 +226,8 @@ public sealed class DataEvent : ModelEnum {
             1 -> Domain.read(reader)
             2 -> Trigger.read(reader)
             3 -> Role.read(reader)
-            4 -> PermissionToken.read(reader)
-            5 -> Configuration.read(reader)
-            6 -> Executor.read(reader)
+            4 -> Configuration.read(reader)
+            5 -> Executor.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: DataEvent) {
@@ -270,9 +237,8 @@ public sealed class DataEvent : ModelEnum {
                 1 -> Domain.write(writer, instance as Domain)
                 2 -> Trigger.write(writer, instance as Trigger)
                 3 -> Role.write(writer, instance as Role)
-                4 -> PermissionToken.write(writer, instance as PermissionToken)
-                5 -> Configuration.write(writer, instance as Configuration)
-                6 -> Executor.write(writer, instance as Executor)
+                4 -> Configuration.write(writer, instance as Configuration)
+                5 -> Executor.write(writer, instance as Executor)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

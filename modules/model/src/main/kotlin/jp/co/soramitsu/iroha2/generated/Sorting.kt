@@ -11,24 +11,24 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Unit
 
 /**
- * FindAccountsByName
+ * Sorting
  *
- * Generated from 'FindAccountsByName' regular structure
+ * Generated from 'Sorting' regular structure
  */
-public data class FindAccountsByName(
-    public val name: Name,
+public data class Sorting(
+    public val sortByMetadataKey: Name? = null,
 ) {
-    public companion object : ScaleReader<FindAccountsByName>, ScaleWriter<FindAccountsByName> {
-        override fun read(reader: ScaleCodecReader): FindAccountsByName = try {
-            FindAccountsByName(
-                Name.read(reader),
+    public companion object : ScaleReader<Sorting>, ScaleWriter<Sorting> {
+        override fun read(reader: ScaleCodecReader): Sorting = try {
+            Sorting(
+                reader.readNullable(Name) as Name?,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: FindAccountsByName): Unit = try {
-            Name.write(writer, instance.name)
+        override fun write(writer: ScaleCodecWriter, instance: Sorting): Unit = try {
+            writer.writeNullable(Name, instance.sortByMetadataKey)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

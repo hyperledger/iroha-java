@@ -10,8 +10,8 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 
 const val DEFAULT_DOMAIN = "wonderland"
-const val ALICE_ACCOUNT = "alice"
-const val BOB_ACCOUNT = "bob"
+const val ALICE_ACCOUNT = "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03"
+const val BOB_ACCOUNT = "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016"
 const val GENESIS = "genesis"
 const val ALICE_ACCOUNT_ID_VALUE = "$ALICE_ACCOUNT$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN"
 

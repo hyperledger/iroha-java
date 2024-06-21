@@ -25,7 +25,7 @@ public data class TransactionEventFilter(
         override fun read(reader: ScaleCodecReader): TransactionEventFilter = try {
             TransactionEventFilter(
                 reader.readNullable(HashOf) as HashOf<SignedTransaction>?,
-                reader.readNullable(),
+                reader.readNullable() as BigInteger?,
                 reader.readNullable(TransactionStatus) as TransactionStatus?,
             )
         } catch (ex: Exception) {

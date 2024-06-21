@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'ExecuteTrigger' regular structure
  */
 public data class ExecuteTrigger(
-    public val triggerId: TriggerId,
+    public val trigger: TriggerId,
 ) {
     public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
         override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
@@ -28,7 +28,7 @@ public data class ExecuteTrigger(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger): Unit = try {
-            TriggerId.write(writer, instance.triggerId)
+            TriggerId.write(writer, instance.trigger)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -345,6 +345,7 @@ open class Iroha2Client(
             queryCursor?.queryId?.also { parameter("query_id", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
+        println("RITA")
         return response.body<ByteArray>().let { BatchedResponse.decode(it) }.cast<BatchedResponse<QueryOutputBox>>()
     }
 

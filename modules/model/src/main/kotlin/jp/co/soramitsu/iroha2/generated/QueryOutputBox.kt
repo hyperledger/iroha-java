@@ -121,21 +121,21 @@ public sealed class QueryOutputBox : ModelEnum {
     }
 
     /**
-     * 'PermissionToken' variant
+     * 'Permission' variant
      */
-    public data class PermissionToken(
-        public val permissionToken: jp.co.soramitsu.iroha2.generated.PermissionToken,
+    public data class Permission(
+        public val permission: jp.co.soramitsu.iroha2.generated.Permission,
     ) : QueryOutputBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionToken>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionToken> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Permission>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Permission> {
             public const val DISCRIMINANT: Int = 3
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionToken = try {
-                PermissionToken(
-                    jp.co.soramitsu.iroha2.generated.PermissionToken.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.Permission = try {
+                Permission(
+                    jp.co.soramitsu.iroha2.generated.Permission.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -143,48 +143,12 @@ public sealed class QueryOutputBox : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionToken,
+                instance: jp.co.soramitsu.iroha2.generated.QueryOutputBox.Permission,
             ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.PermissionToken.write(writer, instance.permissionToken)
+                jp.co.soramitsu.iroha2.generated.Permission.write(writer, instance.permission)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
-        }
-    }
-
-    /**
-     * 'PermissionTokenSchema' variant
-     */
-    public data class PermissionTokenSchema(
-        public val permissionTokenSchema: jp.co.soramitsu.iroha2.generated.PermissionTokenSchema,
-    ) : QueryOutputBox() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionTokenSchema>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionTokenSchema> {
-            public const val DISCRIMINANT: Int = 4
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionTokenSchema = try {
-                PermissionTokenSchema(
-                    jp.co.soramitsu.iroha2.generated.PermissionTokenSchema.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.QueryOutputBox.PermissionTokenSchema,
-            ): Unit =
-                try {
-                    jp.co.soramitsu.iroha2.generated.PermissionTokenSchema.write(
-                        writer,
-                        instance.permissionTokenSchema,
-                    )
-                } catch (ex: Exception) {
-                    throw wrapException(ex)
-                }
         }
     }
 
@@ -199,7 +163,7 @@ public sealed class QueryOutputBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.LimitedMetadata>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.LimitedMetadata> {
-            public const val DISCRIMINANT: Int = 5
+            public const val DISCRIMINANT: Int = 4
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.LimitedMetadata = try {
                 LimitedMetadata(
@@ -231,7 +195,7 @@ public sealed class QueryOutputBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Numeric>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Numeric> {
-            public const val DISCRIMINANT: Int = 6
+            public const val DISCRIMINANT: Int = 5
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.Numeric = try {
                 Numeric(
@@ -263,7 +227,7 @@ public sealed class QueryOutputBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.BlockHeader>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.BlockHeader> {
-            public const val DISCRIMINANT: Int = 7
+            public const val DISCRIMINANT: Int = 6
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.BlockHeader = try {
                 BlockHeader(
@@ -295,7 +259,7 @@ public sealed class QueryOutputBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Block>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.Block> {
-            public const val DISCRIMINANT: Int = 8
+            public const val DISCRIMINANT: Int = 7
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.Block = try {
                 Block(
@@ -310,6 +274,38 @@ public sealed class QueryOutputBox : ModelEnum {
                 instance: jp.co.soramitsu.iroha2.generated.QueryOutputBox.Block,
             ): Unit = try {
                 SignedBlock.write(writer, instance.signedBlock)
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+        }
+    }
+
+    /**
+     * 'ExecutorDataModel' variant
+     */
+    public data class ExecutorDataModel(
+        public val executorDataModel: jp.co.soramitsu.iroha2.generated.ExecutorDataModel,
+    ) : QueryOutputBox() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryOutputBox.ExecutorDataModel>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryOutputBox.ExecutorDataModel> {
+            public const val DISCRIMINANT: Int = 8
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryOutputBox.ExecutorDataModel = try {
+                ExecutorDataModel(
+                    jp.co.soramitsu.iroha2.generated.ExecutorDataModel.read(reader),
+                )
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.QueryOutputBox.ExecutorDataModel,
+            ): Unit = try {
+                jp.co.soramitsu.iroha2.generated.ExecutorDataModel.write(writer, instance.executorDataModel)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -359,12 +355,12 @@ public sealed class QueryOutputBox : ModelEnum {
             0 -> Id.read(reader)
             1 -> Identifiable.read(reader)
             2 -> Transaction.read(reader)
-            3 -> PermissionToken.read(reader)
-            4 -> PermissionTokenSchema.read(reader)
-            5 -> LimitedMetadata.read(reader)
-            6 -> Numeric.read(reader)
-            7 -> BlockHeader.read(reader)
-            8 -> Block.read(reader)
+            3 -> Permission.read(reader)
+            4 -> LimitedMetadata.read(reader)
+            5 -> Numeric.read(reader)
+            6 -> BlockHeader.read(reader)
+            7 -> Block.read(reader)
+            8 -> ExecutorDataModel.read(reader)
             9 -> Vec.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
@@ -374,12 +370,12 @@ public sealed class QueryOutputBox : ModelEnum {
                 0 -> Id.write(writer, instance as Id)
                 1 -> Identifiable.write(writer, instance as Identifiable)
                 2 -> Transaction.write(writer, instance as Transaction)
-                3 -> PermissionToken.write(writer, instance as PermissionToken)
-                4 -> PermissionTokenSchema.write(writer, instance as PermissionTokenSchema)
-                5 -> LimitedMetadata.write(writer, instance as LimitedMetadata)
-                6 -> Numeric.write(writer, instance as Numeric)
-                7 -> BlockHeader.write(writer, instance as BlockHeader)
-                8 -> Block.write(writer, instance as Block)
+                3 -> Permission.write(writer, instance as Permission)
+                4 -> LimitedMetadata.write(writer, instance as LimitedMetadata)
+                5 -> Numeric.write(writer, instance as Numeric)
+                6 -> BlockHeader.write(writer, instance as BlockHeader)
+                7 -> Block.write(writer, instance as Block)
+                8 -> ExecutorDataModel.write(writer, instance as ExecutorDataModel)
                 9 -> Vec.write(writer, instance as Vec)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
