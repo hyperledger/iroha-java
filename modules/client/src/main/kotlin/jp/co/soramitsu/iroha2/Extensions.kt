@@ -657,6 +657,11 @@ fun AccountId.asStringWithJson() = this.asJsonString().asStringWithJson()
 
 fun RoleId.asStringWithJson() = this.asJsonString().asStringWithJson()
 
+fun FilterOptOfAccountId.asString() = when (this) {
+    is FilterOptOfAccountId.BySome -> this.accountId.asString()
+    is FilterOptOfAccountId.AcceptAll -> this::class.simpleName
+}
+
 fun FilterOptOfAccountId.asAccountIdOrNull() = when (this) {
     is FilterOptOfAccountId.BySome -> this.accountId
     is FilterOptOfAccountId.AcceptAll -> null

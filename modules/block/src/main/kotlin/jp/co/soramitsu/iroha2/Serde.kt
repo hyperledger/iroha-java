@@ -94,7 +94,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 /**
- * This JSON mapper is configured to serialise and deserialise `Genesis block` in a format compatible with Iroha 2 peer
+ * This JSON mapper is configured to serialise and deserialize `Genesis block` in a format compatible with Iroha 2 peer
  */
 public val JSON_SERDE by lazy {
     ObjectMapper().also { mapper ->
@@ -168,7 +168,6 @@ public val JSON_SERDE by lazy {
                 .configure(KotlinFeature.NullToEmptyMap, true)
                 .build(),
         )
-
         mapper.propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
     }
@@ -266,7 +265,10 @@ object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
 object FilterOptOfAccountIdDeserializer : JsonDeserializer<FilterOptOfAccountId>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): FilterOptOfAccountId {
         val node = p.readValueAsTree<JsonNode>()
-        return FilterOptOfAccountId.BySome(node.textValue().asAccountId())
+        return when (val text = node.textValue()) {
+            FilterOptOfAccountId.AcceptAll::class.simpleName -> FilterOptOfAccountId.AcceptAll()
+            else -> FilterOptOfAccountId.BySome(text.asAccountId())
+        }
     }
 }
 
@@ -658,7 +660,7 @@ object ScheduleSerializer : JsonSerializer<Schedule>() {
  */
 object FilterOptOfAccountIdSerializer : JsonSerializer<FilterOptOfAccountId>() {
     override fun serialize(value: FilterOptOfAccountId, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeString(value.asAccountIdOrNull()?.asString())
+        gen.writeString(value.asString())
     }
 }
 

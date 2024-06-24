@@ -125,6 +125,39 @@
       {
         "Register" : {
           "Trigger" : {
+            "id" : "name2$wonderland",
+            "action" : {
+              "executable" : {
+                "Instructions" : [ {
+                  "SetKeyValue" : {
+                    "DomainId" : "wonderland",
+                    "key" : {
+                      "Name" : "key"
+                    },
+                    "value" : {
+                      "String" : "value"
+                    }
+                  }
+                } ]
+              },
+              "repeats" : {
+                "Exactly" : 1
+              },
+              "authority" : "alice@wonderland",
+              "filter": {
+                "ExecuteTrigger": {
+                  "trigger_id": "name2$wonderland",
+                  "authority": "AcceptAll"
+                }
+              },
+              "metadata" : { }
+            }
+          }
+        }
+      },
+      {
+        "Register" : {
+          "Trigger" : {
             "id" : "time_trigger",
             "action" : {
               "executable" : {
