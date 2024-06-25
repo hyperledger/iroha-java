@@ -16,6 +16,7 @@ import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.Expression
 import jp.co.soramitsu.iroha2.generated.FilterBox
+import jp.co.soramitsu.iroha2.generated.FilterOptOfAccountId
 import jp.co.soramitsu.iroha2.generated.FindError
 import jp.co.soramitsu.iroha2.generated.Fixed
 import jp.co.soramitsu.iroha2.generated.Hash
@@ -655,3 +656,13 @@ fun AssetId.asStringWithJson() = this.asJsonString().asStringWithJson()
 fun AccountId.asStringWithJson() = this.asJsonString().asStringWithJson()
 
 fun RoleId.asStringWithJson() = this.asJsonString().asStringWithJson()
+
+fun FilterOptOfAccountId.asString() = when (this) {
+    is FilterOptOfAccountId.BySome -> this.accountId.asString()
+    is FilterOptOfAccountId.AcceptAll -> this::class.simpleName
+}
+
+fun FilterOptOfAccountId.asAccountIdOrNull() = when (this) {
+    is FilterOptOfAccountId.BySome -> this.accountId
+    is FilterOptOfAccountId.AcceptAll -> null
+}
