@@ -17,7 +17,7 @@ import kotlin.Unit
  */
 public data class AccountPermissionChanged(
     public val account: AccountId,
-    public val permission: PermissionId,
+    public val permission: Permission,
 ) {
     public companion object :
         ScaleReader<AccountPermissionChanged>,
@@ -25,7 +25,7 @@ public data class AccountPermissionChanged(
         override fun read(reader: ScaleCodecReader): AccountPermissionChanged = try {
             AccountPermissionChanged(
                 AccountId.read(reader),
-                PermissionId.read(reader),
+                Permission.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -33,7 +33,7 @@ public data class AccountPermissionChanged(
 
         override fun write(writer: ScaleCodecWriter, instance: AccountPermissionChanged): Unit = try {
             AccountId.write(writer, instance.account)
-            PermissionId.write(writer, instance.permission)
+            Permission.write(writer, instance.permission)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

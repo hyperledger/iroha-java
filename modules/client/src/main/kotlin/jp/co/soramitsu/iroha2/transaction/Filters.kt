@@ -16,6 +16,7 @@ import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.NonTrivial
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.PeerEventFilter
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.PipelineEventFilterBox
@@ -74,7 +75,7 @@ object Filters {
         PipelineEventFilterBox.Transaction(
             TransactionEventFilter(
                 hash?.asHashOf(),
-                blockHeight,
+                NonZeroOfu64(blockHeight ?: BigInteger.ZERO),
                 status,
             ),
         ),

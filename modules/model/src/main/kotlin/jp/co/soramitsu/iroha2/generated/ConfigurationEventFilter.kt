@@ -17,7 +17,6 @@ import kotlin.Unit
  * Generated from 'ConfigurationEventFilter' regular structure
  */
 public data class ConfigurationEventFilter(
-    public val idMatcher: ParameterId? = null,
     public val eventSet: Long,
 ) {
     public companion object :
@@ -25,7 +24,6 @@ public data class ConfigurationEventFilter(
         ScaleWriter<ConfigurationEventFilter> {
         override fun read(reader: ScaleCodecReader): ConfigurationEventFilter = try {
             ConfigurationEventFilter(
-                reader.readNullable(ParameterId) as ParameterId?,
                 reader.readUint32(),
             )
         } catch (ex: Exception) {
@@ -33,7 +31,6 @@ public data class ConfigurationEventFilter(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: ConfigurationEventFilter): Unit = try {
-            writer.writeNullable(ParameterId, instance.idMatcher)
             writer.writeUint32(instance.eventSet)
         } catch (ex: Exception) {
             throw wrapException(ex)

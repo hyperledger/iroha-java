@@ -261,7 +261,7 @@ open class Iroha2Client(
     ): Pair<Iterable<BlockStreamStorage>, BlockStreamSubscription> = subscribeToBlockStream(
         from,
         onBlock = { block -> block },
-        cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(from + count - 1) },
+        cancelIf = { block -> block.extractBlock().height().u64 == BigInteger.valueOf(from + count - 1) },
         autoStart = autoStart,
     )
 
@@ -342,7 +342,7 @@ open class Iroha2Client(
             start?.also { parameter("start", it) }
             limit?.also { parameter("limit", it) }
             sorting?.also { parameter("sort_by_metadata_key", it) }
-            queryCursor?.queryId?.also { parameter("query_id", it) }
+            queryCursor?.query?.also { parameter("query_id", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         println("RITA")

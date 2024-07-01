@@ -19,17 +19,17 @@ import kotlin.collections.List
  * Generated from 'BlockHeader' regular structure
  */
 public data class BlockHeader(
-    public val height: BigInteger,
+    public val height: NonZeroOfu64,
     public val prevBlockHash: HashOf<SignedBlock>? = null,
     public val transactionsHash: HashOf<List<SignedTransaction>>,
-    public val timestampMs: BigInteger,
+    public val creationTimeMs: BigInteger,
     public val viewChangeIndex: Long,
     public val consensusEstimationMs: BigInteger,
 ) {
     public companion object : ScaleReader<BlockHeader>, ScaleWriter<BlockHeader> {
         override fun read(reader: ScaleCodecReader): BlockHeader = try {
             BlockHeader(
-                reader.readUint64(),
+                NonZeroOfu64.read(reader),
                 reader.readNullable(HashOf) as HashOf<SignedBlock>?,
                 HashOf.read(reader) as HashOf<List<SignedTransaction>>,
                 reader.readUint64(),
@@ -41,10 +41,10 @@ public data class BlockHeader(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: BlockHeader): Unit = try {
-            writer.writeUint64(instance.height)
+            NonZeroOfu64.write(writer, instance.height)
             writer.writeNullable(HashOf, instance.prevBlockHash)
             HashOf.write(writer, instance.transactionsHash)
-            writer.writeUint64(instance.timestampMs)
+            writer.writeUint64(instance.creationTimeMs)
             writer.writeUint32(instance.viewChangeIndex)
             writer.writeUint64(instance.consensusEstimationMs)
         } catch (ex: Exception) {

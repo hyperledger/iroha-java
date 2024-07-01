@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'FindTriggersByAuthorityDomainId' regular structure
  */
 public data class FindTriggersByAuthorityDomainId(
-    public val domainId: DomainId,
+    public val domain: DomainId,
 ) {
     public companion object :
         ScaleReader<FindTriggersByAuthorityDomainId>,
@@ -31,7 +31,7 @@ public data class FindTriggersByAuthorityDomainId(
 
         override fun write(writer: ScaleCodecWriter, instance: FindTriggersByAuthorityDomainId): Unit =
             try {
-                DomainId.write(writer, instance.domainId)
+                DomainId.write(writer, instance.domain)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }

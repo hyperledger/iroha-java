@@ -12,17 +12,17 @@ import java.math.BigInteger
 import kotlin.Unit
 
 /**
- * TransactionLimits
+ * SumeragiParameters
  *
- * Generated from 'TransactionLimits' regular structure
+ * Generated from 'SumeragiParameters' regular structure
  */
-public data class TransactionLimits(
-    public val maxInstructionNumber: BigInteger,
-    public val maxWasmSizeBytes: BigInteger,
+public data class SumeragiParameters(
+    public val blockTimeMs: BigInteger,
+    public val commitTimeMs: BigInteger,
 ) {
-    public companion object : ScaleReader<TransactionLimits>, ScaleWriter<TransactionLimits> {
-        override fun read(reader: ScaleCodecReader): TransactionLimits = try {
-            TransactionLimits(
+    public companion object : ScaleReader<SumeragiParameters>, ScaleWriter<SumeragiParameters> {
+        override fun read(reader: ScaleCodecReader): SumeragiParameters = try {
+            SumeragiParameters(
                 reader.readUint64(),
                 reader.readUint64(),
             )
@@ -30,9 +30,9 @@ public data class TransactionLimits(
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: TransactionLimits): Unit = try {
-            writer.writeUint64(instance.maxInstructionNumber)
-            writer.writeUint64(instance.maxWasmSizeBytes)
+        override fun write(writer: ScaleCodecWriter, instance: SumeragiParameters): Unit = try {
+            writer.writeUint64(instance.blockTimeMs)
+            writer.writeUint64(instance.commitTimeMs)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

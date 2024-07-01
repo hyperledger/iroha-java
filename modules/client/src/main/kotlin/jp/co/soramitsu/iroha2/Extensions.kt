@@ -191,8 +191,8 @@ fun IdBox.extractId(): Any = when (this) {
     is IdBox.DomainId -> this.domainId
     is IdBox.TriggerId -> this.triggerId
     is IdBox.PeerId -> this.peerId
-    is IdBox.PermissionId -> this.permissionId
-    is IdBox.ParameterId -> this.parameterId
+    is IdBox.CustomParameterId -> this.customParameterId
+    is IdBox.Permission -> this.permission
 }
 
 fun InstructionBox.extractAccount() = this
@@ -287,9 +287,8 @@ fun FindError.extract() = when (this) {
     is FindError.Role -> this.roleId.asString()
     is FindError.Block -> this.hashOf.hash.arrayOfU8.toHex()
     is FindError.MetadataKey -> this.name.string
-    is FindError.Parameter -> this.parameterId.name.string
     is FindError.Peer -> this.peerId.address.toString()
-    is FindError.Permission -> this.permissionId.name.string
+    is FindError.Permission -> this.permission.name
     is FindError.PublicKey -> this.publicKey.payload.toString()
     is FindError.Trigger -> this.triggerId.asString()
     is FindError.Transaction -> this.hashOf.hash.arrayOfU8.toHex()
@@ -355,57 +354,12 @@ fun Numeric.asBigInteger() = this.mantissa
 
 fun Numeric.asBigDecimal() = BigDecimal.valueOf(this.mantissa.toLong(), this.scale.toInt())
 
-fun AssetValueType.Companion.numeric(scale: Long? = null) = AssetValueType.Numeric(NumericSpec(scale))
+fun AssetType.Companion.numeric(scale: Long? = null) = AssetType.Numeric(NumericSpec(scale))
 
-fun Boolean.asMetadataValueBox() = MetadataValueBox.Bool(this)
+fun Metadata.getStringValue(key: String) = this.sortedMapOfName[key.asName()]
 
-fun String.asMetadataValueBox() = MetadataValueBox.String(this)
+fun Metadata.getBooleanValue(key: String) = this.sortedMapOfName[key.asName()]
 
-fun Number.asMetadataValueBox() = MetadataValueBox.Numeric(this.asNumeric())
+fun Metadata.getNameValue(key: String) = this.sortedMapOfName[key.asName()]
 
-fun Double.asMetadataValueBox() = MetadataValueBox.Numeric(this.asNumeric())
-
-fun Metadata.getStringValue(key: String) = this.sortedMapOfName.getStringValue(key)
-
-fun Metadata.getBooleanValue(key: String) = this.sortedMapOfName.getBooleanValue(key)
-
-fun Metadata.getNameValue(key: String) = this.sortedMapOfName.getNameValue(key)
-
-fun Metadata.getFixedValue(key: String) = this.sortedMapOfName.getFixedValue(key)
-
-fun Map<Name, MetadataValueBox>.getStringValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.String>()?.string
-
-fun Map<Name, MetadataValueBox>.getBooleanValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.Bool>()?.bool
-
-fun Map<Name, MetadataValueBox>.getU32Value(key: String) = this[key.asName()]
-    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asLong()
-
-fun Map<Name, MetadataValueBox>.getU64Value(key: String) = this[key.asName()]
-    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger()
-
-fun Map<Name, MetadataValueBox>.getU128Value(key: String) = this[key.asName()]
-    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger()
-
-fun Map<Name, MetadataValueBox>.getFixedValue(key: String) = this[key.asName()]
-    ?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigDecimal()
-
-fun Map<Name, MetadataValueBox>.getNameValue(key: String) = this[key.asName()]?.cast<MetadataValueBox.Name>()?.name
-
-inline fun <reified T> MetadataValueBox.getValue() = when (this) {
-    is MetadataValueBox.Numeric -> this.numeric.cast()
-    is MetadataValueBox.Bool -> this.bool.cast()
-    is MetadataValueBox.String -> this.string.cast()
-    is MetadataValueBox.Name -> this.name.string.cast<T>()
-    else -> throw IllegalArgumentException("Value type is not supported")
-}
-
-inline fun <reified T> Map<Name, MetadataValueBox>.extract(key: String) = when (T::class) {
-    Int::class -> this.getU32Value(key)?.toInt()
-    BigInteger::class -> this.getU128Value(key)
-    String::class -> this.getStringValue(key)
-    Boolean::class -> this.getBooleanValue(key)
-    BigDecimal::class -> this.getFixedValue(key)
-    else -> throw RuntimeException("Unknown type ${T::class}")
-} as T?
-
-inline fun <reified T> Metadata.extract(key: String) = this.sortedMapOfName.extract<T>(key)
+fun Metadata.getFixedValue(key: String) = this.sortedMapOfName[key.asName()]

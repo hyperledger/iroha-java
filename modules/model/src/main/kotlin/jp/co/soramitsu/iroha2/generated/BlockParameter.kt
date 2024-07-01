@@ -13,32 +13,32 @@ import kotlin.Int
 import kotlin.Unit
 
 /**
- * ConfigurationEvent
+ * BlockParameter
  *
- * Generated from 'ConfigurationEvent' enum
+ * Generated from 'BlockParameter' enum
  */
-public sealed class ConfigurationEvent : ModelEnum {
+public sealed class BlockParameter : ModelEnum {
     /**
      * @return Discriminator of variant in enum
      */
     public abstract fun discriminant(): Int
 
     /**
-     * 'Changed' variant
+     * 'MaxTransactions' variant
      */
-    public data class Changed(
-        public val parameterChanged: ParameterChanged,
-    ) : ConfigurationEvent() {
+    public data class MaxTransactions(
+        public val nonZeroOfu64: NonZeroOfu64,
+    ) : BlockParameter() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.ConfigurationEvent.Changed>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.ConfigurationEvent.Changed> {
+            ScaleReader<jp.co.soramitsu.iroha2.generated.BlockParameter.MaxTransactions>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.BlockParameter.MaxTransactions> {
             public const val DISCRIMINANT: Int = 0
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.ConfigurationEvent.Changed = try {
-                Changed(
-                    ParameterChanged.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.BlockParameter.MaxTransactions = try {
+                MaxTransactions(
+                    NonZeroOfu64.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -46,27 +46,27 @@ public sealed class ConfigurationEvent : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.ConfigurationEvent.Changed,
+                instance: jp.co.soramitsu.iroha2.generated.BlockParameter.MaxTransactions,
             ): Unit = try {
-                ParameterChanged.write(writer, instance.parameterChanged)
+                NonZeroOfu64.write(writer, instance.nonZeroOfu64)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
         }
     }
 
-    public companion object : ScaleReader<ConfigurationEvent>, ScaleWriter<ConfigurationEvent> {
-        override fun read(reader: ScaleCodecReader): ConfigurationEvent = when (
+    public companion object : ScaleReader<BlockParameter>, ScaleWriter<BlockParameter> {
+        override fun read(reader: ScaleCodecReader): BlockParameter = when (
             val discriminant =
                 reader.readUByte()
         ) {
-            0 -> Changed.read(reader)
+            0 -> MaxTransactions.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
-        override fun write(writer: ScaleCodecWriter, instance: ConfigurationEvent) {
+        override fun write(writer: ScaleCodecWriter, instance: BlockParameter) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Changed.write(writer, instance as Changed)
+                0 -> MaxTransactions.write(writer, instance as MaxTransactions)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

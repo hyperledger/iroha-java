@@ -2,10 +2,9 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Metadata
-import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.PublicKey
@@ -23,7 +22,7 @@ class SendTransaction(
 
     suspend fun registerDomain(
         id: String,
-        metadata: Map<Name, MetadataValueBox> = mapOf(),
+        metadata: Map<Name, String> = mapOf(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
     ) {
@@ -40,7 +39,7 @@ class SendTransaction(
     suspend fun registerAccount(
         id: String,
         signatories: List<PublicKey>,
-        metadata: Map<Name, MetadataValueBox> = mapOf(),
+        metadata: Map<Name, String> = mapOf(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
     ) {
@@ -56,8 +55,8 @@ class SendTransaction(
 
     suspend fun registerAssetDefinition(
         id: String,
-        type: AssetValueType = AssetValueType.Store(),
-        metadata: Map<Name, MetadataValueBox> = mapOf(),
+        type: AssetType = AssetType.Store(),
+        metadata: Map<Name, String> = mapOf(),
         mintable: Mintable = Mintable.Infinitely(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,

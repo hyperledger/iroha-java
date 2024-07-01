@@ -148,14 +148,14 @@ object Instructions {
     @JvmOverloads
     fun registerAssetDefinition(
         id: AssetDefinitionId,
-        assetValueType: AssetValueType,
+        assetType: AssetType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely(),
         logo: IpfsPath? = null,
     ) = InstructionBox.Register(
         RegisterBox.AssetDefinition(
             RegisterOfAssetDefinition(
-                NewAssetDefinition(id, assetValueType, mintable, logo, metadata),
+                NewAssetDefinition(id, assetType, mintable, logo, metadata),
             ),
         ),
     )
@@ -173,7 +173,7 @@ object Instructions {
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
-        metadata: Map<Name, MetadataValueBox> = mapOf(),
+        metadata: Map<Name, String> = mapOf(),
         logo: IpfsPath? = null,
     ) = InstructionBox.Register(
         RegisterBox.Domain(RegisterOfDomain(NewDomain(domainId, logo, Metadata(metadata)))),
@@ -201,7 +201,7 @@ object Instructions {
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox.Asset(
             SetKeyValueOfAsset(assetId, key, value),
@@ -214,7 +214,7 @@ object Instructions {
     fun setKeyValue(
         triggerId: TriggerId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox.Trigger(
             SetKeyValueOfTrigger(triggerId, key, value),
@@ -227,7 +227,7 @@ object Instructions {
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox.AssetDefinition(
             SetKeyValueOfAssetDefinition(definitionId, key, value),
@@ -240,7 +240,7 @@ object Instructions {
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox.Domain(SetKeyValueOfDomain(domainId, key, value)),
     )
@@ -251,7 +251,7 @@ object Instructions {
     fun setKeyValue(
         accountId: AccountId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = InstructionBox.SetKeyValue(
         SetKeyValueBox.Account(SetKeyValueOfAccount(accountId, key, value)),
     )
@@ -269,28 +269,28 @@ object Instructions {
     fun executeTrigger(triggerId: TriggerId) = InstructionBox.ExecuteTrigger(ExecuteTrigger(triggerId))
 
     /**
-     * Mint an asset of the [AssetValueType.Quantity] asset value type
+     * Mint an asset of the [AssetType.Quantity] asset value type
      */
     fun mintAsset(assetId: AssetId, quantity: Int) = InstructionBox.Mint(
         MintBox.Asset(MintOfNumericAndAsset(quantity.asNumeric(), assetId)),
     )
 
     /**
-     * Mint an asset of the [AssetValueType.Fixed] asset value type
+     * Mint an asset of the [AssetType.Fixed] asset value type
      */
     fun mintAsset(assetId: AssetId, quantity: BigDecimal) = InstructionBox.Mint(
         MintBox.Asset(MintOfNumericAndAsset(quantity.asNumeric(), assetId)),
     )
 
     /**
-     * Burn an asset of the [AssetValueType.Quantity] asset value type
+     * Burn an asset of the [AssetType.Quantity] asset value type
      */
     fun burnAsset(assetId: AssetId, value: Int) = InstructionBox.Burn(
         BurnBox.Asset(BurnOfNumericAndAsset(value.asNumeric(), assetId)),
     )
 
     /**
-     * Burn an asset of the [AssetValueType.Fixed] asset value type
+     * Burn an asset of the [AssetType.Fixed] asset value type
      */
     fun burnAsset(assetId: AssetId, value: BigDecimal) = InstructionBox.Burn(
         BurnBox.Asset(BurnOfNumericAndAsset(value.asNumeric(), assetId)),
@@ -341,17 +341,12 @@ object Instructions {
         )
 
     /**
-     * Fail a transaction with a given [message].
-     */
-    fun fail(message: String) = InstructionBox.Fail(Fail(message))
-
-    /**
      * Revoke an account the [Permissions.CanSetKeyValueUserAssetsToken] permission
      */
     fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             Permission(
-                id = Permissions.CanSetKeyValueUserAssetsToken.type,
+                name = Permissions.CanSetKeyValueUserAssetsToken.type,
                 payload = assetId.asJsonString(),
             )
         }
@@ -363,7 +358,7 @@ object Instructions {
     fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             Permission(
-                id = Permissions.CanSetKeyValueInUserAccount.type,
+                name = Permissions.CanSetKeyValueInUserAccount.type,
                 payload = accountId.asJsonString(),
             )
         }
@@ -377,7 +372,7 @@ object Instructions {
             GrantBox.Permission(
                 GrantOfPermissionAndAccount(
                     Permission(
-                        id = Permissions.CanSetKeyValueInDomain.type,
+                        name = Permissions.CanSetKeyValueInDomain.type,
                         payload = domainId.asJsonString(),
                     ),
                     target,
@@ -392,7 +387,7 @@ object Instructions {
     fun revokeSetKeyValueDomain(domainId: DomainId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             Permission(
-                id = Permissions.CanSetKeyValueInDomain.type,
+                name = Permissions.CanSetKeyValueInDomain.type,
                 payload = domainId.asJsonString(),
             )
         }

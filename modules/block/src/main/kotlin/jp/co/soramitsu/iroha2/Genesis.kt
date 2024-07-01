@@ -113,7 +113,7 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
                 RegisterOfAssetDefinition(
                     NewAssetDefinition(
                         this.newAssetDefinition.id,
-                        this.newAssetDefinition.valueType,
+                        this.newAssetDefinition.type,
                         this.newAssetDefinition.mintable,
                         metadata = metadata,
                     ),

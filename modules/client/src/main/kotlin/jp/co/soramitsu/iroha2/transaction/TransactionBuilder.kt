@@ -24,7 +24,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     var creationTimeMillis: BigInteger?
     var timeToLiveMillis: BigInteger?
     var nonce: Long?
-    var metadata: Lazy<HashMap<Name, MetadataValueBox>>
+    var metadata: Lazy<HashMap<Name, String>>
 
     init {
         chainId = null
@@ -70,7 +70,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             Executable.Instructions(instructions.value),
             NonZeroOfu64(timeToLiveMillis ?: DURATION_OF_24_HOURS_IN_MILLIS),
             NonZeroOfu32(nonce ?: throw IrohaClientException("Nonce must not be null")),
-            metadata.value,
+            Metadata(metadata.value),
         )
         val encodedPayload = TransactionPayload.encode(payload)
         val signature = Signature(keyPair.private.sign(encodedPayload)).asSignatureOf<TransactionPayload>()
@@ -237,7 +237,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerAssetDefinition(
         id: AssetDefinitionId,
-        assetValueType: AssetValueType,
+        assetValueType: AssetType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely(),
     ) = this.apply {
@@ -250,7 +250,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun registerAssetDefinition(
         name: Name,
         domainId: DomainId,
-        assetValueType: AssetValueType,
+        assetValueType: AssetType,
         metadata: Metadata = Metadata(mapOf()),
         mintable: Mintable = Mintable.Infinitely(),
     ) = this.apply {
@@ -267,37 +267,37 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     fun setKeyValue(
         assetId: AssetId,
         key: String,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key.asName(), value)) }
 
     fun setKeyValue(
         assetId: AssetId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(assetId, key, value)) }
 
     fun setKeyValue(
         accountId: AccountId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(accountId, key, value)) }
 
     fun setKeyValue(
         definitionId: AssetDefinitionId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(definitionId, key, value)) }
 
     fun setKeyValue(
         triggerId: TriggerId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(triggerId, key, value)) }
 
     fun setKeyValue(
         domainId: DomainId,
         key: Name,
-        value: MetadataValueBox,
+        value: String,
     ) = this.apply { instructions.value.add(Instructions.setKeyValue(domainId, key, value)) }
 
     fun removeKeyValue(
@@ -327,7 +327,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerDomain(
         domainId: DomainId,
-        metadata: Map<Name, MetadataValueBox> = mapOf(),
+        metadata: Map<Name, String> = mapOf(),
         logo: IpfsPath? = null,
     ) = this.apply {
         instructions.value.add(
@@ -363,10 +363,6 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
 
     fun transferDomainOwnership(sourceId: AccountId, value: DomainId, destinationId: AccountId) = this.apply {
         instructions.value.add(Instructions.transferDomainOwnership(sourceId, value, destinationId))
-    }
-
-    fun fail(message: String) = this.apply {
-        this.instructions.value.add(Instructions.fail(message))
     }
 
     fun revokeSetKeyValueAsset(assetId: AssetId, target: AccountId) =

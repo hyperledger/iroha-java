@@ -17,13 +17,13 @@ import kotlin.Unit
  */
 public data class RolePermissionChanged(
     public val role: RoleId,
-    public val permission: PermissionId,
+    public val permission: Permission,
 ) {
     public companion object : ScaleReader<RolePermissionChanged>, ScaleWriter<RolePermissionChanged> {
         override fun read(reader: ScaleCodecReader): RolePermissionChanged = try {
             RolePermissionChanged(
                 RoleId.read(reader),
-                PermissionId.read(reader),
+                Permission.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -31,7 +31,7 @@ public data class RolePermissionChanged(
 
         override fun write(writer: ScaleCodecWriter, instance: RolePermissionChanged): Unit = try {
             RoleId.write(writer, instance.role)
-            PermissionId.write(writer, instance.permission)
+            Permission.write(writer, instance.permission)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

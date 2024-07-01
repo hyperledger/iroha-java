@@ -12,23 +12,26 @@ import kotlin.String
 import kotlin.Unit
 
 /**
- * Custom
+ * CustomParameter
  *
- * Generated from 'Custom' regular structure
+ * Generated from 'CustomParameter' regular structure
  */
-public data class Custom(
+public data class CustomParameter(
+    public val id: CustomParameterId,
     public val payload: String,
 ) {
-    public companion object : ScaleReader<Custom>, ScaleWriter<Custom> {
-        override fun read(reader: ScaleCodecReader): Custom = try {
-            Custom(
+    public companion object : ScaleReader<CustomParameter>, ScaleWriter<CustomParameter> {
+        override fun read(reader: ScaleCodecReader): CustomParameter = try {
+            CustomParameter(
+                CustomParameterId.read(reader),
                 reader.readString(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: Custom): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: CustomParameter): Unit = try {
+            CustomParameterId.write(writer, instance.id)
             writer.writeAsList(instance.payload.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

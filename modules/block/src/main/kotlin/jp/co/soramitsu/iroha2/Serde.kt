@@ -50,7 +50,7 @@ public val JSON_SERDE by lazy {
 
         module.addDeserializer(AssetValue::class.java, AssetValueDeserializer)
         module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer)
-        module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
+        module.addDeserializer(AssetType::class.java, AssetTypeDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
 //        module.addDeserializer(NewParameter::class.java, NewParameterBoxDeserializer)
@@ -168,7 +168,7 @@ object PermissionTokenDeserializer : JsonDeserializer<Permission>() {
         }
 
         return Permission(
-            id = PermissionId(definitionId.value.asText().asName()),
+            name = definitionId.value.asText(),
             payload = payload,
         )
     }
@@ -199,15 +199,15 @@ object NewRoleDeserializer : JsonDeserializer<NewRole>() {
 }
 
 /**
- * Deserializer for [AssetValueType]
+ * Deserializer for [AssetType]
  */
-object AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetValueType {
+object AssetTypeDeserializer : JsonDeserializer<AssetType>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetType {
         val text = p.readValueAs(String::class.java)
-        return AssetValueType::class.nestedClasses
+        return AssetType::class.nestedClasses
             .findLast { it.simpleName == text }
-            ?.createInstance() as AssetValueType?
-            ?: throw DeserializationException("AssetValueType $text not found")
+            ?.createInstance() as AssetType?
+            ?: throw DeserializationException("AssetType $text not found")
     }
 }
 
@@ -376,7 +376,7 @@ object AccountIdSerializer : JsonSerializer<AccountId>() {
 object PermissionTokenSerializer : JsonSerializer<Permission>() {
     override fun serialize(token: Permission, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
-        gen.writeObjectField(Permission::id.name.toSnakeCase(), token.id)
+        gen.writeObjectField(Permission::name.name.toSnakeCase(), token.name)
 
         val payload = when (token.payload.isEmpty()) {
             true -> null
@@ -720,7 +720,7 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
 
     return GrantBox.Permission(
         GrantOfPermissionAndAccount(
-            Permission(PermissionId("".asName()), ""),
+            Permission("", ""),
             AccountId("".asDomainId(), publicKeyFromHex("").toIrohaPublicKey()),
         ),
     )
@@ -848,7 +848,7 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
     val node = nodeMetadata.next()
     val key = node.key.asName()
     val valueNode = node.value.fields().next()
-    val value = valueNode.value.asText().asMetadataValueBox()
+    val value = valueNode.value.asText()
     return Metadata(mapOf(Pair(key, value)))
 }
 

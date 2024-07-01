@@ -12,24 +12,24 @@ import kotlin.String
 import kotlin.Unit
 
 /**
- * Fail
+ * CustomInstruction
  *
- * Generated from 'Fail' regular structure
+ * Generated from 'CustomInstruction' regular structure
  */
-public data class Fail(
-    public val message: String,
+public data class CustomInstruction(
+    public val payload: String,
 ) {
-    public companion object : ScaleReader<Fail>, ScaleWriter<Fail> {
-        override fun read(reader: ScaleCodecReader): Fail = try {
-            Fail(
+    public companion object : ScaleReader<CustomInstruction>, ScaleWriter<CustomInstruction> {
+        override fun read(reader: ScaleCodecReader): CustomInstruction = try {
+            CustomInstruction(
                 reader.readString(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: Fail): Unit = try {
-            writer.writeAsList(instance.message.toByteArray(Charsets.UTF_8))
+        override fun write(writer: ScaleCodecWriter, instance: CustomInstruction): Unit = try {
+            writer.writeAsList(instance.payload.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

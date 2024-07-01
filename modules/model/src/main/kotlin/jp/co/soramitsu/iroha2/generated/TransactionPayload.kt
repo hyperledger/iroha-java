@@ -7,11 +7,9 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecReader
 import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
-import jp.co.soramitsu.iroha2.comparator
 import jp.co.soramitsu.iroha2.wrapException
 import java.math.BigInteger
 import kotlin.Unit
-import kotlin.collections.Map
 
 /**
  * TransactionPayload
@@ -25,7 +23,7 @@ public data class TransactionPayload(
     public val instructions: Executable,
     public val timeToLiveMs: NonZeroOfu64? = null,
     public val nonce: NonZeroOfu32? = null,
-    public val metadata: Map<Name, MetadataValueBox>,
+    public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<TransactionPayload>, ScaleWriter<TransactionPayload> {
         override fun read(reader: ScaleCodecReader): TransactionPayload = try {
@@ -36,11 +34,7 @@ public data class TransactionPayload(
                 Executable.read(reader),
                 reader.readNullable(NonZeroOfu64) as NonZeroOfu64?,
                 reader.readNullable(NonZeroOfu32) as NonZeroOfu32?,
-                reader.readMap(
-                    reader.readCompactInt(),
-                    { Name.read(reader) },
-                    { MetadataValueBox.read(reader) },
-                ),
+                Metadata.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
@@ -53,13 +47,7 @@ public data class TransactionPayload(
             Executable.write(writer, instance.instructions)
             writer.writeNullable(NonZeroOfu64, instance.timeToLiveMs)
             writer.writeNullable(NonZeroOfu32, instance.nonce)
-            writer.writeCompact(instance.metadata.size)
-            instance.metadata.toSortedMap(
-                Name.comparator(),
-            ).forEach { (key, value) ->
-                Name.write(writer, key)
-                MetadataValueBox.write(writer, value)
-            }
+            Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

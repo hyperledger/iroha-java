@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.String
 import kotlin.Unit
 import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
  * ExecutorDataModel
@@ -19,15 +20,21 @@ import kotlin.collections.List
  * Generated from 'ExecutorDataModel' regular structure
  */
 public data class ExecutorDataModel(
-    public val permissions: List<PermissionId>,
-    public val customInstruction: String? = null,
+    public val parameters: Map<CustomParameterId, CustomParameter>,
+    public val instructions: List<String>,
+    public val permissions: List<String>,
     public val schema: String,
 ) {
     public companion object : ScaleReader<ExecutorDataModel>, ScaleWriter<ExecutorDataModel> {
         override fun read(reader: ScaleCodecReader): ExecutorDataModel = try {
             ExecutorDataModel(
-                reader.readVec(reader.readCompactInt()) { PermissionId.read(reader) },
-                reader.readNullable(),
+                reader.readMap(
+                    reader.readCompactInt(),
+                    { CustomParameterId.read(reader) },
+                    { CustomParameter.read(reader) },
+                ),
+                reader.readVec(reader.readCompactInt()) { reader.readString() },
+                reader.readVec(reader.readCompactInt()) { reader.readString() },
                 reader.readString(),
             )
         } catch (ex: Exception) {
@@ -35,13 +42,25 @@ public data class ExecutorDataModel(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: ExecutorDataModel): Unit = try {
+            writer.writeCompact(instance.parameters.size)
+            instance.parameters.toSortedMap(
+                CustomParameterId.comparator(),
+            ).forEach { (key, value) ->
+                CustomParameterId.write(writer, key)
+                CustomParameter.write(writer, value)
+            }
+            writer.writeCompact(instance.instructions.size)
+            instance.instructions.sortedWith(
+                String.comparator(),
+            ).forEach { value ->
+                writer.writeAsList(value.toByteArray(Charsets.UTF_8))
+            }
             writer.writeCompact(instance.permissions.size)
             instance.permissions.sortedWith(
-                PermissionId.comparator(),
+                String.comparator(),
             ).forEach { value ->
-                PermissionId.write(writer, value)
+                writer.writeAsList(value.toByteArray(Charsets.UTF_8))
             }
-            writer.writeNullable(instance.customInstruction)
             writer.writeAsList(instance.schema.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

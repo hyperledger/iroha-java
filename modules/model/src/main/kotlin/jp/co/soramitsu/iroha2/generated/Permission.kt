@@ -17,13 +17,13 @@ import kotlin.Unit
  * Generated from 'Permission' regular structure
  */
 public data class Permission(
-    public val id: PermissionId,
+    public val name: String,
     public val payload: String,
 ) {
     public companion object : ScaleReader<Permission>, ScaleWriter<Permission> {
         override fun read(reader: ScaleCodecReader): Permission = try {
             Permission(
-                PermissionId.read(reader),
+                reader.readString(),
                 reader.readString(),
             )
         } catch (ex: Exception) {
@@ -31,7 +31,7 @@ public data class Permission(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: Permission): Unit = try {
-            PermissionId.write(writer, instance.id)
+            writer.writeAsList(instance.name.toByteArray(Charsets.UTF_8))
             writer.writeAsList(instance.payload.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)

@@ -349,7 +349,7 @@ public sealed class FindError : ModelEnum {
      * 'Permission' variant
      */
     public data class Permission(
-        public val permissionId: PermissionId,
+        public val permission: jp.co.soramitsu.iroha2.generated.Permission,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -360,7 +360,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Permission = try {
                 Permission(
-                    PermissionId.read(reader),
+                    jp.co.soramitsu.iroha2.generated.Permission.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -370,39 +370,7 @@ public sealed class FindError : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.FindError.Permission,
             ): Unit = try {
-                PermissionId.write(writer, instance.permissionId)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
-     * 'Parameter' variant
-     */
-    public data class Parameter(
-        public val parameterId: ParameterId,
-    ) : FindError() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.FindError.Parameter>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.FindError.Parameter> {
-            public const val DISCRIMINANT: Int = 11
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Parameter = try {
-                Parameter(
-                    ParameterId.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.FindError.Parameter,
-            ): Unit = try {
-                ParameterId.write(writer, instance.parameterId)
+                jp.co.soramitsu.iroha2.generated.Permission.write(writer, instance.permission)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -420,7 +388,7 @@ public sealed class FindError : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.FindError.PublicKey>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.FindError.PublicKey> {
-            public const val DISCRIMINANT: Int = 12
+            public const val DISCRIMINANT: Int = 11
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.PublicKey = try {
                 PublicKey(
@@ -457,8 +425,7 @@ public sealed class FindError : ModelEnum {
             8 -> Trigger.read(reader)
             9 -> Role.read(reader)
             10 -> Permission.read(reader)
-            11 -> Parameter.read(reader)
-            12 -> PublicKey.read(reader)
+            11 -> PublicKey.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: FindError) {
@@ -475,8 +442,7 @@ public sealed class FindError : ModelEnum {
                 8 -> Trigger.write(writer, instance as Trigger)
                 9 -> Role.write(writer, instance as Role)
                 10 -> Permission.write(writer, instance as Permission)
-                11 -> Parameter.write(writer, instance as Parameter)
-                12 -> PublicKey.write(writer, instance as PublicKey)
+                11 -> PublicKey.write(writer, instance as PublicKey)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
