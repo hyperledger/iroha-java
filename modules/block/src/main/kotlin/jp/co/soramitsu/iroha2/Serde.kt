@@ -17,7 +17,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
 import kotlin.reflect.full.createInstance
@@ -328,10 +328,10 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 
 // ==================================================
 
-///**
+// /**
 // * Serializer for [RawGenesisBlockFile]
 // */
-//object RawGenesisBlockSerializer : JsonSerializer<RawGenesisBlockFile>() {
+// object RawGenesisBlockSerializer : JsonSerializer<RawGenesisBlockFile>() {
 //    override fun serialize(block: RawGenesisBlockFile, gen: JsonGenerator, serializers: SerializerProvider) {
 //        gen.writeStartObject()
 //        when (block.transactions[0].isi.isEmpty()) {
@@ -341,7 +341,7 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 //        gen.writeObjectField("executor", block.executorFile)
 //        gen.writeEndObject()
 //    }
-//}
+// }
 
 /**
  * Serializer for [AssetDefinitionId]
@@ -852,7 +852,7 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
     return Metadata(mapOf(Pair(key, value)))
 }
 
-//private fun String.toNumericValue(): Numeric {
+// private fun String.toNumericValue(): Numeric {
 //    val (number, type) = this.split('_')
 //    return when (type) {
 //        Numeric.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
@@ -861,7 +861,7 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
 //        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
 //        else -> throw IllegalArgumentException("Number out of range")
 //    }
-//}
+// }
 
 private fun getTriggerAuthority(triggerAction: JsonNode): AccountId {
     return triggerAction.get("authority").asText().asAccountId()
@@ -873,6 +873,7 @@ private fun getTriggerId(triggerName: String): TriggerId {
             val triggerNameWithDomain = triggerName.split("$")
             TriggerId(name = triggerNameWithDomain[0].asName())
         }
+
         false -> TriggerId(name = triggerName.asName())
     }
 }
@@ -891,32 +892,42 @@ private fun getTriggerFilter(triggerAction: JsonNode): TriggeringEventFilterBox 
         "Data" -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }
+
         "Time" -> {
             val scheduleNode = filterNode.value.get("Schedule")
             val start = scheduleNode.get("start")
             val period = scheduleNode.get("period")
             val periodDuration = when (period.isNull) {
                 true -> null
-                false -> Duration(u64 = BigInteger.valueOf(period.get("secs").asLong()), u32 = period.get("nanos").asLong())
+                false -> Duration(
+                    u64 = BigInteger.valueOf(period.get("secs").asLong()),
+                    u32 = period.get("nanos").asLong(),
+                )
             }
             TriggeringEventFilterBox.Time(
                 TimeEventFilter(
                     ExecutionTime.Schedule(
                         Schedule(
-                            Duration(u64 = BigInteger.valueOf(start.get("secs").asLong()), u32 = start.get("nanos").asLong()),
+                            Duration(
+                                u64 = BigInteger.valueOf(start.get("secs").asLong()),
+                                u32 = start.get("nanos").asLong(),
+                            ),
                             periodDuration,
                         ),
                     ),
                 ),
             )
         }
+
         "ExecuteTrigger" -> {
             val executeTrigger = JSON_SERDE.convertValue(filterNode.value, ExecuteTriggerEventFilter::class.java)
             TriggeringEventFilterBox.ExecuteTrigger(executeTrigger)
         }
+
         "Pipeline" -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }
+
         else -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }

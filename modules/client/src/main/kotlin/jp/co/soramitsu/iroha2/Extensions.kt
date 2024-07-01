@@ -1,7 +1,7 @@
 package jp.co.soramitsu.iroha2
 
 import io.ktor.websocket.Frame
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import net.i2p.crypto.eddsa.EdDSAEngine
 import org.bouncycastle.jcajce.provider.digest.Blake2b

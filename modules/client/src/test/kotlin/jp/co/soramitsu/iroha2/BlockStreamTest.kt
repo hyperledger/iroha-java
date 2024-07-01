@@ -62,7 +62,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         var blocks = mutableListOf<BlockMessage>()
         subscription.receive<BlockMessage>(actionId).collect { block -> blocks.add(block) }
 
-        val expectedSize = NewAccountWithMetadata().block.transactions.sumOf { it.isi.size } + 1 // plus wasm
+        val expectedSize = NewAccountWithMetadata().transaction.transactions.sumOf { it.isi.size } + 1 // plus wasm
         var isi = blocks[0].validate(1, GENESIS, GENESIS, expectedSize)
         val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 

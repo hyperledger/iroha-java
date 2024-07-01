@@ -1,6 +1,14 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.Permission
+import jp.co.soramitsu.iroha2.generated.PermissionId
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignatureOf
 import kotlin.reflect.KClass
 
 /**

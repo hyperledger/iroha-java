@@ -5,7 +5,7 @@ import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.U32_MAX_VALUE
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import jp.co.soramitsu.iroha2.sign
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -73,11 +73,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
             metadata.value,
         )
         val encodedPayload = TransactionPayload.encode(payload)
-
-        val signature =
-            Signature(
-                keyPair.private.sign(encodedPayload),
-            ).asSignatureOf<TransactionPayload>()
+        val signature = Signature(keyPair.private.sign(encodedPayload)).asSignatureOf<TransactionPayload>()
 
         return SignedTransaction.V1(
             SignedTransactionV1(TransactionSignature(signature), payload),

@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.toIrohaPublicKey
 
 const val DEFAULT_DOMAIN = "wonderland"
 const val ALICE_ACCOUNT = "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03"
@@ -31,10 +32,10 @@ val ALICE_KEYPAIR = generateKeyPair()
 val BOB_ACCOUNT_NAME = BOB_ACCOUNT.asName()
 
 @JvmField
-val BOB_ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, BOB_ACCOUNT_NAME)
+val BOB_KEYPAIR = generateKeyPair()
 
 @JvmField
-val BOB_KEYPAIR = generateKeyPair()
+val BOB_ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, BOB_KEYPAIR.public.toIrohaPublicKey())
 
 @JvmField
 val DEFAULT_ASSET_DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "xor".asName())

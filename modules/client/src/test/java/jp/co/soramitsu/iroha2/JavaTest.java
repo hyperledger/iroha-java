@@ -1,11 +1,14 @@
 package jp.co.soramitsu.iroha2;
 
+import java.security.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import static jp.co.soramitsu.iroha2.CryptoUtils.generateKeyPair;
+import static jp.co.soramitsu.iroha2.ExtensionsKt.toIrohaPublicKey;
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient;
 import jp.co.soramitsu.iroha2.client.blockstream.*;
 import jp.co.soramitsu.iroha2.generated.*;
@@ -66,7 +69,8 @@ public class JavaTest extends IrohaTest<Iroha2AsyncClient> {
     @Test
     @WithIroha(sources = DefaultGenesis.class)
     public void registerAccount() throws Exception {
-        final AccountId accountId = new AccountId(DEFAULT_DOMAIN_ID, new Name("new_account"));
+        final KeyPair keyPair = generateKeyPair();
+        final AccountId accountId = new AccountId(DEFAULT_DOMAIN_ID, toIrohaPublicKey(keyPair.getPublic()));
         final SignedTransaction transaction = TransactionBuilder.Companion.builder()
             .account(ALICE_ACCOUNT_ID)
             .registerAccount(accountId, new ArrayList<>())

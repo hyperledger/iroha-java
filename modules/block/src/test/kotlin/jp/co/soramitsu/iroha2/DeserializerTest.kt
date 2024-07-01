@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.RawGenesisBlockFile
+import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -12,9 +12,9 @@ class DeserializerTest {
     fun `should deserialize genesis block`() {
         val json = File("../test-tools/src/main/resources/genesis.json")
         val node = JSON_SERDE.readTree(json)
-        val block = JSON_SERDE.convertValue(node, RawGenesisBlockFile::class.java)
+        val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
-        assert(block.transactions.isNotEmpty())
+        assert(transaction.instructions.isNotEmpty())
         // genesis.json has 10 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewAccount (2)
@@ -22,9 +22,9 @@ class DeserializerTest {
         // Grant -> PermissionToken (2)
         // Mint -> AssetId (2)
         // Register -> Trigger (2)
-        assert(block.transactions.flatten().size == 10)
+        assert(transaction.instructions.size == 10)
 
-        val genesis = Genesis(block)
+        val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
         val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
         assertEquals(initialJson, newJson)
@@ -34,9 +34,9 @@ class DeserializerTest {
     fun `should deserialize genesis block2`() {
         val json = File("../test-tools/src/main/resources/genesis2.json")
         val node = JSON_SERDE.readTree(json)
-        val block = JSON_SERDE.convertValue(node, RawGenesisBlockFile::class.java)
+        val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
-        assert(block.transactions.isNotEmpty())
+        assert(transaction.instructions.isNotEmpty())
         // genesis.json has 23 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewDomain
@@ -61,9 +61,9 @@ class DeserializerTest {
         // SetKeyValue -> AssetId
         // SetKeyValue -> AssetId
         // Grant -> PermissionToken
-        assert(block.transactions.size == 23)
+        assert(transaction.instructions.size == 23)
 
-        val genesis = Genesis(block)
+        val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
         val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
         assertEquals(initialJson, newJson)
@@ -73,9 +73,9 @@ class DeserializerTest {
     fun `should deserialize genesis block3`() {
         val json = File("../test-tools/src/main/resources/genesis3.json")
         val node = JSON_SERDE.readTree(json)
-        val block = JSON_SERDE.convertValue(node, RawGenesisBlockFile::class.java)
+        val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
-        assert(block.transactions.isNotEmpty())
+        assert(transaction.instructions.isNotEmpty())
         // genesis.json has 17 instructions ("isi")
         // Register -> NewDomain
         // Register -> NewAccount (3)
@@ -85,9 +85,9 @@ class DeserializerTest {
         // Grant -> PermissionToken
         // SetKeyValue -> AssetId (2)
         // Mint -> AssetId (3)
-        assert(block.transactions.size == 17)
+        assert(transaction.instructions.size == 17)
 
-        val genesis = Genesis(block)
+        val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
         val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
         assertEquals(initialJson, newJson)

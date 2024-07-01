@@ -2,33 +2,34 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.Duration
-import jp.co.soramitsu.iroha2.generated.InstructionExpr
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import jp.co.soramitsu.iroha2.generated.Repeats
-import jp.co.soramitsu.iroha2.generated.SequenceExpr
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.transaction.EventFilters
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class SerializerTest {
     @Test
     fun `should serialize grant permission token genesis block`() {
         val genesis = Genesis(
-            RawGenesisBlock(
-                listOf(
-                    Instructions.grantPermissionToken(
-                        Permissions.CanUnregisterAccount,
-                        "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016${ACCOUNT_ID_DELIMITER}wonderland".asAccountId().asJsonString(),
-                        "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId(),
-                    ),
+            RawGenesisTransaction(
+                ChainId(UUID.randomUUID().toString()),
+                Genesis.EXECUTOR_FILE_NAME,
+                Instructions.grantPermissionToken(
+                    Permissions.CanUnregisterAccount,
+                    "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
+                        .asJsonString(),
+                    "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId(),
                 ).let { listOf(it) },
-                Genesis.executorMode,
+                emptyList(),
             ),
         )
         val expectedJson = """
@@ -59,47 +60,36 @@ class SerializerTest {
     @Test
     fun `should serialize mint asset genesis block`() {
         val triggerId = TriggerId(name = Name("time_trigger"))
-        val aliceAccountId = "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
+        val aliceAccountId =
+            "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
         val assetId = AssetId(
-            AssetDefinitionId("xor".asName(), "wonderland".asDomainId()),
+            AssetDefinitionId("wonderland".asDomainId(), "xor".asName()),
             aliceAccountId,
         )
         val genesis = Genesis(
-            RawGenesisBlock(
+            RawGenesisTransaction(
+                ChainId(UUID.randomUUID().toString()),
+                Genesis.EXECUTOR_FILE_NAME,
                 listOf(
-                    Instructions.mintAsset(
+                    Instructions.mintAsset(assetId, 100),
+                    Instructions.setKeyValue(
                         assetId,
-                        100,
+                        "key".asName(),
+                        "value".asMetadataValueBox(),
                     ),
-                    InstructionExpr.Sequence(
-                        SequenceExpr(
-                            listOf(
-                                Instructions.setKeyValue(
-                                    assetId,
-                                    "key".asName(),
-                                    "value".asValue(),
-                                ),
-                            ),
-                        ),
-                    ),
-                    Instructions.registerTimeTrigger(
+                    Instructions.registerTrigger(
                         triggerId,
-                        listOf(
-                            Instructions.mintAsset(
-                                assetId,
-                                1,
-                            ),
-                        ),
+                        listOf(Instructions.mintAsset(assetId, 1)),
                         Repeats.Indefinitely(),
                         aliceAccountId,
+                        Metadata(mapOf()),
                         EventFilters.timeEventFilter(
                             Duration(BigInteger.valueOf(1715676978L), 0L),
                             Duration(BigInteger.valueOf(1L), 0L),
                         ),
-                        Metadata(mapOf()),
                     ),
-                ).let { listOf(it) },
-                Genesis.executorMode,
+                ),
+                emptyList(),
             ),
         )
         val expectedJson = """

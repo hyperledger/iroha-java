@@ -1,6 +1,23 @@
 package jp.co.soramitsu.iroha2
 
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.Account
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinition
+import jp.co.soramitsu.iroha2.generated.BatchedResponse
+import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.Domain
+import jp.co.soramitsu.iroha2.generated.ExecutorDataModel
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.Peer
+import jp.co.soramitsu.iroha2.generated.Permission
+import jp.co.soramitsu.iroha2.generated.QueryOutputBox
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignedBlock
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
+import jp.co.soramitsu.iroha2.generated.Trigger
+import jp.co.soramitsu.iroha2.generated.TriggerId
 
 /**
  * Extractors are used by [QueryBuilder] to extract data from query results

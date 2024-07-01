@@ -4,7 +4,7 @@ import jp.co.soramitsu.iroha2.Permissions
 import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asNumeric
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import java.math.BigDecimal
 
 /**

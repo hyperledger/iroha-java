@@ -1,6 +1,6 @@
 package jp.co.soramitsu.iroha2.query
 
-import jp.co.soramitsu.iroha2.generated.*
+import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.

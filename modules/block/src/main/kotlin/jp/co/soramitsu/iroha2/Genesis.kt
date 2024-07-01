@@ -1,11 +1,13 @@
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
 import jp.co.soramitsu.iroha2.generated.RegisterOfAssetDefinition
@@ -13,11 +15,12 @@ import jp.co.soramitsu.iroha2.generated.RegisterOfDomain
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import java.util.UUID
 
 /**
  * Genesis block is used to initialise a blockchain
  */
-open class Genesis(open val block: RawGenesisBlockFile) {
+open class Genesis(open val transaction: RawGenesisTransaction) {
     /**
      * Write genesis to file
      */
@@ -31,7 +34,7 @@ open class Genesis(open val block: RawGenesisBlockFile) {
     /**
      * Represent genesis as JSON
      */
-    fun asJson(): String = JSON_SERDE.writeValueAsString(this.block)
+    fun asJson(): String = JSON_SERDE.writeValueAsString(this.transaction)
 
     companion object {
 
@@ -44,13 +47,15 @@ open class Genesis(open val block: RawGenesisBlockFile) {
             val uniqueIsi: MutableSet<InstructionBox> = mutableSetOf()
 
             this.forEach { genesis ->
-                uniqueIsi.addAll(genesis.block.transactions.map { tx -> tx.isi }.flatten())
+                uniqueIsi.addAll(genesis.transaction.instructions)
             }
 
             return Genesis(
-                RawGenesisBlockFile(
-                    listOf(GenesisTransactionBuilder(uniqueIsi.mergeMetadata())),
+                RawGenesisTransaction(
+                    ChainId(UUID.randomUUID().toString()),
                     EXECUTOR_FILE_NAME,
+                    uniqueIsi.mergeMetadata().toList(),
+                    emptyList(),
                 ),
             )
         }
