@@ -14,11 +14,11 @@ fun main(args: Array<String>): Unit = runBlocking {
     val telemetryUrl = "http://127.0.0.1:8180"
     val admin = AccountId(
         "wonderland".asDomainId(),
-        publicKeyFromHex("04FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016").toIrohaPublicKey(),
+        publicKeyFromHex("CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03").toIrohaPublicKey(),
     )
     val adminKeyPair = keyPairFromHex(
-        "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
-        "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
+        "CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03",
+        "CCF31D85E3B32A4BEA59987CE0C78E3B8E2DB93881468AB2435FE45D5C9DCD53",
     )
     val client = AdminIroha2Client(URL(peerUrl), URL(peerUrl), URL(telemetryUrl), log = true)
     val query = Query(client, admin, adminKeyPair)
@@ -26,7 +26,7 @@ fun main(args: Array<String>): Unit = runBlocking {
         .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
     query.findAllAssets()
         .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
-    query.findAllAssets()
+    query.findAllAccounts()
         .also { println("ALL ACCOUNTS: ${it.map { d -> d.id.asString() }}") }
 
     val sendTransaction = SendTransaction(client, admin, adminKeyPair, chainId)
@@ -34,7 +34,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     val domain = "looking_glass_${System.currentTimeMillis()}"
     sendTransaction.registerDomain(domain).also { println("DOMAIN $domain CREATED") }
 
-    val madHatter = "madHatter_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
+    val madHatter = "mad_hatter_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
     val madHatterKeyPair = generateKeyPair()
     sendTransaction.registerAccount(madHatter, listOf(madHatterKeyPair.public.toIrohaPublicKey()))
         .also { println("ACCOUNT $madHatter CREATED") }
@@ -47,7 +47,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     sendTransaction.registerAsset(madHatterAsset, AssetValue.Numeric(100.asNumeric()))
         .also { println("ASSET $madHatterAsset CREATED") }
 
-    val whiteRabbit = "whiteRabbit_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
+    val whiteRabbit = "white_rabbit_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
     val whiteRabbitKeyPair = generateKeyPair()
     sendTransaction.registerAccount(whiteRabbit, listOf(whiteRabbitKeyPair.public.toIrohaPublicKey()))
         .also { println("ACCOUNT $whiteRabbit CREATED") }

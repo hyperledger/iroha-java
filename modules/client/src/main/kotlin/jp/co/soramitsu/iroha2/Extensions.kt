@@ -141,10 +141,10 @@ fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.
 fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpleName.toSnakeCase()}\": " +
     "\"${this.name.string + ASSET_ID_DELIMITER + this.domain.name.string}\"}"
 
-fun AccountId.asString() = this.signatory.toString() + ACCOUNT_ID_DELIMITER + this.domain.name.string
+fun AccountId.asString() = this.signatory.payload.toHex() + ACCOUNT_ID_DELIMITER + this.domain.name.string
 
 fun AccountId.asJsonString() = "{\"${AccountId::class.java.simpleName.toSnakeCase()}\": " +
-    "\"${this.signatory.toString() + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
+    "\"${this.signatory.payload.toHex() + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
 
 fun DomainId.asString() = this.name.string
 fun DomainId.asJsonString() = "{\"${DomainId::class.java.simpleName.toSnakeCase()}\": " +

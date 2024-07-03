@@ -345,7 +345,6 @@ open class Iroha2Client(
             queryCursor?.query?.also { parameter("query_id", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
-        println("RITA")
         return response.body<ByteArray>().let { BatchedResponse.decode(it) }.cast<BatchedResponse<QueryOutputBox>>()
     }
 
@@ -401,7 +400,8 @@ open class Iroha2Client(
 
                 for (i in 1..eventReadMaxAttempts) {
                     try {
-                        val processed = pipelineEventProcess(readMessage(incoming.receive()), hash, hexHash)
+                        val income = readMessage(incoming.receive())
+                        val processed = pipelineEventProcess(income, hash, hexHash)
                         if (processed != null) {
                             result.complete(processed)
                             break
@@ -468,7 +468,9 @@ open class Iroha2Client(
      */
     private fun readMessage(frame: Frame): EventMessage = when (frame) {
         is Frame.Binary -> {
-            frame.readBytes().let { EventMessage.decode(it) }
+            frame.readBytes().let {
+                EventMessage.decode(it)
+            }
         }
 
         else -> throw WebSocketProtocolException(
