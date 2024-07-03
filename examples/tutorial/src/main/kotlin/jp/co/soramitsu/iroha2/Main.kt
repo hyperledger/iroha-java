@@ -34,34 +34,34 @@ fun main(args: Array<String>): Unit = runBlocking {
     val domain = "looking_glass_${System.currentTimeMillis()}"
     sendTransaction.registerDomain(domain).also { println("DOMAIN $domain CREATED") }
 
-    val madHatter = "mad_hatter_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
     val madHatterKeyPair = generateKeyPair()
-    sendTransaction.registerAccount(madHatter, listOf(madHatterKeyPair.public.toIrohaPublicKey()))
+    val madHatter = AccountId(domain.asDomainId(), madHatterKeyPair.public.toIrohaPublicKey())
+    sendTransaction.registerAccount(madHatter.asString())
         .also { println("ACCOUNT $madHatter CREATED") }
 
     val assetDefinition = "asset_time_${System.currentTimeMillis()}$ASSET_ID_DELIMITER$domain"
     sendTransaction.registerAssetDefinition(assetDefinition, AssetType.numeric())
         .also { println("ASSET DEFINITION $assetDefinition CREATED") }
 
-    val madHatterAsset = AssetId(assetDefinition.asAssetDefinitionId(), madHatter.asAccountId())
+    val madHatterAsset = AssetId(assetDefinition.asAssetDefinitionId(), madHatter)
     sendTransaction.registerAsset(madHatterAsset, AssetValue.Numeric(100.asNumeric()))
         .also { println("ASSET $madHatterAsset CREATED") }
 
-    val whiteRabbit = "white_rabbit_${System.currentTimeMillis()}$ACCOUNT_ID_DELIMITER$domain"
     val whiteRabbitKeyPair = generateKeyPair()
-    sendTransaction.registerAccount(whiteRabbit, listOf(whiteRabbitKeyPair.public.toIrohaPublicKey()))
+    val whiteRabbit = AccountId(domain.asDomainId(), whiteRabbitKeyPair.public.toIrohaPublicKey())
+    sendTransaction.registerAccount(whiteRabbit.asString())
         .also { println("ACCOUNT $whiteRabbit CREATED") }
 
-    val whiteRabbitAsset = AssetId(assetDefinition.asAssetDefinitionId(), whiteRabbit.asAccountId())
+    val whiteRabbitAsset = AssetId(assetDefinition.asAssetDefinitionId(), whiteRabbit)
     sendTransaction.registerAsset(whiteRabbitAsset, AssetValue.Numeric(0.asNumeric()))
         .also { println("ASSET $whiteRabbitAsset CREATED") }
 
-    sendTransaction.transferAsset(madHatterAsset, 10, whiteRabbit, madHatter.asAccountId(), madHatterKeyPair)
+    sendTransaction.transferAsset(madHatterAsset, 10, whiteRabbit.asString(), madHatter, madHatterKeyPair)
         .also { println("$madHatter TRANSFERRED FROM $madHatterAsset TO $whiteRabbitAsset: 10") }
     query.getAccountAmount(madHatter, madHatterAsset.definition).also { println("$madHatterAsset BALANCE: $it") }
     query.getAccountAmount(whiteRabbit, whiteRabbitAsset.definition).also { println("$whiteRabbitAsset BALANCE: $it") }
 
-    sendTransaction.burnAssets(madHatterAsset, 10, madHatter.asAccountId(), madHatterKeyPair)
+    sendTransaction.burnAssets(madHatterAsset, 10, madHatter, madHatterKeyPair)
         .also { println("$madHatterAsset WAS BURN") }
 
     query.getAccountAmount(madHatter, madHatterAsset.definition)

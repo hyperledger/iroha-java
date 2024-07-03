@@ -7,7 +7,6 @@ import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Mintable
 import jp.co.soramitsu.iroha2.generated.Name
-import jp.co.soramitsu.iroha2.generated.PublicKey
 import kotlinx.coroutines.withTimeout
 import java.security.KeyPair
 import java.util.UUID
@@ -38,7 +37,6 @@ class SendTransaction(
 
     suspend fun registerAccount(
         id: String,
-        signatories: List<PublicKey>,
         metadata: Map<Name, String> = mapOf(),
         admin: AccountId = this.admin,
         keyPair: KeyPair = this.keyPair,
@@ -46,7 +44,7 @@ class SendTransaction(
         client.sendTransaction {
             account(admin)
             chainId(chainUuid)
-            registerAccount(id.asAccountId(), signatories, Metadata(metadata))
+            registerAccount(id.asAccountId(), Metadata(metadata))
             buildSigned(keyPair)
         }.also {
             withTimeout(timeout) { it.await() }

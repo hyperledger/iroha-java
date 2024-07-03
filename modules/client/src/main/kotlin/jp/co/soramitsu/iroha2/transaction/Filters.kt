@@ -75,7 +75,7 @@ object Filters {
         PipelineEventFilterBox.Transaction(
             TransactionEventFilter(
                 hash?.asHashOf(),
-                NonZeroOfu64(blockHeight ?: BigInteger.ZERO),
+                blockHeight?.let { NonZeroOfu64(it) },
                 status,
             ),
         ),

@@ -17,7 +17,6 @@
     "Register" : {
       "Account" : {
         "id" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland",
-        "signatories" : [ "ed01201dd28d2ed1e708998990982007dcf2e1582d73a62fcb40460152ff8114c217e2" ],
         "metadata" : {
           "xnPrkBHMaF" : {
             "String" : "xnPrkBHMaF"
@@ -29,7 +28,6 @@
     "Register" : {
       "Account" : {
         "id" : "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016@wonderland",
-        "signatories" : [ "ed01206bd8c135e5f490b5f66b79b0e366af1b7560c251e5fffe37e7e5c5b9f5565dc4" ],
         "metadata" : {
           "kGwJtCQaew" : {
             "String" : "kGwJtCQaew"
@@ -41,7 +39,6 @@
     "Register" : {
       "Account" : {
         "id" : "foo@wonderland",
-        "signatories" : [ "ed0120d52923932164a87280eda508d321e252b04e9fe5fc82a36adac8ccb5df257338" ],
         "metadata" : {
           "key" : {
             "String" : "value"

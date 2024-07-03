@@ -230,9 +230,8 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     @JvmOverloads
     fun registerAccount(
         id: AccountId,
-        signatories: List<PublicKey>,
         metadata: Metadata = Metadata(mapOf()),
-    ) = this.apply { instructions.value.add(Instructions.registerAccount(id, signatories, metadata)) }
+    ) = this.apply { instructions.value.add(Instructions.registerAccount(id, metadata)) }
 
     @JvmOverloads
     fun registerAssetDefinition(

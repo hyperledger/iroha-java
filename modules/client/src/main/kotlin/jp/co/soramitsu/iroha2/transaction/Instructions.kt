@@ -29,7 +29,6 @@ object Instructions {
     @JvmOverloads
     fun registerAccount(
         id: AccountId,
-        signatories: List<PublicKey>,
         metadata: Metadata = Metadata(mapOf()),
     ) = InstructionBox.Register(
         RegisterBox.Account(RegisterOfAccount(NewAccount(id, metadata))),

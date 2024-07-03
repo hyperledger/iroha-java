@@ -35,8 +35,8 @@ open class Query(
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
-    suspend fun getAccountAmount(accountId: String, assetDefinitionId: AssetDefinitionId): BigInteger =
-        QueryBuilder.findAccountById(accountId.asAccountId())
+    suspend fun getAccountAmount(accountId: AccountId, assetDefinitionId: AssetDefinitionId): BigInteger =
+        QueryBuilder.findAccountById(accountId)
             .account(admin)
             .buildSigned(keyPair)
             .let { query ->
