@@ -32,8 +32,6 @@ pub struct Executor {
 /// If `migrate()` entrypoint fails then the whole `Upgrade` instruction
 /// will be denied and previous executor will stay unchanged.
 #[entrypoint]
-pub fn migrate(_block_height: u64) -> MigrationResult {
+pub fn migrate(_block_height: u64) {
     DataModelBuilder::with_default_permissions().build_and_set();
-
-    Ok(())
 }
