@@ -12,14 +12,82 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
+import io.ktor.util.toUpperCasePreservingASCIIRules
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.ActionOfTriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.Algorithm
+import jp.co.soramitsu.iroha2.generated.Asset
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.BurnExpr
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.Duration
+import jp.co.soramitsu.iroha2.generated.EvaluatesTo
+import jp.co.soramitsu.iroha2.generated.Executable
+import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
+import jp.co.soramitsu.iroha2.generated.ExecutionTime
+import jp.co.soramitsu.iroha2.generated.ExecutorMode
+import jp.co.soramitsu.iroha2.generated.Expression
+import jp.co.soramitsu.iroha2.generated.Fixed
+import jp.co.soramitsu.iroha2.generated.GrantExpr
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashValue
+import jp.co.soramitsu.iroha2.generated.IdBox
+import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.InstructionExpr
+import jp.co.soramitsu.iroha2.generated.Ipv4Addr
+import jp.co.soramitsu.iroha2.generated.Ipv6Addr
+import jp.co.soramitsu.iroha2.generated.LengthLimits
+import jp.co.soramitsu.iroha2.generated.Limits
+import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.MintExpr
+import jp.co.soramitsu.iroha2.generated.Mintable
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NewAccount
+import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
+import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.NewParameterExpr
+import jp.co.soramitsu.iroha2.generated.NewRole
+import jp.co.soramitsu.iroha2.generated.NumericValue
+import jp.co.soramitsu.iroha2.generated.Parameter
+import jp.co.soramitsu.iroha2.generated.Peer
+import jp.co.soramitsu.iroha2.generated.PermissionToken
+import jp.co.soramitsu.iroha2.generated.PublicKey
+import jp.co.soramitsu.iroha2.generated.RawGenesisBlock
+import jp.co.soramitsu.iroha2.generated.RegisterExpr
+import jp.co.soramitsu.iroha2.generated.RegistrableBox
+import jp.co.soramitsu.iroha2.generated.Repeats
+import jp.co.soramitsu.iroha2.generated.Role
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.Schedule
+import jp.co.soramitsu.iroha2.generated.SequenceExpr
+import jp.co.soramitsu.iroha2.generated.SetKeyValueExpr
+import jp.co.soramitsu.iroha2.generated.SignatureCheckCondition
+import jp.co.soramitsu.iroha2.generated.SignedBlock
+import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.StringWithJson
+import jp.co.soramitsu.iroha2.generated.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.TransactionLimits
+import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
+import jp.co.soramitsu.iroha2.generated.TransactionValue
+import jp.co.soramitsu.iroha2.generated.TriggerId
+import jp.co.soramitsu.iroha2.generated.TriggerOfTriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.TriggeringFilterBox
+import jp.co.soramitsu.iroha2.generated.Value
+import jp.co.soramitsu.iroha2.generated.WasmSmartContract
 import java.io.ByteArrayOutputStream
 import java.math.BigInteger
+import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
@@ -32,53 +100,61 @@ public val JSON_SERDE by lazy {
         val module = SimpleModule()
 
         // deserializers
-        module.addDeserializer(Name::class.java, NameDeserializer)
-
-        module.addDeserializer(InstructionBox::class.java, InstructionDeserializer)
-//        module.addDeserializer(RegisterBox::class.java, RegisterBoxDeserializer)
-//        module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
-        module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
-//        module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
-//        module.addDeserializer(RemoveKeyValueBox::class.java, RemoveKeyValueBoxDeserializer)
-
-        module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
-        module.addDeserializer(DomainId::class.java, DomainIdDeserializer)
-        module.addDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdDeserializer)
-        module.addDeserializer(AccountId::class.java, AccountIdDeserializer)
-        module.addDeserializer(AssetId::class.java, AssetIdDeserializer)
-        module.addDeserializer(RoleId::class.java, RoleIdDeserializer)
-
+        module.addDeserializer(SequenceExpr::class.java, SequenceExprDeserializer)
+        module.addDeserializer(InstructionExpr::class.java, InstructionDeserializer)
+        module.addDeserializer(ExecutorMode::class.java, ExecutorDeserializer)
+        module.addDeserializer(GrantExpr::class.java, GrantExprDeserializer)
+        module.addDeserializer(Value::class.java, ValueDeserializer)
         module.addDeserializer(AssetValue::class.java, AssetValueDeserializer)
         module.addDeserializer(PublicKey::class.java, PublicKeyDeserializer)
-        module.addDeserializer(AssetType::class.java, AssetTypeDeserializer)
+        module.addDeserializer(IdBox::class.java, IdBoxDeserializer)
+        module.addDeserializer(AssetValueType::class.java, AssetValueTypeDeserializer)
+        module.addDeserializer(Name::class.java, NameDeserializer)
         module.addDeserializer(Mintable::class.java, MintableDeserializer)
+        module.addDeserializer(DomainId::class.java, DomainIdDeserializer)
+        module.addDeserializer(AccountId::class.java, AccountIdDeserializer)
+        module.addDeserializer(RoleId::class.java, RoleIdDeserializer)
+        module.addDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdDeserializer)
+        module.addDeserializer(AssetId::class.java, AssetIdDeserializer)
+        module.addDeserializer(RegisterExpr::class.java, RegisterExprDeserializer)
+        module.addDeserializer(MintExpr::class.java, MintExprDeserializer)
+        module.addDeserializer(SetKeyValueExpr::class.java, SetKeyValueExprDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
-//        module.addDeserializer(NewParameter::class.java, NewParameterBoxDeserializer)
         module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
-        module.addDeserializer(Permission::class.java, PermissionTokenDeserializer)
+        module.addDeserializer(NewParameterExpr::class.java, NewParameterExprDeserializer)
+        module.addDeserializer(PermissionToken::class.java, PermissionTokenDeserializer)
+        module.addDeserializer(StringWithJson::class.java, StringWithJsonDeserializer)
         module.addDeserializer(TriggerId::class.java, TriggerIdDeserializer)
+        module.addDeserializer(TriggerOfTriggeringFilterBox::class.java, TriggerOfTriggeringFilterBoxDeserializer)
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
         module.addKeyDeserializer(AssetId::class.java, AssetIdKeyDeserializer)
+        module.addKeyDeserializer(DomainId::class.java, DomainIdKeyDeserializer)
 
         // serializers
-        module.addSerializer(Name::class.java, NameSerializer)
-
+        module.addSerializer(RawGenesisBlock::class.java, RawGenesisBlockSerializer)
+        module.addSerializer(PermissionToken::class.java, PermissionTokenSerializer)
+        module.addKeySerializer(Name::class.java, NameAsKeySerializer)
         module.addSerializer(DomainId::class.java, DomainIdSerializer)
         module.addSerializer(AssetDefinitionId::class.java, AssetDefinitionIdSerializer)
         module.addSerializer(AccountId::class.java, AccountIdSerializer)
         module.addSerializer(AssetId::class.java, AssetIdSerializer)
-        module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
+        module.addSerializer(NumericValue::class.java, NumericValueSerializer)
         module.addSerializer(RoleId::class.java, RoleIdSerializer)
-
-        module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
-        module.addSerializer(Permission::class.java, PermissionTokenSerializer)
         module.addSerializer(SocketAddr::class.java, SocketAddrSerializer)
+        module.addSerializer(TriggerId::class.java, TriggerIdSerializer)
+        module.addSerializer(Name::class.java, NameSerializer)
         module.addSerializer(UInt::class.java, UIntSerializer)
         module.addSerializer(PublicKey::class.java, PublicKeySerializer)
-//        module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
+        module.addSerializer(ModelEnum::class.java, EnumerationSerializer)
+        module.addSerializer(EvaluatesTo::class.java, EvaluatesToSerializer)
         module.addSerializer(Metadata::class.java, MetadataSerializer)
         module.addSerializer(IdentifiableBox.NewRole::class.java, IdentifiableBoxNewRoleSerializer)
+        module.addSerializer(Parameter::class.java, ParameterSerializer)
+        module.addSerializer(ExecutorMode::class.java, ExecutorModeSerializer)
+        module.addSerializer(SequenceExpr::class.java, SequenceExprSerializer)
+        module.addSerializer(NewParameterExpr::class.java, NewParameterExprSerializer)
+        module.addSerializer(StringWithJson::class.java, StringWithJsonSerializer)
         module.addSerializer(TimeEventFilter::class.java, TimeEventFilterSerializer)
         module.addSerializer(Schedule::class.java, ScheduleSerializer)
 
@@ -96,20 +172,44 @@ public val JSON_SERDE by lazy {
 }
 
 /**
+ * Deserializer for sequence expr [SequenceExpr]
+ */
+object SequenceExprDeserializer : JsonDeserializer<SequenceExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SequenceExpr {
+        return sealedDeserializeSequenceExpr(p, JSON_SERDE)
+    }
+}
+
+/**
  * Deserializer for [Iroha Special Instructions][InstructionExpr]
  */
-object InstructionDeserializer : JsonDeserializer<InstructionBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): InstructionBox {
+object InstructionDeserializer : JsonDeserializer<InstructionExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): InstructionExpr {
         return sealedDeserializeInstruction(p.readValueAsTree(), JSON_SERDE)
     }
 }
 
 /**
- * Deserializer for [GrantBox]
+ * Deserializer for [ExecutorMode]
  */
-object GrantBoxDeserializer : JsonDeserializer<GrantBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): GrantBox {
-        return sealedDeserializeGrantBox(p, JSON_SERDE)
+object ExecutorDeserializer : JsonDeserializer<ExecutorMode>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ExecutorMode {
+        return sealedDeserializeValidator(p, JSON_SERDE)
+    }
+}
+
+object GrantExprDeserializer : JsonDeserializer<GrantExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): GrantExpr {
+        return sealedDeserializeGrantExpr(p, JSON_SERDE)
+    }
+}
+
+/**
+ * Deserializer for [Value]
+ */
+object ValueDeserializer : JsonDeserializer<Value>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Value {
+        return sealedDeserializeValue(p, JSON_SERDE)
     }
 }
 
@@ -132,17 +232,79 @@ object IdBoxDeserializer : JsonDeserializer<IdBox>() {
     }
 }
 
-// object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RegisterBox {
-//        return sealedDeserializeRegisterBox(p, JSON_SERDE)
-//    }
-// }
-//
-// object MintBoxDeserializer : JsonDeserializer<MintBox>() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): MintBox {
-//        return deserializeMintBox(p, JSON_SERDE)
-//    }
-// }
+object RegisterExprDeserializer : JsonDeserializer<RegisterExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RegisterExpr {
+        return sealedDeserializeRegisterExpr(p, JSON_SERDE)
+    }
+}
+
+object MintExprDeserializer : JsonDeserializer<MintExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): MintExpr {
+        return deserializeMintExpr(p, JSON_SERDE)
+    }
+}
+
+object NewParameterExprDeserializer : JsonDeserializer<NewParameterExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewParameterExpr {
+        return deserializeNewParameterExpr(p, JSON_SERDE)
+    }
+}
+
+object StringWithJsonDeserializer : JsonDeserializer<StringWithJson>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): StringWithJson {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+
+        return StringWithJson(
+            string = "{\"${node.key}\":\"${node.value.asText()}\"}",
+        )
+    }
+}
+
+object TriggerOfTriggeringFilterBoxDeserializer : JsonDeserializer<TriggerOfTriggeringFilterBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggerOfTriggeringFilterBox {
+        val node = p.readValueAsTree<JsonNode>()
+        val triggerName = node.get("id").asText()
+        val triggerAction = node.get("action")
+        val action = when (triggerAction.get("executable").get("Instructions") == null) {
+            true -> {
+                val wasm = triggerAction.get("executable").get("Wasm")
+                val executable = Executable.Wasm(WasmSmartContract(wasm.asText().toByteArray()))
+                val repeats = getTriggerRepeats(triggerAction)
+                val accountId = getTriggerAuthority(triggerAction)
+                val filter = getTriggerFilter(triggerAction)
+                ActionOfTriggeringFilterBox(
+                    executable = executable,
+                    repeats = repeats,
+                    authority = accountId,
+                    filter = filter,
+                    metadata = Metadata(mapOf()),
+                )
+            }
+            false -> {
+                val instructions = triggerAction.get("executable").get("Instructions").map {
+                    sealedDeserializeInstruction(it, JSON_SERDE)
+                }
+                val executable = Executable.Instructions(instructions)
+                val repeats = getTriggerRepeats(triggerAction)
+                val accountId = getTriggerAuthority(triggerAction)
+                val filter = getTriggerFilter(triggerAction)
+                ActionOfTriggeringFilterBox(
+                    executable = executable,
+                    repeats = repeats,
+                    authority = accountId,
+                    filter = filter,
+                    metadata = Metadata(mapOf()),
+                )
+            }
+        }
+
+        val triggerId = getTriggerId(triggerName)
+        return TriggerOfTriggeringFilterBox(
+            id = triggerId,
+            action = action,
+        )
+    }
+}
 
 object TriggerIdDeserializer : JsonDeserializer<TriggerId>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggerId {
@@ -151,8 +313,8 @@ object TriggerIdDeserializer : JsonDeserializer<TriggerId>() {
     }
 }
 
-object PermissionTokenDeserializer : JsonDeserializer<Permission>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Permission {
+object PermissionTokenDeserializer : JsonDeserializer<PermissionToken>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PermissionToken {
         val jsonNode = p.readValueAsTree<JsonNode>()
         val iter = jsonNode.iterator()
         val nodes = mutableListOf<JsonNode>()
@@ -163,28 +325,22 @@ object PermissionTokenDeserializer : JsonDeserializer<Permission>() {
 
         val definitionId = jsonNode.fields().next()
         val payload = when (nodes[1].isNull) {
-            true -> ""
-            false -> JSON_SERDE.convertValue(nodes[1], String::class.java)
+            true -> StringWithJson("")
+            false -> JSON_SERDE.convertValue(nodes[1], StringWithJson::class.java)
         }
 
-        return Permission(
-            name = definitionId.value.asText(),
+        return PermissionToken(
+            definitionId = definitionId.value.asText().asName(),
             payload = payload,
         )
     }
 }
 
-// object RemoveKeyValueBoxDeserializer : JsonDeserializer<RemoveKeyValueBox>() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RemoveKeyValueBox {
-//        return deserializeRemoveKeyValueBox(p, JSON_SERDE)
-//    }
-// }
-//
-// object SetKeyValueBoxDeserializer : JsonDeserializer<SetKeyValueBox>() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueBox {
-//        return deserializeSetKeyValueBox(p, JSON_SERDE)
-//    }
-// }
+object SetKeyValueExprDeserializer : JsonDeserializer<SetKeyValueExpr>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SetKeyValueExpr {
+        return deserializeSetKeyValueExpr(p, JSON_SERDE)
+    }
+}
 
 object MetadataDeserializer : JsonDeserializer<Metadata>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Metadata {
@@ -199,15 +355,15 @@ object NewRoleDeserializer : JsonDeserializer<NewRole>() {
 }
 
 /**
- * Deserializer for [AssetType]
+ * Deserializer for [AssetValueType]
  */
-object AssetTypeDeserializer : JsonDeserializer<AssetType>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetType {
+object AssetValueTypeDeserializer : JsonDeserializer<AssetValueType>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetValueType {
         val text = p.readValueAs(String::class.java)
-        return AssetType::class.nestedClasses
+        return AssetValueType::class.nestedClasses
             .findLast { it.simpleName == text }
-            ?.createInstance() as AssetType?
-            ?: throw DeserializationException("AssetType $text not found")
+            ?.createInstance() as AssetValueType?
+            ?: throw DeserializationException("AssetValueType $text not found")
     }
 }
 
@@ -328,20 +484,20 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 
 // ==================================================
 
-// /**
-// * Serializer for [RawGenesisBlockFile]
-// */
-// object RawGenesisBlockSerializer : JsonSerializer<RawGenesisBlockFile>() {
-//    override fun serialize(block: RawGenesisBlockFile, gen: JsonGenerator, serializers: SerializerProvider) {
-//        gen.writeStartObject()
-//        when (block.transactions[0].isi.isEmpty()) {
-//            true -> gen.writeObjectField("transactions", listOf<InstructionBox>())
-//            false -> gen.writeObjectField("transactions", block.transactions)
-//        }
-//        gen.writeObjectField("executor", block.executorFile)
-//        gen.writeEndObject()
-//    }
-// }
+/**
+ * Serializer for [RawGenesisBlock]
+ */
+object RawGenesisBlockSerializer : JsonSerializer<RawGenesisBlock>() {
+    override fun serialize(block: RawGenesisBlock, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
+        when (block.transactions[0].isEmpty()) {
+            true -> gen.writeObjectField("transactions", listOf<InstructionExpr>())
+            false -> gen.writeObjectField("transactions", block.transactions)
+        }
+        gen.writeObjectField("executor", block.executor)
+        gen.writeEndObject()
+    }
+}
 
 /**
  * Serializer for [AssetDefinitionId]
@@ -373,16 +529,16 @@ object AccountIdSerializer : JsonSerializer<AccountId>() {
 /**
  * Serializer for [PermissionToken]
  */
-object PermissionTokenSerializer : JsonSerializer<Permission>() {
-    override fun serialize(token: Permission, gen: JsonGenerator, serializers: SerializerProvider) {
+object PermissionTokenSerializer : JsonSerializer<PermissionToken>() {
+    override fun serialize(token: PermissionToken, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
-        gen.writeObjectField(Permission::name.name.toSnakeCase(), token.name)
+        gen.writeObjectField(PermissionToken::definitionId.name.toSnakeCase(), token.definitionId)
 
-        val payload = when (token.payload.isEmpty()) {
+        val payload = when (token.payload.string.isEmpty()) {
             true -> null
             false -> token.payload
         }
-        gen.writeObjectField(Permission::payload.name, payload)
+        gen.writeObjectField(PermissionToken::payload.name, payload)
         gen.writeEndObject()
     }
 }
@@ -417,6 +573,52 @@ object SocketAddrSerializer : JsonSerializer<SocketAddr>() {
 object TriggerIdSerializer : JsonSerializer<TriggerId>() {
     override fun serialize(value: TriggerId, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeString(value.asString())
+    }
+}
+
+/**
+ * Serializer for [SequenceExpr]
+ */
+object SequenceExprSerializer : JsonSerializer<SequenceExpr>() {
+    override fun serialize(value: SequenceExpr, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartArray()
+        value.instructions.forEach { parameter ->
+            when (parameter) {
+                is InstructionExpr.Grant -> parameter.serialize(gen)
+                is InstructionExpr.Burn -> parameter.serialize(gen)
+                is InstructionExpr.Mint -> parameter.serialize(gen)
+                is InstructionExpr.SetKeyValue -> parameter.serialize(gen)
+                is InstructionExpr.Register -> parameter.serialize(gen)
+                else -> serializeSingleMember(gen, parameter)
+            }
+        }
+        gen.writeEndArray()
+    }
+}
+
+/**
+ * Serializer for [NewParameterExpr]
+ */
+object NewParameterExprSerializer : JsonSerializer<NewParameterExpr>() {
+    override fun serialize(value: NewParameterExpr, gen: JsonGenerator, serializers: SerializerProvider) {
+        val parameter = value.parameter.expression.cast<Expression.Raw>()
+            .value.cast<Value.Identifiable>().identifiableBox.cast<IdentifiableBox.Parameter>().parameter
+        gen.writeStartObject()
+        gen.writeObjectField(Parameter::class.simpleName, parameter)
+        gen.writeEndObject()
+    }
+}
+
+/**
+ * Serializer for [StringWithJson]
+ */
+object StringWithJsonSerializer : JsonSerializer<StringWithJson>() {
+    override fun serialize(value: StringWithJson, gen: JsonGenerator, serializers: SerializerProvider) {
+        val tree = ObjectMapper().readTree(value.string)
+        val node = tree.fields().next()
+        gen.writeStartObject()
+        gen.writeObjectField(node.key, node.value.asText())
+        gen.writeEndObject()
     }
 }
 
@@ -460,11 +662,32 @@ object NameSerializer : JsonSerializer<Name>() {
 }
 
 /**
+ * Serializer for [ExecutorMode]
+ */
+object ExecutorModeSerializer : JsonSerializer<ExecutorMode>() {
+    override fun serialize(value: ExecutorMode, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is ExecutorMode.Path -> gen.writeString(value.string)
+            else -> throw IrohaSdkException("Unsupported type ${this::class}")
+        }
+    }
+}
+
+/**
  * Custom serializer for [UInt]
  */
 object UIntSerializer : JsonSerializer<UInt>() {
     override fun serialize(value: UInt, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeNumber(value.toLong())
+    }
+}
+
+/**
+ * Custom serializer for [NumericValue]
+ */
+object NumericValueSerializer : JsonSerializer<NumericValue>() {
+    override fun serialize(value: NumericValue, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.format().second)
     }
 }
 
@@ -486,7 +709,16 @@ object PublicKeySerializer : JsonSerializer<PublicKey>() {
  */
 object MetadataSerializer : JsonSerializer<Metadata>() {
     override fun serialize(value: Metadata, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeObject(value.sortedMapOfName)
+        gen.writeObject(value.map)
+    }
+}
+
+/**
+ * Custom serializer for [EvaluatesTo]
+ */
+object EvaluatesToSerializer : JsonSerializer<EvaluatesTo<*>>() {
+    override fun serialize(value: EvaluatesTo<*>, gen: JsonGenerator, serializers: SerializerProvider) {
+        value.serialize(gen)
     }
 }
 
@@ -502,39 +734,50 @@ object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole
 /**
  * Custom serializer for [Parameter]
  */
-// object ParameterSerializer : JsonSerializer<Parameter>() {
-//    override fun serialize(value: Parameter, gen: JsonGenerator, serializers: SerializerProvider) {
-//        gen.writeString(value.asString())
-//    }
-// }
+object ParameterSerializer : JsonSerializer<Parameter>() {
+    override fun serialize(value: Parameter, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.asString())
+    }
+}
 
 /**
  * Custom serializer for Iroha2 enumeration types
  */
-// object EnumerationSerializer : JsonSerializer<ModelEnum>() {
-//    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
-//        when (value) {
-//            is InstructionBox.Grant -> value.serialize(gen)
-//            is InstructionBox.Burn -> value.serialize(gen)
-//            is InstructionBox.Mint -> value.serialize(gen)
-//            is InstructionBox.SetKeyValue -> value.serialize(gen)
-//            is InstructionBox.Register -> value.serialize(gen)
-//            else -> serializeSingleMember(gen, value)
-//        }
-//    }
-// }
+object EnumerationSerializer : JsonSerializer<ModelEnum>() {
+    override fun serialize(value: ModelEnum, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is InstructionExpr.Grant -> value.serialize(gen)
+            is InstructionExpr.Burn -> value.serialize(gen)
+            is InstructionExpr.Mint -> value.serialize(gen)
+            is InstructionExpr.SetKeyValue -> value.serialize(gen)
+            is InstructionExpr.Register -> value.serialize(gen)
+            is Expression.Raw -> value.serialize(gen)
+            is Value.Identifiable -> value.serialize(gen)
+            is Value.Id -> value.serialize(gen)
+            else -> serializeSingleMember(gen, value)
+        }
+    }
+}
 
-// private fun InstructionBox.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeBox<SetKeyValueBox>(gen)
-//
-// private fun InstructionBox.Grant.serialize(gen: JsonGenerator) {
-//    return this.serializeBox<GrantBox>(gen)
-// }
-//
-// private fun InstructionBox.Burn.serialize(gen: JsonGenerator) = this.serializeBox<BurnBox>(gen)
-//
-// private fun InstructionBox.Mint.serialize(gen: JsonGenerator) = this.serializeBox<MintBox>(gen)
+private fun Value.Identifiable.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
 
-private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
+private fun Value.Id.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
+
+private fun Expression.Raw.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
+
+private fun EvaluatesTo<*>.serialize(gen: JsonGenerator) = this.serializeEnum(gen)
+
+private fun InstructionExpr.SetKeyValue.serialize(gen: JsonGenerator) = this.serializeExpr<SetKeyValueExpr>(gen)
+
+private fun InstructionExpr.Grant.serialize(gen: JsonGenerator) {
+    return this.serializeExpr<GrantExpr>(gen)
+}
+
+private fun InstructionExpr.Burn.serialize(gen: JsonGenerator) = this.serializeExpr<BurnExpr>(gen)
+
+private fun InstructionExpr.Mint.serialize(gen: JsonGenerator) = this.serializeExpr<MintExpr>(gen)
+
+private fun InstructionExpr.Register.serialize(gen: JsonGenerator) {
     val clazz = this::class
     val memberProperties = clazz.memberProperties
     when (memberProperties.size) {
@@ -543,7 +786,9 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
             gen.writeStartObject()
             gen.writeObjectField(
                 clazz.simpleName,
-                memberProperties.first().call(this)?.cast<RegisterBox>(), // todo
+                memberProperties.first().call(this)
+                    ?.cast<RegisterExpr>()
+                    ?.`object`?.expression,
             )
             gen.writeEndObject()
         }
@@ -552,80 +797,95 @@ private fun InstructionBox.Register.serialize(gen: JsonGenerator) {
     }
 }
 
-// /**
-// * Serializes BurnBox, MintBox, GrantBox etc...
-// */
-// private inline fun <reified B> InstructionBox.serializeBox(gen: JsonGenerator) {
-//    val clazz = this::class
-//    val memberProperties = clazz.memberProperties
-//    when (memberProperties.size) {
-//        0 -> gen.writeString(clazz.simpleName)
-//        1 -> {
-//            gen.writeStartObject()
-//            gen.writeObjectFieldStart(clazz.simpleName)
-//            memberProperties.first().call(this)?.cast<B>()?.serializeBox(gen)
-//            gen.writeEndObject()
-//            gen.writeEndObject()
-//        }
-//
-//        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-//    }
-// }
+/**
+ * Serializes BurnExpr, MintExpr, GrantExpr etc...
+ */
+private inline fun <reified B> InstructionExpr.serializeExpr(gen: JsonGenerator) {
+    val clazz = this::class
+    val memberProperties = clazz.memberProperties
+    when (memberProperties.size) {
+        0 -> gen.writeString(clazz.simpleName)
+        1 -> {
+            gen.writeStartObject()
+            gen.writeObjectFieldStart(clazz.simpleName)
+            memberProperties.first().call(this)?.cast<B>()?.serializeExpr(gen)
+            gen.writeEndObject()
+            gen.writeEndObject()
+        }
 
-// private inline fun <reified B> B.serializeBox(
-//    gen: JsonGenerator,
-// ) = when (B::class) {
-//    BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
-//    MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
-//    GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
-//    SetKeyValueBox::class -> this?.cast<SetKeyValueBox>()?.serializeBox(gen)
-//    else -> throw IrohaSdkException("Unexpected type ${B::class}")
-// }
+        else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
+    }
+}
 
-// private fun BurnBox.serializeBox(
-//    gen: JsonGenerator,
-// ) = mintBurnSerialize(gen, this.`object`, this.destinationId)
-//
-// private fun MintBox.serializeBox(
-//    gen: JsonGenerator,
-// ) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
-//
-// private fun GrantBox.serializeBox(gen: JsonGenerator) {
-//    val fieldData = when (val rawValue = this.`object`.expression.cast<Boxession.Raw>().value) {
-//        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.permissionToken
-//        is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
-//        else -> throw IrohaSdkException("Grant InstructionBox serialization error")
-//    }
-//    gen.writeObjectFieldStart("object")
-//    gen.writeObjectField(fieldData.first, fieldData.second)
-//    gen.writeEndObject()
-//    gen.writeObjectField("destination", this.destinationId)
-// }
-//
-// private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
-//    val id = this.objectId.expression
-//        .cast<Boxession.Raw>().value
-//        .cast<Value.Id>().idBox
-//        .extractId()
-//    gen.writeObjectField(id::class.simpleName, id)
-//    gen.writeObjectField("key", this.key)
-//
-//    val fieldValue = when (val value = this.value.expression.cast<Boxession.Raw>().value) {
-//        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
-//        else -> value
-//    }
-//    gen.writeObjectField("value", fieldValue)
-// }
-//
-// private fun mintBurnSerialize(
-//    gen: JsonGenerator,
-//    expression: Boxession,
-//    destinationId: EvaluatesTo<IdBox>,
-// ) {
-//    val rawValue = expression.cast<Boxession.Raw>().value.cast<Value.Numeric>().numericValue
-//    gen.writeObjectField("object", rawValue)
-//    gen.writeObjectField("destination", destinationId)
-// }
+private inline fun <reified B> B.serializeExpr(
+    gen: JsonGenerator,
+) = when (B::class) {
+    BurnExpr::class -> this?.cast<BurnExpr>()?.serializeExpr(gen)
+    MintExpr::class -> this?.cast<MintExpr>()?.serializeExpr(gen)
+    GrantExpr::class -> this?.cast<GrantExpr>()?.serializeExpr(gen)
+    SetKeyValueExpr::class -> this?.cast<SetKeyValueExpr>()?.serializeExpr(gen)
+    else -> throw IrohaSdkException("Unexpected type ${B::class}")
+}
+
+private fun BurnExpr.serializeExpr(
+    gen: JsonGenerator,
+) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
+
+private fun MintExpr.serializeExpr(
+    gen: JsonGenerator,
+) = mintBurnSerialize(gen, this.`object`.expression, this.destinationId)
+
+private fun GrantExpr.serializeExpr(gen: JsonGenerator) {
+    val fieldData = when (val rawValue = this.`object`.expression.cast<Expression.Raw>().value) {
+        is Value.PermissionToken -> Value.PermissionToken::class.simpleName to rawValue.permissionToken
+        is Value.Id -> RoleId::class.simpleName to rawValue.idBox.cast<IdBox.RoleId>().roleId
+        else -> throw IrohaSdkException("Grant InstructionExpr serialization error")
+    }
+    gen.writeObjectFieldStart("object")
+    gen.writeObjectField(fieldData.first, fieldData.second)
+    gen.writeEndObject()
+    gen.writeObjectField("destination_id", this.destinationId)
+}
+
+private fun SetKeyValueExpr.serializeExpr(gen: JsonGenerator) {
+    val id = this.objectId.expression
+        .cast<Expression.Raw>().value
+        .cast<Value.Id>().idBox
+        .extractId()
+    gen.writeObjectField(id::class.simpleName, id)
+    gen.writeObjectField("key", this.key)
+
+    val fieldValue = when (val value = this.value.expression.cast<Expression.Raw>().value) {
+        is Value.Numeric -> value.cast<Value.Numeric>().numericValue.formatAsString()
+        else -> value
+    }
+    gen.writeObjectField("value", fieldValue)
+}
+
+private fun mintBurnSerialize(
+    gen: JsonGenerator,
+    expression: Expression,
+    destinationId: EvaluatesTo<IdBox>,
+) {
+    val rawValue = expression.cast<Expression.Raw>().value.cast<Value.Numeric>().numericValue
+    gen.writeObjectField("object", rawValue)
+    gen.writeObjectField("destination_id", destinationId)
+}
+
+private fun NumericValue.formatAsString() = when (this) {
+    is NumericValue.U32 -> "${this.u32}_u32"
+    is NumericValue.U64 -> "${this.u64}_u64"
+    is NumericValue.U128 -> "${this.u128}_u128"
+    is NumericValue.Fixed -> "${this.fixed.fixedPointOfI64}_fx"
+}.toString()
+
+private fun NumericValue.format() = when (this) {
+    is NumericValue.U32 -> NumericValue.U32::class.simpleName to "${this.u32}_${NumericValue.U32::class.simpleName?.lowercase()}"
+    is NumericValue.U64 -> NumericValue.U64::class.simpleName to "${this.u64}_${NumericValue.U64::class.simpleName?.lowercase()}"
+    is NumericValue.U128 -> NumericValue.U128::class.simpleName to "${this.u128}_${NumericValue.U128::class.simpleName?.lowercase()}"
+    is NumericValue.Fixed -> NumericValue.Fixed::class.simpleName to this.fixed.fixedPointOfI64.toString()
+    else -> throw IrohaSdkException("Invalid numeric value")
+}
 
 /**
  * Serialise a single member object or nothing at all
@@ -668,11 +928,19 @@ private fun String.asClass() = runCatching {
     }
 } ?: throw DeserializationException("Class $this not found")
 
-private fun sealedDeserializeInstruction(jsonNode: JsonNode, mapper: ObjectMapper): InstructionBox {
+private fun sealedDeserializeSequenceExpr(p: JsonParser, mapper: ObjectMapper): SequenceExpr {
+    val jsonNodes = p.readValueAsTree<JsonNode>()
+    val instructions = jsonNodes.map {
+        mapper.convertValue(it, InstructionExpr::class.java) as InstructionExpr
+    }
+    return SequenceExpr(instructions)
+}
+
+private fun sealedDeserializeInstruction(jsonNode: JsonNode, mapper: ObjectMapper): InstructionExpr {
     val node = jsonNode.fields().next()
     val param = node.key
 
-    val subtype = InstructionBox::class.nestedClasses.find { clazz ->
+    val subtype = InstructionExpr::class.nestedClasses.find { clazz ->
         !clazz.isCompanion && clazz.simpleName == param
     } ?: throw DeserializationException("Class with constructor($param) not found")
 
@@ -683,10 +951,14 @@ private fun sealedDeserializeInstruction(jsonNode: JsonNode, mapper: ObjectMappe
     val toConvert: JsonNode = node.value
 
     val arg = mapper.convertValue(toConvert, argTypeName.asClass())
-    return subtype.primaryConstructor?.call(arg) as InstructionBox
+    return subtype.primaryConstructor?.call(arg) as InstructionExpr
 }
 
-private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): GrantBox {
+private fun sealedDeserializeValidator(p: JsonParser, mapper: ObjectMapper): ExecutorMode {
+    return ExecutorMode.Path(p.readValueAsTree<JsonNode>().asText())
+}
+
+private fun sealedDeserializeGrantExpr(p: JsonParser, mapper: ObjectMapper): GrantExpr {
     val jsonNode = p.readValueAsTree<JsonNode>()
 
     val iter = jsonNode.iterator()
@@ -710,20 +982,117 @@ private fun sealedDeserializeGrantBox(p: JsonParser, mapper: ObjectMapper): Gran
         Pair(node.key, node.value)
     }
 
-//    val subtype = Value::class.nestedClasses.find { clazz ->
-//        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
-//    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
-//
-//    val argTypeName = subtype.primaryConstructor?.parameters
-//        ?.firstOrNull()?.type?.toString()
-//        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
+    val subtype = Value::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName?.contains(paramAndValueToConvert.first) ?: false
+    } ?: throw DeserializationException("Class with constructor(${paramAndValueToConvert.first}) not found")
 
-    return GrantBox.Permission(
-        GrantOfPermissionAndAccount(
-            Permission("", ""),
-            AccountId("".asDomainId(), publicKeyFromHex("").toIrohaPublicKey()),
-        ),
+    val argTypeName = subtype.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by ${paramAndValueToConvert.first}")
+
+    val grantObject = mapper.convertValue(paramAndValueToConvert.second, argTypeName.asClass())
+    val destinationId = mapper.convertValue(destination, IdBox::class.java)
+    return GrantExpr(
+        `object` = grantObject.evaluatesTo().cast(),
+        destinationId = destinationId.evaluatesTo().cast(),
     )
+}
+
+private fun sealedDeserializeValue(p: JsonParser, mapper: ObjectMapper): Value {
+    val node = p.readValueAsTree<JsonNode>()
+    if (node is TextNode) {
+        return Value.Numeric(node.textValue().toNumericValue())
+    }
+
+    val field = node.fields().next()
+    val param = when {
+        field.key.contains("Id") -> "Id"
+        "Numeric" == field.key -> field.value.fields().next().key
+        else -> field.key
+    }
+    val clazz = getClazzByParam(param)
+
+    return when (param) {
+        "Bool" -> Value.Bool(field.value.booleanValue())
+        "String" -> Value.String(field.value.asText())
+        else -> {
+            val name = if (field.key == "Id" || field.key == "Numeric") field.value.fields().next().key else field.key
+            val value =
+                if (field.key == "Id" || field.key == "Numeric") field.value.fields().next().value else field.value
+            val subtype = clazz.nestedClasses.find {
+                !it.isCompanion && it.simpleName == name
+            } ?: throw DeserializationException("Class with constructor($param) not found")
+
+            val argTypeName = subtype.primaryConstructor?.parameters
+                ?.firstOrNull()?.type?.toString()
+                ?: throw DeserializationException("Subtype parameter not found by $param")
+
+            val arg = mapper.convertValue(value, argTypeName.asClass())
+            return getValueByClazz(clazz, subtype, arg, name, param)
+        }
+    }
+}
+
+private fun getValueByClazz(clazz: KClass<out Any>, subtype: KClass<*>, arg: Any, name: String, param: String): Value {
+    return when (clazz) {
+        Name::class -> Value.Name(subtype.primaryConstructor?.call(arg) as Name)
+        Value::class -> throw DeserializationException("Value type $clazz not supported")
+        Metadata::class -> Value.LimitedMetadata(subtype.primaryConstructor?.call(arg) as Metadata)
+        Limits::class -> Value.MetadataLimits(subtype.primaryConstructor?.call(arg) as Limits)
+        TransactionLimits::class -> Value.TransactionLimits(subtype.primaryConstructor?.call(arg) as TransactionLimits)
+        LengthLimits::class -> Value.LengthLimits(subtype.primaryConstructor?.call(arg) as LengthLimits)
+        IdBox::class -> Value.Id(subtype.primaryConstructor?.call(arg) as IdBox)
+        IdentifiableBox::class -> Value.Identifiable(subtype.primaryConstructor?.call(arg) as IdentifiableBox)
+        PublicKey::class -> Value.PublicKey(subtype.primaryConstructor?.call(arg) as PublicKey)
+        SignatureCheckCondition::class -> Value.SignatureCheckCondition(subtype.primaryConstructor?.call(arg) as SignatureCheckCondition)
+        PermissionToken::class -> Value.PermissionToken(subtype.primaryConstructor?.call(arg) as PermissionToken)
+        HashValue::class -> Value.Hash(subtype.primaryConstructor?.call(arg) as HashValue)
+        SignedBlock::class -> Value.Block(subtype.primaryConstructor?.call(arg) as SignedBlock)
+        BlockHeader::class -> Value.BlockHeader(subtype.primaryConstructor?.call(arg) as BlockHeader)
+        Ipv4Addr::class -> Value.Ipv4Addr(subtype.primaryConstructor?.call(arg) as Ipv4Addr)
+        Ipv6Addr::class -> Value.Ipv6Addr(subtype.primaryConstructor?.call(arg) as Ipv6Addr)
+        NumericValue::class -> {
+            when (name) {
+                "U32" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U32)
+                "U64" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U64)
+                "U128" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.U128)
+                "Fixed" -> Value.Numeric(subtype.primaryConstructor?.call(arg) as NumericValue.Fixed)
+                else -> throw DeserializationException("Numeric value $param not found")
+            }
+        }
+
+        else -> throw DeserializationException("Value type $clazz not found")
+    }
+}
+
+private fun getClazzByParam(param: String): KClass<out Any> {
+    return when (param) {
+        "Bool" -> Boolean::class
+        "String" -> String::class
+        "Name" -> Name::class
+        "Vec" -> Value::class
+        "LimitedMetadata" -> Metadata::class
+        "MetadataLimits" -> Limits::class
+        "TransactionLimits" -> TransactionLimits::class
+        "LengthLimits" -> LengthLimits::class
+        "Id" -> IdBox::class
+        "Identifiable" -> IdentifiableBox::class
+        "PublicKey" -> PublicKey::class
+        "SignatureCheckCondition" -> SignatureCheckCondition::class
+        "TransactionValue" -> TransactionValue::class
+        "TransactionQueryOutput" -> TransactionQueryOutput::class
+        "PermissionToken" -> PermissionToken::class
+        "Hash" -> Hash::class
+        "Block" -> SignedBlock::class
+        "BlockHeader" -> BlockHeader::class
+        "Ipv4Addr" -> Ipv4Addr::class
+        "Ipv6Addr" -> Ipv6Addr::class
+        "U32" -> NumericValue::class
+        "U64" -> NumericValue::class
+        "U128" -> NumericValue::class
+        "Fixed" -> NumericValue::class
+        else -> throw DeserializationException("Value key $param not found")
+    }
 }
 
 private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
@@ -742,88 +1111,97 @@ private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
     return subtype.primaryConstructor?.call(arg) as IdBox
 }
 
-// private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): RegisterBox {
-//    val node = p.readValueAsTree<JsonNode>().fields().next()
-//
-//    val param = node.key.removePrefix("New")
-//    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
-//        !clazz.isCompanion && clazz.simpleName == param
-//    }
-//    val argTypeName = subtype?.primaryConstructor?.parameters
-//        ?.firstOrNull()?.type?.toString()
-//        ?: throw DeserializationException("Subtype parameter not found by $param")
-//
-//    val arg = mapper.convertValue(node.value, argTypeName.asClass())
-//    return getRegisterBox(arg)
-// }
+private fun sealedDeserializeRegisterExpr(p: JsonParser, mapper: ObjectMapper): RegisterExpr {
+    val node = p.readValueAsTree<JsonNode>().fields().next()
 
-private fun getRegisterBox(arg: Any): RegisterBox {
+    val param = node.key.removePrefix("New")
+    val subtype = RegistrableBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == param
+    }
+    val argTypeName = subtype?.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $param")
+
+    val arg = mapper.convertValue(node.value, argTypeName.asClass())
+    return getRegisterExpr(arg)
+}
+
+private fun getRegisterExpr(arg: Any): RegisterExpr {
     return when (arg) {
-        is NewDomain -> RegisterBox.Domain(RegisterOfDomain(arg))
-        is NewAccount -> RegisterBox.Account(RegisterOfAccount(arg))
-        is Peer -> RegisterBox.Peer(RegisterOfPeer(arg))
-        is NewAssetDefinition -> RegisterBox.AssetDefinition(RegisterOfAssetDefinition(arg))
-        is Asset -> RegisterBox.Asset(RegisterOfAsset(arg))
-        is NewRole -> RegisterBox.Role(RegisterOfRole(arg))
-        is Trigger -> RegisterBox.Trigger(RegisterOfTrigger(arg))
+        is NewDomain -> RegisterExpr(RegistrableBox.Domain(arg).evaluatesTo())
+        is NewAccount -> RegisterExpr(RegistrableBox.Account(arg).evaluatesTo())
+        is Peer -> RegisterExpr(RegistrableBox.Peer(arg).evaluatesTo())
+        is NewAssetDefinition -> RegisterExpr(RegistrableBox.AssetDefinition(arg).evaluatesTo())
+        is Asset -> RegisterExpr(RegistrableBox.Asset(arg).evaluatesTo())
+        is NewRole -> RegisterExpr(RegistrableBox.Role(arg).evaluatesTo())
+        is TriggerOfTriggeringFilterBox -> RegisterExpr(RegistrableBox.Trigger(arg).evaluatesTo())
         else -> throw DeserializationException("Register box `$arg` not found")
     }
 }
 
-// private fun deserializeMintBox(p: JsonParser, mapper: ObjectMapper): MintBox {
-//    val jsonNode = p.readValueAsTree<JsonNode>()
-//    val iter = jsonNode.iterator()
-//    val nodes = mutableListOf<JsonNode>()
-//    while (iter.hasNext()) {
-//        val node = iter.next()
-//        nodes.add(node)
-//    }
-//    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
-//    val newNode = mapper.createObjectNode().set<ObjectNode>(
-//        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
-//        IntNode(numericTypeAndValue[0].toInt()),
-//    )
-//    val objectId = mapper.convertValue(
-//        newNode,
-//        Value::class.java,
-//    ) as Value
-//    val destination = mapper.convertValue(
-//        nodes[1],
-//        IdBox::class.java,
-//    ) as IdBox
-//    return MintBox(
-//        `object` = objectId.evaluatesTo().cast(),
-//        destinationId = destination.evaluatesTo().cast(),
-//    )
-// }
+private fun deserializeMintExpr(p: JsonParser, mapper: ObjectMapper): MintExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+    val numericTypeAndValue = jsonNode.fields().next().value.asText().split("_")
+    val newNode = mapper.createObjectNode().set<ObjectNode>(
+        numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
+        IntNode(numericTypeAndValue[0].toInt()),
+    )
+    val objectId = mapper.convertValue(
+        newNode,
+        Value::class.java,
+    ) as Value
+    val destination = mapper.convertValue(
+        nodes[1],
+        IdBox::class.java,
+    ) as IdBox
+    return MintExpr(
+        `object` = objectId.evaluatesTo().cast(),
+        destinationId = destination.evaluatesTo().cast(),
+    )
+}
 
-// private fun deserializeSetKeyValueBox(p: JsonParser, mapper: ObjectMapper): SetKeyValueBox {
-//    val jsonNode = p.readValueAsTree<JsonNode>()
-//    val iter = jsonNode.iterator()
-//    val nodes = mutableListOf<JsonNode>()
-//    while (iter.hasNext()) {
-//        val node = iter.next()
-//        nodes.add(node)
-//    }
-//
-//    val objectId = jsonNode.fields().next()
-//    val key = nodes[1].fields().next()
-//    val subtype = IdBox::class.nestedClasses.find { clazz ->
-//        !clazz.isCompanion && clazz.simpleName == objectId.key
-//    }
-//    val argTypeName = subtype?.primaryConstructor?.parameters
-//        ?.firstOrNull()?.type?.toString()
-//        ?: throw DeserializationException("Subtype parameter not found by $objectId")
-//
-//    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
-//    val keyArg = mapper.convertValue(key.value, Name::class.java)
-//    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
-//    return SetKeyValueBox(
-//        objectId = objectIdArg.evaluatesTo().cast(),
-//        key = keyArg.evaluatesTo().cast(),
-//        value = valueArg.evaluatesTo().cast(),
-//    )
-// }
+private fun deserializeNewParameterExpr(p: JsonParser, mapper: ObjectMapper): NewParameterExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>().fields().next()
+    val parameter = jsonNode.value.asText().asParameter()
+
+    return NewParameterExpr(
+        parameter = parameter.evaluatesTo().cast(),
+    )
+}
+
+private fun deserializeSetKeyValueExpr(p: JsonParser, mapper: ObjectMapper): SetKeyValueExpr {
+    val jsonNode = p.readValueAsTree<JsonNode>()
+    val iter = jsonNode.iterator()
+    val nodes = mutableListOf<JsonNode>()
+    while (iter.hasNext()) {
+        val node = iter.next()
+        nodes.add(node)
+    }
+
+    val objectId = jsonNode.fields().next()
+    val key = nodes[1].fields().next()
+    val subtype = IdBox::class.nestedClasses.find { clazz ->
+        !clazz.isCompanion && clazz.simpleName == objectId.key
+    }
+    val argTypeName = subtype?.primaryConstructor?.parameters
+        ?.firstOrNull()?.type?.toString()
+        ?: throw DeserializationException("Subtype parameter not found by $objectId")
+
+    val objectIdArg = mapper.convertValue(objectId.value, argTypeName.asClass())
+    val keyArg = mapper.convertValue(key.value, Name::class.java)
+    val valueArg = mapper.convertValue(nodes[2], Value::class.java)
+    return SetKeyValueExpr(
+        objectId = objectIdArg.evaluatesTo().cast(),
+        key = keyArg.evaluatesTo().cast(),
+        value = valueArg.evaluatesTo().cast(),
+    )
+}
 
 private fun deserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
     val iter = p.readValueAsTree<JsonNode>().iterator()
@@ -834,7 +1212,7 @@ private fun deserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
     }
 
     val tokens = nodes[1].map {
-        mapper.convertValue(it, Permission::class.java) as Permission
+        mapper.convertValue(it, PermissionToken::class.java) as PermissionToken
     }
     val roleId = RoleId(nodes[0].asText().asName())
     return NewRole(Role(id = roleId, permissions = tokens))
@@ -848,20 +1226,20 @@ private fun deserializeMetadata(p: JsonParser, mapper: ObjectMapper): Metadata {
     val node = nodeMetadata.next()
     val key = node.key.asName()
     val valueNode = node.value.fields().next()
-    val value = valueNode.value.asText()
+    val value = valueNode.value.asText().asValue()
     return Metadata(mapOf(Pair(key, value)))
 }
 
-// private fun String.toNumericValue(): Numeric {
-//    val (number, type) = this.split('_')
-//    return when (type) {
-//        Numeric.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
-//        Numeric.U64::class.simpleName?.lowercase() -> NumericValue.U64(number.toBigInteger())
-//        Numeric.U128::class.simpleName?.lowercase() -> NumericValue.U128(number.toBigInteger())
-//        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
-//        else -> throw IllegalArgumentException("Number out of range")
-//    }
-// }
+private fun String.toNumericValue(): NumericValue {
+    val (number, type) = this.split('_')
+    return when (type) {
+        NumericValue.U32::class.simpleName?.lowercase() -> NumericValue.U32(number.toLong())
+        NumericValue.U64::class.simpleName?.lowercase() -> NumericValue.U64(number.toBigInteger())
+        NumericValue.U128::class.simpleName?.lowercase() -> NumericValue.U128(number.toBigInteger())
+        "fx" -> NumericValue.Fixed(Fixed(number.toBigDecimal()))
+        else -> throw IllegalArgumentException("Number out of range")
+    }
+}
 
 private fun getTriggerAuthority(triggerAction: JsonNode): AccountId {
     return triggerAction.get("authority").asText().asAccountId()
@@ -871,9 +1249,8 @@ private fun getTriggerId(triggerName: String): TriggerId {
     return when (triggerName.contains("$")) {
         true -> {
             val triggerNameWithDomain = triggerName.split("$")
-            TriggerId(name = triggerNameWithDomain[0].asName())
+            TriggerId(name = triggerNameWithDomain[0].asName(), domainId = triggerNameWithDomain[1].asDomainId())
         }
-
         false -> TriggerId(name = triggerName.asName())
     }
 }
@@ -886,48 +1263,38 @@ private fun getTriggerRepeats(triggerAction: JsonNode): Repeats {
     }
 }
 
-private fun getTriggerFilter(triggerAction: JsonNode): TriggeringEventFilterBox {
+private fun getTriggerFilter(triggerAction: JsonNode): TriggeringFilterBox {
     val filterNode = triggerAction.get("filter").fields().next()
     return when (filterNode.key) {
         "Data" -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }
-
         "Time" -> {
             val scheduleNode = filterNode.value.get("Schedule")
             val start = scheduleNode.get("start")
             val period = scheduleNode.get("period")
             val periodDuration = when (period.isNull) {
                 true -> null
-                false -> Duration(
-                    u64 = BigInteger.valueOf(period.get("secs").asLong()),
-                    u32 = period.get("nanos").asLong(),
-                )
+                false -> Duration(u64 = BigInteger.valueOf(period.get("secs").asLong()), u32 = period.get("nanos").asLong())
             }
-            TriggeringEventFilterBox.Time(
+            TriggeringFilterBox.Time(
                 TimeEventFilter(
                     ExecutionTime.Schedule(
                         Schedule(
-                            Duration(
-                                u64 = BigInteger.valueOf(start.get("secs").asLong()),
-                                u32 = start.get("nanos").asLong(),
-                            ),
+                            Duration(u64 = BigInteger.valueOf(start.get("secs").asLong()), u32 = start.get("nanos").asLong()),
                             periodDuration,
                         ),
                     ),
                 ),
             )
         }
-
         "ExecuteTrigger" -> {
             val executeTrigger = JSON_SERDE.convertValue(filterNode.value, ExecuteTriggerEventFilter::class.java)
-            TriggeringEventFilterBox.ExecuteTrigger(executeTrigger)
+            TriggeringFilterBox.ExecuteTrigger(executeTrigger)
         }
-
         "Pipeline" -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }
-
         else -> {
             throw IrohaSdkException("${filterNode.key} is not supported")
         }
