@@ -11,76 +11,76 @@
             "key": "value"
           }
         }
-      },
-      {
-        "Register" : {
-          "Trigger" : {
-            "id" : "name$wonderland",
-            "action" : {
-              "executable" : {
-                "Instructions" : [ {
-                  "SetKeyValue" : {
-                    "DomainId" : "wonderland",
-                    "key" : {
-                      "Name" : "key"
-                    },
-                    "value" : {
-                      "String" : "value"
+      }
+    },
+    {
+      "Register": {
+        "Trigger": {
+          "id": "name$wonderland",
+          "action": {
+            "executable": {
+              "Instructions": [
+                {
+                  "SetKeyValue": {
+                    "Domain": {
+                      "object": "wonderland",
+                      "key": "key",
+                      "value": "value"
                     }
                   }
-                } ]
-              },
-              "repeats" : {
-                "Exactly" : 1
-              },
-              "authority" : "alice@wonderland",
-              "filter" : {
-                "ExecuteTrigger" : {
-                  "trigger_id" : "name$wonderland",
-                  "authority" : "alice@wonderland"
                 }
-              },
-              "metadata" : { }
-            }
+              ]
+            },
+            "repeats": {
+              "Exactly": 1
+            },
+            "authority": "ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4@wonderland",
+            "filter": {
+              "ExecuteTrigger": {
+                "trigger_id": "name",
+                "authority": "ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4@wonderland"
+              }
+            },
+            "metadata": {}
           }
         }
-      },
-      {
-        "Register" : {
-          "Trigger" : {
-            "id" : "time_trigger",
-            "action" : {
-              "executable" : {
-                "Instructions" : [ {
-                  "SetKeyValue" : {
-                    "DomainId" : "wonderland",
-                    "key" : {
-                      "Name" : "key"
-                    },
-                    "value" : {
-                      "String" : "value"
-                    }
-                  }
-                } ]
-              },
-              "repeats" : "Indefinitely",
-              "authority" : "alice@wonderland",
-              "filter" : {
-                "Time" : {
-                  "Schedule" : {
-                    "start" : {
-                      "secs" : 1715161770,
-                      "nanos" : 0
-                    },
-                    "period" : {
-                      "secs" : 1,
-                      "nanos" : 0
+      }
+    },
+    {
+      "Register": {
+        "Trigger": {
+          "id": "time_trigger",
+          "action": {
+            "executable": {
+              "Instructions": [
+                {
+                  "SetKeyValue": {
+                    "Domain": {
+                      "object": "wonderland",
+                      "key": "key",
+                      "value": "value"
                     }
                   }
                 }
-              },
-              "metadata" : { }
-            }
+              ]
+            },
+            "repeats": "Indefinitely",
+            "authority": "ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4@wonderland",
+            "filter": {
+              "Time": {
+                "Schedule": {
+                  "start": {
+                    "secs": 1790774026,
+                    "nanos": 0
+                  },
+                  "period": {
+                    "secs": 1,
+                    "nanos": 0
+                  }
+                }
+              }
+            },
+            "metadata": {}
           }
         }
       }
@@ -246,4 +246,3 @@
   ],
   "topology": []
 }
-

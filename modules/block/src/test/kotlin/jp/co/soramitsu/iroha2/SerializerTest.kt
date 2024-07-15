@@ -34,7 +34,6 @@ class SerializerTest {
         )
         val expectedJson = """
             {
-              "block" : {
                 "chain": "00000000-0000-0000-0000-000000000000",
                 "executor" : "executor.wasm",
                 "instructions" : [ {
@@ -50,7 +49,6 @@ class SerializerTest {
                     "destination" : "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland"
                   }
                 } ]
-              }
             }
         """.trimIndent()
         val json = JSON_SERDE.writeValueAsString(genesis).trimIndent()
@@ -75,7 +73,7 @@ class SerializerTest {
                     Instructions.setKeyValue(
                         assetId,
                         "key".asName(),
-                        "value".asMetadataValueBox(),
+                        "value",
                     ),
                     Instructions.registerTrigger(
                         triggerId,

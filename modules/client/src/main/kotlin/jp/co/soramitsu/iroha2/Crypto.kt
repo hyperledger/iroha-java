@@ -72,7 +72,10 @@ fun privateKeyFromHex(privateKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_
 @JvmOverloads
 fun publicKeyFromHex(publicKeyHex: String, spec: EdDSAParameterSpec = DEFAULT_SPEC) =
     try {
-        EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.fromHex(), spec))
+        when (publicKeyHex.startsWith("ed0120")) {
+            true -> EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.drop(6).fromHex(), spec))
+            false -> EdDSAPublicKey(EdDSAPublicKeySpec(publicKeyHex.fromHex(), spec))
+        }
     } catch (ex: Exception) {
         throw CryptoException("Cannot create a public key from hex `$publicKeyHex`", ex)
     }
