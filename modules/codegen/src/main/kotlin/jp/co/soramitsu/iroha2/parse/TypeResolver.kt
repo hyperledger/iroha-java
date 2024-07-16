@@ -16,6 +16,7 @@ import jp.co.soramitsu.iroha2.type.I8Type
 import jp.co.soramitsu.iroha2.type.IntType
 import jp.co.soramitsu.iroha2.type.IterableType
 import jp.co.soramitsu.iroha2.type.MapType
+import jp.co.soramitsu.iroha2.type.NullType
 import jp.co.soramitsu.iroha2.type.OptionType
 import jp.co.soramitsu.iroha2.type.SetType
 import jp.co.soramitsu.iroha2.type.StringType
@@ -451,7 +452,7 @@ data class TypeNest(val name: String, var value: Type?) {
 
     private var resolutionInProgress: Boolean = false
 
-    fun requireValue() = value ?: throw IllegalArgumentException("Type is not resolved: $name")
+    fun requireValue() = value ?: NullType
 
     fun notResolvedTypes(): Set<String> {
         if (resolutionInProgress) {

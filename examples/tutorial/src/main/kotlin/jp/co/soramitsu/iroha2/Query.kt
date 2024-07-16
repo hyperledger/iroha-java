@@ -36,11 +36,11 @@ open class Query(
         .let { client.sendQuery(it) }
 
     suspend fun getAccountAmount(accountId: AccountId, assetDefinitionId: AssetDefinitionId): BigInteger =
-        QueryBuilder.findAccountById(accountId)
+        QueryBuilder.findAssetsByAccountId(accountId)
             .account(admin)
             .buildSigned(keyPair)
             .let { query ->
-                client.sendQuery(query).assets[assetDefinitionId]?.value
+                client.sendQuery(query).find { it.id.definition == assetDefinitionId }?.value
             }.let { value ->
                 value?.cast<AssetValue.Numeric>()?.numeric?.mantissa
             } ?: throw RuntimeException("NOT FOUND")

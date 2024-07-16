@@ -11,27 +11,26 @@ import jp.co.soramitsu.iroha2.wrapException
 import kotlin.Unit
 
 /**
- * AssetId
+ * CanUnregisterUserTrigger
  *
- * Generated from 'AssetId' regular structure
+ * Generated from 'CanUnregisterUserTrigger' regular structure
  */
-public data class AssetId(
+public data class CanUnregisterUserTrigger(
     public val account: AccountId,
-    public val definition: AssetDefinitionId,
 ) {
-    public companion object : ScaleReader<AssetId>, ScaleWriter<AssetId> {
-        override fun read(reader: ScaleCodecReader): AssetId = try {
-            AssetId(
+    public companion object :
+        ScaleReader<CanUnregisterUserTrigger>,
+        ScaleWriter<CanUnregisterUserTrigger> {
+        override fun read(reader: ScaleCodecReader): CanUnregisterUserTrigger = try {
+            CanUnregisterUserTrigger(
                 AccountId.read(reader),
-                AssetDefinitionId.read(reader),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: AssetId): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: CanUnregisterUserTrigger): Unit = try {
             AccountId.write(writer, instance.account)
-            AssetDefinitionId.write(writer, instance.definition)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

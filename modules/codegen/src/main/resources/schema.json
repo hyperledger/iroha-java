@@ -6,10 +6,6 @@
         "type": "AccountId"
       },
       {
-        "name": "assets",
-        "type": "SortedMap<AssetDefinitionId, Asset>"
-      },
-      {
         "name": "metadata",
         "type": "Metadata"
       }
@@ -471,12 +467,12 @@
   "AssetId": {
     "Struct": [
       {
-        "name": "definition",
-        "type": "AssetDefinitionId"
-      },
-      {
         "name": "account",
         "type": "AccountId"
+      },
+      {
+        "name": "definition",
+        "type": "AssetDefinitionId"
       }
     ]
   },
@@ -1167,14 +1163,6 @@
         "type": "DomainId"
       },
       {
-        "name": "asset_definitions",
-        "type": "SortedMap<AssetDefinitionId, AssetDefinition>"
-      },
-      {
-        "name": "asset_total_quantities",
-        "type": "SortedMap<AssetDefinitionId, Numeric>"
-      },
-      {
         "name": "logo",
         "type": "Option<IpfsPath>"
       },
@@ -1379,6 +1367,10 @@
       {
         "name": "trigger",
         "type": "TriggerId"
+      },
+      {
+        "name": "args",
+        "type": "Option<JsonString>"
       }
     ]
   },
@@ -1391,6 +1383,10 @@
       {
         "name": "authority",
         "type": "AccountId"
+      },
+      {
+        "name": "args",
+        "type": "Option<JsonString>"
       }
     ]
   },
@@ -2593,6 +2589,9 @@
   "Option<IpfsPath>": {
     "Option": "IpfsPath"
   },
+  "Option<JsonString>": {
+    "Option": "JsonString"
+  },
   "Option<Name>": {
     "Option": "Name"
   },
@@ -3163,6 +3162,10 @@
       {
         "name": "executor",
         "type": "String"
+      },
+      {
+        "name": "parameters",
+        "type": "Vec<Parameter>"
       },
       {
         "name": "instructions",
@@ -3838,24 +3841,6 @@
         "type": "u16"
       }
     ]
-  },
-  "SortedMap<AssetDefinitionId, Asset>": {
-    "Map": {
-      "key": "AssetDefinitionId",
-      "value": "Asset"
-    }
-  },
-  "SortedMap<AssetDefinitionId, AssetDefinition>": {
-    "Map": {
-      "key": "AssetDefinitionId",
-      "value": "AssetDefinition"
-    }
-  },
-  "SortedMap<AssetDefinitionId, Numeric>": {
-    "Map": {
-      "key": "AssetDefinitionId",
-      "value": "Numeric"
-    }
   },
   "SortedMap<CustomParameterId, CustomParameter>": {
     "Map": {
@@ -4546,6 +4531,9 @@
   },
   "Vec<InstructionBox>": {
     "Vec": "InstructionBox"
+  },
+  "Vec<Parameter>": {
+    "Vec": "Parameter"
   },
   "Vec<PeerId>": {
     "Vec": "PeerId"

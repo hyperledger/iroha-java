@@ -23,6 +23,7 @@ class SerializerTest {
             RawGenesisTransaction(
                 ChainId(UUID.randomUUID().toString()),
                 Genesis.EXECUTOR_FILE_NAME,
+                emptyList(),
                 Instructions.grantPermissionToken(
                     Permissions.CanUnregisterAccount,
                     "ed012004FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
@@ -61,13 +62,14 @@ class SerializerTest {
         val aliceAccountId =
             "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03${ACCOUNT_ID_DELIMITER}wonderland".asAccountId()
         val assetId = AssetId(
-            AssetDefinitionId("wonderland".asDomainId(), "xor".asName()),
             aliceAccountId,
+            AssetDefinitionId("wonderland".asDomainId(), "xor".asName()),
         )
         val genesis = Genesis(
             RawGenesisTransaction(
                 ChainId(UUID.randomUUID().toString()),
                 Genesis.EXECUTOR_FILE_NAME,
+                emptyList(),
                 listOf(
                     Instructions.mintAsset(assetId, 100),
                     Instructions.setKeyValue(

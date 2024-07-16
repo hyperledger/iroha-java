@@ -1,6 +1,53 @@
 {
   "chain": "00000000-0000-0000-0000-000000000000",
   "executor": "./executor.wasm",
+  "parameters": [
+    {
+      "Sumeragi": {
+        "BlockTimeMs": 2000
+      }
+    },
+    {
+      "Sumeragi": {
+        "CommitTimeMs": 4000
+      }
+    },
+    {
+      "Block": {
+        "MaxTransactions": 512
+      }
+    },
+    {
+      "Transaction": {
+        "MaxInstructions": 4096
+      }
+    },
+    {
+      "Transaction": {
+        "SmartContractSize": 4194304
+      }
+    },
+    {
+      "Executor": {
+        "Fuel": 55000000
+      }
+    },
+    {
+      "Executor": {
+        "Memory": 55000000
+      }
+    },
+    {
+      "SmartContract": {
+        "Fuel": 55000000
+      }
+    },
+    {
+      "SmartContract": {
+        "Memory": 55000000
+      }
+    }
+  ],
   "instructions": [
     {
       "Register": {
@@ -69,14 +116,8 @@
             "filter": {
               "Time": {
                 "Schedule": {
-                  "start": {
-                    "secs": 1790774026,
-                    "nanos": 0
-                  },
-                  "period": {
-                    "secs": 1,
-                    "nanos": 0
-                  }
+                  "start_ms": 1790774026000,
+                  "period_ms": 1000
                 }
               }
             },
@@ -213,7 +254,7 @@
     {
       "Register": {
         "Trigger": {
-          "id": "name$wonderland",
+          "id": "name2$wonderland",
           "action": {
             "executable": {
               "Instructions": [

@@ -8,31 +8,27 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 import kotlin.Unit
 
 /**
- * ExecuteTrigger
+ * CanBurnUserTrigger
  *
- * Generated from 'ExecuteTrigger' regular structure
+ * Generated from 'CanBurnUserTrigger' regular structure
  */
-public data class ExecuteTrigger(
+public data class CanBurnUserTrigger(
     public val trigger: TriggerId,
-    public val args: String? = null,
 ) {
-    public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
-        override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
-            ExecuteTrigger(
+    public companion object : ScaleReader<CanBurnUserTrigger>, ScaleWriter<CanBurnUserTrigger> {
+        override fun read(reader: ScaleCodecReader): CanBurnUserTrigger = try {
+            CanBurnUserTrigger(
                 TriggerId.read(reader),
-                reader.readNullable(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: CanBurnUserTrigger): Unit = try {
             TriggerId.write(writer, instance.trigger)
-            writer.writeNullable(instance.args)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

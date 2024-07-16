@@ -20,6 +20,9 @@ import io.ipfs.multihash.Multihash
 import io.ktor.util.toUpperCasePreservingASCIIRules
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
 import jp.co.soramitsu.iroha2.RegisterBoxDeserializer.toArg
+import jp.co.soramitsu.iroha2.RepeatsDeserializer.get
+import jp.co.soramitsu.iroha2.RepeatsDeserializer.toArg
+import jp.co.soramitsu.iroha2.TriggeringEventFilterBoxDeserializer.toArg
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Action
 import jp.co.soramitsu.iroha2.generated.Algorithm
@@ -29,9 +32,11 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.BlockHeader
+import jp.co.soramitsu.iroha2.generated.BlockParameter
 import jp.co.soramitsu.iroha2.generated.BurnBox
 import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.CustomInstruction
+import jp.co.soramitsu.iroha2.generated.CustomParameter
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.Executable
@@ -58,6 +63,7 @@ import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
 import jp.co.soramitsu.iroha2.generated.NewRole
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.Numeric
 import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.Peer
@@ -86,8 +92,11 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueOfDomain
 import jp.co.soramitsu.iroha2.generated.SetKeyValueOfTrigger
 import jp.co.soramitsu.iroha2.generated.SetParameter
 import jp.co.soramitsu.iroha2.generated.SignedBlock
+import jp.co.soramitsu.iroha2.generated.SmartContractParameter
 import jp.co.soramitsu.iroha2.generated.SocketAddr
+import jp.co.soramitsu.iroha2.generated.SumeragiParameter
 import jp.co.soramitsu.iroha2.generated.TimeEventFilter
+import jp.co.soramitsu.iroha2.generated.TransactionParameter
 import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TransferBox
 import jp.co.soramitsu.iroha2.generated.Trigger
@@ -140,6 +149,9 @@ public val JSON_SERDE by lazy {
         module.addDeserializer(Executable::class.java, ExecutableDeserializer)
         module.addDeserializer(IpfsPath::class.java, IpfsPathDeserializer)
         module.addDeserializer(Repeats::class.java, RepeatsDeserializer)
+        module.addDeserializer(Parameter::class.java, ParameterDeserializer)
+        module.addDeserializer(SumeragiParameter::class.java, SumeragiParameterDeserializer)
+        module.addDeserializer(BlockParameter::class.java, BlockParameterDeserializer)
 
         module.addKeyDeserializer(AssetDefinitionId::class.java, AssetDefinitionIdKeyDeserializer)
         module.addKeyDeserializer(AccountId::class.java, AccountIdKeyDeserializer)
@@ -328,7 +340,7 @@ object MintBoxDeserializer : JsonDeserializer<MintBox>() {
             numericTypeAndValue[1].toUpperCasePreservingASCIIRules(),
             IntNode(numericTypeAndValue[0].toInt()),
         )
-        return MintBox.Asset(MintOfNumericAndAsset(0.asNumeric(), AssetId(AssetDefinitionId("".asDomainId(), "".asName()), AccountId("".asDomainId(), PublicKey(Algorithm.Ed25519(), byteArrayOf())))))
+        return MintBox.Asset(MintOfNumericAndAsset(0.asNumeric(), AssetId(AccountId("".asDomainId(), PublicKey(Algorithm.Ed25519(), byteArrayOf())), AssetDefinitionId("".asDomainId(), "".asName()))))
     }
 }
 
@@ -336,16 +348,23 @@ object TriggeringEventFilterBoxDeserializer : JsonDeserializer<TriggeringEventFi
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggeringEventFilterBox {
         val node = p.readValueAsTree<JsonNode>().fields().next()
         val paramClass = node.key.toArg()
-        val value = JSON_SERDE.convertValue(node.value, paramClass)
+        val arg = JSON_SERDE.convertValue(node.value, paramClass)
 
-        return TriggeringEventFilterBox.ExecuteTrigger(
-            executeTriggerEventFilter = value as ExecuteTriggerEventFilter,
-        )
+        return getBox(arg)
     }
 
     private fun String.toArg(): Class<*> {
         return when (this) {
             "ExecuteTrigger" -> ExecuteTriggerEventFilter::class.java
+            "Time" -> TimeEventFilter::class.java
+            else -> throw DeserializationException("Unknown type `$this`")
+        }
+    }
+
+    private fun getBox(arg: Any): TriggeringEventFilterBox {
+        return when (arg) {
+            is ExecuteTriggerEventFilter -> TriggeringEventFilterBox.ExecuteTrigger(arg)
+            is TimeEventFilter -> TriggeringEventFilterBox.Time(arg)
             else -> throw DeserializationException("Unknown type `$this`")
         }
     }
@@ -573,6 +592,69 @@ object RepeatsDeserializer : JsonDeserializer<Repeats>() {
             is Unit -> Repeats.Indefinitely()
             else -> throw DeserializationException("Unknown type: $this")
         }
+    }
+}
+
+/**
+ * Deserializer for [Parameter]
+ */
+object ParameterDeserializer : JsonDeserializer<Parameter>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Parameter {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+        return JSON_SERDE.convertValue(node.value, node.key.toArg()).get()
+    }
+
+    private fun String.toArg(): Class<*> {
+        return when (this) {
+            "Sumeragi" -> SumeragiParameter::class.java
+            "Block" -> BlockParameter::class.java
+            "Transaction" -> TransactionParameter::class.java
+            "SmartContract" -> SmartContractParameter::class.java
+            "Executor" -> SmartContractParameter::class.java
+            "Custom" -> CustomParameter::class.java
+            else -> throw DeserializationException("Unknown type: $this")
+        }
+    }
+
+    private fun Any.get(): Parameter {
+        return when (this) {
+            is SumeragiParameter -> Parameter.Sumeragi(this)
+            is BlockParameter -> Parameter.Block(this)
+            is TransactionParameter -> Parameter.Transaction(this)
+            is SmartContractParameter -> Parameter.SmartContract(this)
+            is CustomParameter -> Parameter.Custom(this)
+            else -> throw DeserializationException("Unknown type: $this")
+        }
+    }
+}
+
+/**
+ * Deserializer for [SumeragiParameter]
+ */
+object SumeragiParameterDeserializer : JsonDeserializer<SumeragiParameter>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): SumeragiParameter {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+        val arg = JSON_SERDE.convertValue(node.value, BigInteger::class.java)
+        return get(arg, node.key)
+    }
+
+    private fun get(arg: BigInteger, type: String): SumeragiParameter {
+        return when (type) {
+            "BlockTimeMs" -> SumeragiParameter.BlockTimeMs(arg)
+            "CommitTimeMs" -> SumeragiParameter.CommitTimeMs(arg)
+            else -> throw DeserializationException("Unknown type: $this")
+        }
+    }
+}
+
+/**
+ * Deserializer for [BlockParameter]
+ */
+object BlockParameterDeserializer : JsonDeserializer<BlockParameter>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): BlockParameter {
+        val node = p.readValueAsTree<JsonNode>().fields().next()
+        val arg = JSON_SERDE.convertValue(node.value, BigInteger::class.java)
+        return BlockParameter.MaxTransactions(NonZeroOfu64(arg))
     }
 }
 

@@ -39,11 +39,11 @@ fun String.asAssetId() = this.split(ASSET_ID_DELIMITER).takeIf {
         val domainId = parts[1].takeIf { it.isNotBlank() }?.asDomainId()
 
         AssetId(
+            accountId,
             AssetDefinitionId(
                 domainId ?: accountId.domain,
                 parts[0].asName(),
             ),
-            accountId,
         )
     }
 } ?: throw IllegalArgumentException("Incorrect asset ID: $this")

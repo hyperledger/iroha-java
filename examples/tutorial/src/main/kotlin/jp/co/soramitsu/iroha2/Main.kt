@@ -43,7 +43,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     sendTransaction.registerAssetDefinition(assetDefinition, AssetType.numeric())
         .also { println("ASSET DEFINITION $assetDefinition CREATED") }
 
-    val madHatterAsset = AssetId(assetDefinition.asAssetDefinitionId(), madHatter)
+    val madHatterAsset = AssetId(madHatter, assetDefinition.asAssetDefinitionId())
     sendTransaction.registerAsset(madHatterAsset, AssetValue.Numeric(100.asNumeric()))
         .also { println("ASSET $madHatterAsset CREATED") }
 
@@ -52,7 +52,7 @@ fun main(args: Array<String>): Unit = runBlocking {
     sendTransaction.registerAccount(whiteRabbit.asString())
         .also { println("ACCOUNT $whiteRabbit CREATED") }
 
-    val whiteRabbitAsset = AssetId(assetDefinition.asAssetDefinitionId(), whiteRabbit)
+    val whiteRabbitAsset = AssetId(whiteRabbit, assetDefinition.asAssetDefinitionId())
     sendTransaction.registerAsset(whiteRabbitAsset, AssetValue.Numeric(0.asNumeric()))
         .also { println("ASSET $whiteRabbitAsset CREATED") }
 

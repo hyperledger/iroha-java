@@ -10,14 +10,12 @@ import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.AssetValueType
 import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventEventFilterBox
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
@@ -255,7 +253,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
 
         val testKey = "key"
         val testValue = "value"
-        client.tx { setKeyValue(triggerId, testKey.asName(), testValue.asMetadataValueBox()) }
+        client.tx { setKeyValue(triggerId, testKey.asName(), testValue) }
         QueryBuilder.findTriggerById(triggerId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -298,7 +296,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         client.tx {
             registerExecutableTrigger(
                 setKeyValueTriggerId,
-                listOf(Instructions.setKeyValue(wasmTriggerId, testKey.asName(), testValue.asMetadataValueBox())),
+                listOf(Instructions.setKeyValue(wasmTriggerId, testKey.asName(), testValue)),
                 Repeats.Exactly(1L),
                 ALICE_ACCOUNT_ID,
             )
@@ -357,7 +355,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         repeat(10) { i ->
             client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
-                setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i".asMetadataValueBox())
+                setKeyValue(ALICE_ACCOUNT_ID, "key$i".asName(), "value$i")
                 buildSigned(ALICE_KEYPAIR)
             }.also { d ->
                 delay(1000)
@@ -427,7 +425,6 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
-            .accounts
             .filter { it.key.name == ALICE_ACCOUNT_NAME }
             .map { it.value.assets[DEFAULT_ASSET_ID] }
             .map { (it?.value as AssetValue.Numeric).numeric.asLong() }
@@ -439,7 +436,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         repeat(2) { i ->
             client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
-                setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i".asMetadataValueBox())
+                setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i")
                 buildSigned(ALICE_KEYPAIR)
             }.also { d ->
                 withTimeout(txTimeout) { d.await() }

@@ -8,31 +8,29 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
-import kotlin.String
 import kotlin.Unit
 
 /**
- * ExecuteTrigger
+ * CanRemoveKeyValueInTrigger
  *
- * Generated from 'ExecuteTrigger' regular structure
+ * Generated from 'CanRemoveKeyValueInTrigger' regular structure
  */
-public data class ExecuteTrigger(
+public data class CanRemoveKeyValueInTrigger(
     public val trigger: TriggerId,
-    public val args: String? = null,
 ) {
-    public companion object : ScaleReader<ExecuteTrigger>, ScaleWriter<ExecuteTrigger> {
-        override fun read(reader: ScaleCodecReader): ExecuteTrigger = try {
-            ExecuteTrigger(
+    public companion object :
+        ScaleReader<CanRemoveKeyValueInTrigger>,
+        ScaleWriter<CanRemoveKeyValueInTrigger> {
+        override fun read(reader: ScaleCodecReader): CanRemoveKeyValueInTrigger = try {
+            CanRemoveKeyValueInTrigger(
                 TriggerId.read(reader),
-                reader.readNullable(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
-        override fun write(writer: ScaleCodecWriter, instance: ExecuteTrigger): Unit = try {
+        override fun write(writer: ScaleCodecWriter, instance: CanRemoveKeyValueInTrigger): Unit = try {
             TriggerId.write(writer, instance.trigger)
-            writer.writeNullable(instance.args)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

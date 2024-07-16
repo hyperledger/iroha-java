@@ -20,6 +20,7 @@ import kotlin.collections.List
 public data class RawGenesisTransaction(
     public val chain: ChainId,
     public val executor: String,
+    public val parameters: List<Parameter>,
     public val instructions: List<InstructionBox>,
     public val topology: List<PeerId>,
 ) {
@@ -28,6 +29,7 @@ public data class RawGenesisTransaction(
             RawGenesisTransaction(
                 ChainId.read(reader),
                 reader.readString(),
+                reader.readVec(reader.readCompactInt()) { Parameter.read(reader) },
                 reader.readVec(reader.readCompactInt()) { InstructionBox.read(reader) },
                 reader.readVec(reader.readCompactInt()) { PeerId.read(reader) },
             )
@@ -38,6 +40,10 @@ public data class RawGenesisTransaction(
         override fun write(writer: ScaleCodecWriter, instance: RawGenesisTransaction): Unit = try {
             ChainId.write(writer, instance.chain)
             writer.writeAsList(instance.executor.toByteArray(Charsets.UTF_8))
+            writer.writeCompact(instance.parameters.size)
+            instance.parameters.forEach { value ->
+                Parameter.write(writer, value)
+            }
             writer.writeCompact(instance.instructions.size)
             instance.instructions.forEach { value ->
                 InstructionBox.write(writer, value)

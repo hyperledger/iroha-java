@@ -54,6 +54,7 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
                 RawGenesisTransaction(
                     ChainId(UUID.randomUUID().toString()),
                     EXECUTOR_FILE_NAME,
+                    emptyList(),
                     uniqueIsi.mergeMetadata().toList(),
                     emptyList(),
                 ),
