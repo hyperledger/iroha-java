@@ -336,6 +336,8 @@ fun Number.asNumeric() = when (this) {
     else -> throw IrohaSdkException("Unexpected type to extract numeric ${this::class}")
 }
 
+fun String.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
+
 fun Int.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)
 
 fun Long.asNumeric() = Numeric(mantissa = this.toBigInteger(), scale = 0)

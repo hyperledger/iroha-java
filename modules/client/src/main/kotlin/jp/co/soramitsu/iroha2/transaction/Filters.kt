@@ -10,7 +10,6 @@ import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.DataEventFilter
 import jp.co.soramitsu.iroha2.generated.DomainEventFilter
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.EventFilterBox
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.ExecutionTime
@@ -175,8 +174,8 @@ object EventFilters {
      * Create a filter with a timed execution
      */
     fun timeEventFilter(
-        start: Duration,
-        period: Duration? = null,
+        start: BigInteger,
+        period: BigInteger? = null,
     ) = TimeEventFilter(ExecutionTime.Schedule(Schedule(start, period)))
 
     /**

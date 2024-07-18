@@ -3,7 +3,6 @@ package jp.co.soramitsu.iroha2
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.ChainId
-import jp.co.soramitsu.iroha2.generated.Duration
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
@@ -84,8 +83,8 @@ class SerializerTest {
                         aliceAccountId,
                         Metadata(mapOf()),
                         EventFilters.timeEventFilter(
-                            Duration(BigInteger.valueOf(1715676978L), 0L),
-                            Duration(BigInteger.valueOf(1L), 0L),
+                            BigInteger.valueOf(1715676978L),
+                            BigInteger.valueOf(1L),
                         ),
                     ),
                 ),

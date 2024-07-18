@@ -84,7 +84,7 @@
             "authority": "ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4@wonderland",
             "filter": {
               "ExecuteTrigger": {
-                "trigger_id": "name",
+                "trigger": "name",
                 "authority": "ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4@wonderland"
               }
             },

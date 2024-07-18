@@ -20,7 +20,7 @@ class DeserializerTest {
         // Grant -> PermissionToken (2)
         // Mint -> AssetId (2)
         // Register -> Trigger (2)
-        assert(transaction.instructions.size == 10)
+        assert(transaction.instructions.size == 16)
 
         val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
