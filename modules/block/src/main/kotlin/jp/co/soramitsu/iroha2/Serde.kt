@@ -104,7 +104,6 @@ import jp.co.soramitsu.iroha2.generated.TransactionQueryOutput
 import jp.co.soramitsu.iroha2.generated.TransferBox
 import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndAssetDefinitionIdAndAccount
 import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndDomainIdAndAccount
-import jp.co.soramitsu.iroha2.generated.TransferOfAssetAndNumericAndAccount
 import jp.co.soramitsu.iroha2.generated.Trigger
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
@@ -577,7 +576,7 @@ object NewAssetDefinitionDeserializer : JsonDeserializer<NewAssetDefinition>() {
         val node = p.readValueAsTree<JsonNode>()
         val domainId = node["id"].asText().asAssetDefinitionId()
         val mintable = JSON_SERDE.convertValue(node["mintable"], Mintable::class.java)
-        val type = JSON_SERDE.convertValue(node["type_"], AssetType::class.java)
+        val type = JSON_SERDE.convertValue(node["type"], AssetType::class.java)
         val logo = JSON_SERDE.convertValue(node["logo"], IpfsPath::class.java)
         val metadata = JSON_SERDE.convertValue(node["metadata"], Metadata::class.java)
 
