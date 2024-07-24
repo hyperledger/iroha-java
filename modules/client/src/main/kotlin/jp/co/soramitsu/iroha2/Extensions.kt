@@ -56,8 +56,12 @@ fun String.asName() = Name(this)
 
 fun ByteArray.toFrame(fin: Boolean = true) = Frame.Binary(fin, this)
 
-fun ByteArray.toHex(): String = try {
-    Hex.toHexString(this)
+fun ByteArray.toHex(withPrefix: Boolean = false): String = try {
+    val prefix = when (withPrefix) {
+        true -> "ed0120"
+        false -> ""
+    }
+    "${prefix}${Hex.toHexString(this)}"
 } catch (ex: Exception) {
     throw HexCodecException("Cannot encode to hex string", ex)
 }
@@ -131,7 +135,7 @@ inline fun <reified B> Any.cast(): B {
         ?: throw ClassCastException("Could not cast `${this::class.qualifiedName}` to `${B::class.qualifiedName}`")
 }
 
-fun AssetId.asString() = this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString()
+fun AssetId.asString(withPrefix: Boolean = false) = this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString(withPrefix)
 
 fun AssetId.asJsonString() = "{\"${AssetId::class.java.simpleName.toSnakeCase()}\": " +
     "\"${this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString()}\"}"
@@ -141,7 +145,8 @@ fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.
 fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpleName.toSnakeCase()}\": " +
     "\"${this.name.string + ASSET_ID_DELIMITER + this.domain.name.string}\"}"
 
-fun AccountId.asString() = this.signatory.payload.toHex() + ACCOUNT_ID_DELIMITER + this.domain.name.string
+fun AccountId.asString(withPrefix: Boolean = false) = this.signatory.payload.toHex(withPrefix) +
+    ACCOUNT_ID_DELIMITER + this.domain.name.string
 
 fun AccountId.asJsonString() = "{\"${AccountId::class.java.simpleName.toSnakeCase()}\": " +
     "\"${this.signatory.payload.toHex() + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
@@ -355,6 +360,13 @@ fun Numeric.asLong() = this.mantissa.toLong()
 fun Numeric.asBigInteger() = this.mantissa
 
 fun Numeric.asBigDecimal() = BigDecimal.valueOf(this.mantissa.toLong(), this.scale.toInt())
+
+fun Numeric.asNumber() = when (this.scale) {
+    0L -> this.mantissa
+    else -> this.asBigDecimal()
+}
+
+fun Numeric.asString() = this.asNumber().toString()
 
 fun AssetType.Companion.numeric(scale: Long? = null) = AssetType.Numeric(NumericSpec(scale))
 

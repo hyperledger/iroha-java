@@ -19,7 +19,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ipfs.multihash.Multihash
 import jp.co.soramitsu.iroha2.DigestFunction.Ed25519
-import jp.co.soramitsu.iroha2.MintBoxDeserializer.toArg
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.Action
 import jp.co.soramitsu.iroha2.generated.Algorithm
@@ -118,7 +117,7 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
 /**
- * This JSON mapper is configured to serialise and deserialise `Genesis block` in a format compatible with Iroha 2 peer
+ * This JSON mapper is configured to serialize and deserialize `Genesis block` in a format compatible with Iroha 2 peer
  */
 public val JSON_SERDE by lazy {
     ObjectMapper().also { mapper ->
@@ -194,6 +193,19 @@ public val JSON_SERDE by lazy {
         module.addSerializer(Schedule::class.java, ScheduleSerializer)
         module.addSerializer(Executor::class.java, ExecutorSerializer)
         module.addSerializer(InstructionBox::class.java, InstructionBoxSerializer)
+        module.addSerializer(RegisterOfDomain::class.java, RegisterOfDomainSerializer)
+        module.addSerializer(RegisterOfTrigger::class.java, RegisterOfTriggerSerializer)
+        module.addSerializer(RegisterOfRole::class.java, RegisterOfRoleSerializer)
+        module.addSerializer(RegisterOfAsset::class.java, RegisterOfAssetSerializer)
+        module.addSerializer(RegisterOfAssetDefinition::class.java, RegisterOfAssetDefinitionSerializer)
+        module.addSerializer(RegisterOfPeer::class.java, RegisterOfPeerSerializer)
+        module.addSerializer(RegisterOfAccount::class.java, RegisterOfAccountSerializer)
+        module.addSerializer(AssetTransferBox::class.java, AssetTransferBoxSerializer)
+        module.addSerializer(NonZeroOfu64::class.java, NonZeroOfu64Serializer)
+        module.addSerializer(Executable.Instructions::class.java, ExecutableInstructionsSerializer)
+        module.addSerializer(ExecuteTriggerEventFilter::class.java, ExecuteTriggerEventFilterSerializer)
+        module.addSerializer(AssetType::class.java, AssetTypeSerializer)
+        module.addSerializer(Numeric::class.java, NumericSerializer)
 
         mapper.registerModule(module)
         mapper.registerModule(
@@ -520,12 +532,9 @@ object NewRoleDeserializer : JsonDeserializer<NewRole>() {
  */
 object AssetTypeDeserializer : JsonDeserializer<AssetType>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): AssetType {
-        return when (val node = p.readValueAsTree<JsonNode>()) {
-            is TextNode -> AssetType.Store()
-            is ObjectNode -> {
-                val field = node.fields().next()
-                AssetType.Numeric(JSON_SERDE.convertValue(field.value, NumericSpec::class.java))
-            }
+        return when (p.readValueAsTree<TextNode>().textValue()) {
+            AssetType.Numeric::class.simpleName -> AssetType.Numeric(NumericSpec())
+            AssetType.Store::class.simpleName -> AssetType.Store()
             else -> throw DeserializationException("Unknown type: $this")
         }
     }
@@ -963,11 +972,14 @@ object DomainIdKeyDeserializer : KeyDeserializer() {
 object RawGenesisTransactionSerializer : JsonSerializer<RawGenesisTransaction>() {
     override fun serialize(tx: RawGenesisTransaction, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
+        gen.writeObjectField("chain", tx.chain.string)
+        gen.writeObjectField("executor", tx.executor)
+        gen.writeObjectField("parameters", tx.parameters)
         when (tx.instructions.isEmpty()) {
             true -> gen.writeObjectField("instructions", listOf<InstructionBox>())
             false -> gen.writeObjectField("instructions", tx.instructions)
         }
-        gen.writeObjectField("executor", tx.executor)
+        gen.writeObjectField("topology", tx.topology)
         gen.writeEndObject()
     }
 }
@@ -986,7 +998,7 @@ object AssetDefinitionIdSerializer : JsonSerializer<AssetDefinitionId>() {
  */
 object AssetIdSerializer : JsonSerializer<AssetId>() {
     override fun serialize(value: AssetId, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeString(value.asString())
+        gen.writeString(value.asString(true))
     }
 }
 
@@ -995,7 +1007,7 @@ object AssetIdSerializer : JsonSerializer<AssetId>() {
  */
 object AccountIdSerializer : JsonSerializer<AccountId>() {
     override fun serialize(value: AccountId, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeString(value.asString())
+        gen.writeString(value.asString(true))
     }
 }
 
@@ -1087,9 +1099,139 @@ object ExecutorSerializer : JsonSerializer<Executor>() {
 object InstructionBoxSerializer : JsonSerializer<InstructionBox>() {
     override fun serialize(value: InstructionBox, gen: JsonGenerator, serializers: SerializerProvider) {
         when (value) {
-//            is Executor -> gen.writeString(value.wasm)
+            is InstructionBox.Register -> value.serializeBox<RegisterBox>(gen)
+            is InstructionBox.SetKeyValue -> value.serializeBox<SetKeyValueBox>(gen)
+            is InstructionBox.Mint -> value.serializeBox<MintBox>(gen)
+            is InstructionBox.Burn -> value.serializeBox<BurnBox>(gen)
+            is InstructionBox.Transfer -> value.serializeBox<TransferBox>(gen)
+            is InstructionBox.Grant -> value.serializeBox<GrantBox>(gen)
             else -> throw IrohaSdkException("Unsupported type ${this::class}")
         }
+    }
+}
+
+/**
+ * Serializer for [RegisterOfDomain]
+ */
+object RegisterOfDomainSerializer : JsonSerializer<RegisterOfDomain>() {
+    override fun serialize(value: RegisterOfDomain, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfTrigger]
+ */
+object RegisterOfTriggerSerializer : JsonSerializer<RegisterOfTrigger>() {
+    override fun serialize(value: RegisterOfTrigger, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfRole]
+ */
+object RegisterOfRoleSerializer : JsonSerializer<RegisterOfRole>() {
+    override fun serialize(value: RegisterOfRole, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfAsset]
+ */
+object RegisterOfAssetSerializer : JsonSerializer<RegisterOfAsset>() {
+    override fun serialize(value: RegisterOfAsset, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfAssetDefinition]
+ */
+object RegisterOfAssetDefinitionSerializer : JsonSerializer<RegisterOfAssetDefinition>() {
+    override fun serialize(value: RegisterOfAssetDefinition, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfPeer]
+ */
+object RegisterOfPeerSerializer : JsonSerializer<RegisterOfPeer>() {
+    override fun serialize(value: RegisterOfPeer, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [RegisterOfAccount]
+ */
+object RegisterOfAccountSerializer : JsonSerializer<RegisterOfAccount>() {
+    override fun serialize(value: RegisterOfAccount, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.`object`)
+    }
+}
+
+/**
+ * Serializer for [AssetTransferBox]
+ */
+object AssetTransferBoxSerializer : JsonSerializer<AssetTransferBox>() {
+    override fun serialize(value: AssetTransferBox, gen: JsonGenerator, serializers: SerializerProvider) {
+        when (value) {
+            is AssetTransferBox.Numeric -> gen.writeObject(value.transferOfAssetAndNumericAndAccount)
+            is AssetTransferBox.Store -> gen.writeObject(value.transferOfAssetAndMetadataAndAccount)
+        }
+    }
+}
+
+/**
+ * Serializer for [NonZeroOfu64]
+ */
+object NonZeroOfu64Serializer : JsonSerializer<NonZeroOfu64>() {
+    override fun serialize(value: NonZeroOfu64, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.u64)
+    }
+}
+
+/**
+ * Serializer for [Executable.Instructions]
+ */
+object ExecutableInstructionsSerializer : JsonSerializer<Executable.Instructions>() {
+    override fun serialize(value: Executable.Instructions, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
+        gen.writeObjectField(Executable.Instructions::class.simpleName, value.vec.first()) // TODO
+        gen.writeEndObject()
+    }
+}
+
+/**
+ * Serializer for [ExecuteTriggerEventFilter]
+ */
+object ExecuteTriggerEventFilterSerializer : JsonSerializer<ExecuteTriggerEventFilter>() {
+    override fun serialize(value: ExecuteTriggerEventFilter, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
+        gen.writeObjectField("trigger", value.triggerId)
+        gen.writeObjectField("authority", value.authority)
+        gen.writeEndObject()
+    }
+}
+
+/**
+ * Serializer for [AssetType]
+ */
+object AssetTypeSerializer : JsonSerializer<AssetType>() {
+    override fun serialize(value: AssetType, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value::class.simpleName)
+    }
+}
+
+/**
+ * Serializer for [Numeric]
+ */
+object NumericSerializer : JsonSerializer<Numeric>() {
+    override fun serialize(value: Numeric, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeObject(value.asString())
     }
 }
 
@@ -1138,14 +1280,16 @@ object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole
  */
 object ParameterSerializer : JsonSerializer<Parameter>() {
     override fun serialize(value: Parameter, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeStartObject()
         when (value) {
-            is Parameter.Block -> gen.writeObject(value.blockParameter) // TODO
-            is Parameter.Custom -> gen.writeObject(value.customParameter)
-            is Parameter.Executor -> gen.writeObject(value.smartContractParameter)
-            is Parameter.SmartContract -> gen.writeObject(value.smartContractParameter)
-            is Parameter.Sumeragi -> gen.writeObject(value.sumeragiParameter)
-            is Parameter.Transaction -> gen.writeObject(value.transactionParameter)
+            is Parameter.Block -> gen.writeObjectField(Parameter.Block::class.simpleName, value.blockParameter)
+            is Parameter.Custom -> gen.writeObjectField(Parameter.Custom::class.simpleName, value.customParameter)
+            is Parameter.Executor -> gen.writeObjectField(Parameter.Executor::class.simpleName, value.smartContractParameter)
+            is Parameter.SmartContract -> gen.writeObjectField(Parameter.SmartContract::class.simpleName, value.smartContractParameter)
+            is Parameter.Sumeragi -> gen.writeObjectField(Parameter.Sumeragi::class.simpleName, value.sumeragiParameter)
+            is Parameter.Transaction -> gen.writeObjectField(Parameter.Transaction::class.simpleName, value.transactionParameter)
         }
+        gen.writeEndObject()
     }
 }
 
@@ -1201,58 +1345,31 @@ private inline fun <reified B> B.serializeBox(
     BurnBox::class -> this?.cast<BurnBox>()?.serializeBox(gen)
     MintBox::class -> this?.cast<MintBox>()?.serializeBox(gen)
     GrantBox::class -> this?.cast<GrantBox>()?.serializeBox(gen)
+    TransferBox::class -> this?.cast<TransferBox>()?.serializeBox(gen)
     SetKeyValueBox::class -> this?.cast<SetKeyValueBox>()?.serializeBox(gen)
     RegisterBox::class -> this?.cast<RegisterBox>()?.serializeBox(gen)
     else -> throw IrohaSdkException("Unexpected type ${B::class}")
 }
 
-private fun BurnBox.serializeBox(gen: JsonGenerator) {
-    when (this) {
-        is BurnBox.Asset -> gen.writeObject(this.burnOfNumericAndAsset) // TODO
-        is BurnBox.TriggerRepetitions -> gen.writeObject(this.burnOfu32AndTrigger)
-    }
-}
+private fun BurnBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
 
-private fun MintBox.serializeBox(gen: JsonGenerator) {
-    when (this) {
-        is MintBox.Asset -> gen.writeObject(this.mintOfNumericAndAsset) // TODO
-        is MintBox.TriggerRepetitions -> gen.writeObject(this.mintOfu32AndTrigger)
-    }
-}
+private fun MintBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
 
-private fun GrantBox.serializeBox(gen: JsonGenerator) {
-    when (this) {
-        is GrantBox.Permission -> gen.writeObject(this.grantOfPermissionAndAccount) // TODO
-        is GrantBox.Role -> gen.writeObject(this.grantOfRoleIdAndAccount)
-        is GrantBox.RolePermission -> gen.writeObject(this.grantOfPermissionAndRole)
-    }
-}
+private fun GrantBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
 
-private fun RegisterBox.serializeBox(gen: JsonGenerator) {
-    val clazz = this::class
-    val memberProperties = clazz.memberProperties
+private fun TransferBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
+
+private fun RegisterBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
+
+private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) = serializeBox(this, gen)
+
+private fun serializeBox(obj: Any, gen: JsonGenerator) {
+    val memberProperties = obj::class.memberProperties
     when (memberProperties.size) {
-        0 -> gen.writeString(clazz.simpleName)
-        1 -> {
-            gen.writeStartObject()
-            gen.writeObjectField(
-                clazz.simpleName,
-                memberProperties.first().call(this)?.cast<RegisterBox>(), // TODO
-            )
-            gen.writeEndObject()
-        }
+        0 -> gen.writeString(obj::class.simpleName)
+        1 -> gen.writeObjectField(obj::class.simpleName, memberProperties.first().call(obj))
 
         else -> throw SerializationException("Expected enum that accepts exactly 0 or 1 members as tuple")
-    }
-}
-
-private fun SetKeyValueBox.serializeBox(gen: JsonGenerator) {
-    when (this) {
-        is SetKeyValueBox.Account -> gen.writeObject(this.setKeyValueOfAccount) // TODO
-        is SetKeyValueBox.Trigger -> gen.writeObject(this.setKeyValueOfTrigger)
-        is SetKeyValueBox.Asset -> gen.writeObject(this.setKeyValueOfAsset)
-        is SetKeyValueBox.Domain -> gen.writeObject(this.setKeyValueOfDomain)
-        is SetKeyValueBox.AssetDefinition -> gen.writeObject(this.setKeyValueOfAssetDefinition)
     }
 }
 

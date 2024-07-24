@@ -342,7 +342,7 @@ open class Iroha2Client(
             start?.also { parameter("start", it) }
             limit?.also { parameter("limit", it) }
             sorting?.also { parameter("sort_by_metadata_key", it) }
-            queryCursor?.query?.also { parameter("query_id", it) }
+            queryCursor?.query?.also { parameter("query", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
         return response.body<ByteArray>().let { BatchedResponse.decode(it) }.cast<BatchedResponse<QueryOutputBox>>()
