@@ -6,10 +6,10 @@ extern crate alloc;
 extern crate panic_halt;
 
 use iroha_executor::{prelude::*, DataModelBuilder};
-use lol_alloc::{FreeListAllocator, LockedAllocator};
+use dlmalloc::GlobalDlmalloc;
 
 #[global_allocator]
-static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeListAllocator::new());
+static ALLOC: GlobalDlmalloc = GlobalDlmalloc;
 
 /// Executor that replaces some of [`Validate`]'s methods with sensible defaults
 ///
