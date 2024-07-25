@@ -193,9 +193,10 @@ open class Iroha2Client(
         start: Long? = null,
         limit: Long? = null,
         sorting: String? = null,
+        queryCursor: ForwardCursor? = null,
     ): T {
         logger.debug("Sending query")
-        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting)
+        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
         val cursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
         val finalResult = when (cursor.cursor) {
             null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
@@ -206,10 +207,7 @@ open class Iroha2Client(
                         .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
                 )
                 BatchedResponse.V1(
-                    BatchedResponseV1(
-                        QueryOutputBox.Vec(resultList),
-                        ForwardCursor(),
-                    ),
+                    BatchedResponseV1(QueryOutputBox.Vec(resultList), ForwardCursor()),
                 ).let { queryAndExtractor.resultExtractor.extract(it) }
             }
         }

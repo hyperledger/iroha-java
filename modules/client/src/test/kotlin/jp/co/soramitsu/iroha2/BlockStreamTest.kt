@@ -8,12 +8,11 @@ import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
-import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.InstructionBox
-import jp.co.soramitsu.iroha2.generated.MetadataValueBox
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
@@ -57,12 +56,12 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val newAssetName = "rox"
 
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-            registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetValueType.Store())
+            registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetType.Store())
         }
-        var blocks = mutableListOf<BlockMessage>()
+        val blocks = mutableListOf<BlockMessage>()
         subscription.receive<BlockMessage>(actionId).collect { block -> blocks.add(block) }
 
-        val expectedSize = NewAccountWithMetadata().transaction.transactions.sumOf { it.isi.size } + 1 // plus wasm
+        val expectedSize = NewAccountWithMetadata().transaction.instructions.count() + 1 // plus wasm
         var isi = blocks[0].validate(1, GENESIS, GENESIS, expectedSize)
         val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 
@@ -70,15 +69,15 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(ALICE_ACCOUNT_ID.asString(), isi[1].extractAccount().id.asString())
         assertEquals(BOB_ACCOUNT_ID.asString(), isi[2].extractAccount().id.asString())
         assertEquals(
-            "${NewAccountWithMetadata.ACCOUNT_NAME.string}$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN",
+            "${NewAccountWithMetadata.ACCOUNT_NAME.payload.toHex()}$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN",
             isi[3].extractAccount().id.asString(),
         )
 
         isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
-        var newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
+        val newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
-        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domainId.asString())
+        assertEquals(DEFAULT_DOMAIN, newAssetDefinition.id.domain.asString())
 
         subscription.stop()
     }
@@ -93,7 +92,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val shift = 1 // to test not to take more than was ordered
         val idToSubscription = client.subscribeToBlockStream(
             onBlock = { block -> block.extractBlock().height() },
-            cancelIf = { block -> block.extractBlock().height() == BigInteger.valueOf(repeatTimes.toLong()) },
+            cancelIf = { block -> block.extractBlock().height().u64 == BigInteger.valueOf(repeatTimes.toLong()) },
         )
         val initialActionId = idToSubscription.first.first().id
         val subscription = idToSubscription.second
@@ -102,7 +101,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         subscription.receive<BigInteger>(initialActionId) { heightSum += it }
 
         repeat(repeatTimes + shift) {
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), randomAlphabetic(16).asMetadataValueBox()) }
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), randomAlphabetic(16)) }
         }
         assertEquals((1..repeatTimes.toLong()).sum(), heightSum.toLong())
 
@@ -117,12 +116,11 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         lateinit var lastValue: String
         repeat(repeatTimes * 2) {
             lastValue = randomAlphabetic(16)
-            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), lastValue.asMetadataValueBox()) }
+            client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), lastValue) }
         }
         Thread.sleep(5000)
         val actual = isi.last().cast<InstructionBox.SetKeyValue>().setKeyValueBox
             .cast<SetKeyValueBox.Account>().setKeyValueOfAccount.value
-            .cast<MetadataValueBox.String>().string
         assertEquals(lastValue, actual)
 
         subscription.stop()
@@ -142,11 +140,11 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         expectedIsiSize: Int,
     ): List<InstructionBox> {
         val committedBlock = this.extractBlock()
-        assertEquals(expectedHeight, committedBlock.header.height.toLong())
+        assertEquals(expectedHeight, committedBlock.header.height.u64.toLong())
 
         val payloads = committedBlock.payloads()
-        assertTrue { payloads.any { it.authority.domainId.name.string == expectedDomain } }
-        assertTrue { payloads.any { it.authority.name.string == expectedAccount } }
+        assertTrue { payloads.any { it.authority.domain.name.string == expectedDomain } }
+        assertTrue { payloads.any { it.authority.signatory.payload.toHex() == expectedAccount } }
 
         val instructions = payloads.reversed().map {
             it.instructions.cast<Executable.Instructions>().vec

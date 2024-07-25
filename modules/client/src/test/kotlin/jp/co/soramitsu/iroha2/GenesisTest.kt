@@ -2,7 +2,7 @@ package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetValueType
+import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
@@ -47,7 +47,7 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
     @WithIroha([DefaultGenesis::class], executorSource = "src/test/resources/executor.wasm")
     fun `custom executor path`(): Unit = runBlocking {
         val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "XSTUSD".asName())
-        client.tx { registerAssetDefinition(definitionId, AssetValueType.numeric()) }
+        client.tx { registerAssetDefinition(definitionId, AssetType.numeric()) }
 
         QueryBuilder.findAssetDefinitionById(definitionId)
             .account(super.account)

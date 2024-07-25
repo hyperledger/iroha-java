@@ -19,7 +19,7 @@ public data class Action(
     public val executable: Executable,
     public val repeats: Repeats,
     public val authority: AccountId,
-    public val filter: TriggeringEventFilterBox,
+    public val filter: EventFilterBox,
     public val metadata: Metadata,
 ) {
     public companion object : ScaleReader<Action>, ScaleWriter<Action> {
@@ -28,7 +28,7 @@ public data class Action(
                 Executable.read(reader),
                 Repeats.read(reader),
                 AccountId.read(reader),
-                TriggeringEventFilterBox.read(reader),
+                EventFilterBox.read(reader),
                 Metadata.read(reader),
             )
         } catch (ex: Exception) {
@@ -39,7 +39,7 @@ public data class Action(
             Executable.write(writer, instance.executable)
             Repeats.write(writer, instance.repeats)
             AccountId.write(writer, instance.authority)
-            TriggeringEventFilterBox.write(writer, instance.filter)
+            EventFilterBox.write(writer, instance.filter)
             Metadata.write(writer, instance.metadata)
         } catch (ex: Exception) {
             throw wrapException(ex)

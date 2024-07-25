@@ -29,7 +29,6 @@ import jp.co.soramitsu.iroha2.generated.TransactionEventFilter
 import jp.co.soramitsu.iroha2.generated.TransactionStatus
 import jp.co.soramitsu.iroha2.generated.TriggerEventFilter
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
 import java.math.BigInteger
 
 /**

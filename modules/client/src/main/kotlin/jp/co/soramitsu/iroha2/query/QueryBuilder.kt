@@ -35,6 +35,7 @@ import jp.co.soramitsu.iroha2.generated.FetchSize
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu32
 import jp.co.soramitsu.iroha2.generated.Pagination
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.QueryBox
@@ -58,10 +59,25 @@ class QueryBuilder<R>(
     private val queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
 ) {
     private var accountId: AccountId? = null
+    private var sorting: Sorting? = null
+    private var pagination: Pagination? = null
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
     fun account(signatory: PublicKey, domainId: DomainId) = this.account(AccountId(domainId, signatory))
+
+    fun sorting(key: String) {
+        this.sorting = Sorting(key.asName())
+    }
+
+    fun soring(key: Name) {
+        this.sorting = Sorting(key)
+    }
+
+    fun pagination(limit: Long? = null, start: BigInteger? = null) {
+        this.pagination = Pagination()
+        limit?.also { this.pagination.limit = it }
+    }
 
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
         val filter = queryFilter ?: GenericPredicateBox.Raw(QueryOutputPredicate.Pass())
@@ -69,7 +85,7 @@ class QueryBuilder<R>(
             checkNotNull(accountId) { "Account Id of the sender is mandatory" },
             query,
             filter,
-            Sorting(null),
+            sorting ?: Sorting(null),
             Pagination(null, null),
             FetchSize(null),
         )

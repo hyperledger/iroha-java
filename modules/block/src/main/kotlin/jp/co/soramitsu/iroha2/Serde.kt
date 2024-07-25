@@ -37,6 +37,7 @@ import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.CustomInstruction
 import jp.co.soramitsu.iroha2.generated.CustomParameter
 import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.EventFilterBox
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.ExecuteTrigger
 import jp.co.soramitsu.iroha2.generated.ExecuteTriggerEventFilter
@@ -105,7 +106,6 @@ import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndAssetDefinitionIdAnd
 import jp.co.soramitsu.iroha2.generated.TransferOfAccountAndDomainIdAndAccount
 import jp.co.soramitsu.iroha2.generated.Trigger
 import jp.co.soramitsu.iroha2.generated.TriggerId
-import jp.co.soramitsu.iroha2.generated.TriggeringEventFilterBox
 import jp.co.soramitsu.iroha2.generated.UnregisterBox
 import jp.co.soramitsu.iroha2.generated.Upgrade
 import jp.co.soramitsu.iroha2.generated.WasmSmartContract
@@ -141,7 +141,7 @@ public val JSON_SERDE by lazy {
         module.addDeserializer(TriggerId::class.java, TriggerIdDeserializer)
         module.addDeserializer(InstructionBox::class.java, InstructionDeserializer)
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
-        module.addDeserializer(TriggeringEventFilterBox::class.java, TriggeringEventFilterBoxDeserializer)
+        module.addDeserializer(EventFilterBox::class.java, EventFilterBoxDeserializer)
         module.addDeserializer(SetKeyValueBox::class.java, SetKeyValueBoxDeserializer)
         module.addDeserializer(TransferBox::class.java, TransferBoxDeserializer)
         module.addDeserializer(AssetType::class.java, AssetTypeDeserializer)
@@ -395,8 +395,8 @@ object MintBoxDeserializer : JsonDeserializer<MintBox>() {
     }
 }
 
-object TriggeringEventFilterBoxDeserializer : JsonDeserializer<TriggeringEventFilterBox>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): TriggeringEventFilterBox {
+object EventFilterBoxDeserializer : JsonDeserializer<EventFilterBox>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): EventFilterBox {
         val node = p.readValueAsTree<JsonNode>().fields().next()
         return getBox(JSON_SERDE.convertValue(node.value, node.key.toArg()))
     }
@@ -409,10 +409,10 @@ object TriggeringEventFilterBoxDeserializer : JsonDeserializer<TriggeringEventFi
         }
     }
 
-    private fun getBox(arg: Any): TriggeringEventFilterBox {
+    private fun getBox(arg: Any): EventFilterBox {
         return when (arg) {
-            is ExecuteTriggerEventFilter -> TriggeringEventFilterBox.ExecuteTrigger(arg)
-            is TimeEventFilter -> TriggeringEventFilterBox.Time(arg)
+            is ExecuteTriggerEventFilter -> EventFilterBox.ExecuteTrigger(arg)
+            is TimeEventFilter -> EventFilterBox.Time(arg)
             else -> throw DeserializationException("Unknown type `$this`")
         }
     }
@@ -642,7 +642,7 @@ object ActionDeserializer : JsonDeserializer<Action>() {
         val executable = JSON_SERDE.convertValue(node["executable"], Executable::class.java)
         val repeats = JSON_SERDE.convertValue(node["repeats"], Repeats::class.java)
         val authority = JSON_SERDE.convertValue(node["authority"], AccountId::class.java)
-        val filter = JSON_SERDE.convertValue(node["filter"], TriggeringEventFilterBox::class.java)
+        val filter = JSON_SERDE.convertValue(node["filter"], EventFilterBox::class.java)
         val metadata = JSON_SERDE.convertValue(node["metadata"], Metadata::class.java)
 
         return Action(executable, repeats, authority, filter, metadata)
@@ -1454,41 +1454,10 @@ private fun sealedDeserializeIdBox(p: JsonParser, mapper: ObjectMapper): IdBox {
     return subtype.primaryConstructor?.call(arg) as IdBox
 }
 
-private fun getTriggerAuthority(triggerAction: JsonNode) = triggerAction.get("authority").asText().asAccountId()
-
 private fun getTriggerId(triggerName: String): TriggerId {
     return when (triggerName.contains("$")) {
         true -> TriggerId(name = triggerName.split("$")[0].asName())
         false -> TriggerId(name = triggerName.asName())
-    }
-}
-
-private fun getTriggerRepeats(triggerAction: JsonNode): Repeats {
-    val repeatsNodeFields = triggerAction.get("repeats").fields()
-    return when (repeatsNodeFields.hasNext()) {
-        true -> Repeats.Exactly(repeatsNodeFields.next().value.asLong())
-        false -> Repeats.Indefinitely()
-    }
-}
-
-private fun getTriggerFilter(triggerAction: JsonNode): TriggeringEventFilterBox {
-    val filterNode = triggerAction.get("filter").fields().next()
-    return when (filterNode.key) {
-        "Data" -> throw IrohaSdkException("${filterNode.key} is not supported")
-        "Pipeline" -> throw IrohaSdkException("${filterNode.key} is not supported")
-        "Time" -> {
-            val scheduleNode = filterNode.value.get("Schedule")
-            val start = scheduleNode.get("start")
-            val period = scheduleNode.get("period")
-            TriggeringEventFilterBox.Time(
-                TimeEventFilter(
-                    ExecutionTime.Schedule(
-                        Schedule(start.bigIntegerValue(), period.bigIntegerValue()),
-                    ),
-                ),
-            )
-        }
-        else -> throw IrohaSdkException("${filterNode.key} is not supported")
     }
 }
 
