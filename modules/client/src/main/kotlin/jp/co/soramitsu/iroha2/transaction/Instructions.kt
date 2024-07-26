@@ -20,7 +20,7 @@ object Instructions {
         roleId: RoleId,
         vararg tokens: Permission,
     ) = InstructionBox.Register(
-        RegisterBox.Role(RegisterOfRole(NewRole(Role(roleId, tokens.toList())))),
+        RegisterBox.Role(RegisterOfRole(Role(roleId, tokens.toList()))),
     )
 
     /**
@@ -43,7 +43,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringEventFilterBox,
+        filter: EventFilterBox,
     ) = InstructionBox.Register(
         RegisterBox.Trigger(
             RegisterOfTrigger(
@@ -71,7 +71,7 @@ object Instructions {
         repeats,
         accountId,
         metadata,
-        TriggeringEventFilterBox.Time(TimeEventFilter(filter.executionTime)),
+        EventFilterBox.Time(TimeEventFilter(filter.executionTime)),
     )
 
     /**
@@ -83,7 +83,7 @@ object Instructions {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata,
-        filter: TriggeringEventFilterBox = TriggeringEventFilterBox.ExecuteTrigger(
+        filter: EventFilterBox = EventFilterBox.ExecuteTrigger(
             ExecuteTriggerEventFilter(triggerId, accountId),
         ),
     ) = InstructionBox.Register(

@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2
 
-import io.ktor.util.toLowerCasePreservingASCIIRules
 import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import org.junit.jupiter.api.Test
 import java.io.File

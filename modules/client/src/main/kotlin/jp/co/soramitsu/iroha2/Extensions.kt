@@ -254,13 +254,6 @@ fun InstructionBox.Grant.extractValuePermissionToken() = this
     .grantOfPermissionAndAccount
     .`object`
 
-fun TriggeringEventFilterBox.extractSchedule() = this
-    .cast<TriggeringEventFilterBox.Time>()
-    .timeEventFilter
-    .executionTime
-    .cast<ExecutionTime.Schedule>()
-    .schedule
-
 fun EventFilterBox.extractSchedule() = this
     .cast<EventFilterBox.Time>()
     .timeEventFilter.executionTime

@@ -36,6 +36,7 @@ import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.Hash
 import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu32
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.Pagination
 import jp.co.soramitsu.iroha2.generated.PublicKey
 import jp.co.soramitsu.iroha2.generated.QueryBox
@@ -61,22 +62,26 @@ class QueryBuilder<R>(
     private var accountId: AccountId? = null
     private var sorting: Sorting? = null
     private var pagination: Pagination? = null
+    private var fetchSize: FetchSize? = null
 
     fun account(accountId: AccountId) = this.apply { this.accountId = accountId }
 
     fun account(signatory: PublicKey, domainId: DomainId) = this.account(AccountId(domainId, signatory))
 
-    fun sorting(key: String) {
+    fun sorting(key: String) = this.apply {
         this.sorting = Sorting(key.asName())
     }
 
-    fun soring(key: Name) {
+    fun soring(key: Name) = this.apply {
         this.sorting = Sorting(key)
     }
 
-    fun pagination(limit: Long? = null, start: BigInteger? = null) {
-        this.pagination = Pagination()
-        limit?.also { this.pagination.limit = it }
+    fun pagination(limit: Long? = null, start: BigInteger? = null) = this.apply {
+        this.pagination = Pagination(limit?.let { NonZeroOfu32(limit) }, start?.let { NonZeroOfu64(start) })
+    }
+
+    fun fetchSize(value: Long) = this.apply {
+        this.fetchSize = FetchSize(NonZeroOfu32(value))
     }
 
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
@@ -86,8 +91,8 @@ class QueryBuilder<R>(
             query,
             filter,
             sorting ?: Sorting(null),
-            Pagination(null, null),
-            FetchSize(null),
+            this.pagination ?: Pagination(null, null),
+            this.fetchSize ?: FetchSize(null),
         )
         val encodedPayload = ClientQueryPayload.encode(payload)
         val signature = QuerySignature(Signature(keyPair.private.sign(encodedPayload)).asSignatureOf())

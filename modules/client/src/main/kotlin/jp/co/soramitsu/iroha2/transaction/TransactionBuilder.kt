@@ -127,7 +127,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventFilterBox,
+        filter: EventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(
@@ -148,7 +148,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
-        filter: TriggeringEventFilterBox,
+        filter: EventFilterBox,
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(

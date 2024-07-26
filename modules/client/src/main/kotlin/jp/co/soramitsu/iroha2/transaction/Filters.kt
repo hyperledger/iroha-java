@@ -40,7 +40,7 @@ object Filters {
     /**
      * Create a data filter
      */
-    fun data(entityFilter: DataEventFilter) = TriggeringEventFilterBox.Data(
+    fun data(entityFilter: DataEventFilter) = EventFilterBox.Data(
         entityFilter,
     )
 
@@ -55,7 +55,7 @@ object Filters {
     fun executeTrigger(
         triggerId: TriggerId,
         authority: AccountId,
-    ) = TriggeringEventFilterBox.ExecuteTrigger(
+    ) = EventFilterBox.ExecuteTrigger(
         ExecuteTriggerEventFilter(triggerId, authority),
     )
 

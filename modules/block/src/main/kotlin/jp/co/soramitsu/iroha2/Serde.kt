@@ -64,7 +64,6 @@ import jp.co.soramitsu.iroha2.generated.Name
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
-import jp.co.soramitsu.iroha2.generated.NewRole
 import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.Numeric
 import jp.co.soramitsu.iroha2.generated.NumericSpec
@@ -137,7 +136,6 @@ public val JSON_SERDE by lazy {
         module.addDeserializer(RegisterBox::class.java, RegisterBoxDeserializer)
         module.addDeserializer(MintBox::class.java, MintBoxDeserializer)
         module.addDeserializer(Metadata::class.java, MetadataDeserializer)
-        module.addDeserializer(NewRole::class.java, NewRoleDeserializer)
         module.addDeserializer(TriggerId::class.java, TriggerIdDeserializer)
         module.addDeserializer(InstructionBox::class.java, InstructionDeserializer)
         module.addDeserializer(GrantBox::class.java, GrantBoxDeserializer)
@@ -322,7 +320,6 @@ object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
             "Account" -> NewAccount::class.java
             "AssetDefinition" -> NewAssetDefinition::class.java
             "Asset" -> Asset::class.java
-            "Role" -> NewRole::class.java
             "Trigger" -> Trigger::class.java
             else -> throw DeserializationException("Unknown type: $this")
         }
@@ -335,7 +332,6 @@ object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
             is Peer -> RegisterBox.Peer(RegisterOfPeer(arg))
             is NewAssetDefinition -> RegisterBox.AssetDefinition(RegisterOfAssetDefinition(arg))
             is Asset -> RegisterBox.Asset(RegisterOfAsset(arg))
-            is NewRole -> RegisterBox.Role(RegisterOfRole(arg))
             is Trigger -> RegisterBox.Trigger(RegisterOfTrigger(arg))
             else -> throw DeserializationException("Register box `$arg` not found")
         }
@@ -500,30 +496,6 @@ object MetadataDeserializer : JsonDeserializer<Metadata>() {
         val key = node.key.asName()
         val value = node.value.asText()
         return Metadata(mapOf(Pair(key, value)))
-    }
-}
-
-/**
- * Deserializer for [NewRole]
- */
-object NewRoleDeserializer : JsonDeserializer<NewRole>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): NewRole {
-        return deserializeNewRole(p, JSON_SERDE)
-    }
-
-    private fun deserializeNewRole(p: JsonParser, mapper: ObjectMapper): NewRole {
-        val iter = p.readValueAsTree<JsonNode>().iterator()
-        val nodes = mutableListOf<JsonNode>()
-        while (iter.hasNext()) {
-            val node = iter.next()
-            nodes.add(node)
-        }
-
-        val tokens = nodes[1].map {
-            mapper.convertValue(it, Permission::class.java) as Permission
-        }
-        val roleId = RoleId(nodes[0].asText().asName())
-        return NewRole(Role(id = roleId, permissions = tokens))
     }
 }
 
@@ -1181,6 +1153,7 @@ object AssetTransferBoxSerializer : JsonSerializer<AssetTransferBox>() {
         when (value) {
             is AssetTransferBox.Numeric -> gen.writeObject(value.transferOfAssetAndNumericAndAccount)
             is AssetTransferBox.Store -> gen.writeObject(value.transferOfAssetAndMetadataAndAccount)
+            else -> throw IrohaSdkException("Unexpected type ${value::class}")
         }
     }
 }
@@ -1271,7 +1244,7 @@ object MetadataSerializer : JsonSerializer<Metadata>() {
  */
 object IdentifiableBoxNewRoleSerializer : JsonSerializer<IdentifiableBox.NewRole>() {
     override fun serialize(value: IdentifiableBox.NewRole, gen: JsonGenerator, serializers: SerializerProvider) {
-        serializeSingleMember(gen, value.newRole)
+        serializeSingleMember(gen, value.role)
     }
 }
 
@@ -1288,6 +1261,7 @@ object ParameterSerializer : JsonSerializer<Parameter>() {
             is Parameter.SmartContract -> gen.writeObjectField(Parameter.SmartContract::class.simpleName, value.smartContractParameter)
             is Parameter.Sumeragi -> gen.writeObjectField(Parameter.Sumeragi::class.simpleName, value.sumeragiParameter)
             is Parameter.Transaction -> gen.writeObjectField(Parameter.Transaction::class.simpleName, value.transactionParameter)
+            else -> throw IrohaSdkException("Unexpected type ${value::class}")
         }
         gen.writeEndObject()
     }

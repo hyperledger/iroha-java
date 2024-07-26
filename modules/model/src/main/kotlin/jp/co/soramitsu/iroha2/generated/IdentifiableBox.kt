@@ -126,7 +126,7 @@ public sealed class IdentifiableBox : ModelEnum {
      * 'NewRole' variant
      */
     public data class NewRole(
-        public val newRole: jp.co.soramitsu.iroha2.generated.NewRole,
+        public val role: jp.co.soramitsu.iroha2.generated.Role,
     ) : IdentifiableBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -137,7 +137,7 @@ public sealed class IdentifiableBox : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.IdentifiableBox.NewRole = try {
                 NewRole(
-                    jp.co.soramitsu.iroha2.generated.NewRole.read(reader),
+                    jp.co.soramitsu.iroha2.generated.Role.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -147,7 +147,7 @@ public sealed class IdentifiableBox : ModelEnum {
                 writer: ScaleCodecWriter,
                 instance: jp.co.soramitsu.iroha2.generated.IdentifiableBox.NewRole,
             ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.NewRole.write(writer, instance.newRole)
+                jp.co.soramitsu.iroha2.generated.Role.write(writer, instance.role)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
