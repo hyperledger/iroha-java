@@ -30,12 +30,14 @@ public sealed class QueryExecutionFail : ModelEnum {
         is UnknownCursor -> UnknownCursor.equals(this, other)
         is FetchSizeTooBig -> FetchSizeTooBig.equals(this, other)
         is InvalidSingularParameters -> InvalidSingularParameters.equals(this, other)
+        is CapacityLimit -> CapacityLimit.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
         is UnknownCursor -> UnknownCursor.hashCode()
         is FetchSizeTooBig -> FetchSizeTooBig.hashCode()
         is InvalidSingularParameters -> InvalidSingularParameters.hashCode()
+        is CapacityLimit -> CapacityLimit.hashCode()
         else -> super.hashCode() }
 
     /**
@@ -213,6 +215,43 @@ public sealed class QueryExecutionFail : ModelEnum {
         }
     }
 
+    /**
+     * 'CapacityLimit' variant
+     */
+    public class CapacityLimit : QueryExecutionFail() {
+        override fun discriminant(): Int = DISCRIMINANT
+
+        public companion object :
+            ScaleReader<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.CapacityLimit>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.QueryExecutionFail.CapacityLimit> {
+            public const val DISCRIMINANT: Int = 5
+
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.QueryExecutionFail.CapacityLimit = try {
+                CapacityLimit()
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            override fun write(
+                writer: ScaleCodecWriter,
+                instance: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.CapacityLimit,
+            ): Unit = try {
+            } catch (ex: Exception) {
+                throw wrapException(ex)
+            }
+
+            public fun equals(
+                o1: jp.co.soramitsu.iroha2.generated.QueryExecutionFail.CapacityLimit,
+                o2: Any?,
+            ): Boolean = when (o2) {
+                null -> false
+                else -> o2::class == o1::class
+            }
+
+            override fun hashCode(): Int = ".QueryExecutionFail.CapacityLimit".hashCode()
+        }
+    }
+
     public companion object : ScaleReader<QueryExecutionFail>, ScaleWriter<QueryExecutionFail> {
         override fun read(reader: ScaleCodecReader): QueryExecutionFail = when (
             val discriminant =
@@ -223,6 +262,7 @@ public sealed class QueryExecutionFail : ModelEnum {
             2 -> UnknownCursor.read(reader)
             3 -> FetchSizeTooBig.read(reader)
             4 -> InvalidSingularParameters.read(reader)
+            5 -> CapacityLimit.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: QueryExecutionFail) {
@@ -233,6 +273,7 @@ public sealed class QueryExecutionFail : ModelEnum {
                 2 -> UnknownCursor.write(writer, instance as UnknownCursor)
                 3 -> FetchSizeTooBig.write(writer, instance as FetchSizeTooBig)
                 4 -> InvalidSingularParameters.write(writer, instance as InvalidSingularParameters)
+                5 -> CapacityLimit.write(writer, instance as CapacityLimit)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }
