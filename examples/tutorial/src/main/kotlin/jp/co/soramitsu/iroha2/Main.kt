@@ -4,6 +4,7 @@ import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.query.QueryBuilder
 import kotlinx.coroutines.runBlocking
 import java.net.URL
 import java.util.UUID
@@ -22,12 +23,24 @@ fun main(args: Array<String>): Unit = runBlocking {
     )
     val client = AdminIroha2Client(URL(peerUrl), URL(peerUrl), URL(telemetryUrl), log = true)
     val query = Query(client, admin, adminKeyPair)
-    query.findAllDomains()
-        .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
-    query.findAllAssets()
-        .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
-    query.findAllAccounts()
-        .also { println("ALL ACCOUNTS: ${it.map { d -> d.id.asString() }}") }
+    val accQuery = QueryBuilder.findAllAccounts()
+        .account(admin)
+        .pagination(limit = 100)
+        .fetchSize(25)
+        .buildSigned(adminKeyPair)
+
+    accQuery.let { client.sendQuery(it) }.also { resp ->
+        val resp1 = client.sendQuery(accQuery, cursor = resp.cursor)
+        val resp2 = client.sendQuery(accQuery, cursor = resp1.cursor)
+        val resp3 = client.sendQuery(accQuery, cursor = resp2.cursor)
+        val resp4 = client.sendQuery(accQuery, cursor = resp3.cursor)
+
+        println(resp4)
+    }
+//    query.findAllDomains()
+//        .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
+//    query.findAllAssets()
+//        .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
 
     val sendTransaction = SendTransaction(client, admin, adminKeyPair, chainId)
 
@@ -58,12 +71,12 @@ fun main(args: Array<String>): Unit = runBlocking {
 
     sendTransaction.transferAsset(madHatterAsset, 10, whiteRabbit.asString(), madHatter, madHatterKeyPair)
         .also { println("$madHatter TRANSFERRED FROM $madHatterAsset TO $whiteRabbitAsset: 10") }
-    query.getAccountAmount(madHatter, madHatterAsset.definition).also { println("$madHatterAsset BALANCE: $it") }
-    query.getAccountAmount(whiteRabbit, whiteRabbitAsset.definition).also { println("$whiteRabbitAsset BALANCE: $it") }
+//    query.getAccountAmount(madHatter, madHatterAsset.definition).also { println("$madHatterAsset BALANCE: $it") }
+//    query.getAccountAmount(whiteRabbit, whiteRabbitAsset.definition).also { println("$whiteRabbitAsset BALANCE: $it") }
 
     sendTransaction.burnAssets(madHatterAsset, 10, madHatter, madHatterKeyPair)
         .also { println("$madHatterAsset WAS BURN") }
 
-    query.getAccountAmount(madHatter, madHatterAsset.definition)
-        .also { println("$madHatterAsset BALANCE: $it AFTER ASSETS BURNING") }
+//    query.getAccountAmount(madHatter, madHatterAsset.definition)
+//        .also { println("$madHatterAsset BALANCE: $it AFTER ASSETS BURNING") }
 }

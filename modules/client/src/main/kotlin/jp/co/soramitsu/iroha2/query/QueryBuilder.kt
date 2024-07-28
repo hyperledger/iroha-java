@@ -87,7 +87,7 @@ class QueryBuilder<R>(
     fun buildSigned(keyPair: KeyPair): QueryAndExtractor<R> {
         val filter = queryFilter ?: GenericPredicateBox.Raw(QueryOutputPredicate.Pass())
         val payload = ClientQueryPayload(
-            checkNotNull(accountId) { "Account Id of the sender is mandatory" },
+            checkNotNull(accountId) { "Account ID of the sender is mandatory" },
             query,
             filter,
             sorting ?: Sorting(null),

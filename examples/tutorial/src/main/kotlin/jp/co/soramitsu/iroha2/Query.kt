@@ -1,12 +1,9 @@
 package jp.co.soramitsu.iroha2
 
 import jp.co.soramitsu.iroha2.generated.AccountId
-import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.generated.GenericPredicateBox
 import jp.co.soramitsu.iroha2.generated.QueryOutputPredicate
 import jp.co.soramitsu.iroha2.query.QueryBuilder
-import java.math.BigInteger
 import java.security.KeyPair
 
 open class Query(
@@ -24,23 +21,26 @@ open class Query(
     suspend fun findAllAccounts(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder
         .findAllAccounts(queryFilter)
         .account(admin)
-        .pagination(limit = 10)
+        .pagination(limit = 100)
+        .fetchSize(25)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
     suspend fun findAllAssets(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder
         .findAllAssets(queryFilter)
         .account(admin)
+        .pagination(limit = 100)
+        .fetchSize(25)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
-    suspend fun getAccountAmount(accountId: AccountId, assetDefinitionId: AssetDefinitionId): BigInteger =
-        QueryBuilder.findAssetsByAccountId(accountId)
-            .account(admin)
-            .buildSigned(keyPair)
-            .let { query ->
-                client.sendQuery(query).find { it.id.definition == assetDefinitionId }?.value
-            }.let { value ->
-                value?.cast<AssetValue.Numeric>()?.numeric?.mantissa
-            } ?: throw RuntimeException("NOT FOUND")
+//    suspend fun getAccountAmount(accountId: AccountId, assetDefinitionId: AssetDefinitionId): BigInteger =
+//        QueryBuilder.findAssetsByAccountId(accountId)
+//            .account(admin)
+//            .buildSigned(keyPair)
+//            .let { query ->
+//                client.sendQuery(query).find { it.id.definition == assetDefinitionId }?.value
+//            }.let { value ->
+//                value?.cast<AssetValue.Numeric>()?.numeric?.mantissa
+//            } ?: throw RuntimeException("NOT FOUND")
 }

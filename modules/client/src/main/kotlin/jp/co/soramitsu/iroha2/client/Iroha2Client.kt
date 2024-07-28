@@ -190,28 +190,25 @@ open class Iroha2Client(
      */
     suspend fun <T> sendQuery(
         queryAndExtractor: QueryAndExtractor<T>,
-        start: Long? = null,
-        limit: Long? = null,
-        sorting: String? = null,
-        queryCursor: ForwardCursor? = null,
-    ): T {
+        cursor: ForwardCursor? = null,
+    ): BatchedResponseV1<QueryOutputBox> {
         logger.debug("Sending query")
-        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
-        val cursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
-        val finalResult = when (cursor.cursor) {
-            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
-            else -> {
-                val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor)
-                resultList.addAll(
-                    responseDecoded.cast<BatchedResponse.V1>()
-                        .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
-                )
-                BatchedResponse.V1(
-                    BatchedResponseV1(QueryOutputBox.Vec(resultList), ForwardCursor()),
-                ).let { queryAndExtractor.resultExtractor.extract(it) }
-            }
-        }
-        return finalResult
+        val responseDecoded = sendQueryRequest(queryAndExtractor, cursor)
+//        val decodedCursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
+//        val finalResult = when (decodedCursor.cursor) {
+//            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
+//            else -> {
+//                val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, decodedCursor)
+//                resultList.addAll(
+//                    responseDecoded.cast<BatchedResponse.V1>()
+//                        .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
+//                )
+//                BatchedResponse.V1(
+//                    BatchedResponseV1(QueryOutputBox.Vec(resultList), ForwardCursor()),
+//                ).let { queryAndExtractor.resultExtractor.extract(it) }
+//            }
+//        }
+        return responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1
     }
 
     /**
@@ -330,16 +327,10 @@ open class Iroha2Client(
 
     private suspend fun <T> sendQueryRequest(
         queryAndExtractor: QueryAndExtractor<T>,
-        start: Long? = null,
-        limit: Long? = null,
-        sorting: String? = null,
         queryCursor: ForwardCursor? = null,
     ): BatchedResponse<QueryOutputBox> {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
             setBody(SignedQuery.encode(queryAndExtractor.query))
-            start?.also { parameter("start", it) }
-            limit?.also { parameter("limit", it) }
-            sorting?.also { parameter("sort_by_metadata_key", it) }
             queryCursor?.query?.also { parameter("query", it) }
             queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
         }
@@ -354,7 +345,7 @@ open class Iroha2Client(
         queryCursor: ForwardCursor? = null,
     ): MutableList<QueryOutputBox> {
         val resultList = mutableListOf<QueryOutputBox>()
-        val responseDecoded = sendQueryRequest(queryAndExtractor, start, limit, sorting, queryCursor)
+        val responseDecoded = sendQueryRequest(queryAndExtractor, queryCursor)
         resultList.addAll(
             responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
         )
