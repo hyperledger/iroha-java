@@ -188,27 +188,38 @@ open class Iroha2Client(
     /**
      * Send a request to Iroha2 and extract paginated payload
      */
-    suspend fun <T> sendQuery(
+    suspend fun <T> sendQuery2(
         queryAndExtractor: QueryAndExtractor<T>,
         cursor: ForwardCursor? = null,
     ): BatchedResponseV1<QueryOutputBox> {
         logger.debug("Sending query")
+        return sendQueryRequest(queryAndExtractor, cursor).cast<BatchedResponse.V1>().batchedResponseV1
+    }
+
+    /**
+     * Send a request to Iroha2 and extract paginated payload
+     */
+    suspend fun <T> sendQuery(
+        queryAndExtractor: QueryAndExtractor<T>,
+        cursor: ForwardCursor? = null,
+    ): T {
+        logger.debug("Sending query")
         val responseDecoded = sendQueryRequest(queryAndExtractor, cursor)
-//        val decodedCursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
-//        val finalResult = when (decodedCursor.cursor) {
-//            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
-//            else -> {
-//                val resultList = getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, decodedCursor)
-//                resultList.addAll(
-//                    responseDecoded.cast<BatchedResponse.V1>()
-//                        .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
-//                )
-//                BatchedResponse.V1(
-//                    BatchedResponseV1(QueryOutputBox.Vec(resultList), ForwardCursor()),
-//                ).let { queryAndExtractor.resultExtractor.extract(it) }
-//            }
-//        }
-        return responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1
+        val decodedCursor = responseDecoded.cast<BatchedResponse.V1>().batchedResponseV1.cursor
+        val finalResult = when (decodedCursor.cursor) {
+            null -> responseDecoded.let { queryAndExtractor.resultExtractor.extract(it) }
+            else -> {
+                val resultList = getQueryResultWithCursor(queryAndExtractor, decodedCursor)
+                resultList.addAll(
+                    responseDecoded.cast<BatchedResponse.V1>()
+                        .batchedResponseV1.batch.cast<QueryOutputBox.Vec>().vec,
+                )
+                BatchedResponse.V1(
+                    BatchedResponseV1(QueryOutputBox.Vec(resultList), ForwardCursor()),
+                ).let { queryAndExtractor.resultExtractor.extract(it) }
+            }
+        }
+        return finalResult
     }
 
     /**
@@ -327,21 +338,21 @@ open class Iroha2Client(
 
     private suspend fun <T> sendQueryRequest(
         queryAndExtractor: QueryAndExtractor<T>,
-        queryCursor: ForwardCursor? = null,
+        cursor: ForwardCursor? = null,
     ): BatchedResponse<QueryOutputBox> {
         val response: HttpResponse = client.post("${getApiUrl()}$QUERY_ENDPOINT") {
-            setBody(SignedQuery.encode(queryAndExtractor.query))
-            queryCursor?.query?.also { parameter("query", it) }
-            queryCursor?.cursor?.u64?.also { parameter("cursor", it) }
+            if (cursor != null) {
+                parameter("query", cursor.query)
+                parameter("cursor", cursor.cursor?.u64)
+            } else {
+                setBody(SignedQuery.encode(queryAndExtractor.query))
+            }
         }
         return response.body<ByteArray>().let { BatchedResponse.decode(it) }.cast<BatchedResponse<QueryOutputBox>>()
     }
 
     private suspend fun <T> getQueryResultWithCursor(
         queryAndExtractor: QueryAndExtractor<T>,
-        start: Long? = null,
-        limit: Long? = null,
-        sorting: String? = null,
         queryCursor: ForwardCursor? = null,
     ): MutableList<QueryOutputBox> {
         val resultList = mutableListOf<QueryOutputBox>()
@@ -353,7 +364,7 @@ open class Iroha2Client(
         return when (cursor.cursor) {
             null -> resultList
             else -> {
-                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, start, limit, sorting, cursor))
+                resultList.addAll(getQueryResultWithCursor(queryAndExtractor, cursor))
                 resultList
             }
         }

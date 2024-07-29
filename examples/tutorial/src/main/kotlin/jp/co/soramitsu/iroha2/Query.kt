@@ -21,16 +21,12 @@ open class Query(
     suspend fun findAllAccounts(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder
         .findAllAccounts(queryFilter)
         .account(admin)
-        .pagination(limit = 100)
-        .fetchSize(25)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 
     suspend fun findAllAssets(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder
         .findAllAssets(queryFilter)
         .account(admin)
-        .pagination(limit = 100)
-        .fetchSize(25)
         .buildSigned(keyPair)
         .let { client.sendQuery(it) }
 

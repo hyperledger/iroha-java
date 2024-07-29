@@ -4,7 +4,6 @@ import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.query.QueryBuilder
 import kotlinx.coroutines.runBlocking
 import java.net.URL
 import java.util.UUID
@@ -22,25 +21,33 @@ fun main(args: Array<String>): Unit = runBlocking {
         "CCF31D85E3B32A4BEA59987CE0C78E3B8E2DB93881468AB2435FE45D5C9DCD53",
     )
     val client = AdminIroha2Client(URL(peerUrl), URL(peerUrl), URL(telemetryUrl), log = true)
+
+//    val q = QueryBuilder
+//        .findAllAccounts()
+//        .account(admin)
+//        .pagination(limit = 100)
+//        .fetchSize(25)
+//        .buildSigned(adminKeyPair)
+//
+//    val resp = client.sendQuery2(q)
+//
+//    val q2 = QueryBuilder
+//        .findAllAccounts()
+//        .account(admin)
+//        .buildSigned(adminKeyPair)
+//    val resp2 = client.sendQuery2(q2, resp.cursor)
+//    val resp3 = client.sendQuery2(q2, resp2.cursor)
+//    val resp4 = client.sendQuery2(q2, resp3.cursor)
+//    val resp5 = client.sendQuery2(q2, resp4.cursor)
+//    println(resp5)
+
     val query = Query(client, admin, adminKeyPair)
-    val accQuery = QueryBuilder.findAllAccounts()
-        .account(admin)
-        .pagination(limit = 100)
-        .fetchSize(25)
-        .buildSigned(adminKeyPair)
-
-    accQuery.let { client.sendQuery(it) }.also { resp ->
-        val resp1 = client.sendQuery(accQuery, cursor = resp.cursor)
-        val resp2 = client.sendQuery(accQuery, cursor = resp1.cursor)
-        val resp3 = client.sendQuery(accQuery, cursor = resp2.cursor)
-        val resp4 = client.sendQuery(accQuery, cursor = resp3.cursor)
-
-        println(resp4)
-    }
-//    query.findAllDomains()
-//        .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
-//    query.findAllAssets()
-//        .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
+    query.findAllDomains()
+        .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
+    query.findAllAccounts()
+        .also { println("ALL ACCOUNTS: ${it.map { d -> d.id.asString() }}") }
+    query.findAllAssets()
+        .also { println("ALL ASSETS: ${it.map { d -> d.id.asString() }}") }
 
     val sendTransaction = SendTransaction(client, admin, adminKeyPair, chainId)
 
