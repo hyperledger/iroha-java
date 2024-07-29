@@ -21,26 +21,6 @@ fun main(args: Array<String>): Unit = runBlocking {
         "CCF31D85E3B32A4BEA59987CE0C78E3B8E2DB93881468AB2435FE45D5C9DCD53",
     )
     val client = AdminIroha2Client(URL(peerUrl), URL(peerUrl), URL(telemetryUrl), log = true)
-
-//    val q = QueryBuilder
-//        .findAllAccounts()
-//        .account(admin)
-//        .pagination(limit = 100)
-//        .fetchSize(25)
-//        .buildSigned(adminKeyPair)
-//
-//    val resp = client.sendQuery2(q)
-//
-//    val q2 = QueryBuilder
-//        .findAllAccounts()
-//        .account(admin)
-//        .buildSigned(adminKeyPair)
-//    val resp2 = client.sendQuery2(q2, resp.cursor)
-//    val resp3 = client.sendQuery2(q2, resp2.cursor)
-//    val resp4 = client.sendQuery2(q2, resp3.cursor)
-//    val resp5 = client.sendQuery2(q2, resp4.cursor)
-//    println(resp5)
-
     val query = Query(client, admin, adminKeyPair)
     query.findAllDomains()
         .also { println("ALL DOMAINS: ${it.map { d -> d.id.asString() }}") }
@@ -78,12 +58,12 @@ fun main(args: Array<String>): Unit = runBlocking {
 
     sendTransaction.transferAsset(madHatterAsset, 10, whiteRabbit.asString(), madHatter, madHatterKeyPair)
         .also { println("$madHatter TRANSFERRED FROM $madHatterAsset TO $whiteRabbitAsset: 10") }
-//    query.getAccountAmount(madHatter, madHatterAsset.definition).also { println("$madHatterAsset BALANCE: $it") }
-//    query.getAccountAmount(whiteRabbit, whiteRabbitAsset.definition).also { println("$whiteRabbitAsset BALANCE: $it") }
+    query.getAccountAmount(madHatter, madHatterAsset.definition).also { println("$madHatterAsset BALANCE: $it") }
+    query.getAccountAmount(whiteRabbit, whiteRabbitAsset.definition).also { println("$whiteRabbitAsset BALANCE: $it") }
 
     sendTransaction.burnAssets(madHatterAsset, 10, madHatter, madHatterKeyPair)
         .also { println("$madHatterAsset WAS BURN") }
 
-//    query.getAccountAmount(madHatter, madHatterAsset.definition)
-//        .also { println("$madHatterAsset BALANCE: $it AFTER ASSETS BURNING") }
+    query.getAccountAmount(madHatter, madHatterAsset.definition)
+        .also { println("$madHatterAsset BALANCE: $it AFTER ASSETS BURNING") }
 }
