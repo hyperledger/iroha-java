@@ -71,6 +71,8 @@ import org.slf4j.LoggerFactory
 import java.math.BigInteger
 import java.net.URL
 import java.time.Duration
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.future.future
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -195,6 +197,12 @@ open class Iroha2Client(
         logger.debug("Sending query")
         return sendQueryRequest(queryAndExtractor, cursor).cast<BatchedResponse.V1>().batchedResponseV1
     }
+
+    @JvmOverloads
+    fun <T> sendQueryAsCompletableFuture(
+        queryAndExtractor: QueryAndExtractor<T>,
+        cursor: ForwardCursor? = null,
+    ) = GlobalScope.future { sendQuery(queryAndExtractor, cursor) }
 
     /**
      * Send a request to Iroha2 and extract paginated payload
