@@ -145,10 +145,19 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_domain")
     fun `register domain`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
+        val kp = keyPairFromHex(
+            "5B90067FECCCCA00054961FD21B3ADA524A3DCADBB225B15527D0AFD3D8A8658",
+            "5f8b776d72d42976a71cf131f32e82f11d4e40ce9fad3f9e8712574f0ca53d0f",
+        )
         client.sendTransaction {
-            account(super.account)
+            account(
+                AccountId(
+                    DEFAULT_DOMAIN_ID,
+                    publicKeyFromHex("5B90067FECCCCA00054961FD21B3ADA524A3DCADBB225B15527D0AFD3D8A8658").toIrohaPublicKey(),
+                ),
+            )
             registerDomain(domainId)
-            buildSigned(super.keyPair)
+            buildSigned(kp)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }

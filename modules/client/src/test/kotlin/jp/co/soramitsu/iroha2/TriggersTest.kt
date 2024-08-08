@@ -1,53 +1,53 @@
-//package jp.co.soramitsu.iroha2
+// package jp.co.soramitsu.iroha2
 //
-//import io.qameta.allure.Feature
-//import io.qameta.allure.Owner
-//import io.qameta.allure.Story
-//import jp.co.soramitsu.iroha2.annotations.Sdk
-//import jp.co.soramitsu.iroha2.annotations.SdkTestId
-//import jp.co.soramitsu.iroha2.client.Iroha2Client
-//import jp.co.soramitsu.iroha2.generated.AccountId
-//import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
-//import jp.co.soramitsu.iroha2.generated.AssetId
-//import jp.co.soramitsu.iroha2.generated.AssetValue
-//import jp.co.soramitsu.iroha2.generated.InstructionBox
-//import jp.co.soramitsu.iroha2.generated.Metadata
-//import jp.co.soramitsu.iroha2.generated.Name
-//import jp.co.soramitsu.iroha2.generated.Repeats
-//import jp.co.soramitsu.iroha2.generated.TriggerId
-//import jp.co.soramitsu.iroha2.query.QueryBuilder
-//import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-//import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
-//import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
-//import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
-//import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
-//import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
-//import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
-//import jp.co.soramitsu.iroha2.testengine.IrohaTest
-//import jp.co.soramitsu.iroha2.testengine.WithIroha
-//import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
-//import jp.co.soramitsu.iroha2.transaction.EntityFilters
-//import jp.co.soramitsu.iroha2.transaction.EventFilters
-//import jp.co.soramitsu.iroha2.transaction.Filters
-//import jp.co.soramitsu.iroha2.transaction.Instructions
-//import kotlinx.coroutines.delay
-//import kotlinx.coroutines.runBlocking
-//import kotlinx.coroutines.time.withTimeout
-//import org.junit.jupiter.api.Disabled
-//import org.junit.jupiter.api.Test
-//import org.junit.jupiter.api.assertThrows
-//import java.math.BigInteger
-//import java.security.KeyPair
-//import java.time.Instant
-//import java.util.Date
-//import kotlin.test.assertEquals
-//import kotlin.test.assertNotNull
+// import io.qameta.allure.Feature
+// import io.qameta.allure.Owner
+// import io.qameta.allure.Story
+// import jp.co.soramitsu.iroha2.annotations.Sdk
+// import jp.co.soramitsu.iroha2.annotations.SdkTestId
+// import jp.co.soramitsu.iroha2.client.Iroha2Client
+// import jp.co.soramitsu.iroha2.generated.AccountId
+// import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+// import jp.co.soramitsu.iroha2.generated.AssetId
+// import jp.co.soramitsu.iroha2.generated.AssetValue
+// import jp.co.soramitsu.iroha2.generated.InstructionBox
+// import jp.co.soramitsu.iroha2.generated.Metadata
+// import jp.co.soramitsu.iroha2.generated.Name
+// import jp.co.soramitsu.iroha2.generated.Repeats
+// import jp.co.soramitsu.iroha2.generated.TriggerId
+// import jp.co.soramitsu.iroha2.query.QueryBuilder
+// import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+// import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
+// import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+// import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+// import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
+// import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+// import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+// import jp.co.soramitsu.iroha2.testengine.IrohaTest
+// import jp.co.soramitsu.iroha2.testengine.WithIroha
+// import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
+// import jp.co.soramitsu.iroha2.transaction.EntityFilters
+// import jp.co.soramitsu.iroha2.transaction.EventFilters
+// import jp.co.soramitsu.iroha2.transaction.Filters
+// import jp.co.soramitsu.iroha2.transaction.Instructions
+// import kotlinx.coroutines.delay
+// import kotlinx.coroutines.runBlocking
+// import kotlinx.coroutines.time.withTimeout
+// import org.junit.jupiter.api.Disabled
+// import org.junit.jupiter.api.Test
+// import org.junit.jupiter.api.assertThrows
+// import java.math.BigInteger
+// import java.security.KeyPair
+// import java.time.Instant
+// import java.util.Date
+// import kotlin.test.assertEquals
+// import kotlin.test.assertNotNull
 //
-//@Disabled
-//@Feature("Triggers")
-//@Owner("akostyuchenko")
-//@Sdk("Java/Kotlin")
-//class TriggersTest : IrohaTest<Iroha2Client>() {
+// @Disabled
+// @Feature("Triggers")
+// @Owner("akostyuchenko")
+// @Sdk("Java/Kotlin")
+// class TriggersTest : IrohaTest<Iroha2Client>() {
 //
 //    @Test
 //    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
@@ -459,4 +459,4 @@
 //                )
 //            }
 //    }
-//}
+// }

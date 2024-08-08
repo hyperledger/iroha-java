@@ -14,7 +14,6 @@ import java.security.PublicKey
 import java.util.Locale
 import java.util.StringTokenizer
 import kotlin.experimental.or
-import kotlin.reflect.KClass
 import jp.co.soramitsu.iroha2.generated.PublicKey as IrohaPublicKey
 
 fun BlockSubscriptionRequest.Companion.of(from: Long) = BlockSubscriptionRequest(NonZeroOfu64(BigInteger.valueOf(from)))
@@ -85,7 +84,7 @@ fun PublicKey.toIrohaPublicKey(): IrohaPublicKey {
  *
  * Note: the message must not be prehashed
  */
-fun PrivateKey.sign(message: ByteArray): ByteArray = try {
+fun PrivateKey.щаsign(message: ByteArray): ByteArray = try {
     val sgr = EdDSAEngine(MessageDigest.getInstance(DEFAULT_SPEC.hashAlgorithm))
     sgr.initSign(this)
     sgr.update(message.hash())

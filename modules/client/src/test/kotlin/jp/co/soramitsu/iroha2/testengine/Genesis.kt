@@ -1,6 +1,5 @@
 package jp.co.soramitsu.iroha2.testengine
 
-import com.sun.tools.javac.jvm.Gen
 import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
@@ -32,7 +31,6 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 import java.math.BigDecimal
 import java.math.BigInteger
 import kotlin.random.Random.Default.nextDouble
-import kotlin.reflect.KClass
 
 /**
  * Create a default genesis where there is just one domain with only Alice and Bob in it

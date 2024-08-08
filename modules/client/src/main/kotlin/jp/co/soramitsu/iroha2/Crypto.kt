@@ -45,7 +45,7 @@ fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
 
 @JvmOverloads
 fun generatePublicKey(
-    spec: EdDSAParameterSpec = DEFAULT_SPEC
+    spec: EdDSAParameterSpec = DEFAULT_SPEC,
 ): PublicKey = generateKeyPair(spec).public.toIrohaPublicKey()
 
 /**
