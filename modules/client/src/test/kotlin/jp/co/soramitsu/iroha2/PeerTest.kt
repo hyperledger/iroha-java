@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
 import java.security.KeyPair
 import java.time.Duration
-import kotlin.reflect.full.createInstance
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -142,7 +141,7 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
             this.keyPair = keyPair
             this.alias = alias
             this.networkToJoin = containers.first().network ?: throw IrohaSdkException("Container network not found")
-            this.genesis = DefaultGenesis::class.createInstance()
+            this.genesis = DefaultGenesis()
             this.trustedPeers = containers.map { it.extractPeerId() }
         }.also { it.start() }
     }

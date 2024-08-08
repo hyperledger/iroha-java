@@ -1,5 +1,6 @@
 package jp.co.soramitsu.iroha2.testengine
 
+import com.sun.tools.javac.jvm.Gen
 import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
@@ -30,13 +31,13 @@ import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.util.UUID
 import kotlin.random.Random.Default.nextDouble
+import kotlin.reflect.KClass
 
 /**
  * Create a default genesis where there is just one domain with only Alice and Bob in it
  */
-open class DefaultGenesis : Genesis(rawGenesisTx())
+open class DefaultGenesis(transaction: RawGenesisTransaction? = null) : Genesis(transaction ?: rawGenesisTx())
 
 open class AliceCanUpgradeExecutor : Genesis(
     rawGenesisTx(
@@ -280,7 +281,8 @@ open class NewAccountWithMetadata : Genesis(
     ),
 ) {
     companion object {
-        val ACCOUNT_NAME = publicKeyFromHex("e9f632d3034bab6bb26d92ac8fd93ef878d9c5e69e01b61b4c47101884ee2f99").toIrohaPublicKey()
+        val ACCOUNT_NAME =
+            publicKeyFromHex("e9f632d3034bab6bb26d92ac8fd93ef878d9c5e69e01b61b4c47101884ee2f99").toIrohaPublicKey()
         val KEY = "key".asName()
 
         val VALUE = "value"
@@ -433,7 +435,7 @@ open class BobCanUnregisterAnyRole : Genesis(
  * Return [RawGenesisTransaction] with instructions to init genesis
  */
 fun rawGenesisTx(vararg isi: InstructionBox) = RawGenesisTransaction(
-    chain = ChainId(UUID.randomUUID().toString()),
+    chain = ChainId("00000000-0000-0000-0000-000000000000"),
     executor = Genesis.EXECUTOR_FILE_NAME,
     parameters = emptyList(),
     instructions = listOf(

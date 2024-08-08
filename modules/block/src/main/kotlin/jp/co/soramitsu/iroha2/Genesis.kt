@@ -15,7 +15,6 @@ import jp.co.soramitsu.iroha2.generated.RegisterOfDomain
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
-import java.util.UUID
 
 /**
  * Genesis block is used to initialise a blockchain
@@ -52,7 +51,7 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
 
             return Genesis(
                 RawGenesisTransaction(
-                    ChainId(UUID.randomUUID().toString()),
+                    ChainId("00000000-0000-0000-0000-000000000000"),
                     EXECUTOR_FILE_NAME,
                     emptyList(),
                     uniqueIsi.mergeMetadata().toList(),
@@ -84,7 +83,10 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
         private fun MutableSet<InstructionBox>.sorted() = this.sortedWith(
             compareByDescending { instruction ->
                 when (instruction) {
-                    is InstructionBox.Register -> when (instruction.cast<InstructionBox.Register>().extractIdentifiableBox()) {
+                    is InstructionBox.Register -> when (
+                        instruction.cast<InstructionBox.Register>()
+                            .extractIdentifiableBox()
+                    ) {
                         is IdentifiableBox.NewDomain -> 5
                         is IdentifiableBox.NewAccount -> 4
                         is IdentifiableBox.NewAssetDefinition -> 3
@@ -163,25 +165,15 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
                     instruction.cast<InstructionBox.Register>().extractIdentifiableBox()
                 }.onSuccess { idBox ->
                     when (idBox) {
-                        is IdentifiableBox.NewAccount -> {
-                            val id = idBox.newAccount.id
-                            id to metadata[id]!!
-                        }
-                        is IdentifiableBox.NewDomain -> {
-                            val id = idBox.newDomain.id
-                            id to metadata[id]!!
-                        }
-                        is IdentifiableBox.NewAssetDefinition -> {
-                            val id = idBox.newAssetDefinition.id
-                            id to metadata[id]!!
-                        }
+                        is IdentifiableBox.NewAccount -> idBox.newAccount.id.let { id -> id to metadata[id]!! }
+                        is IdentifiableBox.NewDomain -> idBox.newDomain.id.let { id -> id to metadata[id]!! }
+                        is IdentifiableBox.NewAssetDefinition -> idBox.newAssetDefinition.id.let { id -> id to metadata[id]!! }
                         else -> null
-                    }?.takeIf { it.second.sortedMapOfName.isNotEmpty() }
-                        ?.let {
-                            isiToReplace.merge(it, mutableListOf(instruction.cast())) { old, new ->
-                                old.plus(new).toMutableList()
-                            }
+                    }?.takeIf { it.second.sortedMapOfName.isNotEmpty() }?.let {
+                        isiToReplace.merge(it, mutableListOf(instruction.cast())) { old, new ->
+                            old.plus(new).toMutableList()
                         }
+                    }
                 }
             }
             return isiToReplace

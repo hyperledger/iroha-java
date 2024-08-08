@@ -42,19 +42,17 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         this.config = config
 
         this.withNetwork(config.networkToJoin)
-            .withEnv("SUMERAGI_TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
-            .withEnv("IROHA_PUBLIC_KEY", "ed0120$publicKey")
-            .withEnv("IROHA_PRIVATE_KEY", "{\"digest_function\": \"ed25519\", \"payload\": \"$privateKey$publicKey\"}")
-            .withEnv("IROHA_GENESIS_ACCOUNT_PUBLIC_KEY", "ed0120$genesisPublicKey")
-            .withEnv(
-                "IROHA_GENESIS_ACCOUNT_PRIVATE_KEY",
-                "{\"digest_function\": \"ed25519\", \"payload\": \"$genesisPrivateKey$genesisPublicKey\"}",
-            )
-            .withEnv("TORII_P2P_ADDR", "${config.alias}:$p2pPort")
-            .withEnv("TORII_API_URL", "${config.alias}:$apiPort")
-            .withEnv("TORII_TELEMETRY_URL", "${config.alias}:$telemetryPort")
+            .withEnv("CHAIN", "00000000-0000-0000-0000-000000000000")
+            .withEnv("TRUSTED_PEERS", JSON_SERDE.writeValueAsString(config.trustedPeers))
+            .withEnv("PUBLIC_KEY", "ed0120$publicKey")
+            .withEnv("PRIVATE_KEY", "802620$privateKey")
+            .withEnv("GENESIS_PUBLIC_KEY", "ed0120$genesisPublicKey")
+            .withEnv("GENESIS_PRIVATE_KEY", "802620$genesisPrivateKey")
+            .withEnv("GENESIS", "/tmp/genesis.signed.scale")
+            .withEnv("P2P_ADDRESS", "${config.alias}:$p2pPort")
+            .withEnv("API_ADDRESS", "${config.alias}:$apiPort")
             .withEnv("TORII_FETCH_SIZE", config.fetchSize.toString())
-            .withEnv("WSV_WASM_RUNTIME_CONFIG", "{\"FUEL_LIMIT\":20000000, \"MAX_MEMORY\": 524288000}")
+            .withEnv("TOPOLOGY", JSON_SERDE.writeValueAsString(config.trustedPeers))
             .also { container -> config.envs.forEach { (k, v) -> container.withEnv(k, v) } }
             .withExposedPorts(p2pPort, apiPort, telemetryPort)
             .withNetworkAliases(config.alias)
@@ -80,16 +78,12 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                         executorFileLocation.toFile().writeBytes(content)
                     }
                 }
-                getResource(DEFAULT_CONFIG_FILE_NAME).readBytes().let { content ->
-                    configFileLocation.toFile().writeBytes(content)
-                }
-            }.also { container ->
-                val command = when (config.submitGenesis) {
-                    true -> "$PEER_START_COMMAND --submit-genesis"
-                    false -> PEER_START_COMMAND
-                }
-                container.withCommand(command)
             }
+            .withCopyFileToContainer(
+                forHostPath("/Users/andrejkostucenko/IdeaProjects/iroha-java-fork/modules/test-tools/src/main/resources/start.sh"),
+                "/start.sh",
+            )
+            .withCommand("sh", "/start.sh")
             .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
@@ -115,7 +109,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
     private val genesisFileLocation = Path("$configDirLocation/$DEFAULT_GENESIS_FILE_NAME")
-    private val configFileLocation = Path("$configDirLocation/$DEFAULT_CONFIG_FILE_NAME")
     private val executorFileLocation = Path("$configDirLocation/$DEFAULT_EXECUTOR_FILE_NAME")
 
     override fun start() {
@@ -155,13 +148,11 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
         }.let { DockerImageName.parse(it) }
 
         const val NETWORK_ALIAS = "iroha"
-        const val DEFAULT_IMAGE_TAG = "sha256:573c661a6d63f3fdeda9291ee4f020c36fcc99a21aa8c1082fcb65907e109a51"
-        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha2"
+        const val DEFAULT_IMAGE_TAG = "2.0.0-pre-rc.22.0"
+        const val DEFAULT_IMAGE_NAME = "hyperledger/iroha"
         const val DEFAULT_EXECUTOR_FILE_NAME = "executor.wasm"
         const val DEFAULT_GENESIS_FILE_NAME = "genesis.json"
-        const val DEFAULT_CONFIG_FILE_NAME = "config.json"
         const val DEFAULT_CONFIG_DIR = "config"
-        const val PEER_START_COMMAND = "iroha"
 
         val CONTAINER_STARTUP_TIMEOUT: Duration = Duration.ofSeconds(60)
     }

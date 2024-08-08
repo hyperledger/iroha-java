@@ -29,6 +29,9 @@ val ALICE_ACCOUNT_ID = ALICE_ACCOUNT_ID_VALUE.asAccountId()
 val ALICE_KEYPAIR = generateKeyPair()
 
 @JvmField
+val ALICE_PUBLIC_KEY = ALICE_KEYPAIR.public.toIrohaPublicKey()
+
+@JvmField
 val BOB_ACCOUNT_NAME = BOB_ACCOUNT.asName()
 
 @JvmField

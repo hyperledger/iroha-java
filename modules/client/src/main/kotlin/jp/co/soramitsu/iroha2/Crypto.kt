@@ -2,6 +2,7 @@
 
 package jp.co.soramitsu.iroha2
 
+import jp.co.soramitsu.iroha2.generated.PublicKey
 import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import net.i2p.crypto.eddsa.EdDSAPublicKey
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec
@@ -41,6 +42,11 @@ fun generateKeyPair(spec: EdDSAParameterSpec = DEFAULT_SPEC): KeyPair {
         throw CryptoException("Cannot generate a key pair", ex)
     }
 }
+
+@JvmOverloads
+fun generatePublicKey(
+    spec: EdDSAParameterSpec = DEFAULT_SPEC
+): PublicKey = generateKeyPair(spec).public.toIrohaPublicKey()
 
 /**
  * Create ED25519 key-pair from given hex of the public and private key

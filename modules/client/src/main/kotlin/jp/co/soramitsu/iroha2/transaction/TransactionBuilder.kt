@@ -27,7 +27,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
     var metadata: Lazy<HashMap<Name, String>>
 
     init {
-        chainId = null
+        chainId = ChainId("00000000-0000-0000-0000-000000000000")
         accountId = null
         instructions = lazy { ArrayList() }
         creationTimeMillis = null

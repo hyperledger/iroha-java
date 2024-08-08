@@ -14,6 +14,7 @@ import java.security.PublicKey
 import java.util.Locale
 import java.util.StringTokenizer
 import kotlin.experimental.or
+import kotlin.reflect.KClass
 import jp.co.soramitsu.iroha2.generated.PublicKey as IrohaPublicKey
 
 fun BlockSubscriptionRequest.Companion.of(from: Long) = BlockSubscriptionRequest(NonZeroOfu64(BigInteger.valueOf(from)))

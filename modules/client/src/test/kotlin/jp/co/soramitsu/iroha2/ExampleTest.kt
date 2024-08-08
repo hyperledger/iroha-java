@@ -11,7 +11,6 @@ import kotlinx.coroutines.time.withTimeout
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.time.Duration
-import kotlin.reflect.full.createInstance
 import kotlin.test.assertEquals
 
 @Disabled
@@ -24,7 +23,7 @@ class ExampleTest {
     fun `register domain instruction committed`(): Unit = runBlocking {
         val container = IrohaContainer {
             this.alias = "iroha$DEFAULT_P2P_PORT"
-            this.genesis = DefaultGenesis::class.createInstance()
+            this.genesis = DefaultGenesis()
         }.also { it.start() }
 
         val client = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl(), true)
