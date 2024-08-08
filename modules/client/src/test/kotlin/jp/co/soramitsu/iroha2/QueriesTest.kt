@@ -1,69 +1,69 @@
-//package jp.co.soramitsu.iroha2
+// package jp.co.soramitsu.iroha2
 //
-//import io.qameta.allure.Feature
-//import io.qameta.allure.Owner
-//import io.qameta.allure.Story
-//import jp.co.soramitsu.iroha2.annotations.Permission
-//import jp.co.soramitsu.iroha2.annotations.Query
-//import jp.co.soramitsu.iroha2.annotations.Sdk
-//import jp.co.soramitsu.iroha2.annotations.SdkTestId
-//import jp.co.soramitsu.iroha2.client.Iroha2Client
-//import jp.co.soramitsu.iroha2.generated.AccountId
-//import jp.co.soramitsu.iroha2.generated.AssetId
-//import jp.co.soramitsu.iroha2.generated.AssetValueType
-//import jp.co.soramitsu.iroha2.generated.InstructionBox
-//import jp.co.soramitsu.iroha2.generated.Metadata
-//import jp.co.soramitsu.iroha2.generated.MetadataValueBox
-//import jp.co.soramitsu.iroha2.generated.Name
-//import jp.co.soramitsu.iroha2.generated.QueryOutputBox
-//import jp.co.soramitsu.iroha2.generated.RegisterBox
-//import jp.co.soramitsu.iroha2.generated.SignedTransaction
-//import jp.co.soramitsu.iroha2.generated.StringPredicate
-//import jp.co.soramitsu.iroha2.generated.TransactionValue
-//import jp.co.soramitsu.iroha2.query.QueryBuilder
-//import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-//import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
-//import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
-//import jp.co.soramitsu.iroha2.testengine.AliceAndBobHasPermissionToMintPublicKeys
-//import jp.co.soramitsu.iroha2.testengine.AliceCanMintXor
-//import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
-//import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
-//import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
-//import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
-//import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_NAME
-//import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
-//import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
-//import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
-//import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
-//import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-//import jp.co.soramitsu.iroha2.testengine.IrohaTest
-//import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
-//import jp.co.soramitsu.iroha2.testengine.NewDomain
-//import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
-//import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
-//import jp.co.soramitsu.iroha2.testengine.VAL_DEFINITION_ID
-//import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
-//import jp.co.soramitsu.iroha2.testengine.WithIroha
-//import jp.co.soramitsu.iroha2.testengine.WithManyDomains
-//import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
-//import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
-//import jp.co.soramitsu.iroha2.transaction.QueryFilters
-//import kotlinx.coroutines.runBlocking
-//import kotlinx.coroutines.time.withTimeout
-//import org.apache.commons.lang3.RandomStringUtils
-//import org.junit.jupiter.api.Disabled
-//import org.junit.jupiter.api.Test
-//import java.time.Instant
-//import kotlin.test.assertContains
-//import kotlin.test.assertContentEquals
-//import kotlin.test.assertEquals
-//import kotlin.test.assertTrue
+// import io.qameta.allure.Feature
+// import io.qameta.allure.Owner
+// import io.qameta.allure.Story
+// import jp.co.soramitsu.iroha2.annotations.Permission
+// import jp.co.soramitsu.iroha2.annotations.Query
+// import jp.co.soramitsu.iroha2.annotations.Sdk
+// import jp.co.soramitsu.iroha2.annotations.SdkTestId
+// import jp.co.soramitsu.iroha2.client.Iroha2Client
+// import jp.co.soramitsu.iroha2.generated.AccountId
+// import jp.co.soramitsu.iroha2.generated.AssetId
+// import jp.co.soramitsu.iroha2.generated.AssetValueType
+// import jp.co.soramitsu.iroha2.generated.InstructionBox
+// import jp.co.soramitsu.iroha2.generated.Metadata
+// import jp.co.soramitsu.iroha2.generated.MetadataValueBox
+// import jp.co.soramitsu.iroha2.generated.Name
+// import jp.co.soramitsu.iroha2.generated.QueryOutputBox
+// import jp.co.soramitsu.iroha2.generated.RegisterBox
+// import jp.co.soramitsu.iroha2.generated.SignedTransaction
+// import jp.co.soramitsu.iroha2.generated.StringPredicate
+// import jp.co.soramitsu.iroha2.generated.TransactionValue
+// import jp.co.soramitsu.iroha2.query.QueryBuilder
+// import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+// import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_NAME
+// import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+// import jp.co.soramitsu.iroha2.testengine.AliceAndBobHasPermissionToMintPublicKeys
+// import jp.co.soramitsu.iroha2.testengine.AliceCanMintXor
+// import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+// import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
+// import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
+// import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
+// import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_NAME
+// import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
+// import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
+// import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
+// import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+// import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+// import jp.co.soramitsu.iroha2.testengine.IrohaTest
+// import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
+// import jp.co.soramitsu.iroha2.testengine.NewDomain
+// import jp.co.soramitsu.iroha2.testengine.NewDomainWithMetadata
+// import jp.co.soramitsu.iroha2.testengine.StoreAssetWithMetadata
+// import jp.co.soramitsu.iroha2.testengine.VAL_DEFINITION_ID
+// import jp.co.soramitsu.iroha2.testengine.WithExecutableTrigger
+// import jp.co.soramitsu.iroha2.testengine.WithIroha
+// import jp.co.soramitsu.iroha2.testengine.WithManyDomains
+// import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
+// import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
+// import jp.co.soramitsu.iroha2.transaction.QueryFilters
+// import kotlinx.coroutines.runBlocking
+// import kotlinx.coroutines.time.withTimeout
+// import org.apache.commons.lang3.RandomStringUtils
+// import org.junit.jupiter.api.Disabled
+// import org.junit.jupiter.api.Test
+// import java.time.Instant
+// import kotlin.test.assertContains
+// import kotlin.test.assertContentEquals
+// import kotlin.test.assertEquals
+// import kotlin.test.assertTrue
 //
-//@Disabled
-//@Owner("akostyuchenko")
-//@Sdk("Java/Kotlin")
-//@Permission("no_permission_required")
-//class QueriesTest : IrohaTest<Iroha2Client>() {
+// @Disabled
+// @Owner("akostyuchenko")
+// @Sdk("Java/Kotlin")
+// @Permission("no_permission_required")
+// class QueriesTest : IrohaTest<Iroha2Client>() {
 //
 //    @Test
 //    @WithIroha([AliceAndBobHasPermissionToMintPublicKeys::class])
@@ -237,7 +237,7 @@
 //            .account(ALICE_ACCOUNT_ID)
 //            .buildSigned(ALICE_KEYPAIR)
 //            .let { query -> client.sendQuery(query) } // todo
-////            .also { assertEquals(quantity + XorAndValAssets.XOR_QUANTITY, it.toInt()) }
+// //            .also { assertEquals(quantity + XorAndValAssets.XOR_QUANTITY, it.toInt()) }
 //    }
 //
 //    @Test
@@ -329,7 +329,7 @@
 //            .let { query ->
 //                client.sendQuery(query)
 //            }.also { quantity ->
-////                assert(quantity == XorAndValAssets.XOR_QUANTITY.toLong()) TODO
+// //                assert(quantity == XorAndValAssets.XOR_QUANTITY.toLong()) TODO
 //            }
 //    }
 //
@@ -349,7 +349,7 @@
 //            .let { query ->
 //                client.sendQuery(query)
 //            }.also { value ->
-////                assert(value == StoreAssetWithMetadata.ASSET_VALUE) TODO
+// //                assert(value == StoreAssetWithMetadata.ASSET_VALUE) TODO
 //            }
 //    }
 //
@@ -369,7 +369,7 @@
 //            .let { query ->
 //                client.sendQuery(query)
 //            }.also {
-////                assert(it == StoreAssetWithMetadata.ASSET_VALUE) TODO
+// //                assert(it == StoreAssetWithMetadata.ASSET_VALUE) TODO
 //            }
 //    }
 //
@@ -582,7 +582,7 @@
 //        ).account(ALICE_ACCOUNT_ID)
 //            .buildSigned(ALICE_KEYPAIR)
 //            .let { query -> client.sendQuery(query) }
-////            .also { assertEquals(NewDomainWithMetadata.VALUE, it) } TODO
+// //            .also { assertEquals(NewDomainWithMetadata.VALUE, it) } TODO
 //    }
 //
 //    @Test
@@ -961,4 +961,4 @@
 //            withTimeout(txTimeout) { d.await() }
 //        }
 //    }
-//}
+// }
