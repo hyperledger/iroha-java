@@ -8,18 +8,33 @@ import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.AssetType
+import jp.co.soramitsu.iroha2.generated.AssetValue
 import jp.co.soramitsu.iroha2.query.QueryBuilder
-import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID_VALUE
+import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.AliceHasPermissionToUnregisterDomain
+import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_DEFINITION_ID
+import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
+import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
+import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
@@ -31,7 +46,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         ["http://localhost:8080", "http://localhost:8081", "http://localhost:8082", "http://localhost:8083"],
         ["http://localhost:8180", "http://localhost:8181", "http://localhost:8182", "http://localhost:8183"],
         ["http://localhost:1337", "http://localhost:1338", "http://localhost:1339", "http://localhost:1340"],
-        account = ALICE_ACCOUNT_ID_VALUE,
+        account = "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0${ACCOUNT_ID_DELIMITER}wonderland",
         "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
     )
@@ -55,7 +70,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @Test
     @Disabled // EXAMPLE
     @WithIrohaManual(
-        account = ALICE_ACCOUNT_ID_VALUE,
+        account = "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0${ACCOUNT_ID_DELIMITER}wonderland",
         publicKey = "7233bfc89dcbd68c19fde6ce6158225298ec1131b6a130d1aeb454c1ab5183c0",
         privateKey = "9ac47abf59b356e0bd7dcbbbb4dec080e302156a48ca907e47cb6aea1d32719e",
         dockerComposeFile = "../../docker-compose/docker-compose.yaml",
@@ -89,19 +104,11 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @SdkTestId("register_domain")
     fun `register domain`(): Unit = runBlocking {
         val domainId = "new_domain_name".asDomainId()
-        val kp = keyPairFromHex(
-            "5B90067FECCCCA00054961FD21B3ADA524A3DCADBB225B15527D0AFD3D8A8658",
-            "5f8b776d72d42976a71cf131f32e82f11d4e40ce9fad3f9e8712574f0ca53d0f",
-        )
+
         client.sendTransaction {
-            account(
-                AccountId(
-                    DEFAULT_DOMAIN_ID,
-                    publicKeyFromHex("5B90067FECCCCA00054961FD21B3ADA524A3DCADBB225B15527D0AFD3D8A8658").toIrohaPublicKey(),
-                ),
-            )
+            account(super.account)
             registerDomain(domainId)
-            buildSigned(kp)
+            buildSigned(super.keyPair)
         }.also { d ->
             withTimeout(txTimeout) { d.await() }
         }
@@ -138,108 +145,108 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-            .also { account -> assertEquals(account.id, newAccountId) }
+            .also { account -> assertEquals(account.id.asString(), newAccountId.asString()) }
     }
     // #endregion java_register_account
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Accounts")
-//    @Story("Account registers an account")
-//    @Story("Account unregisters an account")
-//    @Permission("no_permission_required")
-//    @SdkTestId("register_account")
-//    @SdkTestId("unregister_account")
-//    fun `register and unregister account`(): Unit = runBlocking {
-//        val joeId = AccountId(DEFAULT_DOMAIN_ID, generatePublicKey())
-//        val joeKeyPair = generateKeyPair()
-//        client.tx { registerAccount(joeId, listOf(joeKeyPair.public.toIrohaPublicKey())) }
-//
-//        QueryBuilder.findAccountById(joeId)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//            .let { query -> client.sendQuery(query) }
-//            .also { account -> assertEquals(account.id, joeId) }
-//
-//        client.tx(joeId, joeKeyPair) {
-//            grantPermissionToken(
-//                Permissions.CanUnregisterAccount,
-//                joeId.asJsonString(),
-//                ALICE_ACCOUNT_ID,
-//            )
-//            unregisterAccount(joeId)
-//        }
-//        assertThrows<IrohaClientException> {
-//            runBlocking {
-//                QueryBuilder.findAccountById(joeId)
-//                    .account(super.account)
-//                    .buildSigned(super.keyPair)
-//                    .let { query -> client.sendQuery(query) }
-//            }
-//        }
-//    }
-//
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Assets")
-//    @Story("Account registers an asset definition")
-//    @Story("Account unregisters an asset definition")
-//    @Permission("no_permission_required")
-//    @SdkTestId("register_asset_definition")
-//    @SdkTestId("unregister_asset_definition")
-//    fun `register and unregister asset`(): Unit = runBlocking {
-//        val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "XSTUSD".asName())
-//        client.tx { registerAssetDefinition(definitionId, AssetType.numeric()) }
-//
-//        val assetId = AssetId(definitionId, ALICE_ACCOUNT_ID)
-//        client.tx { registerAsset(assetId, AssetValue.Numeric(0.asNumeric())) }
-//
-//        QueryBuilder.findAssetById(assetId)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//            .let { query -> client.sendQuery(query) }
-//            .also { asset -> assertEquals(asset.id, assetId) }
-//
-//        client.tx { unregisterAsset(assetId) }
-//        assertThrows<IrohaClientException> {
-//            runBlocking {
-//                QueryBuilder.findAssetById(assetId)
-//                    .account(super.account)
-//                    .buildSigned(super.keyPair)
-//                    .let { query -> client.sendQuery(query) }
-//            }
-//        }
-//
-//        client.tx { unregisterAssetDefinition(definitionId) }
-//        assertThrows<IrohaClientException> {
-//            runBlocking {
-//                QueryBuilder.findAssetDefinitionById(definitionId)
-//                    .account(super.account)
-//                    .buildSigned(super.keyPair)
-//                    .let { query -> client.sendQuery(query) }
-//            }
-//        }
-//    }
-//
-//    @Test
-//    @WithIroha([AliceHasPermissionToUnregisterDomain::class])
-//    @Feature("Domains")
-//    @Story("Account unregisters a domain")
-//    @Permission("CanUnregisterDomain")
-//    @SdkTestId("unregister_domain")
-//    fun `unregister domain`(): Unit = runBlocking {
-//        client.tx { unregisterDomain(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID) }
-//
-//        assertThrows<IrohaClientException> {
-//            runBlocking {
-//                QueryBuilder.findDomainById(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID)
-//                    .account(super.account)
-//                    .buildSigned(super.keyPair)
-//                    .let { query -> client.sendQuery(query) }
-//            }
-//        }
-//    }
-//
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Account registers an account")
+    @Story("Account unregisters an account")
+    @Permission("no_permission_required")
+    @SdkTestId("register_account")
+    @SdkTestId("unregister_account")
+    fun `register and unregister account`(): Unit = runBlocking {
+        val joeKeyPair = generateKeyPair()
+        val joeId = AccountId(DEFAULT_DOMAIN_ID, joeKeyPair.public.toIrohaPublicKey())
+        client.tx { registerAccount(joeId) }
+
+        QueryBuilder.findAccountById(joeId)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id.asString(), joeId.asString()) }
+
+        client.tx(joeId, joeKeyPair) {
+            grantPermissionToken(
+                Permissions.CanUnregisterAccount,
+                joeId.asJsonString(),
+                ALICE_ACCOUNT_ID,
+            )
+            unregisterAccount(joeId)
+        }
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAccountById(joeId)
+                    .account(super.account)
+                    .buildSigned(super.keyPair)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Assets")
+    @Story("Account registers an asset definition")
+    @Story("Account unregisters an asset definition")
+    @Permission("no_permission_required")
+    @SdkTestId("register_asset_definition")
+    @SdkTestId("unregister_asset_definition")
+    fun `register and unregister asset`(): Unit = runBlocking {
+        val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "XSTUSD".asName())
+        client.tx { registerAssetDefinition(definitionId, AssetType.numeric()) }
+
+        val assetId = AssetId(ALICE_ACCOUNT_ID, definitionId)
+        client.tx { registerAsset(assetId, AssetValue.Numeric(0.asNumeric())) }
+
+        QueryBuilder.findAssetById(assetId)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query -> client.sendQuery(query) }
+            .also { asset -> assertEquals(asset.id, assetId) }
+
+        client.tx { unregisterAsset(assetId) }
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAssetById(assetId)
+                    .account(super.account)
+                    .buildSigned(super.keyPair)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+
+        client.tx { unregisterAssetDefinition(definitionId) }
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findAssetDefinitionById(definitionId)
+                    .account(super.account)
+                    .buildSigned(super.keyPair)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
+    @Test
+    @WithIroha([AliceHasPermissionToUnregisterDomain::class])
+    @Feature("Domains")
+    @Story("Account unregisters a domain")
+    @Permission("CanUnregisterDomain")
+    @SdkTestId("unregister_domain")
+    fun `unregister domain`(): Unit = runBlocking {
+        client.tx { unregisterDomain(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID) }
+
+        assertThrows<IrohaClientException> {
+            runBlocking {
+                QueryBuilder.findDomainById(AliceHasPermissionToUnregisterDomain.NEW_DOMAIN_ID)
+                    .account(super.account)
+                    .buildSigned(super.keyPair)
+                    .let { query -> client.sendQuery(query) }
+            }
+        }
+    }
+
 //    @Test
 //    @WithIroha([DefaultGenesis::class])
 //    @Feature("Accounts")
@@ -266,7 +273,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 //        )
 //        val encodedTx = TransactionBuilder {
 //            account(super.account)
-//            registerAccount(newAccountId, listOf(), metadata)
+//            registerAccount(newAccountId, metadata)
 //        }.buildSigned().let { SignedTransaction.encode(it) }
 //
 //        val decodedTx = encodedTx.let { SignedTransaction.decode(it) }
@@ -288,36 +295,36 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 //        assertEquals(emailValue, accountMetadata.sortedMapOfName[emailKey])
 //        assertEquals(cityValue, accountMetadata.sortedMapOfName[cityKey])
 //    }
-//
-//    /**
-//     * Using for docs generation
-//     */
-//    // #region java_register_asset
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Assets")
-//    @Story("Account registers an asset definition")
-//    @Permission("no_permission_required")
-//    @SdkTestId("DEPRECATE CANDIDATE")
-//    fun `register asset`(): Unit = runBlocking {
-//        client.sendTransaction {
-//            account(super.account)
-//            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric())
-//            buildSigned(super.keyPair)
-//        }.also { d ->
-//            withTimeout(txTimeout) { d.await() }
-//        }
-//        val assetDefinitions = QueryBuilder.findAllAssetsDefinitions()
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//            .let { q -> client.sendQuery(q) }
-//
-//        assertFalse { assetDefinitions.isEmpty() }
-//        assetDefinitions.find { it.id == DEFAULT_ASSET_DEFINITION_ID }
-//            ?: fail("Expected query response contains assetDefinition $DEFAULT_ASSET_DEFINITION_ID, but it is not. Response was $assetDefinitions")
-//    }
-//    // #endregion java_register_asset
-//
+
+    /**
+     * Using for docs generation
+     */
+    // #region java_register_asset
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Assets")
+    @Story("Account registers an asset definition")
+    @Permission("no_permission_required")
+    @SdkTestId("DEPRECATE CANDIDATE")
+    fun `register asset`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(super.account)
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric())
+            buildSigned(super.keyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+        val assetDefinitions = QueryBuilder.findAllAssetsDefinitions()
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { q -> client.sendQuery(q) }
+
+        assertFalse { assetDefinitions.isEmpty() }
+        assetDefinitions.find { it.id == DEFAULT_ASSET_DEFINITION_ID }
+            ?: fail("Expected query response contains assetDefinition $DEFAULT_ASSET_DEFINITION_ID, but it is not. Response was $assetDefinitions")
+    }
+    // #endregion java_register_asset
+
 //    @Test
 //    @WithIroha([DefaultGenesis::class])
 //    @Feature("Assets")
@@ -370,23 +377,23 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 //        assertEquals(1, assetsByDomainName.size)
 //        assertEquals(asset, assetsByDomainName.first())
 //    }
-//
-//    @Test
-//    @WithIroha(
-//        [DefaultGenesis::class],
-//        configs = ["WSV_ACCOUNT_METADATA_LIMITS$IROHA_CONFIG_DELIMITER{\"max_entry_byte_size\": 65536, \"max_len\": 1048576}"],
-//    )
-//    @Feature("Accounts")
-//    @Story("Account metadata limit adjustment")
-//    @Permission("no_permission_required")
-//    @SdkTestId("account_metadata_limit_increased")
-//    fun `account metadata limit increased`(): Unit = runBlocking {
-//        client.tx {
-//            // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
-//            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), randomAlphabetic(5000))
-//        }
-//    }
-//
+
+    @Test
+    @WithIroha(
+        [DefaultGenesis::class],
+        configs = ["WSV_ACCOUNT_METADATA_LIMITS$IROHA_CONFIG_DELIMITER{\"max_entry_byte_size\": 65536, \"max_len\": 1048576}"],
+    )
+    @Feature("Accounts")
+    @Story("Account metadata limit adjustment")
+    @Permission("no_permission_required")
+    @SdkTestId("account_metadata_limit_increased")
+    fun `account metadata limit increased`(): Unit = runBlocking {
+        client.tx {
+            // 5000 characters string would be rejected by Iroha with default WSV_ACCOUNT_METADATA_LIMITS config
+            setKeyValue(ALICE_ACCOUNT_ID, "key".asName(), randomAlphabetic(5000))
+        }
+    }
+
 //    @Test
 //    @WithIroha([DefaultGenesis::class])
 //    fun `domain metadata set key value with permissions`(): Unit = runBlocking {
@@ -394,7 +401,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 //        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
 //            registerDomain(domainId)
 //            grantPermissionToken(
-//                Permissions.CanSetKeyValueInDomain.type.string,
+//                Permissions.CanSetKeyValueInDomain.type,
 //                domainId.asJsonString(),
 //                ALICE_ACCOUNT_ID,
 //            )
@@ -404,57 +411,57 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 //            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10))
 //        }
 //    }
-//
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Accounts")
-//    @Story("Account sets key value pair")
-//    @Permission("CanSetKeyValueInUserAsset")
-//    @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
-//    fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
-//        val aliceAssetId = DEFAULT_ASSET_ID
-//
-//        client.tx {
-//            registerAssetDefinition(aliceAssetId.definitionId, AssetType.Store())
-//            // grant by Alice to Bob permissions to set key value in Asset.Store
-//            grantPermissionToken(
-//                Permissions.CanSetKeyValueUserAssetsToken,
-//                aliceAssetId.asJsonString(),
-//                BOB_ACCOUNT_ID,
-//            )
-//        }
-//        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-//            setKeyValue(aliceAssetId, "foo".asName(), "bar")
-//        }
-//
-//        val query = QueryBuilder.findAssetById(aliceAssetId)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//        val asset = client.sendQuery(query)
-//
-//        assertEquals(aliceAssetId.definitionId.name, asset.id.definitionId.name)
-//        assertEquals(aliceAssetId.definitionId.domainId, asset.id.definitionId.domainId)
-//        when (val value = asset.value) {
-//            is AssetValue.Store -> {
-//                assertEquals(
-//                    "bar",
-//                    (value.metadata.sortedMapOfName["foo".asName()]?.cast<MetadataValueBox.String>())?.string,
-//                )
-//            }
-//
-//            else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
-//        }
-//
-//        client.tx {
-//            revokeSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
-//        }
-//        QueryBuilder.findPermissionTokensByAccountId(BOB_ACCOUNT_ID)
-//            .account(BOB_ACCOUNT_ID)
-//            .buildSigned(BOB_KEYPAIR)
-//            .let { client.sendQuery(it) }
-//            .also { permissions -> assertTrue { permissions.isEmpty() } }
-//    }
-//
+
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Account sets key value pair")
+    @Permission("CanSetKeyValueInUserAsset")
+    @SdkTestId("set_key_value_pair_for_another_account_asset_definition")
+    fun `grant access to asset key-value and then revoke`(): Unit = runBlocking {
+        val aliceAssetId = DEFAULT_ASSET_ID
+
+        client.tx {
+            registerAssetDefinition(aliceAssetId.definition, AssetType.Store())
+            // grant by Alice to Bob permissions to set key value in Asset.Store
+            grantPermissionToken(
+                Permissions.CanSetKeyValueUserAssetsToken,
+                aliceAssetId.asJsonString(),
+                BOB_ACCOUNT_ID,
+            )
+        }
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            setKeyValue(aliceAssetId, "foo".asName(), "bar")
+        }
+
+        val query = QueryBuilder.findAssetById(aliceAssetId)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+        val asset = client.sendQuery(query)
+
+        assertEquals(aliceAssetId.definition.name, asset.id.definition.name)
+        assertEquals(aliceAssetId.definition.domain, asset.id.definition.domain)
+        when (val value = asset.value) {
+            is AssetValue.Store -> {
+                assertEquals(
+                    "bar",
+                    value.metadata.sortedMapOfName["foo".asName()],
+                )
+            }
+
+            else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
+        }
+
+        client.tx {
+            revokeSetKeyValueAsset(aliceAssetId, BOB_ACCOUNT_ID)
+        }
+        QueryBuilder.findPermissionsByAccountId(BOB_ACCOUNT_ID)
+            .account(BOB_ACCOUNT_ID)
+            .buildSigned(BOB_KEYPAIR)
+            .let { client.sendQuery(it) }
+            .also { permissions -> assertTrue { permissions.isEmpty() } }
+    }
+
 //    /**
 //     * Using for docs generation
 //     */

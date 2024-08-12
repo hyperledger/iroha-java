@@ -218,7 +218,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
             keyPairs.add(generateKeyPair())
             portsList.add(listOf(DEFAULT_P2P_PORT + n, DEFAULT_API_PORT + n, DEFAULT_TELEMETRY_PORT + n))
         }
-        val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
@@ -236,7 +235,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     }
                     this.alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     this.keyPair = keyPairs[n]
-                    this.genesisKeyPair = genesisKeyPair
                     this.trustedPeers = peerIds
                     this.ports = portsList[n]
                     this.fetchSize = withIroha.fetchSize

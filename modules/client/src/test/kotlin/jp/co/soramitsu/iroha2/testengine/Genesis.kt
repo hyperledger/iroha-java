@@ -51,7 +51,7 @@ open class WithDomainTransferredToBob : Genesis(
     rawGenesisTx(
         Instructions.registerDomain(DOMAIN_ID),
         Instructions.transferDomainOwnership(
-            "$GENESIS$ACCOUNT_ID_DELIMITER$GENESIS".asAccountId(),
+            GENESIS_ACCOUNT,
             DOMAIN_ID,
             BOB_ACCOUNT_ID,
         ),
@@ -440,6 +440,11 @@ fun rawGenesisTx(vararg isi: InstructionBox) = RawGenesisTransaction(
         Instructions.registerDomain(DEFAULT_DOMAIN_ID),
         Instructions.registerAccount(ALICE_ACCOUNT_ID, Metadata(emptyMap())),
         Instructions.registerAccount(BOB_ACCOUNT_ID, Metadata(emptyMap())),
+        Instructions.transferDomainOwnership(
+            "$GENESIS_ADDRESS$ACCOUNT_ID_DELIMITER$GENESIS_DOMAIN".asAccountId(),
+            DEFAULT_DOMAIN_ID,
+            ALICE_ACCOUNT_ID,
+        ),
         *isi,
     ),
     topology = emptyList(),

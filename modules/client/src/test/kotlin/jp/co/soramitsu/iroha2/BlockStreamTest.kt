@@ -17,13 +17,13 @@ import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
-import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
-import jp.co.soramitsu.iroha2.testengine.GENESIS
+import jp.co.soramitsu.iroha2.testengine.GENESIS_ACCOUNT
+import jp.co.soramitsu.iroha2.testengine.GENESIS_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
@@ -62,7 +62,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         subscription.receive<BlockMessage>(actionId).collect { block -> blocks.add(block) }
 
         val expectedSize = NewAccountWithMetadata().transaction.instructions.count() + 1 // plus wasm
-        var isi = blocks[0].validate(1, GENESIS, GENESIS, expectedSize)
+        var isi = blocks[0].validate(1, GENESIS_DOMAIN, GENESIS_ACCOUNT.asString(), expectedSize)
         val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
@@ -73,7 +73,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
             isi[3].extractAccount().id.asString(),
         )
 
-        isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT, 1)
+        isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT_ID.asString(), 1)
         val newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)

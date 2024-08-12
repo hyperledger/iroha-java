@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
+import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import org.slf4j.LoggerFactory.getLogger
 import org.testcontainers.containers.Network
@@ -33,7 +34,7 @@ class IrohaConfig(
     var pullPolicy: ImagePullPolicy = PullPolicy.ageBased(Duration.ofMinutes(10)),
     var alias: String = IrohaContainer.NETWORK_ALIAS + DEFAULT_P2P_PORT,
     var keyPair: KeyPair = generateKeyPair(),
-    var genesisKeyPair: KeyPair = generateKeyPair(),
+    var genesisKeyPair: KeyPair = keyPairFromHex(GENESIS_ADDRESS, GENESIS_PRIVATE_KEY),
     var trustedPeers: List<PeerId> = listOf(
         PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey()),
     ),
