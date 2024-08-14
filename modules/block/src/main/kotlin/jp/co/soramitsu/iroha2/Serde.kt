@@ -1233,7 +1233,7 @@ object PublicKeySerializer : JsonSerializer<PublicKey>() {
         Multihash.putUvarint(res, Ed25519.index.toLong())
         Multihash.putUvarint(res, value.payload.size.toLong())
         res.write(value.payload)
-        gen.writeString(res.toByteArray().toHex(withPrefix = true))
+        gen.writeString(res.toByteArray().toHex())
     }
 }
 
