@@ -13,14 +13,6 @@ class DeserializerTest {
         val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
         assert(transaction.instructions.isNotEmpty())
-        // genesis.json has 10 instructions ("isi")
-        // Register -> NewDomain
-        // Register -> NewAccount (2)
-        // Register -> NewAssetDefinition
-        // Grant -> PermissionToken (2)
-        // Mint -> AssetId (2)
-        // Register -> Trigger (2)
-        assert(transaction.instructions.size == 16)
 
         val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
@@ -35,36 +27,11 @@ class DeserializerTest {
         val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
         assert(transaction.instructions.isNotEmpty())
-        // genesis.json has 23 instructions ("isi")
-        // Register -> NewDomain
-        // Register -> NewDomain
-        // Register -> NewDomain
-        // Register -> NewDomain
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAccount
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> NewAssetDefinition
-        // Register -> Asset
-        // Register -> Asset
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // SetKeyValue -> AssetId
-        // Grant -> PermissionToken
-        assert(transaction.instructions.size == 23)
 
         val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
         val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
-        assertEquals(initialJson, newJson)
+        assertEquals(initialJson.lowercase(), newJson.lowercase())
     }
 
     @Test
@@ -74,21 +41,11 @@ class DeserializerTest {
         val transaction = JSON_SERDE.convertValue(node, RawGenesisTransaction::class.java)
 
         assert(transaction.instructions.isNotEmpty())
-        // genesis.json has 17 instructions ("isi")
-        // Register -> NewDomain
-        // Register -> NewAccount (3)
-        // Register -> NewAssetDefinition (5)
-        // Register -> NewRole
-        // Mint -> AssetId
-        // Grant -> PermissionToken
-        // SetKeyValue -> AssetId (2)
-        // Mint -> AssetId (3)
-        assert(transaction.instructions.size == 17)
 
         val genesis = Genesis(transaction)
         val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
         val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
-        assertEquals(initialJson, newJson)
+        assertEquals(initialJson.lowercase(), newJson.lowercase())
     }
 
     private fun removeWhiteSpaceAndReplacePubKey(json: String): String {

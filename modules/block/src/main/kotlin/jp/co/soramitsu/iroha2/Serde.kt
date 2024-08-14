@@ -204,6 +204,7 @@ public val JSON_SERDE by lazy {
         module.addSerializer(ExecuteTriggerEventFilter::class.java, ExecuteTriggerEventFilterSerializer)
         module.addSerializer(AssetType::class.java, AssetTypeSerializer)
         module.addSerializer(Numeric::class.java, NumericSerializer)
+        module.addSerializer(Permission::class.java, PermissionSerializer)
 
         mapper.registerModule(module)
         mapper.registerModule(
@@ -301,14 +302,10 @@ object IdBoxDeserializer : JsonDeserializer<IdBox>() {
 
 object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): RegisterBox {
-        return sealedDeserializeRegisterBox(p, JSON_SERDE)
-    }
-
-    private fun sealedDeserializeRegisterBox(p: JsonParser, mapper: ObjectMapper): RegisterBox {
         val node = p.readValueAsTree<JsonNode>().fields().next()
 
         val paramClass = node.key.toArg()
-        val value = mapper.convertValue(node.value, paramClass)
+        val value = JSON_SERDE.convertValue(node.value, paramClass)
 
         return getRegisterBox(value)
     }
@@ -321,7 +318,8 @@ object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
             "AssetDefinition" -> NewAssetDefinition::class.java
             "Asset" -> Asset::class.java
             "Trigger" -> Trigger::class.java
-            else -> throw DeserializationException("Unknown type: $this")
+            "Role" -> Role::class.java
+            else -> throw DeserializationException("Unknown string type: $this")
         }
     }
 
@@ -333,6 +331,7 @@ object RegisterBoxDeserializer : JsonDeserializer<RegisterBox>() {
             is NewAssetDefinition -> RegisterBox.AssetDefinition(RegisterOfAssetDefinition(arg))
             is Asset -> RegisterBox.Asset(RegisterOfAsset(arg))
             is Trigger -> RegisterBox.Trigger(RegisterOfTrigger(arg))
+            is Role -> RegisterBox.Role(RegisterOfRole(arg))
             else -> throw DeserializationException("Register box `$arg` not found")
         }
     }
@@ -494,7 +493,7 @@ object MetadataDeserializer : JsonDeserializer<Metadata>() {
         }
         val node = nodeMetadata.next()
         val key = node.key.asName()
-        val value = node.value.asText()
+        val value = node.value.asStringOrNull() ?: ""
         return Metadata(mapOf(Pair(key, value)))
     }
 }
@@ -536,7 +535,7 @@ object NumericDeserializer : JsonDeserializer<Numeric>() {
 object PermissionDeserializer : JsonDeserializer<Permission>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Permission {
         val node = p.readValueAsTree<ObjectNode>()
-        return Permission(node.get("name").asText(), node.get("payload").asText())
+        return Permission(node.get("name").asText(), node.get("payload").asStringOrNull())
     }
 }
 
@@ -1205,6 +1204,23 @@ object AssetTypeSerializer : JsonSerializer<AssetType>() {
 object NumericSerializer : JsonSerializer<Numeric>() {
     override fun serialize(value: Numeric, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeObject(value.asString())
+    }
+}
+
+/**
+ * Serializer for [Permission]
+ */
+object PermissionSerializer : JsonSerializer<Permission>() {
+    override fun serialize(value: Permission, gen: JsonGenerator, serializers: SerializerProvider) {
+        val payload = when (value.payload) {
+            null -> null
+            else -> JSON_SERDE.readTree(value.payload)
+        }
+
+        gen.writeStartObject()
+        gen.writeObjectField(Permission::name.name, value.name)
+        gen.writeObjectField(Permission::payload.name, payload)
+        gen.writeEndObject()
     }
 }
 

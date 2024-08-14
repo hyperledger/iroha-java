@@ -205,7 +205,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-            .also { asset -> assertEquals(asset.id, assetId) }
+            .also { asset -> assertEquals(asset.id.asString(), assetId.asString()) }
 
         client.tx { unregisterAsset(assetId) }
         assertThrows<IrohaClientException> {

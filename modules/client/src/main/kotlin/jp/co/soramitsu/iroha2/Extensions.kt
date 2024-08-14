@@ -1,5 +1,8 @@
 package jp.co.soramitsu.iroha2
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.NullNode
+import com.fasterxml.jackson.databind.node.TextNode
 import io.ktor.websocket.Frame
 import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
@@ -152,7 +155,7 @@ fun AccountId.asJsonString() = "{\"account\": \"${this.signatory.payload.toHex()
 
 fun DomainId.asString() = this.name.string
 
-fun DomainId.asJsonString() = "{\"${DomainId::class.java.simpleName.toSnakeCase()}\": \"${this.name.string}\"}"
+fun DomainId.asJsonString() = "{\"domain\": \"${this.name.string}\"}"
 
 fun RoleId.asString() = this.name.string
 
@@ -369,3 +372,9 @@ fun Metadata.getBooleanValue(key: String) = this.sortedMapOfName[key.asName()]
 fun Metadata.getNameValue(key: String) = this.sortedMapOfName[key.asName()]
 
 fun Metadata.getFixedValue(key: String) = this.sortedMapOfName[key.asName()]
+
+fun JsonNode.asStringOrNull() = when (this) {
+    is NullNode -> null
+    is TextNode -> this.asText()
+    else -> this.toString()
+}
