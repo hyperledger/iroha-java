@@ -245,15 +245,6 @@ object InstructionDeserializer : JsonDeserializer<InstructionBox>() {
     }
 }
 
-/**
- * Deserializer for [ExecutorMode]
- */
-// object ExecutorDeserializer : JsonDeserializer<ExecutorMode>() {
-//    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): ExecutorMode {
-//        return sealedDeserializeValidator(p, JSON_SERDE)
-//    }
-// }
-
 object GrantBoxDeserializer : JsonDeserializer<GrantBox>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): GrantBox {
         val node = p.readValueAsTree<JsonNode>()
@@ -1242,7 +1233,7 @@ object PublicKeySerializer : JsonSerializer<PublicKey>() {
         Multihash.putUvarint(res, Ed25519.index.toLong())
         Multihash.putUvarint(res, value.payload.size.toLong())
         res.write(value.payload)
-        gen.writeString(res.toByteArray().toHex())
+        gen.writeString(res.toByteArray().toHex(withPrefix = true))
     }
 }
 

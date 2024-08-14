@@ -15,8 +15,8 @@ class DeserializerTest {
         assert(transaction.instructions.isNotEmpty())
 
         val genesis = Genesis(transaction)
-        val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
-        val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
+        val newJson = removeWhiteSpacesAndReplacePubKey(genesis.asJson())
+        val initialJson = removeWhiteSpacesAndReplacePubKey(json.readText())
         assertEquals(initialJson.lowercase(), newJson.lowercase())
     }
 
@@ -29,8 +29,8 @@ class DeserializerTest {
         assert(transaction.instructions.isNotEmpty())
 
         val genesis = Genesis(transaction)
-        val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
-        val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
+        val newJson = removeWhiteSpacesAndReplacePubKey(genesis.asJson())
+        val initialJson = removeWhiteSpacesAndReplacePubKey(json.readText())
         assertEquals(initialJson.lowercase(), newJson.lowercase())
     }
 
@@ -43,12 +43,12 @@ class DeserializerTest {
         assert(transaction.instructions.isNotEmpty())
 
         val genesis = Genesis(transaction)
-        val newJson = removeWhiteSpaceAndReplacePubKey(genesis.asJson())
-        val initialJson = removeWhiteSpaceAndReplacePubKey(json.readText())
+        val newJson = removeWhiteSpacesAndReplacePubKey(genesis.asJson())
+        val initialJson = removeWhiteSpacesAndReplacePubKey(json.readText())
         assertEquals(initialJson.lowercase(), newJson.lowercase())
     }
 
-    private fun removeWhiteSpaceAndReplacePubKey(json: String): String {
+    private fun removeWhiteSpacesAndReplacePubKey(json: String): String {
         val regex = "(\"ed01)+\\w+\"".toRegex()
         return json.replace(System.getProperty("line.separator"), "")
             .replace(" ", "")

@@ -3,6 +3,7 @@ package jp.co.soramitsu.iroha2
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.TextNode
+import com.google.gson.GsonBuilder
 import io.ktor.websocket.Frame
 import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
 import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
@@ -151,7 +152,7 @@ fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpl
 fun AccountId.asString(withPrefix: Boolean = false) = this.signatory.payload.toHex(withPrefix) +
     ACCOUNT_ID_DELIMITER + this.domain.name.string
 
-fun AccountId.asJsonString() = "{\"account\": \"${this.signatory.payload.toHex() + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
+fun AccountId.asJsonString(withPrefix: Boolean = false) = "{\"account\": \"${this.signatory.payload.toHex(withPrefix) + ACCOUNT_ID_DELIMITER + this.domain.name.string}\"}"
 
 fun DomainId.asString() = this.name.string
 
@@ -377,4 +378,10 @@ fun JsonNode.asStringOrNull() = when (this) {
     is NullNode -> null
     is TextNode -> this.asText()
     else -> this.toString()
+}
+
+fun String.asPrettyJson(): String {
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    val jsonElement = com.google.gson.JsonParser.parseString(this)
+    return gson.toJson(jsonElement)
 }
