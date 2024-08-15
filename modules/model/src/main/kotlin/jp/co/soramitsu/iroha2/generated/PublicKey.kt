@@ -37,4 +37,20 @@ public data class PublicKey(
             throw wrapException(ex)
         }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PublicKey
+
+        if (algorithm != other.algorithm) return false
+        return payload.contentEquals(other.payload)
+    }
+
+    override fun hashCode(): Int {
+        var result = algorithm.hashCode()
+        result = 31 * result + payload.contentHashCode()
+        return result
+    } // TODO: добавить в генератор
 }

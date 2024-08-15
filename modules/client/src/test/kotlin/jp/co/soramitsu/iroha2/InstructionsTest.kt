@@ -12,8 +12,11 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
+import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceHasPermissionToUnregisterDomain
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
@@ -145,7 +148,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-            .also { account -> assertEquals(account.id.asString(), newAccountId.asString()) }
+            .also { account -> assertEquals(account.id, newAccountId) }
     }
     // #endregion java_register_account
 
@@ -166,7 +169,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-            .also { account -> assertEquals(account.id.asString(), joeId.asString()) }
+            .also { account -> assertEquals(account.id, joeId) }
 
         client.tx(joeId, joeKeyPair) {
             grantPermissionToken(
@@ -205,7 +208,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .account(super.account)
             .buildSigned(super.keyPair)
             .let { query -> client.sendQuery(query) }
-            .also { asset -> assertEquals(asset.id.asString(), assetId.asString()) }
+            .also { asset -> assertEquals(asset.id, assetId) }
 
         client.tx { unregisterAsset(assetId) }
         assertThrows<IrohaClientException> {
@@ -247,54 +250,50 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Accounts")
-//    @Story("Account registers an account")
-//    @Permission("no_permission_required")
-//    @SdkTestId("register_account_with_metadata")
-//    fun `register account with metadata`(): Unit = runBlocking {
-//        val newAccountId = AccountId(DEFAULT_DOMAIN_ID, "foo".asName())
-//        val addressKey = "address".asName()
-//        val phoneKey = "phone".asName()
-//        val emailKey = "email".asName()
-//        val cityKey = "city".asName()
-//        val addressValue = "address"
-//        val phoneValue = "phone"
-//        val emailValue = "email"
-//        val cityValue = "city"
-//        val metadata = Metadata(
-//            mapOf(
-//                Pair(addressKey, addressValue),
-//                Pair(phoneKey, phoneValue),
-//                Pair(emailKey, emailValue),
-//                Pair(cityKey, cityValue),
-//            ),
-//        )
-//        val encodedTx = TransactionBuilder {
-//            account(super.account)
-//            registerAccount(newAccountId, metadata)
-//        }.buildSigned().let { SignedTransaction.encode(it) }
-//
-//        val decodedTx = encodedTx.let { SignedTransaction.decode(it) }
-//        val signedTx = decodedTx.appendSignatures(ALICE_KEYPAIR)
-//
-//        client.sendTransaction { signedTx }.also { d ->
-//            withTimeout(txTimeout) { d.await() }
-//        }
-//
-//        val accountMetadata = QueryBuilder.findAccountById(newAccountId)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//            .let { query -> client.sendQuery(query) }
-//            .also { account -> assertEquals(account.id, newAccountId) }
-//            .metadata
-//        assertEquals(4, accountMetadata.sortedMapOfName.size)
-//        assertEquals(addressValue, accountMetadata.sortedMapOfName[addressKey])
-//        assertEquals(phoneValue, accountMetadata.sortedMapOfName[phoneKey])
-//        assertEquals(emailValue, accountMetadata.sortedMapOfName[emailKey])
-//        assertEquals(cityValue, accountMetadata.sortedMapOfName[cityKey])
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Accounts")
+    @Story("Account registers an account")
+    @Permission("no_permission_required")
+    @SdkTestId("register_account_with_metadata")
+    fun `register account with metadata`(): Unit = runBlocking {
+        val addressKey = "address".asName()
+        val phoneKey = "phone".asName()
+        val emailKey = "email".asName()
+        val cityKey = "city".asName()
+        val addressValue = "address"
+        val phoneValue = "phone"
+        val emailValue = "email"
+        val cityValue = "city"
+        val metadata = Metadata(
+            mapOf(
+                Pair(addressKey, addressValue),
+                Pair(phoneKey, phoneValue),
+                Pair(emailKey, emailValue),
+                Pair(cityKey, cityValue),
+            ),
+        )
+        val newAccountId = AccountId(DEFAULT_DOMAIN_ID, generatePublicKey())
+        client.sendTransaction {
+            account(super.account)
+            registerAccount(newAccountId, metadata)
+            buildSigned(super.keyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        val accountMetadata = QueryBuilder.findAccountById(newAccountId)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query -> client.sendQuery(query) }
+            .also { account -> assertEquals(account.id, newAccountId) }
+            .metadata
+        assertEquals(4, accountMetadata.sortedMapOfName.size)
+        assertEquals(addressValue, accountMetadata.sortedMapOfName[addressKey])
+        assertEquals(phoneValue, accountMetadata.sortedMapOfName[phoneKey])
+        assertEquals(emailValue, accountMetadata.sortedMapOfName[emailKey])
+        assertEquals(cityValue, accountMetadata.sortedMapOfName[cityKey])
+    }
 
     /**
      * Using for docs generation
@@ -325,58 +324,49 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
     // #endregion java_register_asset
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Assets")
-//    @Story("Account registers an asset definition")
-//    @Permission("no_permission_required")
-//    @SdkTestId("register_asset_definition_with_store_value_type")
-//    fun `store asset`(): Unit = runBlocking {
-//        val pair1 = "key1".asName() to "bar"
-//        val pair2 = "key2".asName() to true
-//        val pair3 = "key3".asName() to 12345
-//
-//        client.tx {
-//            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.Store())
-//            setKeyValue(DEFAULT_ASSET_ID, pair1.first, pair1.second)
-//            setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
-//            setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
-//        }
-//
-//        val findAssetByIdQry = QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//        val asset = client.sendQuery(findAssetByIdQry)
-//
-//        assertEquals(DEFAULT_ASSET_ID.definitionId.name, asset.id.definitionId.name)
-//        assertEquals(DEFAULT_ASSET_ID.definitionId.domainId, asset.id.definitionId.domainId)
-//        when (val value = asset.value) {
-//            is AssetValue.Store -> {
-//                assertEquals(
-//                    pair1.second.string,
-//                    value.metadata.sortedMapOfName[pair1.first]?.cast<MetadataValueBox.String>()?.string,
-//                )
-//                assertEquals(
-//                    pair2.second.bool,
-//                    value.metadata.sortedMapOfName[pair2.first]?.cast<MetadataValueBox.Bool>()?.bool,
-//                )
-//                assertEquals(
-//                    pair3.second.numeric.asBigInteger(),
-//                    value.metadata.sortedMapOfName[pair3.first]?.cast<MetadataValueBox.Numeric>()?.numeric?.asBigInteger(),
-//                )
-//            }
-//
-//            else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
-//        }
-//
-//        // try to find saved assets by domain name
-//        val findAssetsByDomainNameQry = QueryBuilder.findAssetsByDomainId(DEFAULT_DOMAIN_ID)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//        val assetsByDomainName = client.sendQuery(findAssetsByDomainNameQry)
-//        assertEquals(1, assetsByDomainName.size)
-//        assertEquals(asset, assetsByDomainName.first())
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Assets")
+    @Story("Account registers an asset definition")
+    @Permission("no_permission_required")
+    @SdkTestId("register_asset_definition_with_store_value_type")
+    fun `store asset`(): Unit = runBlocking {
+        val pair1 = "key1".asName() to "bar"
+        val pair2 = "key2".asName() to "true"
+        val pair3 = "key3".asName() to "12345"
+
+        client.tx {
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.Store())
+            setKeyValue(DEFAULT_ASSET_ID, pair1.first, pair1.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair2.first, pair2.second)
+            setKeyValue(DEFAULT_ASSET_ID, pair3.first, pair3.second)
+        }
+
+        val findAssetByIdQry = QueryBuilder.findAssetById(DEFAULT_ASSET_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+        val asset = client.sendQuery(findAssetByIdQry)
+
+        assertEquals(DEFAULT_ASSET_ID.definition.name, asset.id.definition.name)
+        assertEquals(DEFAULT_ASSET_ID.definition.domain, asset.id.definition.domain)
+        when (val value = asset.value) {
+            is AssetValue.Store -> {
+                assertEquals(pair1.second, value.metadata.sortedMapOfName[pair1.first])
+                assertEquals(pair2.second, value.metadata.sortedMapOfName[pair2.first])
+                assertEquals(pair3.second, value.metadata.sortedMapOfName[pair3.first])
+            }
+
+            else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
+        }
+
+        // try to find saved assets by domain name
+        val findAssetsByDomainNameQry = QueryBuilder.findAssetsByDomainId(DEFAULT_DOMAIN_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+        val assetsByDomainName = client.sendQuery(findAssetsByDomainNameQry)
+        assertEquals(1, assetsByDomainName.size)
+        assertEquals(asset.id, assetsByDomainName.first().id)
+    }
 
     @Test
     @WithIroha(
@@ -394,23 +384,23 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         }
     }
 
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    fun `domain metadata set key value with permissions`(): Unit = runBlocking {
-//        val domainId = DomainId(randomAlphabetic(10).asName())
-//        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
-//            registerDomain(domainId)
-//            grantPermissionToken(
-//                Permissions.CanSetKeyValueInDomain.type,
-//                domainId.asJsonString(),
-//                ALICE_ACCOUNT_ID,
-//            )
-//        }
-//
-//        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
-//            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10))
-//        }
-//    }
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    fun `domain metadata set key value with permissions`(): Unit = runBlocking {
+        val domainId = DomainId(randomAlphabetic(10).asName())
+        client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
+            registerDomain(domainId)
+            grantPermissionToken(
+                Permissions.CanSetKeyValueInDomain,
+                domainId.asJsonString(),
+                ALICE_ACCOUNT_ID,
+            )
+        }
+
+        client.tx(ALICE_ACCOUNT_ID, ALICE_KEYPAIR) {
+            setKeyValue(domainId, randomAlphabetic(10).asName(), randomAlphabetic(10))
+        }
+    }
 
     @Test
     @WithIroha([DefaultGenesis::class])
@@ -443,10 +433,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         assertEquals(aliceAssetId.definition.domain, asset.id.definition.domain)
         when (val value = asset.value) {
             is AssetValue.Store -> {
-                assertEquals(
-                    "bar",
-                    value.metadata.sortedMapOfName["foo".asName()],
-                )
+                assertEquals("bar", value.metadata.sortedMapOfName["foo".asName()])
             }
 
             else -> fail("Expected result asset value has type `AssetValue.Store`, but it was `${asset.value::class.simpleName}`")
@@ -462,35 +449,37 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .also { permissions -> assertTrue { permissions.isEmpty() } }
     }
 
-//    /**
-//     * Using for docs generation
-//     */
-//    // #region java_mint_asset
-//    @Test
-//    @WithIroha([DefaultGenesis::class])
-//    @Feature("Assets")
-//    @Story("Account mints an asset")
-//    @Permission("no_permission_required")
-//    @SdkTestId("mint_asset_for_account_in_same_domain")
-//    fun `mint asset`(): Unit = runBlocking {
-//        client.sendTransaction {
-//            account(super.account)
-//            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric())
-//            mintAsset(DEFAULT_ASSET_ID, 5)
-//            buildSigned(super.keyPair)
-//        }.also { d ->
-//            withTimeout(txTimeout) { d.await() }
-//        }
-//
-//        QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
-//            .account(super.account)
-//            .buildSigned(super.keyPair)
-//            .let { query -> client.sendQuery(query) }
-//            .also { result ->
-//                assertEquals(5, result.assets[DEFAULT_ASSET_ID]?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
-//            }
-//    }
-//    // #endregion java_mint_asset
+    /**
+     * Using for docs generation
+     */
+    // #region java_mint_asset
+    @Test
+    @WithIroha([DefaultGenesis::class])
+    @Feature("Assets")
+    @Story("Account mints an asset")
+    @Permission("no_permission_required")
+    @SdkTestId("mint_asset_for_account_in_same_domain")
+    fun `mint asset`(): Unit = runBlocking {
+        client.sendTransaction {
+            account(super.account)
+            registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric())
+            mintAsset(DEFAULT_ASSET_ID, 5)
+            buildSigned(super.keyPair)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+
+        QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
+            .account(super.account)
+            .buildSigned(super.keyPair)
+            .let { query -> client.sendQuery(query) }
+            .also { result ->
+                val qwe = result.first().id == DEFAULT_ASSET_ID
+                println(qwe)
+                assertEquals(5, result.find { it.id == DEFAULT_ASSET_ID }?.value?.cast<AssetValue.Numeric>()?.numeric?.asInt())
+            }
+    }
+    // #endregion java_mint_asset
 //
 //    @Test
 //    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
