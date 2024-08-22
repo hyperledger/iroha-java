@@ -1,14 +1,12 @@
 package jp.co.soramitsu.iroha2.testengine
 
-import jp.co.soramitsu.iroha2.ACCOUNT_ID_DELIMITER
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Permissions
-import jp.co.soramitsu.iroha2.asAccountId
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asJsonString
 import jp.co.soramitsu.iroha2.asName
-import jp.co.soramitsu.iroha2.asString
 import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generatePublicKey
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
@@ -23,7 +21,6 @@ import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.numeric
-import jp.co.soramitsu.iroha2.publicKeyFromHex
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import jp.co.soramitsu.iroha2.transaction.Instructions
 import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
@@ -50,11 +47,7 @@ open class AliceCanUpgradeExecutor : Genesis(
 open class WithDomainTransferredToBob : Genesis(
     rawGenesisTx(
         Instructions.registerDomain(DOMAIN_ID),
-        Instructions.transferDomainOwnership(
-            GENESIS_ACCOUNT,
-            DOMAIN_ID,
-            BOB_ACCOUNT_ID,
-        ),
+        Instructions.transferDomainOwnership(GENESIS_ACCOUNT, DOMAIN_ID, BOB_ACCOUNT_ID),
     ),
 ) {
     companion object {
@@ -128,11 +121,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             Permission(
-                Permissions.CanSetKeyValueInUserAccount.type,
+                Permissions.CanSetKeyValueInAccount.type,
                 BOB_ACCOUNT_ID.asJsonString(),
             ),
             Permission(
-                Permissions.CanRemoveKeyValueInUserAccount.type,
+                Permissions.CanRemoveKeyValueInAccount.type,
                 BOB_ACCOUNT_ID.asJsonString(),
             ),
         ),
@@ -233,7 +226,7 @@ open class StoreAssetWithMetadata : Genesis(
 ) {
     companion object {
         val ASSET_KEY = "key".asName()
-        val ASSET_VALUE = RandomStringUtils.randomAlphabetic(50)
+        val ASSET_VALUE: String = RandomStringUtils.randomAlphabetic(50)
         val DEFINITION_ID = AssetDefinitionId(DEFAULT_DOMAIN_ID, "foo".asName())
         val ASSET_ID = AssetId(ALICE_ACCOUNT_ID, DEFINITION_ID)
     }
@@ -279,13 +272,11 @@ open class NewAccountWithMetadata : Genesis(
     ),
 ) {
     companion object {
-        val ACCOUNT_NAME =
-            publicKeyFromHex("e9f632d3034bab6bb26d92ac8fd93ef878d9c5e69e01b61b4c47101884ee2f99").toIrohaPublicKey()
-        val KEY = "key".asName()
+        const val VALUE = "value"
 
-        val VALUE = "value"
-        val ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, ACCOUNT_NAME)
+        val KEY = "key".asName()
         val KEYPAIR = generateKeyPair()
+        val ACCOUNT_ID = AccountId(DEFAULT_DOMAIN_ID, KEYPAIR.public.toIrohaPublicKey())
     }
 }
 
@@ -356,7 +347,7 @@ open class FatGenesis : Genesis(
             mapOf(randomAlphabetic(10).asName() to randomAlphabetic(10)),
         ),
         Instructions.registerAccount(
-            "${randomAlphabetic(10)}@${DEFAULT_DOMAIN_ID.asString()}".asAccountId(),
+            AccountId(domain = DEFAULT_DOMAIN_ID, signatory = generatePublicKey()),
             Metadata(mapOf(randomAlphabetic(10).asName() to randomAlphabetic(10))),
         ),
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric()),
@@ -378,11 +369,11 @@ open class FatGenesis : Genesis(
         Instructions.registerRole(
             ROLE_ID,
             Permission(
-                Permissions.CanSetKeyValueInUserAccount.type,
+                Permissions.CanSetKeyValueInAccount.type,
                 BOB_ACCOUNT_ID.asJsonString(),
             ),
             Permission(
-                Permissions.CanRemoveKeyValueInUserAccount.type,
+                Permissions.CanRemoveKeyValueInAccount.type,
                 BOB_ACCOUNT_ID.asJsonString(),
             ),
         ),
@@ -426,6 +417,11 @@ open class BobCanUnregisterAnyRole : Genesis(
             permission = Permissions.CanUnregisterAnyRole,
             destinationId = BOB_ACCOUNT_ID,
         ),
+        Instructions.transferDomainOwnership(
+            GENESIS_ACCOUNT,
+            WithDomainTransferredToBob.DOMAIN_ID,
+            BOB_ACCOUNT_ID,
+        ),
     ),
 )
 
@@ -440,11 +436,7 @@ fun rawGenesisTx(vararg isi: InstructionBox) = RawGenesisTransaction(
         Instructions.registerDomain(DEFAULT_DOMAIN_ID),
         Instructions.registerAccount(ALICE_ACCOUNT_ID, Metadata(emptyMap())),
         Instructions.registerAccount(BOB_ACCOUNT_ID, Metadata(emptyMap())),
-        Instructions.transferDomainOwnership(
-            "$GENESIS_ADDRESS$ACCOUNT_ID_DELIMITER$GENESIS_DOMAIN".asAccountId(),
-            DEFAULT_DOMAIN_ID,
-            ALICE_ACCOUNT_ID,
-        ),
+        Instructions.transferDomainOwnership(GENESIS_ACCOUNT, DEFAULT_DOMAIN_ID, ALICE_ACCOUNT_ID),
         *isi,
     ),
     topology = emptyList(),

@@ -1,6 +1,7 @@
 package jp.co.soramitsu.iroha2.client.blockstream
 
 import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.http.HttpMethod
 import io.ktor.websocket.close
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaSdkException
@@ -110,6 +111,7 @@ open class BlockStreamSubscription private constructor(
             host = context.apiUrl.host,
             port = context.apiUrl.port,
             path = Iroha2Client.WS_ENDPOINT_BLOCK_STREAM,
+            method = HttpMethod.Get,
         ) {
             try {
                 logger.debug("WebSocket opened")

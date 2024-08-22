@@ -9,6 +9,7 @@ import jp.co.soramitsu.iroha2.generated.Domain
 import jp.co.soramitsu.iroha2.generated.ExecutorDataModel
 import jp.co.soramitsu.iroha2.generated.IdBox
 import jp.co.soramitsu.iroha2.generated.IdentifiableBox
+import jp.co.soramitsu.iroha2.generated.Numeric
 import jp.co.soramitsu.iroha2.generated.Peer
 import jp.co.soramitsu.iroha2.generated.Permission
 import jp.co.soramitsu.iroha2.generated.QueryOutputBox
@@ -68,6 +69,15 @@ object AccountsExtractor : ResultExtractor<List<Account>> {
         return extractVec(result.cast<BatchedResponse.V1>().batchedResponseV1.batch) {
             extractIdentifiable(it, IdentifiableBox.Account::account)
         }
+    }
+}
+
+/**
+ * Extract a numeric from a query
+ */
+object NumericExtractor : ResultExtractor<Numeric> {
+    override fun extract(result: BatchedResponse<QueryOutputBox>): Numeric {
+        return result.cast<BatchedResponse.V1>().batchedResponseV1.batch.cast<QueryOutputBox.Numeric>().numeric
     }
 }
 
@@ -221,11 +231,11 @@ object BlockHeaderExtractor : ResultExtractor<BlockHeader> {
 }
 
 /**
- * Extract `Value` from a query [result]
+ * Extract `String` from a query [result]
  */
-object ValueExtractor : ResultExtractor<QueryOutputBox> {
-    override fun extract(result: BatchedResponse<QueryOutputBox>): QueryOutputBox {
-        return result.cast<BatchedResponse.V1>().batchedResponseV1.batch
+object StringExtractor : ResultExtractor<String> {
+    override fun extract(result: BatchedResponse<QueryOutputBox>): String {
+        return result.cast<BatchedResponse.V1>().batchedResponseV1.batch.cast<QueryOutputBox.Metadata>().string
     }
 }
 

@@ -8,6 +8,7 @@ import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy
 import org.testcontainers.shaded.com.google.common.io.Resources.getResource
 import org.testcontainers.utility.DockerImageName
+import org.testcontainers.utility.MountableFile
 import org.testcontainers.utility.MountableFile.forHostPath
 import java.io.IOException
 import java.net.URL
@@ -31,13 +32,16 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     constructor(config: IrohaConfig) : super(config.getFullImageName()) {
         val publicKey = config.keyPair.public.bytes().toHex()
         val privateKey = config.keyPair.private.bytes().toHex()
+        val containerName = when (config.submitGenesis) {
+            true -> "MAIN_${config.alias}_${randomUUID().toString().split("-").last()}"
+            false -> config.alias
+        }
 
         val genesisPublicKey = config.genesisKeyPair.public.bytes().toHex()
         val genesisPrivateKey = config.genesisKeyPair.private.bytes().toHex()
 
         this.p2pPort = config.ports[IrohaConfig.P2P_PORT_IDX]
         this.apiPort = config.ports[IrohaConfig.API_PORT_IDX]
-        this.telemetryPort = config.ports[IrohaConfig.TELEMETRY_PORT_IDX]
 
         this.config = config
 
@@ -47,14 +51,19 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
             .withEnv("PUBLIC_KEY", "ed0120$publicKey")
             .withEnv("PRIVATE_KEY", "802620$privateKey")
             .withEnv("GENESIS_PUBLIC_KEY", "ed0120$genesisPublicKey")
-            .withEnv("GENESIS_PRIVATE_KEY", "802620$genesisPrivateKey")
-            .withEnv("GENESIS", "/tmp/genesis.signed.scale")
             .withEnv("P2P_ADDRESS", "${config.alias}:$p2pPort")
             .withEnv("API_ADDRESS", "${config.alias}:$apiPort")
             .withEnv("TORII_FETCH_SIZE", config.fetchSize.toString())
-            .withEnv("TOPOLOGY", JSON_SERDE.writeValueAsString(config.trustedPeers))
+            .withCreateContainerCmdModifier { cmd -> cmd.withName(containerName) }
+            .also { container ->
+                if (config.submitGenesis) {
+                    container.withEnv("GENESIS_PRIVATE_KEY", "802620$genesisPrivateKey")
+                    container.withEnv("GENESIS", "/tmp/genesis.signed.scale")
+                    container.withEnv("TOPOLOGY", JSON_SERDE.writeValueAsString(config.trustedPeers))
+                }
+            }
             .also { container -> config.envs.forEach { (k, v) -> container.withEnv(k, v) } }
-            .withExposedPorts(p2pPort, apiPort, telemetryPort)
+            .withExposedPorts(p2pPort, apiPort)
             .withNetworkAliases(config.alias)
             .withLogConsumer(config.logConsumer)
             .withCopyToContainer(
@@ -79,11 +88,15 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
                     }
                 }
             }
-            .withCopyFileToContainer(
-                forHostPath("/Users/andrejkostucenko/IdeaProjects/iroha-java-fork/modules/test-tools/src/main/resources/start.sh"),
-                "/start.sh",
-            )
-            .withCommand("sh", "/start.sh")
+            .also { container ->
+                if (config.submitGenesis) {
+                    container.withCopyFileToContainer(
+                        MountableFile.forClasspathResource("start.sh"),
+                        "$configDirLocation/start.sh",
+                    )
+                    container.withCommand("sh", "$configDirLocation/start.sh")
+                }
+            }
             .withImagePullPolicy(config.pullPolicy)
             .also { container ->
                 if (config.waitStrategy) {
@@ -104,7 +117,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
 
     private val p2pPort: Int
     private val apiPort: Int
-    private val telemetryPort: Int
 
     private val configDirLocation = createTempDir("$DEFAULT_CONFIG_DIR-", randomUUID().toString()).toPath()
 
@@ -136,8 +148,6 @@ open class IrohaContainer : GenericContainer<IrohaContainer> {
     fun getP2pUrl(): URL = URL("http", host, this.getMappedPort(p2pPort), "")
 
     fun getApiUrl(): URL = URL("http", host, this.getMappedPort(apiPort), "")
-
-    fun getTelemetryUrl(): URL = URL("http", host, this.getMappedPort(telemetryPort), "")
 
     private fun String.readStatusBlocks() = JSON_SERDE.readTree(this).get("blocks")?.doubleValue()
 

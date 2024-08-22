@@ -1242,7 +1242,11 @@ object PublicKeySerializer : JsonSerializer<PublicKey>() {
  */
 object MetadataSerializer : JsonSerializer<Metadata>() {
     override fun serialize(value: Metadata, gen: JsonGenerator, serializers: SerializerProvider) {
-        gen.writeObject(value.sortedMapOfName)
+        gen.writeStartObject()
+        value.sortedMapOfName.forEach { (k, v) ->
+            gen.writeStringField(k.string, v)
+        }
+        gen.writeEndObject()
     }
 }
 

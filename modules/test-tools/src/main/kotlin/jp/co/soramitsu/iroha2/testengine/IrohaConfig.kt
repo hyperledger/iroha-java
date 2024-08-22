@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
 import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.PeerId
@@ -38,7 +37,7 @@ class IrohaConfig(
     var trustedPeers: List<PeerId> = listOf(
         PeerId(SocketAddr.Host(SocketAddrHost(alias, DEFAULT_P2P_PORT)), keyPair.public.toIrohaPublicKey()),
     ),
-    var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT, DEFAULT_TELEMETRY_PORT),
+    var ports: List<Int> = listOf(DEFAULT_P2P_PORT, DEFAULT_API_PORT),
     var shouldCloseNetwork: Boolean = true,
     var waitStrategy: Boolean = true,
     var submitGenesis: Boolean = true,
@@ -49,6 +48,5 @@ class IrohaConfig(
     companion object {
         const val P2P_PORT_IDX = 0
         const val API_PORT_IDX = 1
-        const val TELEMETRY_PORT_IDX = 2
     }
 }

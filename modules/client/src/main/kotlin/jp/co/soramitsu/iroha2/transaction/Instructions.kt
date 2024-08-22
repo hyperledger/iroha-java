@@ -352,12 +352,12 @@ object Instructions {
     }
 
     /**
-     * Revoke an account the [Permissions.CanSetKeyValueInUserAccount] permission
+     * Revoke an account the [Permissions.CanSetKeyValueInAccount] permission
      */
     fun revokeSetKeyValueAccount(accountId: AccountId, target: AccountId): InstructionBox {
         return revokeSome(target) {
             Permission(
-                name = Permissions.CanSetKeyValueInUserAccount.type,
+                name = Permissions.CanSetKeyValueInAccount.type,
                 payload = accountId.asJsonString(),
             )
         }

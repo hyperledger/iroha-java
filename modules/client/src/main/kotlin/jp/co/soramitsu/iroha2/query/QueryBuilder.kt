@@ -12,17 +12,19 @@ import jp.co.soramitsu.iroha2.BlocksValueExtractor
 import jp.co.soramitsu.iroha2.DomainExtractor
 import jp.co.soramitsu.iroha2.DomainsExtractor
 import jp.co.soramitsu.iroha2.ExecutorDataModelExtractor
+import jp.co.soramitsu.iroha2.NumericExtractor
 import jp.co.soramitsu.iroha2.PeersExtractor
 import jp.co.soramitsu.iroha2.PermissionTokensExtractor
 import jp.co.soramitsu.iroha2.ResultExtractor
 import jp.co.soramitsu.iroha2.RoleExtractor
 import jp.co.soramitsu.iroha2.RoleIdsExtractor
 import jp.co.soramitsu.iroha2.RolesExtractor
+import jp.co.soramitsu.iroha2.StringExtractor
 import jp.co.soramitsu.iroha2.TransactionValueExtractor
 import jp.co.soramitsu.iroha2.TransactionValuesExtractor
 import jp.co.soramitsu.iroha2.TriggerBoxExtractor
+import jp.co.soramitsu.iroha2.TriggerBoxesExtractor
 import jp.co.soramitsu.iroha2.TriggerIdsExtractor
-import jp.co.soramitsu.iroha2.ValueExtractor
 import jp.co.soramitsu.iroha2.asName
 import jp.co.soramitsu.iroha2.asSignatureOf
 import jp.co.soramitsu.iroha2.fromHex
@@ -115,7 +117,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAccountKeyValueByIdAndKey(accountId: AccountId, key: Name) = QueryBuilder(
             Queries.findAccountKeyValueByIdAndKey(accountId, key),
-            ValueExtractor,
+            StringExtractor,
         )
 
         @JvmStatic
@@ -227,19 +229,19 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAssetQuantityById(assetId: AssetId) = QueryBuilder(
             Queries.findAssetQuantityById(assetId),
-            AssetsExtractor, // todo
+            NumericExtractor,
         )
 
         @JvmStatic
         fun findTotalAssetQuantityByAssetDefinitionId(definitionId: AssetDefinitionId) = QueryBuilder(
             Queries.findTotalAssetQuantityByAssetDefinitionId(definitionId),
-            AssetsExtractor, // todo
+            NumericExtractor,
         )
 
         @JvmStatic
         fun findAssetKeyValueByIdAndKey(assetId: AssetId, key: Name) = QueryBuilder(
             Queries.findAssetKeyValueByIdAndKey(assetId, key),
-            ValueExtractor,
+            StringExtractor,
         )
 
         @JvmStatic
@@ -251,7 +253,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findAssetDefinitionKeyValueByIdAndKey(id: AssetDefinitionId, key: Name) = QueryBuilder(
             Queries.findAssetDefinitionKeyValueByIdAndKey(id, key),
-            ValueExtractor,
+            StringExtractor,
         )
 
         @JvmStatic
@@ -266,7 +268,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findDomainKeyValueByIdAndKey(id: DomainId, key: Name) = QueryBuilder(
             Queries.findDomainKeyValueByIdAndKey(id, key),
-            ValueExtractor,
+            StringExtractor,
         )
 
         @JvmStatic
@@ -403,7 +405,7 @@ class QueryBuilder<R>(
         @JvmStatic
         fun findTriggerKeyValueByIdAndKey(id: TriggerId, key: Name) = QueryBuilder(
             Queries.findTriggerKeyValueByIdAndKey(id, key),
-            ValueExtractor,
+            StringExtractor,
         )
 
         @JvmStatic
@@ -416,9 +418,31 @@ class QueryBuilder<R>(
 
         @JvmStatic
         @JvmOverloads
+        fun findTriggersByAuthorityId(
+            id: AccountId,
+            queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
+        ) = QueryBuilder(
+            Queries.findTriggersByAuthorityId(id),
+            TriggerBoxExtractor,
+            queryFilter,
+        )
+
+        @JvmStatic
+        @JvmOverloads
+        fun findTriggersByAuthorityDomainId(
+            domainId: DomainId,
+            queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null,
+        ) = QueryBuilder(
+            Queries.findTriggersByAuthorityDomainId(domainId),
+            TriggerBoxesExtractor,
+            queryFilter,
+        )
+
+        @JvmStatic
+        @JvmOverloads
         fun findAllParameters(queryFilter: GenericPredicateBox<QueryOutputPredicate>? = null) = QueryBuilder(
             Queries.findAllParameters(),
-            ValueExtractor,
+            StringExtractor,
             queryFilter,
         )
     }

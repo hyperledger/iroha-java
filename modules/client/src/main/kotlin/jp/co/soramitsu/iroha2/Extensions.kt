@@ -141,12 +141,12 @@ inline fun <reified B> Any.cast(): B {
 
 fun AssetId.asString(withPrefix: Boolean = false) = this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString(withPrefix)
 
-fun AssetId.asJsonString() = "{\"${AssetId::class.java.simpleName.toSnakeCase()}\": " +
+fun AssetId.asJsonString() = "{\"asset\": " +
     "\"${this.definition.asString() + ASSET_ID_DELIMITER + this.account.asString()}\"}"
 
 fun AssetDefinitionId.asString() = this.name.string + ASSET_ID_DELIMITER + this.domain.name.string
 
-fun AssetDefinitionId.asJsonString() = "{\"${AssetDefinitionId::class.java.simpleName.toSnakeCase()}\": " +
+fun AssetDefinitionId.asJsonString() = "{\"asset_definition\": " +
     "\"${this.name.string + ASSET_ID_DELIMITER + this.domain.name.string}\"}"
 
 fun AccountId.asString(withPrefix: Boolean = false) = this.signatory.payload.toHex(withPrefix) +
@@ -160,7 +160,7 @@ fun DomainId.asJsonString() = "{\"domain\": \"${this.name.string}\"}"
 
 fun RoleId.asString() = this.name.string
 
-fun RoleId.asJsonString() = "{\"${RoleId::class.java.simpleName.toSnakeCase()}\": \"${this.name.string}\"}"
+fun RoleId.asJsonString() = "{\"role\": \"${this.name.string}\"}"
 
 fun SocketAddr.asString() = when (this) {
     is SocketAddr.Host -> this.socketAddrHost.let { "${it.host}:${it.port}" }

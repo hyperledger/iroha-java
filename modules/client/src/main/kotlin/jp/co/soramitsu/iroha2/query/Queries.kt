@@ -1,6 +1,56 @@
 package jp.co.soramitsu.iroha2.query
 
-import jp.co.soramitsu.iroha2.generated.* // ktlint-disable no-wildcard-imports
+import jp.co.soramitsu.iroha2.generated.AccountId
+import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.generated.DomainId
+import jp.co.soramitsu.iroha2.generated.FindAccountById
+import jp.co.soramitsu.iroha2.generated.FindAccountKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindAccountsByDomainId
+import jp.co.soramitsu.iroha2.generated.FindAccountsWithAsset
+import jp.co.soramitsu.iroha2.generated.FindAllAccounts
+import jp.co.soramitsu.iroha2.generated.FindAllActiveTriggerIds
+import jp.co.soramitsu.iroha2.generated.FindAllAssets
+import jp.co.soramitsu.iroha2.generated.FindAllAssetsDefinitions
+import jp.co.soramitsu.iroha2.generated.FindAllBlockHeaders
+import jp.co.soramitsu.iroha2.generated.FindAllBlocks
+import jp.co.soramitsu.iroha2.generated.FindAllDomains
+import jp.co.soramitsu.iroha2.generated.FindAllParameters
+import jp.co.soramitsu.iroha2.generated.FindAllPeers
+import jp.co.soramitsu.iroha2.generated.FindAllRoleIds
+import jp.co.soramitsu.iroha2.generated.FindAllRoles
+import jp.co.soramitsu.iroha2.generated.FindAllTransactions
+import jp.co.soramitsu.iroha2.generated.FindAssetById
+import jp.co.soramitsu.iroha2.generated.FindAssetDefinitionById
+import jp.co.soramitsu.iroha2.generated.FindAssetDefinitionKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindAssetKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindAssetQuantityById
+import jp.co.soramitsu.iroha2.generated.FindAssetsByAccountId
+import jp.co.soramitsu.iroha2.generated.FindAssetsByAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.FindAssetsByDomainId
+import jp.co.soramitsu.iroha2.generated.FindAssetsByDomainIdAndAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.FindAssetsByName
+import jp.co.soramitsu.iroha2.generated.FindBlockHeaderByHash
+import jp.co.soramitsu.iroha2.generated.FindDomainById
+import jp.co.soramitsu.iroha2.generated.FindDomainKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindExecutorDataModel
+import jp.co.soramitsu.iroha2.generated.FindPermissionsByAccountId
+import jp.co.soramitsu.iroha2.generated.FindRoleByRoleId
+import jp.co.soramitsu.iroha2.generated.FindRolesByAccountId
+import jp.co.soramitsu.iroha2.generated.FindTotalAssetQuantityByAssetDefinitionId
+import jp.co.soramitsu.iroha2.generated.FindTransactionByHash
+import jp.co.soramitsu.iroha2.generated.FindTransactionsByAccountId
+import jp.co.soramitsu.iroha2.generated.FindTriggerById
+import jp.co.soramitsu.iroha2.generated.FindTriggerKeyValueByIdAndKey
+import jp.co.soramitsu.iroha2.generated.FindTriggersByAuthorityDomainId
+import jp.co.soramitsu.iroha2.generated.FindTriggersByAuthorityId
+import jp.co.soramitsu.iroha2.generated.Hash
+import jp.co.soramitsu.iroha2.generated.HashOf
+import jp.co.soramitsu.iroha2.generated.Name
+import jp.co.soramitsu.iroha2.generated.QueryBox
+import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SignedTransaction
+import jp.co.soramitsu.iroha2.generated.TriggerId
 
 /**
  * Queries are sent to an Iroha peer and prompt a response with details from the current world state view.
@@ -221,9 +271,23 @@ object Queries {
     fun findTriggerById(id: TriggerId) = QueryBox.FindTriggerById(FindTriggerById(id))
 
     /**
-     * Return all currently active triggers, that is, triggers that have not expired at the time of the query
+     * Return all currently active triggers, that have not expired at the time of the query
      */
     fun findAllActiveTriggerIds() = QueryBox.FindAllActiveTriggerIds(FindAllActiveTriggerIds())
+
+    /**
+     * Return a trigger with the given [AccountId]
+     */
+    fun findTriggersByAuthorityId(id: AccountId) = QueryBox.FindTriggersByAuthorityId(
+        FindTriggersByAuthorityId(id),
+    )
+
+    /**
+     * Return all currently triggers with the given [DomainId]
+     */
+    fun findTriggersByAuthorityDomainId(domainId: DomainId) = QueryBox.FindTriggersByAuthorityDomainId(
+        FindTriggersByAuthorityDomainId(domainId),
+    )
 
     /**
      * Return all blocks

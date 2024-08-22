@@ -98,14 +98,13 @@ open class Iroha2Client(
 
     constructor(
         apiUrl: URL,
-        telemetryUrl: URL,
         peerUrl: URL,
         log: Boolean = false,
         credentials: String? = null,
         eventReadTimeoutInMills: Long = 250,
         eventReadMaxAttempts: Int = 10,
     ) : this(
-        IrohaUrls(apiUrl, telemetryUrl, peerUrl),
+        IrohaUrls(apiUrl, peerUrl),
         log,
         credentials,
         eventReadTimeoutInMills,
@@ -114,7 +113,6 @@ open class Iroha2Client(
 
     constructor(
         apiUrl: String,
-        telemetryUrl: String,
         peerUrl: String,
         log: Boolean = true,
         credentials: String? = null,
@@ -122,7 +120,6 @@ open class Iroha2Client(
         eventReadMaxAttempts: Int = 10,
     ) : this(
         URL(apiUrl),
-        URL(telemetryUrl),
         URL(peerUrl),
         log,
         credentials,

@@ -12,11 +12,9 @@ import jp.co.soramitsu.iroha2.testengine.IrohaContainer
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-@Disabled
 class GenesisTest : IrohaTest<Iroha2Client>() {
     companion object {
         private val ALICE_KEYPAIR = keyPairFromHex(
@@ -39,7 +37,7 @@ class GenesisTest : IrohaTest<Iroha2Client>() {
             this.genesisPath = path
         }.also { it.start() }
 
-        val client = Iroha2Client(container.getApiUrl(), container.getTelemetryUrl(), container.getP2pUrl(), true)
+        val client = Iroha2Client(container.getApiUrl(), container.getP2pUrl(), true)
         client.checkAliceAndBobExists()
     }
 

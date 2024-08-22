@@ -28,7 +28,6 @@ import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
@@ -37,7 +36,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-@Disabled
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Block Streaming")
@@ -55,6 +53,10 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val subscription = idToSubscription.second
         val newAssetName = "rox"
 
+        client.tx {
+            transferDomainOwnership(ALICE_ACCOUNT_ID, DEFAULT_DOMAIN_ID, BOB_ACCOUNT_ID)
+        }
+
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetType.Store())
         }
@@ -66,12 +68,9 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val registerDomain = isi[0].cast<InstructionBox.Register>().extractDomain().id.name.string
 
         assertEquals(DEFAULT_DOMAIN_ID.asString(), registerDomain)
-        assertEquals(ALICE_ACCOUNT_ID.asString(), isi[1].extractAccount().id.asString())
-        assertEquals(BOB_ACCOUNT_ID.asString(), isi[2].extractAccount().id.asString())
-        assertEquals(
-            "${NewAccountWithMetadata.ACCOUNT_NAME.payload.toHex()}$ACCOUNT_ID_DELIMITER$DEFAULT_DOMAIN",
-            isi[3].extractAccount().id.asString(),
-        )
+        assertEquals(ALICE_ACCOUNT_ID, isi[1].extractAccount().id)
+        assertEquals(BOB_ACCOUNT_ID, isi[2].extractAccount().id)
+        assertEquals(NewAccountWithMetadata.ACCOUNT_ID, isi[3].extractAccount().id)
 
         isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_ACCOUNT_ID.asString(), 1)
         val newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
