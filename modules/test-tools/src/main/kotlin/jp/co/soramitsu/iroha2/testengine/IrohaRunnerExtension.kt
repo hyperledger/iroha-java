@@ -237,7 +237,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     this.keyPair = keyPairs[n]
                     this.trustedPeers = peerIds
                     this.ports = portsList[n]
-                    this.fetchSize = withIroha.fetchSize
                     this.imageName = testInstance.imageName
                     this.imageTag = testInstance.imageTag
                     this.envs = withIroha.configs.associate { config ->

@@ -13,10 +13,7 @@ import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.AssetValue
-import jp.co.soramitsu.iroha2.generated.BatchedResponse
-import jp.co.soramitsu.iroha2.generated.BatchedResponseV1
 import jp.co.soramitsu.iroha2.generated.DomainId
-import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.QueryOutputBox
 import jp.co.soramitsu.iroha2.generated.RoleId
@@ -24,7 +21,7 @@ import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.AliceAndBobEachHave100Xor
-import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMint
 import jp.co.soramitsu.iroha2.testengine.AliceHasPermissionToUnregisterDomain
 import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
@@ -46,8 +43,6 @@ import jp.co.soramitsu.iroha2.testengine.WithDomainTransferredToBob
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.WithIrohaManual
 import jp.co.soramitsu.iroha2.testengine.XorAndValAssets
-import jp.co.soramitsu.iroha2.transaction.Instructions
-import jp.co.soramitsu.iroha2.transaction.TransactionBuilder
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.time.withTimeout
 import org.apache.commons.lang3.RandomStringUtils.randomAlphabetic
@@ -60,9 +55,6 @@ import java.math.MathContext
 import java.math.RoundingMode
 import java.security.SecureRandom
 import java.util.UUID
-import kotlin.reflect.full.callSuspend
-import kotlin.reflect.full.declaredMemberFunctions
-import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -510,7 +502,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     // #endregion java_mint_asset
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Feature("Assets")
     @Story("Account burns an asset")
     @Permission("no_permission_required")
@@ -732,51 +724,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class], fetchSize = 61)
-    fun `iroha respond with given fetch size`(): Unit = runBlocking {
-        val fetchSize = 61
-        repeat(2) { i ->
-            val isi = mutableListOf<InstructionBox>()
-            val tx = TransactionBuilder {
-                account(ALICE_ACCOUNT_ID)
-            }
-            repeat(50) { j ->
-                val definitionId = AssetDefinitionId(DEFAULT_DOMAIN_ID, "ASSET_${j}_$i".asName())
-                isi.add(Instructions.registerAssetDefinition(definitionId, AssetType.Store()))
-                isi.add(
-                    Instructions.setKeyValue(
-                        AssetId(account = ALICE_ACCOUNT_ID, definition = definitionId),
-                        randomAlphabetic(10).asName(),
-                        randomAlphabetic(10),
-                    ),
-                )
-            }
-            tx.instructions(isi)
-
-            client.sendTransaction { tx.buildSigned(ALICE_KEYPAIR) }.let {
-                withTimeout(txTimeout) {
-                    it.await()
-                }
-            }
-        }
-
-        val query = QueryBuilder.findAllAssets()
-            .account(ALICE_ACCOUNT_ID)
-            .buildSigned(ALICE_KEYPAIR)
-        val method = Iroha2Client::class.declaredMemberFunctions.firstOrNull { it.name == "sendQueryRequest" }
-
-        val response = method?.let {
-            it.isAccessible = true
-            it.callSuspend(client, query, null)
-        }
-        val vec = response?.cast<BatchedResponse.V1>()?.batchedResponseV1
-            ?.cast<BatchedResponseV1<*>>()?.batch
-            ?.cast<QueryOutputBox.Vec>()?.vec
-
-        assertEquals(fetchSize, vec?.size)
-    }
-
-    @Test
     @WithIroha([DefaultGenesis::class])
     @Feature("Domains")
     @Story("Account registers a domain")
@@ -867,7 +814,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     @WithIroha(
         [
             DefaultGenesis::class,
-            AliceHas100XorAndPermissionToBurn::class,
+            AliceHas100XorAndPermissionToMint::class,
             StoreAssetWithMetadata::class,
             AliceHasRoleWithAccessToBobsMetadata::class,
             AliceWithTestAssets::class,

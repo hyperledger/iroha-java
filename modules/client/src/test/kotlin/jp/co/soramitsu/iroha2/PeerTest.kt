@@ -42,6 +42,7 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Peers")
+@Disabled // https://github.com/hyperledger/iroha/issues/4999
 class PeerTest : IrohaTest<AdminIroha2Client>() {
 
     companion object {

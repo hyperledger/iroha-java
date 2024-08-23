@@ -110,26 +110,3 @@ services:
       timeout: 1s
       retries: 30
       start_period: 4s
-  irohad4:
-    image: hyperledger/iroha:2.0.0-pre-rc.22.0
-    platform: linux/amd64
-    environment:
-      CHAIN: 00000000-0000-0000-0000-000000000000
-      PUBLIC_KEY: ed0120c6720c1516d9d32da8c0a590bcfa8f31474ed305e52802b4fa2dcb1f3b07db98
-      PRIVATE_KEY: 80262063fc35f814722d28356652c2b42a2c2a6f46541c62e82b1154dbbc7ac47699fc
-      P2P_ADDRESS: 0.0.0.0:1341
-      API_ADDRESS: 0.0.0.0:8084
-      GENESIS_PUBLIC_KEY: ed01204164BF554923ECE1FD412D241036D863A6AE430476C898248B8237D77534CFC4
-      TRUSTED_PEERS: '[{"address":"irohad2:1339","public_key":"ed01204EE2FCD53E1730AF142D1E23951198678295047F9314B4006B0CB61850B1DB10"},{"address":"irohad1:1338","public_key":"ed01209897952D14BDFAEA780087C38FF3EB800CB20B882748FC95A575ADB9CD2CB21D"},{"address":"irohad0:1337","public_key":"ed0120A98BAFB0663CE08D75EBD506FEC38A84E576A7C9B0897693ED4B04FD9EF2D18D"},{"address":"irohad3:1340","public_key":"ed0120CACF3A84B8DC8710CE9D6B968EE95EC7EE4C93C85858F026F3B4417F569592CE"}]'
-    ports:
-      - 1341:1341
-      - 8084:8084
-    volumes:
-      - "../modules/test-tools/src/main/resources:/config"
-    init: true
-    healthcheck:
-      test: test $(curl -s http://127.0.0.1:8084/status/blocks) -gt 0
-      interval: 2s
-      timeout: 1s
-      retries: 30
-      start_period: 4s

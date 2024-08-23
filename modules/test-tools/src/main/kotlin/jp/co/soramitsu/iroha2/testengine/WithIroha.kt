@@ -24,7 +24,6 @@ annotation class WithIroha(
     val configs: Array<String> = [],
     val source: String = "",
     val amount: Int = 1,
-    val fetchSize: Int = 10,
     val executorSource: String = "",
 )
 

@@ -140,7 +140,7 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
 /**
  * Give Alice 100 XOR and the permission to burn them
  */
-open class AliceHas100XorAndPermissionToBurn : Genesis(
+open class AliceHas100XorAndPermissionToMint : Genesis(
     rawGenesisTx(
         Instructions.registerAssetDefinition(DEFAULT_ASSET_DEFINITION_ID, AssetType.numeric()),
         Instructions.mintAsset(DEFAULT_ASSET_ID, 100),

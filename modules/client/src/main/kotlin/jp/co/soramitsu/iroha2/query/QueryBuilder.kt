@@ -103,8 +103,6 @@ class QueryBuilder<R>(
         return QueryAndExtractor(query, resultExtractor)
     }
 
-    private fun fallbackCreationTime() = BigInteger.valueOf(System.currentTimeMillis())
-
     companion object {
         @JvmStatic
         @JvmOverloads

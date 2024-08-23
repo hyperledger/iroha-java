@@ -1163,7 +1163,7 @@ object NonZeroOfu64Serializer : JsonSerializer<NonZeroOfu64>() {
 object ExecutableInstructionsSerializer : JsonSerializer<Executable.Instructions>() {
     override fun serialize(value: Executable.Instructions, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
-        gen.writeObjectField(Executable.Instructions::class.simpleName, value.vec.first()) // TODO
+        gen.writeObjectField(Executable.Instructions::class.simpleName, value.vec)
         gen.writeEndObject()
     }
 }

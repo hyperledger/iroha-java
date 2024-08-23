@@ -169,6 +169,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
         repeats: Repeats,
         accountId: AccountId,
         metadata: Metadata = Metadata(mapOf()),
+        filter: EventFilterBox = EventFilterBox.Time(TimeEventFilter(ExecutionTime.PreCommit())),
     ) = this.apply {
         instructions.value.add(
             Instructions.registerTrigger(
@@ -177,6 +178,7 @@ class TransactionBuilder(builder: TransactionBuilder.() -> Unit = {}) {
                 repeats,
                 accountId,
                 metadata,
+                filter,
             ),
         )
     }

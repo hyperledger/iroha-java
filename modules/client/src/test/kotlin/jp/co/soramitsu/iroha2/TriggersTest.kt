@@ -20,7 +20,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToBurn
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMint
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
@@ -49,7 +49,7 @@ import kotlin.test.assertNotNull
 class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Data created trigger mints asset upon asset definition creation")
     @SdkTestId("data_created_trigger")
     fun `data created trigger`(): Unit = runBlocking {
@@ -69,7 +69,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val prevQuantity = checkDefaultAssetQuantity()
         assertEquals(100L, prevQuantity)
 
-        val filter = Filters.data(
+        val filter = EventFilterBox.Data(
             EntityFilters.byAssetDefinition(0, assetDefinitions.first().id),
         )
         client.sendTransaction {
@@ -97,7 +97,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Pre commit trigger mints asset to account for every transaction")
     @SdkTestId("pre_commit_trigger_should_mint_asset_to_account_for_every_transaction")
     fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
@@ -156,7 +156,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Executable trigger mints asset")
     @SdkTestId("executable_trigger")
     fun `executable trigger`(): Unit = runBlocking {
@@ -180,7 +180,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Endless time trigger decreases asset quantity continuously")
     @SdkTestId("endless_time_trigger")
     fun `endless time trigger`(): Unit = runBlocking {
@@ -198,7 +198,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Time trigger executes a limited number of times")
     @SdkTestId("time_trigger_execution_repeats_few_times")
     fun `time trigger execution repeats few times`(): Unit = runBlocking {
@@ -216,7 +216,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
     fun `wasm trigger to mint nft for every user and update trigger metadata`(): Unit = runBlocking {
@@ -256,7 +256,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Wasm trigger mints NFT for every user when trigger metadata is updated")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user_on_update_trigger_metadata_event")
     fun `wasm trigger to mint nft for every user on update trigger metadata event`(): Unit = runBlocking {
@@ -303,7 +303,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMint::class])
     @Story("Unregister an executable trigger")
     @SdkTestId("unregister_executable_trigger")
     fun `unregister executable trigger`(): Unit = runBlocking {
