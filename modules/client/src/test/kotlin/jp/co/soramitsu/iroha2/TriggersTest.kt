@@ -20,10 +20,11 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
-import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMint
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMintAndBurn
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
+import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.WithIroha
 import jp.co.soramitsu.iroha2.testengine.XOR_DEFINITION_ID
@@ -49,7 +50,7 @@ import kotlin.test.assertNotNull
 class TriggersTest : IrohaTest<Iroha2Client>() {
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Data created trigger mints asset upon asset definition creation")
     @SdkTestId("data_created_trigger")
     fun `data created trigger`(): Unit = runBlocking {
@@ -70,7 +71,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         assertEquals(100L, prevQuantity)
 
         val filter = EventFilterBox.Data(
-            EntityFilters.byAssetDefinition(0, assetDefinitions.first().id),
+            EntityFilters.byAssetDefinition(1),
         )
         client.sendTransaction {
             accountId = ALICE_ACCOUNT_ID
@@ -97,7 +98,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Pre commit trigger mints asset to account for every transaction")
     @SdkTestId("pre_commit_trigger_should_mint_asset_to_account_for_every_transaction")
     fun `pre commit trigger should mint asset to account for every transaction`(): Unit = runBlocking {
@@ -156,7 +157,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Executable trigger mints asset")
     @SdkTestId("executable_trigger")
     fun `executable trigger`(): Unit = runBlocking {
@@ -180,31 +181,28 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Endless time trigger decreases asset quantity continuously")
     @SdkTestId("endless_time_trigger")
     fun `endless time trigger`(): Unit = runBlocking {
         val triggerId = TriggerId(name = Name("endless_time_trigger"))
 
-        sendAndAwaitTimeTrigger(
-            triggerId,
-            Repeats.Indefinitely(),
-            Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
-        )
+        sendAndAwaitExecutableTrigger(triggerId, Instructions.burnAsset(DEFAULT_ASSET_ID, 1))
         sendAndWait10Txs()
 
         delay(3000)
-        assert(readQuantity() <= 90L)
+        val q = readQuantity()
+        assert(q <= 90L)
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Time trigger executes a limited number of times")
     @SdkTestId("time_trigger_execution_repeats_few_times")
     fun `time trigger execution repeats few times`(): Unit = runBlocking {
         val triggerId = TriggerId(name = Name("time_trigger"))
 
-        sendAndAwaitTimeTrigger(
+        sendAndAwaitExecutableTrigger(
             triggerId,
             Repeats.Exactly(5L),
             Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
@@ -216,18 +214,15 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
     fun `wasm trigger to mint nft for every user and update trigger metadata`(): Unit = runBlocking {
         val triggerId = TriggerId(name = "wasm_trigger".asName())
 
-        val currentTime = Date().time / 1000
+        val currentTime = Date().time + 10000
         val filter = EventFilterBox.Time(
-            EventFilters.timeEventFilter(
-                BigInteger.valueOf(currentTime),
-                BigInteger.valueOf(1L),
-            ),
+            EventFilters.timeEventFilter(BigInteger.valueOf(currentTime), BigInteger.valueOf(1000L)),
         )
         val wasm = this.javaClass.classLoader
             .getResource("create_nft_for_alice_smartcontract.wasm")
@@ -256,7 +251,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Wasm trigger mints NFT for every user when trigger metadata is updated")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user_on_update_trigger_metadata_event")
     fun `wasm trigger to mint nft for every user on update trigger metadata event`(): Unit = runBlocking {
@@ -303,7 +298,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Unregister an executable trigger")
     @SdkTestId("unregister_executable_trigger")
     fun `unregister executable trigger`(): Unit = runBlocking {
@@ -366,7 +361,26 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .value.cast<AssetValue.Numeric>().numeric.asLong()
     }
 
-    private suspend fun sendAndAwaitTimeTrigger(
+    private suspend fun sendAndAwaitExecutableTrigger(
+        triggerId: TriggerId,
+        instruction: InstructionBox,
+        accountId: AccountId = ALICE_ACCOUNT_ID,
+    ) {
+        client.sendTransaction {
+            this.accountId = accountId
+            registerExecutableTrigger(
+                triggerId,
+                listOf(instruction),
+                Repeats.Indefinitely(),
+                accountId,
+            )
+            buildSigned(ALICE_KEYPAIR)
+        }.also { d ->
+            withTimeout(txTimeout) { d.await() }
+        }
+    }
+
+    private suspend fun sendAndAwaitExecutableTrigger(
         triggerId: TriggerId,
         repeats: Repeats,
         instruction: InstructionBox,
@@ -380,7 +394,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 repeats,
                 accountId,
                 EventFilters.timeEventFilter(
-                    BigInteger.valueOf(Instant.now().epochSecond),
+                    BigInteger.valueOf(Instant.now().toEpochMilli()),
                     BigInteger.valueOf(1L),
                 ),
             )
@@ -421,7 +435,8 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
 
     private suspend fun keepNetworkBusyAndCheckAssetDefinitionIds() {
         // send some transactions to keep Iroha2 network busy
-        repeat(2) { i ->
+        repeat(10) { i ->
+            println("$i TRANSACTION APPLIED")
             client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
                 setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i")
@@ -429,6 +444,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             }.also { d ->
                 withTimeout(txTimeout) { d.await() }
             }
+            delay(250)
         }
         QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)

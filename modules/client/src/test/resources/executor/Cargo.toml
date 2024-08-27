@@ -19,7 +19,7 @@ codegen-units = 1   # Further reduces binary size but increases compilation time
 crate-type = ['cdylib']
 
 [dependencies]
-iroha_executor = { git = "https://github.com/hyperledger/iroha/", branch = "main", features = ["debug"] }
+iroha_executor = { git = "https://github.com/hyperledger/iroha/", tag = "v2.0.0-pre-rc.22.1", features = ["debug"] }
 
 getrandom = { version = "0.2", features = ["custom"] }
 dlmalloc = { version = "0.2.6", features = ["global"] }

@@ -8,20 +8,18 @@ extern crate alloc;
 #[cfg(not(test))]
 extern crate panic_halt;
 
-use alloc::{format, string::ToString as _};
+use alloc::{format, string::ToString};
 use lol_alloc::{FreeListAllocator, LockedAllocator};
 
 #[global_allocator]
 static ALLOC: LockedAllocator<FreeListAllocator> = LockedAllocator::new(FreeListAllocator::new());
 
-use iroha_trigger::{data_model::metadata::MetadataValueBox, prelude::*};
+use iroha_trigger::{prelude::*};
 
 #[iroha_trigger::main]
 fn main(_id: TriggerId, _owner: AccountId, _event: EventBox) {
     let account_id: AccountId = "ed0120CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03@wonderland".parse().unwrap();
-    let limits = MetadataLimits::new(256, 256);
-    let mut metadata = Metadata::new();
-
+    let mut metadata = Metadata::default();
     let name = format!(
         "nft_for_{}_in_{}",
         account_id.signatory(),
@@ -29,9 +27,7 @@ fn main(_id: TriggerId, _owner: AccountId, _event: EventBox) {
     )
     .parse()
     .dbg_unwrap();
-    metadata
-        .insert_with_limits(name, true, limits)
-        .dbg_unwrap();
+    metadata.insert(name, true);
 
     let nft_id = generate_new_nft_id(&account_id);
     let nft_definition = AssetDefinition::store(nft_id.clone())
@@ -44,7 +40,7 @@ fn main(_id: TriggerId, _owner: AccountId, _event: EventBox) {
     SetKeyValue::asset(
         AssetId::new(nft_id, account_id),
         "has_this_nft".parse::<Name>().dbg_unwrap(),
-        MetadataValueBox::Bool(true),
+        true,
     )
     .execute()
     .dbg_unwrap();

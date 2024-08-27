@@ -23,7 +23,7 @@ import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.ALICE_PUBLIC_KEY
 import jp.co.soramitsu.iroha2.testengine.AliceCanMintXor
-import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMint
+import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMintAndBurn
 import jp.co.soramitsu.iroha2.testengine.AliceHasRoleWithAccessToBobsMetadata
 import jp.co.soramitsu.iroha2.testengine.AliceWithTestAssets
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
@@ -309,7 +309,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("Assets")
     @Query("FindAssetDefinitionById")
     @Story("Account queries asset definition by ID")
@@ -425,7 +425,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("PermissionTokens")
     @Query("FindPermissionTokensByAccountId")
     @Story("PermissionToken queries permission tokens by account id")
@@ -636,7 +636,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("Accounts")
     @Query("FindAllAccountsWithPagination")
     @Story("Account queries all accounts with pagination")
@@ -662,7 +662,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("Transactions")
     @Query("FindAllTransactions")
     @Story("Account queries all transactions")
@@ -687,7 +687,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("Blocks")
     @Query("FindAllBlocks")
     @Story("Account queries all blocks")
@@ -710,7 +710,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMint::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Feature("Blocks")
     @Query("FindAllBlockHeaders")
     @Story("Account queries all block headers")
