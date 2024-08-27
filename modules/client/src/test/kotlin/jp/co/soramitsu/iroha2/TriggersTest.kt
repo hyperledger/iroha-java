@@ -20,6 +20,7 @@ import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.query.QueryBuilder
 import jp.co.soramitsu.iroha2.testengine.ALICE_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.ALICE_KEYPAIR
+import jp.co.soramitsu.iroha2.testengine.ALICE_PUBLIC_KEY
 import jp.co.soramitsu.iroha2.testengine.AliceHas100XorAndPermissionToMintAndBurn
 import jp.co.soramitsu.iroha2.testengine.BOB_ACCOUNT_ID
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_ASSET_ID
@@ -181,7 +182,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
     @Story("Endless time trigger decreases asset quantity continuously")
     @SdkTestId("endless_time_trigger")
     fun `endless time trigger`(): Unit = runBlocking {
@@ -240,9 +241,12 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         }
         keepNetworkBusyAndCheckAssetDefinitionIds()
 
-        val testKey = "key"
-        val testValue = "value"
+        val testKey = "key02357123"
+        val testValue = "value986441123"
         client.tx { setKeyValue(triggerId, testKey.asName(), testValue) }
+
+        delay(5000)
+
         QueryBuilder.findTriggerById(triggerId)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
@@ -435,8 +439,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
 
     private suspend fun keepNetworkBusyAndCheckAssetDefinitionIds() {
         // send some transactions to keep Iroha2 network busy
-        repeat(10) { i ->
-            println("$i TRANSACTION APPLIED")
+        repeat(5) { i ->
             client.sendTransaction {
                 accountId = ALICE_ACCOUNT_ID
                 setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i")
@@ -444,19 +447,23 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             }.also { d ->
                 withTimeout(txTimeout) { d.await() }
             }
-            delay(250)
+            delay(500)
         }
         QueryBuilder.findAssetsByAccountId(ALICE_ACCOUNT_ID)
             .account(ALICE_ACCOUNT_ID)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .also { assets ->
+                val expectedDefinition = AssetDefinitionId(
+                    DEFAULT_DOMAIN_ID,
+                    "nft_number_1_for_${ALICE_PUBLIC_KEY.payload.toHex(true)}".asName(),
+                )
                 assert(assets.size > 1)
                 assert(assets.all { it.id.account == ALICE_ACCOUNT_ID })
                 assert(assets.any { it.id.definition == XOR_DEFINITION_ID })
                 assert(
                     assets.any {
-                        it.id.definition == AssetDefinitionId(DEFAULT_DOMAIN_ID, "nft_number_1_for_alice".asName())
+                        it.id.definition.asString().lowercase() == expectedDefinition.asString().lowercase()
                     },
                 )
             }

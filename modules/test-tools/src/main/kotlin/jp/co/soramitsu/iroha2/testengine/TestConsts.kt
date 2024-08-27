@@ -6,6 +6,7 @@ import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
+import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.publicKeyFromHex
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 
@@ -21,7 +22,10 @@ val GENESIS_ACCOUNT = AccountId(GENESIS_DOMAIN.asDomainId(), publicKeyFromHex(GE
 val DEFAULT_DOMAIN_ID = DEFAULT_DOMAIN.asDomainId()
 
 @JvmField
-val ALICE_KEYPAIR = generateKeyPair()
+val ALICE_KEYPAIR = keyPairFromHex(
+    "CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03",
+    "CCF31D85E3B32A4BEA59987CE0C78E3B8E2DB93881468AB2435FE45D5C9DCD53"
+)
 
 @JvmField
 val ALICE_PUBLIC_KEY = ALICE_KEYPAIR.public.toIrohaPublicKey()

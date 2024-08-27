@@ -29,22 +29,22 @@
     },
     {
       "Executor": {
-        "Fuel": 55000000
+        "Fuel": 5500000000
       }
     },
     {
       "Executor": {
-        "Memory": 55000000
+        "Memory": 550000000
       }
     },
     {
       "SmartContract": {
-        "Fuel": 55000000
+        "Fuel": 5500000000
       }
     },
     {
       "SmartContract": {
-        "Memory": 55000000
+        "Memory": 550000000
       }
     }
   ],

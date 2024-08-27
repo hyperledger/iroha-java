@@ -15,10 +15,13 @@ import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.DomainId
 import jp.co.soramitsu.iroha2.generated.InstructionBox
 import jp.co.soramitsu.iroha2.generated.Metadata
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
+import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.Permission
 import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.RoleId
+import jp.co.soramitsu.iroha2.generated.SmartContractParameter
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.numeric
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
@@ -153,6 +156,14 @@ open class AliceHas100XorAndPermissionToMintAndBurn : Genesis(
             Permissions.CanBurnAssetWithDefinition,
             DEFAULT_ASSET_DEFINITION_ID.asJsonString(),
             ALICE_ACCOUNT_ID,
+        ),
+        params = listOf(
+            Parameter.SmartContract(
+                SmartContractParameter.Fuel(NonZeroOfu64(BigInteger.valueOf(5500000000))),
+            ),
+            Parameter.Executor(
+                SmartContractParameter.Fuel(NonZeroOfu64(BigInteger.valueOf(5500000000))),
+            ),
         ),
     ),
 )
@@ -433,10 +444,10 @@ open class BobCanUnregisterAnyRole : Genesis(
 /**
  * Return [RawGenesisTransaction] with instructions to init genesis
  */
-fun rawGenesisTx(vararg isi: InstructionBox) = RawGenesisTransaction(
+fun rawGenesisTx(vararg isi: InstructionBox, params: List<Parameter> = emptyList()) = RawGenesisTransaction(
     chain = ChainId("00000000-0000-0000-0000-000000000000"),
     executor = Genesis.EXECUTOR_FILE_NAME,
-    parameters = emptyList(),
+    parameters = params,
     instructions = listOf(
         Instructions.registerDomain(DEFAULT_DOMAIN_ID),
         Instructions.registerAccount(ALICE_ACCOUNT_ID, Metadata(emptyMap())),

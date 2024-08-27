@@ -7,6 +7,7 @@ import jp.co.soramitsu.iroha2.generated.Metadata
 import jp.co.soramitsu.iroha2.generated.NewAccount
 import jp.co.soramitsu.iroha2.generated.NewAssetDefinition
 import jp.co.soramitsu.iroha2.generated.NewDomain
+import jp.co.soramitsu.iroha2.generated.Parameter
 import jp.co.soramitsu.iroha2.generated.RawGenesisTransaction
 import jp.co.soramitsu.iroha2.generated.RegisterBox
 import jp.co.soramitsu.iroha2.generated.RegisterOfAccount
@@ -33,7 +34,9 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
     /**
      * Represent genesis as JSON
      */
-    fun asJson(): String = JSON_SERDE.writeValueAsString(this.transaction)
+    fun asJson(): String = JSON_SERDE.writeValueAsString(this.transaction).also {
+        println("GENESIS: $it")
+    }
 
     companion object {
 
@@ -44,16 +47,18 @@ open class Genesis(open val transaction: RawGenesisTransaction) {
          */
         fun List<Genesis>.toSingle(): Genesis {
             val uniqueIsi: MutableSet<InstructionBox> = mutableSetOf()
+            val uniqueParams: MutableSet<Parameter> = mutableSetOf()
 
             this.forEach { genesis ->
                 uniqueIsi.addAll(genesis.transaction.instructions)
+                uniqueParams.addAll(genesis.transaction.parameters)
             }
 
             return Genesis(
                 RawGenesisTransaction(
                     ChainId("00000000-0000-0000-0000-000000000000"),
                     EXECUTOR_FILE_NAME,
-                    emptyList(),
+                    uniqueParams.toList(),
                     uniqueIsi.mergeMetadata().toList(),
                     emptyList(),
                 ),
