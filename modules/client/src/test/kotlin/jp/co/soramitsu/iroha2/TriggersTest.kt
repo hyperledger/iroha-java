@@ -188,7 +188,11 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     fun `endless time trigger`(): Unit = runBlocking {
         val triggerId = TriggerId(name = Name("endless_time_trigger"))
 
-        sendAndAwaitExecutableTrigger(triggerId, Instructions.burnAsset(DEFAULT_ASSET_ID, 1))
+        sendAndAwaitTimeTrigger(
+            triggerId,
+            Repeats.Indefinitely(),
+            Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
+        )
         sendAndWait10Txs()
 
         delay(3000)
@@ -203,7 +207,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     fun `time trigger execution repeats few times`(): Unit = runBlocking {
         val triggerId = TriggerId(name = Name("time_trigger"))
 
-        sendAndAwaitExecutableTrigger(
+        sendAndAwaitTimeTrigger(
             triggerId,
             Repeats.Exactly(5L),
             Instructions.burnAsset(DEFAULT_ASSET_ID, 1),
@@ -365,26 +369,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
             .value.cast<AssetValue.Numeric>().numeric.asLong()
     }
 
-    private suspend fun sendAndAwaitExecutableTrigger(
-        triggerId: TriggerId,
-        instruction: InstructionBox,
-        accountId: AccountId = ALICE_ACCOUNT_ID,
-    ) {
-        client.sendTransaction {
-            this.accountId = accountId
-            registerExecutableTrigger(
-                triggerId,
-                listOf(instruction),
-                Repeats.Indefinitely(),
-                accountId,
-            )
-            buildSigned(ALICE_KEYPAIR)
-        }.also { d ->
-            withTimeout(txTimeout) { d.await() }
-        }
-    }
-
-    private suspend fun sendAndAwaitExecutableTrigger(
+    private suspend fun sendAndAwaitTimeTrigger(
         triggerId: TriggerId,
         repeats: Repeats,
         instruction: InstructionBox,
