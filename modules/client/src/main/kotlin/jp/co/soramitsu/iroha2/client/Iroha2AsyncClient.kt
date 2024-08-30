@@ -2,6 +2,7 @@ package jp.co.soramitsu.iroha2.client
 
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.model.IrohaUrls
+import jp.co.soramitsu.iroha2.query.QueryAndExtractor
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.future.future
 import kotlinx.coroutines.runBlocking
@@ -19,15 +20,15 @@ class Iroha2AsyncClient @JvmOverloads constructor(
     eventReadMaxAttempts: Int = 10,
 ) : Iroha2Client(urls, log, credentials, eventReadTimeoutInMills, eventReadMaxAttempts) {
 
-//    /**
-//     * Send a request to Iroha2 and extract payload.
-//     * {@see Extractors}
-//     */
-//    fun <T> sendQueryAsync(
-//        queryAndExtractor: QueryAndExtractor<T>,
-//    ): CompletableFuture<T> = future {
-//        sendQuery(queryAndExtractor)
-//    }
+    /**
+     * Send a request to Iroha2 and extract payload.
+     * {@see Extractors}
+     */
+    fun <T> sendQueryAsync(
+        queryAndExtractor: QueryAndExtractor<T>,
+    ): CompletableFuture<T> = future {
+        sendQuery(queryAndExtractor)
+    }
 
     /**
      * Send a transaction to an Iroha peer and wait until it is committed or rejected.

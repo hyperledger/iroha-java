@@ -259,7 +259,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
     @Story("Wasm trigger mints NFT for every user when trigger metadata is updated")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user_on_update_trigger_metadata_event")
     fun `wasm trigger to mint nft for every user on update trigger metadata event`(): Unit = runBlocking {
@@ -267,7 +267,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
         val setKeyValueTriggerId = TriggerId(name = "update_trigger".asName())
 
         val filter = Filters.data(
-            EntityFilters.byTrigger(0, wasmTriggerId),
+            EntityFilters.byTrigger(1, wasmTriggerId),
         )
         val wasm = this.javaClass.classLoader
             .getResource("create_nft_for_alice_smartcontract.wasm")
@@ -384,7 +384,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 accountId,
                 EventFilters.timeEventFilter(
                     BigInteger.valueOf(Instant.now().toEpochMilli()),
-                    BigInteger.valueOf(1L),
+                    BigInteger.valueOf(500L),
                 ),
             )
             buildSigned(ALICE_KEYPAIR)

@@ -2,7 +2,6 @@ package jp.co.soramitsu.iroha2.testengine
 
 import jp.co.soramitsu.iroha2.asDomainId
 import jp.co.soramitsu.iroha2.asName
-import jp.co.soramitsu.iroha2.generateKeyPair
 import jp.co.soramitsu.iroha2.generated.AccountId
 import jp.co.soramitsu.iroha2.generated.AssetDefinitionId
 import jp.co.soramitsu.iroha2.generated.AssetId
@@ -34,7 +33,10 @@ val ALICE_PUBLIC_KEY = ALICE_KEYPAIR.public.toIrohaPublicKey()
 val ALICE_ACCOUNT_ID = AccountId(domain = DEFAULT_DOMAIN_ID, signatory = ALICE_PUBLIC_KEY)
 
 @JvmField
-val BOB_KEYPAIR = generateKeyPair()
+val BOB_KEYPAIR = keyPairFromHex(
+    "04FF5B81046DDCCF19E2E451C45DFB6F53759D4EB30FA2EFA807284D1CC33016",
+    "AF3F96DEEF44348FEB516C057558972CEC4C75C4DB9C5B3AAC843668854BF828",
+)
 
 @JvmField
 val BOB_PUBLIC_KEY = BOB_KEYPAIR.public.toIrohaPublicKey()

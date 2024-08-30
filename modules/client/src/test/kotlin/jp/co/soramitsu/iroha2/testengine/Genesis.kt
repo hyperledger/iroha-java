@@ -305,6 +305,7 @@ open class NewDomainWithMetadata : Genesis(
             domainId = DOMAIN_ID,
             metadata = mapOf(KEY to VALUE),
         ),
+        Instructions.transferDomainOwnership(GENESIS_ACCOUNT, DOMAIN_ID, ALICE_ACCOUNT_ID),
     ),
 ) {
     companion object {

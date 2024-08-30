@@ -25,6 +25,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
+import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
@@ -142,6 +143,7 @@ open class Iroha2Client(
 
     open val logger: Logger = LoggerFactory.getLogger(javaClass)
 
+    @OptIn(InternalAPI::class)
     open val client by lazy {
         HttpClient(CIO) {
             expectSuccess = true
@@ -172,25 +174,12 @@ open class Iroha2Client(
             }
             HttpResponseValidator {
                 handleResponseExceptionWithRequest { exception, _ ->
-                    val status = exception
-                        .takeIf { it is ClientRequestException }
-                        ?.cast<ClientRequestException>()
-                        ?.response?.status
+                    val err = exception.takeIf { it is ClientRequestException }?.cast<ClientRequestException>()
+                    val status = err?.response?.status
                     throw IrohaClientException(cause = exception, status = status)
                 }
             }
         }
-    }
-
-    /**
-     * Send a request to Iroha2 and extract paginated payload
-     */
-    suspend fun <T> sendQuery2(
-        queryAndExtractor: QueryAndExtractor<T>,
-        cursor: ForwardCursor? = null,
-    ): BatchedResponseV1<QueryOutputBox> {
-        logger.debug("Sending query")
-        return sendQueryRequest(queryAndExtractor, cursor).cast<BatchedResponse.V1>().batchedResponseV1
     }
 
     /**
