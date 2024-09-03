@@ -187,7 +187,7 @@ public sealed class FindError : ModelEnum {
      * 'Block' variant
      */
     public data class Block(
-        public val hashOf: HashOf<SignedBlock>,
+        public val hashOf: HashOf<BlockHeader>,
     ) : FindError() {
         override fun discriminant(): Int = DISCRIMINANT
 
@@ -198,7 +198,7 @@ public sealed class FindError : ModelEnum {
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.FindError.Block = try {
                 Block(
-                    HashOf.read(reader) as HashOf<SignedBlock>,
+                    HashOf.read(reader) as HashOf<BlockHeader>,
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)

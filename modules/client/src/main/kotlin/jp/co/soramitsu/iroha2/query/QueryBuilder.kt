@@ -74,7 +74,7 @@ class QueryBuilder<R>(
         this.sorting = Sorting(key.asName())
     }
 
-    fun soring(key: Name) = this.apply {
+    fun sorting(key: Name) = this.apply {
         this.sorting = Sorting(key)
     }
 

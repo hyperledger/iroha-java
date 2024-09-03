@@ -598,7 +598,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         QueryBuilder.findAccountsByDomainId(NewDomainWithMetadata.DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .pagination(limit = limit)
-            .soring(key)
+            .sorting(key)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .let { accounts ->
@@ -608,7 +608,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         QueryBuilder.findAccountsByDomainId(NewDomainWithMetadata.DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .pagination(start = limit.toBigInteger(), limit = limit)
-            .soring(key)
+            .sorting(key)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .let { accounts ->
@@ -628,7 +628,7 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
         QueryBuilder.findAccountsByDomainId(NewDomainWithMetadata.DOMAIN_ID)
             .account(ALICE_ACCOUNT_ID)
             .pagination(start = BigInteger.valueOf(2).multiply(limit.toBigInteger()), limit = limit)
-            .soring(key)
+            .sorting(key)
             .buildSigned(ALICE_KEYPAIR)
             .let { query -> client.sendQuery(query) }
             .let { accounts ->

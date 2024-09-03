@@ -18,13 +18,13 @@ import kotlin.Unit
  */
 public data class BlockSignature(
     public val u64: BigInteger,
-    public val signatureOf: SignatureOf<BlockPayload>,
+    public val signatureOf: SignatureOf<BlockHeader>,
 ) {
     public companion object : ScaleReader<BlockSignature>, ScaleWriter<BlockSignature> {
         override fun read(reader: ScaleCodecReader): BlockSignature = try {
             BlockSignature(
                 reader.readUint64(),
-                SignatureOf.read(reader) as SignatureOf<BlockPayload>,
+                SignatureOf.read(reader) as SignatureOf<BlockHeader>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

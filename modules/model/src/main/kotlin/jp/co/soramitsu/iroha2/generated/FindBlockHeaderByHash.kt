@@ -16,12 +16,12 @@ import kotlin.Unit
  * Generated from 'FindBlockHeaderByHash' regular structure
  */
 public data class FindBlockHeaderByHash(
-    public val hash: HashOf<SignedBlock>,
+    public val hash: HashOf<BlockHeader>,
 ) {
     public companion object : ScaleReader<FindBlockHeaderByHash>, ScaleWriter<FindBlockHeaderByHash> {
         override fun read(reader: ScaleCodecReader): FindBlockHeaderByHash = try {
             FindBlockHeaderByHash(
-                HashOf.read(reader) as HashOf<SignedBlock>,
+                HashOf.read(reader) as HashOf<BlockHeader>,
             )
         } catch (ex: Exception) {
             throw wrapException(ex)

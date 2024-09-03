@@ -20,7 +20,7 @@ import kotlin.collections.List
  */
 public data class BlockHeader(
     public val height: NonZeroOfu64,
-    public val prevBlockHash: HashOf<SignedBlock>? = null,
+    public val prevBlockHash: HashOf<BlockHeader>? = null,
     public val transactionsHash: HashOf<List<SignedTransaction>>,
     public val creationTimeMs: BigInteger,
     public val viewChangeIndex: Long,
@@ -30,7 +30,7 @@ public data class BlockHeader(
         override fun read(reader: ScaleCodecReader): BlockHeader = try {
             BlockHeader(
                 NonZeroOfu64.read(reader),
-                reader.readNullable(HashOf) as HashOf<SignedBlock>?,
+                reader.readNullable(HashOf) as HashOf<BlockHeader>?,
                 HashOf.read(reader) as HashOf<List<SignedTransaction>>,
                 reader.readUint64(),
                 reader.readUint32(),

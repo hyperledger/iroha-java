@@ -19,10 +19,12 @@ import kotlin.Unit
 public data class SumeragiParameters(
     public val blockTimeMs: BigInteger,
     public val commitTimeMs: BigInteger,
+    public val maxClockDriftMs: BigInteger,
 ) {
     public companion object : ScaleReader<SumeragiParameters>, ScaleWriter<SumeragiParameters> {
         override fun read(reader: ScaleCodecReader): SumeragiParameters = try {
             SumeragiParameters(
+                reader.readUint64(),
                 reader.readUint64(),
                 reader.readUint64(),
             )
@@ -33,6 +35,7 @@ public data class SumeragiParameters(
         override fun write(writer: ScaleCodecWriter, instance: SumeragiParameters): Unit = try {
             writer.writeUint64(instance.blockTimeMs)
             writer.writeUint64(instance.commitTimeMs)
+            writer.writeUint64(instance.maxClockDriftMs)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

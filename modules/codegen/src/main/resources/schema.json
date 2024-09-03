@@ -557,10 +557,6 @@
         "type": "BlockHeader"
       },
       {
-        "name": "hash",
-        "type": "HashOf<SignedBlock>"
-      },
-      {
         "name": "status",
         "type": "BlockStatus"
       }
@@ -586,7 +582,7 @@
       },
       {
         "name": "prev_block_hash",
-        "type": "Option<HashOf<SignedBlock>>"
+        "type": "Option<HashOf<BlockHeader>>"
       },
       {
         "name": "transactions_hash",
@@ -651,7 +647,7 @@
   "BlockSignature": {
     "Tuple": [
       "u64",
-      "SignatureOf<BlockPayload>"
+      "SignatureOf<BlockHeader>"
     ]
   },
   "BlockStatus": {
@@ -1621,7 +1617,7 @@
     "Struct": [
       {
         "name": "hash",
-        "type": "HashOf<SignedBlock>"
+        "type": "HashOf<BlockHeader>"
       }
     ]
   },
@@ -1675,7 +1671,7 @@
       {
         "tag": "Block",
         "discriminant": 5,
-        "type": "HashOf<SignedBlock>"
+        "type": "HashOf<BlockHeader>"
       },
       {
         "tag": "Transaction",
@@ -1886,8 +1882,8 @@
     ]
   },
   "Hash": "Array<u8, 32>",
+  "HashOf<BlockHeader>": "Hash",
   "HashOf<MerkleTree<SignedTransaction>>": "Hash",
-  "HashOf<SignedBlock>": "Hash",
   "HashOf<SignedTransaction>": "Hash",
   "IdBox": {
     "Enum": [
@@ -2555,8 +2551,8 @@
   "Option<DomainId>": {
     "Option": "DomainId"
   },
-  "Option<HashOf<SignedBlock>>": {
-    "Option": "HashOf<SignedBlock>"
+  "Option<HashOf<BlockHeader>>": {
+    "Option": "HashOf<BlockHeader>"
   },
   "Option<HashOf<SignedTransaction>>": {
     "Option": "HashOf<SignedTransaction>"
@@ -3677,7 +3673,7 @@
       }
     ]
   },
-  "SignatureOf<BlockPayload>": "Signature",
+  "SignatureOf<BlockHeader>": "Signature",
   "SignatureOf<ClientQueryPayload>": "Signature",
   "SignatureOf<TransactionPayload>": "Signature",
   "SignedBlock": {
@@ -3886,6 +3882,11 @@
         "tag": "CommitTimeMs",
         "discriminant": 1,
         "type": "u64"
+      },
+      {
+        "tag": "MaxClockDriftMs",
+        "discriminant": 2,
+        "type": "u64"
       }
     ]
   },
@@ -3897,6 +3898,10 @@
       },
       {
         "name": "commit_time_ms",
+        "type": "u64"
+      },
+      {
+        "name": "max_clock_drift_ms",
         "type": "u64"
       }
     ]
@@ -4028,7 +4033,7 @@
     "Struct": [
       {
         "name": "block_hash",
-        "type": "HashOf<SignedBlock>"
+        "type": "HashOf<BlockHeader>"
       },
       {
         "name": "transaction",
