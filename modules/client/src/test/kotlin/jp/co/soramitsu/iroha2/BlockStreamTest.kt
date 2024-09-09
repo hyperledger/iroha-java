@@ -6,13 +6,13 @@ import io.qameta.allure.Owner
 import io.qameta.allure.Story
 import jp.co.soramitsu.iroha2.annotations.Sdk
 import jp.co.soramitsu.iroha2.annotations.SdkTestId
-import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.client.blockstream.BlockStreamStorage
 import jp.co.soramitsu.iroha2.generated.AssetType
 import jp.co.soramitsu.iroha2.generated.BlockMessage
 import jp.co.soramitsu.iroha2.generated.BlockPayload
 import jp.co.soramitsu.iroha2.generated.Executable
 import jp.co.soramitsu.iroha2.generated.InstructionBox
+import jp.co.soramitsu.iroha2.generated.NonZeroOfu64
 import jp.co.soramitsu.iroha2.generated.SetKeyValueBox
 import jp.co.soramitsu.iroha2.generated.SignedTransaction
 import jp.co.soramitsu.iroha2.generated.TransactionPayload
@@ -22,9 +22,9 @@ import jp.co.soramitsu.iroha2.testengine.BOB_KEYPAIR
 import jp.co.soramitsu.iroha2.testengine.BOB_PUBLIC_KEY
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
-import jp.co.soramitsu.iroha2.testengine.DefaultGenesis
 import jp.co.soramitsu.iroha2.testengine.GENESIS_ADDRESS
 import jp.co.soramitsu.iroha2.testengine.GENESIS_DOMAIN
+import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
@@ -40,16 +40,16 @@ import kotlin.test.assertTrue
 @Owner("akostyuchenko")
 @Sdk("Java/Kotlin")
 @Feature("Block Streaming")
-class BlockStreamTest : IrohaTest<Iroha2Client>() {
+class BlockStreamTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
-    @WithIroha([NewAccountWithMetadata::class])
+    @WithIroha([NewAccountWithMetadata::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
     @Issue("https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/361")
     @ResourceLock("blockStream")
     fun `subscription to block stream`(): Unit = runBlocking {
-        val idToSubscription = client.subscribeToBlockStream(from = 1, count = 2)
+        val idToSubscription = client.subscribeToBlockStream(from = 1, count = 3)
         val actionId = idToSubscription.first.first().id
         val subscription = idToSubscription.second
         val newAssetName = "rox"
@@ -60,6 +60,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerAssetDefinition(newAssetName.asName(), DEFAULT_DOMAIN_ID, AssetType.Store())
         }
+
         val blocks = mutableListOf<BlockMessage>()
         subscription.receive<BlockMessage>(actionId).collect { block -> blocks.add(block) }
 
@@ -72,7 +73,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         assertEquals(BOB_ACCOUNT_ID, isi[2].extractAccount().id)
         assertEquals(NewAccountWithMetadata.ACCOUNT_ID, isi[3].extractAccount().id)
 
-        isi = blocks[1].validate(2, DEFAULT_DOMAIN, BOB_PUBLIC_KEY.payload.toHex(true), 1)
+        isi = blocks[2].validate(3, DEFAULT_DOMAIN, BOB_PUBLIC_KEY.payload.toHex(true), 1)
         val newAssetDefinition = isi[0].cast<InstructionBox.Register>().extractAssetDefinition()
         assertNotNull(newAssetDefinition)
         assertEquals(newAssetName, newAssetDefinition.id.name.string)
@@ -82,7 +83,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([DefaultGenesis::class])
+    @WithIroha([NewAccountWithMetadata::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
     @ResourceLock("blockStream")
@@ -97,7 +98,7 @@ class BlockStreamTest : IrohaTest<Iroha2Client>() {
         val subscription = idToSubscription.second
         var heightSum = BigInteger.ZERO
 
-        subscription.receive<BigInteger>(initialActionId) { heightSum += it }
+        subscription.receive<NonZeroOfu64>(initialActionId) { heightSum += it.u64 }
 
         repeat(repeatTimes + shift) {
             client.tx { setKeyValue(ALICE_ACCOUNT_ID, randomAlphabetic(16).asName(), randomAlphabetic(16)) }

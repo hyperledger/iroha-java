@@ -125,11 +125,11 @@ open class AliceHasRoleWithAccessToBobsMetadata : Genesis(
             ROLE_ID,
             Permission(
                 Permissions.CanSetKeyValueInAccount.type,
-                BOB_ACCOUNT_ID.asJsonString(),
+                BOB_ACCOUNT_ID.asJsonString(true),
             ),
             Permission(
                 Permissions.CanRemoveKeyValueInAccount.type,
-                BOB_ACCOUNT_ID.asJsonString(),
+                BOB_ACCOUNT_ID.asJsonString(true),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),
@@ -387,11 +387,11 @@ open class FatGenesis : Genesis(
             ROLE_ID,
             Permission(
                 Permissions.CanSetKeyValueInAccount.type,
-                BOB_ACCOUNT_ID.asJsonString(),
+                BOB_ACCOUNT_ID.asJsonString(true),
             ),
             Permission(
                 Permissions.CanRemoveKeyValueInAccount.type,
-                BOB_ACCOUNT_ID.asJsonString(),
+                BOB_ACCOUNT_ID.asJsonString(true),
             ),
         ),
         Instructions.grantRole(ROLE_ID, ALICE_ACCOUNT_ID),

@@ -25,7 +25,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.serialization.jackson.jackson
-import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readBytes
 import jp.co.soramitsu.iroha2.IrohaClientException
@@ -143,7 +142,6 @@ open class Iroha2Client(
 
     open val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    @OptIn(InternalAPI::class)
     open val client by lazy {
         HttpClient(CIO) {
             expectSuccess = true

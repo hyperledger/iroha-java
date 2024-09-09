@@ -106,7 +106,6 @@ open class BlockStreamSubscription private constructor(
                 BigInteger.valueOf(context.from),
             ),
         )
-
         context.client.webSocket(
             host = context.apiUrl.host,
             port = context.apiUrl.port,
@@ -119,33 +118,29 @@ open class BlockStreamSubscription private constructor(
                 val idsToRemove = mutableListOf<UUID>()
 
                 for (frame in incoming) {
-                    logger.debug("Received frame: {}", frame)
+                    logger.info("Received frame: {}", frame)
 
                     val block = BlockMessage.decode(frame.readBytes())
                     source.forEach { (id, storage) ->
-                        logger.debug("Executing {} action", id)
+                        logger.info("Executing {} action", id)
                         val result = storage.onBlock(block)
-                        logger.debug("{} action result: {}", id, result)
+                        logger.info("{} action result: {}", id, result)
                         val channel = storage.channel.value
                         when (channel.isClosedForSend) {
-                            true -> logger.warn(
-                                "Block stream channel#{} is already closed, not sending the action result",
-                                id,
-                            )
-
+                            true -> logger.warn("Block stream channel#{} is already closed, not sending the action result", id)
                             false -> channel.send(result)
                         }
                         if (storage.cancelIf?.let { it(block) } == true) {
                             // idempotent
                             channel.close()
                             idsToRemove.add(id)
-                            logger.debug("Block stream channel#{} is closed and scheduled for removal", id)
+                            logger.info("Block stream channel#{} is closed and scheduled for removal", id)
                         }
                     }
                     if (idsToRemove.isNotEmpty()) {
                         idsToRemove.forEach {
                             source.remove(it)
-                            logger.debug("Block stream channel#{} is removed", it)
+                            logger.info("Block stream channel#{} is removed", it)
                         }
                         idsToRemove.clear()
                     }
