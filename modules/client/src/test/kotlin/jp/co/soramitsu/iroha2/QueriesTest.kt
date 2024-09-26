@@ -941,11 +941,9 @@ class QueriesTest : IrohaTest<Iroha2Client>() {
     }
 
     @WithIroha([WithManyDomains::class])
-    @Story(
-        "Iroha2 returns 10 results per request. This test checks new internal implementation of cursor mechanism" +
-            "that is also implemented in Iroha2. Without it this test would fail with only 10 results returned",
-    )
-    @SdkTestId("querying_multiple_domains_with_cursor_test")
+    @Feature("Domains")
+    @Query("FindAllDomains")
+    @Story("Account queries all domains using cursor pagination")
     fun `find multiple domains with cursor test`(): Unit = runBlocking {
         val domains = QueryBuilder.findAllDomains()
             .account(ALICE_ACCOUNT_ID)
