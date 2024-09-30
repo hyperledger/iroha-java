@@ -1277,7 +1277,7 @@ object ParameterSerializer : JsonSerializer<Parameter>() {
             is Parameter.Executor -> gen.writeObjectField(Parameter.Executor::class.simpleName, value.smartContractParameter)
             is Parameter.SmartContract -> gen.writeObjectField(
                 Parameter.SmartContract::class.simpleName,
-                value.smartContractParameter
+                value.smartContractParameter,
             )
 
             is Parameter.Sumeragi -> gen.writeObjectField(Parameter.Sumeragi::class.simpleName, value.sumeragiParameter)
