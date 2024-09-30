@@ -10,9 +10,9 @@ import jp.co.soramitsu.iroha2.generated.Repeats
 import jp.co.soramitsu.iroha2.generated.TriggerId
 import jp.co.soramitsu.iroha2.transaction.EventFilters
 import jp.co.soramitsu.iroha2.transaction.Instructions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
-import org.junit.jupiter.api.Disabled
 import kotlin.test.assertEquals
 
 class SerializerTest {
@@ -60,9 +60,9 @@ class SerializerTest {
         assertEquals(expectedJson.lowercase(), json.asPrettyJson().lowercase())
     }
 
+    // TODO it's correct, just deal with the format
     @Test
     @Disabled
-    // TODO it's correct, just deal with the format
     fun `should serialize mint asset genesis block`() {
         val triggerId = TriggerId(name = Name("time_trigger"))
         val aliceAccountId =
