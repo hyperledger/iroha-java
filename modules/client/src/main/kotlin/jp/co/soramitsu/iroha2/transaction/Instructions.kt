@@ -300,7 +300,7 @@ object Instructions {
      */
     fun grantPermissionToken(
         permission: Permissions,
-        payload: String = "",
+        payload: String = "Null",
         destinationId: AccountId,
     ) = InstructionBox.Grant(
         GrantBox.Permission(

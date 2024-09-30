@@ -41,7 +41,7 @@ open class AliceCanUpgradeExecutor : Genesis(
     rawGenesisTx(
         Instructions.grantPermissionToken(
             Permissions.CanUpgradeExecutor,
-            "",
+            "Null",
             ALICE_ACCOUNT_ID,
         ),
     ),
@@ -62,7 +62,7 @@ open class AliceCanUnregisterAnyPeer : Genesis(
     rawGenesisTx(
         Instructions.grantPermissionToken(
             Permissions.CanUnregisterAnyPeer,
-            "",
+            "Null",
             ALICE_ACCOUNT_ID,
         ),
     ),

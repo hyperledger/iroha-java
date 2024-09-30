@@ -526,7 +526,12 @@ object NumericDeserializer : JsonDeserializer<Numeric>() {
 object PermissionDeserializer : JsonDeserializer<Permission>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Permission {
         val node = p.readValueAsTree<ObjectNode>()
-        return Permission(node.get("name").asText(), node.get("payload").asStringOrNull())
+        var payloadValue = node.get("payload").asStringOrNull()
+        when (payloadValue.isNullOrEmpty()) {
+            true -> payloadValue = "Null"
+            else -> {}
+        }
+        return Permission(node.get("name").asText(), payloadValue)
     }
 }
 
@@ -669,6 +674,7 @@ object RepeatsDeserializer : JsonDeserializer<Repeats>() {
                 val field = node.fields().next()
                 Repeats.Exactly(JSON_SERDE.convertValue(field.value, Long::class.java))
             }
+
             else -> throw DeserializationException("Unknown type: $this")
         }
     }
@@ -1204,7 +1210,7 @@ object NumericSerializer : JsonSerializer<Numeric>() {
 object PermissionSerializer : JsonSerializer<Permission>() {
     override fun serialize(value: Permission, gen: JsonGenerator, serializers: SerializerProvider) {
         val payload = when (value.payload) {
-            null -> null
+            "Null" -> null
             else -> JSON_SERDE.readTree(value.payload)
         }
 
@@ -1269,7 +1275,11 @@ object ParameterSerializer : JsonSerializer<Parameter>() {
             is Parameter.Block -> gen.writeObjectField(Parameter.Block::class.simpleName, value.blockParameter)
             is Parameter.Custom -> gen.writeObjectField(Parameter.Custom::class.simpleName, value.customParameter)
             is Parameter.Executor -> gen.writeObjectField(Parameter.Executor::class.simpleName, value.smartContractParameter)
-            is Parameter.SmartContract -> gen.writeObjectField(Parameter.SmartContract::class.simpleName, value.smartContractParameter)
+            is Parameter.SmartContract -> gen.writeObjectField(
+                Parameter.SmartContract::class.simpleName,
+                value.smartContractParameter
+            )
+
             is Parameter.Sumeragi -> gen.writeObjectField(Parameter.Sumeragi::class.simpleName, value.sumeragiParameter)
             is Parameter.Transaction -> gen.writeObjectField(Parameter.Transaction::class.simpleName, value.transactionParameter)
             else -> throw IrohaSdkException("Unexpected type ${value::class}")

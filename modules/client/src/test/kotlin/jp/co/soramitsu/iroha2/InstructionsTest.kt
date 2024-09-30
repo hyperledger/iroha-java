@@ -761,8 +761,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         client.tx(BOB_ACCOUNT_ID, BOB_KEYPAIR) {
             registerRole(
                 roleId,
-                IrohaPermission(Permissions.CanSetKeyValueUserAssetsToken.type),
-                IrohaPermission(Permissions.CanRemoveKeyValueInUserAssets.type),
+                IrohaPermission(Permissions.CanSetKeyValueUserAssetsToken.type, "Null"),
+                IrohaPermission(Permissions.CanRemoveKeyValueInUserAssets.type, "Null"),
             )
             grantRole(roleId, ALICE_ACCOUNT_ID)
             setKeyValue(assetId, "key".asName(), "value")
