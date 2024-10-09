@@ -71,7 +71,8 @@ class ScaleCodecReader(private val source: ByteArray) {
         if (scaleReader is BoolReader || scaleReader is BoolNullableReader) {
             return BOOL_NULLABLE.read(this) as T?
         }
-        return when (readBoolean()) {
+        val nullable = readBoolean()
+        return when (nullable) {
             true -> read(scaleReader)
             else -> null
         }

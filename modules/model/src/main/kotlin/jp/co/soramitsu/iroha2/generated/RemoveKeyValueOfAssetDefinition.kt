@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'RemoveKeyValueOfAssetDefinition' regular structure
  */
 public data class RemoveKeyValueOfAssetDefinition(
-    public val objectId: AssetDefinitionId,
+    public val `object`: AssetDefinitionId,
     public val key: Name,
 ) {
     public companion object :
@@ -33,7 +33,7 @@ public data class RemoveKeyValueOfAssetDefinition(
 
         override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueOfAssetDefinition): Unit =
             try {
-                AssetDefinitionId.write(writer, instance.objectId)
+                AssetDefinitionId.write(writer, instance.`object`)
                 Name.write(writer, instance.key)
             } catch (ex: Exception) {
                 throw wrapException(ex)

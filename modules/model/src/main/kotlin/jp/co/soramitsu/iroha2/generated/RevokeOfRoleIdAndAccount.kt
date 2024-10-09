@@ -17,7 +17,7 @@ import kotlin.Unit
  */
 public data class RevokeOfRoleIdAndAccount(
     public val `object`: RoleId,
-    public val destinationId: AccountId,
+    public val destination: AccountId,
 ) {
     public companion object :
         ScaleReader<RevokeOfRoleIdAndAccount>,
@@ -33,7 +33,7 @@ public data class RevokeOfRoleIdAndAccount(
 
         override fun write(writer: ScaleCodecWriter, instance: RevokeOfRoleIdAndAccount): Unit = try {
             RoleId.write(writer, instance.`object`)
-            AccountId.write(writer, instance.destinationId)
+            AccountId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'RemoveKeyValueOfTrigger' regular structure
  */
 public data class RemoveKeyValueOfTrigger(
-    public val objectId: TriggerId,
+    public val `object`: TriggerId,
     public val key: Name,
 ) {
     public companion object :
@@ -32,7 +32,7 @@ public data class RemoveKeyValueOfTrigger(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueOfTrigger): Unit = try {
-            TriggerId.write(writer, instance.objectId)
+            TriggerId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
         } catch (ex: Exception) {
             throw wrapException(ex)

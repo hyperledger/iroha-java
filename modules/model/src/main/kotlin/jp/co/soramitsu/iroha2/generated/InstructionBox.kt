@@ -376,38 +376,6 @@ public sealed class InstructionBox : ModelEnum {
     }
 
     /**
-     * 'NewParameter' variant
-     */
-    public data class NewParameter(
-        public val newParameter: jp.co.soramitsu.iroha2.generated.NewParameter,
-    ) : InstructionBox() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.NewParameter>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.NewParameter> {
-            public const val DISCRIMINANT: Int = 11
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.NewParameter = try {
-                NewParameter(
-                    jp.co.soramitsu.iroha2.generated.NewParameter.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.InstructionBox.NewParameter,
-            ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.NewParameter.write(writer, instance.newParameter)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Upgrade' variant
      */
     public data class Upgrade(
@@ -418,7 +386,7 @@ public sealed class InstructionBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Upgrade>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Upgrade> {
-            public const val DISCRIMINANT: Int = 12
+            public const val DISCRIMINANT: Int = 11
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Upgrade = try {
                 Upgrade(
@@ -450,7 +418,7 @@ public sealed class InstructionBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Log>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Log> {
-            public const val DISCRIMINANT: Int = 13
+            public const val DISCRIMINANT: Int = 12
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Log = try {
                 Log(
@@ -472,21 +440,21 @@ public sealed class InstructionBox : ModelEnum {
     }
 
     /**
-     * 'Fail' variant
+     * 'Custom' variant
      */
-    public data class Fail(
-        public val fail: jp.co.soramitsu.iroha2.generated.Fail,
+    public data class Custom(
+        public val customInstruction: CustomInstruction,
     ) : InstructionBox() {
         override fun discriminant(): Int = DISCRIMINANT
 
         public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Fail>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Fail> {
-            public const val DISCRIMINANT: Int = 14
+            ScaleReader<jp.co.soramitsu.iroha2.generated.InstructionBox.Custom>,
+            ScaleWriter<jp.co.soramitsu.iroha2.generated.InstructionBox.Custom> {
+            public const val DISCRIMINANT: Int = 13
 
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Fail = try {
-                Fail(
-                    jp.co.soramitsu.iroha2.generated.Fail.read(reader),
+            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.InstructionBox.Custom = try {
+                Custom(
+                    CustomInstruction.read(reader),
                 )
             } catch (ex: Exception) {
                 throw wrapException(ex)
@@ -494,9 +462,9 @@ public sealed class InstructionBox : ModelEnum {
 
             override fun write(
                 writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.InstructionBox.Fail,
+                instance: jp.co.soramitsu.iroha2.generated.InstructionBox.Custom,
             ): Unit = try {
-                jp.co.soramitsu.iroha2.generated.Fail.write(writer, instance.fail)
+                CustomInstruction.write(writer, instance.customInstruction)
             } catch (ex: Exception) {
                 throw wrapException(ex)
             }
@@ -519,10 +487,9 @@ public sealed class InstructionBox : ModelEnum {
             8 -> Revoke.read(reader)
             9 -> ExecuteTrigger.read(reader)
             10 -> SetParameter.read(reader)
-            11 -> NewParameter.read(reader)
-            12 -> Upgrade.read(reader)
-            13 -> Log.read(reader)
-            14 -> Fail.read(reader)
+            11 -> Upgrade.read(reader)
+            12 -> Log.read(reader)
+            13 -> Custom.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: InstructionBox) {
@@ -539,10 +506,9 @@ public sealed class InstructionBox : ModelEnum {
                 8 -> Revoke.write(writer, instance as Revoke)
                 9 -> ExecuteTrigger.write(writer, instance as ExecuteTrigger)
                 10 -> SetParameter.write(writer, instance as SetParameter)
-                11 -> NewParameter.write(writer, instance as NewParameter)
-                12 -> Upgrade.write(writer, instance as Upgrade)
-                13 -> Log.write(writer, instance as Log)
-                14 -> Fail.write(writer, instance as Fail)
+                11 -> Upgrade.write(writer, instance as Upgrade)
+                12 -> Log.write(writer, instance as Log)
+                13 -> Custom.write(writer, instance as Custom)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

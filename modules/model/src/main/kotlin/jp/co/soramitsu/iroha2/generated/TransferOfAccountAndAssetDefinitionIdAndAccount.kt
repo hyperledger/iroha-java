@@ -16,9 +16,9 @@ import kotlin.Unit
  * Generated from 'TransferOfAccountAndAssetDefinitionIdAndAccount' regular structure
  */
 public data class TransferOfAccountAndAssetDefinitionIdAndAccount(
-    public val sourceId: AccountId,
+    public val source: AccountId,
     public val `object`: AssetDefinitionId,
-    public val destinationId: AccountId,
+    public val destination: AccountId,
 ) {
     public companion object :
         ScaleReader<TransferOfAccountAndAssetDefinitionIdAndAccount>,
@@ -38,9 +38,9 @@ public data class TransferOfAccountAndAssetDefinitionIdAndAccount(
             writer: ScaleCodecWriter,
             instance: TransferOfAccountAndAssetDefinitionIdAndAccount,
         ): Unit = try {
-            AccountId.write(writer, instance.sourceId)
+            AccountId.write(writer, instance.source)
             AssetDefinitionId.write(writer, instance.`object`)
-            AccountId.write(writer, instance.destinationId)
+            AccountId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

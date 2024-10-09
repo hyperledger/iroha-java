@@ -17,14 +17,12 @@ import kotlin.Unit
  */
 public data class BlockEvent(
     public val `header`: BlockHeader,
-    public val hash: HashOf<SignedBlock>,
     public val status: BlockStatus,
 ) {
     public companion object : ScaleReader<BlockEvent>, ScaleWriter<BlockEvent> {
         override fun read(reader: ScaleCodecReader): BlockEvent = try {
             BlockEvent(
                 BlockHeader.read(reader),
-                HashOf.read(reader) as HashOf<SignedBlock>,
                 BlockStatus.read(reader),
             )
         } catch (ex: Exception) {
@@ -33,7 +31,6 @@ public data class BlockEvent(
 
         override fun write(writer: ScaleCodecWriter, instance: BlockEvent): Unit = try {
             BlockHeader.write(writer, instance.`header`)
-            HashOf.write(writer, instance.hash)
             BlockStatus.write(writer, instance.status)
         } catch (ex: Exception) {
             throw wrapException(ex)

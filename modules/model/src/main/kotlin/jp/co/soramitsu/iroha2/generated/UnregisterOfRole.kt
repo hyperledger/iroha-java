@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfRole' regular structure
  */
 public data class UnregisterOfRole(
-    public val objectId: RoleId,
+    public val `object`: RoleId,
 ) {
     public companion object : ScaleReader<UnregisterOfRole>, ScaleWriter<UnregisterOfRole> {
         override fun read(reader: ScaleCodecReader): UnregisterOfRole = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfRole(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfRole): Unit = try {
-            RoleId.write(writer, instance.objectId)
+            RoleId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

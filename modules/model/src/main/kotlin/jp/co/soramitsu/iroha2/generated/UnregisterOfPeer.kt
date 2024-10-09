@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfPeer' regular structure
  */
 public data class UnregisterOfPeer(
-    public val objectId: PeerId,
+    public val `object`: PeerId,
 ) {
     public companion object : ScaleReader<UnregisterOfPeer>, ScaleWriter<UnregisterOfPeer> {
         override fun read(reader: ScaleCodecReader): UnregisterOfPeer = try {
@@ -28,7 +28,7 @@ public data class UnregisterOfPeer(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfPeer): Unit = try {
-            PeerId.write(writer, instance.objectId)
+            PeerId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -16,9 +16,9 @@ import kotlin.Unit
  * Generated from 'TransferOfAssetAndNumericAndAccount' regular structure
  */
 public data class TransferOfAssetAndNumericAndAccount(
-    public val sourceId: AssetId,
+    public val source: AssetId,
     public val `object`: Numeric,
-    public val destinationId: AccountId,
+    public val destination: AccountId,
 ) {
     public companion object :
         ScaleReader<TransferOfAssetAndNumericAndAccount>,
@@ -34,9 +34,9 @@ public data class TransferOfAssetAndNumericAndAccount(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransferOfAssetAndNumericAndAccount): Unit = try {
-            AssetId.write(writer, instance.sourceId)
+            AssetId.write(writer, instance.source)
             Numeric.write(writer, instance.`object`)
-            AccountId.write(writer, instance.destinationId)
+            AccountId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

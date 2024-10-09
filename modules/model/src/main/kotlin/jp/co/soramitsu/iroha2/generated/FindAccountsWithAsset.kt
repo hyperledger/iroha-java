@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'FindAccountsWithAsset' regular structure
  */
 public data class FindAccountsWithAsset(
-    public val assetDefinitionId: AssetDefinitionId,
+    public val assetDefinition: AssetDefinitionId,
 ) {
     public companion object : ScaleReader<FindAccountsWithAsset>, ScaleWriter<FindAccountsWithAsset> {
         override fun read(reader: ScaleCodecReader): FindAccountsWithAsset = try {
@@ -28,7 +28,7 @@ public data class FindAccountsWithAsset(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: FindAccountsWithAsset): Unit = try {
-            AssetDefinitionId.write(writer, instance.assetDefinitionId)
+            AssetDefinitionId.write(writer, instance.assetDefinition)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

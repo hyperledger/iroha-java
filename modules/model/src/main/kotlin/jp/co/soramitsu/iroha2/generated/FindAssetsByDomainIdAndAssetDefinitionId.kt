@@ -16,8 +16,8 @@ import kotlin.Unit
  * Generated from 'FindAssetsByDomainIdAndAssetDefinitionId' regular structure
  */
 public data class FindAssetsByDomainIdAndAssetDefinitionId(
-    public val domainId: DomainId,
-    public val assetDefinitionId: AssetDefinitionId,
+    public val domain: DomainId,
+    public val assetDefinition: AssetDefinitionId,
 ) {
     public companion object :
         ScaleReader<FindAssetsByDomainIdAndAssetDefinitionId>,
@@ -35,8 +35,8 @@ public data class FindAssetsByDomainIdAndAssetDefinitionId(
             writer: ScaleCodecWriter,
             instance: FindAssetsByDomainIdAndAssetDefinitionId,
         ): Unit = try {
-            DomainId.write(writer, instance.domainId)
-            AssetDefinitionId.write(writer, instance.assetDefinitionId)
+            DomainId.write(writer, instance.domain)
+            AssetDefinitionId.write(writer, instance.assetDefinition)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

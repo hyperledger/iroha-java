@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'RemoveKeyValueOfAccount' regular structure
  */
 public data class RemoveKeyValueOfAccount(
-    public val objectId: AccountId,
+    public val `object`: AccountId,
     public val key: Name,
 ) {
     public companion object :
@@ -32,7 +32,7 @@ public data class RemoveKeyValueOfAccount(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueOfAccount): Unit = try {
-            AccountId.write(writer, instance.objectId)
+            AccountId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
         } catch (ex: Exception) {
             throw wrapException(ex)

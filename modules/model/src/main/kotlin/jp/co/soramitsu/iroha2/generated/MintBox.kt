@@ -24,38 +24,6 @@ public sealed class MintBox : ModelEnum {
     public abstract fun discriminant(): Int
 
     /**
-     * 'Account' variant
-     */
-    public data class Account(
-        public val accountMintBox: AccountMintBox,
-    ) : MintBox() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.MintBox.Account>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.MintBox.Account> {
-            public const val DISCRIMINANT: Int = 0
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MintBox.Account = try {
-                Account(
-                    AccountMintBox.read(reader),
-                )
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.MintBox.Account,
-            ): Unit = try {
-                AccountMintBox.write(writer, instance.accountMintBox)
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-        }
-    }
-
-    /**
      * 'Asset' variant
      */
     public data class Asset(
@@ -66,7 +34,7 @@ public sealed class MintBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.MintBox.Asset>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.MintBox.Asset> {
-            public const val DISCRIMINANT: Int = 1
+            public const val DISCRIMINANT: Int = 0
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MintBox.Asset =
                 try {
@@ -99,7 +67,7 @@ public sealed class MintBox : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.MintBox.TriggerRepetitions>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.MintBox.TriggerRepetitions> {
-            public const val DISCRIMINANT: Int = 2
+            public const val DISCRIMINANT: Int = 1
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.MintBox.TriggerRepetitions = try {
                 TriggerRepetitions(
@@ -125,17 +93,15 @@ public sealed class MintBox : ModelEnum {
             val discriminant =
                 reader.readUByte()
         ) {
-            0 -> Account.read(reader)
-            1 -> Asset.read(reader)
-            2 -> TriggerRepetitions.read(reader)
+            0 -> Asset.read(reader)
+            1 -> TriggerRepetitions.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: MintBox) {
             writer.directWrite(instance.discriminant())
             when (val discriminant = instance.discriminant()) {
-                0 -> Account.write(writer, instance as Account)
-                1 -> Asset.write(writer, instance as Asset)
-                2 -> TriggerRepetitions.write(writer, instance as TriggerRepetitions)
+                0 -> Asset.write(writer, instance as Asset)
+                1 -> TriggerRepetitions.write(writer, instance as TriggerRepetitions)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

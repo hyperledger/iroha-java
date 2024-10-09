@@ -8,6 +8,7 @@ import jp.co.soramitsu.iroha2.codec.ScaleCodecWriter
 import jp.co.soramitsu.iroha2.codec.ScaleReader
 import jp.co.soramitsu.iroha2.codec.ScaleWriter
 import jp.co.soramitsu.iroha2.wrapException
+import kotlin.String
 import kotlin.Unit
 
 /**
@@ -16,25 +17,25 @@ import kotlin.Unit
  * Generated from 'SetKeyValueOfAsset' regular structure
  */
 public data class SetKeyValueOfAsset(
-    public val objectId: AssetId,
+    public val `object`: AssetId,
     public val key: Name,
-    public val `value`: MetadataValueBox,
+    public val `value`: String,
 ) {
     public companion object : ScaleReader<SetKeyValueOfAsset>, ScaleWriter<SetKeyValueOfAsset> {
         override fun read(reader: ScaleCodecReader): SetKeyValueOfAsset = try {
             SetKeyValueOfAsset(
                 AssetId.read(reader),
                 Name.read(reader),
-                MetadataValueBox.read(reader),
+                reader.readString(),
             )
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
 
         override fun write(writer: ScaleCodecWriter, instance: SetKeyValueOfAsset): Unit = try {
-            AssetId.write(writer, instance.objectId)
+            AssetId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
-            MetadataValueBox.write(writer, instance.`value`)
+            writer.writeAsList(instance.`value`.toByteArray(Charsets.UTF_8))
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

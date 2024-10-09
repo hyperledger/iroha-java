@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'RemoveKeyValueOfDomain' regular structure
  */
 public data class RemoveKeyValueOfDomain(
-    public val objectId: DomainId,
+    public val `object`: DomainId,
     public val key: Name,
 ) {
     public companion object : ScaleReader<RemoveKeyValueOfDomain>, ScaleWriter<RemoveKeyValueOfDomain> {
@@ -30,7 +30,7 @@ public data class RemoveKeyValueOfDomain(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: RemoveKeyValueOfDomain): Unit = try {
-            DomainId.write(writer, instance.objectId)
+            DomainId.write(writer, instance.`object`)
             Name.write(writer, instance.key)
         } catch (ex: Exception) {
             throw wrapException(ex)

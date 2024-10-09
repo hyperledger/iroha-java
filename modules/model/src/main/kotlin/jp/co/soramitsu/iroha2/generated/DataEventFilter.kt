@@ -26,12 +26,10 @@ public sealed class DataEventFilter : ModelEnum {
 
     override fun equals(other: kotlin.Any?): Boolean = when (this) {
         is Any -> Any.equals(this, other)
-        is PermissionTokenSchemaUpdate -> PermissionTokenSchemaUpdate.equals(this, other)
         else -> super.equals(other) }
 
     override fun hashCode(): Int = when (this) {
         is Any -> Any.hashCode()
-        is PermissionTokenSchemaUpdate -> PermissionTokenSchemaUpdate.hashCode()
         else -> super.hashCode() }
 
     /**
@@ -293,43 +291,6 @@ public sealed class DataEventFilter : ModelEnum {
     }
 
     /**
-     * 'PermissionTokenSchemaUpdate' variant
-     */
-    public class PermissionTokenSchemaUpdate : DataEventFilter() {
-        override fun discriminant(): Int = DISCRIMINANT
-
-        public companion object :
-            ScaleReader<jp.co.soramitsu.iroha2.generated.DataEventFilter.PermissionTokenSchemaUpdate>,
-            ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEventFilter.PermissionTokenSchemaUpdate> {
-            public const val DISCRIMINANT: Int = 8
-
-            override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEventFilter.PermissionTokenSchemaUpdate = try {
-                PermissionTokenSchemaUpdate()
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            override fun write(
-                writer: ScaleCodecWriter,
-                instance: jp.co.soramitsu.iroha2.generated.DataEventFilter.PermissionTokenSchemaUpdate,
-            ): Unit = try {
-            } catch (ex: Exception) {
-                throw wrapException(ex)
-            }
-
-            public fun equals(
-                o1: jp.co.soramitsu.iroha2.generated.DataEventFilter.PermissionTokenSchemaUpdate,
-                o2: kotlin.Any?,
-            ): Boolean = when (o2) {
-                null -> false
-                else -> o2::class == o1::class
-            }
-
-            override fun hashCode(): Int = ".DataEventFilter.PermissionTokenSchemaUpdate".hashCode()
-        }
-    }
-
-    /**
      * 'Configuration' variant
      */
     public data class Configuration(
@@ -340,7 +301,7 @@ public sealed class DataEventFilter : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DataEventFilter.Configuration>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEventFilter.Configuration> {
-            public const val DISCRIMINANT: Int = 9
+            public const val DISCRIMINANT: Int = 8
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEventFilter.Configuration = try {
                 Configuration(
@@ -372,7 +333,7 @@ public sealed class DataEventFilter : ModelEnum {
         public companion object :
             ScaleReader<jp.co.soramitsu.iroha2.generated.DataEventFilter.Executor>,
             ScaleWriter<jp.co.soramitsu.iroha2.generated.DataEventFilter.Executor> {
-            public const val DISCRIMINANT: Int = 10
+            public const val DISCRIMINANT: Int = 9
 
             override fun read(reader: ScaleCodecReader): jp.co.soramitsu.iroha2.generated.DataEventFilter.Executor = try {
                 Executor(
@@ -406,9 +367,8 @@ public sealed class DataEventFilter : ModelEnum {
             5 -> AssetDefinition.read(reader)
             6 -> Trigger.read(reader)
             7 -> Role.read(reader)
-            8 -> PermissionTokenSchemaUpdate.read(reader)
-            9 -> Configuration.read(reader)
-            10 -> Executor.read(reader)
+            8 -> Configuration.read(reader)
+            9 -> Executor.read(reader)
             else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
 
         override fun write(writer: ScaleCodecWriter, instance: DataEventFilter) {
@@ -422,9 +382,8 @@ public sealed class DataEventFilter : ModelEnum {
                 5 -> AssetDefinition.write(writer, instance as AssetDefinition)
                 6 -> Trigger.write(writer, instance as Trigger)
                 7 -> Role.write(writer, instance as Role)
-                8 -> PermissionTokenSchemaUpdate.write(writer, instance as PermissionTokenSchemaUpdate)
-                9 -> Configuration.write(writer, instance as Configuration)
-                10 -> Executor.write(writer, instance as Executor)
+                8 -> Configuration.write(writer, instance as Configuration)
+                9 -> Executor.write(writer, instance as Executor)
                 else -> throw RuntimeException("Unresolved discriminant of the enum variant: $discriminant") }
         }
     }

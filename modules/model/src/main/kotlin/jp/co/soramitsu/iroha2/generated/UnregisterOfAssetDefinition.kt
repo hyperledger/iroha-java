@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'UnregisterOfAssetDefinition' regular structure
  */
 public data class UnregisterOfAssetDefinition(
-    public val objectId: AssetDefinitionId,
+    public val `object`: AssetDefinitionId,
 ) {
     public companion object :
         ScaleReader<UnregisterOfAssetDefinition>,
@@ -30,7 +30,7 @@ public data class UnregisterOfAssetDefinition(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: UnregisterOfAssetDefinition): Unit = try {
-            AssetDefinitionId.write(writer, instance.objectId)
+            AssetDefinitionId.write(writer, instance.`object`)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

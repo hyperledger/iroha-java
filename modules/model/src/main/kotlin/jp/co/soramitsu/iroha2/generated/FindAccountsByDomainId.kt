@@ -16,7 +16,7 @@ import kotlin.Unit
  * Generated from 'FindAccountsByDomainId' regular structure
  */
 public data class FindAccountsByDomainId(
-    public val domainId: DomainId,
+    public val domain: DomainId,
 ) {
     public companion object : ScaleReader<FindAccountsByDomainId>, ScaleWriter<FindAccountsByDomainId> {
         override fun read(reader: ScaleCodecReader): FindAccountsByDomainId = try {
@@ -28,7 +28,7 @@ public data class FindAccountsByDomainId(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: FindAccountsByDomainId): Unit = try {
-            DomainId.write(writer, instance.domainId)
+            DomainId.write(writer, instance.domain)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -16,9 +16,9 @@ import kotlin.Unit
  * Generated from 'TransferOfAccountAndDomainIdAndAccount' regular structure
  */
 public data class TransferOfAccountAndDomainIdAndAccount(
-    public val sourceId: AccountId,
+    public val source: AccountId,
     public val `object`: DomainId,
-    public val destinationId: AccountId,
+    public val destination: AccountId,
 ) {
     public companion object :
         ScaleReader<TransferOfAccountAndDomainIdAndAccount>,
@@ -34,9 +34,9 @@ public data class TransferOfAccountAndDomainIdAndAccount(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransferOfAccountAndDomainIdAndAccount): Unit = try {
-            AccountId.write(writer, instance.sourceId)
+            AccountId.write(writer, instance.source)
             DomainId.write(writer, instance.`object`)
-            AccountId.write(writer, instance.destinationId)
+            AccountId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

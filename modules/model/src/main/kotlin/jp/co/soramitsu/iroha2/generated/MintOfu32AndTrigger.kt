@@ -18,7 +18,7 @@ import kotlin.Unit
  */
 public data class MintOfu32AndTrigger(
     public val `object`: Long,
-    public val destinationId: TriggerId,
+    public val destination: TriggerId,
 ) {
     public companion object : ScaleReader<MintOfu32AndTrigger>, ScaleWriter<MintOfu32AndTrigger> {
         override fun read(reader: ScaleCodecReader): MintOfu32AndTrigger = try {
@@ -32,7 +32,7 @@ public data class MintOfu32AndTrigger(
 
         override fun write(writer: ScaleCodecWriter, instance: MintOfu32AndTrigger): Unit = try {
             writer.writeUint32(instance.`object`)
-            TriggerId.write(writer, instance.destinationId)
+            TriggerId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }

@@ -16,9 +16,9 @@ import kotlin.Unit
  * Generated from 'TransferOfAssetAndMetadataAndAccount' regular structure
  */
 public data class TransferOfAssetAndMetadataAndAccount(
-    public val sourceId: AssetId,
+    public val source: AssetId,
     public val `object`: Metadata,
-    public val destinationId: AccountId,
+    public val destination: AccountId,
 ) {
     public companion object :
         ScaleReader<TransferOfAssetAndMetadataAndAccount>,
@@ -34,9 +34,9 @@ public data class TransferOfAssetAndMetadataAndAccount(
         }
 
         override fun write(writer: ScaleCodecWriter, instance: TransferOfAssetAndMetadataAndAccount): Unit = try {
-            AssetId.write(writer, instance.sourceId)
+            AssetId.write(writer, instance.source)
             Metadata.write(writer, instance.`object`)
-            AccountId.write(writer, instance.destinationId)
+            AccountId.write(writer, instance.destination)
         } catch (ex: Exception) {
             throw wrapException(ex)
         }
