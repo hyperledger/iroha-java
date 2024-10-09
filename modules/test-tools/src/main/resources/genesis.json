@@ -58,6 +58,78 @@
             "key": "value"
           }
         }
+      },
+      {
+        "Register" : {
+          "Trigger" : {
+            "id" : "name$wonderland",
+            "action" : {
+              "executable" : {
+                "Instructions" : [ {
+                  "SetKeyValue" : {
+                    "DomainId" : "wonderland",
+                    "key" : {
+                      "Name" : "key"
+                    },
+                    "value" : {
+                      "String" : "value"
+                    }
+                  }
+                } ]
+              },
+              "repeats" : {
+                "Exactly" : 1
+              },
+              "authority" : "alice@wonderland",
+              "filter" : {
+                "ExecuteTrigger" : {
+                  "trigger_id" : "name$wonderland",
+                  "authority" : "alice@wonderland"
+                }
+              },
+              "metadata" : { }
+            }
+          }
+        }
+      },
+      {
+        "Register" : {
+          "Trigger" : {
+            "id" : "time_trigger",
+            "action" : {
+              "executable" : {
+                "Instructions" : [ {
+                  "SetKeyValue" : {
+                    "DomainId" : "wonderland",
+                    "key" : {
+                      "Name" : "key"
+                    },
+                    "value" : {
+                      "String" : "value"
+                    }
+                  }
+                } ]
+              },
+              "repeats" : "Indefinitely",
+              "authority" : "alice@wonderland",
+              "filter" : {
+                "Time" : {
+                  "Schedule" : {
+                    "start" : {
+                      "secs" : 1715161770,
+                      "nanos" : 0
+                    },
+                    "period" : {
+                      "secs" : 1,
+                      "nanos" : 0
+                    }
+                  }
+                }
+              },
+              "metadata" : { }
+            }
+          }
+        }
       }
     },
     {
