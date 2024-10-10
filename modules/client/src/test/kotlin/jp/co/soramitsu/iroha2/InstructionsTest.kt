@@ -801,7 +801,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .also { Assertions.assertNull(it) }
     }
 
-    @Disabled // TODO: create an issue
+    @Disabled // https://github.com/hyperledger/iroha-java/issues/439
     @Test
     @WithIroha(
         [
