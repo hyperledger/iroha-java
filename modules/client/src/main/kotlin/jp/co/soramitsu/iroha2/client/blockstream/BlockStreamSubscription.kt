@@ -118,7 +118,7 @@ open class BlockStreamSubscription private constructor(
                 val idsToRemove = mutableListOf<UUID>()
 
                 for (frame in incoming) {
-                    logger.info("Received frame: {}", frame)
+                    logger.debug("Received frame: {}", frame)
 
                     val block = BlockMessage.decode(frame.readBytes())
                     source.forEach { (id, storage) ->

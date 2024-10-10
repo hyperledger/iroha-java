@@ -61,36 +61,6 @@ class PeerTest : IrohaTest<AdminIroha2Client>() {
         val keyPair = generateKeyPair()
         val payload = keyPair.public.bytes()
 
-//        val kp = keyPairFromHex(
-//            "CE7FA46C9DCE7EA4B125E2E36BDB63EA33073E7590AC92816AE1E861B7048B03",
-//            "CCF31D85E3B32A4BEA59987CE0C78E3B8E2DB93881468AB2435FE45D5C9DCD53",
-//        )
-//        val cl = AdminIroha2Client(URL("http://127.0.0.1:8080"), URL("http://127.0.0.1:1337"))
-//        val st = cl.status()
-//        println(st)
-//        val ad = cl.sendTransaction {
-//            account(AccountId(DEFAULT_DOMAIN_ID, kp.public.toIrohaPublicKey()))
-//            registerPeer(
-//                PeerId(
-//                    SocketAddr.Host(SocketAddrHost("irohad4", 1341)),
-//                    kp.public.toIrohaPublicKey(),
-//                ),
-//            )
-//            buildSigned(kp)
-//        }.let { d ->
-//            withTimeout(txTimeout.plus(Duration.ofSeconds(20))) { d.await() }
-//        }
-//        println(ad.toHex())
-//        println(ad.toIrohaHash().arrayOfU8.toHex())
-//
-//        val qwe = QueryBuilder.findAllPeers()
-//            .account(ALICE_ACCOUNT_ID)
-//            .buildSigned(kp)
-//            .let { query ->
-//                client.sendQuery(query)
-//            }
-//        println(qwe)
-
         val containerJob = async {
             startNewContainer(keyPair, alias, PEER_AMOUNT)
         }
