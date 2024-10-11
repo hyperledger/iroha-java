@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigInteger
 import java.security.KeyPair
+import java.time.Duration
 import java.time.Instant
 import java.util.Date
 import kotlin.test.assertEquals
@@ -219,7 +220,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
-    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
+    @WithIroha([AliceHas100XorAndPermissionToMintAndBurn::class])
     @Story("Wasm trigger mints NFT for every user")
     @SdkTestId("wasm_trigger_to_mint_nft_for_every_user")
     fun `wasm trigger to mint nft for every user and update trigger metadata`(): Unit = runBlocking {
@@ -429,7 +430,7 @@ class TriggersTest : IrohaTest<Iroha2Client>() {
                 setKeyValue(ALICE_ACCOUNT_ID, "test$i".asName(), "test$i")
                 buildSigned(ALICE_KEYPAIR)
             }.also { d ->
-                withTimeout(txTimeout) { d.await() }
+                withTimeout(Duration.ofSeconds(60)) { d.await() }
             }
             delay(500)
         }

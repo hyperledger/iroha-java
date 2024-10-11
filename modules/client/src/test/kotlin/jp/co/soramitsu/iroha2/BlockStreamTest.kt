@@ -24,7 +24,6 @@ import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN
 import jp.co.soramitsu.iroha2.testengine.DEFAULT_DOMAIN_ID
 import jp.co.soramitsu.iroha2.testengine.GENESIS_ADDRESS
 import jp.co.soramitsu.iroha2.testengine.GENESIS_DOMAIN
-import jp.co.soramitsu.iroha2.testengine.IROHA_CONFIG_DELIMITER
 import jp.co.soramitsu.iroha2.testengine.IrohaTest
 import jp.co.soramitsu.iroha2.testengine.NewAccountWithMetadata
 import jp.co.soramitsu.iroha2.testengine.WithIroha
@@ -43,7 +42,7 @@ import kotlin.test.assertTrue
 class BlockStreamTest : IrohaTest<AdminIroha2Client>() {
 
     @Test
-    @WithIroha([NewAccountWithMetadata::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
+    @WithIroha([NewAccountWithMetadata::class])
     @Story("Successful subscription to block stream")
     @SdkTestId("subscription_to_block_stream")
     @Issue("https://app.zenhub.com/workspaces/iroha-v2-60ddb820813b9100181fc060/issues/gh/hyperledger/iroha-java/361")
@@ -83,7 +82,7 @@ class BlockStreamTest : IrohaTest<AdminIroha2Client>() {
     }
 
     @Test
-    @WithIroha([NewAccountWithMetadata::class], configs = ["LOG_LEVEL${IROHA_CONFIG_DELIMITER}TRACE"])
+    @WithIroha([NewAccountWithMetadata::class])
     @Story("Successful subscription to endless block stream")
     @SdkTestId("subscription_to_endless_block_stream")
     @ResourceLock("blockStream")
