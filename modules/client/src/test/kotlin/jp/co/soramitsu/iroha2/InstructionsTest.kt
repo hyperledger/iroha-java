@@ -801,7 +801,6 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .also { Assertions.assertNull(it) }
     }
 
-    @Disabled // https://github.com/hyperledger/iroha-java/issues/439
     @Test
     @WithIroha(
         [
@@ -826,7 +825,7 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
         val assetBefore = getAsset(assetId)
         assertEquals(
             StoreAssetWithMetadata.ASSET_VALUE,
-            assetBefore.value.cast<AssetValue.Store>().metadata.sortedMapOfName[assetKey],
+            assetBefore.value.cast<AssetValue.Store>().metadata.sortedMapOfName[assetKey]?.fromJsonString(),
         )
         QueryBuilder.findAccountById(ALICE_ACCOUNT_ID)
             .account(super.account)
@@ -834,8 +833,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { alice ->
                 assertEquals(
-                    alice.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asName()],
                     RubbishToTestMultipleGenesis.ALICE_KEY_VALUE,
+                    alice.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.ALICE_KEY_VALUE.asName()]?.fromJsonString(),
                 )
             }
         QueryBuilder.findAccountById(BOB_ACCOUNT_ID)
@@ -844,8 +843,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { bob ->
                 assertEquals(
-                    bob.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asName()],
                     RubbishToTestMultipleGenesis.BOB_KEY_VALUE,
+                    bob.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.BOB_KEY_VALUE.asName()]?.fromJsonString(),
                 )
             }
         QueryBuilder.findDomainById(DEFAULT_DOMAIN_ID)
@@ -854,8 +853,8 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
             .let { query -> client.sendQuery(query) }
             .also { domain ->
                 assertEquals(
-                    domain.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asName()],
                     RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE,
+                    domain.metadata.sortedMapOfName[RubbishToTestMultipleGenesis.DOMAIN_KEY_VALUE.asName()]?.fromJsonString(),
                 )
             }
     }

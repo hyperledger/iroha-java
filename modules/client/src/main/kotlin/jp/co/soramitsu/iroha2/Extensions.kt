@@ -179,22 +179,20 @@ fun Metadata.merge(extra: Metadata) = Metadata(
     this.sortedMapOfName.toMutableMap().also { it.putAll(extra.sortedMapOfName) },
 )
 
-fun InstructionBox.Register.extractIdentifiableBox() = runCatching {
-    when (this.registerBox.discriminant()) {
-        0 -> this.registerBox.cast<Peer>() as IdentifiableBox
-        1 -> this.registerBox.cast<Domain>() as IdentifiableBox
-        2 -> this.registerBox.cast<Account>() as IdentifiableBox
-        3 -> this.registerBox.cast<AssetDefinition>() as IdentifiableBox
-        4 -> this.registerBox.cast<Asset>() as IdentifiableBox
-        5 -> this.registerBox.cast<Role>() as IdentifiableBox
-        6 -> this.registerBox.cast<Trigger>() as IdentifiableBox
-        else -> null
-    }
-}.getOrNull()
+fun InstructionBox.Register.extractBox() = when (this.registerBox.discriminant()) {
+    0 -> this.registerBox.cast<RegisterBox>() as RegisterBox
+    1 -> this.registerBox.cast<Domain>() as RegisterBox
+    2 -> this.registerBox.cast<Account>() as RegisterBox
+    3 -> this.registerBox.cast<AssetDefinition>() as RegisterBox
+    4 -> this.registerBox.cast<Asset>() as RegisterBox
+    5 -> this.registerBox.cast<Role>() as RegisterBox
+    6 -> this.registerBox.cast<Trigger>() as RegisterBox
+    else -> null
+}
 
-fun Iterable<InstructionBox>.extractIdentifiableBoxes() = this.asSequence()
+fun Iterable<InstructionBox>.extractRegisterBoxes() = this.asSequence()
     .filterIsInstance<InstructionBox.Register>()
-    .map { it.extractIdentifiableBox() }.filter { it != null }.map { it!! }.toList()
+    .map { it.registerBox }
 
 fun IdBox.extractId(): Any = when (this) {
     is IdBox.RoleId -> this.roleId
