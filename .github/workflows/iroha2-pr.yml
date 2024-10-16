@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: iroha-ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
