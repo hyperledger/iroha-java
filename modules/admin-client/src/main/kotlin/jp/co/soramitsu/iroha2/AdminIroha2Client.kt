@@ -32,21 +32,19 @@ open class AdminIroha2Client(
 
     constructor(
         apiUrl: URL,
-        telemetryUrl: URL,
         peerUrl: URL,
         log: Boolean = false,
         credentials: String? = null,
         balancingHealthCheck: Boolean = true,
-    ) : this(IrohaUrls(apiUrl, telemetryUrl, peerUrl), log, credentials, balancingHealthCheck)
+    ) : this(IrohaUrls(apiUrl, peerUrl), log, credentials, balancingHealthCheck)
 
     constructor(
         apiUrl: String,
-        telemetryUrl: String,
         peerUrl: String,
         log: Boolean = false,
         credentials: String? = null,
         balancingHealthCheck: Boolean = true,
-    ) : this(URL(apiUrl), URL(telemetryUrl), URL(peerUrl), log, credentials, balancingHealthCheck)
+    ) : this(URL(apiUrl), URL(peerUrl), log, credentials, balancingHealthCheck)
 
     /**
      * Send metrics request
@@ -71,7 +69,7 @@ open class AdminIroha2Client(
     /**
      * Send schema request
      */
-    suspend fun schema(): String = client.get("${getTelemetryUrl()}$SCHEMA_ENDPOINT").body()
+    suspend fun schema(): String = client.get("${getApiUrl()}$SCHEMA_ENDPOINT").body()
 
     /**
      * Request current configuration of the peer
@@ -87,8 +85,6 @@ open class AdminIroha2Client(
         }
         return config(mapOf(ConfigurationFieldType.Docs to fieldValue))
     }
-
-    suspend fun describeConfig(vararg fieldValue: String): String = describeConfig(fieldValue.asList())
 
     private suspend inline fun <reified T, reified B> config(body: B): T {
         val response: HttpResponse = client.get("${getApiUrl()}$CONFIGURATION_ENDPOINT") {

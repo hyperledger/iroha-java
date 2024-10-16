@@ -4,7 +4,7 @@ import jp.co.soramitsu.iroha2.AdminIroha2AsyncClient
 import jp.co.soramitsu.iroha2.AdminIroha2Client
 import jp.co.soramitsu.iroha2.DEFAULT_API_PORT
 import jp.co.soramitsu.iroha2.DEFAULT_P2P_PORT
-import jp.co.soramitsu.iroha2.DEFAULT_TELEMETRY_PORT
+import jp.co.soramitsu.iroha2.Genesis
 import jp.co.soramitsu.iroha2.Genesis.Companion.toSingle
 import jp.co.soramitsu.iroha2.IrohaSdkException
 import jp.co.soramitsu.iroha2.asAccountId
@@ -12,6 +12,7 @@ import jp.co.soramitsu.iroha2.cast
 import jp.co.soramitsu.iroha2.client.Iroha2AsyncClient
 import jp.co.soramitsu.iroha2.client.Iroha2Client
 import jp.co.soramitsu.iroha2.generateKeyPair
+import jp.co.soramitsu.iroha2.generated.ChainId
 import jp.co.soramitsu.iroha2.generated.PeerId
 import jp.co.soramitsu.iroha2.generated.SocketAddr
 import jp.co.soramitsu.iroha2.generated.SocketAddrHost
@@ -19,18 +20,22 @@ import jp.co.soramitsu.iroha2.keyPairFromHex
 import jp.co.soramitsu.iroha2.model.IrohaUrls
 import jp.co.soramitsu.iroha2.toIrohaPublicKey
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.InvocationInterceptor
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext
 import org.yaml.snakeyaml.Yaml
 import java.io.File
+import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.security.KeyPair
 import java.util.Collections
+import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.createInstance
@@ -105,28 +110,32 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         // inject `Iroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             Iroha2Client(
-                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+                containers.map { IrohaUrls(it.getApiUrl(), it.getP2pUrl()) }.toMutableList(),
+                true,
             ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2Client` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2Client(
-                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+                containers.map { IrohaUrls(it.getApiUrl(), it.getP2pUrl()) }.toMutableList(),
+                true,
             ).also { utilizedResources.add(it) }
         }
 
         // inject `Iroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             Iroha2AsyncClient(
-                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+                containers.map { IrohaUrls(it.getApiUrl(), it.getP2pUrl()) }.toMutableList(),
+                true,
             ).also { utilizedResources.add(it) }
         }
 
         // inject `AdminIroha2AsyncClient` if it is declared in test class
         setPropertyValue(properties, testInstance) {
             AdminIroha2AsyncClient(
-                containers.map { IrohaUrls(it.getApiUrl(), it.getTelemetryUrl(), it.getP2pUrl()) }.toMutableList(),
+                containers.map { IrohaUrls(it.getApiUrl(), it.getP2pUrl()) }.toMutableList(),
+                true,
             ).also { utilizedResources.add(it) }
         }
 
@@ -138,7 +147,7 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         val properties = testInstance::class.memberProperties
 
         val urls = when (this.dockerComposeFile.isEmpty()) {
-            true -> this.apiUrls.mapIndexed { idx, url -> IrohaUrls(url, telemetryUrls[idx], peerUrls[idx]) }
+            true -> this.apiUrls.mapIndexed { idx, url -> IrohaUrls(url, peerUrls[idx]) }
             else -> File(this.dockerComposeFile).readDockerComposeData()
         } ?: throw IrohaSdkException("Iroha URLs required")
 
@@ -177,7 +186,6 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
         return all.map {
             IrohaUrls(
                 it["TORII_API_URL"].convertUrl(),
-                it["TORII_TELEMETRY_URL"].convertUrl(),
                 it["TORII_P2P_ADDR"].convertUrl(),
             )
         }
@@ -212,9 +220,8 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
 
         repeat(withIroha.amount) { n ->
             keyPairs.add(generateKeyPair())
-            portsList.add(listOf(DEFAULT_P2P_PORT + n, DEFAULT_API_PORT + n, DEFAULT_TELEMETRY_PORT + n))
+            portsList.add(listOf(DEFAULT_P2P_PORT + n, DEFAULT_API_PORT + n))
         }
-        val genesisKeyPair = generateKeyPair()
         val peerIds = keyPairs.mapIndexed { i: Int, kp: KeyPair ->
             val p2pPort = portsList[i][IrohaConfig.P2P_PORT_IDX]
             kp.toPeerId(IrohaContainer.NETWORK_ALIAS + p2pPort, p2pPort)
@@ -228,14 +235,12 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                     this.networkToJoin = testInstance.network
                     when {
                         withIroha.source.isNotEmpty() -> genesisPath = withIroha.source
-                        else -> genesis = withIroha.sources.map { it.createInstance() }.toSingle()
+                        else -> genesis = withIroha.sources.map { genesisInstance(it) }.toSingle()
                     }
                     this.alias = IrohaContainer.NETWORK_ALIAS + p2pPort
                     this.keyPair = keyPairs[n]
-                    this.genesisKeyPair = genesisKeyPair
                     this.trustedPeers = peerIds
                     this.ports = portsList[n]
-                    this.fetchSize = withIroha.fetchSize
                     this.imageName = testInstance.imageName
                     this.imageTag = testInstance.imageTag
                     this.envs = withIroha.configs.associate { config ->
@@ -249,12 +254,16 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
                         this.executorPath = withIroha.executorSource
                     }
                 }
-                container.start()
+                withContext(Dispatchers.IO) {
+                    container.start()
+                }
                 containers.add(container)
             }.let { deferredSet.add(it) }
         }
 
-        deferredSet.forEach { it.await() }
+        withContext(Dispatchers.IO) {
+            deferredSet.forEach { it.await() }
+        }
 
         containers
     }
@@ -265,4 +274,26 @@ class IrohaRunnerExtension : InvocationInterceptor, BeforeEachCallback {
     )
 
     private fun ExtensionContext.testId() = "${this.testClass.get().name}_${this.testMethod.get().name}"
+
+    private fun genesisInstance(clazz: KClass<out Genesis>): Genesis = clazz.createInstance().let { genesis ->
+        val tx = genesis.transaction.copy(
+            chain = ChainId("00000000-0000-0000-0000-000000000000"),
+        )
+        val transactionField = findField(clazz.java, "transaction")
+        transactionField.isAccessible = true
+        transactionField.set(genesis, tx)
+
+        return genesis
+    }
+
+    private fun findField(clazz: Class<*>, fieldName: String): Field {
+        return try {
+            clazz.getDeclaredField(fieldName)
+        } catch (e: NoSuchFieldException) {
+            when (clazz.superclass == null) {
+                true -> throw e
+                false -> findField(clazz.superclass, fieldName)
+            }
+        }
+    }
 }
