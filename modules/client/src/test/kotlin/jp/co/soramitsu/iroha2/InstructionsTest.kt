@@ -405,6 +405,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @Feature("Accounts")
+    @Story("Account sets key value pair")
+    @Permission("CanSetKeyValueInDomain")
+    @SdkTestId("set_key_value_pair_for_another_account_domain_defenition")
     @WithIroha([DefaultGenesis::class])
     fun `domain metadata set key value with permissions`(): Unit = runBlocking {
         val domainId = DomainId(randomAlphabetic(10).asName())
@@ -920,6 +924,10 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
     }
 
     @Test
+    @Permission("no_permission_required")
+    @Feature("Query")
+    @Story("Query find all accounts in genesis and apply it")
+    @SdkTestId("query_all_accounts_in_genesis")
     @WithIroha([FatGenesis::class])
     fun `fat genesis apply`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
