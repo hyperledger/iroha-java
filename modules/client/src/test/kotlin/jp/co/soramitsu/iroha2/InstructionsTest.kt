@@ -925,9 +925,9 @@ class InstructionsTest : IrohaTest<Iroha2Client>() {
 
     @Test
     @Permission("no_permission_required")
-    @Feature("Query")
-    @Story("Query find all accounts in genesis and apply it")
-    @SdkTestId("query_all_accounts_in_genesis")
+    @Feature("Сonfiguration")
+    @Story("Initiator starts network with fat genesis")
+    @SdkTestId("initiator_start_network_with_fat_genesis")
     @WithIroha([FatGenesis::class])
     fun `fat genesis apply`(): Unit = runBlocking {
         QueryBuilder.findAllAccounts()
