@@ -148,34 +148,40 @@ sonar {
     }
 }
 
-tasks.named('testCoverage') {
-    dependsOn ":admin-client:processTestResources"
-}
+// tasks.named('testCoverage') {
+//     dependsOn ":admin-client:processTestResources"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":block:compileTestKotlin"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":block:test"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":block:processTestResources"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":client:processTestResources"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":codegen:test"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":model:test"
+// }
+
+// tasks.named('testCoverage') {
+//     dependsOn ":test-tools:processTestResources"
+// }
 
 tasks.named('testCoverage') {
-    dependsOn ":block:compileTestKotlin"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":block:test"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":block:processTestResources"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":client:processTestResources"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":codegen:test"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":model:test"
-}
-
-tasks.named('testCoverage') {
-    dependsOn ":test-tools:processTestResources"
+    dependsOn "${project.path}:test"
+    dependsOn "${project.path}:processTestResources"
+    dependsOn "${project.path}:compileTestKotlin"
 }
