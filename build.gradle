@@ -181,7 +181,7 @@ sonar {
 // }
 
 tasks.named('testCoverage') {
-    dependsOn "${project.path}:test"
-    dependsOn "${project.path}:processTestResources"
-    dependsOn "${project.path}:compileTestKotlin"
+    mustRunAfter "${project.path}:test"
+    mustRunAfter "${project.path}:processTestResources"
+    mustRunAfter "${project.path}:compileTestKotlin"
 }
