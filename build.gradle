@@ -146,16 +146,16 @@ task testCoverage(type: JacocoReport) {
     }
 }
 
+test {
+    useJUnitPlatform()
+    finalizedBy testCoverage
+}
+
 tasks.named('testCoverage') {
     // Add specific dependencies for tasks that weren't covered
     mustRunAfter ":${project.path}:processTestResources"
     mustRunAfter ":${project.path}:compileTestKotlin"
     mustRunAfter ":${project.path}:test"
-}
-
-test {
-    useJUnitPlatform()
-    finalizedBy testCoverage
 }
 
 sonar {
