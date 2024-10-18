@@ -96,35 +96,6 @@ subprojects {
     // it is disabled by default to publish original version by CI, not a fat jar
     tasks.shadowJar.enabled = false
 
-
-    task testCoverage(type: JacocoReport) {
-        // Ensure all necessary tasks are complete before running testCoverage
-        dependsOn "${project.path}:test"
-        dependsOn "${project.path}:processTestResources"
-        dependsOn "${project.path}:compileTestKotlin"
-
-        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-        
-        sourceSets sourceSets.main
-
-        reports {
-            xml.required = true
-            html.required = true
-        }
-    }
-
-    tasks.named('testCoverage') {
-        // Add specific dependencies for tasks that weren't covered
-        mustRunAfter ":${project.path}:processTestResources"
-        mustRunAfter ":${project.path}:compileTestKotlin"
-        mustRunAfter ":${project.path}:test"
-    }
-    
-    test {
-        useJUnitPlatform()
-        finalizedBy testCoverage
-    }
-
 }
 
 task allShadowJars {
@@ -158,6 +129,34 @@ jacoco {
 //     useJUnitPlatform()
 //     dependsOn testCoverage
 // }
+
+task testCoverage(type: JacocoReport) {
+    // Ensure all necessary tasks are complete before running testCoverage
+    dependsOn "${project.path}:test"
+    dependsOn "${project.path}:processTestResources"
+    dependsOn "${project.path}:compileTestKotlin"
+
+    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+    
+    sourceSets sourceSets.main
+
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+tasks.named('testCoverage') {
+    // Add specific dependencies for tasks that weren't covered
+    mustRunAfter ":${project.path}:processTestResources"
+    mustRunAfter ":${project.path}:compileTestKotlin"
+    mustRunAfter ":${project.path}:test"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy testCoverage
+}
 
 sonar {
     properties {
