@@ -131,20 +131,18 @@ jacoco {
 // }
 
 task testCoverage(type: JacocoReport) {
-    // Ensure all necessary tasks are complete before running testCoverage
-    dependsOn "${project.path}:test"
-    dependsOn "${project.path}:processTestResources"
-    dependsOn "${project.path}:compileTestKotlin"
-
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
     
-    sourceSets sourceSets.main
+    subprojects.each {
+        sourceSets it.sourceSets.main
+    }
 
     reports {
         xml.required = true
         html.required = true
     }
 }
+
 
 test {
     useJUnitPlatform()
