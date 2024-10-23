@@ -10,3 +10,12 @@ dependencies {
     implementation(project(":block"))
     api(project(":admin-client"))
 }
+
+tasks.testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
+    mustRunAfter(":client:testCoverage")
+    mustRunAfter(":codegen:testCoverage")
+    mustRunAfter(":model:testCoverage")
+    mustRunAfter(":test-tools:testCoverage")
+}

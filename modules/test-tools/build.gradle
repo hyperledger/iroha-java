@@ -18,6 +18,10 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }
 
-test {
-    useJUnitPlatform()
+testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
+    mustRunAfter(":client:testCoverage")
+    mustRunAfter(":codegen:testCoverage")
+    mustRunAfter(":model:testCoverage")
 }

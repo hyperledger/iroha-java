@@ -7,3 +7,9 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVer"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlinVer"
 }
+
+testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":client:testCoverage")
+    mustRunAfter(":codegen:testCoverage")
+}
