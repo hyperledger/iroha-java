@@ -133,8 +133,11 @@ subprojects {
             property "sonar.host.url", "https://sonar.katana.soramitsu.co.jp"
             property "sonar.java.coveragePlugin", "jacoco"
             property "sonar.projectName", "${project.group}:${rootProject.name}.${project.name}"
-            property "sonar.sources", "${project.projectDir}/src/main/java"
-            property "sonar.tests", "${project.projectDir}/src/test"
+            property "sonar.sources", "${project.projectDir}/src/main/kotlin"
+            // exclude projects with no tests
+            if (project.name != "codegen" && project.name != "model" && project.name != "tutorial") {
+                property "sonar.tests", "${project.projectDir}/src/test"
+            }
             property "sonar.java.test.binaries", "${project.projectDir}/build/test-results/test/binary"
             property "sonar.junit.reportPaths", "${project.projectDir}/build/test-results/test/"
             property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/testCoverage/*.xml"
