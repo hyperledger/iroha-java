@@ -96,6 +96,46 @@ subprojects {
     // it is disabled by default to publish original version by CI, not a fat jar
     tasks.shadowJar.enabled = false
 
+    task testCoverage(type: JacocoReport) {
+        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+        subprojects.each {
+            sourceSets it.sourceSets.main
+        }
+
+        reports {
+            xml.required = true
+            html.required = true
+        }
+
+        // Add specific dependencies for tasks that weren't covered
+        dependsOn "processTestResources"
+        dependsOn "test"
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy testCoverage
+    }
+
+    jacoco {
+        toolVersion = "0.8.8"
+        reportsDirectory = file("$buildDir/reports/")
+    }
+
+    sonar {
+        properties {
+            property "sonar.projectKey", "hyperledger:iroha-java"
+            property "sonar.host.url", "https://sonar.katana.soramitsu.co.jp"
+            property "sonar.java.coveragePlugin", "jacoco"
+            property "sonar.projectName", "${project.group}:${rootProject.name}.${project.name}"
+            property "sonar.sources", "${project.projectDir}/src/main/java"
+            property "sonar.tests", "${project.projectDir}/src/test"
+            property "sonar.java.test.binaries", "${project.projectDir}/build/test-results/test/binary"
+            property "sonar.junit.reportPaths", "${project.projectDir}/build/test-results/test/"
+            property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/testCoverage/*.xml"
+        }
+    }
 }
 
 task allShadowJars {
@@ -105,105 +145,3 @@ task allShadowJars {
 check {
     dependsOn "installKotlinterPrePushHook"
 }
-
-jacoco {
-    toolVersion = "0.8.8"
-    reportsDirectory = file("$buildDir/reports/")
-}
-
-// task testCoverage(type: JacocoReport) {
-//     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-    
-//     subprojects.each {
-//         sourceSets it.sourceSets.main
-//     }
-
-//     reports {
-//         xml.required = true
-//         html.required = true
-//     }
-// }
-
-
-// test {
-//     useJUnitPlatform()
-//     dependsOn testCoverage
-// }
-
-task testCoverage(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-    
-    subprojects.each {
-        sourceSets it.sourceSets.main
-    }
-
-    reports {
-        xml.required = true
-        html.required = true
-    }
-}
-
-
-test {
-    useJUnitPlatform()
-    finalizedBy testCoverage
-}
-
-tasks.named('testCoverage') {
-    // Add specific dependencies for tasks that weren't covered
-    mustRunAfter ":${project.path}:processTestResources"
-    mustRunAfter ":${project.path}:compileTestKotlin"
-    mustRunAfter ":${project.path}:test"
-}
-
-sonar {
-    properties {
-      property "sonar.projectKey", "hyperledger:iroha-java"
-      property "sonar.host.url", "https://sonar.katana.soramitsu.co.jp"
-      property "sonar.java.coveragePlugin", "jacoco"
-      property "sonar.projectName", "${project.group}:${rootProject.name}.${project.name}"
-      property "sonar.sources", "${project.projectDir}/src/main/java"
-      property "sonar.tests", "${project.projectDir}/src/test"
-      property "sonar.java.test.binaries", "${project.projectDir}/build/test-results/test/binary"
-      property "sonar.junit.reportPaths", "${project.projectDir}/build/test-results/test/"
-      property "sonar.coverage.jacoco.xmlReportPaths", "${project.projectDir}/build/reports/testCoverage/*.xml"
-    }
-}
-
-// tasks.named('testCoverage') {
-//     dependsOn ":admin-client:processTestResources"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":block:compileTestKotlin"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":block:test"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":block:processTestResources"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":client:processTestResources"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":codegen:test"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":model:test"
-// }
-
-// tasks.named('testCoverage') {
-//     dependsOn ":test-tools:processTestResources"
-// }
-
-// tasks.named('testCoverage') {
-//     mustRunAfter "${project.path}:test"
-//     mustRunAfter "${project.path}:processTestResources"
-//     mustRunAfter "${project.path}:compileTestKotlin"
-// }
