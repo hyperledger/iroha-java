@@ -24,7 +24,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build with Gradle & Sonarqube analysis
-        run: ./gradlew build testCoverage sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} --info
+        run: ./gradlew build test testCoverage sonar -Dsonar.token=${{ secrets.SONAR_TOKEN }} --info
       - name: DefectDojo
         if: always()
         uses: C4tWithShell/defectdojo-action@1.0.4

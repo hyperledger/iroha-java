@@ -99,9 +99,13 @@ subprojects {
     task testCoverage(type: JacocoReport) {
         executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
-        subprojects.each {
-            sourceSets it.sourceSets.main
-        }
+        def sourceDirs = [
+                "${project.projectDir}/src/main/java",
+                "${project.projectDir}/src/main/kotlin",
+                "${project.projectDir}/src/debug/java",
+                "${project.projectDir}/src/debug/kotlin"
+        ]
+        sourceDirectories.from = files(sourceDirs)
 
         reports {
             xml.required = true
@@ -109,6 +113,7 @@ subprojects {
         }
 
         // Add specific dependencies for tasks that weren't covered
+        dependsOn "compileKotlin"
         dependsOn "processTestResources"
         dependsOn "test"
     }
