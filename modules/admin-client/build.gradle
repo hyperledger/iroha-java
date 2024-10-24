@@ -9,11 +9,3 @@ dependencies {
 
     testApi project(":test-tools")
 }
-
-testCoverage {
-    mustRunAfter(":block:compileTestKotlin")
-    mustRunAfter(":block:test")
-    mustRunAfter(":tutorial:compileKotlin")
-    mustRunAfter(":tutorial:test")
-    mustRunAfter(":test")
-}

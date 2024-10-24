@@ -111,11 +111,6 @@ subprojects {
             xml.required = true
             html.required = true
         }
-
-        // Add specific dependencies for tasks that weren't covered
-        dependsOn "compileKotlin"
-        dependsOn "processTestResources"
-        dependsOn "test"
     }
 
     test {

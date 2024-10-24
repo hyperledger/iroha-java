@@ -10,6 +10,4 @@ dependencies {
 
 testCoverage {
     mustRunAfter(":admin-client:testCoverage")
-    mustRunAfter(":client:testCoverage")
-    mustRunAfter(":codegen:testCoverage")
 }

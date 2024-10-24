@@ -23,5 +23,6 @@ task generate(type: JavaExec) {
 
 testCoverage {
     mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
     mustRunAfter(":client:testCoverage")
 }

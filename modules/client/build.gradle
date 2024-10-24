@@ -34,4 +34,5 @@ dependencies {
 
 testCoverage {
     mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
 }
