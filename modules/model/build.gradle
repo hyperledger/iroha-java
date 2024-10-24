@@ -1,0 +1,6 @@
+testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
+    mustRunAfter(":client:testCoverage")
+    mustRunAfter(":codegen:testCoverage")
+}

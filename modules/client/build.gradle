@@ -31,3 +31,8 @@ dependencies {
 
     testApi project(":test-tools")
 }
+
+testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
+}

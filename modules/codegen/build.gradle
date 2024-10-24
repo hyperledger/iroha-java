@@ -20,3 +20,9 @@ task generate(type: JavaExec) {
     args "schemaFileName=schema.json"
     finalizedBy ':model:formatKotlin'
 }
+
+testCoverage {
+    mustRunAfter(":admin-client:testCoverage")
+    mustRunAfter(":block:testCoverage")
+    mustRunAfter(":client:testCoverage")
+}
